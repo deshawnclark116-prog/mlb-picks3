@@ -1,0 +1,169 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/**
+ * Formats betting odds to the standard American format (e.g., +150, -110).
+ */
+export function formatOdds(odds: number | null | undefined): string {
+  if (odds === null || odds === undefined || isNaN(odds)) return "N/A";
+  const rounded = Math.round(odds);
+  return rounded > 0 ? `+${rounded}` : `${rounded}`;
+}
+
+/**
+ * Formats a probability or decimal as a percentage string (e.g., 0.542 -> 54.2%).
+ */
+export function formatPercent(value: number | null | undefined): string {
+  if (value === null || value === undefined || isNaN(value)) return "N/A";
+  // If value is a ratio between 0 and 1, multiply by 100
+  // Note: some JSON feeds send rates already multiplied, let's handle both gracefully.
+  const absVal = Math.abs(value);
+  if (absVal <= 1) {
+    return `${(value * 100).toFixed(1)}%`;
+  }
+  return `${value.toFixed(1)}%`;
+}
+
+/**
+ * Formats Kelly Fraction as a custom Suggested Stake % (e.g., 0.05 -> 5.0% or 5 -> 5.0%).
+ */
+export function formatKellyStake(fraction: number | null | undefined): string {
+  if (fraction === null || fraction === undefined || isNaN(fraction)) return "0.0%";
+  const stake = fraction <= 1 ? fraction * 100 : fraction;
+  return `${stake.toFixed(1)}%`;
+}
+
+/**
+ * Returns a human-readable relative time string (e.g. "3 minutes ago", "just now").
+ */
+export function formatRelativeTime(dateString: string): string {
+  try {
+    const past = new Date(dateString);
+    if (isNaN(past.getTime())) {
+      return dateString;
+    }
+    const now = new Date();
+    const diffMs = now.getTime() - past.getTime();
+    
+    // Fallback if future
+    if (diffMs < 0) {
+      return "just now";
+    }
+    
+    const diffMins = Math.floor(diffMs / 60000);
+    if (diffMins < 1) return "just now";
+    if (diffMins < 60) return `${diffMins}m ago`;
+    
+    const diffHours = Math.floor(diffMins / 60);
+    if (diffHours < 24) return `${diffHours}h ago`;
+    
+    const diffDays = Math.floor(diffHours / 24);
+    return `${diffDays}d ago`;
+  } catch (e) {
+    return dateString;
+  }
+}
+
+/**
+ * Format ISO time into Eastern Time hours and minutes (e.g., "7:10 PM ET").
+ */
+export function formatLocalTime(gameTimeStr: string): string {
+  try {
+    const date = new Date(gameTimeStr);
+    if (isNaN(date.getTime())) {
+      return gameTimeStr;
+    }
+    return date.toLocaleTimeString("en-US", { 
+      hour: "numeric", 
+      minute: "2-digit",
+      timeZone: "America/New_York"
+    }) + " ET";
+  } catch (e) {
+    return gameTimeStr;
+  }
+}
+
+/**
+ * Format any date or parseable date string into a beautiful Eastern Time string (e.g. "Jun 24, 11:59 PM ET").
+ */
+export function formatToEasternTime(dateInput: string | Date | null | undefined): string {
+  if (!dateInput) return "N/A";
+  try {
+    if (typeof dateInput === "string") {
+      const trimmed = dateInput.trim();
+      // If it is a pure date format like YYYY-MM-DD, parse as local date to prevent timezone shift
+      if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+        const parts = trimmed.split("-");
+        const year = Number(parts[0]);
+        const month = Number(parts[1]) - 1;
+        const day = Number(parts[2]);
+        const localDate = new Date(year, month, day);
+        return localDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+      }
+    }
+    const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
+    if (isNaN(date.getTime())) {
+      return String(dateInput);
+    }
+    const options: Intl.DateTimeFormatOptions = {
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+      timeZone: "America/New_York"
+    };
+    return date.toLocaleString("en-US", options) + " ET";
+  } catch (e) {
+    return String(dateInput);
+  }
+}
+
+import { Prediction } from "./types";
+
+/**
+ * Returns a unique composite key for a prediction item based on:
+ * player_id/player + prop_type + game_id/team + pick
+ */
+export function getPredictionKey(pred: Prediction): string {
+  if (!pred || typeof pred !== "object") return "";
+  
+  const safeStr = (val: any): string => {
+    if (val === null || val === undefined) return "";
+    if (typeof val === "string") return val;
+    return String(val);
+  };
+
+  const playerKey = safeStr(pred.player_id || pred.player).trim().toLowerCase();
+  const propKey = safeStr(pred.prop_type).trim().toLowerCase();
+  const gameKey = safeStr(pred.game_id || pred.team || pred.opponent).trim().toLowerCase();
+  const pickKey = safeStr(pred.pick).trim().toLowerCase();
+  
+  return `${playerKey}-${propKey}-${gameKey}-${pickKey}`;
+}
+
+/**
+ * Deduplicates predictions by their composite key, keeping only the entry with the most recent `generated_at`.
+ */
+export function deduplicatePredictions(preds: Prediction[]): Prediction[] {
+  if (!Array.isArray(preds)) return [];
+  const map = new Map<string, Prediction>();
+
+  for (const pred of preds) {
+    const key = getPredictionKey(pred);
+    if (!map.has(key)) {
+      map.set(key, pred);
+    } else {
+      const existing = map.get(key)!;
+      const newTime = pred.generated_at ? new Date(pred.generated_at).getTime() : 0;
+      const existingTime = existing.generated_at ? new Date(existing.generated_at).getTime() : 0;
+      if (newTime >= existingTime) {
+        map.set(key, pred);
+      }
+    }
+  }
+
+  return Array.from(map.values());
+}

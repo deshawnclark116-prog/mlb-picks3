@@ -1,0 +1,8 @@
+{
+  "name": "Prop Edge 2",
+  "description": "Daily MLB player-prop value bets dashboard showing statistical predictions, game schedules, and model status trackers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
