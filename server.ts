@@ -1,6 +1,20 @@
 import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
+import {
+  evaluatePitchMatchup,
+  getPredictionTensor,
+  FEATURED_STARTERS,
+  FEATURED_BATTERS
+} from "./src/utils/pitchMatchupTensor.ts";
+import {
+  calculateBullpenExposure,
+  TEAM_BULLPENS
+} from "./src/utils/bullpenExposureEngine.ts";
+import {
+  LineupMarkovSimulatorTS,
+  DEFAULT_LINEUP_OBPS
+} from "./src/utils/lineupMarkovSimulator.ts";
 
 async function startServer() {
   const app = express();
@@ -47,10 +61,101 @@ async function startServer() {
     throw lastError || new Error(`Failed to fetch ${endpoint} from upstream API`);
   };
 
-  // API Route - Proxy Predictions
+  // API Route - Pitch Matchup Tensor Diagnostic Generator
+  app.get("/api/pitch-matchup", (req, res) => {
+    try {
+      const hitter = (req.query.hitter as string) || "Aaron Judge";
+      const pitcher = (req.query.pitcher as string) || "Spencer Strider";
+
+      const tensorData = getPredictionTensor(hitter, pitcher);
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+      res.json(tensorData);
+    } catch (err: any) {
+      res.status(500).json({ error: "Failed to evaluate pitch matchup", details: err.message });
+    }
+  });
+
+  app.post("/api/pitch-matchup", (req, res) => {
+    try {
+      const { hitter, pitcher, pitcherArsenal, batterRv100 } = req.body;
+      if (!hitter || !pitcher) {
+        return res.status(400).json({ error: "hitter and pitcher names are required" });
+      }
+
+      const arsenal = pitcherArsenal || FEATURED_STARTERS[pitcher] || { FF: 0.50, SL: 0.35, CH: 0.15 };
+      const rv100 = batterRv100 || FEATURED_BATTERS[hitter] || { FF: 1.5, SI: 1.0, SL: -0.8, CU: 0.5, CH: 0.0 };
+
+      const result = evaluatePitchMatchup(hitter, pitcher, arsenal, rv100);
+      res.json(result);
+    } catch (err: any) {
+      res.status(500).json({ error: "Failed to process custom pitch tensor simulation", details: err.message });
+    }
+  });
+
+  // API Route - Phase 2 Probabilistic Bullpen Exposure Engine
+  app.get("/api/bullpen-exposure", (req, res) => {
+    try {
+      const hitter = (req.query.hitter as string) || "Aaron Judge";
+      const hitterHand = ((req.query.hand as string)?.toUpperCase() === "L" ? "L" : "R") as "R" | "L";
+      const starter = (req.query.starter as string) || "Spencer Strider";
+      const starterBf = parseFloat(req.query.bf as string) || 22.0;
+      const team = (req.query.team as string)?.toUpperCase() || "NYY";
+
+      const rv100 = FEATURED_BATTERS[hitter] || { FF: 2.45, SI: 1.8, SL: -1.2, CH: 0.1 };
+      const arsenal = FEATURED_STARTERS[starter] || { FF: 0.58, SL: 0.35, CH: 0.07 };
+      const bullpen = TEAM_BULLPENS[team] || TEAM_BULLPENS["NYY"];
+
+      const exposureResult = calculateBullpenExposure(
+        hitter,
+        hitterHand,
+        rv100,
+        starter,
+        starterBf,
+        arsenal,
+        bullpen
+      );
+
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+      res.json(exposureResult);
+    } catch (err: any) {
+      res.status(500).json({ error: "Failed to calculate bullpen exposure", details: err.message });
+    }
+  });
+
+  // API Route - Generative 9-Man Lineup Markov Simulator
+  app.get("/api/lineup-markov", (req, res) => {
+    try {
+      const team = (req.query.team as string)?.toUpperCase() || "NYY";
+      const isHome = req.query.home === "true" || req.query.home === "1";
+      const starterBf = parseFloat(req.query.bf as string) || 22.0;
+      const bullpenObp = parseFloat(req.query.bullpen_obp as string) || 0.310;
+      const numSims = parseInt(req.query.sims as string, 10) || 25000;
+
+      const lineupObps = DEFAULT_LINEUP_OBPS[team] || DEFAULT_LINEUP_OBPS["NYY"];
+      const sim = new LineupMarkovSimulatorTS(lineupObps, isHome, starterBf, bullpenObp);
+      const summary = sim.calculatePaDistributions(numSims);
+
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+      res.json(summary);
+    } catch (err: any) {
+      res.status(500).json({ error: "Failed to run Lineup Markov simulation", details: err.message });
+    }
+  });
+
+  // API Route - Proxy Predictions (enriched with pitch_tensor)
   app.get("/api/predictions", async (req, res) => {
     try {
       const data = await fetchUpstream("/predictions");
+      if (Array.isArray(data)) {
+        const enriched = data.map((pred: any) => {
+          if (!pred.pitch_tensor && pred.player) {
+            pred.pitch_tensor = getPredictionTensor(pred.player, pred.opposing_pitcher);
+          }
+          return pred;
+        });
+        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        return res.json(enriched);
+      }
       res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
       res.json(data);
     } catch (error: any) {

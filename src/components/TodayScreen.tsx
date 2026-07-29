@@ -18,10 +18,14 @@ import {
   Search,
   CheckCircle,
   HelpCircle,
-  ChevronDown
+  ChevronDown,
+  Activity,
+  Zap
 } from "lucide-react";
-import { Prediction } from "../types";
+import { Prediction, PitchTensorData } from "../types";
 import { formatOdds, formatPercent, formatKellyStake, formatToEasternTime, getPredictionKey } from "../utils";
+import PitchTensorModal from "./PitchTensorModal";
+import { getPredictionTensor } from "../utils/pitchMatchupTensor";
 
 interface TodayScreenProps {
   predictions: Prediction[];
@@ -41,8 +45,23 @@ export default function TodayScreen({
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullY, setPullY] = useState(0);
+
+  // Pitch Tensor Modal state
+  const [tensorModalOpen, setTensorModalOpen] = useState(false);
+  const [selectedTensorData, setSelectedTensorData] = useState<PitchTensorData | null>(null);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStartY = useRef<number>(0);
+
+  const openTensorModal = (pred?: Prediction) => {
+    if (pred && pred.player) {
+      const tensor = pred.pitch_tensor || getPredictionTensor(pred.player, pred.opposing_pitcher);
+      setSelectedTensorData(tensor);
+    } else {
+      setSelectedTensorData(null);
+    }
+    setTensorModalOpen(true);
+  };
 
   // Manual trigger
   const handleManualRefresh = async () => {
@@ -142,6 +161,17 @@ export default function TodayScreen({
         </div>
         
         <div className="flex items-center gap-2">
+          {/* Pitch Tensor Inspector Trigger */}
+          <button
+            id="today-pitch-tensor-btn"
+            onClick={() => openTensorModal()}
+            className="flex items-center gap-1.5 px-3 py-1 bg-[#141414] hover:bg-[#1C1C1C] text-[#00FF41] border border-[#00FF41]/30 rounded-full text-[10px] font-mono font-bold tracking-wider cursor-pointer transition-all shadow-[0_0_10px_rgba(0,255,65,0.1)]"
+            title="Open Pitch-Mix Matchup Tensor Inspector"
+          >
+            <Activity className="w-3.5 h-3.5" />
+            <span>TENSOR ENGINE</span>
+          </button>
+
           {/* Pulsating status badge */}
           <div className="flex items-center gap-2 px-3 py-1 bg-[#141414] rounded-full border border-[#222]">
             <div className="w-1.5 h-1.5 rounded-full bg-[#00FF41] shadow-[0_0_8px_#00FF41] animate-pulse"></div>
@@ -351,6 +381,34 @@ export default function TodayScreen({
                       </span>
                     </div>
 
+                    {/* Pitch-Mix Matchup Tensor Indicator Widget */}
+                    {(() => {
+                      const tensor = pred.pitch_tensor || getPredictionTensor(pred.player, pred.opposing_pitcher);
+                      return (
+                        <div 
+                          onClick={() => openTensorModal(pred)}
+                          className="bg-[#0A0A0A] p-3 rounded-2xl border border-[#222] hover:border-[#00FF41]/40 flex items-center justify-between gap-3 cursor-pointer group/tensor transition-all"
+                        >
+                          <div className="space-y-0.5 flex-1 min-w-0">
+                            <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase text-gray-400 font-bold">
+                              <Activity className="w-3 h-3 text-[#00FF41]" />
+                              <span>Pitch-Mix Matchup Tensor</span>
+                              <span className="text-white font-bold px-1.5 py-0.2 rounded bg-[#1A1A1A] text-[9px] border border-[#333]">
+                                {tensor.percentile_display}
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-gray-300 font-medium truncate">
+                              {tensor.primary_vulnerability}
+                            </p>
+                          </div>
+                          <div className="shrink-0 flex items-center gap-1 text-[10px] font-mono text-[#00FF41] group-hover/tensor:translate-x-0.5 transition-transform font-bold">
+                            Inspect
+                            <ChevronDown className="w-3 h-3 -rotate-90" />
+                          </div>
+                        </div>
+                      );
+                    })()}
+
                     {/* Styled internal grid divider */}
                     <div className="grid grid-cols-2 gap-4 border-t border-[#1F1F1F] pt-3">
                       
@@ -398,6 +456,13 @@ export default function TodayScreen({
           </div>
         )}
       </div>
+
+      {/* Interactive Pitch Tensor Diagnostic Modal */}
+      <PitchTensorModal
+        isOpen={tensorModalOpen}
+        onClose={() => setTensorModalOpen(false)}
+        initialData={selectedTensorData}
+      />
     </div>
   );
 }

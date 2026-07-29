@@ -3,6 +3,41 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+export interface PitchBreakdownItem {
+  pitch_type: string;
+  pitch_name: string;
+  frequency_pct: number;
+  batter_rv100: number;
+  weighted_impact: number;
+}
+
+export interface PitchTensorData {
+  hitter: string;
+  pitcher: string;
+  raw_matchup_score: number;
+  percentile_rank: number;
+  percentile_display: string;
+  rating: string;
+  badge_color: "green" | "emerald" | "gray" | "amber" | "red";
+  primary_vulnerability: string;
+  primary_advantage: string;
+  arsenal_breakdown: PitchBreakdownItem[];
+  vulnerability_detail?: {
+    pitch_type: string;
+    pitch_name: string;
+    frequency_pct: number;
+    batter_rv100: number;
+    summary: string;
+  };
+  advantage_detail?: {
+    pitch_type: string;
+    pitch_name: string;
+    frequency_pct: number;
+    batter_rv100: number;
+    summary: string;
+  };
+}
+
 export interface Prediction {
   player: string;
   team?: string;
@@ -22,6 +57,8 @@ export interface Prediction {
   actual_value?: number; // Actual value recorded during the game
   player_id?: string;
   game_id?: string;
+  opposing_pitcher?: string;
+  pitch_tensor?: PitchTensorData;
 }
 
 export interface Game {
