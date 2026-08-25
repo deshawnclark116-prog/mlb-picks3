@@ -115,3 +115,37 @@ export interface RecordData {
   last_updated: string;
 }
 
+// NFL predictions -- a deliberately separate shape from Prediction (MLB).
+// The NFL pipeline is predictions-first with NO odds/confidence-bucket/
+// kelly_fraction concept anywhere (see mlb-picks2's api.py /nfl/predictions),
+// so this type doesn't carry those fields at all rather than leaving them
+// perpetually undefined.
+export interface NflPrediction {
+  market: string; // "rushing_yards" | "receiving_yards" | "sacks" | "rushing_yards_early_season"
+  prop_type: string; // alias of market, kept for symmetry with MLB's Prediction shape
+  player_id?: string;
+  player: string;
+  team?: string;
+  opponent?: string;
+  season: number;
+  week: number;
+  line: number;
+  pick: string; // e.g. "OVER 49.5"
+  model_prob: number; // 0..1
+  prob_pct?: number; // 0..100, e.g. 64.5 meaning 64.5%
+  prob_over?: number;
+  games_played?: number;
+  generated_at?: string;
+  model_source?: string; // present on rushing_yards_early_season picks
+  validation_note?: string;
+}
+
+export interface NflPredictionsDoc {
+  generated_at_utc: string | null;
+  season: number | null;
+  week: number | null;
+  markets: Record<string, { eligible: number } & Record<string, unknown>>;
+  note?: string;
+  picks: NflPrediction[];
+}
+

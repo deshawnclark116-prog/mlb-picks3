@@ -4,16 +4,17 @@
  */
 
 import React, { useState, useEffect } from "react";
-import { Prediction, Game, Health, RecordData } from "./types";
+import { Prediction, Game, Health, RecordData, NflPrediction, NflPredictionsDoc } from "./types";
 import TodayScreen from "./components/TodayScreen";
 import GamesScreen from "./components/GamesScreen";
 import StatusScreen from "./components/StatusScreen";
 import RecordScreen from "./components/RecordScreen";
-import { deduplicatePredictions } from "./utils";
+import NflTodayScreen from "./components/NflTodayScreen";
+import { deduplicatePredictions, deduplicateNflPredictions } from "./utils";
 import { TrendingUp, Calendar, Activity, ShieldCheck, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
-type TabType = "TODAY" | "GAMES" | "STATUS" | "RECORD";
+type TabType = "TODAY" | "GAMES" | "STATUS" | "RECORD" | "NFL";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>("TODAY");
@@ -21,7 +22,11 @@ export default function App() {
   const [games, setGames] = useState<Game[]>([]);
   const [health, setHealth] = useState<Health | null>(null);
   const [recordData, setRecordData] = useState<RecordData | null>(null);
-  
+  const [nflPredictions, setNflPredictions] = useState<NflPrediction[]>([]);
+  const [nflSeason, setNflSeason] = useState<number | null>(null);
+  const [nflWeek, setNflWeek] = useState<number | null>(null);
+  const [nflError, setNflError] = useState<string | null>(null);
+
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -97,11 +102,28 @@ export default function App() {
     setLoading(false);
   };
 
+  // NFL is a weekly-cadence feed (unlike MLB's daily slate), so it doesn't
+  // need the same retry/backoff plumbing -- one fetch is enough, still on
+  // the same 30s interval as MLB for consistency.
+  const loadNflData = async () => {
+    const doc: NflPredictionsDoc | null = await fetchEndpoint(`/api/nfl-predictions?t=${Date.now()}`);
+    if (doc && Array.isArray(doc.picks)) {
+      setNflPredictions(deduplicateNflPredictions(doc.picks));
+      setNflSeason(doc.season ?? null);
+      setNflWeek(doc.week ?? null);
+      setNflError(null);
+    } else {
+      setNflError("Unable to connect to Prop Edge NFL predictions server.");
+    }
+  };
+
   useEffect(() => {
     loadWorkspaceData();
+    loadNflData();
     // Poll endpoints every 30 seconds to fetch fresh predictions
     const interval = setInterval(() => {
       loadWorkspaceData();
+      loadNflData();
     }, 30000);
     return () => clearInterval(interval);
   }, []);
@@ -139,11 +161,22 @@ export default function App() {
         );
       case "RECORD":
         return (
-          <RecordScreen 
-            recordData={recordData} 
-            loading={loading} 
-            error={error} 
+          <RecordScreen
+            recordData={recordData}
+            loading={loading}
+            error={error}
             onRefresh={loadWorkspaceData}
+          />
+        );
+      case "NFL":
+        return (
+          <NflTodayScreen
+            predictions={nflPredictions}
+            season={nflSeason}
+            week={nflWeek}
+            loading={loading}
+            error={nflError}
+            onRefresh={loadNflData}
           />
         );
       default:
@@ -285,6 +318,30 @@ export default function App() {
               }`}
             >
               Record
+            </span>
+          </button>
+
+          {/* NFL Button */}
+          <button
+            id="tab-btn-nfl"
+            onClick={() => setActiveTab("NFL")}
+            className="flex-1 flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
+          >
+            <div className={`w-10 h-6 rounded-full flex items-center justify-center transition-all ${
+              activeTab === "NFL" ? "bg-[#00FF41]/20" : "bg-transparent"
+            }`}>
+              <div className={`w-1.5 h-1.5 rounded-full transition-all ${
+                activeTab === "NFL" ? "bg-[#00FF41] shadow-[0_0_8px_#00FF41]" : "bg-white/40 group-hover:bg-white"
+              }`} />
+            </div>
+            <span
+              className={`text-[10px] font-bold uppercase tracking-tighter transition-colors duration-250 ${
+                activeTab === "NFL"
+                  ? "text-[#00FF41]"
+                  : "text-white opacity-40 group-hover:opacity-80"
+              }`}
+            >
+              NFL
             </span>
           </button>
         </nav>

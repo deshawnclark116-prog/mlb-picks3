@@ -121,7 +121,7 @@ export function formatToEasternTime(dateInput: string | Date | null | undefined)
   }
 }
 
-import { Prediction } from "./types";
+import { Prediction, NflPrediction } from "./types";
 
 /**
  * Returns a unique composite key for a prediction item based on:
@@ -165,5 +165,40 @@ export function deduplicatePredictions(preds: Prediction[]): Prediction[] {
     }
   }
 
+  return Array.from(map.values());
+}
+
+/**
+ * Composite key for an NFL prediction: player_id/player + market + week.
+ * Unlike MLB there's no per-day slate to disambiguate on, so week is the
+ * right granularity here.
+ */
+export function getNflPredictionKey(pred: NflPrediction): string {
+  if (!pred || typeof pred !== "object") return "";
+  const safeStr = (val: any): string => (val === null || val === undefined ? "" : String(val));
+  const playerKey = safeStr(pred.player_id || pred.player).trim().toLowerCase();
+  const marketKey = safeStr(pred.market).trim().toLowerCase();
+  const weekKey = safeStr(pred.week);
+  return `${playerKey}-${marketKey}-${weekKey}`;
+}
+
+/**
+ * Deduplicates NFL predictions by their composite key, keeping the entry
+ * with the most recent generated_at.
+ */
+export function deduplicateNflPredictions(preds: NflPrediction[]): NflPrediction[] {
+  if (!Array.isArray(preds)) return [];
+  const map = new Map<string, NflPrediction>();
+  for (const pred of preds) {
+    const key = getNflPredictionKey(pred);
+    if (!map.has(key)) {
+      map.set(key, pred);
+    } else {
+      const existing = map.get(key)!;
+      const newTime = pred.generated_at ? new Date(pred.generated_at).getTime() : 0;
+      const existingTime = existing.generated_at ? new Date(existing.generated_at).getTime() : 0;
+      if (newTime >= existingTime) map.set(key, pred);
+    }
+  }
   return Array.from(map.values());
 }
