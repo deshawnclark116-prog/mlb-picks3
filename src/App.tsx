@@ -4,17 +4,18 @@
  */
 
 import React, { useState, useEffect } from "react";
-import { Prediction, Game, Health, RecordData, NflPrediction, NflPredictionsDoc } from "./types";
+import { Prediction, Game, Health, RecordData, NflPrediction, NflPredictionsDoc, CfbPrediction, CfbPredictionsDoc } from "./types";
 import TodayScreen from "./components/TodayScreen";
 import GamesScreen from "./components/GamesScreen";
 import StatusScreen from "./components/StatusScreen";
 import RecordScreen from "./components/RecordScreen";
 import NflTodayScreen from "./components/NflTodayScreen";
-import { deduplicatePredictions, deduplicateNflPredictions } from "./utils";
+import CfbTodayScreen from "./components/CfbTodayScreen";
+import { deduplicatePredictions, deduplicateNflPredictions, deduplicateCfbPredictions } from "./utils";
 import { TrendingUp, Calendar, Activity, ShieldCheck, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
-type TabType = "TODAY" | "GAMES" | "STATUS" | "RECORD" | "NFL";
+type TabType = "TODAY" | "GAMES" | "STATUS" | "RECORD" | "NFL" | "CFB";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>("TODAY");
@@ -26,6 +27,10 @@ export default function App() {
   const [nflSeason, setNflSeason] = useState<number | null>(null);
   const [nflWeek, setNflWeek] = useState<number | null>(null);
   const [nflError, setNflError] = useState<string | null>(null);
+  const [cfbPredictions, setCfbPredictions] = useState<CfbPrediction[]>([]);
+  const [cfbSeason, setCfbSeason] = useState<number | null>(null);
+  const [cfbWeek, setCfbWeek] = useState<number | null>(null);
+  const [cfbError, setCfbError] = useState<string | null>(null);
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -117,13 +122,28 @@ export default function App() {
     }
   };
 
+  // CFB is also a weekly-cadence feed, same reasoning as loadNflData.
+  const loadCfbData = async () => {
+    const doc: CfbPredictionsDoc | null = await fetchEndpoint(`/api/cfb-predictions?t=${Date.now()}`);
+    if (doc && Array.isArray(doc.picks)) {
+      setCfbPredictions(deduplicateCfbPredictions(doc.picks));
+      setCfbSeason(doc.season ?? null);
+      setCfbWeek(doc.week ?? null);
+      setCfbError(null);
+    } else {
+      setCfbError("Unable to connect to Prop Edge CFB predictions server.");
+    }
+  };
+
   useEffect(() => {
     loadWorkspaceData();
     loadNflData();
+    loadCfbData();
     // Poll endpoints every 30 seconds to fetch fresh predictions
     const interval = setInterval(() => {
       loadWorkspaceData();
       loadNflData();
+      loadCfbData();
     }, 30000);
     return () => clearInterval(interval);
   }, []);
@@ -177,6 +197,17 @@ export default function App() {
             loading={loading}
             error={nflError}
             onRefresh={loadNflData}
+          />
+        );
+      case "CFB":
+        return (
+          <CfbTodayScreen
+            predictions={cfbPredictions}
+            season={cfbSeason}
+            week={cfbWeek}
+            loading={loading}
+            error={cfbError}
+            onRefresh={loadCfbData}
           />
         );
       default:
@@ -342,6 +373,30 @@ export default function App() {
               }`}
             >
               NFL
+            </span>
+          </button>
+
+          {/* CFB Button */}
+          <button
+            id="tab-btn-cfb"
+            onClick={() => setActiveTab("CFB")}
+            className="flex-1 flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
+          >
+            <div className={`w-10 h-6 rounded-full flex items-center justify-center transition-all ${
+              activeTab === "CFB" ? "bg-[#00FF41]/20" : "bg-transparent"
+            }`}>
+              <div className={`w-1.5 h-1.5 rounded-full transition-all ${
+                activeTab === "CFB" ? "bg-[#00FF41] shadow-[0_0_8px_#00FF41]" : "bg-white/40 group-hover:bg-white"
+              }`} />
+            </div>
+            <span
+              className={`text-[10px] font-bold uppercase tracking-tighter transition-colors duration-250 ${
+                activeTab === "CFB"
+                  ? "text-[#00FF41]"
+                  : "text-white opacity-40 group-hover:opacity-80"
+              }`}
+            >
+              CFB
             </span>
           </button>
         </nav>

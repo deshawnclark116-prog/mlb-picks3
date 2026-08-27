@@ -149,3 +149,33 @@ export interface NflPredictionsDoc {
   picks: NflPrediction[];
 }
 
+// CFB predictions -- same predictions-first shape as NFL (see mlb-picks2's
+// api.py /cfb/predictions), no odds/confidence-bucket/kelly_fraction fields.
+export interface CfbPrediction {
+  market: string; // "rushing_yards"
+  prop_type: string; // alias of market, added by the api.py route
+  player_id?: string;
+  player: string;
+  team?: string;
+  opponent?: string;
+  season: number;
+  week: number;
+  line: number;
+  pick: string; // e.g. "OVER 69.5"
+  model_prob: number; // 0..1
+  prob_pct?: number; // 0..100, e.g. 64.5 meaning 64.5%
+  prob_over?: number;
+  games_played?: number;
+  generated_at?: string;
+  validation_note?: string;
+}
+
+export interface CfbPredictionsDoc {
+  generated_at_utc: string | null;
+  season: number | null;
+  week: number | null;
+  markets: Record<string, { eligible: number } & Record<string, unknown>>;
+  note?: string;
+  picks: CfbPrediction[];
+}
+

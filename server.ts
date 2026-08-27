@@ -176,6 +176,18 @@ async function startServer() {
     }
   });
 
+  // API Route - Proxy CFB Predictions
+  app.get("/api/cfb-predictions", async (req, res) => {
+    try {
+      const data = await fetchUpstream("/cfb/predictions");
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+      res.json(data);
+    } catch (error: any) {
+      console.error("[Proxy Server] Error fetching CFB predictions:", error);
+      res.status(502).json({ error: "Failed to fetch CFB predictions from upstream API", details: error.message });
+    }
+  });
+
   // API Route - Proxy Games
   app.get("/api/games", async (req, res) => {
     try {
