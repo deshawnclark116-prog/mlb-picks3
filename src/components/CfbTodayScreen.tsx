@@ -20,9 +20,10 @@ interface CfbTodayScreenProps {
 
 const MARKET_LABELS: Record<string, string> = {
   rushing_yards: "Rushing Yards",
+  receiving_yards: "Receiving Yards",
 };
 
-type MarketFilter = "ALL" | "rushing_yards";
+type MarketFilter = "ALL" | "rushing_yards" | "receiving_yards";
 
 export default function CfbTodayScreen({
   predictions,
