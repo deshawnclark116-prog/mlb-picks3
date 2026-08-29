@@ -21,9 +21,11 @@ interface CfbTodayScreenProps {
 const MARKET_LABELS: Record<string, string> = {
   rushing_yards: "Rushing Yards",
   receiving_yards: "Receiving Yards",
+  passing_yards: "Passing Yards",
+  passing_touchdowns: "Passing TDs",
 };
 
-type MarketFilter = "ALL" | "rushing_yards" | "receiving_yards";
+type MarketFilter = "ALL" | "rushing_yards" | "receiving_yards" | "passing_yards" | "passing_touchdowns";
 
 export default function CfbTodayScreen({
   predictions,
