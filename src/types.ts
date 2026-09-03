@@ -152,7 +152,7 @@ export interface NflPredictionsDoc {
 // CFB predictions -- same predictions-first shape as NFL (see mlb-picks2's
 // api.py /cfb/predictions), no odds/confidence-bucket/kelly_fraction fields.
 export interface CfbPrediction {
-  market: string; // "rushing_yards" | "receiving_yards" | "passing_yards" | "passing_touchdowns"
+  market: string; // "rushing_yards" | "receiving_yards" | "passing_yards" | "passing_touchdowns" | "rushing_yards_early_season" | "receiving_yards_early_season" | "passing_yards_early_season" | "passing_touchdowns_early_season"
   prop_type: string; // alias of market, added by the api.py route
   player_id?: string;
   player: string;
@@ -167,6 +167,7 @@ export interface CfbPrediction {
   prob_over?: number;
   games_played?: number;
   generated_at?: string;
+  model_source?: string; // present on "*_early_season" picks (prior-season-informed bootstrap)
   validation_note?: string;
 }
 

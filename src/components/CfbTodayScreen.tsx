@@ -23,9 +23,22 @@ const MARKET_LABELS: Record<string, string> = {
   receiving_yards: "Receiving Yards",
   passing_yards: "Passing Yards",
   passing_touchdowns: "Passing TDs",
+  rushing_yards_early_season: "Rushing Yards (Prior-Season-Informed)",
+  receiving_yards_early_season: "Receiving Yards (Prior-Season-Informed)",
+  passing_yards_early_season: "Passing Yards (Prior-Season-Informed)",
+  passing_touchdowns_early_season: "Passing TDs (Prior-Season-Informed)",
 };
 
-type MarketFilter = "ALL" | "rushing_yards" | "receiving_yards" | "passing_yards" | "passing_touchdowns";
+type MarketFilter =
+  | "ALL"
+  | "rushing_yards"
+  | "receiving_yards"
+  | "passing_yards"
+  | "passing_touchdowns"
+  | "rushing_yards_early_season"
+  | "receiving_yards_early_season"
+  | "passing_yards_early_season"
+  | "passing_touchdowns_early_season";
 
 export default function CfbTodayScreen({
   predictions,
