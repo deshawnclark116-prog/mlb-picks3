@@ -169,6 +169,15 @@ export interface CfbPrediction {
   generated_at?: string;
   model_source?: string; // present on "*_early_season" picks (prior-season-informed bootstrap)
   validation_note?: string;
+  // Present only for rushing_yards and passing_touchdowns, and only when
+  // real per-carry/per-attempt data exists for this player (a Monte Carlo
+  // simulator, mirroring the MLB pitcher-strikeout model's projected
+  // value -- see cfb_rush_sim.py). Absent, not zero, when the simulator
+  // couldn't run for this pick.
+  projected?: number;
+  sim_median?: number;
+  sim_prob_over?: number;
+  sim_confidence?: "HIGH" | "MEDIUM" | "LOW" | "NO_BET";
 }
 
 export interface CfbPredictionsDoc {

@@ -293,6 +293,23 @@ export default function CfbTodayScreen({
                     </div>
                   </div>
 
+                  {pred.projected !== undefined && pred.projected !== null && (
+                    <div className="grid grid-cols-2 gap-4 border-t border-[#1F1F1F] pt-3">
+                      <div>
+                        <p className="text-[9px] text-[#555] uppercase font-mono font-bold leading-none mb-1">
+                          Projected
+                        </p>
+                        <p className="text-base font-mono font-bold text-white">{pred.projected.toFixed(1)}</p>
+                      </div>
+                      <div>
+                        <p className="text-[9px] text-[#555] uppercase font-mono font-bold leading-none mb-1">
+                          Sim Confidence
+                        </p>
+                        <p className="text-base font-mono font-bold text-white">{pred.sim_confidence ?? "N/A"}</p>
+                      </div>
+                    </div>
+                  )}
+
                   {pred.validation_note && (
                     <p className="text-[9px] text-gray-600 font-mono leading-tight border-t border-[#1F1F1F] pt-2">
                       {pred.validation_note}
