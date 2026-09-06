@@ -6,7 +6,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Game, Prediction } from "../types";
-import { formatLocalTime, formatOdds, formatPercent, formatKellyStake, formatToEasternTime, getPredictionKey } from "../utils";
+import { formatLocalTime, formatOdds, formatPercent, formatKellyStake, formatToEasternTime, getPredictionKey, getLatestGeneratedAt } from "../utils";
 import { Calendar, RefreshCw, AlertTriangle, ChevronDown, ChevronUp, TrendingUp } from "lucide-react";
 
 // Dynamic mapping logic linking predictions to a given game based on team and opponent fields
@@ -104,9 +104,9 @@ export default function GamesScreen({
             <p className="text-[9px] text-gray-500 uppercase tracking-widest mt-0.5 font-mono">
               Live scheduled matches today
             </p>
-            {predictions && predictions.length > 0 && predictions[0].generated_at && (
+            {getLatestGeneratedAt(predictions) && (
               <p className="text-[8px] text-[#00FF41]/80 font-mono mt-1 uppercase tracking-wider">
-                Updated: {formatToEasternTime(predictions[0].generated_at)}
+                Updated: {formatToEasternTime(getLatestGeneratedAt(predictions))}
               </p>
             )}
           </div>

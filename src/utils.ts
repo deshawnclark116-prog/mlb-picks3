@@ -127,6 +127,33 @@ import { Prediction, NflPrediction, CfbPrediction } from "./types";
  * Returns a unique composite key for a prediction item based on:
  * player_id/player + prop_type + game_id/team + pick
  */
+export function getLatestGeneratedAt(
+  predictions: Array<{ generated_at?: string | null }> | null | undefined
+): string | null {
+  // predictions[0].generated_at is unreliable as a "board last updated"
+  // signal for MLB specifically: each pick's generated_at is set when
+  // THAT pick's game was still pregame, and picks for already-started/
+  // finished games are deliberately preserved unchanged (not stale --
+  // by design, so a locked-in prediction doesn't change after the game
+  // starts). Once such a pick sorts to the top of the list, predictions[0]
+  // shows its old lock time instead of the board's actual last refresh.
+  // Taking the max across every pick's generated_at reflects the most
+  // recently computed pick instead of an arbitrary (possibly long-since
+  // locked) one.
+  if (!predictions || predictions.length === 0) return null;
+  let latest: string | null = null;
+  let latestMs = -Infinity;
+  for (const p of predictions) {
+    if (!p.generated_at) continue;
+    const ms = new Date(p.generated_at).getTime();
+    if (!isNaN(ms) && ms > latestMs) {
+      latestMs = ms;
+      latest = p.generated_at;
+    }
+  }
+  return latest;
+}
+
 export function getPredictionKey(pred: Prediction): string {
   if (!pred || typeof pred !== "object") return "";
   

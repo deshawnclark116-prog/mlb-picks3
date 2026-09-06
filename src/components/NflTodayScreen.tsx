@@ -7,7 +7,7 @@ import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { TrendingUp, RefreshCw, AlertTriangle, Search } from "lucide-react";
 import { NflPrediction } from "../types";
-import { getNflPredictionKey } from "../utils";
+import { getNflPredictionKey, getLatestGeneratedAt } from "../utils";
 
 interface NflTodayScreenProps {
   predictions: NflPrediction[];
@@ -122,9 +122,9 @@ export default function NflTodayScreen({
           <p className="text-[9px] text-gray-500 uppercase tracking-widest mt-0.5 font-mono">
             NFL Player Props{season ? ` • ${season} Week ${week ?? "-"}` : ""}
           </p>
-          {predictions.length > 0 && predictions[0].generated_at && (
+          {getLatestGeneratedAt(predictions) && (
             <p className="text-[8px] text-[#00FF41]/80 font-mono mt-1 uppercase tracking-wider">
-              Updated: {new Date(predictions[0].generated_at).toLocaleString("en-US", {
+              Updated: {new Date(getLatestGeneratedAt(predictions)!).toLocaleString("en-US", {
                 month: "short", day: "numeric", hour: "numeric", minute: "2-digit", hour12: true, timeZone: "America/New_York",
               })} ET
             </p>

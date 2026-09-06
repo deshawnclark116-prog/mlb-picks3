@@ -23,7 +23,7 @@ import {
   Zap
 } from "lucide-react";
 import { Prediction, PitchTensorData } from "../types";
-import { formatOdds, formatPercent, formatKellyStake, formatToEasternTime, getPredictionKey } from "../utils";
+import { formatOdds, formatPercent, formatKellyStake, formatToEasternTime, getPredictionKey, getLatestGeneratedAt } from "../utils";
 import PitchTensorModal from "./PitchTensorModal";
 import { getPredictionTensor } from "../utils/pitchMatchupTensor";
 
@@ -153,9 +153,9 @@ export default function TodayScreen({
           <p className="text-[9px] text-gray-500 uppercase tracking-widest mt-0.5 font-mono">
             Daily MLB Value Finder
           </p>
-          {predictions && predictions.length > 0 && predictions[0].generated_at && (
+          {getLatestGeneratedAt(predictions) && (
             <p className="text-[8px] text-[#00FF41]/80 font-mono mt-1 uppercase tracking-wider">
-              Updated: {formatToEasternTime(predictions[0].generated_at)}
+              Updated: {formatToEasternTime(getLatestGeneratedAt(predictions))}
             </p>
           )}
         </div>
