@@ -36,6 +36,7 @@ export default function NflTodayScreen({
   onRefresh,
 }: NflTodayScreenProps) {
   const [marketFilter, setMarketFilter] = useState<MarketFilter>("ALL");
+  const [confidenceFilter, setConfidenceFilter] = useState<"ALL" | "HIGH" | "MEDIUM" | "LOW">("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullY, setPullY] = useState(0);
@@ -85,6 +86,7 @@ export default function NflTodayScreen({
 
   const filteredPredictions = sortedPredictions.filter((pred) => {
     if (marketFilter !== "ALL" && pred.market !== marketFilter) return false;
+    if (confidenceFilter !== "ALL" && pred.confidence !== confidenceFilter) return false;
     if (searchQuery.trim() !== "") {
       const q = searchQuery.toLowerCase();
       const nameMatch = pred.player?.toLowerCase().includes(q);
@@ -173,6 +175,29 @@ export default function NflTodayScreen({
           </div>
         </div>
 
+        <div>
+          <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block mb-2 font-mono">Confidence Group</span>
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar scrollbar-none">
+            {(["ALL", "HIGH", "MEDIUM", "LOW"] as const).map((conf) => {
+              const active = confidenceFilter === conf;
+              return (
+                <button
+                  id={`nfl-btn-conf-${conf}`}
+                  key={conf}
+                  onClick={() => setConfidenceFilter(conf)}
+                  className={`px-4 py-1.5 rounded-full text-[11px] font-semibold tracking-wide border transition-all cursor-pointer whitespace-nowrap uppercase ${
+                    active
+                      ? "bg-[#00FF41] text-black border-none font-bold"
+                      : "bg-[#141414] text-gray-400 border-[#222] hover:text-white hover:border-gray-700"
+                  }`}
+                >
+                  {conf === "ALL" ? "All Confidence" : `${conf} Conf`}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         <div className="relative">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <Search className="h-3 w-3 text-gray-600" />
@@ -255,6 +280,19 @@ export default function NflTodayScreen({
                       <span className="text-[9px] font-black px-2 py-0.5 rounded border tracking-wider font-mono uppercase bg-[#252525] text-gray-400 border-[#333]">
                         WK {pred.week}
                       </span>
+                      {pred.confidence && (
+                        <span
+                          className={`text-[9px] font-black px-2 py-0.5 rounded border tracking-wider font-mono uppercase ${
+                            pred.confidence === "HIGH"
+                              ? "bg-[#00FF41]/10 text-[#00FF41] border-[#00FF41]/20"
+                              : pred.confidence === "MEDIUM"
+                              ? "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
+                              : "bg-zinc-500/10 text-zinc-400 border-zinc-500/20"
+                          }`}
+                        >
+                          {pred.confidence}
+                        </span>
+                      )}
                     </div>
                   </div>
 

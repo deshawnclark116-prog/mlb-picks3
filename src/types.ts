@@ -116,10 +116,13 @@ export interface RecordData {
 }
 
 // NFL predictions -- a deliberately separate shape from Prediction (MLB).
-// The NFL pipeline is predictions-first with NO odds/confidence-bucket/
-// kelly_fraction concept anywhere (see mlb-picks2's api.py /nfl/predictions),
-// so this type doesn't carry those fields at all rather than leaving them
-// perpetually undefined.
+// The NFL pipeline is predictions-first with NO odds/kelly_fraction/
+// value_edge/fair_prob concept anywhere (see mlb-picks2's api.py
+// /nfl/predictions) -- those genuinely require a market price this
+// pipeline never has, so this type doesn't carry them at all rather than
+// leaving them perpetually undefined. confidence IS included: it's just
+// a HIGH/MEDIUM/LOW bucket of model_prob (same conf_from_prob() bucketing
+// MLB's Prediction.confidence uses), which needs no odds at all.
 export interface NflPrediction {
   market: string; // "rushing_yards" | "receiving_yards" | "sacks" | "rushing_yards_early_season"
   prop_type: string; // alias of market, kept for symmetry with MLB's Prediction shape
@@ -134,6 +137,7 @@ export interface NflPrediction {
   model_prob: number; // 0..1
   prob_pct?: number; // 0..100, e.g. 64.5 meaning 64.5%
   prob_over?: number;
+  confidence?: "HIGH" | "MEDIUM" | "LOW";
   games_played?: number;
   generated_at?: string;
   model_source?: string; // present on rushing_yards_early_season picks
@@ -150,9 +154,13 @@ export interface NflPredictionsDoc {
 }
 
 // CFB predictions -- same predictions-first shape as NFL (see mlb-picks2's
-// api.py /cfb/predictions), no odds/confidence-bucket/kelly_fraction fields.
+// api.py /cfb/predictions): no odds/kelly_fraction/value_edge/fair_prob,
+// but confidence IS included (see NflPrediction's comment for why that's
+// real parity, not fabrication). Don't confuse it with sim_confidence
+// below -- that's the Monte Carlo simulator's own confidence in ITS
+// projection, a different, CFB-only concept that predates this field.
 export interface CfbPrediction {
-  market: string; // "rushing_yards" | "receiving_yards" | "passing_yards" | "passing_touchdowns" | "rushing_touchdowns" | "rushing_yards_early_season" | "receiving_yards_early_season" | "passing_yards_early_season" | "passing_touchdowns_early_season" | "rushing_touchdowns_early_season"
+  market: string; // "rushing_yards" | "receiving_yards" | "passing_yards" | "passing_touchdowns" | "anytime_touchdowns" | "rushing_yards_early_season" | "receiving_yards_early_season" | "passing_yards_early_season" | "passing_touchdowns_early_season" | "anytime_touchdowns_early_season"
   prop_type: string; // alias of market, added by the api.py route
   player_id?: string;
   player: string;
@@ -165,6 +173,7 @@ export interface CfbPrediction {
   model_prob: number; // 0..1
   prob_pct?: number; // 0..100, e.g. 64.5 meaning 64.5%
   prob_over?: number;
+  confidence?: "HIGH" | "MEDIUM" | "LOW";
   games_played?: number;
   generated_at?: string;
   model_source?: string; // present on "*_early_season" picks (prior-season-informed bootstrap)
