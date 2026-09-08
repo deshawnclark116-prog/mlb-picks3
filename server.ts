@@ -188,6 +188,18 @@ async function startServer() {
     }
   });
 
+  // API Route - Proxy Tennis Predictions
+  app.get("/api/tennis-predictions", async (req, res) => {
+    try {
+      const data = await fetchUpstream("/tennis/predictions");
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+      res.json(data);
+    } catch (error: any) {
+      console.error("[Proxy Server] Error fetching tennis predictions:", error);
+      res.status(502).json({ error: "Failed to fetch tennis predictions from upstream API", details: error.message });
+    }
+  });
+
   // API Route - Proxy Games
   app.get("/api/games", async (req, res) => {
     try {

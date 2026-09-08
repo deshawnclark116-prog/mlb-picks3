@@ -198,3 +198,53 @@ export interface CfbPredictionsDoc {
   picks: CfbPrediction[];
 }
 
+// Tennis predictions -- structurally different from every other sport here:
+// a match is two players, not one player vs a team, and only two markets
+// ship at all (see mlb-picks2's tennis_serving_builder_a.py):
+//   total_games   graded against a REAL market line (The Odds API) --
+//                 has line/odds/book/predicted_mean and a real confidence
+//                 tier, same conf_from_prob() bucketing as NFL/CFB.
+//   set_betting   an UNAGRADED model projection -- no real correct-score
+//                 market exists anywhere checked, so there's deliberately
+//                 no confidence field at all (api.py's /tennis/predictions
+//                 route skips conf_from_prob() for this market on purpose).
+//                 `unagraded: true` is the signal to render this
+//                 differently, not as a graded HIGH/MEDIUM/LOW pick.
+// total_aces, double_faults, moneyline, and games_spread all failed their
+// backtests and are never present in this feed at all.
+export interface TennisPrediction {
+  market: "total_games" | "set_betting";
+  prop_type: string; // alias of market, added by the api.py route
+  tour: string; // "atp" -- WTA has no historical data source, ATP only
+  tourney: string;
+  surface: string;
+  surface_confirmed: boolean; // false means surface was guessed (defaulted to Hard), not looked up
+  best_of: number;
+  start_time_utc: string;
+  player1: string;
+  player1_id?: string;
+  player2: string;
+  player2_id?: string;
+  pick: string; // e.g. "UNDER 40.0" (total_games) or "Carlos Alcaraz 3-1" (set_betting)
+  model_prob: number; // 0..1
+  prob_pct?: number; // 0..100
+  confidence?: "HIGH" | "MEDIUM" | "LOW"; // total_games only -- real market line behind it
+  unagraded?: boolean; // set_betting only -- no real market to grade against
+  note?: string;
+  // total_games only:
+  line?: number;
+  predicted_mean?: number;
+  odds?: number;
+  book?: string;
+  generated_at?: string;
+}
+
+export interface TennisPredictionsDoc {
+  generated_at_utc: string | null;
+  builder?: string;
+  design?: string;
+  markets: Record<string, { eligible: number } & Record<string, unknown>>;
+  note?: string;
+  picks: TennisPrediction[];
+}
+

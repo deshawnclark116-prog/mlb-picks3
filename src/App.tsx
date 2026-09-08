@@ -4,18 +4,19 @@
  */
 
 import React, { useState, useEffect } from "react";
-import { Prediction, Game, Health, RecordData, NflPrediction, NflPredictionsDoc, CfbPrediction, CfbPredictionsDoc } from "./types";
+import { Prediction, Game, Health, RecordData, NflPrediction, NflPredictionsDoc, CfbPrediction, CfbPredictionsDoc, TennisPrediction, TennisPredictionsDoc } from "./types";
 import TodayScreen from "./components/TodayScreen";
 import GamesScreen from "./components/GamesScreen";
 import StatusScreen from "./components/StatusScreen";
 import RecordScreen from "./components/RecordScreen";
 import NflTodayScreen from "./components/NflTodayScreen";
 import CfbTodayScreen from "./components/CfbTodayScreen";
-import { deduplicatePredictions, deduplicateNflPredictions, deduplicateCfbPredictions } from "./utils";
+import TennisTodayScreen from "./components/TennisTodayScreen";
+import { deduplicatePredictions, deduplicateNflPredictions, deduplicateCfbPredictions, deduplicateTennisPredictions } from "./utils";
 import { TrendingUp, Calendar, Activity, ShieldCheck, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
-type TabType = "TODAY" | "GAMES" | "STATUS" | "RECORD" | "NFL" | "CFB";
+type TabType = "TODAY" | "GAMES" | "STATUS" | "RECORD" | "NFL" | "CFB" | "TENNIS";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>("TODAY");
@@ -31,6 +32,8 @@ export default function App() {
   const [cfbSeason, setCfbSeason] = useState<number | null>(null);
   const [cfbWeek, setCfbWeek] = useState<number | null>(null);
   const [cfbError, setCfbError] = useState<string | null>(null);
+  const [tennisPredictions, setTennisPredictions] = useState<TennisPrediction[]>([]);
+  const [tennisError, setTennisError] = useState<string | null>(null);
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -135,15 +138,29 @@ export default function App() {
     }
   };
 
+  // Tennis has no season/week cadence at all (individual matches, not a
+  // team schedule) -- same one-fetch-per-poll reasoning as NFL/CFB.
+  const loadTennisData = async () => {
+    const doc: TennisPredictionsDoc | null = await fetchEndpoint(`/api/tennis-predictions?t=${Date.now()}`);
+    if (doc && Array.isArray(doc.picks)) {
+      setTennisPredictions(deduplicateTennisPredictions(doc.picks));
+      setTennisError(null);
+    } else {
+      setTennisError("Unable to connect to Prop Edge tennis predictions server.");
+    }
+  };
+
   useEffect(() => {
     loadWorkspaceData();
     loadNflData();
     loadCfbData();
+    loadTennisData();
     // Poll endpoints every 30 seconds to fetch fresh predictions
     const interval = setInterval(() => {
       loadWorkspaceData();
       loadNflData();
       loadCfbData();
+      loadTennisData();
     }, 30000);
     return () => clearInterval(interval);
   }, []);
@@ -208,6 +225,15 @@ export default function App() {
             loading={loading}
             error={cfbError}
             onRefresh={loadCfbData}
+          />
+        );
+      case "TENNIS":
+        return (
+          <TennisTodayScreen
+            predictions={tennisPredictions}
+            loading={loading}
+            error={tennisError}
+            onRefresh={loadTennisData}
           />
         );
       default:
@@ -397,6 +423,30 @@ export default function App() {
               }`}
             >
               CFB
+            </span>
+          </button>
+
+          {/* Tennis Button */}
+          <button
+            id="tab-btn-tennis"
+            onClick={() => setActiveTab("TENNIS")}
+            className="flex-1 flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
+          >
+            <div className={`w-10 h-6 rounded-full flex items-center justify-center transition-all ${
+              activeTab === "TENNIS" ? "bg-[#00FF41]/20" : "bg-transparent"
+            }`}>
+              <div className={`w-1.5 h-1.5 rounded-full transition-all ${
+                activeTab === "TENNIS" ? "bg-[#00FF41] shadow-[0_0_8px_#00FF41]" : "bg-white/40 group-hover:bg-white"
+              }`} />
+            </div>
+            <span
+              className={`text-[10px] font-bold uppercase tracking-tighter transition-colors duration-250 ${
+                activeTab === "TENNIS"
+                  ? "text-[#00FF41]"
+                  : "text-white opacity-40 group-hover:opacity-80"
+              }`}
+            >
+              Tennis
             </span>
           </button>
         </nav>

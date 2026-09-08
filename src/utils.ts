@@ -121,7 +121,7 @@ export function formatToEasternTime(dateInput: string | Date | null | undefined)
   }
 }
 
-import { Prediction, NflPrediction, CfbPrediction } from "./types";
+import { Prediction, NflPrediction, CfbPrediction, TennisPrediction } from "./types";
 
 /**
  * Returns a unique composite key for a prediction item based on:
@@ -252,6 +252,44 @@ export function deduplicateCfbPredictions(preds: CfbPrediction[]): CfbPrediction
   const map = new Map<string, CfbPrediction>();
   for (const pred of preds) {
     const key = getCfbPredictionKey(pred);
+    if (!map.has(key)) {
+      map.set(key, pred);
+    } else {
+      const existing = map.get(key)!;
+      const newTime = pred.generated_at ? new Date(pred.generated_at).getTime() : 0;
+      const existingTime = existing.generated_at ? new Date(existing.generated_at).getTime() : 0;
+      if (newTime >= existingTime) map.set(key, pred);
+    }
+  }
+  return Array.from(map.values());
+}
+
+/**
+ * Composite key for a tennis prediction. Unlike every other sport here a
+ * match is two players (not one player vs a team) and there's no
+ * season/week to disambiguate on, so the key is both players + market +
+ * tourney + start time.
+ */
+export function getTennisPredictionKey(pred: TennisPrediction): string {
+  if (!pred || typeof pred !== "object") return "";
+  const safeStr = (val: any): string => (val === null || val === undefined ? "" : String(val));
+  const p1Key = safeStr(pred.player1_id || pred.player1).trim().toLowerCase();
+  const p2Key = safeStr(pred.player2_id || pred.player2).trim().toLowerCase();
+  const marketKey = safeStr(pred.market).trim().toLowerCase();
+  const tourneyKey = safeStr(pred.tourney).trim().toLowerCase();
+  const startKey = safeStr(pred.start_time_utc);
+  return `${p1Key}-${p2Key}-${marketKey}-${tourneyKey}-${startKey}`;
+}
+
+/**
+ * Deduplicates tennis predictions by their composite key, keeping the
+ * entry with the most recent generated_at.
+ */
+export function deduplicateTennisPredictions(preds: TennisPrediction[]): TennisPrediction[] {
+  if (!Array.isArray(preds)) return [];
+  const map = new Map<string, TennisPrediction>();
+  for (const pred of preds) {
+    const key = getTennisPredictionKey(pred);
     if (!map.has(key)) {
       map.set(key, pred);
     } else {
