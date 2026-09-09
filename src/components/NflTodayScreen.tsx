@@ -54,10 +54,26 @@ const MARKET_LABELS: Record<string, string> = {
   rushing_yards: "Rushing Yards",
   receiving_yards: "Receiving Yards",
   sacks: "Sacks",
-  rushing_yards_early_season: "Rushing Yards (Preseason-Informed)",
+  // Early-season markets blend two sources -- a player's real 2026
+  // preseason snaps when they have any, or their real last-season
+  // production when they don't (the common case for rested veteran
+  // starters). Each pick's model_source distinguishes which one fed it.
+  rushing_yards_early_season: "Rushing Yards (Early Season)",
+  receiving_yards_early_season: "Receiving Yards (Early Season)",
 };
 
-type MarketFilter = "ALL" | "rushing_yards" | "receiving_yards" | "sacks" | "rushing_yards_early_season";
+const MODEL_SOURCE_LABELS: Record<string, string> = {
+  preseason_informed: "Preseason",
+  prior_season_informed: "Prior Season",
+};
+
+type MarketFilter =
+  | "ALL"
+  | "rushing_yards"
+  | "receiving_yards"
+  | "sacks"
+  | "rushing_yards_early_season"
+  | "receiving_yards_early_season";
 
 export default function NflTodayScreen({
   predictions,
@@ -358,6 +374,11 @@ export default function NflTodayScreen({
                                       {MARKET_LABELS[pred.market] || pred.market} •{" "}
                                       <span className="text-white font-semibold italic">{pred.pick}</span>
                                     </p>
+                                    {pred.model_source && MODEL_SOURCE_LABELS[pred.model_source] && (
+                                      <span className="inline-block mt-1 text-[8px] font-mono uppercase tracking-wider text-gray-500 bg-[#141414] border border-[#242424] rounded px-1.5 py-0.5">
+                                        {MODEL_SOURCE_LABELS[pred.model_source]}
+                                      </span>
+                                    )}
                                   </div>
                                   {pred.confidence && (
                                     <span
