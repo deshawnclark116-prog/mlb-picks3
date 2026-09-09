@@ -5,9 +5,41 @@
 
 import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { TrendingUp, RefreshCw, AlertTriangle, Search } from "lucide-react";
+import { TrendingUp, RefreshCw, AlertTriangle, Search, ChevronDown, ChevronUp } from "lucide-react";
 import { NflPrediction } from "../types";
 import { getNflPredictionKey, getLatestGeneratedAt } from "../utils";
+
+// Groups a flat list of player-prop picks into one card per real-world
+// matchup, mirroring GamesScreen.tsx's MLB slate view -- NFL predictions
+// carry team/opponent per pick (no separate game/schedule feed the way
+// MLB does), so the matchup itself is derived here rather than matched
+// against an external Game list. Keyed on the unordered team pair since
+// a single game produces picks for players on both sides.
+interface NflGameGroup {
+  key: string;
+  teamA: string;
+  teamB: string;
+  season: number;
+  week: number;
+  predictions: NflPrediction[];
+}
+
+function groupPredictionsByGame(preds: NflPrediction[]): NflGameGroup[] {
+  const map = new Map<string, NflGameGroup>();
+  for (const p of preds) {
+    if (!p.team || !p.opponent) continue;
+    const key = [p.team, p.opponent].sort().join("__");
+    let group = map.get(key);
+    if (!group) {
+      group = { key, teamA: p.team, teamB: p.opponent, season: p.season, week: p.week, predictions: [] };
+      map.set(key, group);
+    }
+    group.predictions.push(p);
+  }
+  return Array.from(map.values()).sort(
+    (a, b) => (b.predictions[0]?.prob_pct ?? 0) - (a.predictions[0]?.prob_pct ?? 0)
+  );
+}
 
 interface NflTodayScreenProps {
   predictions: NflPrediction[];
@@ -40,6 +72,11 @@ export default function NflTodayScreen({
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullY, setPullY] = useState(0);
+  const [expandedGameKey, setExpandedGameKey] = useState<string | null>(null);
+
+  const toggleExpand = (key: string) => {
+    setExpandedGameKey((cur) => (cur === key ? null : key));
+  };
 
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStartY = useRef<number>(0);
@@ -96,6 +133,8 @@ export default function NflTodayScreen({
     }
     return true;
   });
+
+  const gameGroups = groupPredictionsByGame(filteredPredictions);
 
   return (
     <div
@@ -241,7 +280,7 @@ export default function NflTodayScreen({
               Retry Sync
             </button>
           </div>
-        ) : filteredPredictions.length === 0 ? (
+        ) : gameGroups.length === 0 ? (
           <div id="nfl-empty-predictions-state" className="flex flex-col items-center justify-center py-16 px-4 text-center rounded-3xl border border-dashed border-[#222] bg-[#141414]/30">
             <TrendingUp className="w-8 h-8 text-gray-700 mb-3" />
             <h3 className="text-gray-300 text-sm font-semibold mb-1">No NFL picks found.</h3>
@@ -251,80 +290,126 @@ export default function NflTodayScreen({
             </p>
           </div>
         ) : (
-          <div id="nfl-predictions-list" className="space-y-4">
+          <div id="nfl-games-list" className="space-y-4">
             <AnimatePresence mode="popLayout">
-              {filteredPredictions.map((pred, i) => (
-                <motion.div
-                  id={`nfl-prediction-card-${i}`}
-                  key={getNflPredictionKey(pred)}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.22, delay: Math.min(i * 0.03, 0.3) }}
-                  className="bg-[#141414] rounded-3xl p-5 border border-[#1F1F1F] shadow-lg flex flex-col gap-4 relative overflow-hidden group transition-all"
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-0.5 flex-1 min-w-0 pr-3">
-                      <h2 className="text-xl font-bold text-white leading-none tracking-tight truncate">
-                        {pred.player}
-                      </h2>
-                      <p className="text-xs text-gray-400 mt-1">
-                        {pred.team && pred.opponent ? `${pred.team} vs ${pred.opponent}` : pred.opponent || ""}
-                      </p>
-                      <p className="text-xs text-gray-400">
-                        {MARKET_LABELS[pred.market] || pred.market} •{" "}
-                        <span className="text-white font-semibold italic">{pred.pick}</span>
-                      </p>
-                    </div>
-                    <div className="flex flex-col items-end gap-1.5 shrink-0">
-                      <span className="text-[9px] font-black px-2 py-0.5 rounded border tracking-wider font-mono uppercase bg-[#252525] text-gray-400 border-[#333]">
-                        WK {pred.week}
-                      </span>
-                      {pred.confidence && (
-                        <span
-                          className={`text-[9px] font-black px-2 py-0.5 rounded border tracking-wider font-mono uppercase ${
-                            pred.confidence === "HIGH"
-                              ? "bg-[#00FF41]/10 text-[#00FF41] border-[#00FF41]/20"
-                              : pred.confidence === "MEDIUM"
-                              ? "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
-                              : "bg-zinc-500/10 text-zinc-400 border-zinc-500/20"
-                          }`}
-                        >
-                          {pred.confidence}
+              {gameGroups.map((game, idx) => {
+                const isExpanded = expandedGameKey === game.key;
+                return (
+                  <motion.div
+                    id={`nfl-game-card-${idx}`}
+                    key={game.key}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.22, delay: Math.min(idx * 0.03, 0.3) }}
+                    onClick={() => toggleExpand(game.key)}
+                    className={`bg-[#141414] rounded-3xl p-5 border cursor-pointer select-none transition-all duration-200 flex flex-col ${
+                      isExpanded ? "border-[#00FF41]/40 shadow-[0_0_15px_rgba(0,255,65,0.04)] bg-[#171717]" : "border-[#1F1F1F] hover:border-gray-800"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex-1 min-w-0">
+                        <h2 className="text-lg font-bold text-white leading-tight tracking-tight truncate">
+                          {game.teamA} <span className="text-gray-600 font-mono text-sm">vs</span> {game.teamB}
+                        </h2>
+                        <p className="text-[10px] text-gray-500 font-mono uppercase tracking-wider mt-1">
+                          {game.season} • Week {game.week}
+                        </p>
+                      </div>
+                      <div className="flex flex-col items-end gap-1.5 shrink-0 pl-4">
+                        <span className="text-[9px] font-black px-2 py-0.5 rounded border tracking-wider font-mono uppercase bg-[#252525] text-gray-400 border-[#333]">
+                          {game.predictions.length} {game.predictions.length === 1 ? "PROP" : "PROPS"}
                         </span>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-center mt-3 pt-2 border-t border-[#1F1F1F]/50">
+                      {isExpanded ? (
+                        <ChevronUp className="w-4 h-4 text-gray-500" />
+                      ) : (
+                        <ChevronDown className="w-4 h-4 text-gray-500" />
                       )}
                     </div>
-                  </div>
 
-                  <div className="bg-[#1A1A1A]/50 rounded-2xl p-4 border border-[#222] flex flex-col items-center justify-center text-center shadow-inner">
-                    <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-widest font-mono mb-1">
-                      Hit Probability
-                    </span>
-                    <span className="text-4xl font-black font-mono text-[#00FF41] tracking-tight drop-shadow-[0_0_12px_rgba(0,255,65,0.2)]">
-                      {pred.prob_pct !== undefined && pred.prob_pct !== null ? `${pred.prob_pct.toFixed(1)}%` : "N/A"}
-                    </span>
-                  </div>
+                    <AnimatePresence initial={false}>
+                      {isExpanded && (
+                        <motion.div
+                          id={`nfl-game-props-expanded-${idx}`}
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.22, ease: "easeInOut" }}
+                          className="overflow-hidden mt-4 pt-4 border-t border-[#1F1F1F] w-full"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <div className="space-y-3 pb-1">
+                            {game.predictions.map((pred) => (
+                              <div
+                                key={getNflPredictionKey(pred)}
+                                className="bg-[#1C1C1C] rounded-2xl p-4 border border-[#242424] space-y-3"
+                              >
+                                <div className="flex justify-between items-start">
+                                  <div className="min-w-0 flex-1 pr-2">
+                                    <h4 className="text-sm font-bold text-white tracking-tight truncate">
+                                      {pred.player}
+                                      <span className="text-gray-500 font-normal"> ({pred.team})</span>
+                                    </h4>
+                                    <p className="text-[10px] text-gray-400 mt-0.5">
+                                      {MARKET_LABELS[pred.market] || pred.market} •{" "}
+                                      <span className="text-white font-semibold italic">{pred.pick}</span>
+                                    </p>
+                                  </div>
+                                  {pred.confidence && (
+                                    <span
+                                      className={`text-[8px] uppercase font-mono font-bold tracking-wider px-1.5 py-0.5 border rounded shrink-0 ${
+                                        pred.confidence === "HIGH"
+                                          ? "bg-[#00FF41]/10 text-[#00FF41] border-[#00FF41]/20"
+                                          : pred.confidence === "MEDIUM"
+                                          ? "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
+                                          : "bg-zinc-500/10 text-zinc-400 border-zinc-500/20"
+                                      }`}
+                                    >
+                                      {pred.confidence}
+                                    </span>
+                                  )}
+                                </div>
 
-                  <div className="grid grid-cols-2 gap-4 border-t border-[#1F1F1F] pt-3">
-                    <div>
-                      <p className="text-[9px] text-[#555] uppercase font-mono font-bold leading-none mb-1">Line</p>
-                      <p className="text-base font-mono font-bold text-white">{pred.line}</p>
-                    </div>
-                    <div>
-                      <p className="text-[9px] text-[#555] uppercase font-mono font-bold leading-none mb-1">Games Played</p>
-                      <p className="text-base font-mono font-bold text-white">
-                        {pred.games_played !== undefined && pred.games_played !== null ? pred.games_played : "N/A"}
-                      </p>
-                    </div>
-                  </div>
+                                <div className="bg-[#141414] rounded-xl p-2.5 border border-[#222] flex flex-col items-center justify-center text-center shadow-inner">
+                                  <span className="text-[8px] font-semibold text-gray-500 uppercase tracking-widest font-mono mb-0.5">
+                                    Hit Probability
+                                  </span>
+                                  <span className="text-2xl font-black font-mono text-[#00FF41] tracking-tight drop-shadow-[0_0_8px_rgba(0,255,65,0.15)]">
+                                    {pred.prob_pct !== undefined && pred.prob_pct !== null ? `${pred.prob_pct.toFixed(1)}%` : "N/A"}
+                                  </span>
+                                </div>
 
-                  {pred.validation_note && (
-                    <p className="text-[9px] text-gray-600 font-mono leading-tight border-t border-[#1F1F1F] pt-2">
-                      {pred.validation_note}
-                    </p>
-                  )}
-                </motion.div>
-              ))}
+                                <div className="grid grid-cols-2 gap-2 text-center bg-[#141414] p-2 rounded-xl border border-[#222] text-[9.5px] font-mono">
+                                  <div>
+                                    <p className="text-[#555] font-bold uppercase leading-none mb-1">Line</p>
+                                    <p className="text-white font-bold text-xs">{pred.line}</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-[#555] font-bold uppercase leading-none mb-1">Games Played</p>
+                                    <p className="text-white font-bold text-xs">
+                                      {pred.games_played !== undefined && pred.games_played !== null ? pred.games_played : "N/A"}
+                                    </p>
+                                  </div>
+                                </div>
+
+                                {pred.validation_note && (
+                                  <p className="text-[9px] text-gray-600 font-mono leading-tight border-t border-[#1F1F1F] pt-2">
+                                    {pred.validation_note}
+                                  </p>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                );
+              })}
             </AnimatePresence>
           </div>
         )}
