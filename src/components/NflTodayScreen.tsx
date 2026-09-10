@@ -398,10 +398,16 @@ export default function NflTodayScreen({
                                   </span>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-2 text-center bg-[#141414] p-2 rounded-xl border border-[#222] text-[9.5px] font-mono">
+                                <div className="grid grid-cols-3 gap-2 text-center bg-[#141414] p-2 rounded-xl border border-[#222] text-[9.5px] font-mono">
                                   <div>
                                     <p className="text-[#555] font-bold uppercase leading-none mb-1">Line</p>
                                     <p className="text-white font-bold text-xs">{pred.line}</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-[#555] font-bold uppercase leading-none mb-1">Projected</p>
+                                    <p className="text-white font-bold text-xs">
+                                      {pred.projected_mean !== undefined && pred.projected_mean !== null ? pred.projected_mean.toFixed(1) : "N/A"}
+                                    </p>
                                   </div>
                                   <div>
                                     <p className="text-[#555] font-bold uppercase leading-none mb-1">Games Played</p>
