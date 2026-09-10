@@ -5,7 +5,7 @@
 
 import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { TrendingUp, RefreshCw, AlertTriangle, Search } from "lucide-react";
+import { TrendingUp, RefreshCw, AlertTriangle, Search, ChevronDown, ChevronUp } from "lucide-react";
 import { TennisPrediction } from "../types";
 import { getTennisPredictionKey, getLatestGeneratedAt } from "../utils";
 
@@ -26,6 +26,46 @@ const MARKET_LABELS: Record<string, string> = {
 
 type MarketFilter = "ALL" | "total_games" | "set_betting";
 
+interface TennisMatchGroup {
+  key: string;
+  player1: string;
+  player2: string;
+  tourney: string;
+  surface: string;
+  surface_confirmed: boolean;
+  best_of: number;
+  predictions: TennisPrediction[];
+}
+
+// Keyed on the unordered player pair plus tourney (not just the pair) --
+// same two players could in principle appear across more than one event
+// in the feed, and the tourney qualifier keeps those from colliding.
+function groupPredictionsByMatch(preds: TennisPrediction[]): TennisMatchGroup[] {
+  const map = new Map<string, TennisMatchGroup>();
+  for (const p of preds) {
+    if (!p.player1 || !p.player2) continue;
+    const key = [p.player1, p.player2].sort().join("__") + "::" + p.tourney;
+    let group = map.get(key);
+    if (!group) {
+      group = {
+        key,
+        player1: p.player1,
+        player2: p.player2,
+        tourney: p.tourney,
+        surface: p.surface,
+        surface_confirmed: p.surface_confirmed,
+        best_of: p.best_of,
+        predictions: [],
+      };
+      map.set(key, group);
+    }
+    group.predictions.push(p);
+  }
+  return Array.from(map.values()).sort(
+    (a, b) => (b.predictions[0]?.prob_pct ?? 0) - (a.predictions[0]?.prob_pct ?? 0)
+  );
+}
+
 export default function TennisTodayScreen({
   predictions,
   loading,
@@ -37,6 +77,11 @@ export default function TennisTodayScreen({
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullY, setPullY] = useState(0);
+  const [expandedMatchKey, setExpandedMatchKey] = useState<string | null>(null);
+
+  const toggleExpand = (key: string) => {
+    setExpandedMatchKey((cur) => (cur === key ? null : key));
+  };
 
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStartY = useRef<number>(0);
@@ -98,6 +143,8 @@ export default function TennisTodayScreen({
     }
     return true;
   });
+
+  const matchGroups = groupPredictionsByMatch(filteredPredictions);
 
   return (
     <div
@@ -247,7 +294,7 @@ export default function TennisTodayScreen({
               Retry Sync
             </button>
           </div>
-        ) : filteredPredictions.length === 0 ? (
+        ) : matchGroups.length === 0 ? (
           <div id="tennis-empty-predictions-state" className="flex flex-col items-center justify-center py-16 px-4 text-center rounded-3xl border border-dashed border-[#222] bg-[#141414]/30">
             <TrendingUp className="w-8 h-8 text-gray-700 mb-3" />
             <h3 className="text-gray-300 text-sm font-semibold mb-1">No tennis picks found.</h3>
@@ -258,90 +305,133 @@ export default function TennisTodayScreen({
             </p>
           </div>
         ) : (
-          <div id="tennis-predictions-list" className="space-y-4">
+          <div id="tennis-matches-list" className="space-y-4">
             <AnimatePresence mode="popLayout">
-              {filteredPredictions.map((pred, i) => (
-                <motion.div
-                  id={`tennis-prediction-card-${i}`}
-                  key={getTennisPredictionKey(pred)}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.22, delay: Math.min(i * 0.03, 0.3) }}
-                  className="bg-[#141414] rounded-3xl p-5 border border-[#1F1F1F] shadow-lg flex flex-col gap-4 relative overflow-hidden group transition-all"
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-0.5 flex-1 min-w-0 pr-3">
-                      <h2 className="text-lg font-bold text-white leading-tight tracking-tight">
-                        {pred.player1} <span className="text-gray-600 font-normal">vs</span> {pred.player2}
-                      </h2>
-                      <p className="text-xs text-gray-400 mt-1">
-                        {pred.tourney} • {pred.surface}
-                        {!pred.surface_confirmed && (
-                          <span className="text-gray-700"> (surface assumed)</span>
-                        )}
-                        {" "}• Bo{pred.best_of}
-                      </p>
-                      <p className="text-xs text-gray-400">
-                        {MARKET_LABELS[pred.market] || pred.market} •{" "}
-                        <span className="text-white font-semibold italic">{pred.pick}</span>
-                      </p>
+              {matchGroups.map((match, idx) => {
+                const isExpanded = expandedMatchKey === match.key;
+                return (
+                  <motion.div
+                    id={`tennis-match-card-${idx}`}
+                    key={match.key}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.22, delay: Math.min(idx * 0.03, 0.3) }}
+                    onClick={() => toggleExpand(match.key)}
+                    className={`bg-[#141414] rounded-3xl p-5 border cursor-pointer select-none transition-all duration-200 flex flex-col ${
+                      isExpanded ? "border-[#00FF41]/40 shadow-[0_0_15px_rgba(0,255,65,0.04)] bg-[#171717]" : "border-[#1F1F1F] hover:border-gray-800"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex-1 min-w-0">
+                        <h2 className="text-lg font-bold text-white leading-tight tracking-tight truncate">
+                          {match.player1} <span className="text-gray-600 font-normal">vs</span> {match.player2}
+                        </h2>
+                        <p className="text-[10px] text-gray-500 font-mono uppercase tracking-wider mt-1">
+                          {match.tourney} • {match.surface}
+                          {!match.surface_confirmed && (
+                            <span className="text-gray-700"> (assumed)</span>
+                          )}
+                          {" "}• Bo{match.best_of}
+                        </p>
+                      </div>
+                      <div className="flex flex-col items-end gap-1.5 shrink-0 pl-4">
+                        <span className="text-[9px] font-black px-2 py-0.5 rounded border tracking-wider font-mono uppercase bg-[#252525] text-gray-400 border-[#333]">
+                          {match.predictions.length} {match.predictions.length === 1 ? "PROP" : "PROPS"}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex flex-col items-end gap-1.5 shrink-0">
-                      {pred.confidence ? (
-                        <span
-                          className={`text-[9px] font-black px-2 py-0.5 rounded border tracking-wider font-mono uppercase ${
-                            pred.confidence === "HIGH"
-                              ? "bg-[#00FF41]/10 text-[#00FF41] border-[#00FF41]/20"
-                              : pred.confidence === "MEDIUM"
-                              ? "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
-                              : "bg-zinc-500/10 text-zinc-400 border-zinc-500/20"
-                          }`}
+
+                    <div className="flex justify-center mt-3 pt-2 border-t border-[#1F1F1F]/50">
+                      {isExpanded ? (
+                        <ChevronUp className="w-4 h-4 text-gray-500" />
+                      ) : (
+                        <ChevronDown className="w-4 h-4 text-gray-500" />
+                      )}
+                    </div>
+
+                    <AnimatePresence initial={false}>
+                      {isExpanded && (
+                        <motion.div
+                          id={`tennis-match-props-expanded-${idx}`}
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.22, ease: "easeInOut" }}
+                          className="overflow-hidden mt-4 pt-4 border-t border-[#1F1F1F] w-full"
+                          onClick={(e) => e.stopPropagation()}
                         >
-                          {pred.confidence}
-                        </span>
-                      ) : pred.unagraded ? (
-                        <span className="text-[9px] font-black px-2 py-0.5 rounded border tracking-wider font-mono uppercase bg-blue-500/10 text-blue-400 border-blue-500/20">
-                          Projection
-                        </span>
-                      ) : null}
-                    </div>
-                  </div>
+                          <div className="space-y-3 pb-1">
+                            {match.predictions.map((pred) => (
+                              <div
+                                key={getTennisPredictionKey(pred)}
+                                className="bg-[#1C1C1C] rounded-2xl p-4 border border-[#242424] space-y-3"
+                              >
+                                <div className="flex justify-between items-start">
+                                  <div className="min-w-0 flex-1 pr-2">
+                                    <p className="text-[10px] text-gray-400">
+                                      {MARKET_LABELS[pred.market] || pred.market} •{" "}
+                                      <span className="text-white font-semibold italic">{pred.pick}</span>
+                                    </p>
+                                  </div>
+                                  {pred.confidence ? (
+                                    <span
+                                      className={`text-[8px] uppercase font-mono font-bold tracking-wider px-1.5 py-0.5 border rounded shrink-0 ${
+                                        pred.confidence === "HIGH"
+                                          ? "bg-[#00FF41]/10 text-[#00FF41] border-[#00FF41]/20"
+                                          : pred.confidence === "MEDIUM"
+                                          ? "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
+                                          : "bg-zinc-500/10 text-zinc-400 border-zinc-500/20"
+                                      }`}
+                                    >
+                                      {pred.confidence}
+                                    </span>
+                                  ) : pred.unagraded ? (
+                                    <span className="text-[8px] uppercase font-mono font-bold tracking-wider px-1.5 py-0.5 border rounded shrink-0 bg-blue-500/10 text-blue-400 border-blue-500/20">
+                                      Projection
+                                    </span>
+                                  ) : null}
+                                </div>
 
-                  <div className="bg-[#1A1A1A]/50 rounded-2xl p-4 border border-[#222] flex flex-col items-center justify-center text-center shadow-inner">
-                    <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-widest font-mono mb-1">
-                      {pred.market === "total_games" ? "Hit Probability" : "Model Probability"}
-                    </span>
-                    <span className="text-4xl font-black font-mono text-[#00FF41] tracking-tight drop-shadow-[0_0_12px_rgba(0,255,65,0.2)]">
-                      {pred.prob_pct !== undefined && pred.prob_pct !== null ? `${pred.prob_pct.toFixed(1)}%` : "N/A"}
-                    </span>
-                  </div>
+                                <div className="bg-[#141414] rounded-xl p-2.5 border border-[#222] flex flex-col items-center justify-center text-center shadow-inner">
+                                  <span className="text-[8px] font-semibold text-gray-500 uppercase tracking-widest font-mono mb-0.5">
+                                    {pred.market === "total_games" ? "Hit Probability" : "Model Probability"}
+                                  </span>
+                                  <span className="text-2xl font-black font-mono text-[#00FF41] tracking-tight drop-shadow-[0_0_8px_rgba(0,255,65,0.15)]">
+                                    {pred.prob_pct !== undefined && pred.prob_pct !== null ? `${pred.prob_pct.toFixed(1)}%` : "N/A"}
+                                  </span>
+                                </div>
 
-                  {pred.market === "total_games" ? (
-                    <div className="grid grid-cols-2 gap-4 border-t border-[#1F1F1F] pt-3">
-                      <div>
-                        <p className="text-[9px] text-[#555] uppercase font-mono font-bold leading-none mb-1">Line</p>
-                        <p className="text-base font-mono font-bold text-white">{pred.line}</p>
-                      </div>
-                      <div>
-                        <p className="text-[9px] text-[#555] uppercase font-mono font-bold leading-none mb-1">
-                          Book Odds
-                        </p>
-                        <p className="text-base font-mono font-bold text-white">
-                          {pred.odds !== undefined && pred.odds !== null ? pred.odds : "N/A"}
-                          {pred.book && <span className="text-gray-600 text-xs ml-1">({pred.book})</span>}
-                        </p>
-                      </div>
-                    </div>
-                  ) : (
-                    pred.note && (
-                      <p className="text-[9px] text-gray-600 font-mono leading-tight border-t border-[#1F1F1F] pt-2">
-                        {pred.note}
-                      </p>
-                    )
-                  )}
-                </motion.div>
-              ))}
+                                {pred.market === "total_games" ? (
+                                  <div className="grid grid-cols-2 gap-2 text-center bg-[#141414] p-2 rounded-xl border border-[#222] text-[9.5px] font-mono">
+                                    <div>
+                                      <p className="text-[#555] font-bold uppercase leading-none mb-1">Line</p>
+                                      <p className="text-white font-bold text-xs">{pred.line}</p>
+                                    </div>
+                                    <div>
+                                      <p className="text-[#555] font-bold uppercase leading-none mb-1">Book Odds</p>
+                                      <p className="text-white font-bold text-xs">
+                                        {pred.odds !== undefined && pred.odds !== null ? pred.odds : "N/A"}
+                                        {pred.book && <span className="text-gray-600 text-[8px] ml-1">({pred.book})</span>}
+                                      </p>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  pred.note && (
+                                    <p className="text-[9px] text-gray-600 font-mono leading-tight border-t border-[#1F1F1F] pt-2">
+                                      {pred.note}
+                                    </p>
+                                  )
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                );
+              })}
             </AnimatePresence>
           </div>
         )}
