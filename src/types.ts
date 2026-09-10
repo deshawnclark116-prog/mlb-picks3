@@ -124,7 +124,7 @@ export interface RecordData {
 // a HIGH/MEDIUM/LOW bucket of model_prob (same conf_from_prob() bucketing
 // MLB's Prediction.confidence uses), which needs no odds at all.
 export interface NflPrediction {
-  market: string; // "rushing_yards" | "receiving_yards" | "sacks" | "rushing_yards_early_season"
+  market: string; // "rushing_yards" | "receiving_yards" | "sacks"
   prop_type: string; // alias of market, kept for symmetry with MLB's Prediction shape
   player_id?: string;
   player: string;
@@ -140,7 +140,17 @@ export interface NflPrediction {
   confidence?: "HIGH" | "MEDIUM" | "LOW";
   games_played?: number;
   generated_at?: string;
-  model_source?: string; // present on rushing_yards_early_season picks
+  // rushing_yards/receiving_yards only: real book line priced by a real
+  // Monte Carlo projection (nfl_serving_builder_a.py's
+  // build_real_odds_yardage_picks) -- same shape as MLB's own props.
+  // sacks has none of these; it's still the flat classifier design.
+  odds?: number; // American odds for the picked side, e.g. -110
+  book?: string; // bookmaker key, e.g. "draftkings"
+  fair_prob?: number; // de-vigged (no-vig) probability for the picked side
+  value_edge?: number; // (model_prob - fair_prob) / fair_prob
+  kelly_fraction?: number; // 0..0.25, capped
+  projected_mean?: number; // simulator's own projected yards for this player
+  model_source?: string; // "in_season_sim" | "prior_season_sim"
   validation_note?: string;
 }
 

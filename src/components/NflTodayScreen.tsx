@@ -7,7 +7,7 @@ import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { TrendingUp, RefreshCw, AlertTriangle, Search, ChevronDown, ChevronUp } from "lucide-react";
 import { NflPrediction } from "../types";
-import { getNflPredictionKey, getLatestGeneratedAt } from "../utils";
+import { getNflPredictionKey, getLatestGeneratedAt, formatOdds, formatKellyStake, formatPercent } from "../utils";
 
 // Groups a flat list of player-prop picks into one card per real-world
 // matchup, mirroring GamesScreen.tsx's MLB slate view -- NFL predictions
@@ -54,26 +54,19 @@ const MARKET_LABELS: Record<string, string> = {
   rushing_yards: "Rushing Yards",
   receiving_yards: "Receiving Yards",
   sacks: "Sacks",
-  // Early-season markets blend two sources -- a player's real 2026
-  // preseason snaps when they have any, or their real last-season
-  // production when they don't (the common case for rested veteran
-  // starters). Each pick's model_source distinguishes which one fed it.
-  rushing_yards_early_season: "Rushing Yards (Early Season)",
-  receiving_yards_early_season: "Receiving Yards (Early Season)",
 };
 
+// rushing_yards/receiving_yards blend two real sources -- a player's
+// current-season history when they have 3+ games, or their real last
+// season's per-play history when they don't (weeks 1-3, the common
+// case for a rested veteran or anyone before week 4). Each pick's
+// model_source says which one priced it against the real book line.
 const MODEL_SOURCE_LABELS: Record<string, string> = {
-  preseason_informed: "Preseason",
-  prior_season_informed: "Prior Season",
+  in_season_sim: "This Season",
+  prior_season_sim: "Prior Season",
 };
 
-type MarketFilter =
-  | "ALL"
-  | "rushing_yards"
-  | "receiving_yards"
-  | "sacks"
-  | "rushing_yards_early_season"
-  | "receiving_yards_early_season";
+type MarketFilter = "ALL" | "rushing_yards" | "receiving_yards" | "sacks";
 
 export default function NflTodayScreen({
   predictions,
@@ -301,8 +294,9 @@ export default function NflTodayScreen({
             <TrendingUp className="w-8 h-8 text-gray-700 mb-3" />
             <h3 className="text-gray-300 text-sm font-semibold mb-1">No NFL picks found.</h3>
             <p className="text-xs text-gray-500 max-w-xs leading-relaxed mt-1">
-              Early-season weeks are empty by design -- eligibility requires prior-game history the season
-              hasn't produced yet. Try changing filters, or check back once the week advances.
+              rushing_yards/receiving_yards only show a pick when a real book line exists for that
+              player today -- sacks needs 3+ current-season games. Try changing filters, or check
+              back closer to kickoff.
             </p>
           </div>
         ) : (
@@ -416,6 +410,32 @@ export default function NflTodayScreen({
                                     </p>
                                   </div>
                                 </div>
+
+                                {/* Real book line + edge/kelly -- only rushing_yards/
+                                    receiving_yards picks carry these (a real market
+                                    price to compute them against); sacks never will
+                                    until it has one too. */}
+                                {pred.odds !== undefined && pred.odds !== null && (
+                                  <div className="grid grid-cols-3 gap-2 text-center bg-[#141414] p-2 rounded-xl border border-[#222] text-[9.5px] font-mono">
+                                    <div>
+                                      <p className="text-[#555] font-bold uppercase leading-none mb-1">Odds</p>
+                                      <p className="text-[#00FF41] font-bold text-xs">{formatOdds(pred.odds)}</p>
+                                      {pred.book && (
+                                        <p className="text-gray-600 text-[8px] mt-0.5 capitalize">{pred.book}</p>
+                                      )}
+                                    </div>
+                                    <div>
+                                      <p className="text-[#555] font-bold uppercase leading-none mb-1">Edge</p>
+                                      <p className={`font-bold text-xs ${(pred.value_edge ?? 0) > 0 ? "text-[#00FF41]" : "text-white"}`}>
+                                        {formatPercent(pred.value_edge)}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <p className="text-[#555] font-bold uppercase leading-none mb-1">Stake</p>
+                                      <p className="text-white font-bold text-xs">{formatKellyStake(pred.kelly_fraction)}</p>
+                                    </div>
+                                  </div>
+                                )}
 
                                 {pred.validation_note && (
                                   <p className="text-[9px] text-gray-600 font-mono leading-tight border-t border-[#1F1F1F] pt-2">
