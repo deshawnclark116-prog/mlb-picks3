@@ -149,7 +149,8 @@ export interface NflPrediction {
   fair_prob?: number; // de-vigged (no-vig) probability for the picked side
   value_edge?: number; // (model_prob - fair_prob) / fair_prob
   kelly_fraction?: number; // 0..0.25, capped
-  projected_mean?: number; // simulator's own projected yards for this player
+  projected_median?: number; // simulator's median simulated yards -- always agrees with
+  // the pick's OVER/UNDER direction (mean does not, for a boom/bust player)
   model_source?: string; // "in_season_sim" | "prior_season_sim"
   validation_note?: string;
 }

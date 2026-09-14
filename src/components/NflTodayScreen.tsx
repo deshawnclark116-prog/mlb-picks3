@@ -406,7 +406,7 @@ export default function NflTodayScreen({
                                   <div>
                                     <p className="text-[#555] font-bold uppercase leading-none mb-1">Projected</p>
                                     <p className="text-white font-bold text-xs">
-                                      {pred.projected_mean !== undefined && pred.projected_mean !== null ? pred.projected_mean.toFixed(1) : "N/A"}
+                                      {pred.projected_median !== undefined && pred.projected_median !== null ? pred.projected_median.toFixed(1) : "N/A"}
                                     </p>
                                   </div>
                                   <div>
