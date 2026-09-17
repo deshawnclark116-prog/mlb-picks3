@@ -65,6 +65,7 @@ const MARKET_LABELS: Record<string, string> = {
 const MODEL_SOURCE_LABELS: Record<string, string> = {
   in_season_sim: "This Season",
   prior_season_sim: "Prior Season",
+  blended_sim: "Blended",
 };
 
 type MarketFilter = "ALL" | "rushing_yards" | "receiving_yards" | "sacks" | "anytime_touchdowns";
