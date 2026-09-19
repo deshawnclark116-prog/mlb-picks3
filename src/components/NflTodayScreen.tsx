@@ -55,6 +55,7 @@ const MARKET_LABELS: Record<string, string> = {
   receiving_yards: "Receiving Yards",
   sacks: "Sacks",
   anytime_touchdowns: "Anytime TD",
+  anytime_touchdowns_early_season: "Anytime TD (Prior-Season-Informed)",
 };
 
 // rushing_yards/receiving_yards blend two real sources -- a player's
@@ -68,7 +69,7 @@ const MODEL_SOURCE_LABELS: Record<string, string> = {
   blended_sim: "Blended",
 };
 
-type MarketFilter = "ALL" | "rushing_yards" | "receiving_yards" | "sacks" | "anytime_touchdowns";
+type MarketFilter = "ALL" | "rushing_yards" | "receiving_yards" | "sacks" | "anytime_touchdowns" | "anytime_touchdowns_early_season";
 
 export default function NflTodayScreen({
   predictions,

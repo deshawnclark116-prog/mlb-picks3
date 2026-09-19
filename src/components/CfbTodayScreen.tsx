@@ -57,6 +57,7 @@ const MARKET_LABELS: Record<string, string> = {
   passing_touchdowns: "Passing TDs",
   anytime_touchdowns: "Anytime TD",
   moneyline: "Moneyline",
+  moneyline_early_season: "Moneyline (Prior-Season-Informed)",
   rushing_yards_early_season: "Rushing Yards (Prior-Season-Informed)",
   receiving_yards_early_season: "Receiving Yards (Prior-Season-Informed)",
   passing_yards_early_season: "Passing Yards (Prior-Season-Informed)",
@@ -72,6 +73,7 @@ type MarketFilter =
   | "passing_touchdowns"
   | "anytime_touchdowns"
   | "moneyline"
+  | "moneyline_early_season"
   | "rushing_yards_early_season"
   | "receiving_yards_early_season"
   | "passing_yards_early_season"
