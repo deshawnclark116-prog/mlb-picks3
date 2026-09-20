@@ -16,15 +16,18 @@ interface TennisTodayScreenProps {
   onRefresh: () => Promise<void>;
 }
 
-// Only two markets ever appear here -- total_aces, double_faults,
-// moneyline, and games_spread all failed their backtests and are never
-// generated (see mlb-picks2's tennis_serving_builder_a.py).
+// total_aces, double_faults, and games_spread all failed their backtests
+// and are never generated. moneyline ALSO failed its own gate on both
+// tours (see tennis_serving_builder_a.py's moneyline comment) but is
+// served anyway by explicit product decision -- see mlb-picks2's
+// tennis_serving_builder_a.py for the real numbers.
 const MARKET_LABELS: Record<string, string> = {
   total_games: "Total Games",
   set_betting: "Correct Score (Projection)",
+  moneyline: "Moneyline",
 };
 
-type MarketFilter = "ALL" | "total_games" | "set_betting";
+type MarketFilter = "ALL" | "total_games" | "set_betting" | "moneyline";
 
 interface TennisMatchGroup {
   key: string;
