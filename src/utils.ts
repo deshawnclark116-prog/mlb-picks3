@@ -121,7 +121,7 @@ export function formatToEasternTime(dateInput: string | Date | null | undefined)
   }
 }
 
-import { Prediction, NflPrediction, CfbPrediction, TennisPrediction } from "./types";
+import { Prediction, NflPrediction, CfbPrediction, TennisPrediction, NhlPrediction } from "./types";
 
 /**
  * Returns a unique composite key for a prediction item based on:
@@ -252,6 +252,42 @@ export function deduplicateCfbPredictions(preds: CfbPrediction[]): CfbPrediction
   const map = new Map<string, CfbPrediction>();
   for (const pred of preds) {
     const key = getCfbPredictionKey(pred);
+    if (!map.has(key)) {
+      map.set(key, pred);
+    } else {
+      const existing = map.get(key)!;
+      const newTime = pred.generated_at ? new Date(pred.generated_at).getTime() : 0;
+      const existingTime = existing.generated_at ? new Date(existing.generated_at).getTime() : 0;
+      if (newTime >= existingTime) map.set(key, pred);
+    }
+  }
+  return Array.from(map.values());
+}
+
+/**
+ * Composite key for an NHL prediction: team + market + game_date (a
+ * calendar date, not a week -- NHL plays near-daily, unlike CFB/NFL).
+ * player_id is always null for moneyline (team-level, no player), same
+ * reason getCfbPredictionKey falls back the way it does.
+ */
+export function getNhlPredictionKey(pred: NhlPrediction): string {
+  if (!pred || typeof pred !== "object") return "";
+  const safeStr = (val: any): string => (val === null || val === undefined ? "" : String(val));
+  const teamKey = safeStr(pred.player_id || pred.team).trim().toLowerCase();
+  const marketKey = safeStr(pred.market).trim().toLowerCase();
+  const dateKey = safeStr(pred.game_date);
+  return `${teamKey}-${marketKey}-${dateKey}`;
+}
+
+/**
+ * Deduplicates NHL predictions by their composite key, keeping the entry
+ * with the most recent generated_at.
+ */
+export function deduplicateNhlPredictions(preds: NhlPrediction[]): NhlPrediction[] {
+  if (!Array.isArray(preds)) return [];
+  const map = new Map<string, NhlPrediction>();
+  for (const pred of preds) {
+    const key = getNhlPredictionKey(pred);
     if (!map.has(key)) {
       map.set(key, pred);
     } else {

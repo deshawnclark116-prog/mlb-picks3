@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from "react";
-import { Prediction, Game, Health, RecordData, NflPrediction, NflPredictionsDoc, CfbPrediction, CfbPredictionsDoc, TennisPrediction, TennisPredictionsDoc } from "./types";
+import { Prediction, Game, Health, RecordData, NflPrediction, NflPredictionsDoc, CfbPrediction, CfbPredictionsDoc, TennisPrediction, TennisPredictionsDoc, NhlPrediction, NhlPredictionsDoc } from "./types";
 import TodayScreen from "./components/TodayScreen";
 import GamesScreen from "./components/GamesScreen";
 import StatusScreen from "./components/StatusScreen";
@@ -12,11 +12,12 @@ import RecordScreen from "./components/RecordScreen";
 import NflTodayScreen from "./components/NflTodayScreen";
 import CfbTodayScreen from "./components/CfbTodayScreen";
 import TennisTodayScreen from "./components/TennisTodayScreen";
-import { deduplicatePredictions, deduplicateNflPredictions, deduplicateCfbPredictions, deduplicateTennisPredictions } from "./utils";
+import NhlTodayScreen from "./components/NhlTodayScreen";
+import { deduplicatePredictions, deduplicateNflPredictions, deduplicateCfbPredictions, deduplicateTennisPredictions, deduplicateNhlPredictions } from "./utils";
 import { TrendingUp, Calendar, Activity, ShieldCheck, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
-type TabType = "TODAY" | "GAMES" | "STATUS" | "RECORD" | "NFL" | "CFB" | "TENNIS";
+type TabType = "TODAY" | "GAMES" | "STATUS" | "RECORD" | "NFL" | "CFB" | "TENNIS" | "NHL";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>("TODAY");
@@ -34,6 +35,9 @@ export default function App() {
   const [cfbError, setCfbError] = useState<string | null>(null);
   const [tennisPredictions, setTennisPredictions] = useState<TennisPrediction[]>([]);
   const [tennisError, setTennisError] = useState<string | null>(null);
+  const [nhlPredictions, setNhlPredictions] = useState<NhlPrediction[]>([]);
+  const [nhlGameDate, setNhlGameDate] = useState<string | null>(null);
+  const [nhlError, setNhlError] = useState<string | null>(null);
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -150,17 +154,33 @@ export default function App() {
     }
   };
 
+  // NHL plays near-daily (unlike NFL/CFB's weekly cadence), so its doc is
+  // keyed on a real calendar game_date instead of season/week -- same
+  // one-fetch-per-poll reasoning as NFL/CFB/tennis otherwise.
+  const loadNhlData = async () => {
+    const doc: NhlPredictionsDoc | null = await fetchEndpoint(`/api/nhl-predictions?t=${Date.now()}`);
+    if (doc && Array.isArray(doc.picks)) {
+      setNhlPredictions(deduplicateNhlPredictions(doc.picks));
+      setNhlGameDate(doc.game_date ?? null);
+      setNhlError(null);
+    } else {
+      setNhlError("Unable to connect to Prop Edge NHL predictions server.");
+    }
+  };
+
   useEffect(() => {
     loadWorkspaceData();
     loadNflData();
     loadCfbData();
     loadTennisData();
+    loadNhlData();
     // Poll endpoints every 30 seconds to fetch fresh predictions
     const interval = setInterval(() => {
       loadWorkspaceData();
       loadNflData();
       loadCfbData();
       loadTennisData();
+      loadNhlData();
     }, 30000);
     return () => clearInterval(interval);
   }, []);
@@ -234,6 +254,16 @@ export default function App() {
             loading={loading}
             error={tennisError}
             onRefresh={loadTennisData}
+          />
+        );
+      case "NHL":
+        return (
+          <NhlTodayScreen
+            predictions={nhlPredictions}
+            gameDate={nhlGameDate}
+            loading={loading}
+            error={nhlError}
+            onRefresh={loadNhlData}
           />
         );
       default:
@@ -447,6 +477,30 @@ export default function App() {
               }`}
             >
               Tennis
+            </span>
+          </button>
+
+          {/* NHL Button */}
+          <button
+            id="tab-btn-nhl"
+            onClick={() => setActiveTab("NHL")}
+            className="flex-1 flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
+          >
+            <div className={`w-10 h-6 rounded-full flex items-center justify-center transition-all ${
+              activeTab === "NHL" ? "bg-[#00FF41]/20" : "bg-transparent"
+            }`}>
+              <div className={`w-1.5 h-1.5 rounded-full transition-all ${
+                activeTab === "NHL" ? "bg-[#00FF41] shadow-[0_0_8px_#00FF41]" : "bg-white/40 group-hover:bg-white"
+              }`} />
+            </div>
+            <span
+              className={`text-[10px] font-bold uppercase tracking-tighter transition-colors duration-250 ${
+                activeTab === "NHL"
+                  ? "text-[#00FF41]"
+                  : "text-white opacity-40 group-hover:opacity-80"
+              }`}
+            >
+              NHL
             </span>
           </button>
         </nav>

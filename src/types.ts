@@ -209,6 +209,40 @@ export interface CfbPredictionsDoc {
   picks: CfbPrediction[];
 }
 
+// NHL predictions -- team-level moneyline only (this repo's first and,
+// for now, only NHL market -- see mlb-picks2's nhl_serving_builder_a.py).
+// Unlike CFB/NFL's week-based cadence, NHL plays near-daily, so the doc
+// is keyed on a real calendar game_date instead of season/week.
+export interface NhlPrediction {
+  market: string; // "moneyline" | "moneyline_early_season"
+  prop_type: string; // alias of market, added by the api.py route
+  player_id?: string | null;
+  player: string; // the picked team's own name (team-level pick, no individual player)
+  team: string;
+  opponent: string;
+  season: number;
+  game_date: string; // YYYY-MM-DD
+  pick: string; // e.g. "Boston Bruins ML"
+  model_prob: number; // 0..1
+  prob_pct?: number; // 0..100
+  confidence?: "HIGH" | "MEDIUM" | "LOW";
+  is_home?: number;
+  team_games_played?: number;
+  opp_games_played?: number;
+  generated_at?: string;
+  model_source?: string; // present on moneyline_early_season picks (prior-season-informed bootstrap)
+  prior_season?: number;
+}
+
+export interface NhlPredictionsDoc {
+  generated_at_utc: string | null;
+  season: number | null;
+  game_date: string | null;
+  markets: Record<string, { eligible: number } & Record<string, unknown>>;
+  note?: string;
+  picks: NhlPrediction[];
+}
+
 // Tennis predictions -- structurally different from every other sport here:
 // a match is two players, not one player vs a team, and only two markets
 // ship at all (see mlb-picks2's tennis_serving_builder_a.py):

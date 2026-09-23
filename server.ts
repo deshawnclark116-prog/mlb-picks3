@@ -200,6 +200,18 @@ async function startServer() {
     }
   });
 
+  // API Route - Proxy NHL Predictions
+  app.get("/api/nhl-predictions", async (req, res) => {
+    try {
+      const data = await fetchUpstream("/nhl/predictions");
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+      res.json(data);
+    } catch (error: any) {
+      console.error("[Proxy Server] Error fetching NHL predictions:", error);
+      res.status(502).json({ error: "Failed to fetch NHL predictions from upstream API", details: error.message });
+    }
+  });
+
   // API Route - Proxy Games
   app.get("/api/games", async (req, res) => {
     try {
