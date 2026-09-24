@@ -214,21 +214,24 @@ export interface CfbPredictionsDoc {
 // Unlike CFB/NFL's week-based cadence, NHL plays near-daily, so the doc
 // is keyed on a real calendar game_date instead of season/week.
 export interface NhlPrediction {
-  market: string; // "moneyline" | "moneyline_early_season"
+  market: string; // "moneyline" | "moneyline_early_season" | "points" | "shots_on_goal" | "goalie_saves"
   prop_type: string; // alias of market, added by the api.py route
-  player_id?: string | null;
-  player: string; // the picked team's own name (team-level pick, no individual player)
+  player_id?: string | number | null;
+  player: string; // team name for moneyline picks; the real skater/goalie's name for player-level picks
   team: string;
   opponent: string;
   season: number;
   game_date: string; // YYYY-MM-DD
-  pick: string; // e.g. "Boston Bruins ML"
+  pick: string; // e.g. "Boston Bruins ML", "OVER 2.5", "UNDER 24.5"
   model_prob: number; // 0..1
   prob_pct?: number; // 0..100
+  prob_over?: number; // present on points/shots_on_goal/goalie_saves (two-sided/anytime markets)
   confidence?: "HIGH" | "MEDIUM" | "LOW";
   is_home?: number;
-  team_games_played?: number;
-  opp_games_played?: number;
+  line?: number; // present on points/shots_on_goal/goalie_saves
+  team_games_played?: number; // moneyline only
+  opp_games_played?: number; // moneyline only
+  games_played?: number; // points/shots_on_goal/goalie_saves only
   generated_at?: string;
   model_source?: string; // present on moneyline_early_season picks (prior-season-informed bootstrap)
   prior_season?: number;

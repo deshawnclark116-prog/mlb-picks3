@@ -20,9 +20,18 @@ interface NhlTodayScreenProps {
 const MARKET_LABELS: Record<string, string> = {
   moneyline: "Moneyline",
   moneyline_early_season: "Moneyline (Prior-Season-Informed)",
+  points: "Anytime Point",
+  shots_on_goal: "Shots on Goal",
+  goalie_saves: "Goalie Saves",
 };
 
-type MarketFilter = "ALL" | "moneyline" | "moneyline_early_season";
+type MarketFilter =
+  | "ALL"
+  | "moneyline"
+  | "moneyline_early_season"
+  | "points"
+  | "shots_on_goal"
+  | "goalie_saves";
 
 export default function NhlTodayScreen({
   predictions,
@@ -86,8 +95,9 @@ export default function NhlTodayScreen({
     if (searchQuery.trim() !== "") {
       const q = searchQuery.toLowerCase();
       const teamMatch = pred.team?.toLowerCase().includes(q) || pred.opponent?.toLowerCase().includes(q);
+      const playerMatch = pred.player?.toLowerCase().includes(q);
       const pickMatch = pred.pick?.toLowerCase().includes(q);
-      if (!teamMatch && !pickMatch) return false;
+      if (!teamMatch && !playerMatch && !pickMatch) return false;
     }
     return true;
   });
@@ -200,7 +210,7 @@ export default function NhlTodayScreen({
           <input
             id="nhl-team-search-input"
             type="text"
-            placeholder="Filter by team or pick..."
+            placeholder="Filter by player, team, or pick..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full text-xs bg-[#141414] text-gray-200 pl-8 pr-4 py-2 rounded-xl border border-[#222] focus:border-[#00FF41]/40 focus:outline-none placeholder-gray-700 font-sans transition-all"
@@ -248,7 +258,10 @@ export default function NhlTodayScreen({
         ) : (
           <div id="nhl-picks-list" className="space-y-3">
             <AnimatePresence mode="popLayout">
-              {filteredPredictions.map((pred, idx) => (
+              {filteredPredictions.map((pred, idx) => {
+                const isPlayerMarket = pred.market === "points" || pred.market === "shots_on_goal" || pred.market === "goalie_saves";
+                const gamesPlayed = isPlayerMarket ? pred.games_played : pred.team_games_played;
+                return (
                 <motion.div
                   id={`nhl-pick-card-${idx}`}
                   key={getNhlPredictionKey(pred)}
@@ -261,8 +274,21 @@ export default function NhlTodayScreen({
                   <div className="flex justify-between items-start">
                     <div className="min-w-0 flex-1 pr-2">
                       <h2 className="text-base font-bold text-white leading-tight tracking-tight truncate">
-                        {pred.team} <span className="text-gray-600 font-mono text-xs">vs</span> {pred.opponent}
+                        {isPlayerMarket ? (
+                          <>
+                            {pred.player} <span className="text-gray-500 font-normal text-sm">({pred.team})</span>
+                          </>
+                        ) : (
+                          <>
+                            {pred.team} <span className="text-gray-600 font-mono text-xs">vs</span> {pred.opponent}
+                          </>
+                        )}
                       </h2>
+                      {isPlayerMarket && (
+                        <p className="text-[9px] text-gray-500 font-mono uppercase tracking-wider mt-0.5">
+                          vs {pred.opponent}
+                        </p>
+                      )}
                       <p className="text-[10px] text-gray-400 mt-1">
                         {MARKET_LABELS[pred.market] || pred.market} •{" "}
                         <span className="text-white font-semibold italic">{pred.pick}</span>
@@ -289,7 +315,7 @@ export default function NhlTodayScreen({
                   <div className="grid grid-cols-2 gap-2 mt-3">
                     <div className="bg-[#1C1C1C] rounded-xl p-2.5 border border-[#242424] flex flex-col items-center justify-center text-center">
                       <span className="text-[8px] font-semibold text-gray-500 uppercase tracking-widest font-mono mb-0.5">
-                        Win Probability
+                        {isPlayerMarket ? "Hit Probability" : "Win Probability"}
                       </span>
                       <span className="text-xl font-black font-mono text-[#00FF41] tracking-tight">
                         {pred.prob_pct !== undefined && pred.prob_pct !== null ? `${pred.prob_pct.toFixed(1)}%` : "N/A"}
@@ -302,12 +328,13 @@ export default function NhlTodayScreen({
                       <span className="text-xl font-black font-mono text-white tracking-tight">
                         {pred.model_source === "prior_season_informed"
                           ? pred.prior_season ?? "N/A"
-                          : pred.team_games_played ?? "N/A"}
+                          : gamesPlayed ?? "N/A"}
                       </span>
                     </div>
                   </div>
                 </motion.div>
-              ))}
+                );
+              })}
             </AnimatePresence>
           </div>
         )}
