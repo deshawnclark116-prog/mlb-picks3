@@ -151,7 +151,15 @@ export interface NflPrediction {
   kelly_fraction?: number; // 0..0.25, capped
   projected_median?: number; // simulator's median simulated yards -- always agrees with
   // the pick's OVER/UNDER direction (mean does not, for a boom/bust player)
-  model_source?: string; // "in_season_sim" | "prior_season_sim"
+  model_source?: string; // "in_season_sim" | "prior_season_sim" | "blended_sim" | "classifier_fixed_line"
+  // rushing_yards/receiving_yards only: true when no real book line was matched today
+  // (odds fetch failed/exhausted quota, or not offered) -- the projection above is
+  // still real, just priced against this market's fixed 49.5 line instead of a real
+  // market line, so odds/book/fair_prob/value_edge/kelly_fraction are absent and no
+  // confidence tier is assigned (api.py skips conf_from_prob() for these, same as
+  // tennis's own unagraded picks).
+  unagraded?: boolean;
+  note?: string;
   validation_note?: string;
 }
 

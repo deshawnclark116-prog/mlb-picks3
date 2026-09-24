@@ -453,6 +453,12 @@ export default function NflTodayScreen({
                                   </div>
                                 )}
 
+                                {pred.note && (
+                                  <p className="text-[9px] text-yellow-600/80 font-mono leading-tight border-t border-[#1F1F1F] pt-2">
+                                    {pred.note}
+                                  </p>
+                                )}
+
                                 {pred.validation_note && (
                                   <p className="text-[9px] text-gray-600 font-mono leading-tight border-t border-[#1F1F1F] pt-2">
                                     {pred.validation_note}
