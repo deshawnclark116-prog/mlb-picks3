@@ -399,33 +399,74 @@ export default function NflTodayScreen({
                                   )}
                                 </div>
 
-                                <div className="bg-[#141414] rounded-xl p-2.5 border border-[#222] flex flex-col items-center justify-center text-center shadow-inner">
-                                  <span className="text-[8px] font-semibold text-gray-500 uppercase tracking-widest font-mono mb-0.5">
-                                    Hit Probability
-                                  </span>
-                                  <span className="text-2xl font-black font-mono text-[#00FF41] tracking-tight drop-shadow-[0_0_8px_rgba(0,255,65,0.15)]">
-                                    {pred.prob_pct !== undefined && pred.prob_pct !== null ? `${pred.prob_pct.toFixed(1)}%` : "N/A"}
-                                  </span>
-                                </div>
+                                {pred.line !== undefined && pred.line !== null ? (
+                                  <>
+                                    <div className="bg-[#141414] rounded-xl p-2.5 border border-[#222] flex flex-col items-center justify-center text-center shadow-inner">
+                                      <span className="text-[8px] font-semibold text-gray-500 uppercase tracking-widest font-mono mb-0.5">
+                                        Hit Probability
+                                      </span>
+                                      <span className="text-2xl font-black font-mono text-[#00FF41] tracking-tight drop-shadow-[0_0_8px_rgba(0,255,65,0.15)]">
+                                        {pred.prob_pct !== undefined && pred.prob_pct !== null ? `${pred.prob_pct.toFixed(1)}%` : "N/A"}
+                                      </span>
+                                    </div>
 
-                                <div className="grid grid-cols-3 gap-2 text-center bg-[#141414] p-2 rounded-xl border border-[#222] text-[9.5px] font-mono">
-                                  <div>
-                                    <p className="text-[#555] font-bold uppercase leading-none mb-1">Line</p>
-                                    <p className="text-white font-bold text-xs">{pred.line}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-[#555] font-bold uppercase leading-none mb-1">Projected</p>
-                                    <p className="text-white font-bold text-xs">
-                                      {pred.projected_median !== undefined && pred.projected_median !== null ? pred.projected_median.toFixed(1) : "N/A"}
-                                    </p>
-                                  </div>
-                                  <div>
-                                    <p className="text-[#555] font-bold uppercase leading-none mb-1">Games Played</p>
-                                    <p className="text-white font-bold text-xs">
-                                      {pred.games_played !== undefined && pred.games_played !== null ? pred.games_played : "N/A"}
-                                    </p>
-                                  </div>
-                                </div>
+                                    <div className="grid grid-cols-3 gap-2 text-center bg-[#141414] p-2 rounded-xl border border-[#222] text-[9.5px] font-mono">
+                                      <div>
+                                        <p className="text-[#555] font-bold uppercase leading-none mb-1">Line</p>
+                                        <p className="text-white font-bold text-xs">{pred.line}</p>
+                                      </div>
+                                      <div>
+                                        <p className="text-[#555] font-bold uppercase leading-none mb-1">Projected</p>
+                                        <p className="text-white font-bold text-xs">
+                                          {pred.projected_median !== undefined && pred.projected_median !== null ? pred.projected_median.toFixed(1) : "N/A"}
+                                        </p>
+                                      </div>
+                                      <div>
+                                        <p className="text-[#555] font-bold uppercase leading-none mb-1">Games Played</p>
+                                        <p className="text-white font-bold text-xs">
+                                          {pred.games_played !== undefined && pred.games_played !== null ? pred.games_played : "N/A"}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </>
+                                ) : (
+                                  // No real book line matched today -- there's no bet to grade a
+                                  // hit-probability or line against, so this shows the model's own
+                                  // real projected yardage directly instead (see nfl_serving_
+                                  // builder_a.py's make_real_odds_pick): a per-player number, not a
+                                  // shared round-number line everyone gets compared against.
+                                  <>
+                                    <div className="bg-[#141414] rounded-xl p-2.5 border border-[#222] flex flex-col items-center justify-center text-center shadow-inner">
+                                      <span className="text-[8px] font-semibold text-gray-500 uppercase tracking-widest font-mono mb-0.5">
+                                        Projected Yards
+                                      </span>
+                                      <span className="text-2xl font-black font-mono text-[#00FF41] tracking-tight drop-shadow-[0_0_8px_rgba(0,255,65,0.15)]">
+                                        {pred.projected_median !== undefined && pred.projected_median !== null ? pred.projected_median.toFixed(0) : "N/A"}
+                                      </span>
+                                    </div>
+
+                                    <div className="grid grid-cols-3 gap-2 text-center bg-[#141414] p-2 rounded-xl border border-[#222] text-[9.5px] font-mono">
+                                      <div>
+                                        <p className="text-[#555] font-bold uppercase leading-none mb-1">Low (p10)</p>
+                                        <p className="text-white font-bold text-xs">
+                                          {pred.projected_low !== undefined && pred.projected_low !== null ? pred.projected_low.toFixed(0) : "N/A"}
+                                        </p>
+                                      </div>
+                                      <div>
+                                        <p className="text-[#555] font-bold uppercase leading-none mb-1">High (p90)</p>
+                                        <p className="text-white font-bold text-xs">
+                                          {pred.projected_high !== undefined && pred.projected_high !== null ? pred.projected_high.toFixed(0) : "N/A"}
+                                        </p>
+                                      </div>
+                                      <div>
+                                        <p className="text-[#555] font-bold uppercase leading-none mb-1">Games Played</p>
+                                        <p className="text-white font-bold text-xs">
+                                          {pred.games_played !== undefined && pred.games_played !== null ? pred.games_played : "N/A"}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </>
+                                )}
 
                                 {/* Real book line + edge/kelly -- only rushing_yards/
                                     receiving_yards picks carry these (a real market

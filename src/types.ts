@@ -132,9 +132,13 @@ export interface NflPrediction {
   opponent?: string;
   season: number;
   week: number;
-  line: number;
-  pick: string; // e.g. "OVER 49.5"
-  model_prob: number; // 0..1
+  // rushing_yards/receiving_yards: absent when no real book line was matched today
+  // (see unagraded below) -- there's no line to show or a probability to grade
+  // against one, just the model's own projected_median/mean/low/high instead.
+  // sacks and any real-line yardage pick always have both.
+  line?: number;
+  pick: string; // e.g. "OVER 49.5" (real line or classifier) or "Projected 76 yards" (no real line)
+  model_prob?: number; // 0..1
   prob_pct?: number; // 0..100, e.g. 64.5 meaning 64.5%
   prob_over?: number;
   confidence?: "HIGH" | "MEDIUM" | "LOW";
@@ -151,15 +155,13 @@ export interface NflPrediction {
   kelly_fraction?: number; // 0..0.25, capped
   projected_median?: number; // simulator's median simulated yards -- always agrees with
   // the pick's OVER/UNDER direction (mean does not, for a boom/bust player)
-  model_source?: string; // "in_season_sim" | "prior_season_sim" | "blended_sim" | "classifier_fixed_line"
-  // rushing_yards/receiving_yards only: true when no real book line was matched today
-  // (odds fetch failed/exhausted quota, or not offered) -- the projection above is
-  // still real, just priced against this market's fixed 49.5 line instead of a real
-  // market line, so odds/book/fair_prob/value_edge/kelly_fraction are absent and no
-  // confidence tier is assigned (api.py skips conf_from_prob() for these, same as
-  // tennis's own unagraded picks).
-  unagraded?: boolean;
+  projected_mean?: number; // no-real-line picks only
+  projected_low?: number; // p10 of the simulated distribution -- no-real-line picks only
+  projected_high?: number; // p90 of the simulated distribution -- no-real-line picks only
+  unagraded?: boolean; // true when no real book line was matched -- pick is a real
+  // projection, not a bet; no confidence tier assigned (api.py skips conf_from_prob())
   note?: string;
+  model_source?: string; // "in_season_sim" | "prior_season_sim" | "blended_sim" | "classifier_fixed_line"
   validation_note?: string;
 }
 
