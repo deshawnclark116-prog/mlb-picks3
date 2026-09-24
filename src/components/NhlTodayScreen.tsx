@@ -21,7 +21,9 @@ const MARKET_LABELS: Record<string, string> = {
   moneyline: "Moneyline",
   moneyline_early_season: "Moneyline (Prior-Season-Informed)",
   points: "Anytime Point",
+  points_early_season: "Anytime Point (Prior-Season-Informed)",
   shots_on_goal: "Shots on Goal",
+  shots_on_goal_early_season: "Shots on Goal (Prior-Season-Informed)",
   goalie_saves: "Goalie Saves",
 };
 
@@ -30,7 +32,9 @@ type MarketFilter =
   | "moneyline"
   | "moneyline_early_season"
   | "points"
+  | "points_early_season"
   | "shots_on_goal"
+  | "shots_on_goal_early_season"
   | "goalie_saves";
 
 export default function NhlTodayScreen({
@@ -259,7 +263,8 @@ export default function NhlTodayScreen({
           <div id="nhl-picks-list" className="space-y-3">
             <AnimatePresence mode="popLayout">
               {filteredPredictions.map((pred, idx) => {
-                const isPlayerMarket = pred.market === "points" || pred.market === "shots_on_goal" || pred.market === "goalie_saves";
+                const isPlayerMarket = ["points", "points_early_season", "shots_on_goal",
+                  "shots_on_goal_early_season", "goalie_saves"].includes(pred.market);
                 const gamesPlayed = isPlayerMarket ? pred.games_played : pred.team_games_played;
                 return (
                 <motion.div
