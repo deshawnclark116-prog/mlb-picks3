@@ -276,8 +276,11 @@ export interface TennisPrediction {
   pick: string; // e.g. "UNDER 40.0" (total_games) or "Carlos Alcaraz 3-1" (set_betting)
   model_prob: number; // 0..1
   prob_pct?: number; // 0..100
-  confidence?: "HIGH" | "MEDIUM" | "LOW"; // total_games only -- real market line behind it
-  unagraded?: boolean; // set_betting only -- no real market to grade against
+  confidence?: "HIGH" | "MEDIUM" | "LOW"; // only when a real market line backs the pick (see unagraded)
+  unagraded?: boolean; // true for set_betting always, and for total_games whenever no real book
+                        // line was matched today (odds fetch failed, or not offered) -- the pick
+                        // is still the model's own real projection, just not graded against a market
+  model_source?: string; // "real_book_line" | "model_projected_line" (total_games only)
   note?: string;
   // total_games only:
   line?: number;
