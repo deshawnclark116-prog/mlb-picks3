@@ -63,10 +63,17 @@ const MARKET_LABELS: Record<string, string> = {
 // season's per-play history when they don't (weeks 1-3, the common
 // case for a rested veteran or anyone before week 4). Each pick's
 // model_source says which one priced it against the real book line.
+// classifier_fixed_line is a different, older fallback: the frozen
+// champion classifier against a fixed 49.5 line, used whenever no real
+// book line was matched for that player today (odds API down, out of
+// quota, or that player just isn't offered) -- a real prediction, not a
+// fabricated one, just without a real book price to show odds/edge/
+// kelly against.
 const MODEL_SOURCE_LABELS: Record<string, string> = {
   in_season_sim: "This Season",
   prior_season_sim: "Prior Season",
   blended_sim: "Blended",
+  classifier_fixed_line: "No Real Line Today",
 };
 
 type MarketFilter = "ALL" | "rushing_yards" | "receiving_yards" | "sacks" | "anytime_touchdowns" | "anytime_touchdowns_early_season";
