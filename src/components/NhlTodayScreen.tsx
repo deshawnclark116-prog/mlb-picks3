@@ -5,9 +5,44 @@
 
 import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { TrendingUp, RefreshCw, AlertTriangle, Search } from "lucide-react";
+import { TrendingUp, RefreshCw, AlertTriangle, Search, ChevronDown, ChevronUp } from "lucide-react";
 import { NhlPrediction } from "../types";
 import { getNhlPredictionKey, getLatestGeneratedAt } from "../utils";
+
+// Groups a flat list of picks into one card per real-world game, matching
+// CfbTodayScreen/NflTodayScreen's treatment -- NHL predictions carry team/
+// opponent per pick (no separate schedule feed), and now that points/
+// shots_on_goal/goalie_saves/moneyline can all fire for the same game at
+// once (243 picks on a 5-game slate isn't unusual), a flat list of
+// ungrouped cards doesn't scale the way it did when NHL only had a
+// handful of moneyline-only picks a day. Keyed on the unordered team pair
+// since a single game produces picks for both sides (and both team-level
+// moneyline picks and player-level prop picks together).
+interface NhlGameGroup {
+  key: string;
+  teamA: string;
+  teamB: string;
+  season: number;
+  game_date: string;
+  predictions: NhlPrediction[];
+}
+
+function groupPredictionsByGame(preds: NhlPrediction[]): NhlGameGroup[] {
+  const map = new Map<string, NhlGameGroup>();
+  for (const p of preds) {
+    if (!p.team || !p.opponent) continue;
+    const key = [p.team, p.opponent].sort().join("__");
+    let group = map.get(key);
+    if (!group) {
+      group = { key, teamA: p.team, teamB: p.opponent, season: p.season, game_date: p.game_date, predictions: [] };
+      map.set(key, group);
+    }
+    group.predictions.push(p);
+  }
+  return Array.from(map.values()).sort(
+    (a, b) => (b.predictions[0]?.prob_pct ?? 0) - (a.predictions[0]?.prob_pct ?? 0)
+  );
+}
 
 interface NhlTodayScreenProps {
   predictions: NhlPrediction[];
@@ -26,6 +61,9 @@ const MARKET_LABELS: Record<string, string> = {
   shots_on_goal_early_season: "Shots on Goal (Prior-Season-Informed)",
   goalie_saves: "Goalie Saves",
 };
+
+const PLAYER_MARKETS = ["points", "points_early_season", "shots_on_goal",
+  "shots_on_goal_early_season", "goalie_saves"];
 
 type MarketFilter =
   | "ALL"
@@ -49,6 +87,11 @@ export default function NhlTodayScreen({
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullY, setPullY] = useState(0);
+  const [expandedGameKey, setExpandedGameKey] = useState<string | null>(null);
+
+  const toggleExpand = (key: string) => {
+    setExpandedGameKey((cur) => (cur === key ? null : key));
+  };
 
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStartY = useRef<number>(0);
@@ -106,6 +149,8 @@ export default function NhlTodayScreen({
     return true;
   });
 
+  const gameGroups = groupPredictionsByGame(filteredPredictions);
+
   return (
     <div
       id="nhl-today-screen-wrapper"
@@ -131,7 +176,7 @@ export default function NhlTodayScreen({
             PROP <span className="text-[#00FF41]">EDGE</span>
           </h1>
           <p className="text-[9px] text-gray-500 uppercase tracking-widest mt-0.5 font-mono">
-            NHL Moneyline{gameDate ? ` • ${gameDate}` : ""}
+            NHL{gameDate ? ` • ${gameDate}` : ""}
           </p>
           {getLatestGeneratedAt(predictions) && (
             <p className="text-[8px] text-[#00FF41]/80 font-mono mt-1 uppercase tracking-wider">
@@ -229,7 +274,7 @@ export default function NhlTodayScreen({
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        className="flex-1 overflow-y-auto px-4 py-4 space-y-3 pb-28 scroll-smooth no-scrollbar"
+        className="flex-1 overflow-y-auto px-4 py-4 space-y-4 pb-28 scroll-smooth no-scrollbar"
       >
         {loading && predictions.length === 0 ? (
           <div id="nhl-loading-spinner-state" className="flex flex-col items-center justify-center py-20 space-y-3">
@@ -250,7 +295,7 @@ export default function NhlTodayScreen({
               Retry Sync
             </button>
           </div>
-        ) : filteredPredictions.length === 0 ? (
+        ) : gameGroups.length === 0 ? (
           <div id="nhl-empty-predictions-state" className="flex flex-col items-center justify-center py-16 px-4 text-center rounded-3xl border border-dashed border-[#222] bg-[#141414]/30">
             <TrendingUp className="w-8 h-8 text-gray-700 mb-3" />
             <h3 className="text-gray-300 text-sm font-semibold mb-1">No NHL picks found.</h3>
@@ -260,84 +305,134 @@ export default function NhlTodayScreen({
             </p>
           </div>
         ) : (
-          <div id="nhl-picks-list" className="space-y-3">
+          <div id="nhl-games-list" className="space-y-4">
             <AnimatePresence mode="popLayout">
-              {filteredPredictions.map((pred, idx) => {
-                const isPlayerMarket = ["points", "points_early_season", "shots_on_goal",
-                  "shots_on_goal_early_season", "goalie_saves"].includes(pred.market);
-                const gamesPlayed = isPlayerMarket ? pred.games_played : pred.team_games_played;
+              {gameGroups.map((game, idx) => {
+                const isExpanded = expandedGameKey === game.key;
                 return (
-                <motion.div
-                  id={`nhl-pick-card-${idx}`}
-                  key={getNhlPredictionKey(pred)}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.22, delay: Math.min(idx * 0.03, 0.3) }}
-                  className="bg-[#141414] rounded-3xl p-5 border border-[#1F1F1F] hover:border-gray-800 transition-all duration-200"
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="min-w-0 flex-1 pr-2">
-                      <h2 className="text-base font-bold text-white leading-tight tracking-tight truncate">
-                        {isPlayerMarket ? (
-                          <>
-                            {pred.player} <span className="text-gray-500 font-normal text-sm">({pred.team})</span>
-                          </>
-                        ) : (
-                          <>
-                            {pred.team} <span className="text-gray-600 font-mono text-xs">vs</span> {pred.opponent}
-                          </>
-                        )}
-                      </h2>
-                      {isPlayerMarket && (
-                        <p className="text-[9px] text-gray-500 font-mono uppercase tracking-wider mt-0.5">
-                          vs {pred.opponent}
+                  <motion.div
+                    id={`nhl-game-card-${idx}`}
+                    key={game.key}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.22, delay: Math.min(idx * 0.03, 0.3) }}
+                    onClick={() => toggleExpand(game.key)}
+                    className={`bg-[#141414] rounded-3xl p-5 border cursor-pointer select-none transition-all duration-200 flex flex-col ${
+                      isExpanded ? "border-[#00FF41]/40 shadow-[0_0_15px_rgba(0,255,65,0.04)] bg-[#171717]" : "border-[#1F1F1F] hover:border-gray-800"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex-1 min-w-0">
+                        <h2 className="text-lg font-bold text-white leading-tight tracking-tight truncate">
+                          {game.teamA} <span className="text-gray-600 font-mono text-sm">vs</span> {game.teamB}
+                        </h2>
+                        <p className="text-[10px] text-gray-500 font-mono uppercase tracking-wider mt-1">
+                          {game.season}-{game.season + 1} • {game.game_date}
                         </p>
-                      )}
-                      <p className="text-[10px] text-gray-400 mt-1">
-                        {MARKET_LABELS[pred.market] || pred.market} •{" "}
-                        <span className="text-white font-semibold italic">{pred.pick}</span>
-                      </p>
-                      <p className="text-[9px] text-gray-500 font-mono uppercase tracking-wider mt-1">
-                        {pred.season}-{pred.season + 1} • {pred.game_date}
-                      </p>
+                      </div>
+                      <div className="flex flex-col items-end gap-1.5 shrink-0 pl-4">
+                        <span className="text-[9px] font-black px-2 py-0.5 rounded border tracking-wider font-mono uppercase bg-[#252525] text-gray-400 border-[#333]">
+                          {game.predictions.length} {game.predictions.length === 1 ? "PICK" : "PICKS"}
+                        </span>
+                      </div>
                     </div>
-                    {pred.confidence && (
-                      <span
-                        className={`text-[8px] uppercase font-mono font-bold tracking-wider px-1.5 py-0.5 border rounded shrink-0 ${
-                          pred.confidence === "HIGH"
-                            ? "bg-[#00FF41]/10 text-[#00FF41] border-[#00FF41]/20"
-                            : pred.confidence === "MEDIUM"
-                            ? "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
-                            : "bg-zinc-500/10 text-zinc-400 border-zinc-500/20"
-                        }`}
-                      >
-                        {pred.confidence}
-                      </span>
-                    )}
-                  </div>
 
-                  <div className="grid grid-cols-2 gap-2 mt-3">
-                    <div className="bg-[#1C1C1C] rounded-xl p-2.5 border border-[#242424] flex flex-col items-center justify-center text-center">
-                      <span className="text-[8px] font-semibold text-gray-500 uppercase tracking-widest font-mono mb-0.5">
-                        {isPlayerMarket ? "Hit Probability" : "Win Probability"}
-                      </span>
-                      <span className="text-xl font-black font-mono text-[#00FF41] tracking-tight">
-                        {pred.prob_pct !== undefined && pred.prob_pct !== null ? `${pred.prob_pct.toFixed(1)}%` : "N/A"}
-                      </span>
+                    <div className="flex justify-center mt-3 pt-2 border-t border-[#1F1F1F]/50">
+                      {isExpanded ? (
+                        <ChevronUp className="w-4 h-4 text-gray-500" />
+                      ) : (
+                        <ChevronDown className="w-4 h-4 text-gray-500" />
+                      )}
                     </div>
-                    <div className="bg-[#1C1C1C] rounded-xl p-2.5 border border-[#242424] flex flex-col items-center justify-center text-center">
-                      <span className="text-[8px] font-semibold text-gray-500 uppercase tracking-widest font-mono mb-0.5">
-                        {pred.model_source === "prior_season_informed" ? "Prior Season" : "Games Played"}
-                      </span>
-                      <span className="text-xl font-black font-mono text-white tracking-tight">
-                        {pred.model_source === "prior_season_informed"
-                          ? pred.prior_season ?? "N/A"
-                          : gamesPlayed ?? "N/A"}
-                      </span>
-                    </div>
-                  </div>
-                </motion.div>
+
+                    <AnimatePresence initial={false}>
+                      {isExpanded && (
+                        <motion.div
+                          id={`nhl-game-picks-expanded-${idx}`}
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.22, ease: "easeInOut" }}
+                          className="overflow-hidden mt-4 pt-4 border-t border-[#1F1F1F] w-full"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <div className="space-y-3 pb-1">
+                            {game.predictions.map((pred) => {
+                              const isPlayerMarket = PLAYER_MARKETS.includes(pred.market);
+                              const gamesPlayed = isPlayerMarket ? pred.games_played : pred.team_games_played;
+                              return (
+                                <div
+                                  key={getNhlPredictionKey(pred)}
+                                  className="bg-[#1C1C1C] rounded-2xl p-4 border border-[#242424] space-y-3"
+                                >
+                                  <div className="flex justify-between items-start">
+                                    <div className="min-w-0 flex-1 pr-2">
+                                      <h4 className="text-sm font-bold text-white tracking-tight truncate">
+                                        {isPlayerMarket ? (
+                                          <>
+                                            {pred.player}
+                                            <span className="text-gray-500 font-normal"> ({pred.team})</span>
+                                          </>
+                                        ) : (
+                                          pred.team
+                                        )}
+                                      </h4>
+                                      <p className="text-[10px] text-gray-400 mt-0.5">
+                                        {MARKET_LABELS[pred.market] || pred.market} •{" "}
+                                        <span className="text-white font-semibold italic">{pred.pick}</span>
+                                      </p>
+                                    </div>
+                                    {pred.confidence && (
+                                      <span
+                                        className={`text-[8px] uppercase font-mono font-bold tracking-wider px-1.5 py-0.5 border rounded shrink-0 ${
+                                          pred.confidence === "HIGH"
+                                            ? "bg-[#00FF41]/10 text-[#00FF41] border-[#00FF41]/20"
+                                            : pred.confidence === "MEDIUM"
+                                            ? "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
+                                            : "bg-zinc-500/10 text-zinc-400 border-zinc-500/20"
+                                        }`}
+                                      >
+                                        {pred.confidence}
+                                      </span>
+                                    )}
+                                  </div>
+
+                                  <div className="bg-[#141414] rounded-xl p-2.5 border border-[#222] flex flex-col items-center justify-center text-center shadow-inner">
+                                    <span className="text-[8px] font-semibold text-gray-500 uppercase tracking-widest font-mono mb-0.5">
+                                      {isPlayerMarket ? "Hit Probability" : "Win Probability"}
+                                    </span>
+                                    <span className="text-2xl font-black font-mono text-[#00FF41] tracking-tight drop-shadow-[0_0_8px_rgba(0,255,65,0.15)]">
+                                      {pred.prob_pct !== undefined && pred.prob_pct !== null ? `${pred.prob_pct.toFixed(1)}%` : "N/A"}
+                                    </span>
+                                  </div>
+
+                                  <div className="grid grid-cols-2 gap-2 text-center bg-[#141414] p-2 rounded-xl border border-[#222] text-[9.5px] font-mono">
+                                    <div>
+                                      <p className="text-[#555] font-bold uppercase leading-none mb-1">
+                                        {pred.model_source === "prior_season_informed" ? "Prior Season" : "Games Played"}
+                                      </p>
+                                      <p className="text-white font-bold text-xs">
+                                        {pred.model_source === "prior_season_informed"
+                                          ? pred.prior_season ?? "N/A"
+                                          : gamesPlayed ?? "N/A"}
+                                      </p>
+                                    </div>
+                                    {pred.line !== undefined && pred.line !== null && (
+                                      <div>
+                                        <p className="text-[#555] font-bold uppercase leading-none mb-1">Line</p>
+                                        <p className="text-white font-bold text-xs">{pred.line}</p>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
                 );
               })}
             </AnimatePresence>
