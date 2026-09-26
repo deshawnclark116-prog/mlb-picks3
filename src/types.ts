@@ -189,6 +189,13 @@ export interface CfbPrediction {
   opponent?: string;
   season: number;
   week: number;
+  // Real kickoff timestamp (ISO 8601 UTC, e.g. "2026-09-26T16:00:00.000Z")
+  // from cfbfastR-data's own schedule -- added so games can be ordered by
+  // actual kickoff time instead of by model confidence, which is all a
+  // week's picks had to sort by before this existed (found live
+  // 2026-09-26). Absent only if the raw schedule row itself had no
+  // start_date (shouldn't happen for a real, already-scheduled game).
+  kickoff_utc?: string;
   line: number;
   pick: string; // e.g. "OVER 69.5"
   model_prob: number; // 0..1
