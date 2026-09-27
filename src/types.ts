@@ -132,6 +132,10 @@ export interface NflPrediction {
   opponent?: string;
   season: number;
   week: number;
+  // Real kickoff timestamp (ISO 8601 UTC), same as CfbPrediction's --
+  // added so games can be ordered by actual kickoff time instead of by
+  // model confidence.
+  kickoff_utc?: string;
   // rushing_yards/receiving_yards: absent when no real book line was matched today
   // (see unagraded below) -- there's no line to show or a probability to grade
   // against one, just the model's own projected_median/mean/low/high instead.
@@ -239,6 +243,10 @@ export interface NhlPrediction {
   opponent: string;
   season: number;
   game_date: string; // YYYY-MM-DD
+  // Real kickoff timestamp (ISO 8601 UTC), same as CfbPrediction's --
+  // added so games can be ordered by actual puck-drop time instead of by
+  // model confidence.
+  kickoff_utc?: string;
   pick: string; // e.g. "Boston Bruins ML", "OVER 2.5", "UNDER 24.5"
   model_prob: number; // 0..1
   prob_pct?: number; // 0..100

@@ -24,6 +24,7 @@ interface NhlGameGroup {
   teamB: string;
   season: number;
   game_date: string;
+  kickoff_utc?: string;
   predictions: NhlPrediction[];
 }
 
@@ -34,14 +35,31 @@ function groupPredictionsByGame(preds: NhlPrediction[]): NhlGameGroup[] {
     const key = [p.team, p.opponent].sort().join("__");
     let group = map.get(key);
     if (!group) {
-      group = { key, teamA: p.team, teamB: p.opponent, season: p.season, game_date: p.game_date, predictions: [] };
+      group = {
+        key, teamA: p.team, teamB: p.opponent, season: p.season, game_date: p.game_date,
+        kickoff_utc: p.kickoff_utc, predictions: [],
+      };
       map.set(key, group);
+    } else if (!group.kickoff_utc && p.kickoff_utc) {
+      group.kickoff_utc = p.kickoff_utc;
     }
     group.predictions.push(p);
   }
-  return Array.from(map.values()).sort(
-    (a, b) => (b.predictions[0]?.prob_pct ?? 0) - (a.predictions[0]?.prob_pct ?? 0)
+  // Real kickoff time first, same fix as CFB/NFL's (found live
+  // 2026-09-27, user asked why every sport wasn't fixed alongside CFB).
+  return Array.from(map.values()).sort((a, b) =>
+    (a.kickoff_utc || "9999").localeCompare(b.kickoff_utc || "9999")
   );
+}
+
+function formatKickoff(iso?: string): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return null;
+  return d.toLocaleString("en-US", {
+    weekday: "short", month: "short", day: "numeric",
+    hour: "numeric", minute: "2-digit", hour12: true, timeZone: "America/New_York",
+  });
 }
 
 interface NhlTodayScreenProps {
@@ -328,7 +346,7 @@ export default function NhlTodayScreen({
                           {game.teamA} <span className="text-gray-600 font-mono text-sm">vs</span> {game.teamB}
                         </h2>
                         <p className="text-[10px] text-gray-500 font-mono uppercase tracking-wider mt-1">
-                          {game.season}-{game.season + 1} • {game.game_date}
+                          {formatKickoff(game.kickoff_utc) || `${game.season}-${game.season + 1} • ${game.game_date}`}
                         </p>
                       </div>
                       <div className="flex flex-col items-end gap-1.5 shrink-0 pl-4">

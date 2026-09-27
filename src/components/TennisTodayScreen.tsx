@@ -37,6 +37,7 @@ interface TennisMatchGroup {
   surface: string;
   surface_confirmed: boolean;
   best_of: number;
+  start_time_utc?: string;
   predictions: TennisPrediction[];
 }
 
@@ -58,15 +59,30 @@ function groupPredictionsByMatch(preds: TennisPrediction[]): TennisMatchGroup[] 
         surface: p.surface,
         surface_confirmed: p.surface_confirmed,
         best_of: p.best_of,
+        start_time_utc: p.start_time_utc,
         predictions: [],
       };
       map.set(key, group);
     }
     group.predictions.push(p);
   }
-  return Array.from(map.values()).sort(
-    (a, b) => (b.predictions[0]?.prob_pct ?? 0) - (a.predictions[0]?.prob_pct ?? 0)
+  // Real start time first, same as CFB/NFL/NHL -- the backend already
+  // carried start_time_utc on every pick, it just wasn't being sorted by
+  // (found live 2026-09-27, user asked why every sport wasn't fixed
+  // alongside CFB).
+  return Array.from(map.values()).sort((a, b) =>
+    (a.start_time_utc || "9999").localeCompare(b.start_time_utc || "9999")
   );
+}
+
+function formatMatchTime(iso?: string): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return null;
+  return d.toLocaleString("en-US", {
+    weekday: "short", month: "short", day: "numeric",
+    hour: "numeric", minute: "2-digit", hour12: true, timeZone: "America/New_York",
+  });
 }
 
 export default function TennisTodayScreen({
@@ -337,6 +353,11 @@ export default function TennisTodayScreen({
                           )}
                           {" "}• Bo{match.best_of}
                         </p>
+                        {formatMatchTime(match.start_time_utc) && (
+                          <p className="text-[9px] text-gray-600 font-mono uppercase tracking-wider mt-0.5">
+                            {formatMatchTime(match.start_time_utc)}
+                          </p>
+                        )}
                       </div>
                       <div className="flex flex-col items-end gap-1.5 shrink-0 pl-4">
                         <span className="text-[9px] font-black px-2 py-0.5 rounded border tracking-wider font-mono uppercase bg-[#252525] text-gray-400 border-[#333]">
