@@ -165,8 +165,15 @@ export interface NflPrediction {
   unagraded?: boolean; // true when no real book line was matched -- pick is a real
   // projection, not a bet; no confidence tier assigned (api.py skips conf_from_prob())
   note?: string;
-  model_source?: string; // "in_season_sim" | "prior_season_sim" | "blended_sim" | "classifier_fixed_line"
+  model_source?: string; // "in_season_sim" | "prior_season_sim" | "blended_sim" | "classifier_fixed_line" | "v2_context" | "v4_context"
   validation_note?: string;
+  // FanDuel's real pregame line/odds, shown next to our number (display
+  // only -- the model never sees it).
+  fanduel_line?: number;
+  fanduel_over_odds?: number;
+  vs_fanduel?: number; // our projection minus FanDuel's line
+  fanduel_td_odds?: number;
+  fanduel_td_implied?: number; // 0..1
 }
 
 export interface NflPredictionsDoc {

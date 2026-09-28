@@ -92,6 +92,8 @@ const MODEL_SOURCE_LABELS: Record<string, string> = {
   prior_season_sim: "Prior Season",
   blended_sim: "Blended",
   classifier_fixed_line: "No Real Line Today",
+  v2_context: "Context Model",
+  v4_context: "Red-Zone + Defense Model",
 };
 
 type MarketFilter = "ALL" | "rushing_yards" | "receiving_yards" | "sacks" | "anytime_touchdowns" | "anytime_touchdowns_early_season";
@@ -484,6 +486,48 @@ export default function NflTodayScreen({
                                       </div>
                                     </div>
                                   </>
+                                )}
+
+                                {/* FanDuel's own number next to ours -- display only. */}
+                                {pred.fanduel_line !== undefined && pred.fanduel_line !== null && (
+                                  <div className="grid grid-cols-3 gap-2 text-center bg-[#141414] p-2 rounded-xl border border-[#222] text-[9.5px] font-mono">
+                                    <div>
+                                      <p className="text-[#555] font-bold uppercase leading-none mb-1">Ours</p>
+                                      <p className="text-white font-bold text-xs">
+                                        {pred.projected_median !== undefined && pred.projected_median !== null ? pred.projected_median.toFixed(0) : "N/A"}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <p className="text-[#555] font-bold uppercase leading-none mb-1">FanDuel</p>
+                                      <p className="text-white font-bold text-xs">{pred.fanduel_line}</p>
+                                    </div>
+                                    <div>
+                                      <p className="text-[#555] font-bold uppercase leading-none mb-1">Difference</p>
+                                      <p className={`font-bold text-xs ${(pred.vs_fanduel ?? 0) >= 0 ? "text-[#00FF41]" : "text-red-400"}`}>
+                                        {pred.vs_fanduel !== undefined && pred.vs_fanduel !== null ? `${pred.vs_fanduel > 0 ? "+" : ""}${pred.vs_fanduel.toFixed(1)}` : "N/A"}
+                                      </p>
+                                    </div>
+                                  </div>
+                                )}
+                                {pred.fanduel_td_odds !== undefined && pred.fanduel_td_odds !== null && (
+                                  <div className="grid grid-cols-3 gap-2 text-center bg-[#141414] p-2 rounded-xl border border-[#222] text-[9.5px] font-mono">
+                                    <div>
+                                      <p className="text-[#555] font-bold uppercase leading-none mb-1">Ours</p>
+                                      <p className="text-white font-bold text-xs">
+                                        {pred.model_prob !== undefined && pred.model_prob !== null ? `${(pred.model_prob * 100).toFixed(0)}%` : "N/A"}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <p className="text-[#555] font-bold uppercase leading-none mb-1">FanDuel</p>
+                                      <p className="text-white font-bold text-xs">
+                                        {pred.fanduel_td_implied !== undefined && pred.fanduel_td_implied !== null ? `${(pred.fanduel_td_implied * 100).toFixed(0)}%` : "N/A"}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <p className="text-[#555] font-bold uppercase leading-none mb-1">FD Odds</p>
+                                      <p className="text-white font-bold text-xs">{formatOdds(pred.fanduel_td_odds)}</p>
+                                    </div>
+                                  </div>
                                 )}
 
                                 {/* Real book line + edge/kelly -- only rushing_yards/
