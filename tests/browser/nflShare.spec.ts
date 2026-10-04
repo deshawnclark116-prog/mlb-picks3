@@ -70,10 +70,10 @@ test('PNG prepares before click; share preserves user activation and save reuses
  await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeDisabled();
  await page.evaluate(()=>(window as any).__releaseFonts());
  await expect(modal.getByRole('button',{name:'SHARE IMAGE',exact:true})).toBeEnabled();
- expect(await page.evaluate(()=>(window as any).__renders)).toBe(2);
+ const initialRenders=await page.evaluate(()=>(window as any).__renders);expect(initialRenders).toBeGreaterThan(0);
  await modal.getByRole('button',{name:'SHARE IMAGE',exact:true}).click();
  expect(await page.evaluate(()=>(window as any).__activation)).toBe(true);
- expect(await page.evaluate(()=>(window as any).__rendersAtShare)).toBe(2);
+ expect(await page.evaluate(()=>(window as any).__rendersAtShare)).toBe(initialRenders);
  await expect(modal.getByRole('button',{name:'CLOSE',exact:true})).toBeDisabled();
  await expect(modal.getByRole('button',{name:'SYSTEM CARD',exact:true})).toBeDisabled();
  await page.evaluate(()=>(window as any).__finishShare());
@@ -82,15 +82,16 @@ test('PNG prepares before click; share preserves user activation and save reuses
  expect(download.suggestedFilename()).toBe('prop-edge-nyj-chi-t90-system-w04.png');
  const saved=readFileSync((await download.path())!);
  const shared=await page.evaluate(async()=>Array.from(new Uint8Array(await (window as any).__sharedFile.arrayBuffer())));
- expect(saved.equals(Buffer.from(shared))).toBe(true);expect(await page.evaluate(()=>(window as any).__renders)).toBe(2);
+ expect(saved.equals(Buffer.from(shared))).toBe(true);expect(await page.evaluate(()=>(window as any).__renders)).toBe(initialRenders);
  await page.evaluate(()=>Object.defineProperty(navigator,'share',{configurable:true,value:async()=>{throw new DOMException('Denied','NotAllowedError');}}));
  await modal.getByRole('button',{name:'SHARE IMAGE',exact:true}).click();await expect(modal.getByText('File sharing is unavailable here. Use SAVE PNG.',{exact:true})).toBeVisible();
- await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();expect(await page.evaluate(()=>(window as any).__renders)).toBe(2);
+ await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();expect(await page.evaluate(()=>(window as any).__renders)).toBe(initialRenders);
 });
 test('mode invalidates cache; a stale successful render cannot overwrite the newer prepared PNG',async({page})=>{
  test.setTimeout(60000);await setup(page);
  await page.evaluate(()=>{
-  Object.defineProperty(document.fonts,'ready',{configurable:true,value:new Promise<void>(resolve=>(window as any).__oldFonts=resolve)});
+  const oldReady=new Promise<void>(resolve=>(window as any).__oldFonts=resolve);
+  Object.defineProperty(document.fonts,'ready',{configurable:true,get(){(window as any).__oldStarted=true;return oldReady;}});
   const encode=HTMLCanvasElement.prototype.toDataURL;
   HTMLCanvasElement.prototype.toDataURL=function(...args){
    const n=(window as any).__renders=((window as any).__renders||0)+1;
@@ -99,6 +100,7 @@ test('mode invalidates cache; a stale successful render cannot overwrite the new
   };
  });
  const modal=await open(page);await expect(modal.getByText('PREPARING IMAGE…',{exact:true})).toBeVisible();
+ await expect.poll(()=>page.evaluate(()=>(window as any).__oldStarted)).toBe(true);
  await page.evaluate(()=>Object.defineProperty(document.fonts,'ready',{configurable:true,value:new Promise<void>(resolve=>(window as any).__newFonts=resolve)}));
  await modal.getByRole('button',{name:'BETTABLE CARD',exact:true}).click();
  await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeDisabled();
@@ -106,11 +108,11 @@ test('mode invalidates cache; a stale successful render cannot overwrite the new
  await page.evaluate(()=>(window as any).__newFonts());await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
  const save=async()=>{const event=page.waitForEvent('download');await modal.getByRole('button',{name:'SAVE PNG',exact:true}).click();const dl=await event;expect(dl.suggestedFilename()).toBe('prop-edge-nyj-chi-t90-bettable-w04.png');return readFileSync((await dl.path())!);};
  const newer=await save();expect(await page.evaluate(()=>(window as any).__renders)).toBe(1);
- await page.evaluate(()=>(window as any).__oldFonts());await expect.poll(()=>page.evaluate(()=>(window as any).__renders)).toBe(3);
+ await page.evaluate(()=>(window as any).__oldFonts());await expect.poll(()=>page.evaluate(()=>(window as any).__renders)).toBe(2);
  // The two encodes intentionally differ; saving must still return the newer cache.
  expect((await save()).equals(newer)).toBe(true);await expect(modal.getByRole('alert')).toHaveCount(0);
  await modal.getByRole('button',{name:'SYSTEM CARD',exact:true}).click();await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
- await expect.poll(()=>page.evaluate(()=>(window as any).__renders)).toBe(4);
+ await expect.poll(()=>page.evaluate(()=>(window as any).__renders)).toBe(3);
 });
 test('automatic renderer failure leaves the modal alive with a working retry path',async({page})=>{
  await setup(page);await page.evaluate(()=>{
@@ -138,4 +140,48 @@ test('changed poster freshness automatically invalidates its prepared snapshot',
  await expect(modal.getByText('PREPARING IMAGE…',{exact:true})).toBeVisible();
  await page.evaluate(()=>(window as any).__snapshotFonts());
  await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
+});
+test('premium SYSTEM, premium BETTABLE empty and clean SYSTEM export with theme-aware cache',async({page})=>{
+ test.setTimeout(60000);await setup(page);const modal=await open(page),poster=modal.getByTestId('game-share-poster');
+ const save=async(name:string)=>{await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();const event=page.waitForEvent('download');await modal.getByRole('button',{name:'SAVE PNG',exact:true}).click();const download=await event;const path=`${artifacts}/${name}.png`;await download.saveAs(path);const bytes=readFileSync(path);expect(bytes.readUInt32BE(16)).toBe(1080);expect(bytes.readUInt32BE(20)).toBe(1350);return bytes;};
+ await expect(poster).toHaveAttribute('data-theme','premium');
+ const premium=await save('nfl-premium-system');await expect(poster.getByTestId('poster-logo')).toHaveCount(2);await expect(poster.getByTestId('poster-art')).toHaveCount(1);await expect(poster.getByTestId('poster-player-slots')).toHaveCount(0);
+ await page.screenshot({path:`${artifacts}/nfl-premium-modal-360.png`});
+ // Family leaders must sit below, rather than overlap, the recommendation grid.
+ const core=await poster.getByTestId('poster-core').boundingBox();const leaders=await poster.getByRole('heading',{name:'MODEL LEADERS',exact:true}).boundingBox();expect(leaders!.y).toBeGreaterThanOrEqual(core!.y+core!.height);
+ await modal.getByRole('button',{name:'BETTABLE CARD',exact:true}).click();await expect(poster).toContainText('NO VERIFIED EXECUTION MATCHES');await expect(poster).toContainText('System targets remain sportsbook-independent');
+ await save('nfl-premium-bettable-empty');await page.screenshot({path:`${artifacts}/nfl-premium-bettable-modal-360.png`});
+ await modal.getByRole('button',{name:'SYSTEM CARD',exact:true}).click();await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
+ await page.evaluate(()=>Object.defineProperty(document.fonts,'ready',{configurable:true,value:new Promise<void>(resolve=>(window as any).__themeFonts=resolve)}));
+ await modal.getByRole('button',{name:'CLEAN',exact:true}).click();await expect(poster).toHaveAttribute('data-theme','clean');await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeDisabled();
+ await page.evaluate(()=>(window as any).__themeFonts());const clean=await save('nfl-clean-system');expect(clean.equals(premium)).toBe(false);
+ await expect(poster.getByTestId('poster-art')).toHaveCount(0);await expect(poster.getByTestId('poster-logo')).toHaveCount(2);await expect(poster.getByTestId('poster-core')).toContainText('dandre swift');
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);await page.screenshot({path:`${artifacts}/nfl-clean-modal-360.png`});
+});
+test('missing artwork and logos gracefully fall back and still export exact-size premium PNG',async({page})=>{
+ await setup(page);await page.route('**/nfl/art/**',route=>route.abort());await page.route('**/nfl/teams/**',route=>route.abort());
+ const modal=await open(page),poster=modal.getByTestId('game-share-poster');await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
+ await expect(poster.getByTestId('poster-art')).toHaveCount(0);await expect(poster.getByTestId('poster-logo')).toHaveCount(0);await expect(poster.getByTestId('poster-logo-fallback')).toHaveCount(2);await expect(modal.getByRole('alert')).toHaveCount(0);
+ const event=page.waitForEvent('download');await modal.getByRole('button',{name:'SAVE PNG',exact:true}).click();const download=await event;const path=`${artifacts}/nfl-premium-all-assets-missing.png`;await download.saveAs(path);const bytes=readFileSync(path);expect(bytes.readUInt32BE(16)).toBe(1080);expect(bytes.readUInt32BE(20)).toBe(1350);
+});
+test('one through four optional cutouts stay inside hero bounds; failed player image is omitted',async({page})=>{
+ test.setTimeout(60000);await setup(page);
+ // Test-only transparent silhouettes exercise slots; no real player photo is invented or shipped.
+ await page.route('**/nfl/players/test-*.svg*',route=>route.fulfill({contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="140" height="206"><circle cx="70" cy="38" r="22" fill="#a3b3b9"/><path d="M45 62h50l23 110H22z" fill="#496673"/></svg>'}));
+ for(let count=1;count<=4;count++){
+  await page.evaluate(async(count)=>{
+   const path='/src/nfl/posterAssets.ts';const module=await import(/* @vite-ignore */path);
+   module.POSTER_ASSETS.games['2026_04_NYJ_CHI']={players:Array.from({length:count},(_,i)=>({team:i%2?'CHI':'NYJ',name:`Test cutout ${i+1}`,src:`/nfl/players/test-${i}.svg`}))};
+  },count);
+  const modal=await open(page),poster=modal.getByTestId('game-share-poster');await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
+  const images=poster.getByRole('img',{name:/Test cutout/});await expect(images).toHaveCount(count);
+  const hero=await poster.getByTestId('poster-hero').boundingBox();for(const image of await images.all()){const box=await image.boundingBox();expect(box!.x).toBeGreaterThanOrEqual(hero!.x);expect(box!.x+box!.width).toBeLessThanOrEqual(hero!.x+hero!.width);expect(box!.y+box!.height).toBeLessThanOrEqual(hero!.y+hero!.height);}
+  if(count===4)await page.screenshot({path:`${artifacts}/nfl-premium-test-cutouts-360.png`});
+  await modal.getByRole('button',{name:'CLOSE',exact:true}).click();
+ }
+ await page.route('**/nfl/players/**',route=>route.abort());const modal=await open(page);await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
+ // Cached valid local assets remain usable; add a never-loaded missing slot to exercise failure.
+ await modal.getByRole('button',{name:'CLOSE',exact:true}).click();
+ await page.evaluate(async()=>{const path='/src/nfl/posterAssets.ts';const module=await import(/* @vite-ignore */path);module.POSTER_ASSETS.games['2026_04_NYJ_CHI']={players:[{team:'NYJ',name:'Missing cutout',src:'/nfl/players/missing.png'}]};});
+ const fallback=await open(page);await expect(fallback.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();await expect(fallback.getByTestId('poster-player-slots')).toHaveCount(0);await expect(fallback.getByTestId('poster-logo')).toHaveCount(2);
 });

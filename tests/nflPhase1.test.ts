@@ -267,14 +267,14 @@ test('stale line warning affects BETTABLE only, whose empty-state poster is hone
 });
 test('missing draws never invents simulation count; fixed export size and local asset layout',()=>{
  const v=nyj();delete v.games[0].horizons.T90!.n_draws;const data=shareData(v);assert.equal(data.draws,null);
- const html=renderToStaticMarkup(React.createElement(NflGameShareCard,{data}));assert(!html.includes('DRAWS'));assert(!html.includes('<img'));assert(!html.includes('https://'));assert.match(html,/width:1080px;height:1350px/);assert.equal(EXPORT_WIDTH,1080);assert.equal(EXPORT_HEIGHT,1350);
+ const html=renderToStaticMarkup(React.createElement(NflGameShareCard,{data}));assert(!html.includes('DRAWS'));assert(html.includes('/nfl/teams/'));assert(!html.includes('src="http'));assert(!html.includes('https://'));assert.match(html,/width:1080px;height:1350px/);assert.equal(EXPORT_WIDTH,1080);assert.equal(EXPORT_HEIGHT,1350);
 });
 test('filename is deterministic, sanitized and model hashes do not clutter the poster',()=>{
  const data=shareData();assert.equal(shareFilename(data),'prop-edge-nyj-chi-t90-system-w04.png');assert.equal(shareFilename({...data,mode:'bettable'}),'prop-edge-nyj-chi-t90-bettable-w04.png');
  const unsafe=shareFilename({...data,game:{...data.game,away:'../NYJ /',home:'CHI?!'}});assert(!unsafe.includes('/'));assert.match(unsafe,/prop-edge-nyj-chi-/);assert.equal(shortModelVersion('p1c-f3b1fa3608f90253'),'p1c');
 });
 test('unknown team branding uses a safe neutral fallback; all NFL teams have local accents',()=>{
- assert.deepEqual(teamBrand('xyz'),{abbreviation:'XYZ',primary:'#66717E',secondary:'#AAB0B7'});assert.equal(teamBrand('nyj').primary,'#125740');assert.notEqual(teamBrand('CHI').primary,teamBrand('NYJ').primary);
+ assert.deepEqual(teamBrand('xyz'),{abbreviation:'XYZ',name:'XYZ',primary:'#66717E',secondary:'#AAB0B7',text:'#F0F4F5',logo:null,artwork:null});assert.equal(teamBrand('nyj').primary,'#125740');assert.notEqual(teamBrand('CHI').primary,teamBrand('NYJ').primary);
 });
 test('poster creation leaves interactive SYSTEM behavior, 286 outcomes and protected files unchanged',()=>{
  const v=nyj(),before=JSON.stringify(v),top=picks(v);shareData(v);shareData(v,'bettable');assert.equal(JSON.stringify(v),before);assert.deepEqual(picks(v),top);assert.equal(v.rows.T90.length,286);
@@ -301,4 +301,39 @@ test('shareBlob enters native share immediately, before yielding to any asynchro
  let called=false;
  const completion=shareBlob(new Blob(['prepared'],{type:'image/png'}),'prepared.png',{canShare:()=>true,share:()=>{called=true;return Promise.resolve();}} as any);
  assert.equal(called,true);assert.equal(await completion,'shared');
+});
+
+import {posterPresentation,localAsset} from '../src/nfl/posterAssets.ts';
+import {POSTER_THEMES} from '../src/nfl/posterTheme.ts';
+test('premium/clean presentation assembly is deterministic and cannot alter picks, ranks or model data',()=>{
+ const data=shareData(),before=JSON.stringify(data);
+ for(const theme of ['premium','clean'] as const){assert.deepEqual(posterPresentation(data,theme),posterPresentation(data,theme));assert.equal(JSON.stringify(data),before);}
+ assert(posterPresentation(data).background);assert.equal(posterPresentation(data,'clean').background,null);
+ assert.equal(posterPresentation(data).players.length,0);assert.equal(POSTER_THEMES.premium.label,'PREMIUM');
+});
+test('local branding covers all 32 clubs and aliases; no remote logo dependency',()=>{
+ const teams='ARI ATL BAL BUF CAR CHI CIN CLE DAL DEN DET GB HOU IND JAX KC LAR LAC LV MIA MIN NE NO NYG NYJ PHI PIT SEA SF TB TEN WSH'.split(' ');
+ for(const team of teams){const brand=teamBrand(team);assert(brand.logo);assert(readFileSync(`public${brand.logo}`).length>100);assert(brand.name!==team);}
+ assert.equal(teamBrand('LA').logo,teamBrand('LAR').logo);assert.equal(teamBrand('WAS').logo,teamBrand('WSH').logo);
+});
+test('optional hero configuration supports zero through four images; caps at two per team without selecting picks',()=>{
+ const data=shareData(),before=JSON.stringify(data);
+ const entries=[{team:'NYJ',name:'Player A',src:'/nfl/players/a.png'},{team:'CHI',name:'Player B',src:'/nfl/players/b.png'},{team:'NYJ',name:'Player C',src:'/nfl/players/c.png'},{team:'CHI',name:'Player D',src:'/nfl/players/d.png'}];
+ for(let count=0;count<=4;count++){
+  const visual=posterPresentation(data,'premium',{games:{[data.game.game_id]:{players:entries.slice(0,count)}}});
+  assert.equal(visual.players.length,count);
+  const html=renderToStaticMarkup(React.createElement(NflGameShareCard,{data,visual}));assert.equal((html.match(/src="\/nfl\/players\//g)||[]).length,count);assert(html.includes('dandre swift'));assert.equal(JSON.stringify(data),before);
+ }
+ const config={games:{[data.game.game_id]:{players:[...entries,...entries]}}};assert.equal(posterPresentation(data,'premium',config).players.length,4);assert.equal(posterPresentation(data,'clean',config).players.length,0);
+});
+test('missing art/player configuration yields logo-forward premium layout; unsafe remote assets are rejected',()=>{
+ const data=shareData(),visual=posterPresentation(data,'premium',{games:{[data.game.game_id]:{background:'https://bad.example/art.jpg',players:[{team:'NYJ',name:'Unsafe',src:'https://bad.example/player.png'}]}}});
+ assert.equal(visual.background,null);assert.equal(visual.players.length,0);assert(visual.away.logo && visual.home.logo);
+ for(const path of ['//example.com/a.png','/nfl/../a.png','/nfl/a.png?url=https://bad.example','data:image/png;base64,abc'])assert.equal(localAsset(path),null);
+ assert.equal(localAsset('/nfl/art/chicago-night.svg'),'/nfl/art/chicago-night.svg');
+});
+test('both poster themes remain sportsbook-independent and canonical under active screen filters',()=>{
+ const v=nyj(),before=shareData(v);systemGames(v,'T90','Geno Smith','RUSH');delete v.artifact.lines;delete v.artifact.lines_meta;
+ for(const theme of ['premium','clean'] as const){const render=(data:any)=>renderToStaticMarkup(React.createElement(NflGameShareCard,{data,theme}));assert.equal(render(shareData(v)),render(before));}
+ assert.equal(v.rows.T90.length,286);assert.deepEqual(shareData(v).core,before.core);
 });
