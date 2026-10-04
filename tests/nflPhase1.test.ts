@@ -106,83 +106,127 @@ test('legacy route and other sport components are byte-identical to base',()=>{
   assert(!readFileSync('src/App.tsx','utf8').includes('/api/nfl-predictions'));
 });
 
-// The complete published 286-row NYJ/CHI universe, with downstream lines only.
-import { bettableGames, bettablePicks, normalizePlayer, exactAltMarket, lineFreshness } from '../src/nfl/bettable.ts';
-import { BettableCard, NflPhase1Board } from '../src/components/NflTodayScreen.tsx';
+import { systemCandidates, compareSystem, systemGames, todaysBest, bestExecution, executableGames, lineFreshness, targetText } from '../src/nfl/bettable.ts';
+import { SystemPickCard } from '../src/components/NflTodayScreen.tsx';
 const nyjSource=JSON.parse(readFileSync(new URL('./fixtures/nfl-nyj-chi-bettable.json',import.meta.url),'utf8'));
 const nyj=()=>parsePhase1(structuredClone(nyjSource),new Date(Date.parse(nyjSource.status.last_shadow_run_utc)+60000));
-test('286 model outcomes produce 16 eligible markets and only 10 default BETTABLE picks',()=>{
-  const v=nyj(),picks=bettablePicks(v,'T90');assert.equal(v.rows.T90.length,286);assert.equal(picks.length,16);assert.equal(bettableGames(v,'T90')[0].picks.length,10);
-  assert.equal(groupGames(v,'T90')[0].rows.length,286);
-  const html=renderToStaticMarkup(React.createElement(NflPhase1Board,{view:v,loading:false,error:null,retrievedAt:null,refresh:async()=>{}}));
-  assert.match(html,/10 BETTABLE PICKS/);assert(!html.includes('286 player outcomes'));
+const picks=(v=nyj())=>systemGames(v,'T90')[0].picks;
+function sample(outcome='rec_yds',milestone=50){
+  const v=nyj(),r=v.rows.T90.find(r=>r.outcome===outcome && (r.p_active||0)>=.75)!;
+  const pick={row:r,target:{milestone,probability:.65,method:'empirical_cdf_lattice' as const}};
+  const line={game_id:r.game_id,horizon:'T90',player:r.player,outcome,book:'DraftKings',line:milestone-.5,over_price:-110};
+  v.artifact.lines=[line];return {v,pick,line};
+}
+test('SYSTEM PICKS require no lines; deleting every sportsbook field leaves targets identical',()=>{
+  const v=nyj(),before=picks(v),best=todaysBest(v,'T90');delete v.artifact.lines;delete v.artifact.lines_meta;
+  assert.deepEqual(picks(v),before);assert.deepEqual(todaysBest(v,'T90'),best);
 });
-test('real line join requires game, horizon, normalized player and exact outcome',()=>{
-  assert.equal(normalizePlayer('  D’Andre   Swift '),'dandre swift');const v=nyj();v.artifact.lines=[{...nyjSource.lines[0],player:' BRAELON   ALLEN '}];
-  assert.equal(bettablePicks(v,'T90').length,1);
-  for(const patch of [{game_id:'wrong'},{horizon:'T24'},{player:'unknown'},{outcome:'tackles'}]){v.artifact.lines=[{...nyjSource.lines[0],...patch}];assert.equal(bettablePicks(v,'T90').length,0);}
+test('all system picks use existing >=65% targets and offensive outcomes',()=>{
+  const v=nyj();for(const p of picks(v)){assert.deepEqual(p.target,v.artifact.alt_65![p.row.id]);assert(p.target.probability>=.65);assert(!['tackles','sacks','def_int'].includes(p.row.outcome));}
 });
-test('low-active backup UNDER cannot rank, including real Tyson Bagent and Isaiah Davis',()=>{
-  const v=nyj(),picks=bettablePicks(v,'T90');assert(!picks.some(p=>['tyson bagent','isaiah davis'].includes(p.row.player)));
-  const r=v.rows.T90.find(r=>r.player==='braelon allen'&&r.outcome==='rec_yds')!;
-  v.artifact.lines=[{...nyjSource.lines[0],p_over:.001,p_under:.999}];r.p_active=.7499;assert.equal(bettablePicks(v,'T90').length,0);
-  r.p_active=.75;assert.equal(bettablePicks(v,'T90')[0].side,'UNDER');r.p_active=null;assert.equal(bettablePicks(v,'T90').length,0);
-  assert(v.rows.T90.some(r=>r.player==='tyson bagent'));
+test('availability guard excludes lower-activity and missing availability, preserving MODEL BOARD',()=>{
+  const v=nyj(),p=picks(v)[0];p.row.p_active=.7499;assert(!picks(v).some(x=>x.row.id===p.row.id));p.row.p_active=null;assert(!picks(v).some(x=>x.row.id===p.row.id));p.row.p_active=.75;assert(picks(v).some(x=>x.row.id===p.row.id));assert.equal(v.rows.T90.length,286);
 });
-test('invalid lines/probabilities/book and ambiguous identities do not become picks',()=>{
-  const v=nyj();
-  for(const patch of [{line:NaN},{line:Infinity},{p_over:null},{p_under:1.1},{p_over:-.1},{p_under:NaN},{p_over:.8,p_under:.8},{book:''}]){
-    v.artifact.lines=[{...nyjSource.lines[0],...patch}];assert.equal(bettablePicks(v,'T90').length,0);
-  }
-  v.artifact.lines=[nyjSource.lines[0]];const r=v.rows.T90.find(r=>r.player==='braelon allen'&&r.outcome==='rec_yds')!;
-  v.rows.T90.push({...r,id:'ambiguous'});assert.equal(bettablePicks(v,'T90').length,0);
+test('null targets cannot become picks; sportsbook fields cannot create or change targets',()=>{
+  const v=nyj();v.artifact.alt_65=Object.fromEntries(v.rows.T90.map(r=>[r.id,null]));assert.equal(picks(v).length,0);v.artifact.lines=[{book:'book',line:1,p_over:1}];assert.equal(picks(v).length,0);
 });
-test('each side and selected odds come directly from probabilities; tie selects UNDER',()=>{
-  const v=nyj();
-  for(const [over,under,side,odds] of [[.6,.4,'OVER',-109],[.4,.6,'UNDER',-115],[.5,.5,'UNDER',-115]] as const){
-    v.artifact.lines=[{...nyjSource.lines[0],p_over:over,p_under:under}];const p=bettablePicks(v,'T90')[0];assert.equal(p.side,side);assert.equal(p.odds,odds);assert.equal(p.probability,Math.max(over,under));
-  }
+test('max ten per game; fewer than ten remain fewer, without weakening thresholds',()=>{
+  const v=nyj();assert.equal(picks(v).length,10);const keep=picks(v).slice(0,4).map(p=>p.row.id);v.artifact.alt_65=Object.fromEntries(v.rows.T90.map(r=>[r.id,keep.includes(r.id)?v.artifact.alt_65![r.id]:null]));assert.equal(picks(v).length,4);
 });
-test('ranking descends by probability deterministically, no extra probability gate or padding',()=>{
-  const v=nyj(),p=bettablePicks(v,'T90');assert.equal(p[0].row.player,'geno smith');assert.equal(p[0].probability,.705);
-  assert(p.every((x,i)=>!i||p[i-1].probability>=x.probability));assert.deepEqual(bettablePicks(v,'T90'),p);
-  v.artifact.lines=nyjSource.lines.slice(0,4);assert.equal(bettableGames(v,'T90')[0].picks.length,4);
-  v.artifact.lines=[{...nyjSource.lines[0],p_over:.499,p_under:.501}];assert.equal(bettableGames(v,'T90')[0].picks.length,1);
+test('ranking uses hit probability then active probability then player/outcome, deterministically',()=>{
+  const v=nyj();const r=picks(v)[0].row;v.rows.T90=[{...r,id:'b',player:'B player',p_active:.9},{...r,id:'a',player:'A player',p_active:.9},{...r,id:'c',player:'C player',p_active:.99}];v.artifact.alt_65=Object.fromEntries(['a','b','c'].map(id=>[id,{milestone:10,probability:.7,method:'quantile_grid_99_conservative'}]));assert.deepEqual(picks(v).map(p=>p.row.id),['c','a','b']);assert.deepEqual(picks(v),picks(v));
 });
-test('BETTABLE filters preserve search/outcome and exclude model-only defense markets',()=>{
-  const v=nyj();assert.equal(bettableGames(v,'T90','garrett')[0].picks.length,1);
-  assert(bettableGames(v,'T90','','rush_yds')[0].picks.every(p=>p.row.outcome==='rush_yds'));
-  assert.equal(bettableGames(v,'T90','','tackles').length,0);assert(v.rows.T90.some(r=>r.outcome==='tackles'));
+test("TODAY'S BEST returns at most five with the same deterministic ranking",()=>{
+  const v=nyj();assert(todaysBest(v,'T90').length<=5);assert.deepEqual(todaysBest(v,'T90'),picks(v).slice(0,5));assert.deepEqual(todaysBest(v,'T90'),todaysBest(v,'T90'));
 });
-test('T24 and T90 line matching never crosses horizons even with both forecast sets',()=>{
-  const v=nyj();v.rows.T24=v.rows.T90.map(r=>({...r,id:'T24-'+r.id}));
-  assert.equal(bettablePicks(v,'T24').length,0);v.artifact.lines=[{...nyjSource.lines[0],horizon:'T24'}];
-  assert.equal(bettablePicks(v,'T90').length,0);assert.equal(bettablePicks(v,'T24').length,1);
+test('BETTABLE NOW is an intersection of uncapped SYSTEM eligibility, not a market scanner',()=>{
+  const v=nyj(),system=new Set(systemCandidates(v,'T90').map(p=>p.row.id));for(const p of executableGames(v,'T90')[0].picks)assert(system.has(p.row.id));
+  const backup=v.rows.T90.find(r=>r.player==='tyson bagent'&&r.outcome==='rush_yds')!;v.artifact.lines=[{game_id:backup.game_id,horizon:'T90',player:backup.player,outcome:backup.outcome,book:'Book',line:1.5,over_price:200}];assert.equal(executableGames(v,'T90')[0].picks.length,0);
 });
-test('60-minute line freshness boundary, missing timestamp and visible stale warning without hiding picks',()=>{
-  const v=nyj();v.artifact.lines_meta={generated_at_utc:new Date(now-3600000).toISOString()};assert.equal(lineFreshness(v,now).stale,false);
-  assert.equal(lineFreshness(v,now+1).stale,true);v.artifact.lines_meta={};assert.equal(lineFreshness(v,now).unknown,true);
-  v.artifact.lines_meta=nyjSource.lines_meta;
-  const html=renderToStaticMarkup(React.createElement(NflPhase1Board,{view:v,loading:false,error:null,retrievedAt:null,refresh:async()=>{}}));
-  assert.match(html,/LINE MAY HAVE MOVED — verify before placing/);assert.match(html,/Sportsbook lines updated:/);assert.match(html,/10 BETTABLE PICKS/);
+for(const [outcome,milestone] of [['rec_yds',50],['rush_yds',40],['rec',2],['pass_td',1]] as const)test(`${milestone}+ ${outcome} matches OVER ${milestone-.5}`,()=>{
+  const {v,pick}=sample(outcome,milestone);assert.equal(bestExecution(v,'T90',pick)?.line,milestone-.5);
 });
-test('unconfirmed 65% milestone is MODEL ALT TARGET; exact horizon/player/outcome/line alone confirms alt',()=>{
-  const v=nyj(),p=bettablePicks(v,'T90')[0],alt=v.artifact.alt_65![p.row.id]!;assert(alt);
-  const render=()=>renderToStaticMarkup(React.createElement(BettableCard,{pick:p,view:v,horizon:'T90',cutoff:v.games[0].horizons.T90!.cutoff}));
-  assert.match(render(),/MODEL ALT TARGET/);assert(!render().includes('BETTABLE ALT'));
-  assert.equal(exactAltMarket(v,p.row,'T90',alt.milestone),false);
-  const exact={...p.market,line:alt.milestone,horizon:'T24'};v.artifact.lines=[exact];assert.equal(exactAltMarket(v,p.row,'T90',alt.milestone),false);
-  v.artifact.lines=[{...exact,horizon:'T90'}];assert.match(render(),/BETTABLE ALT/);
+test('OVER 50.5 and conventional OVER 50 do not equal 50+',()=>{
+  const {v,pick,line}=sample();for(const n of [50,50.5,49]){v.artifact.lines=[{...line,line:n}];assert.equal(bestExecution(v,'T90',pick),null);}
 });
-test('cards display book odds, probability, median, mean, active probability, cutoff, horizon; no confidence bucket',()=>{
-  const v=nyj(),p=bettablePicks(v,'T90').find(p=>p.row.player==='garrett wilson')!;
-  const html=renderToStaticMarkup(React.createElement(BettableCard,{pick:p,view:v,horizon:'T90',cutoff:v.games[0].horizons.T90!.cutoff}));
-  for(const text of ['UNDER','76.5','draftkings','-114','58.7%','Projection (median)','66 yds','Expected average (mean)','99.5%','T90','Information cutoff'])assert(html.includes(text));
-  assert(!/HIGH|MEDIUM/.test(html));
+test('explicit milestone requires affirmative at-least settlement; unclear markets fail closed',()=>{
+  const {v,pick,line}=sample();v.artifact.lines=[{...line,line:50,market_type:'milestone',settlement:'at_least',price:-120}];assert.equal(bestExecution(v,'T90',pick)?.kind,'milestone');
+  v.artifact.lines=[{...line,line:50,market_type:'milestone'}];assert.equal(bestExecution(v,'T90',pick),null);
+  v.artifact.lines=[{...line,side:'UNDER'}];assert.equal(bestExecution(v,'T90',pick),null);
 });
-test('downstream joins leave all forecasts and alt calculations unchanged; other sports and source pipeline byte-identical',()=>{
-  const v=nyj(),before=JSON.stringify(v.rows),artifact=JSON.stringify(v.artifact.forecasts),alts=JSON.stringify(v.artifact.alt_65);
-  bettablePicks(v,'T90');bettableGames(v,'T90');assert.equal(JSON.stringify(v.rows),before);assert.equal(JSON.stringify(v.artifact.forecasts),artifact);assert.equal(JSON.stringify(v.artifact.alt_65),alts);
-  const base=execFileSync('git',['merge-base','HEAD','origin/main'],{encoding:'utf8'}).trim();
-  for(const file of ['src/App.tsx','src/nfl/phase1.ts','src/nfl/usePhase1.ts','server/nflPhase1.ts','server.ts'])assert.equal(readFileSync(file,'utf8'),execFileSync('git',['show',`${base}:${file}`],{encoding:'utf8'}));
+test('best confirmed odds use only matching options in the artifact',()=>{
+  const {v,pick,line}=sample();v.artifact.lines=[{...line,book:'A',over_price:-120},{...line,book:'B',over_price:-105},{...line,line:50.5,over_price:500}];assert.equal(bestExecution(v,'T90',pick)?.book,'B');(v.artifact.lines as any[]).push({...line,book:'C',over_price:110});assert.equal(bestExecution(v,'T90',pick)?.book,'C');
+});
+test('missing/malformed book data does not break system picks or invent an available market',()=>{
+  const v=nyj(),before=picks(v);for(const lines of [null,{},[],[{line:NaN,book:'bad'}]]){v.artifact.lines=lines;assert.deepEqual(picks(v),before);assert.equal(executableGames(v,'T90')[0].picks.length,0);}
+});
+test('stale >60-minute lines warn without altering model targets; boundary is exact',()=>{
+  const v=nyj(),before=picks(v);v.artifact.lines_meta={generated_at_utc:new Date(now-3600000).toISOString()};assert.equal(lineFreshness(v,now).stale,false);assert.equal(lineFreshness(v,now+1).stale,true);assert.deepEqual(picks(v),before);
+});
+test('wrong game, horizon, player, outcome, invalid price and ambiguous identities cannot confirm markets',()=>{
+  const {v,pick,line}=sample();for(const patch of [{game_id:'wrong'},{horizon:'T24'},{player:'wrong'},{outcome:'tackles'},{over_price:NaN},{book:''}]){v.artifact.lines=[{...line,...patch}];assert.equal(bestExecution(v,'T90',pick),null);}
+  v.artifact.lines=[line];v.rows.T90.push({...pick.row,id:'ambiguous'});assert.equal(bestExecution(v,'T90',pick),null);
+});
+test('T24 targets and executions never mix with T90',()=>{
+  const v=nyj();assert.equal(systemGames(v,'T24')[0]?.picks.length||0,0);v.rows.T24=v.rows.T90.map(r=>({...r,id:'T24-'+r.id}));v.artifact.alt_65={...v.artifact.alt_65,...Object.fromEntries(v.rows.T90.map(r=>['T24-'+r.id,v.artifact.alt_65![r.id]]))};v.games[0].horizons.T24={...v.games[0].horizons.T90!};assert(systemGames(v,'T24')[0].picks.every(p=>p.row.id.startsWith('T24-')));assert.equal(executableGames(v,'T24')[0].picks.length,0);
+});
+test('defensive outcomes never leak even with high probability targets and sportsbook lines',()=>{
+  const v=nyj();for(const r of v.rows.T90.filter(r=>['tackles','sacks','def_int'].includes(r.outcome)))v.artifact.alt_65![r.id]={milestone:1,probability:.99,method:'empirical_cdf_lattice'};assert(picks(v).every(p=>!['tackles','sacks','def_int'].includes(p.row.outcome)));
+});
+test('system cards lead with target/likelihood; technical details start collapsed',()=>{
+  const v=nyj(),pick=picks(v)[0],html=renderToStaticMarkup(React.createElement(SystemPickCard,{pick,view:v,horizon:'T90'}));assert(html.includes(targetText(pick)));assert.match(html,/MODEL HIT PROBABILITY/);assert.match(html,/<details[^>]*data-testid="system-details"/);assert(!/<details[^>]*open/.test(html));for(const field of ['Median','Mean','P10–P90','P(active)','Expected opportunities','Information cutoff'])assert(html.includes(field));
+});
+test('MODEL BOARD preserves 286 rows; decoding/calculation/transport/other sports remain byte-identical',()=>{
+  const v=nyj();assert.equal(groupGames(v,'T90')[0].rows.length,286);const before=JSON.stringify(v);systemGames(v,'T90');executableGames(v,'T90');assert.equal(JSON.stringify(v),before);
+  const base=execFileSync('git',['merge-base','HEAD','origin/main'],{encoding:'utf8'}).trim();for(const file of ['src/App.tsx','src/nfl/phase1.ts','src/nfl/usePhase1.ts','server/nflPhase1.ts','server.ts'])assert.equal(readFileSync(file,'utf8'),execFileSync('git',['show',`${base}:${file}`],{encoding:'utf8'}));
+});
+
+test('uncapped system eligibility retains all 26 NYJ/CHI targets; default top ten is unchanged',()=>{
+  const v=nyj(),candidates=systemCandidates(v,'T90');assert.equal(candidates.length,26);
+  const expected=[['dandre swift','rec',1],['jeremy ruckert','rec',1],['kenyon sadiq','rec',2],['rome odunze','rec',2],['isaiah williams','rec_yds',10],['kalif raymond','rec_yds',10],['cole kmet','rec',1],['garrett wilson','rec',4],['dandre swift','rush_yds',40],['luther burden','rec',3]];
+  assert.deepEqual(picks(v).map(p=>[p.row.player,p.row.outcome,p.target.milestone]),expected);
+  assert.deepEqual(picks(v),[...candidates].sort(compareSystem).slice(0,10));
+  const before=[...candidates].sort(compareSystem);delete v.artifact.lines;delete v.artifact.lines_meta;
+  assert.deepEqual(systemCandidates(v,'T90').sort(compareSystem),before);
+});
+test('RUSH filters uncapped eligibility before display cap, exposing Swift/Geno/Allen/Monangai',()=>{
+  const rush=systemGames(nyj(),'T90','','RUSH')[0].picks;
+  assert.deepEqual(rush.map(p=>[p.row.player,p.target.milestone,p.target.probability]),[['dandre swift',40,.75],['geno smith',10,.74],['braelon allen',40,.67],['kyle monangai',20,.66]]);
+  assert.equal(rush.length,4);
+});
+test('Geno Smith search exposes all three eligible targets outside default top ten',()=>{
+  const v=nyj();assert(!picks(v).some(p=>p.row.player==='geno smith'));
+  const result=systemGames(v,'T90','Geno Smith')[0].picks;
+  assert.deepEqual(result.map(p=>[p.row.outcome,p.target.milestone,p.target.probability]),[['rush_yds',10,.74],['pass_yds',175,.71],['pass_td',1,.67916]]);
+  assert.equal(systemGames(v,'T90','Geno Smith','RUSH')[0].picks.length,1);
+});
+for(const [family,outcomes] of [['PASS',['pass_yds','pass_td','int']],['REC',['rec_yds','rec','rec_td']],['TD',['pass_td','rush_td','rec_td','atd']]] as const)test(`${family} filters the uncapped pool before ranking/capping`,()=>{
+  const v=nyj(),expected=systemCandidates(v,'T90').filter(p=>(outcomes as readonly string[]).includes(p.row.outcome)).sort(compareSystem).slice(0,10);
+  assert(expected.length>0);assert.deepEqual(systemGames(v,'T90','',family)[0].picks,expected);
+  const more=systemCandidates(v,'T90').filter(p=>(outcomes as readonly string[]).includes(p.row.outcome) && !picks(v).some(top=>top.row.id===p.row.id));assert(more.length>0);
+});
+test("TODAY'S BEST filters uncapped eligibility first, finding rushing and searched-player targets",()=>{
+  const v=nyj();assert.deepEqual(todaysBest(v,'T90','','RUSH'),systemGames(v,'T90','','RUSH')[0].picks);
+  assert.deepEqual(todaysBest(v,'T90','Geno Smith'),systemGames(v,'T90','Geno Smith')[0].picks);
+  assert.equal(todaysBest(v,'T90','Geno Smith','PASS').length,2);
+  assert.deepEqual(todaysBest(v,'T90'),picks(v).slice(0,5));
+});
+test('BETTABLE NOW can match a target outside the default cap; books still cannot create targets',()=>{
+  const v=nyj(),before=systemCandidates(v,'T90').sort(compareSystem);
+  const geno=before.find(p=>p.row.player==='geno smith'&&p.row.outcome==='rush_yds')!;
+  assert(before.findIndex(p=>p.row.id===geno.row.id)>=10);
+  v.artifact.lines=[{game_id:geno.row.game_id,horizon:'T90',player:'Geno Smith',outcome:'rush_yds',book:'Test book',line:9.5,over_price:-110}];
+  assert.equal(executableGames(v,'T90')[0].picks[0].row.id,geno.row.id);
+  assert.equal(executableGames(v,'T90','Geno Smith','RUSH')[0].picks.length,1);
+  assert.equal(executableGames(v,'T90','','REC')[0].picks.length,0);
+  assert.deepEqual(systemCandidates(v,'T90').sort(compareSystem),before);
+  v.artifact.alt_65![geno.row.id]=null;assert.equal(executableGames(v,'T90')[0].picks.length,0);
+});
+test('execution gets its own cap AFTER market matching; searches can find later eligible matches',()=>{
+  const v=nyj(),all=systemCandidates(v,'T90').sort(compareSystem);
+  v.artifact.lines=all.map(p=>({game_id:p.row.game_id,horizon:'T90',player:p.row.player,outcome:p.row.outcome,book:'Test book',line:p.target.milestone-.5,over_price:-110}));
+  assert.equal(executableGames(v,'T90')[0].picks.length,10);
+  assert.deepEqual(executableGames(v,'T90')[0].picks.map(p=>p.row.id),picks(v).map(p=>p.row.id));
+  assert.equal(executableGames(v,'T90','Geno Smith')[0].picks.length,3);
+  delete v.artifact.lines;assert.equal(systemCandidates(v,'T90').length,26);assert.equal(executableGames(v,'T90')[0].picks.length,0);
 });

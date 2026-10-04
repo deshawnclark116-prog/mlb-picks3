@@ -1,77 +1,81 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
-import { deriveAlt65 } from '../../src/nfl/phase1';
-const original=JSON.parse(readFileSync(new URL('../fixtures/nfl-phase1-oct4.json',import.meta.url),'utf8'));
-const records=JSON.parse(readFileSync(new URL('../fixtures/nfl-phase1-distributions.json',import.meta.url),'utf8'));
-const doc=()=>({...structuredClone(original),alt_65:Object.fromEntries(records.map((r:any)=>[r.id,deriveAlt65(r)]))});
-async function setup(page:any,get:()=>any,time='2026-10-04T16:00:00Z'){
-  await page.clock.install({time:new Date(time)});
-  let legacy=0,requests:string[]=[];
+const source=JSON.parse(readFileSync(new URL('../fixtures/nfl-nyj-chi-bettable.json',import.meta.url),'utf8'));
+async function setup(page:any,get=()=>structuredClone(source)) {
+  await page.clock.install({time:new Date('2026-10-04T17:00:00Z')});
+  let legacy=0;const requests:string[]=[];
   await page.route('**/api/**',async(route:any)=>{
     const url=route.request().url();
-    if(url.includes('/api/nfl-phase1-predictions')){requests.push(url);await route.fulfill({json:get(),headers:{'X-Forecast-Retrieved-At':'2026-10-04T16:00:00Z','Cache-Control':'no-store'}});}
-    else {if(url.includes('/api/nfl-predictions'))legacy++;await route.fulfill({json:{picks:[{date:'2026-09-27',matchup:'LEGACY SEPT 27'}],predictions:[],games:[]}});}
+    if(url.includes('/api/nfl-phase1-predictions')){requests.push(url);await route.fulfill({json:get(),headers:{'X-Forecast-Retrieved-At':'2026-10-04T17:00:00Z'}});}
+    else{if(url.includes('/api/nfl-predictions'))legacy++;await route.fulfill({json:{predictions:[],picks:[],games:[]}});}
   });
-  await page.goto('/'); await page.locator('#tab-btn-nfl').click();
+  await page.goto('/');await page.locator('#tab-btn-nfl').click();await expect(page.getByTestId('nfl-game')).toHaveCount(1);
   return {requests,legacy:()=>legacy};
 }
-test('360px Oct 4 T90 matchup, median/details/alt, touch targets and no legacy requests',async({page})=>{
-  const check=await setup(page,doc);
-  await page.getByRole('button',{name:'MODEL BOARD',exact:true}).click();
-  await expect(page.getByRole('button',{name:'T24',exact:true})).toBeDisabled();
-  await expect(page.getByText('No valid T24 forecast captured.')).toBeVisible();
-  const game=page.getByTestId('nfl-game');await expect(game).toContainText('ARI vs NYG');await expect(game).toContainText('Sun, Oct 4');await expect(game).toContainText('1:00 PM EDT');await expect(game).toContainText('T90 · 3 player outcomes');
-  await game.getByRole('button').click();
-  const rush=page.getByTestId('forecast-row').filter({hasText:'devin singletary'});
-  await expect(rush.getByTestId('model-projection')).toContainText('11 yds');await expect(rush).toContainText('Expected average (mean)');await expect(rush).toContainText('16.8 yds');await expect(rush).toContainText('2–25 yds');await expect(rush).toContainText('0–41 yds');
-  await expect(page.getByTestId('forecast-row').filter({hasText:'tremaine edmunds'}).getByTestId('alt-line')).toContainText('6+ tackles');
-  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
-  const widths=await page.locator('#nfl-today-screen-wrapper').evaluate((el)=>({width:el.clientWidth,scroll:el.scrollWidth}));expect(widths.scroll).toBeLessThanOrEqual(widths.width);
-  for(const label of ['Refresh NFL forecasts','T90','T24']){const box=await page.getByRole('button',{name:label,exact:true}).boundingBox();expect(box!.height).toBeGreaterThanOrEqual(44);}
-  expect(check.legacy()).toBe(0);await expect(page.locator('#nfl-today-screen-wrapper')).not.toContainText('Sep 27');
-  await page.screenshot({path:process.env.NFL_SCREENSHOT || '/tmp/nfl-phase1-mobile.png',fullPage:true});
-});
-test('horizon switching isolates rows and refresh replaces entire snapshot; malformed/stale fail visibly',async({page})=>{
-  let current=doc();current.forecasts.T24=structuredClone(current.forecasts.T90);
-  const id=current.row_fields.indexOf('id'),median=current.row_fields.indexOf('median');
-  current.forecasts.T24.forEach((r:any[])=>{r[id]='T24-'+r[id];r[median]=77;});current.games[0].horizons.T24={...current.games[0].horizons.T90,cutoff:'2026-10-03T17:00:00Z'};current.status.counts.T24.valid_games=1;
-  const check=await setup(page,()=>current);
-  await page.getByRole('button',{name:'MODEL BOARD',exact:true}).click();
-  await page.getByRole('button',{name:'T24',exact:true}).click();await page.getByTestId('nfl-game').getByRole('button').click();
-  await expect(page.getByTestId('model-projection').first()).toContainText('77');
-  await page.getByRole('button',{name:'T90',exact:true}).click();await page.getByTestId('nfl-game').getByRole('button').click();await expect(page.getByTestId('model-projection').first()).not.toContainText('77');
-  current=doc();current.games=[];current.forecasts.T90=[];current.status.counts.T90.valid_games=0;current.status.last_shadow_run_utc='2026-10-04T16:00:01Z';
-  await page.getByRole('button',{name:'Refresh NFL forecasts'}).click();await expect(page.getByTestId('nfl-game')).toHaveCount(0);expect(check.requests.length).toBeGreaterThanOrEqual(2);
-  current={picks:[{date:'2026-09-27'}]} as any;await page.getByRole('button',{name:'Refresh NFL forecasts'}).click();await expect(page.getByRole('alert')).toContainText('legacy picks are unsupported');await expect(page.getByTestId('nfl-game')).toHaveCount(0);
-  current=doc();current.status.last_shadow_run_utc='2026-09-27T15:00:00Z';await page.getByRole('button',{name:'Refresh NFL forecasts'}).click();await expect(page.getByRole('alert')).toContainText('Stale NFL');expect(check.legacy()).toBe(0);
-});
-test('30-second polling refetches; older publication and upstream failures clear cards',async({page})=>{
-  let current=doc();const check=await setup(page,()=>current);
-  await page.getByRole('button',{name:'MODEL BOARD',exact:true}).click();
-  await expect(page.getByTestId('nfl-game')).toHaveCount(1);
-  await page.clock.fastForward(30000);await expect.poll(()=>check.requests.length).toBeGreaterThanOrEqual(2);
-  expect(new Set(check.requests).size).toBe(check.requests.length);
-  current.status.last_shadow_run_utc='2026-10-04T15:40:00Z';await page.getByRole('button',{name:'Refresh NFL forecasts'}).click();
-  await expect(page.getByRole('alert')).toContainText('predates the last accepted artifact');await expect(page.getByTestId('nfl-game')).toHaveCount(0);
-  await page.route('**/api/nfl-phase1-predictions?*',route=>route.fulfill({status:502,json:{error:'NFL Phase 1 upstream unavailable or invalid',details:'GitHub upstream HTTP 503'}}));
-  await page.getByRole('button',{name:'Refresh NFL forecasts'}).click();await expect(page.getByRole('alert')).toContainText('GitHub upstream HTTP 503');await expect(page.getByTestId('nfl-game')).toHaveCount(0);expect(check.legacy()).toBe(0);
-});
-const nyjSource=JSON.parse(readFileSync(new URL('../fixtures/nfl-nyj-chi-bettable.json',import.meta.url),'utf8'));
-test('360px default BETTABLE ranks 10 picks, warns on old lines, filters; MODEL BOARD preserves 286 rows',async({page})=>{
-  const check=await setup(page,()=>structuredClone(nyjSource),'2026-10-04T17:00:00Z');
-  await expect(page.getByRole('button',{name:'BETTABLE',exact:true})).toHaveAttribute('aria-pressed','true');
-  await expect(page.getByText('LINE MAY HAVE MOVED — verify before placing',{exact:true})).toBeVisible();
-  const game=page.getByTestId('nfl-game');await expect(game).toContainText('NYJ vs CHI');await expect(game).toContainText('10 BETTABLE PICKS');await expect(game).not.toContainText('286 player outcomes');
-  await game.getByRole('button').click();await expect(page.getByTestId('bettable-pick')).toHaveCount(10);
-  const picks=page.getByTestId('bettable-pick');await expect(picks.first()).toContainText('geno smith');await expect(picks.first()).toContainText('OVER 11.5');await expect(picks.first()).toContainText('70.5%');
-  await expect(page.locator('#nfl-today-screen-wrapper')).not.toContainText('tyson bagent');await expect(picks.first().getByTestId('alt-line')).toContainText('MODEL ALT TARGET');
-  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
+const screen=()=>process.env.NFL_SCREENSHOT_DIR || '/workspace/scratch';
+test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit universe and genuine empty execution screenshots',async({page})=>{
+  const check=await setup(page);
+  await expect(page.getByRole('button',{name:'SYSTEM PICKS',exact:true})).toHaveAttribute('aria-pressed','true');
+  await expect(page.getByTestId('today-best')).toHaveCount(5);
+  const game=page.getByTestId('nfl-game');await expect(game).toContainText('10 SYSTEM PICKS');await expect(game).toContainText('BEST: dandre swift');
+  await expect(game.getByRole('button')).toHaveAttribute('aria-expanded','false');await expect(page.getByTestId('system-pick')).toHaveCount(0);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
+  for(const label of ['SYSTEM PICKS','BETTABLE NOW','MODEL BOARD','T90','T24','ALL','PASS','RUSH','REC','TD','Refresh NFL forecasts']){
+    const box=await page.getByRole('button',{name:label,exact:true}).boundingBox();expect(box!.height).toBeGreaterThanOrEqual(44);expect(box!.x).toBeGreaterThanOrEqual(0);expect(box!.x+box!.width).toBeLessThanOrEqual(360);
+  }
+  await page.screenshot({path:`${screen()}/nfl-system-picks-360.png`});
+  await page.getByTestId('today-best').first().click();await expect(game.getByRole('button').first()).toHaveAttribute('aria-expanded','true');await expect(page.getByTestId('system-pick')).toHaveCount(10);
+  const pick=page.getByTestId('system-pick').first();await expect(pick).toContainText('MODEL HIT PROBABILITY');await expect(pick.getByTestId('system-details')).not.toHaveAttribute('open','');
+  await expect(pick.getByTestId('system-target')).toContainText('1+ RECEPTIONS');
+  await page.locator('#nfl-scroll-area').evaluate(el=>{const game=el.querySelector('[data-testid="nfl-game"]')!;el.scrollTop+=game.getBoundingClientRect().top-el.getBoundingClientRect().top;});await page.screenshot({path:`${screen()}/nfl-nyj-chi-expanded-360.png`});
+  await pick.getByText('VIEW DETAILS ▾',{exact:true}).click();await expect(pick.getByTestId('system-details')).toHaveAttribute('open','');await expect(pick.getByText('Expected opportunities',{exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'BETTABLE NOW',exact:true}).click();await expect(game).toContainText('0 BETTABLE NOW');await game.getByRole('button').click();
+  await expect(page.getByText("No current sportsbook market matches this game's system picks.",{exact:true})).toBeVisible();await expect(page.getByText('LINE MAY HAVE MOVED',{exact:false})).toBeVisible();
+  await page.locator('#nfl-scroll-area').evaluate(el=>el.scrollTop=0);await page.screenshot({path:`${screen()}/nfl-bettable-now-360.png`});
   await page.getByRole('button',{name:'MODEL BOARD',exact:true}).click();await expect(game).toContainText('286 player outcomes');await game.getByRole('button').click();
   while(await page.getByRole('button',{name:/Show more outcomes/}).count())await page.getByRole('button',{name:/Show more outcomes/}).click();
-  await expect(page.getByTestId('forecast-row')).toHaveCount(286);await expect(page.getByTestId('forecast-row').filter({hasText:'tyson bagent'}).first()).toBeAttached();
-  await page.getByRole('button',{name:'BETTABLE',exact:true}).click();await page.getByRole('searchbox',{name:'Filter NFL players or teams'}).fill('garrett');await expect(game).toContainText('1 BETTABLE PICKS');await game.getByRole('button').click();
-  await expect(page.getByTestId('bettable-pick')).toHaveCount(1);await expect(picks.first()).toContainText('UNDER 76.5');await expect(picks.first()).toContainText('58.7%');
-  await page.getByRole('combobox',{name:'Filter NFL outcome'}).selectOption('tackles');await expect(page.getByTestId('bettable-pick')).toHaveCount(0);
-  for(const name of ['BETTABLE','MODEL BOARD']){const box=await page.getByRole('button',{name,exact:true}).boundingBox();expect(box!.height).toBeGreaterThanOrEqual(44);}
-  expect(check.legacy()).toBe(0);
+  await expect(page.getByTestId('forecast-row')).toHaveCount(286);expect(check.legacy()).toBe(0);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
+});
+test('deleting all sportsbook data preserves system targets and filtering; exact execution stays secondary',async({page})=>{
+  let current=structuredClone(source);delete current.lines;delete current.lines_meta;
+  await setup(page,()=>current);await page.getByTestId('nfl-game').getByRole('button').click();
+  const before=await page.getByTestId('system-target').allTextContents();expect(before.length).toBe(10);
+  await page.getByRole('button',{name:'RUSH',exact:true}).click();await expect(page.getByTestId('system-pick')).toHaveCount(4);await expect(page.getByTestId('system-target').first()).toContainText('40+ RUSHING YARDS');
+  await page.getByRole('button',{name:'ALL',exact:true}).click();expect(await page.getByTestId('system-target').allTextContents()).toEqual(before);
+  await page.getByRole('searchbox',{name:'Search player or team'}).fill('garrett');await expect(page.getByTestId('system-pick')).toHaveCount(2);
+  await expect(page.getByTestId('system-target').last()).toContainText('50+ RECEIVING YARDS');
+  current.lines=[{game_id:'2026_04_NYJ_CHI',horizon:'T90',player:'garrett wilson',outcome:'rec',book:'DraftKings',line:3.5,over_price:-110}];
+  await page.getByRole('button',{name:'Refresh NFL forecasts'}).click();await page.getByRole('button',{name:'BETTABLE NOW',exact:true}).click();await page.getByTestId('nfl-game').getByRole('button').click();
+  await expect(page.getByTestId('system-target')).toContainText('4+ RECEPTIONS');await expect(page.getByTestId('available-market')).toContainText('OVER 3.5');await expect(page.getByTestId('system-pick')).toHaveCount(1);
+});
+test('separate horizons, empty targets, malformed/stale errors and no fallback',async({page})=>{
+  let current=structuredClone(source);current.forecasts.T24=structuredClone(current.forecasts.T90);
+  const id=current.row_fields.indexOf('id');current.forecasts.T24.forEach((r:any[])=>{const old=r[id];r[id]='T24-'+old;current.alt_65[r[id]]=null;});
+  current.games[0].horizons.T24={...current.games[0].horizons.T90,cutoff:'2026-10-03T17:00:00Z'};current.status.counts.T24.valid_games=1;
+  const check=await setup(page,()=>current);await page.getByRole('button',{name:'T24',exact:true}).click();await expect(page.getByTestId('nfl-game')).toContainText('0 SYSTEM PICKS');await page.getByTestId('nfl-game').getByRole('button').click();await expect(page.getByText('No model-derived 65%+ system picks are available for this game.',{exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'T90',exact:true}).click();await expect(page.getByTestId('nfl-game')).toContainText('10 SYSTEM PICKS');
+  current={picks:[{date:'2026-09-27'}]} as any;await page.getByRole('button',{name:'Refresh NFL forecasts'}).click();await expect(page.getByRole('alert')).toContainText('legacy picks are unsupported');await expect(page.getByTestId('nfl-game')).toHaveCount(0);
+  current=structuredClone(source);current.status.last_shadow_run_utc='2026-09-27T15:00:00Z';await page.getByRole('button',{name:'Refresh NFL forecasts'}).click();await expect(page.getByRole('alert')).toContainText('Stale NFL');expect(check.legacy()).toBe(0);
+});
+test('polling refreshes; older publications and upstream errors clear previous games',async({page})=>{
+  let current=structuredClone(source);const check=await setup(page,()=>current);
+  await page.clock.fastForward(30000);await expect.poll(()=>check.requests.length).toBeGreaterThanOrEqual(2);
+  current.status.last_shadow_run_utc='2026-10-04T15:00:00Z';await page.getByRole('button',{name:'Refresh NFL forecasts'}).click();await expect(page.getByRole('alert')).toContainText('predates the last accepted artifact');
+  await page.route('**/api/nfl-phase1-predictions?*',route=>route.fulfill({status:502,json:{error:'NFL Phase 1 upstream unavailable',details:'GitHub HTTP 503'}}));
+  await page.getByRole('button',{name:'Refresh NFL forecasts'}).click();await expect(page.getByRole('alert')).toContainText('GitHub HTTP 503');await expect(page.getByTestId('nfl-game')).toHaveCount(0);expect(check.legacy()).toBe(0);
+});
+test('360px filters/search discover uncapped targets; executable Geno target survives outside default ten',async({page})=>{
+  let current=structuredClone(source);await setup(page,()=>current);
+  await page.getByRole('button',{name:'RUSH',exact:true}).click();
+  await expect(page.getByTestId('today-best')).toHaveCount(4);
+  await page.getByTestId('nfl-game').getByRole('button').click();await expect(page.getByTestId('system-pick')).toHaveCount(4);
+  for(const player of ['geno smith','braelon allen','kyle monangai'])await expect(page.getByTestId('system-pick').filter({hasText:player})).toHaveCount(1);
+  await page.getByRole('button',{name:'ALL',exact:true}).click();await page.getByRole('searchbox',{name:'Search player or team'}).fill('Geno Smith');
+  await expect(page.getByTestId('system-pick')).toHaveCount(3);await expect(page.getByTestId('today-best')).toHaveCount(3);
+  await expect(page.getByTestId('system-target').first()).toContainText('10+ RUSHING YARDS');
+  current.lines=[{game_id:'2026_04_NYJ_CHI',horizon:'T90',player:'Geno Smith',outcome:'rush_yds',book:'Test book',line:9.5,over_price:-110}];
+  await page.getByRole('button',{name:'Refresh NFL forecasts'}).click();await page.getByRole('button',{name:'BETTABLE NOW',exact:true}).click();
+  await page.getByTestId('nfl-game').getByRole('button').click();await expect(page.getByTestId('system-pick')).toHaveCount(1);await expect(page.getByTestId('available-market')).toContainText('OVER 9.5');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
 });
