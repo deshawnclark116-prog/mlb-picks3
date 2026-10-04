@@ -8,18 +8,36 @@ const button='min-h-11 rounded-xl border border-[#333] px-3 text-xs font-bold di
 export default function NflShareModal({view,gameId,horizon,onClose}:{view:Phase1View;gameId:string;horizon:Horizon;onClose:()=>void}) {
  const [mode,setMode]=useState<ShareMode>('system'),[busy,setBusy]=useState(false),[message,setMessage]=useState<string|null>(null),[error,setError]=useState<string|null>(null);
  const [scale,setScale]=useState(.25),[clock,setClock]=useState(Date.now);
+ const [prepared,setPrepared]=useState<{key:string;blob:Blob;filename:string}|null>(null),[retry,setRetry]=useState(0);
+ const [failedKey,setFailedKey]=useState<string|null>(null);
  const lock=useRef(false),dialog=useRef<HTMLDialogElement>(null),wrapper=useRef<HTMLDivElement>(null),card=useRef<HTMLDivElement>(null);
  const data=useMemo(()=>gameShareData(view,gameId,horizon,mode,clock),[view,gameId,horizon,mode,clock]);
+ // Key the cache by actual poster content, not the polling clock or object identity.
+ const posterKey=JSON.stringify(data);
+ const ready=prepared?.key===posterKey;
+ useEffect(()=>{
+   let cancelled=false;
+   setPrepared(null);setFailedKey(null);setError(null);setMessage(null);
+   const element=card.current!;
+   void renderElementToPng(element).then(blob=>{
+     if(!cancelled)setPrepared({key:posterKey,blob,filename:shareFilename(JSON.parse(posterKey))});
+   }).catch(err=>{
+     if(!cancelled){setFailedKey(posterKey);setError(`Could not prepare the image: ${err instanceof Error?err.message:String(err)}. Retry preparation.`);}
+   });
+   // A superseded render must never publish a Blob or error into the new snapshot.
+   return()=>{cancelled=true;};
+ },[posterKey,retry]);
  useEffect(()=>{const el=dialog.current!;el.showModal();const timer=setInterval(()=>{if(!lock.current)setClock(Date.now());},30000);return()=>{clearInterval(timer);el.close();};},[]);
  useLayoutEffect(()=>{const el=wrapper.current!;const update=()=>setScale(Math.min(el.clientWidth/1080,1));const observer=new ResizeObserver(update);observer.observe(el);update();return()=>observer.disconnect();},[]);
- async function generate(action:'share'|'save') {
-   if(lock.current || !card.current)return;
+ async function usePrepared(action:'share'|'save') {
+   if(lock.current || !ready || !prepared)return;
    lock.current=true;setBusy(true);setError(null);setMessage(null);
    try {
-     const blob=await renderElementToPng(card.current),filename=shareFilename(data);
-     if(action==='save'){downloadBlob(blob,filename);setMessage('PNG saved.');}
-     else{const result=await shareBlob(blob,filename);setMessage(result==='shared'?'Image shared.':result==='cancelled'?'Share cancelled. SAVE PNG remains available.':'File sharing is unavailable here. Use SAVE PNG.');}
-   } catch(err){setError(`Could not create/share the image: ${err instanceof Error?err.message:String(err)}. Try SAVE PNG again.`);}
+     if(action==='save'){downloadBlob(prepared.blob,prepared.filename);setMessage('PNG saved.');}
+     // shareBlob invokes navigator.share synchronously before its first await.
+     // No rendering or other awaited work occurs between this click and native share.
+     else{const result=await shareBlob(prepared.blob,prepared.filename);setMessage(result==='shared'?'Image shared.':result==='cancelled'?'Share cancelled. SAVE PNG remains available.':'File sharing is unavailable here. Use SAVE PNG.');}
+   } catch(err){setError(`Could not share/save the prepared image: ${err instanceof Error?err.message:String(err)}. Try again.`);}
    finally{lock.current=false;setBusy(false);}
  }
  const supported=typeof navigator.share==='function' && typeof navigator.canShare==='function';
@@ -30,9 +48,11 @@ export default function NflShareModal({view,gameId,horizon,onClose}:{view:Phase1
    <div ref={wrapper} data-testid="share-preview" style={{width:'100%',height:1350*scale,position:'relative',overflow:'hidden',borderRadius:10}}>
      <div style={{position:'absolute',left:0,top:0,width:1080,height:1350,transform:`scale(${scale})`,transformOrigin:'top left'}}><NflGameShareCard data={data} cardRef={card}/></div>
    </div>
-   <div className="mt-3 grid grid-cols-2 gap-2"><button disabled={busy||!supported} onClick={()=>void generate('share')} className={`${button} bg-[#79FF48] text-black`}>{busy?'RENDERING…':'SHARE IMAGE'}</button><button disabled={busy} onClick={()=>void generate('save')} className={`${button} text-[#79FF48]`}>{busy?'RENDERING…':'SAVE PNG'}</button></div>
+   <div className="mt-3 grid grid-cols-2 gap-2"><button disabled={busy||!ready||!supported} onClick={()=>void usePrepared('share')} className={`${button} bg-[#79FF48] text-black`}>SHARE IMAGE</button><button disabled={busy||!ready} onClick={()=>void usePrepared('save')} className={`${button} text-[#79FF48]`}>SAVE PNG</button></div>
    {!supported && <p className="mt-2 text-[10px] text-gray-500">Native file sharing unavailable. SAVE PNG works in this browser.</p>}
-   {busy && <p role="status" className="mt-2 text-xs text-gray-400">Rendering full-resolution image…</p>}
+   {!ready && failedKey!==posterKey && <p role="status" className="mt-2 text-xs text-gray-400">PREPARING IMAGE…</p>}
+   {busy && <p role="status" className="mt-2 text-xs text-gray-400">Sharing image…</p>}
+   {failedKey===posterKey && <button className={`${button} mt-2 w-full text-[#79FF48]`} onClick={()=>setRetry(value=>value+1)}>RETRY IMAGE</button>}
    {message && <p role="status" className="mt-2 text-xs text-gray-400">{message}</p>}
    {error && <p role="alert" className="mt-2 break-words text-xs text-red-300">{error}</p>}
    <button disabled={busy} onClick={onClose} className={`${button} mt-3 w-full text-gray-400`}>CLOSE</button>

@@ -49,21 +49,93 @@ test('all published games have sibling 44px image controls; system export works 
  await setup(page,()=>doc);for(const g of doc.games){const control=page.getByRole('button',{name:`Create share card for ${g.away} vs ${g.home}`});const box=await control.boundingBox();expect(box!.width).toBeGreaterThanOrEqual(44);expect(box!.height).toBeGreaterThanOrEqual(44);expect(await control.evaluate(el=>el.parentElement?.closest('button'))).toBe(null);}
  const modal=await open(page);await expect(modal.getByTestId('poster-core')).toContainText('dandre swift');await expect(modal.getByTestId('game-share-poster')).not.toContainText('LINES MAY HAVE MOVED');await modal.getByRole('button',{name:'CLOSE'}).click();
 });
-test('native PNG file share feature detection, unsupported fallback, busy guard and visible rendering error',async({page})=>{
- test.setTimeout(60000);await page.addInitScript(()=>{
+test('PNG prepares before click; share preserves user activation and save reuses the cached Blob',async({page})=>{
+ test.setTimeout(60000);
+ await page.addInitScript(()=>{
+  const encode=HTMLCanvasElement.prototype.toDataURL;
+  HTMLCanvasElement.prototype.toDataURL=function(...args){(window as any).__renders=((window as any).__renders||0)+1;return encode.apply(this,args);};
   Object.defineProperty(navigator,'canShare',{configurable:true,value:({files}:any)=>files?.[0]?.type==='image/png'});
-  Object.defineProperty(navigator,'share',{configurable:true,value:async({files}:any)=>{(window as any).__shareCalls=((window as any).__shareCalls||0)+1;(window as any).__sharedFile={name:files[0].name,size:files[0].size,type:files[0].type};}});
+  Object.defineProperty(navigator,'share',{configurable:true,value:({files}:any)=>{
+   (window as any).__activation=navigator.userActivation.isActive;
+   (window as any).__rendersAtShare=(window as any).__renders;
+   (window as any).__sharedFile=files[0];
+   return new Promise<void>(resolve=>(window as any).__finishShare=resolve);
+  }});
  });
- await setup(page);const modal=await open(page);
+ await setup(page);
  await page.evaluate(()=>Object.defineProperty(document.fonts,'ready',{configurable:true,value:new Promise<void>(resolve=>(window as any).__releaseFonts=resolve)}));
+ const modal=await open(page);
+ await expect(modal.getByText('PREPARING IMAGE…',{exact:true})).toBeVisible();
+ await expect(modal.getByRole('button',{name:'SHARE IMAGE',exact:true})).toBeDisabled();
+ await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeDisabled();
+ await page.evaluate(()=>(window as any).__releaseFonts());
+ await expect(modal.getByRole('button',{name:'SHARE IMAGE',exact:true})).toBeEnabled();
+ expect(await page.evaluate(()=>(window as any).__renders)).toBe(2);
  await modal.getByRole('button',{name:'SHARE IMAGE',exact:true}).click();
- await expect(modal.getByRole('button',{name:'RENDERING…',exact:true})).toHaveCount(2);await expect(modal.getByRole('button',{name:'CLOSE',exact:true})).toBeDisabled();await expect(modal.getByRole('button',{name:'SYSTEM CARD',exact:true})).toBeDisabled();
- await modal.getByRole('button',{name:'RENDERING…',exact:true}).first().evaluate(el=>(el as HTMLButtonElement).click());await page.evaluate(()=>(window as any).__releaseFonts());
+ expect(await page.evaluate(()=>(window as any).__activation)).toBe(true);
+ expect(await page.evaluate(()=>(window as any).__rendersAtShare)).toBe(2);
+ await expect(modal.getByRole('button',{name:'CLOSE',exact:true})).toBeDisabled();
+ await expect(modal.getByRole('button',{name:'SYSTEM CARD',exact:true})).toBeDisabled();
+ await page.evaluate(()=>(window as any).__finishShare());
  await expect(modal.getByText('Image shared.',{exact:true})).toBeVisible();
- const file=await page.evaluate(()=>(window as any).__sharedFile);expect(file.name).toBe('prop-edge-nyj-chi-t90-system-w04.png');expect(file.size).toBeGreaterThan(10000);expect(file.type).toBe('image/png');expect(await page.evaluate(()=>(window as any).__shareCalls)).toBe(1);
+ const event=page.waitForEvent('download');await modal.getByRole('button',{name:'SAVE PNG',exact:true}).click();const download=await event;
+ expect(download.suggestedFilename()).toBe('prop-edge-nyj-chi-t90-system-w04.png');
+ const saved=readFileSync((await download.path())!);
+ const shared=await page.evaluate(async()=>Array.from(new Uint8Array(await (window as any).__sharedFile.arrayBuffer())));
+ expect(saved.equals(Buffer.from(shared))).toBe(true);expect(await page.evaluate(()=>(window as any).__renders)).toBe(2);
  await page.evaluate(()=>Object.defineProperty(navigator,'share',{configurable:true,value:async()=>{throw new DOMException('Denied','NotAllowedError');}}));
- await modal.getByRole('button',{name:'SHARE IMAGE',exact:true}).click();await expect(modal.getByText('File sharing is unavailable here. Use SAVE PNG.',{exact:true})).toBeVisible();await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
- // Simulate a renderer/canvas failure, not a server failure.
- await page.evaluate(()=>{HTMLCanvasElement.prototype.toDataURL=()=>{throw new Error('Canvas unavailable');};});
- await modal.getByRole('button',{name:'SAVE PNG',exact:true}).click();await expect(modal.getByRole('alert')).toContainText('Canvas unavailable');await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();await modal.getByRole('button',{name:'CLOSE',exact:true}).click();await expect(page.getByTestId('nfl-game')).toHaveCount(1);
+ await modal.getByRole('button',{name:'SHARE IMAGE',exact:true}).click();await expect(modal.getByText('File sharing is unavailable here. Use SAVE PNG.',{exact:true})).toBeVisible();
+ await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();expect(await page.evaluate(()=>(window as any).__renders)).toBe(2);
+});
+test('mode invalidates cache; a stale successful render cannot overwrite the newer prepared PNG',async({page})=>{
+ test.setTimeout(60000);await setup(page);
+ await page.evaluate(()=>{
+  Object.defineProperty(document.fonts,'ready',{configurable:true,value:new Promise<void>(resolve=>(window as any).__oldFonts=resolve)});
+  const encode=HTMLCanvasElement.prototype.toDataURL;
+  HTMLCanvasElement.prototype.toDataURL=function(...args){
+   const n=(window as any).__renders=((window as any).__renders||0)+1;
+   const ctx=this.getContext('2d')!;ctx.fillStyle=n===1?'red':'blue';ctx.fillRect(0,0,20,20);
+   return encode.apply(this,args);
+  };
+ });
+ const modal=await open(page);await expect(modal.getByText('PREPARING IMAGE…',{exact:true})).toBeVisible();
+ await page.evaluate(()=>Object.defineProperty(document.fonts,'ready',{configurable:true,value:new Promise<void>(resolve=>(window as any).__newFonts=resolve)}));
+ await modal.getByRole('button',{name:'BETTABLE CARD',exact:true}).click();
+ await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeDisabled();
+ await expect(modal.getByRole('button',{name:'SHARE IMAGE',exact:true})).toBeDisabled();
+ await page.evaluate(()=>(window as any).__newFonts());await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
+ const save=async()=>{const event=page.waitForEvent('download');await modal.getByRole('button',{name:'SAVE PNG',exact:true}).click();const dl=await event;expect(dl.suggestedFilename()).toBe('prop-edge-nyj-chi-t90-bettable-w04.png');return readFileSync((await dl.path())!);};
+ const newer=await save();expect(await page.evaluate(()=>(window as any).__renders)).toBe(1);
+ await page.evaluate(()=>(window as any).__oldFonts());await expect.poll(()=>page.evaluate(()=>(window as any).__renders)).toBe(3);
+ // The two encodes intentionally differ; saving must still return the newer cache.
+ expect((await save()).equals(newer)).toBe(true);await expect(modal.getByRole('alert')).toHaveCount(0);
+ await modal.getByRole('button',{name:'SYSTEM CARD',exact:true}).click();await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
+ await expect.poll(()=>page.evaluate(()=>(window as any).__renders)).toBe(4);
+});
+test('automatic renderer failure leaves the modal alive with a working retry path',async({page})=>{
+ await setup(page);await page.evaluate(()=>{
+  (window as any).__originalEncode=HTMLCanvasElement.prototype.toDataURL;
+  HTMLCanvasElement.prototype.toDataURL=()=>{throw new Error('Canvas unavailable');};
+ });
+ const modal=await open(page);await expect(modal.getByRole('alert')).toContainText('Canvas unavailable');
+ await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeDisabled();
+ await expect(modal.getByRole('button',{name:'SHARE IMAGE',exact:true})).toBeDisabled();
+ await page.evaluate(()=>{HTMLCanvasElement.prototype.toDataURL=(window as any).__originalEncode;});
+ await modal.getByRole('button',{name:'RETRY IMAGE',exact:true}).click();await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
+ await expect(modal.getByRole('alert')).toHaveCount(0);await modal.getByRole('button',{name:'CLOSE',exact:true}).click();await expect(page.getByTestId('nfl-game')).toHaveCount(1);
+});
+test('changed poster freshness automatically invalidates its prepared snapshot',async({page})=>{
+ const doc=structuredClone(source);doc.lines_meta={generated_at_utc:'2026-10-04T16:00:30Z'};
+ await setup(page,()=>doc);const modal=await open(page);
+ await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
+ await modal.getByRole('button',{name:'BETTABLE CARD',exact:true}).click();
+ await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
+ await expect(modal.getByTestId('game-share-poster')).not.toContainText('LINES MAY HAVE MOVED');
+ await page.evaluate(()=>Object.defineProperty(document.fonts,'ready',{configurable:true,value:new Promise<void>(resolve=>(window as any).__snapshotFonts=resolve)}));
+ await page.clock.fastForward(60001);
+ await expect(modal.getByTestId('game-share-poster')).toContainText('LINES MAY HAVE MOVED');
+ await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeDisabled();
+ await expect(modal.getByText('PREPARING IMAGE…',{exact:true})).toBeVisible();
+ await page.evaluate(()=>(window as any).__snapshotFonts());
+ await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
 });

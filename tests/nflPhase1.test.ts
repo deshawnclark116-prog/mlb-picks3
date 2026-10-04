@@ -287,3 +287,18 @@ test('native file sharing tests supported, unsupported, not-allowed and cancella
  for(const [error,result] of [['NotAllowedError','unsupported'],['NotSupportedError','unsupported'],['AbortError','cancelled']])assert.equal(await shareBlob(blob,name,{canShare:()=>true,share:async()=>{throw new DOMException('test',error);}} as any),result);
  await assert.rejects(shareBlob(blob,name,{canShare:()=>true,share:async()=>{throw Error('unexpected failure');}} as any),/unexpected failure/);
 });
+
+test('poster claims separate model-only SYSTEM targets from BETTABLE execution data and leaders',()=>{
+ const render=(mode:'system'|'bettable')=>renderToStaticMarkup(React.createElement(NflGameShareCard,{data:shareData(nyj(),mode)}));
+ const system=render('system'),bet=render('bettable');
+ assert.match(system,/MODEL-DERIVED 65%\+ TARGETS · NO SPORTSBOOK INPUTS/);
+ assert(!bet.includes('NO SPORTSBOOK INPUTS'));
+ assert.match(bet,/MODEL TARGETS ARE SPORTSBOOK-INDEPENDENT · SPORTSBOOK DATA USED ONLY FOR EXECUTION/);
+ assert.match(bet,/NO VERIFIED EXECUTION MATCHES/);assert.match(bet,/SYSTEM LEADERS · MODEL ONLY/);
+ assert(!bet.includes('>MODEL LEADERS<'));assert.match(system,/>MODEL LEADERS</);
+});
+test('shareBlob enters native share immediately, before yielding to any asynchronous work',async()=>{
+ let called=false;
+ const completion=shareBlob(new Blob(['prepared'],{type:'image/png'}),'prepared.png',{canShare:()=>true,share:()=>{called=true;return Promise.resolve();}} as any);
+ assert.equal(called,true);assert.equal(await completion,'shared');
+});
