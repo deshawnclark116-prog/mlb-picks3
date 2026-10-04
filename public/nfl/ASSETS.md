@@ -61,3 +61,19 @@ real likenesses. Successes may be cached; failures are evicted and RETRY IMAGE
 rechecks local assets before preparing a new PNG.
 
 Theme filenames include `premium` or `clean`. Export remains 1080 × 1350.
+
+## PREMIUM art direction
+
+`art/anonymous-football-hero.webp` is an original AI-generated anonymous football
+shadow character created specifically for Prop Edge in this art-direction pass.
+It is not a photograph of a real athlete or a reproduction of supplied reference
+assets. Its opaque visor conceals identity; it has no identifying number, name,
+or team mark. A 1024×1536 transparent master was generated, then encoded locally
+at 640×960 as WebP. PREMIUM uses it with team-color rim lighting and keeps the
+original hand-authored SVG as the last-resort artwork fallback. Verified licensed
+real cutouts still take precedence. CLEAN remains unchanged and does not load or
+render hero artwork.
+
+The supplied reference images are development direction only, never shipped in
+the frontend. Synthetic matchup transformations are confined to browser tests;
+their output images carry an explicit SYNTHETIC VISUAL FIXTURE label and filename.

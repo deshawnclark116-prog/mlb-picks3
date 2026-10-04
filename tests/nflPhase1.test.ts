@@ -361,3 +361,9 @@ test('failed asset loads are evicted, pending loads shared and successes cached'
  let resolve!:(ok:boolean)=>void;const pending=createAssetLoader(()=>new Promise<boolean>(done=>{resolve=done;}));const a=pending('/a'),b=pending('/a');assert.equal(a,b);await Promise.resolve();resolve(true);assert.equal(await a,true);
  const rejected=createAssetLoader(async()=>{throw Error('transient');});assert.equal(await rejected('/a'),false);assert.equal(await rejected('/a'),false);
 });
+
+test('PREMIUM uses one featured pick and five editorial supports; CLEAN retains its existing grid markup',()=>{
+ const data=shareData(),render=(theme:'premium'|'clean')=>renderToStaticMarkup(React.createElement(NflGameShareCard,{data,theme}));
+ const premium=render('premium'),clean=render('clean');assert.equal((premium.match(/data-testid="poster-featured-pick"/g)||[]).length,1);assert.equal((premium.match(/data-testid="poster-supporting-pick"/g)||[]).length,5);assert(premium.includes('height:580px'));assert(premium.includes('height:590px'));
+ assert(!clean.includes('poster-featured-pick'));assert(clean.includes('grid-template-rows:repeat(3, 1fr)'));assert(!clean.includes('premium-environment'));
+});

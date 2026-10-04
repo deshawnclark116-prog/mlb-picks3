@@ -5,6 +5,7 @@ import { shortModelVersion,type GameShareData } from '../nfl/shareCard';
 import { posterPresentation,type PosterPresentation } from '../nfl/posterAssets';
 import { POSTER_THEMES,type PosterTheme } from '../nfl/posterTheme';
 import NflPosterHero from './NflPosterHero';
+import NflPremiumPoster from './NflPremiumPoster';
 import { EXPORT_WIDTH,EXPORT_HEIGHT } from '../lib/exportImage';
 const green='#79FF48',muted='#8E9DA5';
 const pct=(p:number|null)=>p==null?'—':`${(p*100).toFixed(1)}%`;
@@ -13,6 +14,7 @@ const label:React.CSSProperties={fontSize:17,fontWeight:700,letterSpacing:2,colo
 export default function NflGameShareCard({data,cardRef,theme='premium',visual:resolved}:{data:GameShareData;cardRef?:React.Ref<HTMLDivElement>;theme?:PosterTheme;visual?:PosterPresentation}) {
  const visual=resolved||posterPresentation(data,theme),style=POSTER_THEMES[visual.theme],away=visual.away,home=visual.home;
  const kickoff=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(data.game.kickoff_utc)).toUpperCase()+' ET';
+ if(visual.theme==='premium')return <NflPremiumPoster data={data} visual={visual} kickoff={kickoff} cardRef={cardRef}/>;
  return <div ref={cardRef} data-testid="game-share-poster" data-theme={visual.theme} style={{width:EXPORT_WIDTH,height:EXPORT_HEIGHT,boxSizing:'border-box',position:'relative',overflow:'hidden',padding:44,background:style.background,color:'#F0F4F5',fontFamily:'Arial, Helvetica, sans-serif',lineHeight:1.1,isolation:'isolate'}}>
   <div aria-hidden="true" style={{position:'absolute',inset:0,zIndex:-1,background:style.grid?`radial-gradient(ellipse at 8% 20%, ${away.primary}55, transparent 45%), radial-gradient(ellipse at 95% 15%, ${home.primary}44, transparent 44%), repeating-linear-gradient(120deg, transparent 0px, transparent 89px, #ffffff04 90px, transparent 92px)`:`linear-gradient(180deg,${away.primary}18,transparent 50%)`}}/>
   {style.grid && <div aria-hidden="true" style={{position:'absolute',left:-35,right:-35,top:84,height:280,zIndex:-1,border:'2px solid #ffffff08',borderRadius:'50%',transform:'rotate(-10deg)',boxShadow:'0 0 80px #79ff4806'}}/>}
@@ -27,7 +29,7 @@ export default function NflGameShareCard({data,cardRef,theme='premium',visual:re
     {data.draws!=null && <div><b style={{fontSize:25}}>{data.draws.toLocaleString('en-US')}</b><span style={{...label,fontSize:13,marginLeft:10}}>DRAWS</span></div>}
   </section>
   <div style={{display:'flex',alignItems:'baseline',justifyContent:'space-between',marginTop:24,marginBottom:14}}><h2 style={{margin:0,fontSize:30,fontWeight:900,letterSpacing:1}}>{data.mode==='system'?'SYSTEM CORE':'BETTABLE NOW'}</h2><span style={{...label,fontSize:12}}>MODEL TARGET → OPTIONAL EXECUTION</span></div>
-  <section data-testid="poster-core" style={{height:visual.theme==='premium'?480:510,display:'grid',gridTemplateColumns:'1fr 1fr',gridTemplateRows:'repeat(3, 1fr)',gap:12}}>
+  <section data-testid="poster-core" style={{height:510,display:'grid',gridTemplateColumns:'1fr 1fr',gridTemplateRows:'repeat(3, 1fr)',gap:12}}>
     {data.core.map((pick,i)=><div key={pick.row.id} style={{minWidth:0,position:'relative',border:'1px solid #ffffff20',borderRadius:18,padding:'12px 20px',background:style.grid?'linear-gradient(130deg,#202A30,#11181E)':style.panel}}>
       <div style={{display:'flex',justifyContent:'space-between',gap:10}}><span style={{fontSize:20,fontWeight:900,color:'#607079'}}>{String(i+1).padStart(2,'0')}</span><span style={{...label,fontSize:12}}>{pick.row.team} · {OUTCOMES[pick.row.outcome]?.toUpperCase()}</span></div>
       <p style={{margin:'8px 0 0',fontWeight:800,fontSize:24,textTransform:'uppercase',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{pick.row.player}</p>

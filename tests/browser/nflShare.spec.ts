@@ -15,6 +15,14 @@ async function setup(page:any,get=()=>structuredClone(source)) {
  await page.goto('/');await page.locator('#tab-btn-nfl').click();await expect(page.getByTestId('nfl-game')).toHaveCount(get().games.length);
  return ()=>legacy;
 }
+async function labelSynthetic(page:any) {
+ await page.evaluate(()=>{
+  const label=()=>{const poster=document.querySelector('[data-testid="game-share-poster"]');if(!poster||poster.querySelector('[data-synthetic-label]'))return;
+   const banner=document.createElement('div');banner.dataset.syntheticLabel='true';banner.textContent='SYNTHETIC VISUAL FIXTURE · TEST ONLY';
+   Object.assign(banner.style,{position:'absolute',top:'0',left:'0',right:'0',height:'24px',zIndex:'99',background:'#8b2436',color:'white',textAlign:'center',font:'bold 16px Arial',lineHeight:'24px',letterSpacing:'2px'});poster.appendChild(banner);
+  };new MutationObserver(label).observe(document.body,{childList:true,subtree:true});label();
+ });
+}
 const open=async(page:any)=>{await page.getByRole('button',{name:'Create share card for NYJ vs CHI',exact:true}).click();return page.getByRole('dialog');};
 test('360px modal, canonical source despite filters, real PNG download, exact dimensions, and honest bettable export',async({page})=>{
  test.setTimeout(60000);const legacy=await setup(page);
@@ -164,8 +172,8 @@ test('missing artwork and logos gracefully fall back and still export exact-size
  await expect(poster.getByTestId('poster-art')).toHaveCount(0);await expect(poster.getByTestId('poster-logo')).toHaveCount(0);await expect(poster.getByTestId('poster-logo-fallback')).toHaveCount(2);await expect(modal.getByRole('alert')).toHaveCount(0);
  const event=page.waitForEvent('download');await modal.getByRole('button',{name:'SAVE PNG',exact:true}).click();const download=await event;const path=`${artifacts}/nfl-premium-all-assets-missing.png`;await download.saveAs(path);const bytes=readFileSync(path);expect(bytes.readUInt32BE(16)).toBe(1080);expect(bytes.readUInt32BE(20)).toBe(1350);
 });
-test('verified local cutouts resolve for selected names, missing assets fall back and RETRY IMAGE recovers',async({page})=>{
- test.setTimeout(60000);await setup(page);
+test('SYNTHETIC VISUAL FIXTURE: verified local cutouts resolve for selected names, missing assets fall back and RETRY IMAGE recovers',async({page})=>{
+ test.setTimeout(60000);await setup(page);await labelSynthetic(page);
  await page.evaluate(async()=>{const path='/src/nfl/posterAssets.ts';const module=await import(/* @vite-ignore */path);module.POSTER_ASSETS.players={'jeremy-ruckert':{src:'/nfl/players/jeremy-ruckert.svg',source:'Test-only original vector fixture',permission:'Original fixture, not a real likeness',verified:true}};});
  let fail=true;await page.route('**/nfl/players/jeremy-ruckert.svg*',route=>fail?route.abort():route.fulfill({contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="160" height="260"><circle cx="80" cy="40" r="28" fill="#eee"/><path d="M45 65h70l30 120H15z" fill="#7e9"/><path d="M40 185h80v75H40z" fill="#40505b"/></svg>'}));
  const modal=await open(page),poster=modal.getByTestId('game-share-poster');await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
@@ -173,17 +181,17 @@ test('verified local cutouts resolve for selected names, missing assets fall bac
  await page.screenshot({path:`${artifacts}/nfl-premium-no-real-cutouts-360.png`});
  fail=false;await modal.getByRole('button',{name:'RETRY IMAGE',exact:true}).click();await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
  await expect(poster.getByRole('img',{name:'Verified cutout: jeremy ruckert'})).toHaveCount(1);await expect(poster.getByTestId('generic-football-hero')).toHaveCount(3);
- await page.screenshot({path:`${artifacts}/nfl-premium-test-cutouts-360.png`});
- const event=page.waitForEvent('download');await modal.getByRole('button',{name:'SAVE PNG',exact:true}).click();const dl=await event;await dl.saveAs(`${artifacts}/nfl-premium-test-cutouts.png`);
+ await page.screenshot({path:`${artifacts}/SYNTHETIC-VISUAL-FIXTURE-nfl-premium-test-cutouts-360.png`});
+ const event=page.waitForEvent('download');await modal.getByRole('button',{name:'SAVE PNG',exact:true}).click();const dl=await event;await dl.saveAs(`${artifacts}/SYNTHETIC-VISUAL-FIXTURE-nfl-premium-test-cutouts.png`);
  const bytes=readFileSync((await dl.path())!);expect(bytes.readUInt32BE(16)).toBe(1080);expect(bytes.readUInt32BE(20)).toBe(1350);
  await modal.getByRole('button',{name:'CLEAN',exact:true}).click();await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();await expect(poster.getByTestId('generic-football-hero')).toHaveCount(0);await expect(poster.getByTestId('poster-player-slots')).toHaveCount(0);
 });
-test('non-Chicago home team has intentional coastal stadium scene and exports premium poster',async({page})=>{
+test('SYNTHETIC VISUAL FIXTURE: non-Chicago home team has intentional coastal stadium scene and exports premium poster',async({page})=>{
  const doc=structuredClone(source),fields=doc.row_fields;doc.games[0].home='NE';doc.games[0].game_id='2026_04_NYJ_NE';
  for(const row of doc.forecasts.T90){row[fields.indexOf('game_id')]='2026_04_NYJ_NE';if(row[fields.indexOf('team')]==='CHI')row[fields.indexOf('team')]='NE';if(row[fields.indexOf('opp')]==='CHI')row[fields.indexOf('opp')]='NE';}
- await setup(page,()=>doc);await page.getByRole('button',{name:'Create share card for NYJ vs NE',exact:true}).click();const modal=page.getByRole('dialog');await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
+ await setup(page,()=>doc);await labelSynthetic(page);await page.getByRole('button',{name:'Create share card for NYJ vs NE',exact:true}).click();const modal=page.getByRole('dialog');await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
  await expect(modal.getByTestId('poster-city-scene')).toHaveCount(1);await expect(modal.getByTestId('poster-hero')).toContainText('NEW ENGLAND');await expect(modal.getByTestId('generic-football-hero')).toHaveCount(4);
- const event=page.waitForEvent('download');await modal.getByRole('button',{name:'SAVE PNG',exact:true}).click();const dl=await event;await dl.saveAs(`${artifacts}/nfl-premium-new-england.png`);await page.screenshot({path:`${artifacts}/nfl-premium-new-england-360.png`});
+ const event=page.waitForEvent('download');await modal.getByRole('button',{name:'SAVE PNG',exact:true}).click();const dl=await event;await dl.saveAs(`${artifacts}/SYNTHETIC-VISUAL-FIXTURE-nfl-premium-new-england.png`);await page.screenshot({path:`${artifacts}/SYNTHETIC-VISUAL-FIXTURE-nfl-premium-new-england-360.png`});
  const bytes=readFileSync((await dl.path())!);expect(bytes.readUInt32BE(16)).toBe(1080);expect(bytes.readUInt32BE(20)).toBe(1350);
 });
 test('stale pending asset preparation cannot overwrite a newer clean theme',async({page})=>{
@@ -193,4 +201,28 @@ test('stale pending asset preparation cannot overwrite a newer clean theme',asyn
  await modal.getByRole('button',{name:'CLEAN',exact:true}).click();await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();const response=page.waitForResponse(r=>r.url().endsWith('/nfl/art/chicago-night.svg'));release();await response;
  await expect(modal.getByTestId('game-share-poster')).toHaveAttribute('data-theme','clean');await expect(modal.getByTestId('generic-football-hero')).toHaveCount(0);
  const event=page.waitForEvent('download');await modal.getByRole('button',{name:'SAVE PNG',exact:true}).click();expect((await event).suggestedFilename()).toBe('prop-edge-nyj-chi-t90-system-clean-w04.png');
+});
+
+test('PREMIUM sports composition: dominant heroes, editorial pick hierarchy; CLEAN remains a compact grid',async({page})=>{
+ await setup(page);const modal=await open(page),poster=modal.getByTestId('game-share-poster');await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
+ const hero=await poster.getByTestId('poster-hero').evaluate(el=>(el as HTMLElement).offsetHeight);expect(hero).toBeGreaterThan(500);
+ const figures=await poster.getByTestId('premium-primary-hero').evaluateAll(els=>els.map(el=>(el as HTMLElement).offsetHeight));expect(figures).toEqual([590,590]);
+ await expect(poster.getByTestId('poster-featured-pick')).toHaveCount(1);await expect(poster.getByTestId('poster-supporting-pick')).toHaveCount(5);
+ expect(await poster.getByTestId('poster-core').evaluate(el=>getComputedStyle(el).display)).not.toBe('grid');
+ const lead=await poster.getByTestId('poster-featured-pick').boundingBox(),support=await poster.getByTestId('poster-supporting-pick').first().boundingBox();expect(lead!.width).toBeGreaterThan(support!.width*1.8);expect(lead!.height).toBeGreaterThan(support!.height);
+ const footer=await poster.locator('footer').boundingBox(),leaders=await poster.getByTestId('premium-scouting-strip').boundingBox();expect(leaders!.y+leaders!.height).toBeLessThan(footer!.y);
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
+ await modal.getByRole('button',{name:'CLEAN',exact:true}).click();await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
+ await expect(poster.getByTestId('poster-featured-pick')).toHaveCount(0);expect(await poster.getByTestId('poster-core').evaluate(el=>getComputedStyle(el).display)).toBe('grid');await expect(poster.getByTestId('generic-football-hero')).toHaveCount(0);
+});
+
+test('verified BETTABLE execution overlays stay subordinate and inside editorial pick blocks',async({page})=>{
+ const doc=structuredClone(source),f=doc.row_fields;
+ doc.lines=doc.forecasts.T90.flatMap((row:any[])=>{const target=doc.alt_65[row[f.indexOf('id')]];return target?[{game_id:row[f.indexOf('game_id')],horizon:'T90',player:row[f.indexOf('player')],outcome:row[f.indexOf('outcome')],book:'DraftKings',line:target.milestone-.5,over_price:-110}]:[];});
+ await setup(page,()=>doc);const modal=await open(page);await modal.getByRole('button',{name:'BETTABLE CARD',exact:true}).click();await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
+ const poster=modal.getByTestId('game-share-poster');await expect(poster.getByTestId('poster-featured-pick')).toHaveCount(1);await expect(poster.getByTestId('poster-supporting-pick')).toHaveCount(5);
+ for(const tile of [poster.getByTestId('poster-featured-pick'),...await poster.getByTestId('poster-supporting-pick').all()]){
+  const available=tile.getByText(/AVAILABLE · DraftKings/);await expect(available).toBeVisible();const outer=await tile.boundingBox(),inner=await available.boundingBox();expect(inner!.y+inner!.height).toBeLessThanOrEqual(outer!.y+outer!.height+1);
+ }
+ await expect(poster).not.toContainText('NO SPORTSBOOK INPUTS');await expect(poster).toContainText('SPORTSBOOK DATA USED ONLY FOR EXECUTION');
 });

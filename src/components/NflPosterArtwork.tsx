@@ -17,7 +17,8 @@ export function CityScene({motif,color}:{motif:CityMotif;color:string}) {
   <path d="M0 400l180-100h640l180 100M180 300h640M100 345h800M380 300l-70 100M620 300l70 100" fill="none" stroke="#ffffff" opacity=".12" strokeWidth="2"/>
  </svg>;
 }
-export function GenericFootballHero({color,variant}:{color:string;variant:number}) {
+export function GenericFootballHero({color,variant,artwork}:{color:string;variant:number;artwork?:string|null}) {
+ if(artwork)return <img data-testid="generic-football-hero" alt="Generic football shadow artwork — not a player likeness" src={artwork} style={{width:'100%',height:'100%',objectFit:'contain',objectPosition:'top',transform:variant%2?'scaleX(-1)':undefined,filter:`drop-shadow(0 0 18px ${color}aa)`}}/>;
  return <svg data-testid="generic-football-hero" role="img" aria-label="Generic football shadow artwork — not a player likeness" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 280" style={{width:'100%',height:'100%',filter:`drop-shadow(0 0 14px ${color}99)`}}>
   <g transform={variant%2?'translate(180 0) scale(-1 1)':undefined}>
    <path d="M64 18q28-18 53 1l9 20-6 34-12 8H79L62 61l-6-21z" fill="#141c24" stroke={color} strokeWidth="3"/>

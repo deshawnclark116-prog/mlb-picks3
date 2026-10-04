@@ -32,7 +32,8 @@ export function posterPresentation(data:GameShareData,theme:PosterTheme='premium
   return {...player,src,kind:src?'cutout':'generic'};
  }):[];
  return {theme,away:{...away,logo:localAsset(away.logo)},home:{...home,logo:localAsset(home.logo)},background:POSTER_THEMES[theme].art?localAsset(art?.background??home.artwork):null,
-  atmosphere:POSTER_THEMES[theme].art?cityAtmosphere(home.abbreviation):null,players,degraded:false};
+  atmosphere:POSTER_THEMES[theme].art?cityAtmosphere(home.abbreviation):null,players,
+  genericArtwork:POSTER_THEMES[theme].heroes?'/nfl/art/anonymous-football-hero.webp':null,degraded:false};
 }
 export type PosterPresentation=ReturnType<typeof posterPresentation>;
 /** Successes and pending requests are shared; failures are evicted immediately for genuine retry. */
@@ -51,9 +52,9 @@ const load=createAssetLoader(path=>new Promise(resolve=>{
  image.onload=()=>finish(image.naturalWidth>0);image.onerror=()=>finish(false);image.src=path;
 }));
 export async function preparePosterAssets(visual:PosterPresentation):Promise<PosterPresentation> {
- const paths=[visual.away.logo,visual.home.logo,visual.background,...visual.players.map(p=>p.src)].filter((p):p is string=>!!p);
+ const paths=[visual.away.logo,visual.home.logo,visual.background,visual.genericArtwork,...visual.players.map(p=>p.src)].filter((p):p is string=>!!p);
  const results=await Promise.all(paths.map(async path=>[path,await load(path)] as const));
  const available=new Map(results),safe=(path:string|null)=>path && available.get(path)?path:null;
- return {...visual,degraded:results.some(([,ok])=>!ok),away:{...visual.away,logo:safe(visual.away.logo)},home:{...visual.home,logo:safe(visual.home.logo)},background:safe(visual.background),
+ return {...visual,degraded:results.some(([,ok])=>!ok),away:{...visual.away,logo:safe(visual.away.logo)},home:{...visual.home,logo:safe(visual.home.logo)},background:safe(visual.background),genericArtwork:safe(visual.genericArtwork),
   players:visual.players.map(p=>({...p,src:safe(p.src),kind:safe(p.src)?'cutout':'generic'}))};
 }
