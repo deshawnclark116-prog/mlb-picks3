@@ -1,16 +1,23 @@
-/** NFL Phase 1 shadow presentation. Model forecasts and downstream sportsbook presentation. */
+/** NFL model-first mobile decision board. Scientific outputs remain read-only. */
 import React, { useEffect, useState } from 'react';
-import { AlertTriangle, ChevronDown, RefreshCw } from 'lucide-react';
+import { ChevronDown, RefreshCw } from 'lucide-react';
 import { usePhase1 } from '../nfl/usePhase1';
 import { HORIZONS, OUTCOMES, altFor, formatET, groupGames, type ForecastRow, type Horizon, type Phase1View } from '../nfl/phase1';
-
-import { bettableGames, exactAltMarket, lineFreshness, type BettablePick } from '../nfl/bettable';
-
-const number = (n?: number | null) => n == null ? '—' : new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 }).format(n);
-const percent = (n?: number | null) => n == null ? '—' : `${(n*100).toFixed(n < .1 ? 1 : 0)}%`;
-const unit = (outcome: string) => outcome.endsWith('_yds') ? ' yds' : '';
-const touch = 'min-h-11 rounded-xl border border-[#282828] bg-[#181818] px-3 text-sm';
-
+import { systemGames, todaysBest, bestExecution, lineFreshness, matchesFilter, targetText, type Family, type SystemPick, type Execution } from '../nfl/bettable';
+const number=(n?:number|null)=>n==null?'—':new Intl.NumberFormat('en-US',{maximumFractionDigits:1}).format(n);
+const percent=(n?:number|null)=>n==null?'—':`${(n*100).toFixed(1)}%`;
+const unit=(outcome:string)=>outcome.endsWith('_yds')?' yds':'';
+const touch='min-h-11 rounded-xl border border-[#282828] bg-[#181818] px-3 text-xs';
+const etTime=(iso?:string|null)=>iso && Number.isFinite(Date.parse(iso)) ? new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'2-digit'}).format(new Date(iso))+' ET':'Unavailable';
+function ModelAlt({row,view}:{row:ForecastRow;view:Phase1View}) {
+  const alt=altFor(view,row);
+  return <div className="mt-4 rounded-xl border border-[#00FF41]/25 bg-[#00FF41]/5 p-3" data-testid="alt-line">
+    <p className="text-[11px] text-gray-400">65%+ MODEL TARGET</p>
+    <p className="mt-1 font-bold text-white">{alt?`${alt.milestone}+ ${OUTCOMES[row.outcome]?.toLowerCase() || row.outcome}`:'No 65%+ alt'}</p>
+    {alt && <p className="mt-1 text-xs text-gray-300">Model hit probability: {percent(alt.probability)}</p>}
+    {alt?.method==='quantile_grid_99_conservative' && <p className="mt-1 text-[11px] text-gray-500">Conservative simulated quantile estimate · ~1 percentage point resolution</p>}
+  </div>;
+}
 export function OutcomeCard({ row, view }: { row: ForecastRow; view: Phase1View }) {
   const cells = [
     ['Expected average (mean)', number(row.mean)+unit(row.outcome)],
@@ -30,131 +37,100 @@ export function OutcomeCard({ row, view }: { row: ForecastRow; view: Phase1View 
     <dl className="grid min-w-0 grid-cols-2 gap-x-3 gap-y-3">
       {cells.map(([label, value]) => <div key={label} className="min-w-0"><dt className="text-[11px] leading-4 text-gray-400">{label}</dt><dd className="mt-0.5 break-words text-sm font-semibold text-gray-100">{value}</dd></div>)}
     </dl>
-    <AltPanel row={row} view={view}/>
+    <ModelAlt row={row} view={view}/>
     <div className="mt-3 break-words text-[11px] text-gray-400">Uncertainty: {number(row.unc)}{row.unc_reasons?.length ? ` · ${row.unc_reasons.join(', ')}` : ''}</div>
   </article>;
 }
 
-function AltPanel({ row, view, horizon }: { row: ForecastRow; view: Phase1View; horizon?: Horizon }) {
-  const alt = altFor(view, row);
-  const distributionAvailable = Object.hasOwn(view.artifact.alt_65 || {}, row.id) || !!row.quantile_grid_99 || !!row.cdf_lattice;
-  const label = horizon ? alt && exactAltMarket(view,row,horizon,alt.milestone) ? 'BETTABLE ALT' : 'MODEL ALT TARGET' : '65%+ ALT LINE';
-  return (
-    <div className="mt-4 rounded-xl border border-[#00FF41]/40 bg-[#00FF41]/5 p-3" data-testid="alt-line">
-      <div className="text-[11px] font-mono font-bold text-[#00FF41]">{label}</div>
-      <div className="mt-1 text-lg font-bold text-white">{alt ? `${alt.milestone}+ ${OUTCOMES[row.outcome]?.toLowerCase() || row.outcome}` : 'No 65%+ alt'}</div>
-      {alt && <div className="mt-1 text-xs text-gray-200">Model hit probability: {percent(alt.probability)}</div>}
-      {alt?.method === 'quantile_grid_99_conservative' && <div className="mt-1 text-[11px] text-gray-400">Conservative simulated quantile estimate · ~1 percentage point resolution</div>}
-      {!distributionAvailable && <div className="mt-1 text-[11px] text-gray-400">Distribution detail unavailable; no alt inferred from the projection.</div>}
-    </div>
-  );
-}
-export function BettableCard({pick,view,horizon,cutoff}: {pick:BettablePick;view:Phase1View;horizon:Horizon;cutoff:string}) {
-  const {row,market,side,probability,odds}=pick;
-  return <article data-testid="bettable-pick" className="min-w-0 rounded-2xl border border-[#292929] bg-[#1C1C1C] p-4">
-    <div className="break-words text-base font-bold capitalize text-white">{row.player}</div>
-    <p className="mt-1 text-xs text-gray-400">{row.team} · {OUTCOMES[row.outcome] || row.outcome}</p>
-    <div className="mt-3 text-3xl font-black text-[#00FF41]">{side} {market.line}</div>
-    <p className="mt-1 break-words text-sm text-gray-200"><span className="capitalize">{market.book}</span> {odds==null?'Odds unavailable':odds>0?`+${odds}`:odds}</p>
-    <div className="my-4"><p className="text-[11px] font-mono text-gray-400">MODEL PROBABILITY</p><p className="text-2xl font-bold text-white">{(probability*100).toFixed(1)}%</p></div>
-    <dl className="grid grid-cols-2 gap-3 text-sm">
-      <div data-testid="model-projection"><dt className="text-[11px] text-gray-400">Projection (median)</dt><dd>{number(row.median)}{unit(row.outcome)}</dd></div>
-      <div><dt className="text-[11px] text-gray-400">Expected average (mean)</dt><dd>{number(row.mean)}{unit(row.outcome)}</dd></div>
-      <div><dt className="text-[11px] text-gray-400">P(active)</dt><dd>{row.p_active==null?'—':`${(row.p_active*100).toFixed(1)}%`}</dd></div>
-      <div><dt className="text-[11px] text-gray-400">Selected horizon</dt><dd>{horizon}</dd></div>
-    </dl>
-    <p className="mt-3 text-[11px] text-gray-400">Information cutoff: {formatET(cutoff)}</p>
-    <AltPanel row={row} view={view} horizon={horizon}/>
+export function SystemPickCard({pick,view,horizon,execution}:{pick:SystemPick;view:Phase1View;horizon:Horizon;execution?:Execution|null}) {
+  const {row,target}=pick;
+  const game=view.games.find(g=>g.game_id===row.game_id)!;
+  const summary=[['Median',number(row.median)+unit(row.outcome)],['Mean',number(row.mean)+unit(row.outcome)],['P10–P90',`${number(row.p10)}–${number(row.p90)}${unit(row.outcome)}`],['P(active)',percent(row.p_active)]];
+  return <article id={`pick-${row.id}`} data-testid="system-pick" className="min-w-0 scroll-mt-3 rounded-2xl border border-[#292929] bg-[#1C1C1C] p-4">
+    <div className="flex items-start justify-between gap-3"><h3 className="min-w-0 break-words text-lg font-bold capitalize text-white">{row.player}</h3><span className="rounded-md bg-[#303030] px-2 py-1 text-xs font-bold text-gray-300">{row.team}</span></div>
+    <p className="mt-1 text-[11px] uppercase tracking-wide text-gray-400">{OUTCOMES[row.outcome]}</p>
+    <p className="mt-4 text-[10px] font-mono text-gray-500">MODEL TARGET · SYSTEM PICK</p>
+    <p className="mt-1 text-3xl font-black leading-tight text-[#00FF41]" data-testid="system-target">{targetText(pick)}</p>
+    <div className="my-4"><p className="text-[10px] tracking-wide text-gray-400">MODEL HIT PROBABILITY</p><p className="text-2xl font-black text-[#00FF41]">{percent(target.probability)}</p></div>
+    <dl className="grid grid-cols-2 gap-x-4 gap-y-3">{summary.map(([label,value])=><div key={label}><dt className="text-[11px] text-gray-500">{label}</dt><dd className="text-sm font-semibold text-gray-200">{value}</dd></div>)}</dl>
+    {execution && <div data-testid="available-market" className="mt-4 rounded-xl border border-[#363636] bg-[#141414] p-3 text-sm text-gray-200">
+      <p className="mb-2 text-[10px] font-mono text-gray-500">AVAILABLE MARKET</p>
+      <div className="flex justify-between gap-2"><span className="capitalize">{execution.book}</span><span>{execution.odds>0?'+':''}{execution.odds}</span></div>
+      <p className="mt-1 font-bold">{execution.kind==='over'?`OVER ${execution.line}`:targetText(pick)}</p>
+    </div>}
+    <details className="mt-4 border-t border-[#303030] pt-1" data-testid="system-details"><summary className="flex min-h-11 cursor-pointer items-center text-[11px] font-bold text-gray-400">VIEW DETAILS ▾</summary>
+      <dl className="grid grid-cols-2 gap-3 pb-3 text-xs text-gray-300">
+        {[['Expected opportunities',number(row.exp_opp)],['Role share',percent(row.role_share)],['Standard deviation',number(row.sd)],['P25–P75',`${number(row.p25)}–${number(row.p75)}`],['Horizon',horizon],['Information cutoff',formatET(game.horizons[horizon]?.cutoff)]].map(([label,value])=><div key={label}><dt className="text-[10px] text-gray-500">{label}</dt><dd>{value}</dd></div>)}
+      </dl><p className="break-words pb-2 text-[11px] text-gray-500">Uncertainty: {number(row.unc)} · {row.unc_reasons?.join(', ') || 'None reported'}</p>
+      <p className="break-all text-[10px] text-gray-500">Model: {game.horizons[horizon]?.model_version}</p>
+    </details>
   </article>;
 }
-
-interface BoardProps {
-  view: Phase1View | null; loading: boolean; error: string | null;
-  retrievedAt: string | null; refresh: () => Promise<void>;
-}
-export function NflPhase1Board({ view, loading, error, retrievedAt, refresh }: BoardProps) {
-  const [mode,setMode] = useState<'BETTABLE'|'MODEL BOARD'>('BETTABLE');
-  const [clock,setClock] = useState(Date.now);
-  useEffect(()=>{const timer=setInterval(()=>setClock(Date.now()),30000);return ()=>clearInterval(timer);},[]);
-  const [horizon, setHorizon] = useState<Horizon>('T90');
-  const [expanded, setExpanded] = useState<string | null>(null);
-  const [query, setQuery] = useState(''), [outcome, setOutcome] = useState('');
-  const [limit, setLimit] = useState(40);
-  // The effective horizon is checked on every render, before effects run.
-  const selected = view && !view.rows[horizon].length ? view.defaultHorizon : horizon;
-  useEffect(() => { if (view) setHorizon(current => view.rows[current].length ? current : view.defaultHorizon); }, [view]);
-  useEffect(() => { setExpanded(null); setLimit(40); }, [view?.publicationMs, selected, mode]);
-  const groups = view ? groupGames(view, selected) : [];
-  const search = query.trim().toLowerCase();
-  const modelGroups = groups.map(game => ({ ...game, visibleRows: game.rows.filter(r => (!outcome || r.outcome === outcome)
-    && (!search || `${r.player} ${r.team} ${r.opp}`.toLowerCase().includes(search))) })).filter(game => game.visibleRows.length);
-  const betGames = view ? bettableGames(view,selected,search,outcome) : [];
-  const filtered = mode==='BETTABLE' ? betGames.map(g=>({...g,visibleRows:[],picks:g.picks})) : modelGroups.map(g=>({...g,picks:[]}));
-  const freshness = view ? lineFreshness(view,clock) : null;
-  const toggle = (id: string) => { setExpanded(current => current === id ? null : id); setLimit(40); };
+type Mode='SYSTEM PICKS'|'BETTABLE NOW'|'MODEL BOARD';
+interface BoardProps {view:Phase1View|null;loading:boolean;error:string|null;retrievedAt:string|null;refresh:()=>Promise<void>}
+export function NflPhase1Board({view,loading,error,retrievedAt,refresh}:BoardProps) {
+  const [mode,setMode]=useState<Mode>('SYSTEM PICKS'),[horizon,setHorizon]=useState<Horizon>('T90');
+  const [family,setFamily]=useState<Family>('ALL'),[search,setSearch]=useState(''),[outcome,setOutcome]=useState('');
+  const [expanded,setExpanded]=useState<string|null>(null),[limit,setLimit]=useState(40),[clock,setClock]=useState(Date.now);
+  useEffect(()=>{const timer=setInterval(()=>setClock(Date.now()),30000);return()=>clearInterval(timer);},[]);
+  const selected=view && !view.rows[horizon].length?view.defaultHorizon:horizon;
+  useEffect(()=>{setExpanded(null);setLimit(40);},[mode,selected,view?.publicationMs]);
+  const systems=view?systemGames(view,selected):[];
+  const groups=view?groupGames(view,selected).map(game=>{
+    const picks=systems.find(g=>g.game_id===game.game_id)!.picks.filter(p=>matchesFilter(p.row,search,family));
+    const shown=picks.map(p=>({...p,execution:mode==='BETTABLE NOW'?bestExecution(view,selected,p):null})).filter(p=>mode!=='BETTABLE NOW'||p.execution);
+    return {...game,picks:shown,visibleRows:game.rows.filter(r=>matchesFilter(r,search,family,outcome))};
+  }):[];
+  const best=view?todaysBest(view,selected).filter(p=>matchesFilter(p.row,search,family)):[];
+  const freshness=view?lineFreshness(view,clock):null;
+  const toggle=(id:string)=>{setExpanded(v=>v===id?null:id);setLimit(40);};
+  const jump=(pick:SystemPick)=>{
+    setExpanded(pick.row.game_id);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>document.getElementById(`pick-${pick.row.id}`)?.scrollIntoView({behavior:'smooth',block:'start'})));
+  };
+  const empty=mode==='SYSTEM PICKS'?'No model-derived 65%+ system picks are available for this game.':mode==='BETTABLE NOW'?"No current sportsbook market matches this game's system picks.":view?.artifact.empty_message || 'No valid New Engine forecast has been captured for this slate yet.';
   return <div id="nfl-today-screen-wrapper" className="flex h-full min-w-0 flex-col overflow-hidden bg-[#0D0D0D] text-gray-200">
-    <header className="flex shrink-0 items-center justify-between gap-3 border-b border-[#222] bg-[#0A0A0A] px-4 pb-3 pt-5">
-      <div className="min-w-0"><h1 className="text-2xl font-black tracking-tighter text-white">PROP <span className="text-[#00FF41]">EDGE</span></h1>
-        <p className="mt-1 text-[11px] font-mono font-bold text-[#00FF41]">NEW NFL OUTCOME ENGINE</p></div>
-      <button aria-label="Refresh NFL forecasts" onClick={() => void refresh()} disabled={loading} className={`${touch} flex min-w-11 items-center justify-center text-[#00FF41] disabled:opacity-50`}><RefreshCw size={18} className={loading ? 'animate-spin' : ''}/></button>
+    <header className="flex shrink-0 items-center justify-between gap-3 border-b border-[#222] px-4 py-3">
+      <div className="min-w-0"><h1 className="text-xl font-black tracking-tighter text-white">PROP <span className="text-[#00FF41]">EDGE</span></h1>
+        <p className="mt-1 text-[10px] font-mono text-gray-400">NFL · {view?.artifact.status.season || '—'} WEEK {view?.artifact.status.week || '—'} · UPDATED {etTime(retrievedAt)}</p>
+      </div><button aria-label="Refresh NFL forecasts" disabled={loading} onClick={()=>void refresh()} className={`${touch} flex min-w-11 items-center justify-center text-[#00FF41] disabled:opacity-40`}><RefreshCw size={17} className={loading?'animate-spin':''}/></button>
     </header>
-    <div className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto px-4 pb-28 pt-3" id="nfl-scroll-area">
-      <div className="flex flex-wrap gap-2 text-[10px] font-mono font-bold">
-        {['SHADOW / RESEARCH', 'NO SPORTSBOOK INPUTS', 'NOT YET PROMOTED TO PRODUCTION'].map(label => <span key={label} className="rounded-md border border-[#00FF41]/25 bg-[#00FF41]/5 px-2 py-1 text-[#00FF41]">{label}</span>)}
-      </div>
-      <dl className="my-4 space-y-2 rounded-xl bg-[#151515] p-3 text-[11px]">
-        <div><dt className="text-gray-500">Last forecast retrieval</dt><dd>{formatET(retrievedAt)}</dd></div>
-        <div><dt className="text-gray-500">Last shadow publication/run</dt><dd>{formatET(view?.artifact.status.last_shadow_run_utc)}</dd></div>
-        <div><dt className="text-gray-500">Model version</dt><dd className="break-all">{view?.artifact.status.model_versions.join(', ') || 'Unavailable'}</dd></div>
-      </dl>
-      {view && <>
-        <div className="mb-3 grid grid-cols-2 gap-2" aria-label="NFL board mode">
-          {(['BETTABLE','MODEL BOARD'] as const).map(m=><button key={m} aria-pressed={mode===m} onClick={()=>setMode(m)} className={`${touch} font-bold ${mode===m?'!border-[#00FF41]/50 !bg-[#00FF41]/10 text-[#00FF41]':'text-gray-400'}`}>{m}</button>)}
-        </div>
-        {mode==='BETTABLE' && <div className="mb-3 text-xs text-gray-400">
-          <p>Sportsbook lines updated: {formatET(freshness?.timestamp)}</p>
-          {(freshness?.stale || freshness?.unknown) && <p role="status" className="mt-2 rounded-xl border border-amber-500/40 bg-amber-500/10 p-3 font-bold text-amber-300">LINE MAY HAVE MOVED — verify before placing{freshness?.unknown?' · Line timestamp unavailable or invalid.':''}</p>}
-          <p className="mt-2">Up to 10 matched markets per game · P(active) ≥ 75% · Lines are downstream only.</p>
-        </div>}
-        <div className="grid grid-cols-2 gap-2" aria-label="Forecast horizon">
-          {HORIZONS.map(h => <button key={h} disabled={!view.rows[h].length} aria-pressed={selected === h} onClick={() => setHorizon(h)} className={`${touch} font-bold disabled:opacity-40 ${selected === h ? '!border-[#00FF41]/50 !bg-[#00FF41]/10 text-[#00FF41]' : 'text-gray-400'}`}>{h}</button>)}
-        </div>
-        {!view.rows.T24.length && <p className="mt-2 text-xs text-amber-300">No valid T24 forecast captured.</p>}
-        {!view.rows.T90.length && <p className="mt-2 text-xs text-amber-300">No valid T90 forecast captured.</p>}
-        {view.excludedGames > 0 && <p role="status" className="mt-2 text-xs text-amber-300">{view.excludedGames} past-date game(s) excluded from the published set.</p>}
-        <div className="my-4 grid grid-cols-2 gap-2">
-          <input aria-label="Filter NFL players or teams" type="search" value={query} onChange={e => setQuery(e.target.value)} placeholder="Player or team" className={`${touch} min-w-0 w-full text-gray-200`} />
-          <select aria-label="Filter NFL outcome" value={outcome} onChange={e => setOutcome(e.target.value)} className={`${touch} min-w-0 w-full text-gray-200`}>
-            <option value="">All outcomes</option>{Object.entries(OUTCOMES).filter(([key]) => view.rows[selected].some(r => r.outcome === key)).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
-          </select>
-        </div>
-      </>}
-      {error ? <div role="alert" className="rounded-2xl border border-red-900 bg-red-950/20 p-4 text-sm">
-        <div className="mb-2 flex items-center gap-2 font-bold text-red-400"><AlertTriangle size={18}/> NFL forecast unavailable</div>
-        <p className="break-words text-gray-300">{error}</p><button onClick={() => void refresh()} className={`${touch} mt-3 w-full text-red-300`}>Retry new-engine feed</button>
-      </div> : !view && loading ? <p role="status" className="py-8 text-center text-sm text-gray-400">Loading Phase 1 forecasts…</p>
-        : filtered.length === 0 ? <p role="status" className="rounded-2xl border border-[#222] p-5 text-sm text-gray-400">{view && mode==='BETTABLE' ? 'No matching sportsbook picks meet the availability guard. Explore all outcomes in MODEL BOARD.' : view?.artifact.empty_message || 'No valid New Engine forecast has been captured for this slate yet.'}</p>
-        : <div className="space-y-3" id="nfl-games-list">
-          {filtered.map(game => <section key={`${selected}|${game.game_id}`} className="min-w-0 overflow-hidden rounded-2xl border border-[#242424] bg-[#141414]" data-testid="nfl-game">
-            <button className="flex min-h-20 w-full items-center gap-3 p-4 text-left" aria-expanded={expanded === game.game_id} aria-controls={`rows-${selected}-${game.game_id}`} onClick={() => toggle(game.game_id)}>
-              <div className="min-w-0 flex-1"><h2 className="text-lg font-bold text-white">{game.away} <span className="text-gray-500">vs</span> {game.home}</h2>
-                <p className="mt-1 text-xs text-gray-400">{formatET(game.kickoff_utc)}</p>
-                <p className="mt-1 text-xs text-[#00FF41]">{selected} · {mode==='BETTABLE' ? `${game.picks.length} BETTABLE PICKS` : `${game.rows.length} player outcomes`}</p></div>
-              <ChevronDown size={18} className={`shrink-0 text-gray-400 ${expanded === game.game_id ? 'rotate-180' : ''}`}/>
-            </button>
-            {expanded === game.game_id && <div id={`rows-${selected}-${game.game_id}`} className="space-y-3 border-t border-[#252525] p-3">
-              <p className="text-[11px] text-gray-500">Information cutoff: {formatET(game.horizons[selected]?.cutoff)}</p>
-              {mode==='BETTABLE' && game.picks.map(pick=><BettableCard key={`${pick.row.id}|${pick.market.book}|${pick.market.line}`} pick={pick} view={view!} horizon={selected} cutoff={game.horizons[selected]!.cutoff}/>)}
-              {game.visibleRows.slice(0, limit).map(row => <OutcomeCard key={row.id} row={row} view={view!}/>)}
-              {game.visibleRows.length > limit && <button onClick={() => setLimit(n => n+40)} className={`${touch} w-full text-[#00FF41]`}>Show more outcomes ({game.visibleRows.length-limit} remaining)</button>}
+    <div className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden px-3 pb-28" id="nfl-scroll-area">
+      <div className="mt-3 grid grid-cols-3 gap-1" aria-label="NFL board mode">{(['SYSTEM PICKS','BETTABLE NOW','MODEL BOARD'] as Mode[]).map(m=><button key={m} onClick={()=>setMode(m)} aria-pressed={mode===m} className={`${touch} !px-1 text-[10px] font-bold whitespace-nowrap ${mode===m?'!border-[#00FF41]/50 !bg-[#00FF41]/10 text-[#00FF41]':'text-gray-400'}`}>{m}</button>)}</div>
+      <div className="mt-2 flex gap-2" aria-label="Forecast horizon">{HORIZONS.map(h=><button key={h} disabled={!view?.rows[h].length} aria-pressed={selected===h} onClick={()=>setHorizon(h)} className={`${touch} px-5 font-bold disabled:opacity-30 ${selected===h?'text-[#00FF41]':'text-gray-400'}`}>{h}</button>)}
+        {view && !view.rows.T24.length && <span className="self-center text-[10px] text-gray-500">No valid T24 forecast captured.</span>}</div>
+      <div className="mt-2 flex gap-1 overflow-x-auto" aria-label="Outcome family">{(['ALL','PASS','RUSH','REC','TD'] as Family[]).map(f=><button key={f} aria-pressed={family===f} onClick={()=>setFamily(f)} className={`${touch} shrink-0 ${family===f?'!border-[#00FF41]/40 text-[#00FF41]':'text-gray-400'}`}>{f}</button>)}</div>
+      <div className="mt-2 flex min-w-0 gap-2"><input type="search" aria-label="Search player or team" placeholder="Search player or team" value={search} onChange={e=>setSearch(e.target.value)} className={`${touch} min-w-0 w-full text-gray-200`}/>
+        {mode==='MODEL BOARD' && <select aria-label="Filter NFL outcome" value={outcome} onChange={e=>setOutcome(e.target.value)} className={`${touch} min-w-0 w-1/2 text-gray-300`}><option value="">All outcomes</option>{Object.entries(OUTCOMES).map(([k,v])=><option key={k} value={k}>{v}</option>)}</select>}</div>
+      <div className="mt-2 flex items-center gap-2 text-[9px] text-gray-500"><span className="rounded-md bg-[#222] px-2 py-1">SHADOW</span><span className="rounded-md bg-[#222] px-2 py-1">NO SPORTSBOOK INPUTS</span></div>
+      {mode==='BETTABLE NOW' && view && <div className="mt-3 rounded-xl border border-[#333] p-3 text-[11px] text-gray-400"><p className="text-[10px]">SPORTSBOOK LINES UPDATED</p><p className="mt-1">{formatET(freshness?.timestamp)}</p>
+        {(freshness?.stale || freshness?.unknown) && <p role="status" className="mt-2 font-bold text-amber-300">LINE MAY HAVE MOVED<br/>VERIFY BEFORE PLACING{freshness?.unknown?' · Timestamp unavailable or invalid.':''}</p>}</div>}
+      {error?<div role="alert" className="mt-4 rounded-xl border border-red-900 p-4 text-sm text-red-300">NFL forecast unavailable<p className="mt-2 break-words">{error}</p><button className={`${touch} mt-3 w-full`} onClick={()=>void refresh()}>Retry new-engine feed</button></div>
+      :!view?<p role="status" className="py-8 text-center text-sm text-gray-500">{loading?'Loading Phase 1 forecasts…':empty}</p>:<>
+        {mode==='SYSTEM PICKS' && best.length>0 && <section className="mt-4" aria-label="Today's best"><h2 className="text-xs font-bold text-gray-300">TODAY'S BEST</h2><div className="mt-2 flex gap-2 overflow-x-auto pb-1">{best.map(p=><button data-testid="today-best" key={p.row.id} onClick={()=>jump(p)} className="flex min-h-24 w-44 shrink-0 flex-col items-start justify-between gap-2 rounded-xl border border-[#292929] bg-[#171717] p-3 text-left">
+          <div className="min-w-0"><p className="break-words text-[10px] font-bold uppercase text-gray-300">{p.row.player} · {p.row.team}</p><p className="mt-1 text-sm font-bold text-[#00FF41]">{targetText(p,true)}</p></div><span className="text-lg font-bold text-[#00FF41]">{percent(p.target.probability)}</span></button>)}</div></section>}
+        {groups.length===0 && <p role="status" className="mt-4 rounded-xl border border-[#222] p-4 text-sm text-gray-500">{empty}</p>}
+        <div className="mt-4 space-y-3">{groups.map(game=>{
+          const preview=game.picks[0];const count=mode==='MODEL BOARD'?game.visibleRows.length:game.picks.length;
+          return <section key={`${selected}|${game.game_id}`} data-testid="nfl-game" className="min-w-0 overflow-hidden rounded-2xl border border-[#292929] bg-[#141414]">
+            <button onClick={()=>toggle(game.game_id)} aria-expanded={expanded===game.game_id} aria-controls={`rows-${game.game_id}`} className="flex min-h-20 w-full items-center gap-3 p-4 text-left"><div className="min-w-0 flex-1"><div className="flex flex-wrap items-baseline justify-between gap-1"><h2 className="text-base font-bold text-white">{game.away} vs {game.home}</h2><span className="text-[11px] text-gray-500">{etTime(game.kickoff_utc)}</span></div>
+              <p className="mt-2 text-[10px] font-bold text-gray-400">{selected} · {count} {mode==='MODEL BOARD'?'player outcomes':mode==='SYSTEM PICKS'?'SYSTEM PICKS':'BETTABLE NOW'}</p>
+              {mode!=='MODEL BOARD' && preview && <p className="mt-2 break-words text-[11px] text-gray-500">BEST: <span className="capitalize text-gray-300">{preview.row.player}</span> · {targetText(preview,true)} · {percent(preview.target.probability)}</p>}
+            </div><ChevronDown size={16} className={`shrink-0 text-gray-500 ${expanded===game.game_id?'rotate-180':''}`}/></button>
+            {expanded===game.game_id && <div id={`rows-${game.game_id}`} className="space-y-3 border-t border-[#292929] p-3">
+              {count===0 && <p className="p-2 text-sm text-gray-500">{empty}</p>}
+              {mode==='MODEL BOARD'?game.visibleRows.slice(0,limit).map(row=><OutcomeCard key={row.id} row={row} view={view}/>):game.picks.map(p=><SystemPickCard key={p.row.id} pick={p} view={view} horizon={selected} execution={p.execution}/>)}
+              {mode==='MODEL BOARD' && game.visibleRows.length>limit && <button className={`${touch} w-full text-gray-300`} onClick={()=>setLimit(n=>n+40)}>Show more outcomes ({game.visibleRows.length-limit} remaining)</button>}
             </div>}
-          </section>)}
-        </div>}
-      {view && <p className="mt-5 break-words text-[10px] leading-4 text-gray-500">R11: {view.artifact.status.r11}</p>}
-      <p className="mt-3 text-[11px] leading-4 text-gray-500">Calibrated simulated outcomes; nonparticipation counts as zero. T24 and T90 remain separate. Shadow research forecasts; sportsbook matches are downstream presentation only.</p>
+          </section>;
+        })}</div>
+      </>}
+      <details className="mt-4 rounded-xl border border-[#252525] px-3 text-[11px] text-gray-500"><summary className="flex min-h-11 cursor-pointer items-center font-bold">MODEL STATUS / ABOUT ▾</summary><div className="space-y-2 pb-3 break-words">
+        <p>NEW NFL OUTCOME ENGINE · SHADOW / RESEARCH · NOT YET PROMOTED TO PRODUCTION</p><p>Model / football data → player outcome distribution → system-derived target → optional sportsbook execution check.</p>
+        <p>R11: {view?.artifact.status.r11 || 'Unavailable'}</p><p>Last forecast retrieval: {formatET(retrievedAt)}</p><p>Last shadow publication/run: {formatET(view?.artifact.status.last_shadow_run_utc)}</p><p className="break-all">Model version: {view?.artifact.status.model_versions.join(', ') || 'Unavailable'}</p>
+        {view?.excludedGames ? <p>{view.excludedGames} past-date games excluded.</p>:null}<p>Nonparticipation counts as zero. T24 and T90 remain separate. System targets use existing simulated distributions; sportsbooks only supply optional execution markets.</p>
+      </div></details>
     </div>
   </div>;
 }
-export default function NflTodayScreen() {
-  return <NflPhase1Board {...usePhase1()}/>;
-}
+export default function NflTodayScreen(){return <NflPhase1Board {...usePhase1()}/>;}
