@@ -4,8 +4,8 @@ import { deriveAlt65 } from '../../src/nfl/phase1';
 const original=JSON.parse(readFileSync(new URL('../fixtures/nfl-phase1-oct4.json',import.meta.url),'utf8'));
 const records=JSON.parse(readFileSync(new URL('../fixtures/nfl-phase1-distributions.json',import.meta.url),'utf8'));
 const doc=()=>({...structuredClone(original),alt_65:Object.fromEntries(records.map((r:any)=>[r.id,deriveAlt65(r)]))});
-async function setup(page:any,get:()=>any){
-  await page.clock.install({time:new Date('2026-10-04T16:00:00Z')});
+async function setup(page:any,get:()=>any,time='2026-10-04T16:00:00Z'){
+  await page.clock.install({time:new Date(time)});
   let legacy=0,requests:string[]=[];
   await page.route('**/api/**',async(route:any)=>{
     const url=route.request().url();
@@ -17,6 +17,7 @@ async function setup(page:any,get:()=>any){
 }
 test('360px Oct 4 T90 matchup, median/details/alt, touch targets and no legacy requests',async({page})=>{
   const check=await setup(page,doc);
+  await page.getByRole('button',{name:'MODEL BOARD',exact:true}).click();
   await expect(page.getByRole('button',{name:'T24',exact:true})).toBeDisabled();
   await expect(page.getByText('No valid T24 forecast captured.')).toBeVisible();
   const game=page.getByTestId('nfl-game');await expect(game).toContainText('ARI vs NYG');await expect(game).toContainText('Sun, Oct 4');await expect(game).toContainText('1:00 PM EDT');await expect(game).toContainText('T90 · 3 player outcomes');
@@ -35,6 +36,7 @@ test('horizon switching isolates rows and refresh replaces entire snapshot; malf
   const id=current.row_fields.indexOf('id'),median=current.row_fields.indexOf('median');
   current.forecasts.T24.forEach((r:any[])=>{r[id]='T24-'+r[id];r[median]=77;});current.games[0].horizons.T24={...current.games[0].horizons.T90,cutoff:'2026-10-03T17:00:00Z'};current.status.counts.T24.valid_games=1;
   const check=await setup(page,()=>current);
+  await page.getByRole('button',{name:'MODEL BOARD',exact:true}).click();
   await page.getByRole('button',{name:'T24',exact:true}).click();await page.getByTestId('nfl-game').getByRole('button').click();
   await expect(page.getByTestId('model-projection').first()).toContainText('77');
   await page.getByRole('button',{name:'T90',exact:true}).click();await page.getByTestId('nfl-game').getByRole('button').click();await expect(page.getByTestId('model-projection').first()).not.toContainText('77');
@@ -45,6 +47,7 @@ test('horizon switching isolates rows and refresh replaces entire snapshot; malf
 });
 test('30-second polling refetches; older publication and upstream failures clear cards',async({page})=>{
   let current=doc();const check=await setup(page,()=>current);
+  await page.getByRole('button',{name:'MODEL BOARD',exact:true}).click();
   await expect(page.getByTestId('nfl-game')).toHaveCount(1);
   await page.clock.fastForward(30000);await expect.poll(()=>check.requests.length).toBeGreaterThanOrEqual(2);
   expect(new Set(check.requests).size).toBe(check.requests.length);
@@ -52,4 +55,23 @@ test('30-second polling refetches; older publication and upstream failures clear
   await expect(page.getByRole('alert')).toContainText('predates the last accepted artifact');await expect(page.getByTestId('nfl-game')).toHaveCount(0);
   await page.route('**/api/nfl-phase1-predictions?*',route=>route.fulfill({status:502,json:{error:'NFL Phase 1 upstream unavailable or invalid',details:'GitHub upstream HTTP 503'}}));
   await page.getByRole('button',{name:'Refresh NFL forecasts'}).click();await expect(page.getByRole('alert')).toContainText('GitHub upstream HTTP 503');await expect(page.getByTestId('nfl-game')).toHaveCount(0);expect(check.legacy()).toBe(0);
+});
+const nyjSource=JSON.parse(readFileSync(new URL('../fixtures/nfl-nyj-chi-bettable.json',import.meta.url),'utf8'));
+test('360px default BETTABLE ranks 10 picks, warns on old lines, filters; MODEL BOARD preserves 286 rows',async({page})=>{
+  const check=await setup(page,()=>structuredClone(nyjSource),'2026-10-04T17:00:00Z');
+  await expect(page.getByRole('button',{name:'BETTABLE',exact:true})).toHaveAttribute('aria-pressed','true');
+  await expect(page.getByText('LINE MAY HAVE MOVED — verify before placing',{exact:true})).toBeVisible();
+  const game=page.getByTestId('nfl-game');await expect(game).toContainText('NYJ vs CHI');await expect(game).toContainText('10 BETTABLE PICKS');await expect(game).not.toContainText('286 player outcomes');
+  await game.getByRole('button').click();await expect(page.getByTestId('bettable-pick')).toHaveCount(10);
+  const picks=page.getByTestId('bettable-pick');await expect(picks.first()).toContainText('geno smith');await expect(picks.first()).toContainText('OVER 11.5');await expect(picks.first()).toContainText('70.5%');
+  await expect(page.locator('#nfl-today-screen-wrapper')).not.toContainText('tyson bagent');await expect(picks.first().getByTestId('alt-line')).toContainText('MODEL ALT TARGET');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
+  await page.getByRole('button',{name:'MODEL BOARD',exact:true}).click();await expect(game).toContainText('286 player outcomes');await game.getByRole('button').click();
+  while(await page.getByRole('button',{name:/Show more outcomes/}).count())await page.getByRole('button',{name:/Show more outcomes/}).click();
+  await expect(page.getByTestId('forecast-row')).toHaveCount(286);await expect(page.getByTestId('forecast-row').filter({hasText:'tyson bagent'}).first()).toBeAttached();
+  await page.getByRole('button',{name:'BETTABLE',exact:true}).click();await page.getByRole('searchbox',{name:'Filter NFL players or teams'}).fill('garrett');await expect(game).toContainText('1 BETTABLE PICKS');await game.getByRole('button').click();
+  await expect(page.getByTestId('bettable-pick')).toHaveCount(1);await expect(picks.first()).toContainText('UNDER 76.5');await expect(picks.first()).toContainText('58.7%');
+  await page.getByRole('combobox',{name:'Filter NFL outcome'}).selectOption('tackles');await expect(page.getByTestId('bettable-pick')).toHaveCount(0);
+  for(const name of ['BETTABLE','MODEL BOARD']){const box=await page.getByRole('button',{name,exact:true}).boundingBox();expect(box!.height).toBeGreaterThanOrEqual(44);}
+  expect(check.legacy()).toBe(0);
 });
