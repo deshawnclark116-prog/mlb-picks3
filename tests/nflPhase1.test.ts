@@ -230,3 +230,60 @@ test('execution gets its own cap AFTER market matching; searches can find later 
   assert.equal(executableGames(v,'T90','Geno Smith')[0].picks.length,3);
   delete v.artifact.lines;assert.equal(systemCandidates(v,'T90').length,26);assert.equal(executableGames(v,'T90')[0].picks.length,0);
 });
+
+import {gameShareData,shareFilename,shortModelVersion} from '../src/nfl/shareCard.ts';
+import {teamBrand} from '../src/nfl/teamBrand.ts';
+import {shareBlob,EXPORT_WIDTH,EXPORT_HEIGHT} from '../src/lib/exportImage.ts';
+import NflGameShareCard from '../src/components/NflGameShareCard.tsx';
+const shareData=(v=nyj(),mode:'system'|'bettable'='system')=>gameShareData(v,'2026_04_NYJ_CHI','T90',mode,now);
+test('SYSTEM poster derives from 26 uncapped candidates, ranked with compareSystem, capped to SIX only in core',()=>{
+ const v=nyj(),data=shareData(v),all=systemCandidates(v,'T90').sort(compareSystem);
+ assert.equal(data.qualifyingCount,26);assert.equal(data.core.length,6);assert.deepEqual(data.core,all.slice(0,6));assert.equal(data.topProbability,all[0].target.probability);
+});
+test('deleting all sportsbook data leaves SYSTEM poster data AND rendered markup byte-identical',()=>{
+ const v=nyj(),before=shareData(v),html=renderToStaticMarkup(React.createElement(NflGameShareCard,{data:before}));delete v.artifact.lines;delete v.artifact.lines_meta;
+ assert.deepEqual(shareData(v),before);assert.equal(renderToStaticMarkup(React.createElement(NflGameShareCard,{data:shareData(v)})),html);
+});
+test('canonical export ignores screen filters and search, which cannot be passed as export eligibility',()=>{
+ const v=nyj(),before=shareData(v);systemGames(v,'T90','Geno Smith','RUSH');todaysBest(v,'T90','','PASS');assert.deepEqual(shareData(v),before);assert.equal(before.core[0].row.player,'dandre swift');
+});
+test('fewer than six targets stay fewer; unavailable families have no fabricated leaders',()=>{
+ const v=nyj(),keep=picks(v).slice(0,3).map(p=>p.row.id);v.artifact.alt_65=Object.fromEntries(v.rows.T90.map(r=>[r.id,keep.includes(r.id)?v.artifact.alt_65![r.id]:null]));
+ const data=shareData(v);assert.equal(data.qualifyingCount,3);assert.equal(data.core.length,3);assert.deepEqual(data.leaders.map(l=>l.family),['REC']);
+});
+test('MODEL LEADERS uses best available PASS/RUSH/REC/TD from uncapped eligibility',()=>{
+ const v=nyj(),data=shareData(v);for(const {family,pick} of data.leaders)assert.deepEqual(pick,systemGames(v,'T90','',family)[0].picks[0]);assert.deepEqual(data.leaders.map(l=>l.family),['PASS','RUSH','REC','TD']);
+});
+test('BETTABLE poster is a subset of model candidates and cannot be populated by books alone',()=>{
+ const v=nyj(),all=systemCandidates(v,'T90'),geno=all.find(p=>p.row.player==='geno smith'&&p.row.outcome==='rush_yds')!;
+ v.artifact.lines=[{game_id:geno.row.game_id,horizon:'T90',player:geno.row.player,outcome:geno.row.outcome,book:'Book',line:9.5,over_price:-110}];
+ const data=shareData(v,'bettable');assert.equal(data.core.length,1);assert(all.some(p=>p.row.id===data.core[0].row.id));assert.equal(data.core[0].execution!.line,9.5);
+ v.artifact.alt_65![geno.row.id]=null;assert.equal(shareData(v,'bettable').core.length,0);
+});
+test('stale line warning affects BETTABLE only, whose empty-state poster is honest',()=>{
+ const v=nyj();v.artifact.lines_meta={generated_at_utc:'2026-09-27T00:00:00Z'};
+ const system=shareData(v),bet=shareData(v,'bettable');assert.equal(system.lines,null);assert.equal(bet.lines!.stale,true);
+ const render=(data:any)=>renderToStaticMarkup(React.createElement(NflGameShareCard,{data}));assert(!render(system).includes('LINES MAY HAVE MOVED'));assert.match(render(bet),/LINES MAY HAVE MOVED/);assert.match(render(bet),/NO VERIFIED EXECUTION MATCHES/);
+});
+test('missing draws never invents simulation count; fixed export size and local asset layout',()=>{
+ const v=nyj();delete v.games[0].horizons.T90!.n_draws;const data=shareData(v);assert.equal(data.draws,null);
+ const html=renderToStaticMarkup(React.createElement(NflGameShareCard,{data}));assert(!html.includes('DRAWS'));assert(!html.includes('<img'));assert(!html.includes('https://'));assert.match(html,/width:1080px;height:1350px/);assert.equal(EXPORT_WIDTH,1080);assert.equal(EXPORT_HEIGHT,1350);
+});
+test('filename is deterministic, sanitized and model hashes do not clutter the poster',()=>{
+ const data=shareData();assert.equal(shareFilename(data),'prop-edge-nyj-chi-t90-system-w04.png');assert.equal(shareFilename({...data,mode:'bettable'}),'prop-edge-nyj-chi-t90-bettable-w04.png');
+ const unsafe=shareFilename({...data,game:{...data.game,away:'../NYJ /',home:'CHI?!'}});assert(!unsafe.includes('/'));assert.match(unsafe,/prop-edge-nyj-chi-/);assert.equal(shortModelVersion('p1c-f3b1fa3608f90253'),'p1c');
+});
+test('unknown team branding uses a safe neutral fallback; all NFL teams have local accents',()=>{
+ assert.deepEqual(teamBrand('xyz'),{abbreviation:'XYZ',primary:'#66717E',secondary:'#AAB0B7'});assert.equal(teamBrand('nyj').primary,'#125740');assert.notEqual(teamBrand('CHI').primary,teamBrand('NYJ').primary);
+});
+test('poster creation leaves interactive SYSTEM behavior, 286 outcomes and protected files unchanged',()=>{
+ const v=nyj(),before=JSON.stringify(v),top=picks(v);shareData(v);shareData(v,'bettable');assert.equal(JSON.stringify(v),before);assert.deepEqual(picks(v),top);assert.equal(v.rows.T90.length,286);
+ const base=execFileSync('git',['merge-base','HEAD','origin/main'],{encoding:'utf8'}).trim();for(const file of ['src/nfl/bettable.ts','src/nfl/phase1.ts','src/nfl/usePhase1.ts','server/nflPhase1.ts','src/App.tsx'])assert.equal(readFileSync(file,'utf8'),execFileSync('git',['show',`${base}:${file}`],{encoding:'utf8'}));
+});
+test('native file sharing tests supported, unsupported, not-allowed and cancellation separately',async()=>{
+ const blob=new Blob(['png'],{type:'image/png'}),name='test.png';let received:any;
+ assert.equal(await shareBlob(blob,name,{canShare:(data:any)=>data.files[0].type==='image/png',share:async(data:any)=>{received=data;}} as any),'shared');assert.equal(received.files[0].name,name);assert.equal(received.files[0].size,3);
+ assert.equal(await shareBlob(blob,name,{} as any),'unsupported');assert.equal(await shareBlob(blob,name,{canShare:()=>false,share:async()=>{throw Error('must not call');}} as any),'unsupported');
+ for(const [error,result] of [['NotAllowedError','unsupported'],['NotSupportedError','unsupported'],['AbortError','cancelled']])assert.equal(await shareBlob(blob,name,{canShare:()=>true,share:async()=>{throw new DOMException('test',error);}} as any),result);
+ await assert.rejects(shareBlob(blob,name,{canShare:()=>true,share:async()=>{throw Error('unexpected failure');}} as any),/unexpected failure/);
+});
