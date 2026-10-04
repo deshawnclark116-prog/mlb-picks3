@@ -1,0 +1,22 @@
+/** Local ingestion only: never downloads photography. Run from repository root. */
+import {readFileSync,writeFileSync,copyFileSync,existsSync} from 'node:fs';
+import {extname} from 'node:path';
+import {playerKey} from '../src/nfl/playerAssets.ts';
+const args=process.argv.slice(2),get=(flag:string)=>args[args.indexOf(flag)+1];
+for(const flag of ['--name','--file','--source','--permission'])if(!args.includes(flag)||!get(flag)||get(flag).startsWith('--'))throw Error(`Required: ${flag}`);
+if(!args.includes('--approved'))throw Error('Review permission for redistribution/commercial use, then explicitly attest with --approved.');
+const key=playerKey(get('--name')),extension=extname(get('--file')).toLowerCase();
+if(!key||!['.png','.webp'].includes(extension))throw Error('A named local PNG/WebP cutout is required.');
+const bytes=readFileSync(get('--file'));
+if(bytes.length>5_000_000)throw Error('Optimize the cutout below 5 MB before ingesting.');
+const png=bytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])),webp=bytes.subarray(0,4).toString()==='RIFF'&&bytes.subarray(8,12).toString()==='WEBP';
+if(extension==='.png'?!png:!webp)throw Error('Image signature does not match its extension.');
+const dest=`public/nfl/players/${key}${extension}`,manifestPath='public/nfl/players/manifest.json';
+const manifest=JSON.parse(readFileSync(manifestPath,'utf8'));
+if((manifest[key]||existsSync(dest))&&!args.includes('--replace'))throw Error('Asset already exists. Use --replace after reviewing the new permission.');
+copyFileSync(get('--file'),dest);
+manifest[key]={src:`/nfl/players/${key}${extension}`,source:get('--source'),permission:get('--permission'),verified:true};
+const ordered=Object.fromEntries(Object.entries(manifest).sort(([a],[b])=>a.localeCompare(b)));
+writeFileSync(manifestPath,JSON.stringify(ordered,null,2)+'\n');
+writeFileSync('src/nfl/licensedPlayerAssets.ts',"import type {LicensedCutout} from './playerAssets';\n/** Local permission attestations: see public/nfl/players/manifest.json. */\nexport const LICENSED_PLAYER_ASSETS:Record<string,LicensedCutout>="+JSON.stringify(ordered,null,2)+';\n');
+console.log(`Ingested ${key}. Commit the image, manifest, and generated registry together.`);

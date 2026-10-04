@@ -27,7 +27,7 @@ test('360px modal, canonical source despite filters, real PNG download, exact di
  const preview=await modal.getByTestId('share-preview').boundingBox();expect(preview!.x).toBeGreaterThanOrEqual(0);expect(preview!.x+preview!.width).toBeLessThanOrEqual(360);
  await page.screenshot({path:`${artifacts}/nfl-share-modal-360.png`});
  const downloadEvent=page.waitForEvent('download');await modal.getByRole('button',{name:'SAVE PNG',exact:true}).click();const download=await downloadEvent;
- expect(download.suggestedFilename()).toBe('prop-edge-nyj-chi-t90-system-w04.png');const png=`${artifacts}/prop-edge-nyj-chi-t90-system-w04.png`;await download.saveAs(png);
+ expect(download.suggestedFilename()).toBe('prop-edge-nyj-chi-t90-system-premium-w04.png');const png=`${artifacts}/prop-edge-nyj-chi-t90-system-premium-w04.png`;await download.saveAs(png);
  const bytes=readFileSync(png);expect(bytes.length).toBeGreaterThan(10000);expect(bytes.subarray(1,4).toString()).toBe('PNG');expect(bytes.readUInt32BE(16)).toBe(1080);expect(bytes.readUInt32BE(20)).toBe(1350);
  await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
  // Capture the same poster component at its native size, with no second layout.
@@ -37,7 +37,7 @@ test('360px modal, canonical source despite filters, real PNG download, exact di
  await expect.poll(async()=>Math.round((await poster.boundingBox())!.width)).toBeLessThanOrEqual(330);
  await modal.getByRole('button',{name:'BETTABLE CARD',exact:true}).click();await expect(poster).toContainText('NO VERIFIED EXECUTION MATCHES');await expect(poster).toContainText('LINES MAY HAVE MOVED');
  await page.screenshot({path:`${artifacts}/nfl-share-bettable-360.png`});
- const betDownload=page.waitForEvent('download');await modal.getByRole('button',{name:'SAVE PNG',exact:true}).click();const bet=await betDownload;expect(bet.suggestedFilename()).toBe('prop-edge-nyj-chi-t90-bettable-w04.png');await bet.saveAs(`${artifacts}/prop-edge-nyj-chi-t90-bettable-w04.png`);
+ const betDownload=page.waitForEvent('download');await modal.getByRole('button',{name:'SAVE PNG',exact:true}).click();const bet=await betDownload;expect(bet.suggestedFilename()).toBe('prop-edge-nyj-chi-t90-bettable-premium-w04.png');await bet.saveAs(`${artifacts}/prop-edge-nyj-chi-t90-bettable-premium-w04.png`);
  await modal.getByRole('button',{name:'CLOSE',exact:true}).click();await expect(page.getByRole('dialog')).toHaveCount(0);await expect(accordion).toHaveAttribute('aria-expanded','false');
  for(const mode of ['BETTABLE NOW','MODEL BOARD','SYSTEM PICKS']){await page.getByRole('button',{name:mode,exact:true}).click();await expect(page.getByRole('button',{name:mode,exact:true})).toHaveAttribute('aria-pressed','true');}
  expect(legacy()).toBe(0);
@@ -79,7 +79,7 @@ test('PNG prepares before click; share preserves user activation and save reuses
  await page.evaluate(()=>(window as any).__finishShare());
  await expect(modal.getByText('Image shared.',{exact:true})).toBeVisible();
  const event=page.waitForEvent('download');await modal.getByRole('button',{name:'SAVE PNG',exact:true}).click();const download=await event;
- expect(download.suggestedFilename()).toBe('prop-edge-nyj-chi-t90-system-w04.png');
+ expect(download.suggestedFilename()).toBe('prop-edge-nyj-chi-t90-system-premium-w04.png');
  const saved=readFileSync((await download.path())!);
  const shared=await page.evaluate(async()=>Array.from(new Uint8Array(await (window as any).__sharedFile.arrayBuffer())));
  expect(saved.equals(Buffer.from(shared))).toBe(true);expect(await page.evaluate(()=>(window as any).__renders)).toBe(initialRenders);
@@ -106,7 +106,7 @@ test('mode invalidates cache; a stale successful render cannot overwrite the new
  await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeDisabled();
  await expect(modal.getByRole('button',{name:'SHARE IMAGE',exact:true})).toBeDisabled();
  await page.evaluate(()=>(window as any).__newFonts());await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
- const save=async()=>{const event=page.waitForEvent('download');await modal.getByRole('button',{name:'SAVE PNG',exact:true}).click();const dl=await event;expect(dl.suggestedFilename()).toBe('prop-edge-nyj-chi-t90-bettable-w04.png');return readFileSync((await dl.path())!);};
+ const save=async()=>{const event=page.waitForEvent('download');await modal.getByRole('button',{name:'SAVE PNG',exact:true}).click();const dl=await event;expect(dl.suggestedFilename()).toBe('prop-edge-nyj-chi-t90-bettable-premium-w04.png');return readFileSync((await dl.path())!);};
  const newer=await save();expect(await page.evaluate(()=>(window as any).__renders)).toBe(1);
  await page.evaluate(()=>(window as any).__oldFonts());await expect.poll(()=>page.evaluate(()=>(window as any).__renders)).toBe(2);
  // The two encodes intentionally differ; saving must still return the newer cache.
@@ -145,7 +145,7 @@ test('premium SYSTEM, premium BETTABLE empty and clean SYSTEM export with theme-
  test.setTimeout(60000);await setup(page);const modal=await open(page),poster=modal.getByTestId('game-share-poster');
  const save=async(name:string)=>{await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();const event=page.waitForEvent('download');await modal.getByRole('button',{name:'SAVE PNG',exact:true}).click();const download=await event;const path=`${artifacts}/${name}.png`;await download.saveAs(path);const bytes=readFileSync(path);expect(bytes.readUInt32BE(16)).toBe(1080);expect(bytes.readUInt32BE(20)).toBe(1350);return bytes;};
  await expect(poster).toHaveAttribute('data-theme','premium');
- const premium=await save('nfl-premium-system');await expect(poster.getByTestId('poster-logo')).toHaveCount(2);await expect(poster.getByTestId('poster-art')).toHaveCount(1);await expect(poster.getByTestId('poster-player-slots')).toHaveCount(0);
+ const premium=await save('nfl-premium-system');await expect(poster.getByTestId('poster-logo')).toHaveCount(2);await expect(poster.getByTestId('poster-art')).toHaveCount(1);await expect(poster.getByTestId('poster-player-slots')).toHaveCount(2);
  await page.screenshot({path:`${artifacts}/nfl-premium-modal-360.png`});
  // Family leaders must sit below, rather than overlap, the recommendation grid.
  const core=await poster.getByTestId('poster-core').boundingBox();const leaders=await poster.getByRole('heading',{name:'MODEL LEADERS',exact:true}).boundingBox();expect(leaders!.y).toBeGreaterThanOrEqual(core!.y+core!.height);
@@ -164,24 +164,33 @@ test('missing artwork and logos gracefully fall back and still export exact-size
  await expect(poster.getByTestId('poster-art')).toHaveCount(0);await expect(poster.getByTestId('poster-logo')).toHaveCount(0);await expect(poster.getByTestId('poster-logo-fallback')).toHaveCount(2);await expect(modal.getByRole('alert')).toHaveCount(0);
  const event=page.waitForEvent('download');await modal.getByRole('button',{name:'SAVE PNG',exact:true}).click();const download=await event;const path=`${artifacts}/nfl-premium-all-assets-missing.png`;await download.saveAs(path);const bytes=readFileSync(path);expect(bytes.readUInt32BE(16)).toBe(1080);expect(bytes.readUInt32BE(20)).toBe(1350);
 });
-test('one through four optional cutouts stay inside hero bounds; failed player image is omitted',async({page})=>{
+test('verified local cutouts resolve for selected names, missing assets fall back and RETRY IMAGE recovers',async({page})=>{
  test.setTimeout(60000);await setup(page);
- // Test-only transparent silhouettes exercise slots; no real player photo is invented or shipped.
- await page.route('**/nfl/players/test-*.svg*',route=>route.fulfill({contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="140" height="206"><circle cx="70" cy="38" r="22" fill="#a3b3b9"/><path d="M45 62h50l23 110H22z" fill="#496673"/></svg>'}));
- for(let count=1;count<=4;count++){
-  await page.evaluate(async(count)=>{
-   const path='/src/nfl/posterAssets.ts';const module=await import(/* @vite-ignore */path);
-   module.POSTER_ASSETS.games['2026_04_NYJ_CHI']={players:Array.from({length:count},(_,i)=>({team:i%2?'CHI':'NYJ',name:`Test cutout ${i+1}`,src:`/nfl/players/test-${i}.svg`}))};
-  },count);
-  const modal=await open(page),poster=modal.getByTestId('game-share-poster');await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
-  const images=poster.getByRole('img',{name:/Test cutout/});await expect(images).toHaveCount(count);
-  const hero=await poster.getByTestId('poster-hero').boundingBox();for(const image of await images.all()){const box=await image.boundingBox();expect(box!.x).toBeGreaterThanOrEqual(hero!.x);expect(box!.x+box!.width).toBeLessThanOrEqual(hero!.x+hero!.width);expect(box!.y+box!.height).toBeLessThanOrEqual(hero!.y+hero!.height);}
-  if(count===4)await page.screenshot({path:`${artifacts}/nfl-premium-test-cutouts-360.png`});
-  await modal.getByRole('button',{name:'CLOSE',exact:true}).click();
- }
- await page.route('**/nfl/players/**',route=>route.abort());const modal=await open(page);await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
- // Cached valid local assets remain usable; add a never-loaded missing slot to exercise failure.
- await modal.getByRole('button',{name:'CLOSE',exact:true}).click();
- await page.evaluate(async()=>{const path='/src/nfl/posterAssets.ts';const module=await import(/* @vite-ignore */path);module.POSTER_ASSETS.games['2026_04_NYJ_CHI']={players:[{team:'NYJ',name:'Missing cutout',src:'/nfl/players/missing.png'}]};});
- const fallback=await open(page);await expect(fallback.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();await expect(fallback.getByTestId('poster-player-slots')).toHaveCount(0);await expect(fallback.getByTestId('poster-logo')).toHaveCount(2);
+ await page.evaluate(async()=>{const path='/src/nfl/posterAssets.ts';const module=await import(/* @vite-ignore */path);module.POSTER_ASSETS.players={'jeremy-ruckert':{src:'/nfl/players/jeremy-ruckert.svg',source:'Test-only original vector fixture',permission:'Original fixture, not a real likeness',verified:true}};});
+ let fail=true;await page.route('**/nfl/players/jeremy-ruckert.svg*',route=>fail?route.abort():route.fulfill({contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="160" height="260"><circle cx="80" cy="40" r="28" fill="#eee"/><path d="M45 65h70l30 120H15z" fill="#7e9"/><path d="M40 185h80v75H40z" fill="#40505b"/></svg>'}));
+ const modal=await open(page),poster=modal.getByTestId('game-share-poster');await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
+ await expect(poster.getByTestId('generic-football-hero')).toHaveCount(4);await expect(modal.getByRole('button',{name:'RETRY IMAGE',exact:true})).toBeVisible();
+ await page.screenshot({path:`${artifacts}/nfl-premium-no-real-cutouts-360.png`});
+ fail=false;await modal.getByRole('button',{name:'RETRY IMAGE',exact:true}).click();await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
+ await expect(poster.getByRole('img',{name:'Verified cutout: jeremy ruckert'})).toHaveCount(1);await expect(poster.getByTestId('generic-football-hero')).toHaveCount(3);
+ await page.screenshot({path:`${artifacts}/nfl-premium-test-cutouts-360.png`});
+ const event=page.waitForEvent('download');await modal.getByRole('button',{name:'SAVE PNG',exact:true}).click();const dl=await event;await dl.saveAs(`${artifacts}/nfl-premium-test-cutouts.png`);
+ const bytes=readFileSync((await dl.path())!);expect(bytes.readUInt32BE(16)).toBe(1080);expect(bytes.readUInt32BE(20)).toBe(1350);
+ await modal.getByRole('button',{name:'CLEAN',exact:true}).click();await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();await expect(poster.getByTestId('generic-football-hero')).toHaveCount(0);await expect(poster.getByTestId('poster-player-slots')).toHaveCount(0);
+});
+test('non-Chicago home team has intentional coastal stadium scene and exports premium poster',async({page})=>{
+ const doc=structuredClone(source),fields=doc.row_fields;doc.games[0].home='NE';doc.games[0].game_id='2026_04_NYJ_NE';
+ for(const row of doc.forecasts.T90){row[fields.indexOf('game_id')]='2026_04_NYJ_NE';if(row[fields.indexOf('team')]==='CHI')row[fields.indexOf('team')]='NE';if(row[fields.indexOf('opp')]==='CHI')row[fields.indexOf('opp')]='NE';}
+ await setup(page,()=>doc);await page.getByRole('button',{name:'Create share card for NYJ vs NE',exact:true}).click();const modal=page.getByRole('dialog');await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();
+ await expect(modal.getByTestId('poster-city-scene')).toHaveCount(1);await expect(modal.getByTestId('poster-hero')).toContainText('NEW ENGLAND');await expect(modal.getByTestId('generic-football-hero')).toHaveCount(4);
+ const event=page.waitForEvent('download');await modal.getByRole('button',{name:'SAVE PNG',exact:true}).click();const dl=await event;await dl.saveAs(`${artifacts}/nfl-premium-new-england.png`);await page.screenshot({path:`${artifacts}/nfl-premium-new-england-360.png`});
+ const bytes=readFileSync((await dl.path())!);expect(bytes.readUInt32BE(16)).toBe(1080);expect(bytes.readUInt32BE(20)).toBe(1350);
+});
+test('stale pending asset preparation cannot overwrite a newer clean theme',async({page})=>{
+ await setup(page);let release!:()=>void;const held=new Promise<void>(resolve=>{release=resolve;});
+ await page.route('**/nfl/art/chicago-night.svg',async route=>{await held;await route.continue();});
+ const modal=await open(page);await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeDisabled();
+ await modal.getByRole('button',{name:'CLEAN',exact:true}).click();await expect(modal.getByRole('button',{name:'SAVE PNG',exact:true})).toBeEnabled();const response=page.waitForResponse(r=>r.url().endsWith('/nfl/art/chicago-night.svg'));release();await response;
+ await expect(modal.getByTestId('game-share-poster')).toHaveAttribute('data-theme','clean');await expect(modal.getByTestId('generic-football-hero')).toHaveCount(0);
+ const event=page.waitForEvent('download');await modal.getByRole('button',{name:'SAVE PNG',exact:true}).click();expect((await event).suggestedFilename()).toBe('prop-edge-nyj-chi-t90-system-clean-w04.png');
 });

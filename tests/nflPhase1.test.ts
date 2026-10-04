@@ -270,7 +270,7 @@ test('missing draws never invents simulation count; fixed export size and local 
  const html=renderToStaticMarkup(React.createElement(NflGameShareCard,{data}));assert(!html.includes('DRAWS'));assert(html.includes('/nfl/teams/'));assert(!html.includes('src="http'));assert(!html.includes('https://'));assert.match(html,/width:1080px;height:1350px/);assert.equal(EXPORT_WIDTH,1080);assert.equal(EXPORT_HEIGHT,1350);
 });
 test('filename is deterministic, sanitized and model hashes do not clutter the poster',()=>{
- const data=shareData();assert.equal(shareFilename(data),'prop-edge-nyj-chi-t90-system-w04.png');assert.equal(shareFilename({...data,mode:'bettable'}),'prop-edge-nyj-chi-t90-bettable-w04.png');
+ const data=shareData();assert.equal(shareFilename(data),'prop-edge-nyj-chi-t90-system-premium-w04.png');assert.equal(shareFilename({...data,mode:'bettable'}),'prop-edge-nyj-chi-t90-bettable-premium-w04.png');
  const unsafe=shareFilename({...data,game:{...data.game,away:'../NYJ /',home:'CHI?!'}});assert(!unsafe.includes('/'));assert.match(unsafe,/prop-edge-nyj-chi-/);assert.equal(shortModelVersion('p1c-f3b1fa3608f90253'),'p1c');
 });
 test('unknown team branding uses a safe neutral fallback; all NFL teams have local accents',()=>{
@@ -303,37 +303,61 @@ test('shareBlob enters native share immediately, before yielding to any asynchro
  assert.equal(called,true);assert.equal(await completion,'shared');
 });
 
-import {posterPresentation,localAsset} from '../src/nfl/posterAssets.ts';
+import {posterPresentation,localAsset,featuredPlayers,featuredFromCandidates,createAssetLoader} from '../src/nfl/posterAssets.ts';
 import {POSTER_THEMES} from '../src/nfl/posterTheme.ts';
 test('premium/clean presentation assembly is deterministic and cannot alter picks, ranks or model data',()=>{
  const data=shareData(),before=JSON.stringify(data);
  for(const theme of ['premium','clean'] as const){assert.deepEqual(posterPresentation(data,theme),posterPresentation(data,theme));assert.equal(JSON.stringify(data),before);}
  assert(posterPresentation(data).background);assert.equal(posterPresentation(data,'clean').background,null);
- assert.equal(posterPresentation(data).players.length,0);assert.equal(POSTER_THEMES.premium.label,'PREMIUM');
+ assert.equal(posterPresentation(data).players.length,4);assert.equal(POSTER_THEMES.premium.label,'PREMIUM');
 });
 test('local branding covers all 32 clubs and aliases; no remote logo dependency',()=>{
  const teams='ARI ATL BAL BUF CAR CHI CIN CLE DAL DEN DET GB HOU IND JAX KC LAR LAC LV MIA MIN NE NO NYG NYJ PHI PIT SEA SF TB TEN WSH'.split(' ');
  for(const team of teams){const brand=teamBrand(team);assert(brand.logo);assert(readFileSync(`public${brand.logo}`).length>100);assert(brand.name!==team);}
  assert.equal(teamBrand('LA').logo,teamBrand('LAR').logo);assert.equal(teamBrand('WAS').logo,teamBrand('WSH').logo);
 });
-test('optional hero configuration supports zero through four images; caps at two per team without selecting picks',()=>{
- const data=shareData(),before=JSON.stringify(data);
- const entries=[{team:'NYJ',name:'Player A',src:'/nfl/players/a.png'},{team:'CHI',name:'Player B',src:'/nfl/players/b.png'},{team:'NYJ',name:'Player C',src:'/nfl/players/c.png'},{team:'CHI',name:'Player D',src:'/nfl/players/d.png'}];
- for(let count=0;count<=4;count++){
-  const visual=posterPresentation(data,'premium',{games:{[data.game.game_id]:{players:entries.slice(0,count)}}});
-  assert.equal(visual.players.length,count);
-  const html=renderToStaticMarkup(React.createElement(NflGameShareCard,{data,visual}));assert.equal((html.match(/src="\/nfl\/players\//g)||[]).length,count);assert(html.includes('dandre swift'));assert.equal(JSON.stringify(data),before);
- }
- const config={games:{[data.game.game_id]:{players:[...entries,...entries]}}};assert.equal(posterPresentation(data,'premium',config).players.length,4);assert.equal(posterPresentation(data,'clean',config).players.length,0);
+test('featured identities derive from uncapped eligible SYSTEM candidates; two unique players per team',()=>{
+ const v=nyj(),all=systemCandidates(v,'T90'),before=JSON.stringify(all),selected=featuredPlayers(v,'2026_04_NYJ_CHI','T90');
+ assert.deepEqual(selected,featuredFromCandidates(all,['NYJ','CHI']));assert.equal(selected.length,4);
+ for(const team of ['NYJ','CHI']){const heroes=selected.filter(p=>p.team===team);assert.equal(heroes.length,2);assert.equal(new Set(heroes.map(p=>p.key)).size,2);for(const h of heroes)assert(all.some(p=>p.row.team===team&&p.row.player===h.name));}
+ const duplicate=[...all,...all];assert.deepEqual(featuredFromCandidates(duplicate,['NYJ','CHI']),selected);assert.equal(JSON.stringify(all),before);
+ delete v.artifact.lines;delete v.artifact.lines_meta;assert.deepEqual(featuredPlayers(v,'2026_04_NYJ_CHI','T90'),selected);
 });
-test('missing art/player configuration yields logo-forward premium layout; unsafe remote assets are rejected',()=>{
- const data=shareData(),visual=posterPresentation(data,'premium',{games:{[data.game.game_id]:{background:'https://bad.example/art.jpg',players:[{team:'NYJ',name:'Unsafe',src:'https://bad.example/player.png'}]}}});
- assert.equal(visual.background,null);assert.equal(visual.players.length,0);assert(visual.away.logo && visual.home.logo);
+test('generic heroes populate premium without claiming likeness; verified local cutouts take priority',()=>{
+ const v=nyj(),data=shareData(v),featured=featuredPlayers(v,data.game.game_id,'T90'),before=JSON.stringify(data);
+ const fallback=posterPresentation(data,'premium',{},featured);assert.equal(fallback.players.length,4);assert(fallback.players.every(p=>p.kind==='generic'&&!p.src));
+ const html=renderToStaticMarkup(React.createElement(NflGameShareCard,{data,visual:fallback}));assert.equal((html.match(/data-testid="generic-football-hero"/g)||[]).length,4);assert(html.includes('not a player likeness'));assert.equal(JSON.stringify(data),before);
+ const config={players:{[featured[0].key]:{src:`/nfl/players/${featured[0].key}.webp`,source:'User licensed asset',permission:'Documented commercial redistribution permission',verified:true}}};
+ const visual=posterPresentation(data,'premium',config,featured);assert.equal(visual.players[0].kind,'cutout');assert(visual.players[0].src!.endsWith('.webp'));
+ config.players[featured[0].key].verified=false;assert.equal(posterPresentation(data,'premium',config,featured).players[0].kind,'generic');
+ assert.equal(posterPresentation(data,'clean',config,featured).players.length,0);
+});
+test('unsafe remote assets cannot enter poster; missing known-team art uses intentional local scene',()=>{
+ const data=shareData(),visual=posterPresentation(data,'premium',{games:{[data.game.game_id]:{background:'https://bad.example/art.jpg'}}});
+ assert.equal(visual.background,null);assert(visual.atmosphere);assert(visual.away.logo&&visual.home.logo);
  for(const path of ['//example.com/a.png','/nfl/../a.png','/nfl/a.png?url=https://bad.example','data:image/png;base64,abc'])assert.equal(localAsset(path),null);
- assert.equal(localAsset('/nfl/art/chicago-night.svg'),'/nfl/art/chicago-night.svg');
 });
 test('both poster themes remain sportsbook-independent and canonical under active screen filters',()=>{
  const v=nyj(),before=shareData(v);systemGames(v,'T90','Geno Smith','RUSH');delete v.artifact.lines;delete v.artifact.lines_meta;
  for(const theme of ['premium','clean'] as const){const render=(data:any)=>renderToStaticMarkup(React.createElement(NflGameShareCard,{data,theme}));assert.equal(render(shareData(v)),render(before));}
  assert.equal(v.rows.T90.length,286);assert.deepEqual(shareData(v).core,before.core);
+});
+
+import {playerKey} from '../src/nfl/playerAssets.ts';
+import {cityAtmosphere} from '../src/nfl/cityAtmosphere.ts';
+test('player keys normalize deterministically, independent of team/outcome',()=>{
+ assert.equal(playerKey("D’Andre Swift"),'dandre-swift');assert.equal(playerKey("D'Andre Swift"),'dandre-swift');assert.equal(playerKey('  José SMITH Jr. '),'jose-smith-jr');assert.equal(playerKey('../Geno Smith?!'),'geno-smith');
+});
+test('every known team gets original city/stadium atmosphere; unknown uses abstract fallback',()=>{
+ for(const team of 'ARI ATL BAL BUF CAR CHI CIN CLE DAL DEN DET GB HOU IND JAX KC LAR LAC LV MIA MIN NE NO NYG NYJ PHI PIT SEA SF TB TEN WSH LA WAS'.split(' '))assert(cityAtmosphere(team)?.label.includes('stadium lights'));
+ assert.equal(cityAtmosphere('XYZ'),null);assert.equal(cityAtmosphere('NE')?.motif,'coast');assert.equal(cityAtmosphere('DEN')?.motif,'mountains');
+});
+test('theme-specific filenames are deterministic and cannot collide',()=>{
+ const data=shareData();assert.equal(shareFilename(data,'clean'),'prop-edge-nyj-chi-t90-system-clean-w04.png');assert.notEqual(shareFilename(data,'premium'),shareFilename(data,'clean'));assert.equal(shareFilename({...data,mode:'bettable'},'premium'),'prop-edge-nyj-chi-t90-bettable-premium-w04.png');
+});
+test('failed asset loads are evicted, pending loads shared and successes cached',async()=>{
+ let calls=0;const load=createAssetLoader(async()=>++calls>1);
+ assert.equal(await load('/local'),false);assert.equal(calls,1);assert.equal(await load('/local'),true);assert.equal(calls,2);assert.equal(await load('/local'),true);assert.equal(calls,2);
+ let resolve!:(ok:boolean)=>void;const pending=createAssetLoader(()=>new Promise<boolean>(done=>{resolve=done;}));const a=pending('/a'),b=pending('/a');assert.equal(a,b);await Promise.resolve();resolve(true);assert.equal(await a,true);
+ const rejected=createAssetLoader(async()=>{throw Error('transient');});assert.equal(await rejected('/a'),false);assert.equal(await rejected('/a'),false);
 });

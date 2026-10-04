@@ -3,7 +3,7 @@ import {createPortal} from 'react-dom';
 import NflGameShareCard from './NflGameShareCard';
 import {gameShareData,shareFilename,type ShareMode} from '../nfl/shareCard';
 import type {Horizon,Phase1View} from '../nfl/phase1';
-import {posterPresentation,preparePosterAssets,type PosterPresentation} from '../nfl/posterAssets';
+import {featuredPlayers,posterPresentation,preparePosterAssets,POSTER_ASSETS,type PosterPresentation} from '../nfl/posterAssets';
 import {POSTER_THEMES,type PosterTheme} from '../nfl/posterTheme';
 import {downloadBlob,renderElementToPng,shareBlob} from '../lib/exportImage';
 const button='min-h-11 rounded-xl border border-[#333] px-3 text-xs font-bold disabled:opacity-40';
@@ -17,7 +17,8 @@ export default function NflShareModal({view,gameId,horizon,onClose}:{view:Phase1
  const lock=useRef(false),dialog=useRef<HTMLDialogElement>(null),wrapper=useRef<HTMLDivElement>(null),card=useRef<HTMLDivElement>(null);
  const data=useMemo(()=>gameShareData(view,gameId,horizon,mode,clock),[view,gameId,horizon,mode,clock]);
  // Key the cache by actual poster content, not the polling clock or object identity.
- const presentation=useMemo(()=>posterPresentation(data,theme),[data,theme]);
+ const featured=useMemo(()=>featuredPlayers(view,gameId,horizon),[view,gameId,horizon]);
+ const presentation=useMemo(()=>posterPresentation(data,theme,POSTER_ASSETS,featured),[data,theme,featured]);
  const posterKey=JSON.stringify({data,presentation});
  const ready=prepared?.key===posterKey;
  useEffect(()=>{
@@ -32,7 +33,7 @@ export default function NflShareModal({view,gameId,horizon,onClose}:{view:Phase1
    let cancelled=false;
    const element=card.current!;
    void renderElementToPng(element).then(blob=>{
-     if(!cancelled)setPrepared({key:posterKey,blob,filename:shareFilename(JSON.parse(posterKey).data)});
+     if(!cancelled)setPrepared({key:posterKey,blob,filename:shareFilename(JSON.parse(posterKey).data,JSON.parse(posterKey).presentation.theme)});
    }).catch(err=>{
      if(!cancelled){setFailedKey(posterKey);setError(`Could not prepare the image: ${err instanceof Error?err.message:String(err)}. Retry preparation.`);}
    });
@@ -65,7 +66,7 @@ export default function NflShareModal({view,gameId,horizon,onClose}:{view:Phase1
    {!supported && <p className="mt-2 text-[10px] text-gray-500">Native file sharing unavailable. SAVE PNG works in this browser.</p>}
    {!ready && failedKey!==posterKey && <p role="status" className="mt-2 text-xs text-gray-400">PREPARING IMAGE…</p>}
    {busy && <p role="status" className="mt-2 text-xs text-gray-400">Sharing image…</p>}
-   {failedKey===posterKey && <button className={`${button} mt-2 w-full text-[#79FF48]`} onClick={()=>setRetry(value=>value+1)}>RETRY IMAGE</button>}
+   {(failedKey===posterKey || (ready && assets?.visual.degraded)) && <button className={`${button} mt-2 w-full text-[#79FF48]`} disabled={busy} onClick={()=>{setPrepared(null);setRetry(value=>value+1);}}>RETRY IMAGE</button>}
    {message && <p role="status" className="mt-2 text-xs text-gray-400">{message}</p>}
    {error && <p role="alert" className="mt-2 break-words text-xs text-red-300">{error}</p>}
    <button disabled={busy} onClick={onClose} className={`${button} mt-3 w-full text-gray-400`}>CLOSE</button>

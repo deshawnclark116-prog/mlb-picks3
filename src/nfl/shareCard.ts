@@ -18,10 +18,10 @@ export function gameShareData(view:Phase1View,gameId:string,horizon:Horizon,mode
    lines:mode==='bettable'?lineFreshness(view,now):null};
 }
 export type GameShareData=ReturnType<typeof gameShareData>;
-export function shareFilename(data:Pick<GameShareData,'game'|'horizon'|'mode'|'week'>) {
+export function shareFilename(data:Pick<GameShareData,'game'|'horizon'|'mode'|'week'>,theme:'premium'|'clean'='premium') {
  const clean=(s:string)=>s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') || 'unknown';
  const week=Number.isInteger(data.week) && data.week!>=0?String(data.week).padStart(2,'0'):'unknown';
- return `prop-edge-${clean(data.game.away)}-${clean(data.game.home)}-${clean(data.horizon)}-${data.mode}-w${week}.png`;
+ return `prop-edge-${clean(data.game.away)}-${clean(data.game.home)}-${clean(data.horizon)}-${data.mode}-${theme}-w${week}.png`;
 }
 export function shortModelVersion(version:string) {
  // Keep the readable model prefix, never print a long artifact hash.
