@@ -105,3 +105,84 @@ test('legacy route and other sport components are byte-identical to base',()=>{
   assert.equal(route(readFileSync('server.ts','utf8')),route(old('server.ts')));
   assert(!readFileSync('src/App.tsx','utf8').includes('/api/nfl-predictions'));
 });
+
+// The complete published 286-row NYJ/CHI universe, with downstream lines only.
+import { bettableGames, bettablePicks, normalizePlayer, exactAltMarket, lineFreshness } from '../src/nfl/bettable.ts';
+import { BettableCard, NflPhase1Board } from '../src/components/NflTodayScreen.tsx';
+const nyjSource=JSON.parse(readFileSync(new URL('./fixtures/nfl-nyj-chi-bettable.json',import.meta.url),'utf8'));
+const nyj=()=>parsePhase1(structuredClone(nyjSource),new Date(Date.parse(nyjSource.status.last_shadow_run_utc)+60000));
+test('286 model outcomes produce 16 eligible markets and only 10 default BETTABLE picks',()=>{
+  const v=nyj(),picks=bettablePicks(v,'T90');assert.equal(v.rows.T90.length,286);assert.equal(picks.length,16);assert.equal(bettableGames(v,'T90')[0].picks.length,10);
+  assert.equal(groupGames(v,'T90')[0].rows.length,286);
+  const html=renderToStaticMarkup(React.createElement(NflPhase1Board,{view:v,loading:false,error:null,retrievedAt:null,refresh:async()=>{}}));
+  assert.match(html,/10 BETTABLE PICKS/);assert(!html.includes('286 player outcomes'));
+});
+test('real line join requires game, horizon, normalized player and exact outcome',()=>{
+  assert.equal(normalizePlayer('  D’Andre   Swift '),'dandre swift');const v=nyj();v.artifact.lines=[{...nyjSource.lines[0],player:' BRAELON   ALLEN '}];
+  assert.equal(bettablePicks(v,'T90').length,1);
+  for(const patch of [{game_id:'wrong'},{horizon:'T24'},{player:'unknown'},{outcome:'tackles'}]){v.artifact.lines=[{...nyjSource.lines[0],...patch}];assert.equal(bettablePicks(v,'T90').length,0);}
+});
+test('low-active backup UNDER cannot rank, including real Tyson Bagent and Isaiah Davis',()=>{
+  const v=nyj(),picks=bettablePicks(v,'T90');assert(!picks.some(p=>['tyson bagent','isaiah davis'].includes(p.row.player)));
+  const r=v.rows.T90.find(r=>r.player==='braelon allen'&&r.outcome==='rec_yds')!;
+  v.artifact.lines=[{...nyjSource.lines[0],p_over:.001,p_under:.999}];r.p_active=.7499;assert.equal(bettablePicks(v,'T90').length,0);
+  r.p_active=.75;assert.equal(bettablePicks(v,'T90')[0].side,'UNDER');r.p_active=null;assert.equal(bettablePicks(v,'T90').length,0);
+  assert(v.rows.T90.some(r=>r.player==='tyson bagent'));
+});
+test('invalid lines/probabilities/book and ambiguous identities do not become picks',()=>{
+  const v=nyj();
+  for(const patch of [{line:NaN},{line:Infinity},{p_over:null},{p_under:1.1},{p_over:-.1},{p_under:NaN},{p_over:.8,p_under:.8},{book:''}]){
+    v.artifact.lines=[{...nyjSource.lines[0],...patch}];assert.equal(bettablePicks(v,'T90').length,0);
+  }
+  v.artifact.lines=[nyjSource.lines[0]];const r=v.rows.T90.find(r=>r.player==='braelon allen'&&r.outcome==='rec_yds')!;
+  v.rows.T90.push({...r,id:'ambiguous'});assert.equal(bettablePicks(v,'T90').length,0);
+});
+test('each side and selected odds come directly from probabilities; tie selects UNDER',()=>{
+  const v=nyj();
+  for(const [over,under,side,odds] of [[.6,.4,'OVER',-109],[.4,.6,'UNDER',-115],[.5,.5,'UNDER',-115]] as const){
+    v.artifact.lines=[{...nyjSource.lines[0],p_over:over,p_under:under}];const p=bettablePicks(v,'T90')[0];assert.equal(p.side,side);assert.equal(p.odds,odds);assert.equal(p.probability,Math.max(over,under));
+  }
+});
+test('ranking descends by probability deterministically, no extra probability gate or padding',()=>{
+  const v=nyj(),p=bettablePicks(v,'T90');assert.equal(p[0].row.player,'geno smith');assert.equal(p[0].probability,.705);
+  assert(p.every((x,i)=>!i||p[i-1].probability>=x.probability));assert.deepEqual(bettablePicks(v,'T90'),p);
+  v.artifact.lines=nyjSource.lines.slice(0,4);assert.equal(bettableGames(v,'T90')[0].picks.length,4);
+  v.artifact.lines=[{...nyjSource.lines[0],p_over:.499,p_under:.501}];assert.equal(bettableGames(v,'T90')[0].picks.length,1);
+});
+test('BETTABLE filters preserve search/outcome and exclude model-only defense markets',()=>{
+  const v=nyj();assert.equal(bettableGames(v,'T90','garrett')[0].picks.length,1);
+  assert(bettableGames(v,'T90','','rush_yds')[0].picks.every(p=>p.row.outcome==='rush_yds'));
+  assert.equal(bettableGames(v,'T90','','tackles').length,0);assert(v.rows.T90.some(r=>r.outcome==='tackles'));
+});
+test('T24 and T90 line matching never crosses horizons even with both forecast sets',()=>{
+  const v=nyj();v.rows.T24=v.rows.T90.map(r=>({...r,id:'T24-'+r.id}));
+  assert.equal(bettablePicks(v,'T24').length,0);v.artifact.lines=[{...nyjSource.lines[0],horizon:'T24'}];
+  assert.equal(bettablePicks(v,'T90').length,0);assert.equal(bettablePicks(v,'T24').length,1);
+});
+test('60-minute line freshness boundary, missing timestamp and visible stale warning without hiding picks',()=>{
+  const v=nyj();v.artifact.lines_meta={generated_at_utc:new Date(now-3600000).toISOString()};assert.equal(lineFreshness(v,now).stale,false);
+  assert.equal(lineFreshness(v,now+1).stale,true);v.artifact.lines_meta={};assert.equal(lineFreshness(v,now).unknown,true);
+  v.artifact.lines_meta=nyjSource.lines_meta;
+  const html=renderToStaticMarkup(React.createElement(NflPhase1Board,{view:v,loading:false,error:null,retrievedAt:null,refresh:async()=>{}}));
+  assert.match(html,/LINE MAY HAVE MOVED — verify before placing/);assert.match(html,/Sportsbook lines updated:/);assert.match(html,/10 BETTABLE PICKS/);
+});
+test('unconfirmed 65% milestone is MODEL ALT TARGET; exact horizon/player/outcome/line alone confirms alt',()=>{
+  const v=nyj(),p=bettablePicks(v,'T90')[0],alt=v.artifact.alt_65![p.row.id]!;assert(alt);
+  const render=()=>renderToStaticMarkup(React.createElement(BettableCard,{pick:p,view:v,horizon:'T90',cutoff:v.games[0].horizons.T90!.cutoff}));
+  assert.match(render(),/MODEL ALT TARGET/);assert(!render().includes('BETTABLE ALT'));
+  assert.equal(exactAltMarket(v,p.row,'T90',alt.milestone),false);
+  const exact={...p.market,line:alt.milestone,horizon:'T24'};v.artifact.lines=[exact];assert.equal(exactAltMarket(v,p.row,'T90',alt.milestone),false);
+  v.artifact.lines=[{...exact,horizon:'T90'}];assert.match(render(),/BETTABLE ALT/);
+});
+test('cards display book odds, probability, median, mean, active probability, cutoff, horizon; no confidence bucket',()=>{
+  const v=nyj(),p=bettablePicks(v,'T90').find(p=>p.row.player==='garrett wilson')!;
+  const html=renderToStaticMarkup(React.createElement(BettableCard,{pick:p,view:v,horizon:'T90',cutoff:v.games[0].horizons.T90!.cutoff}));
+  for(const text of ['UNDER','76.5','draftkings','-114','58.7%','Projection (median)','66 yds','Expected average (mean)','99.5%','T90','Information cutoff'])assert(html.includes(text));
+  assert(!/HIGH|MEDIUM/.test(html));
+});
+test('downstream joins leave all forecasts and alt calculations unchanged; other sports and source pipeline byte-identical',()=>{
+  const v=nyj(),before=JSON.stringify(v.rows),artifact=JSON.stringify(v.artifact.forecasts),alts=JSON.stringify(v.artifact.alt_65);
+  bettablePicks(v,'T90');bettableGames(v,'T90');assert.equal(JSON.stringify(v.rows),before);assert.equal(JSON.stringify(v.artifact.forecasts),artifact);assert.equal(JSON.stringify(v.artifact.alt_65),alts);
+  const base=execFileSync('git',['merge-base','HEAD','origin/main'],{encoding:'utf8'}).trim();
+  for(const file of ['src/App.tsx','src/nfl/phase1.ts','src/nfl/usePhase1.ts','server/nflPhase1.ts','server.ts'])assert.equal(readFileSync(file,'utf8'),execFileSync('git',['show',`${base}:${file}`],{encoding:'utf8'}));
+});
