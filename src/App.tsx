@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from "react";
-import { Prediction, Game, Health, RecordData, NflPrediction, NflPredictionsDoc, CfbPrediction, CfbPredictionsDoc, TennisPrediction, TennisPredictionsDoc, NhlPrediction, NhlPredictionsDoc } from "./types";
+import { Prediction, Game, Health, RecordData, CfbPrediction, CfbPredictionsDoc, TennisPrediction, TennisPredictionsDoc, NhlPrediction, NhlPredictionsDoc } from "./types";
 import TodayScreen from "./components/TodayScreen";
 import GamesScreen from "./components/GamesScreen";
 import StatusScreen from "./components/StatusScreen";
@@ -13,7 +13,7 @@ import NflTodayScreen from "./components/NflTodayScreen";
 import CfbTodayScreen from "./components/CfbTodayScreen";
 import TennisTodayScreen from "./components/TennisTodayScreen";
 import NhlTodayScreen from "./components/NhlTodayScreen";
-import { deduplicatePredictions, deduplicateNflPredictions, deduplicateCfbPredictions, deduplicateTennisPredictions, deduplicateNhlPredictions } from "./utils";
+import { deduplicatePredictions, deduplicateCfbPredictions, deduplicateTennisPredictions, deduplicateNhlPredictions } from "./utils";
 import { TrendingUp, Calendar, Activity, ShieldCheck, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -25,10 +25,6 @@ export default function App() {
   const [games, setGames] = useState<Game[]>([]);
   const [health, setHealth] = useState<Health | null>(null);
   const [recordData, setRecordData] = useState<RecordData | null>(null);
-  const [nflPredictions, setNflPredictions] = useState<NflPrediction[]>([]);
-  const [nflSeason, setNflSeason] = useState<number | null>(null);
-  const [nflWeek, setNflWeek] = useState<number | null>(null);
-  const [nflError, setNflError] = useState<string | null>(null);
   const [cfbPredictions, setCfbPredictions] = useState<CfbPrediction[]>([]);
   const [cfbSeason, setCfbSeason] = useState<number | null>(null);
   const [cfbWeek, setCfbWeek] = useState<number | null>(null);
@@ -114,21 +110,6 @@ export default function App() {
     setLoading(false);
   };
 
-  // NFL is a weekly-cadence feed (unlike MLB's daily slate), so it doesn't
-  // need the same retry/backoff plumbing -- one fetch is enough, still on
-  // the same 30s interval as MLB for consistency.
-  const loadNflData = async () => {
-    const doc: NflPredictionsDoc | null = await fetchEndpoint(`/api/nfl-predictions?t=${Date.now()}`);
-    if (doc && Array.isArray(doc.picks)) {
-      setNflPredictions(deduplicateNflPredictions(doc.picks));
-      setNflSeason(doc.season ?? null);
-      setNflWeek(doc.week ?? null);
-      setNflError(null);
-    } else {
-      setNflError("Unable to connect to Prop Edge NFL predictions server.");
-    }
-  };
-
   // CFB is also a weekly-cadence feed, same reasoning as loadNflData.
   const loadCfbData = async () => {
     const doc: CfbPredictionsDoc | null = await fetchEndpoint(`/api/cfb-predictions?t=${Date.now()}`);
@@ -170,14 +151,12 @@ export default function App() {
 
   useEffect(() => {
     loadWorkspaceData();
-    loadNflData();
     loadCfbData();
     loadTennisData();
     loadNhlData();
     // Poll endpoints every 30 seconds to fetch fresh predictions
     const interval = setInterval(() => {
       loadWorkspaceData();
-      loadNflData();
       loadCfbData();
       loadTennisData();
       loadNhlData();
@@ -227,14 +206,7 @@ export default function App() {
         );
       case "NFL":
         return (
-          <NflTodayScreen
-            predictions={nflPredictions}
-            season={nflSeason}
-            week={nflWeek}
-            loading={loading}
-            error={nflError}
-            onRefresh={loadNflData}
-          />
+          <NflTodayScreen />
         );
       case "CFB":
         return (
