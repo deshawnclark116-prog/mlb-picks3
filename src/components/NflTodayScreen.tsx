@@ -1,585 +1,118 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+/** NFL Phase 1 shadow presentation. No legacy picks or sportsbook calculations. */
+import React, { useEffect, useState } from 'react';
+import { AlertTriangle, ChevronDown, RefreshCw } from 'lucide-react';
+import { usePhase1 } from '../nfl/usePhase1';
+import { HORIZONS, OUTCOMES, altFor, formatET, groupGames, type ForecastRow, type Horizon, type Phase1View } from '../nfl/phase1';
 
-import React, { useState, useRef } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { TrendingUp, RefreshCw, AlertTriangle, Search, ChevronDown, ChevronUp } from "lucide-react";
-import { NflPrediction } from "../types";
-import { getNflPredictionKey, getLatestGeneratedAt, formatOdds, formatKellyStake, formatPercent } from "../utils";
+const number = (n?: number | null) => n == null ? '—' : new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 }).format(n);
+const percent = (n?: number | null) => n == null ? '—' : `${(n*100).toFixed(n < .1 ? 1 : 0)}%`;
+const unit = (outcome: string) => outcome.endsWith('_yds') ? ' yds' : '';
+const touch = 'min-h-11 rounded-xl border border-[#282828] bg-[#181818] px-3 text-sm';
 
-// Groups a flat list of player-prop picks into one card per real-world
-// matchup, mirroring GamesScreen.tsx's MLB slate view -- NFL predictions
-// carry team/opponent per pick (no separate game/schedule feed the way
-// MLB does), so the matchup itself is derived here rather than matched
-// against an external Game list. Keyed on the unordered team pair since
-// a single game produces picks for players on both sides.
-interface NflGameGroup {
-  key: string;
-  teamA: string;
-  teamB: string;
-  season: number;
-  week: number;
-  kickoff_utc?: string;
-  predictions: NflPrediction[];
-}
-
-function groupPredictionsByGame(preds: NflPrediction[]): NflGameGroup[] {
-  const map = new Map<string, NflGameGroup>();
-  for (const p of preds) {
-    if (!p.team || !p.opponent) continue;
-    const key = [p.team, p.opponent].sort().join("__");
-    let group = map.get(key);
-    if (!group) {
-      group = {
-        key, teamA: p.team, teamB: p.opponent, season: p.season, week: p.week,
-        kickoff_utc: p.kickoff_utc, predictions: [],
-      };
-      map.set(key, group);
-    } else if (!group.kickoff_utc && p.kickoff_utc) {
-      group.kickoff_utc = p.kickoff_utc;
-    }
-    group.predictions.push(p);
-  }
-  // Real kickoff time first, same fix as CFB's (found live 2026-09-27,
-  // user asked why every sport wasn't fixed alongside CFB).
-  return Array.from(map.values()).sort((a, b) =>
-    (a.kickoff_utc || "9999").localeCompare(b.kickoff_utc || "9999")
-  );
-}
-
-function formatKickoff(iso?: string): string | null {
-  if (!iso) return null;
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return null;
-  return d.toLocaleString("en-US", {
-    weekday: "short", month: "short", day: "numeric",
-    hour: "numeric", minute: "2-digit", hour12: true, timeZone: "America/New_York",
-  });
-}
-
-interface NflTodayScreenProps {
-  predictions: NflPrediction[];
-  season: number | null;
-  week: number | null;
-  loading: boolean;
-  error: string | null;
-  onRefresh: () => Promise<void>;
-}
-
-const MARKET_LABELS: Record<string, string> = {
-  rushing_yards: "Rushing Yards",
-  receiving_yards: "Receiving Yards",
-  sacks: "Sacks",
-  anytime_touchdowns: "Anytime TD",
-  anytime_touchdowns_early_season: "Anytime TD (Prior-Season-Informed)",
-};
-
-// rushing_yards/receiving_yards blend two real sources -- a player's
-// current-season history when they have 3+ games, or their real last
-// season's per-play history when they don't (weeks 1-3, the common
-// case for a rested veteran or anyone before week 4). Each pick's
-// model_source says which one priced it against the real book line.
-// classifier_fixed_line is a different, older fallback: the frozen
-// champion classifier against a fixed 49.5 line, used whenever no real
-// book line was matched for that player today (odds API down, out of
-// quota, or that player just isn't offered) -- a real prediction, not a
-// fabricated one, just without a real book price to show odds/edge/
-// kelly against.
-const MODEL_SOURCE_LABELS: Record<string, string> = {
-  in_season_sim: "This Season",
-  prior_season_sim: "Prior Season",
-  blended_sim: "Blended",
-  classifier_fixed_line: "No Real Line Today",
-  v2_context: "Context Model",
-  v4_context: "Red-Zone + Defense Model",
-};
-
-type MarketFilter = "ALL" | "rushing_yards" | "receiving_yards" | "sacks" | "anytime_touchdowns" | "anytime_touchdowns_early_season";
-
-export default function NflTodayScreen({
-  predictions,
-  season,
-  week,
-  loading,
-  error,
-  onRefresh,
-}: NflTodayScreenProps) {
-  const [marketFilter, setMarketFilter] = useState<MarketFilter>("ALL");
-  const [confidenceFilter, setConfidenceFilter] = useState<"ALL" | "HIGH" | "MEDIUM" | "LOW">("ALL");
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [pullY, setPullY] = useState(0);
-  const [expandedGameKey, setExpandedGameKey] = useState<string | null>(null);
-
-  const toggleExpand = (key: string) => {
-    setExpandedGameKey((cur) => (cur === key ? null : key));
-  };
-
-  const containerRef = useRef<HTMLDivElement>(null);
-  const touchStartY = useRef<number>(0);
-
-  const handleManualRefresh = async () => {
-    setIsRefreshing(true);
-    await onRefresh();
-    setIsRefreshing(false);
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (!containerRef.current) return;
-    touchStartY.current = containerRef.current.scrollTop === 0 ? e.touches[0].clientY : -1;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (touchStartY.current === -1) return;
-    const diff = e.touches[0].clientY - touchStartY.current;
-    if (diff > 0) {
-      const damped = Math.min(80, Math.pow(diff, 0.8) * 1.5);
-      setPullY(damped);
-      if (diff > 10 && e.cancelable) e.preventDefault();
-    }
-  };
-
-  const handleTouchEnd = async () => {
-    if (pullY > 50) {
-      setIsRefreshing(true);
-      setPullY(40);
-      await onRefresh();
-      setPullY(0);
-      setIsRefreshing(false);
-    } else {
-      setPullY(0);
-    }
-    touchStartY.current = -1;
-  };
-
-  const marketsPresent = Array.from(new Set(predictions.map((p) => p.market))).filter(
-    (m) => MARKET_LABELS[m]
-  );
-
-  const sortedPredictions = [...predictions].sort((a, b) => (b.prob_pct ?? 0) - (a.prob_pct ?? 0));
-
-  const filteredPredictions = sortedPredictions.filter((pred) => {
-    if (marketFilter !== "ALL" && pred.market !== marketFilter) return false;
-    if (confidenceFilter !== "ALL" && pred.confidence !== confidenceFilter) return false;
-    if (searchQuery.trim() !== "") {
-      const q = searchQuery.toLowerCase();
-      const nameMatch = pred.player?.toLowerCase().includes(q);
-      const teamMatch = pred.team?.toLowerCase().includes(q) || pred.opponent?.toLowerCase().includes(q);
-      const pickMatch = pred.pick?.toLowerCase().includes(q);
-      if (!nameMatch && !teamMatch && !pickMatch) return false;
-    }
-    return true;
-  });
-
-  const gameGroups = groupPredictionsByGame(filteredPredictions);
-
-  return (
-    <div
-      id="nfl-today-screen-wrapper"
-      className="flex flex-col h-full bg-[#0D0D0D] text-gray-200 select-none overflow-hidden"
-    >
-      {/* Pull indicator */}
-      <motion.div
-        id="nfl-pull-indicator-bar"
-        className="flex items-center justify-center bg-[#0D0D0D] overflow-hidden text-[#00FF41] border-b border-[#1A1A1A]"
-        animate={{ height: pullY > 0 ? Math.max(32, pullY) : 0, opacity: pullY > 0 ? 1 : 0 }}
-        transition={{ type: "spring", stiffness: 350, damping: 30 }}
-      >
-        <span className="text-[10px] font-mono tracking-widest flex items-center gap-2">
-          <RefreshCw className={`w-3 h-3 ${isRefreshing ? "animate-spin" : ""}`} />
-          {pullY > 50 ? "RELEASE TO UPDATE" : "PULL TO REFRESH"}
-        </span>
-      </motion.div>
-
-      {/* Header */}
-      <header id="nfl-screen-header" className="pt-8 px-6 pb-4 bg-[#0A0A0A] border-b border-[#1A1A1A] flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-black tracking-tighter text-white uppercase font-sans">
-            PROP <span className="text-[#00FF41]">EDGE</span>
-          </h1>
-          <p className="text-[9px] text-gray-500 uppercase tracking-widest mt-0.5 font-mono">
-            NFL Player Props{season ? ` • ${season} Week ${week ?? "-"}` : ""}
-          </p>
-          {getLatestGeneratedAt(predictions) && (
-            <p className="text-[8px] text-[#00FF41]/80 font-mono mt-1 uppercase tracking-wider">
-              Updated: {new Date(getLatestGeneratedAt(predictions)!).toLocaleString("en-US", {
-                month: "short", day: "numeric", hour: "numeric", minute: "2-digit", hour12: true, timeZone: "America/New_York",
-              })} ET
-            </p>
-          )}
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2 px-3 py-1 bg-[#141414] rounded-full border border-[#222]">
-            <div className="w-1.5 h-1.5 rounded-full bg-[#00FF41] shadow-[0_0_8px_#00FF41] animate-pulse"></div>
-            <span className="text-[9px] font-bold text-gray-300 uppercase tracking-wider font-mono">LIVE</span>
-          </div>
-          <button
-            id="nfl-refresh-btn"
-            onClick={handleManualRefresh}
-            disabled={loading || isRefreshing}
-            className="p-1.5 rounded-lg bg-[#141414] hover:bg-[#1A1A1A] border border-[#222] text-gray-400 hover:text-[#00FF41] cursor-pointer transition-colors"
-            title="Refresh feed"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading || isRefreshing ? "animate-spin text-[#00FF41]" : ""}`} />
-          </button>
-        </div>
-      </header>
-
-      {/* Filters */}
-      <div id="nfl-filter-controls-board" className="px-6 py-4 bg-[#0D0D0D] border-b border-[#1A1A1A] flex flex-col gap-4">
-        <div>
-          <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block mb-2 font-mono">Market</span>
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar scrollbar-none">
-            {(["ALL", ...marketsPresent] as MarketFilter[]).map((m) => {
-              const active = marketFilter === m;
-              return (
-                <button
-                  id={`nfl-btn-market-${m}`}
-                  key={m}
-                  onClick={() => setMarketFilter(m)}
-                  className={`px-4 py-1.5 rounded-full text-[11px] font-semibold tracking-wide border transition-all cursor-pointer whitespace-nowrap uppercase ${
-                    active
-                      ? "bg-[#00FF41] text-black border-none font-bold"
-                      : "bg-[#141414] text-gray-400 border-[#222] hover:text-white hover:border-gray-700"
-                  }`}
-                >
-                  {m === "ALL" ? "All Markets" : MARKET_LABELS[m] || m}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div>
-          <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block mb-2 font-mono">Confidence Group</span>
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar scrollbar-none">
-            {(["ALL", "HIGH", "MEDIUM", "LOW"] as const).map((conf) => {
-              const active = confidenceFilter === conf;
-              return (
-                <button
-                  id={`nfl-btn-conf-${conf}`}
-                  key={conf}
-                  onClick={() => setConfidenceFilter(conf)}
-                  className={`px-4 py-1.5 rounded-full text-[11px] font-semibold tracking-wide border transition-all cursor-pointer whitespace-nowrap uppercase ${
-                    active
-                      ? "bg-[#00FF41] text-black border-none font-bold"
-                      : "bg-[#141414] text-gray-400 border-[#222] hover:text-white hover:border-gray-700"
-                  }`}
-                >
-                  {conf === "ALL" ? "All Confidence" : `${conf} Conf`}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="relative">
-          <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <Search className="h-3 w-3 text-gray-600" />
-          </span>
-          <input
-            id="nfl-player-search-input"
-            type="text"
-            placeholder="Filter by player, team, or pick..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full text-xs bg-[#141414] text-gray-200 pl-8 pr-4 py-2 rounded-xl border border-[#222] focus:border-[#00FF41]/40 focus:outline-none placeholder-gray-700 font-sans transition-all"
-          />
-        </div>
-      </div>
-
-      {/* Scroll area */}
-      <div
-        id="nfl-predictions-scroll-area"
-        ref={containerRef}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        className="flex-1 overflow-y-auto px-4 py-4 space-y-4 pb-28 scroll-smooth no-scrollbar"
-      >
-        {loading && predictions.length === 0 ? (
-          <div id="nfl-loading-spinner-state" className="flex flex-col items-center justify-center py-20 space-y-3">
-            <RefreshCw className="w-8 h-8 text-[#00FF41] animate-spin" />
-            <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">Loading NFL Board...</p>
-          </div>
-        ) : error ? (
-          <div id="nfl-error-alert-state" className="p-4 rounded-3xl bg-[#141414] border border-red-950 text-gray-300">
-            <div className="flex items-center gap-2 text-red-500 font-bold text-xs mb-1.5 uppercase font-mono">
-              <AlertTriangle className="w-4 h-4" />
-              <span>Network Sync Error</span>
-            </div>
-            <p className="text-xs text-gray-400 mb-3">{error}</p>
-            <button
-              onClick={handleManualRefresh}
-              className="w-full text-center py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl text-xs font-mono uppercase font-bold tracking-wider transition-all"
-            >
-              Retry Sync
-            </button>
-          </div>
-        ) : gameGroups.length === 0 ? (
-          <div id="nfl-empty-predictions-state" className="flex flex-col items-center justify-center py-16 px-4 text-center rounded-3xl border border-dashed border-[#222] bg-[#141414]/30">
-            <TrendingUp className="w-8 h-8 text-gray-700 mb-3" />
-            <h3 className="text-gray-300 text-sm font-semibold mb-1">No NFL picks found.</h3>
-            <p className="text-xs text-gray-500 max-w-xs leading-relaxed mt-1">
-              rushing_yards/receiving_yards only show a pick when a real book line exists for that
-              player today -- sacks needs 3+ current-season games. Try changing filters, or check
-              back closer to kickoff.
-            </p>
-          </div>
-        ) : (
-          <div id="nfl-games-list" className="space-y-4">
-            <AnimatePresence mode="popLayout">
-              {gameGroups.map((game, idx) => {
-                const isExpanded = expandedGameKey === game.key;
-                return (
-                  <motion.div
-                    id={`nfl-game-card-${idx}`}
-                    key={game.key}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.22, delay: Math.min(idx * 0.03, 0.3) }}
-                    onClick={() => toggleExpand(game.key)}
-                    className={`bg-[#141414] rounded-3xl p-5 border cursor-pointer select-none transition-all duration-200 flex flex-col ${
-                      isExpanded ? "border-[#00FF41]/40 shadow-[0_0_15px_rgba(0,255,65,0.04)] bg-[#171717]" : "border-[#1F1F1F] hover:border-gray-800"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <div className="flex-1 min-w-0">
-                        <h2 className="text-lg font-bold text-white leading-tight tracking-tight truncate">
-                          {game.teamA} <span className="text-gray-600 font-mono text-sm">vs</span> {game.teamB}
-                        </h2>
-                        <p className="text-[10px] text-gray-500 font-mono uppercase tracking-wider mt-1">
-                          {formatKickoff(game.kickoff_utc) || `${game.season} • Week ${game.week}`}
-                        </p>
-                      </div>
-                      <div className="flex flex-col items-end gap-1.5 shrink-0 pl-4">
-                        <span className="text-[9px] font-black px-2 py-0.5 rounded border tracking-wider font-mono uppercase bg-[#252525] text-gray-400 border-[#333]">
-                          {game.predictions.length} {game.predictions.length === 1 ? "PROP" : "PROPS"}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-center mt-3 pt-2 border-t border-[#1F1F1F]/50">
-                      {isExpanded ? (
-                        <ChevronUp className="w-4 h-4 text-gray-500" />
-                      ) : (
-                        <ChevronDown className="w-4 h-4 text-gray-500" />
-                      )}
-                    </div>
-
-                    <AnimatePresence initial={false}>
-                      {isExpanded && (
-                        <motion.div
-                          id={`nfl-game-props-expanded-${idx}`}
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                          transition={{ duration: 0.22, ease: "easeInOut" }}
-                          className="overflow-hidden mt-4 pt-4 border-t border-[#1F1F1F] w-full"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <div className="space-y-3 pb-1">
-                            {game.predictions.map((pred) => (
-                              <div
-                                key={getNflPredictionKey(pred)}
-                                className="bg-[#1C1C1C] rounded-2xl p-4 border border-[#242424] space-y-3"
-                              >
-                                <div className="flex justify-between items-start">
-                                  <div className="min-w-0 flex-1 pr-2">
-                                    <h4 className="text-sm font-bold text-white tracking-tight truncate">
-                                      {pred.player}
-                                      <span className="text-gray-500 font-normal"> ({pred.team})</span>
-                                    </h4>
-                                    <p className="text-[10px] text-gray-400 mt-0.5">
-                                      {MARKET_LABELS[pred.market] || pred.market} •{" "}
-                                      <span className="text-white font-semibold italic">{pred.pick}</span>
-                                    </p>
-                                    {pred.model_source && MODEL_SOURCE_LABELS[pred.model_source] && (
-                                      <span className="inline-block mt-1 text-[8px] font-mono uppercase tracking-wider text-gray-500 bg-[#141414] border border-[#242424] rounded px-1.5 py-0.5">
-                                        {MODEL_SOURCE_LABELS[pred.model_source]}
-                                      </span>
-                                    )}
-                                  </div>
-                                  {pred.confidence && (
-                                    <span
-                                      className={`text-[8px] uppercase font-mono font-bold tracking-wider px-1.5 py-0.5 border rounded shrink-0 ${
-                                        pred.confidence === "HIGH"
-                                          ? "bg-[#00FF41]/10 text-[#00FF41] border-[#00FF41]/20"
-                                          : pred.confidence === "MEDIUM"
-                                          ? "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
-                                          : "bg-zinc-500/10 text-zinc-400 border-zinc-500/20"
-                                      }`}
-                                    >
-                                      {pred.confidence}
-                                    </span>
-                                  )}
-                                </div>
-
-                                {pred.line !== undefined && pred.line !== null ? (
-                                  <>
-                                    <div className="bg-[#141414] rounded-xl p-2.5 border border-[#222] flex flex-col items-center justify-center text-center shadow-inner">
-                                      <span className="text-[8px] font-semibold text-gray-500 uppercase tracking-widest font-mono mb-0.5">
-                                        Hit Probability
-                                      </span>
-                                      <span className="text-2xl font-black font-mono text-[#00FF41] tracking-tight drop-shadow-[0_0_8px_rgba(0,255,65,0.15)]">
-                                        {pred.prob_pct !== undefined && pred.prob_pct !== null ? `${pred.prob_pct.toFixed(1)}%` : "N/A"}
-                                      </span>
-                                    </div>
-
-                                    <div className="grid grid-cols-3 gap-2 text-center bg-[#141414] p-2 rounded-xl border border-[#222] text-[9.5px] font-mono">
-                                      <div>
-                                        <p className="text-[#555] font-bold uppercase leading-none mb-1">Line</p>
-                                        <p className="text-white font-bold text-xs">{pred.line}</p>
-                                      </div>
-                                      <div>
-                                        <p className="text-[#555] font-bold uppercase leading-none mb-1">Projected</p>
-                                        <p className="text-white font-bold text-xs">
-                                          {pred.projected_median !== undefined && pred.projected_median !== null ? pred.projected_median.toFixed(1) : "N/A"}
-                                        </p>
-                                      </div>
-                                      <div>
-                                        <p className="text-[#555] font-bold uppercase leading-none mb-1">Games Played</p>
-                                        <p className="text-white font-bold text-xs">
-                                          {pred.games_played !== undefined && pred.games_played !== null ? pred.games_played : "N/A"}
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </>
-                                ) : (
-                                  // No real book line matched today -- there's no bet to grade a
-                                  // hit-probability or line against, so this shows the model's own
-                                  // real projected yardage directly instead (see nfl_serving_
-                                  // builder_a.py's make_real_odds_pick): a per-player number, not a
-                                  // shared round-number line everyone gets compared against.
-                                  <>
-                                    <div className="bg-[#141414] rounded-xl p-2.5 border border-[#222] flex flex-col items-center justify-center text-center shadow-inner">
-                                      <span className="text-[8px] font-semibold text-gray-500 uppercase tracking-widest font-mono mb-0.5">
-                                        Projected Yards
-                                      </span>
-                                      <span className="text-2xl font-black font-mono text-[#00FF41] tracking-tight drop-shadow-[0_0_8px_rgba(0,255,65,0.15)]">
-                                        {pred.projected_median !== undefined && pred.projected_median !== null ? pred.projected_median.toFixed(0) : "N/A"}
-                                      </span>
-                                    </div>
-
-                                    <div className="grid grid-cols-3 gap-2 text-center bg-[#141414] p-2 rounded-xl border border-[#222] text-[9.5px] font-mono">
-                                      <div>
-                                        <p className="text-[#555] font-bold uppercase leading-none mb-1">Low (p10)</p>
-                                        <p className="text-white font-bold text-xs">
-                                          {pred.projected_low !== undefined && pred.projected_low !== null ? pred.projected_low.toFixed(0) : "N/A"}
-                                        </p>
-                                      </div>
-                                      <div>
-                                        <p className="text-[#555] font-bold uppercase leading-none mb-1">High (p90)</p>
-                                        <p className="text-white font-bold text-xs">
-                                          {pred.projected_high !== undefined && pred.projected_high !== null ? pred.projected_high.toFixed(0) : "N/A"}
-                                        </p>
-                                      </div>
-                                      <div>
-                                        <p className="text-[#555] font-bold uppercase leading-none mb-1">Games Played</p>
-                                        <p className="text-white font-bold text-xs">
-                                          {pred.games_played !== undefined && pred.games_played !== null ? pred.games_played : "N/A"}
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </>
-                                )}
-
-                                {/* FanDuel's own number next to ours -- display only. */}
-                                {pred.fanduel_line !== undefined && pred.fanduel_line !== null && (
-                                  <div className="grid grid-cols-3 gap-2 text-center bg-[#141414] p-2 rounded-xl border border-[#222] text-[9.5px] font-mono">
-                                    <div>
-                                      <p className="text-[#555] font-bold uppercase leading-none mb-1">Ours</p>
-                                      <p className="text-white font-bold text-xs">
-                                        {pred.projected_median !== undefined && pred.projected_median !== null ? pred.projected_median.toFixed(0) : "N/A"}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <p className="text-[#555] font-bold uppercase leading-none mb-1">FanDuel</p>
-                                      <p className="text-white font-bold text-xs">{pred.fanduel_line}</p>
-                                    </div>
-                                    <div>
-                                      <p className="text-[#555] font-bold uppercase leading-none mb-1">Difference</p>
-                                      <p className={`font-bold text-xs ${(pred.vs_fanduel ?? 0) >= 0 ? "text-[#00FF41]" : "text-red-400"}`}>
-                                        {pred.vs_fanduel !== undefined && pred.vs_fanduel !== null ? `${pred.vs_fanduel > 0 ? "+" : ""}${pred.vs_fanduel.toFixed(1)}` : "N/A"}
-                                      </p>
-                                    </div>
-                                  </div>
-                                )}
-                                {pred.fanduel_td_odds !== undefined && pred.fanduel_td_odds !== null && (
-                                  <div className="grid grid-cols-3 gap-2 text-center bg-[#141414] p-2 rounded-xl border border-[#222] text-[9.5px] font-mono">
-                                    <div>
-                                      <p className="text-[#555] font-bold uppercase leading-none mb-1">Ours</p>
-                                      <p className="text-white font-bold text-xs">
-                                        {pred.model_prob !== undefined && pred.model_prob !== null ? `${(pred.model_prob * 100).toFixed(0)}%` : "N/A"}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <p className="text-[#555] font-bold uppercase leading-none mb-1">FanDuel</p>
-                                      <p className="text-white font-bold text-xs">
-                                        {pred.fanduel_td_implied !== undefined && pred.fanduel_td_implied !== null ? `${(pred.fanduel_td_implied * 100).toFixed(0)}%` : "N/A"}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <p className="text-[#555] font-bold uppercase leading-none mb-1">FD Odds</p>
-                                      <p className="text-white font-bold text-xs">{formatOdds(pred.fanduel_td_odds)}</p>
-                                    </div>
-                                  </div>
-                                )}
-
-                                {/* Real book line + edge/kelly -- only rushing_yards/
-                                    receiving_yards picks carry these (a real market
-                                    price to compute them against); sacks never will
-                                    until it has one too. */}
-                                {pred.odds !== undefined && pred.odds !== null && (
-                                  <div className="grid grid-cols-3 gap-2 text-center bg-[#141414] p-2 rounded-xl border border-[#222] text-[9.5px] font-mono">
-                                    <div>
-                                      <p className="text-[#555] font-bold uppercase leading-none mb-1">Odds</p>
-                                      <p className="text-[#00FF41] font-bold text-xs">{formatOdds(pred.odds)}</p>
-                                      {pred.book && (
-                                        <p className="text-gray-600 text-[8px] mt-0.5 capitalize">{pred.book}</p>
-                                      )}
-                                    </div>
-                                    <div>
-                                      <p className="text-[#555] font-bold uppercase leading-none mb-1">Edge</p>
-                                      <p className={`font-bold text-xs ${(pred.value_edge ?? 0) > 0 ? "text-[#00FF41]" : "text-white"}`}>
-                                        {formatPercent(pred.value_edge)}
-                                      </p>
-                                    </div>
-                                    <div>
-                                      <p className="text-[#555] font-bold uppercase leading-none mb-1">Stake</p>
-                                      <p className="text-white font-bold text-xs">{formatKellyStake(pred.kelly_fraction)}</p>
-                                    </div>
-                                  </div>
-                                )}
-
-                                {pred.note && (
-                                  <p className="text-[9px] text-yellow-600/80 font-mono leading-tight border-t border-[#1F1F1F] pt-2">
-                                    {pred.note}
-                                  </p>
-                                )}
-
-                                {pred.validation_note && (
-                                  <p className="text-[9px] text-gray-600 font-mono leading-tight border-t border-[#1F1F1F] pt-2">
-                                    {pred.validation_note}
-                                  </p>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
-          </div>
-        )}
-      </div>
+export function OutcomeCard({ row, view }: { row: ForecastRow; view: Phase1View }) {
+  const alt = altFor(view, row);
+  const distributionAvailable = Object.hasOwn(view.artifact.alt_65 || {}, row.id) || !!row.quantile_grid_99 || !!row.cdf_lattice;
+  const cells = [
+    ['Expected average (mean)', number(row.mean)+unit(row.outcome)],
+    ['Middle 50% (P25–P75)', `${number(row.p25)}–${number(row.p75)}${unit(row.outcome)}`],
+    ['Range (P10–P90)', `${number(row.p10)}–${number(row.p90)}${unit(row.outcome)}`],
+    ['P(active)', percent(row.p_active)], ['Expected opportunities', number(row.exp_opp)],
+    ['Role share', percent(row.role_share)], ['P(≥1)', percent(row.p_ge1)], ['P(0)', percent(row.p0)],
+    ['Standard deviation', number(row.sd)],
+  ];
+  return <article className="min-w-0 rounded-2xl border border-[#292929] bg-[#1C1C1C] p-4" data-testid="forecast-row">
+    <div className="break-words text-base font-bold capitalize text-white">{row.player || 'Player name unavailable'}</div>
+    <div className="mt-1 text-xs text-gray-400">{row.team}{row.pos ? ` · ${row.pos}` : ''} · {OUTCOMES[row.outcome] || row.outcome}</div>
+    <div className="my-4" data-testid="model-projection">
+      <div className="text-[11px] font-mono font-bold tracking-wide text-gray-400">MODEL PROJECTION · MEDIAN</div>
+      <div className="text-3xl font-black text-[#00FF41]">{number(row.median)}{unit(row.outcome)}</div>
     </div>
-  );
+    <dl className="grid min-w-0 grid-cols-2 gap-x-3 gap-y-3">
+      {cells.map(([label, value]) => <div key={label} className="min-w-0"><dt className="text-[11px] leading-4 text-gray-400">{label}</dt><dd className="mt-0.5 break-words text-sm font-semibold text-gray-100">{value}</dd></div>)}
+    </dl>
+    <div className="mt-4 rounded-xl border border-[#00FF41]/40 bg-[#00FF41]/5 p-3" data-testid="alt-line">
+      <div className="text-[11px] font-mono font-bold text-[#00FF41]">65%+ ALT LINE</div>
+      <div className="mt-1 text-lg font-bold text-white">{alt ? `${alt.milestone}+ ${OUTCOMES[row.outcome]?.toLowerCase() || row.outcome}` : 'No 65%+ alt'}</div>
+      {alt && <div className="mt-1 text-xs text-gray-200">Model hit probability: {percent(alt.probability)}</div>}
+      {alt?.method === 'quantile_grid_99_conservative' && <div className="mt-1 text-[11px] text-gray-400">Conservative simulated quantile estimate · ~1 percentage point resolution</div>}
+      {!distributionAvailable && <div className="mt-1 text-[11px] text-gray-400">Distribution detail unavailable; no alt inferred from the projection.</div>}
+    </div>
+    <div className="mt-3 break-words text-[11px] text-gray-400">Uncertainty: {number(row.unc)}{row.unc_reasons?.length ? ` · ${row.unc_reasons.join(', ')}` : ''}</div>
+  </article>;
+}
+
+interface BoardProps {
+  view: Phase1View | null; loading: boolean; error: string | null;
+  retrievedAt: string | null; refresh: () => Promise<void>;
+}
+export function NflPhase1Board({ view, loading, error, retrievedAt, refresh }: BoardProps) {
+  const [horizon, setHorizon] = useState<Horizon>('T90');
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [query, setQuery] = useState(''), [outcome, setOutcome] = useState('');
+  const [limit, setLimit] = useState(40);
+  // The effective horizon is checked on every render, before effects run.
+  const selected = view && !view.rows[horizon].length ? view.defaultHorizon : horizon;
+  useEffect(() => { if (view) setHorizon(current => view.rows[current].length ? current : view.defaultHorizon); }, [view]);
+  useEffect(() => { setExpanded(null); setLimit(40); }, [view?.publicationMs, selected]);
+  const groups = view ? groupGames(view, selected) : [];
+  const search = query.trim().toLowerCase();
+  const filtered = groups.map(game => ({ ...game, visibleRows: game.rows.filter(r => (!outcome || r.outcome === outcome)
+    && (!search || `${r.player} ${r.team} ${r.opp}`.toLowerCase().includes(search))) })).filter(game => game.visibleRows.length);
+  const toggle = (id: string) => { setExpanded(current => current === id ? null : id); setLimit(40); };
+  return <div id="nfl-today-screen-wrapper" className="flex h-full min-w-0 flex-col overflow-hidden bg-[#0D0D0D] text-gray-200">
+    <header className="flex shrink-0 items-center justify-between gap-3 border-b border-[#222] bg-[#0A0A0A] px-4 pb-3 pt-5">
+      <div className="min-w-0"><h1 className="text-2xl font-black tracking-tighter text-white">PROP <span className="text-[#00FF41]">EDGE</span></h1>
+        <p className="mt-1 text-[11px] font-mono font-bold text-[#00FF41]">NEW NFL OUTCOME ENGINE</p></div>
+      <button aria-label="Refresh NFL forecasts" onClick={() => void refresh()} disabled={loading} className={`${touch} flex min-w-11 items-center justify-center text-[#00FF41] disabled:opacity-50`}><RefreshCw size={18} className={loading ? 'animate-spin' : ''}/></button>
+    </header>
+    <div className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto px-4 pb-28 pt-3" id="nfl-scroll-area">
+      <div className="flex flex-wrap gap-2 text-[10px] font-mono font-bold">
+        {['SHADOW / RESEARCH', 'NO SPORTSBOOK INPUTS', 'NOT YET PROMOTED TO PRODUCTION'].map(label => <span key={label} className="rounded-md border border-[#00FF41]/25 bg-[#00FF41]/5 px-2 py-1 text-[#00FF41]">{label}</span>)}
+      </div>
+      <dl className="my-4 space-y-2 rounded-xl bg-[#151515] p-3 text-[11px]">
+        <div><dt className="text-gray-500">Last forecast retrieval</dt><dd>{formatET(retrievedAt)}</dd></div>
+        <div><dt className="text-gray-500">Last shadow publication/run</dt><dd>{formatET(view?.artifact.status.last_shadow_run_utc)}</dd></div>
+        <div><dt className="text-gray-500">Model version</dt><dd className="break-all">{view?.artifact.status.model_versions.join(', ') || 'Unavailable'}</dd></div>
+      </dl>
+      {view && <>
+        <div className="grid grid-cols-2 gap-2" aria-label="Forecast horizon">
+          {HORIZONS.map(h => <button key={h} disabled={!view.rows[h].length} aria-pressed={selected === h} onClick={() => setHorizon(h)} className={`${touch} font-bold disabled:opacity-40 ${selected === h ? '!border-[#00FF41]/50 !bg-[#00FF41]/10 text-[#00FF41]' : 'text-gray-400'}`}>{h}</button>)}
+        </div>
+        {!view.rows.T24.length && <p className="mt-2 text-xs text-amber-300">No valid T24 forecast captured.</p>}
+        {!view.rows.T90.length && <p className="mt-2 text-xs text-amber-300">No valid T90 forecast captured.</p>}
+        {view.excludedGames > 0 && <p role="status" className="mt-2 text-xs text-amber-300">{view.excludedGames} past-date game(s) excluded from the published set.</p>}
+        <div className="my-4 grid grid-cols-2 gap-2">
+          <input aria-label="Filter NFL players or teams" type="search" value={query} onChange={e => setQuery(e.target.value)} placeholder="Player or team" className={`${touch} min-w-0 w-full text-gray-200`} />
+          <select aria-label="Filter NFL outcome" value={outcome} onChange={e => setOutcome(e.target.value)} className={`${touch} min-w-0 w-full text-gray-200`}>
+            <option value="">All outcomes</option>{Object.entries(OUTCOMES).filter(([key]) => view.rows[selected].some(r => r.outcome === key)).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
+          </select>
+        </div>
+      </>}
+      {error ? <div role="alert" className="rounded-2xl border border-red-900 bg-red-950/20 p-4 text-sm">
+        <div className="mb-2 flex items-center gap-2 font-bold text-red-400"><AlertTriangle size={18}/> NFL forecast unavailable</div>
+        <p className="break-words text-gray-300">{error}</p><button onClick={() => void refresh()} className={`${touch} mt-3 w-full text-red-300`}>Retry new-engine feed</button>
+      </div> : !view && loading ? <p role="status" className="py-8 text-center text-sm text-gray-400">Loading Phase 1 forecasts…</p>
+        : filtered.length === 0 ? <p role="status" className="rounded-2xl border border-[#222] p-5 text-sm text-gray-400">{view?.artifact.empty_message || 'No valid New Engine forecast has been captured for this slate yet.'}</p>
+        : <div className="space-y-3" id="nfl-games-list">
+          {filtered.map(game => <section key={`${selected}|${game.game_id}`} className="min-w-0 overflow-hidden rounded-2xl border border-[#242424] bg-[#141414]" data-testid="nfl-game">
+            <button className="flex min-h-20 w-full items-center gap-3 p-4 text-left" aria-expanded={expanded === game.game_id} aria-controls={`rows-${selected}-${game.game_id}`} onClick={() => toggle(game.game_id)}>
+              <div className="min-w-0 flex-1"><h2 className="text-lg font-bold text-white">{game.away} <span className="text-gray-500">vs</span> {game.home}</h2>
+                <p className="mt-1 text-xs text-gray-400">{formatET(game.kickoff_utc)}</p>
+                <p className="mt-1 text-xs text-[#00FF41]">{selected} · {game.rows.length} player outcomes</p></div>
+              <ChevronDown size={18} className={`shrink-0 text-gray-400 ${expanded === game.game_id ? 'rotate-180' : ''}`}/>
+            </button>
+            {expanded === game.game_id && <div id={`rows-${selected}-${game.game_id}`} className="space-y-3 border-t border-[#252525] p-3">
+              <p className="text-[11px] text-gray-500">Information cutoff: {formatET(game.horizons[selected]?.cutoff)}</p>
+              {game.visibleRows.slice(0, limit).map(row => <OutcomeCard key={row.id} row={row} view={view!}/>)}
+              {game.visibleRows.length > limit && <button onClick={() => setLimit(n => n+40)} className={`${touch} w-full text-[#00FF41]`}>Show more outcomes ({game.visibleRows.length-limit} remaining)</button>}
+            </div>}
+          </section>)}
+        </div>}
+      {view && <p className="mt-5 break-words text-[10px] leading-4 text-gray-500">R11: {view.artifact.status.r11}</p>}
+      <p className="mt-3 text-[11px] leading-4 text-gray-500">Calibrated simulated outcomes; nonparticipation counts as zero. T24 and T90 remain separate. Shadow research forecasts, not sportsbook picks.</p>
+    </div>
+  </div>;
+}
+export default function NflTodayScreen() {
+  return <NflPhase1Board {...usePhase1()}/>;
 }

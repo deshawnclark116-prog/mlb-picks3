@@ -1,0 +1,212 @@
+{
+  "default_horizon": "T90",
+  "empty_message": "No valid New Engine forecast has been captured for this slate yet.",
+  "forecasts": {
+    "T24": [],
+    "T90": [
+      [
+        "2026_04_ARI_NYG",
+        "darnell mooney",
+        "NYG",
+        "ARI",
+        "WR",
+        "rec",
+        0.9879,
+        3.1212,
+        0.1107,
+        1.7981,
+        2.0,
+        1.5723,
+        0.0,
+        1.0,
+        3.0,
+        4.0,
+        0.2214,
+        null,
+        0.3064,
+        [
+          "opportunity_volatility",
+          "spread"
+        ],
+        "c09caee9e6b2f3b684fb5f5d082c5777"
+      ],
+      [
+        "2026_04_ARI_NYG",
+        "devin singletary",
+        "NYG",
+        "ARI",
+        "RB",
+        "rush_yds",
+        0.887,
+        3.7479,
+        0.1832,
+        16.7502,
+        11.0,
+        18.8686,
+        0.0,
+        2.0,
+        25.0,
+        41.0,
+        0.2095,
+        null,
+        0.381,
+        [
+          "role_change",
+          "opportunity_volatility"
+        ],
+        "8c17261884da476188c3c92c4a473443"
+      ],
+      [
+        "2026_04_ARI_NYG",
+        "tremaine edmunds",
+        "NYG",
+        "ARI",
+        "LB",
+        "tackles",
+        0.9837,
+        56.6497,
+        null,
+        7.5928,
+        7.0,
+        3.3368,
+        4.0,
+        5.0,
+        10.0,
+        12.0,
+        0.0178,
+        null,
+        0.224,
+        [
+          "spread",
+          "opportunity_volatility"
+        ],
+        "50b01e3593863c71b9313a3069ee4812"
+      ]
+    ]
+  },
+  "games": [
+    {
+      "away": "ARI",
+      "game_id": "2026_04_ARI_NYG",
+      "home": "NYG",
+      "horizons": {
+        "T90": {
+          "cutoff": "2026-10-04T15:30:00.000000Z",
+          "model_version": "p1c-f3b1fa3608f90253",
+          "n_draws": 100000,
+          "n_records": 3
+        }
+      },
+      "kickoff_utc": "2026-10-04T17:00:00.000000Z"
+    }
+  ],
+  "labels": [
+    "NEW NFL OUTCOME ENGINE",
+    "SHADOW / RESEARCH",
+    "NO SPORTSBOOK INPUTS",
+    "NOT YET PROMOTED TO PRODUCTION"
+  ],
+  "lines": [
+    {
+      "book": "draftkings",
+      "game_id": "2026_04_ARI_NYG",
+      "horizon": "T90",
+      "line": 17.5,
+      "outcome": "rec_yds",
+      "over_price": -107,
+      "p_over": 0.435,
+      "p_under": 0.565,
+      "player": "cam skattebo",
+      "under_price": -117
+    },
+    {
+      "book": "draftkings",
+      "game_id": "2026_04_ARI_NYG",
+      "horizon": "T90",
+      "line": 63.5,
+      "outcome": "rush_yds",
+      "over_price": -110,
+      "p_over": 0.355,
+      "p_under": 0.645,
+      "player": "cam skattebo",
+      "under_price": -114
+    }
+  ],
+  "lines_meta": {
+    "date_et": "2026-10-04",
+    "generated_at_utc": "2026-10-04T08:23:18.760906+00:00",
+    "note": "downstream display only; never an input to the forecast"
+  },
+  "outcomes": [
+    "rush_yds",
+    "rec_yds",
+    "rec",
+    "pass_yds",
+    "pass_td",
+    "int",
+    "rush_td",
+    "rec_td",
+    "atd",
+    "tackles",
+    "sacks",
+    "def_int"
+  ],
+  "row_fields": [
+    "game_id",
+    "player",
+    "team",
+    "opp",
+    "pos",
+    "outcome",
+    "p_active",
+    "exp_opp",
+    "role_share",
+    "mean",
+    "median",
+    "sd",
+    "p10",
+    "p25",
+    "p75",
+    "p90",
+    "p0",
+    "p_ge1",
+    "unc",
+    "unc_reasons",
+    "id"
+  ],
+  "schema": "nfl-new-engine-shadow-v1",
+  "status": {
+    "counts": {
+      "T24": {
+        "failed": 0,
+        "ledger_done_keys": 0,
+        "missed": 14,
+        "planned": 1,
+        "valid_games": 0
+      },
+      "T90": {
+        "failed": 0,
+        "ledger_done_keys": 8,
+        "missed": 1,
+        "planned": 6,
+        "valid_games": 1
+      }
+    },
+    "last_provider_retrieval_utc": "2026-10-04T15:26:07.182123Z",
+    "last_shadow_run_utc": "2026-10-04T15:41:40.357035Z",
+    "model_versions": [
+      "p1c-f3b1fa3608f90253"
+    ],
+    "next_cutoff": {
+      "cutoff": "2026-10-04T18:35:00.000000Z",
+      "key": "2026_04_MIA_MIN|T90|2026-10-04T18:35:00.000000Z",
+      "kickoff": "2026-10-04T20:05:00.000000Z"
+    },
+    "r11": "UNRESOLVED (BLOCKER): operational N=100,000 draws; forecasts are shadow evidence, not freeze evidence",
+    "readiness_ready": true,
+    "reference_clock_utc": "2026-10-04T15:41:40.357035Z",
+    "scheduler_version": "phase1e-scheduler-3",
+    "season": 2026,
+    "week": 4
+  }
+}

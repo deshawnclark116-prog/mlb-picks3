@@ -1,4 +1,5 @@
 import express from "express";
+import { phase1Handler } from "./server/nflPhase1.ts";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import {
@@ -163,6 +164,9 @@ async function startServer() {
       res.status(502).json({ error: "Failed to fetch predictions from upstream API", details: error.message });
     }
   });
+
+  // Read-only new-engine feed; never falls back to the legacy Render route.
+  app.get("/api/nfl-phase1-predictions", phase1Handler());
 
   // API Route - Proxy NFL Predictions
   app.get("/api/nfl-predictions", async (req, res) => {
