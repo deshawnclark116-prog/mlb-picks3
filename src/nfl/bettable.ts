@@ -12,16 +12,21 @@ export function compareSystem(a: SystemPick,b: SystemPick): number {
     || a.row.player.localeCompare(b.row.player) || a.row.outcome.localeCompare(b.row.outcome)
     || a.row.game_id.localeCompare(b.row.game_id) || a.row.id.localeCompare(b.row.id);
 }
-/** Sole eligibility source: existing alt_65/empirical distribution plus availability. */
-export function systemGames(view: Phase1View,horizon: Horizon) {
-  return groupGames(view,horizon).map(game=>({...game,picks:game.rows.flatMap(row=>{
+/** Uncapped eligibility: existing model targets plus availability, never books. */
+export function systemCandidates(view: Phase1View,horizon: Horizon): SystemPick[] {
+  return groupGames(view,horizon).flatMap(game=>game.rows.flatMap(row=>{
     if (!OFFENSIVE_OUTCOMES.includes(row.outcome) || !row.player.trim() || row.p_active==null || row.p_active<.75) return [];
     const target=altFor(view,row);
     return target && target.probability>=.65 ? [{row,target}] : [];
-  }).sort(compareSystem).slice(0,10)}));
+  }));
 }
-export function todaysBest(view: Phase1View,horizon: Horizon) {
-  return systemGames(view,horizon).flatMap(g=>g.picks).sort(compareSystem).slice(0,5);
+/** Search/family eligibility precedes ranking and the per-game DISPLAY cap. */
+export function systemGames(view: Phase1View,horizon: Horizon,search='',family: Family='ALL') {
+  const candidates=systemCandidates(view,horizon).filter(p=>matchesFilter(p.row,search,family));
+  return groupGames(view,horizon).map(game=>({...game,picks:candidates.filter(p=>p.row.game_id===game.game_id).sort(compareSystem).slice(0,10)}));
+}
+export function todaysBest(view: Phase1View,horizon: Horizon,search='',family: Family='ALL') {
+  return systemCandidates(view,horizon).filter(p=>matchesFilter(p.row,search,family)).sort(compareSystem).slice(0,5);
 }
 export function matchesFilter(row: ForecastRow,search: string,family: Family,outcome='') {
   const families={ALL:OFFENSIVE_OUTCOMES,PASS:['pass_yds','pass_td','int'],RUSH:['rush_yds','rush_td'],REC:['rec_yds','rec','rec_td'],TD:['pass_td','rush_td','rec_td','atd']};
@@ -57,10 +62,12 @@ export function bestExecution(view: Phase1View,horizon: Horizon,pick: SystemPick
   // American odds: positive prices outrank negative, then larger is better.
   return options.sort((a,b)=>b.odds-a.odds || a.book.localeCompare(b.book) || a.kind.localeCompare(b.kind))[0] || null;
 }
-export function executableGames(view: Phase1View,horizon: Horizon) {
-  return systemGames(view,horizon).map(g=>({...g,picks:g.picks.flatMap(pick=>{
+/** Execution intersects uncapped model eligibility; it has its OWN display cap. */
+export function executableGames(view: Phase1View,horizon: Horizon,search='',family: Family='ALL') {
+  const executable=systemCandidates(view,horizon).filter(p=>matchesFilter(p.row,search,family)).flatMap(pick=>{
     const execution=bestExecution(view,horizon,pick);return execution?[{...pick,execution}]:[];
-  })}));
+  });
+  return groupGames(view,horizon).map(game=>({...game,picks:executable.filter(p=>p.row.game_id===game.game_id).sort(compareSystem).slice(0,10)}));
 }
 export function lineFreshness(view: Phase1View,now=Date.now()) {
   const timestamp=(view.artifact.lines_meta as {generated_at_utc?:string}|null)?.generated_at_utc;

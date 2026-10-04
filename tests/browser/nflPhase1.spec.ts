@@ -41,9 +41,10 @@ test('deleting all sportsbook data preserves system targets and filtering; exact
   let current=structuredClone(source);delete current.lines;delete current.lines_meta;
   await setup(page,()=>current);await page.getByTestId('nfl-game').getByRole('button').click();
   const before=await page.getByTestId('system-target').allTextContents();expect(before.length).toBe(10);
-  await page.getByRole('button',{name:'RUSH',exact:true}).click();await expect(page.getByTestId('system-pick')).toHaveCount(1);await expect(page.getByTestId('system-target')).toContainText('40+ RUSHING YARDS');
+  await page.getByRole('button',{name:'RUSH',exact:true}).click();await expect(page.getByTestId('system-pick')).toHaveCount(4);await expect(page.getByTestId('system-target').first()).toContainText('40+ RUSHING YARDS');
   await page.getByRole('button',{name:'ALL',exact:true}).click();expect(await page.getByTestId('system-target').allTextContents()).toEqual(before);
-  await page.getByRole('searchbox',{name:'Search player or team'}).fill('garrett');await expect(page.getByTestId('system-pick')).toHaveCount(1);
+  await page.getByRole('searchbox',{name:'Search player or team'}).fill('garrett');await expect(page.getByTestId('system-pick')).toHaveCount(2);
+  await expect(page.getByTestId('system-target').last()).toContainText('50+ RECEIVING YARDS');
   current.lines=[{game_id:'2026_04_NYJ_CHI',horizon:'T90',player:'garrett wilson',outcome:'rec',book:'DraftKings',line:3.5,over_price:-110}];
   await page.getByRole('button',{name:'Refresh NFL forecasts'}).click();await page.getByRole('button',{name:'BETTABLE NOW',exact:true}).click();await page.getByTestId('nfl-game').getByRole('button').click();
   await expect(page.getByTestId('system-target')).toContainText('4+ RECEPTIONS');await expect(page.getByTestId('available-market')).toContainText('OVER 3.5');await expect(page.getByTestId('system-pick')).toHaveCount(1);
@@ -63,4 +64,18 @@ test('polling refreshes; older publications and upstream errors clear previous g
   current.status.last_shadow_run_utc='2026-10-04T15:00:00Z';await page.getByRole('button',{name:'Refresh NFL forecasts'}).click();await expect(page.getByRole('alert')).toContainText('predates the last accepted artifact');
   await page.route('**/api/nfl-phase1-predictions?*',route=>route.fulfill({status:502,json:{error:'NFL Phase 1 upstream unavailable',details:'GitHub HTTP 503'}}));
   await page.getByRole('button',{name:'Refresh NFL forecasts'}).click();await expect(page.getByRole('alert')).toContainText('GitHub HTTP 503');await expect(page.getByTestId('nfl-game')).toHaveCount(0);expect(check.legacy()).toBe(0);
+});
+test('360px filters/search discover uncapped targets; executable Geno target survives outside default ten',async({page})=>{
+  let current=structuredClone(source);await setup(page,()=>current);
+  await page.getByRole('button',{name:'RUSH',exact:true}).click();
+  await expect(page.getByTestId('today-best')).toHaveCount(4);
+  await page.getByTestId('nfl-game').getByRole('button').click();await expect(page.getByTestId('system-pick')).toHaveCount(4);
+  for(const player of ['geno smith','braelon allen','kyle monangai'])await expect(page.getByTestId('system-pick').filter({hasText:player})).toHaveCount(1);
+  await page.getByRole('button',{name:'ALL',exact:true}).click();await page.getByRole('searchbox',{name:'Search player or team'}).fill('Geno Smith');
+  await expect(page.getByTestId('system-pick')).toHaveCount(3);await expect(page.getByTestId('today-best')).toHaveCount(3);
+  await expect(page.getByTestId('system-target').first()).toContainText('10+ RUSHING YARDS');
+  current.lines=[{game_id:'2026_04_NYJ_CHI',horizon:'T90',player:'Geno Smith',outcome:'rush_yds',book:'Test book',line:9.5,over_price:-110}];
+  await page.getByRole('button',{name:'Refresh NFL forecasts'}).click();await page.getByRole('button',{name:'BETTABLE NOW',exact:true}).click();
+  await page.getByTestId('nfl-game').getByRole('button').click();await expect(page.getByTestId('system-pick')).toHaveCount(1);await expect(page.getByTestId('available-market')).toContainText('OVER 9.5');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
 });

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { ChevronDown, RefreshCw } from 'lucide-react';
 import { usePhase1 } from '../nfl/usePhase1';
 import { HORIZONS, OUTCOMES, altFor, formatET, groupGames, type ForecastRow, type Horizon, type Phase1View } from '../nfl/phase1';
-import { systemGames, todaysBest, bestExecution, lineFreshness, matchesFilter, targetText, type Family, type SystemPick, type Execution } from '../nfl/bettable';
+import { systemGames, todaysBest, executableGames, lineFreshness, matchesFilter, targetText, type Family, type SystemPick, type Execution } from '../nfl/bettable';
 const number=(n?:number|null)=>n==null?'—':new Intl.NumberFormat('en-US',{maximumFractionDigits:1}).format(n);
 const percent=(n?:number|null)=>n==null?'—':`${(n*100).toFixed(1)}%`;
 const unit=(outcome:string)=>outcome.endsWith('_yds')?' yds':'';
@@ -75,13 +75,14 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh}:BoardPro
   useEffect(()=>{const timer=setInterval(()=>setClock(Date.now()),30000);return()=>clearInterval(timer);},[]);
   const selected=view && !view.rows[horizon].length?view.defaultHorizon:horizon;
   useEffect(()=>{setExpanded(null);setLimit(40);},[mode,selected,view?.publicationMs]);
-  const systems=view?systemGames(view,selected):[];
+  const systems=!view ? [] : mode==='BETTABLE NOW'
+    ? executableGames(view,selected,search,family)
+    : systemGames(view,selected,search,family).map(g=>({...g,picks:g.picks.map(p=>({...p,execution:null}))}));
   const groups=view?groupGames(view,selected).map(game=>{
-    const picks=systems.find(g=>g.game_id===game.game_id)!.picks.filter(p=>matchesFilter(p.row,search,family));
-    const shown=picks.map(p=>({...p,execution:mode==='BETTABLE NOW'?bestExecution(view,selected,p):null})).filter(p=>mode!=='BETTABLE NOW'||p.execution);
-    return {...game,picks:shown,visibleRows:game.rows.filter(r=>matchesFilter(r,search,family,outcome))};
+    const picks=systems.find(g=>g.game_id===game.game_id)!.picks;
+    return {...game,picks,visibleRows:game.rows.filter(r=>matchesFilter(r,search,family,outcome))};
   }):[];
-  const best=view?todaysBest(view,selected).filter(p=>matchesFilter(p.row,search,family)):[];
+  const best=view?todaysBest(view,selected,search,family):[];
   const freshness=view?lineFreshness(view,clock):null;
   const toggle=(id:string)=>{setExpanded(v=>v===id?null:id);setLimit(40);};
   const jump=(pick:SystemPick)=>{

@@ -106,7 +106,7 @@ test('legacy route and other sport components are byte-identical to base',()=>{
   assert(!readFileSync('src/App.tsx','utf8').includes('/api/nfl-predictions'));
 });
 
-import { systemGames, todaysBest, bestExecution, executableGames, lineFreshness, targetText } from '../src/nfl/bettable.ts';
+import { systemCandidates, compareSystem, systemGames, todaysBest, bestExecution, executableGames, lineFreshness, targetText } from '../src/nfl/bettable.ts';
 import { SystemPickCard } from '../src/components/NflTodayScreen.tsx';
 const nyjSource=JSON.parse(readFileSync(new URL('./fixtures/nfl-nyj-chi-bettable.json',import.meta.url),'utf8'));
 const nyj=()=>parsePhase1(structuredClone(nyjSource),new Date(Date.parse(nyjSource.status.last_shadow_run_utc)+60000));
@@ -139,8 +139,8 @@ test('ranking uses hit probability then active probability then player/outcome, 
 test("TODAY'S BEST returns at most five with the same deterministic ranking",()=>{
   const v=nyj();assert(todaysBest(v,'T90').length<=5);assert.deepEqual(todaysBest(v,'T90'),picks(v).slice(0,5));assert.deepEqual(todaysBest(v,'T90'),todaysBest(v,'T90'));
 });
-test('BETTABLE NOW is an intersection of capped SYSTEM PICKS, not a market scanner',()=>{
-  const v=nyj(),system=new Set(picks(v).map(p=>p.row.id));for(const p of executableGames(v,'T90')[0].picks)assert(system.has(p.row.id));
+test('BETTABLE NOW is an intersection of uncapped SYSTEM eligibility, not a market scanner',()=>{
+  const v=nyj(),system=new Set(systemCandidates(v,'T90').map(p=>p.row.id));for(const p of executableGames(v,'T90')[0].picks)assert(system.has(p.row.id));
   const backup=v.rows.T90.find(r=>r.player==='tyson bagent'&&r.outcome==='rush_yds')!;v.artifact.lines=[{game_id:backup.game_id,horizon:'T90',player:backup.player,outcome:backup.outcome,book:'Book',line:1.5,over_price:200}];assert.equal(executableGames(v,'T90')[0].picks.length,0);
 });
 for(const [outcome,milestone] of [['rec_yds',50],['rush_yds',40],['rec',2],['pass_td',1]] as const)test(`${milestone}+ ${outcome} matches OVER ${milestone-.5}`,()=>{
@@ -179,4 +179,54 @@ test('system cards lead with target/likelihood; technical details start collapse
 test('MODEL BOARD preserves 286 rows; decoding/calculation/transport/other sports remain byte-identical',()=>{
   const v=nyj();assert.equal(groupGames(v,'T90')[0].rows.length,286);const before=JSON.stringify(v);systemGames(v,'T90');executableGames(v,'T90');assert.equal(JSON.stringify(v),before);
   const base=execFileSync('git',['merge-base','HEAD','origin/main'],{encoding:'utf8'}).trim();for(const file of ['src/App.tsx','src/nfl/phase1.ts','src/nfl/usePhase1.ts','server/nflPhase1.ts','server.ts'])assert.equal(readFileSync(file,'utf8'),execFileSync('git',['show',`${base}:${file}`],{encoding:'utf8'}));
+});
+
+test('uncapped system eligibility retains all 26 NYJ/CHI targets; default top ten is unchanged',()=>{
+  const v=nyj(),candidates=systemCandidates(v,'T90');assert.equal(candidates.length,26);
+  const expected=[['dandre swift','rec',1],['jeremy ruckert','rec',1],['kenyon sadiq','rec',2],['rome odunze','rec',2],['isaiah williams','rec_yds',10],['kalif raymond','rec_yds',10],['cole kmet','rec',1],['garrett wilson','rec',4],['dandre swift','rush_yds',40],['luther burden','rec',3]];
+  assert.deepEqual(picks(v).map(p=>[p.row.player,p.row.outcome,p.target.milestone]),expected);
+  assert.deepEqual(picks(v),[...candidates].sort(compareSystem).slice(0,10));
+  const before=[...candidates].sort(compareSystem);delete v.artifact.lines;delete v.artifact.lines_meta;
+  assert.deepEqual(systemCandidates(v,'T90').sort(compareSystem),before);
+});
+test('RUSH filters uncapped eligibility before display cap, exposing Swift/Geno/Allen/Monangai',()=>{
+  const rush=systemGames(nyj(),'T90','','RUSH')[0].picks;
+  assert.deepEqual(rush.map(p=>[p.row.player,p.target.milestone,p.target.probability]),[['dandre swift',40,.75],['geno smith',10,.74],['braelon allen',40,.67],['kyle monangai',20,.66]]);
+  assert.equal(rush.length,4);
+});
+test('Geno Smith search exposes all three eligible targets outside default top ten',()=>{
+  const v=nyj();assert(!picks(v).some(p=>p.row.player==='geno smith'));
+  const result=systemGames(v,'T90','Geno Smith')[0].picks;
+  assert.deepEqual(result.map(p=>[p.row.outcome,p.target.milestone,p.target.probability]),[['rush_yds',10,.74],['pass_yds',175,.71],['pass_td',1,.67916]]);
+  assert.equal(systemGames(v,'T90','Geno Smith','RUSH')[0].picks.length,1);
+});
+for(const [family,outcomes] of [['PASS',['pass_yds','pass_td','int']],['REC',['rec_yds','rec','rec_td']],['TD',['pass_td','rush_td','rec_td','atd']]] as const)test(`${family} filters the uncapped pool before ranking/capping`,()=>{
+  const v=nyj(),expected=systemCandidates(v,'T90').filter(p=>(outcomes as readonly string[]).includes(p.row.outcome)).sort(compareSystem).slice(0,10);
+  assert(expected.length>0);assert.deepEqual(systemGames(v,'T90','',family)[0].picks,expected);
+  const more=systemCandidates(v,'T90').filter(p=>(outcomes as readonly string[]).includes(p.row.outcome) && !picks(v).some(top=>top.row.id===p.row.id));assert(more.length>0);
+});
+test("TODAY'S BEST filters uncapped eligibility first, finding rushing and searched-player targets",()=>{
+  const v=nyj();assert.deepEqual(todaysBest(v,'T90','','RUSH'),systemGames(v,'T90','','RUSH')[0].picks);
+  assert.deepEqual(todaysBest(v,'T90','Geno Smith'),systemGames(v,'T90','Geno Smith')[0].picks);
+  assert.equal(todaysBest(v,'T90','Geno Smith','PASS').length,2);
+  assert.deepEqual(todaysBest(v,'T90'),picks(v).slice(0,5));
+});
+test('BETTABLE NOW can match a target outside the default cap; books still cannot create targets',()=>{
+  const v=nyj(),before=systemCandidates(v,'T90').sort(compareSystem);
+  const geno=before.find(p=>p.row.player==='geno smith'&&p.row.outcome==='rush_yds')!;
+  assert(before.findIndex(p=>p.row.id===geno.row.id)>=10);
+  v.artifact.lines=[{game_id:geno.row.game_id,horizon:'T90',player:'Geno Smith',outcome:'rush_yds',book:'Test book',line:9.5,over_price:-110}];
+  assert.equal(executableGames(v,'T90')[0].picks[0].row.id,geno.row.id);
+  assert.equal(executableGames(v,'T90','Geno Smith','RUSH')[0].picks.length,1);
+  assert.equal(executableGames(v,'T90','','REC')[0].picks.length,0);
+  assert.deepEqual(systemCandidates(v,'T90').sort(compareSystem),before);
+  v.artifact.alt_65![geno.row.id]=null;assert.equal(executableGames(v,'T90')[0].picks.length,0);
+});
+test('execution gets its own cap AFTER market matching; searches can find later eligible matches',()=>{
+  const v=nyj(),all=systemCandidates(v,'T90').sort(compareSystem);
+  v.artifact.lines=all.map(p=>({game_id:p.row.game_id,horizon:'T90',player:p.row.player,outcome:p.row.outcome,book:'Test book',line:p.target.milestone-.5,over_price:-110}));
+  assert.equal(executableGames(v,'T90')[0].picks.length,10);
+  assert.deepEqual(executableGames(v,'T90')[0].picks.map(p=>p.row.id),picks(v).map(p=>p.row.id));
+  assert.equal(executableGames(v,'T90','Geno Smith')[0].picks.length,3);
+  delete v.artifact.lines;assert.equal(systemCandidates(v,'T90').length,26);assert.equal(executableGames(v,'T90')[0].picks.length,0);
 });
