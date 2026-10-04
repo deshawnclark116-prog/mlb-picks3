@@ -1,6 +1,7 @@
 /** NFL model-first mobile decision board. Scientific outputs remain read-only. */
 import React, { useEffect, useState } from 'react';
-import { ChevronDown, RefreshCw } from 'lucide-react';
+import { ChevronDown, RefreshCw, Image } from 'lucide-react';
+import NflShareModal from './NflShareModal';
 import { usePhase1 } from '../nfl/usePhase1';
 import { HORIZONS, OUTCOMES, altFor, formatET, groupGames, type ForecastRow, type Horizon, type Phase1View } from '../nfl/phase1';
 import { systemGames, todaysBest, executableGames, lineFreshness, matchesFilter, targetText, type Family, type SystemPick, type Execution } from '../nfl/bettable';
@@ -69,6 +70,7 @@ export function SystemPickCard({pick,view,horizon,execution}:{pick:SystemPick;vi
 type Mode='SYSTEM PICKS'|'BETTABLE NOW'|'MODEL BOARD';
 interface BoardProps {view:Phase1View|null;loading:boolean;error:string|null;retrievedAt:string|null;refresh:()=>Promise<void>}
 export function NflPhase1Board({view,loading,error,retrievedAt,refresh}:BoardProps) {
+  const [share,setShare]=useState<{view:Phase1View;gameId:string;horizon:Horizon}|null>(null);
   const [mode,setMode]=useState<Mode>('SYSTEM PICKS'),[horizon,setHorizon]=useState<Horizon>('T90');
   const [family,setFamily]=useState<Family>('ALL'),[search,setSearch]=useState(''),[outcome,setOutcome]=useState('');
   const [expanded,setExpanded]=useState<string|null>(null),[limit,setLimit]=useState(40),[clock,setClock]=useState(Date.now);
@@ -114,10 +116,12 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh}:BoardPro
         <div className="mt-4 space-y-3">{groups.map(game=>{
           const preview=game.picks[0];const count=mode==='MODEL BOARD'?game.visibleRows.length:game.picks.length;
           return <section key={`${selected}|${game.game_id}`} data-testid="nfl-game" className="min-w-0 overflow-hidden rounded-2xl border border-[#292929] bg-[#141414]">
-            <button onClick={()=>toggle(game.game_id)} aria-expanded={expanded===game.game_id} aria-controls={`rows-${game.game_id}`} className="flex min-h-20 w-full items-center gap-3 p-4 text-left"><div className="min-w-0 flex-1"><div className="flex flex-wrap items-baseline justify-between gap-1"><h2 className="text-base font-bold text-white">{game.away} vs {game.home}</h2><span className="text-[11px] text-gray-500">{etTime(game.kickoff_utc)}</span></div>
+            <div className="flex items-center gap-1 pr-3"><button onClick={()=>toggle(game.game_id)} aria-expanded={expanded===game.game_id} aria-controls={`rows-${game.game_id}`} className="flex min-h-20 min-w-0 flex-1 items-center gap-3 p-4 text-left"><div className="min-w-0 flex-1"><div className="flex flex-wrap items-baseline justify-between gap-1"><h2 className="text-base font-bold text-white">{game.away} vs {game.home}</h2><span className="text-[11px] text-gray-500">{etTime(game.kickoff_utc)}</span></div>
               <p className="mt-2 text-[10px] font-bold text-gray-400">{selected} · {count} {mode==='MODEL BOARD'?'player outcomes':mode==='SYSTEM PICKS'?'SYSTEM PICKS':'BETTABLE NOW'}</p>
               {mode!=='MODEL BOARD' && preview && <p className="mt-2 break-words text-[11px] text-gray-500">BEST: <span className="capitalize text-gray-300">{preview.row.player}</span> · {targetText(preview,true)} · {percent(preview.target.probability)}</p>}
             </div><ChevronDown size={16} className={`shrink-0 text-gray-500 ${expanded===game.game_id?'rotate-180':''}`}/></button>
+              <button aria-label={`Create share card for ${game.away} vs ${game.home}`} onClick={()=>setShare({view,gameId:game.game_id,horizon:selected})} className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-xl border border-[#333] bg-[#1B211E] text-gray-300"><Image size={18}/></button>
+            </div>
             {expanded===game.game_id && <div id={`rows-${game.game_id}`} className="space-y-3 border-t border-[#292929] p-3">
               {count===0 && <p className="p-2 text-sm text-gray-500">{empty}</p>}
               {mode==='MODEL BOARD'?game.visibleRows.slice(0,limit).map(row=><OutcomeCard key={row.id} row={row} view={view}/>):game.picks.map(p=><SystemPickCard key={p.row.id} pick={p} view={view} horizon={selected} execution={p.execution}/>)}
@@ -132,6 +136,7 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh}:BoardPro
         {view?.excludedGames ? <p>{view.excludedGames} past-date games excluded.</p>:null}<p>Nonparticipation counts as zero. T24 and T90 remain separate. System targets use existing simulated distributions; sportsbooks only supply optional execution markets.</p>
       </div></details>
     </div>
+    {share && <NflShareModal {...share} onClose={()=>setShare(null)}/>}
   </div>;
 }
 export default function NflTodayScreen(){return <NflPhase1Board {...usePhase1()}/>;}
