@@ -34,3 +34,14 @@ jobs:
         run: npm test
       - name: Adversarial CFB/NHL model projection contract tests
         run: node --import tsx --test tests/projectionFeeds.test.ts
+      - name: Verify both published original-source research feeds over HTTP
+        run: |
+          node --import tsx --input-type=module -e '
+          import {loadProjectionFeed} from "./server/projectionFeeds.ts";
+          for (const sport of ["cfb","nhl"]) {
+            const feed=await loadProjectionFeed(sport);
+            const count=sport==="cfb"?feed.forecast_count:feed.total_valid_forecasts;
+            if (!Number.isInteger(count)||count<=0) throw Error(sport+" feed empty");
+            console.log(sport+" ORIGINAL-SOURCE VERIFIED RESEARCH rows="+count);
+          }
+          '
