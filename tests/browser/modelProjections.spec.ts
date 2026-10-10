@@ -42,7 +42,7 @@ async function setup(page:any,cfbFailed=false) {
 test("CFB opens current prediction board with moneylines first; archived 3-game means remain separate",async ({page})=>{
  await setup(page);
  await page.locator("#tab-btn-cfb").click();
- await expect(page.getByText("CFB PREDICTIONS")).toBeVisible();
+ await expect(page.getByText("CFB PREDICTIONS",{exact:true})).toBeVisible();
  await expect(page.getByRole("button",{name:"Current predictions"})).toHaveAttribute("aria-pressed","true");
  await expect(page.getByRole("region",{name:"Current CFB moneyline model predictions"})).toContainText("Oregon State Beavers ML");
  await expect(page.getByRole("region",{name:"Current CFB moneyline model predictions"})).toContainText("87.4%");
