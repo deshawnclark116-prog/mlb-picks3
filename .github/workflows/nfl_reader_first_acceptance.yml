@@ -1,0 +1,41 @@
+name: NFL reader-first forecast delivery UI acceptance
+on:
+  push:
+    branches: [fix/nfl-reader-first-verified-projections]
+  pull_request:
+    paths:
+      - 'src/components/NflTodayScreen.tsx'
+      - 'src/nfl/readable.ts'
+      - 'tests/nflReadable.test.ts'
+      - 'tests/browser/nflPhase1.spec.ts'
+      - '.github/workflows/nfl_reader_first_acceptance.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: TypeScript static checks and production bundle
+        run: |
+          npm run lint
+          npm run build
+      - name: Existing NFL security, probability and delivery regressions
+        run: npm test
+      - name: Numeric projection clarity and no-fake-pick unit tests
+        run: node --import tsx --test tests/nflReadable.test.ts
+      - name: Install Chromium
+        run: npx playwright install chromium
+      - name: Real 360x800 NFL board and data failure browser acceptance
+        env:
+          NFL_SCREENSHOT_DIR: ${{ runner.temp }}
+        run: npx playwright test tests/browser/nflPhase1.spec.ts --reporter=line

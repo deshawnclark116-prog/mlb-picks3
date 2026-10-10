@@ -17,7 +17,21 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   const check=await setup(page);
   await expect(page.getByRole('button',{name:'SYSTEM PICKS',exact:true})).toHaveAttribute('aria-pressed','true');
   await expect(page.getByTestId('today-best')).toHaveCount(5);
-  const game=page.getByTestId('nfl-game');await expect(game).toContainText('10 SYSTEM PICKS');await expect(game).toContainText('BEST: dandre swift');
+  // Actual numerical model projections are visible without tapping a single game.
+  const quick=page.getByTestId('quick-projection');
+  expect(await quick.count()).toBeGreaterThan(0);
+  await expect(quick.first()).toContainText('median');
+  await expect(quick.first()).toContainText('Mean');
+  await expect(quick.first()).toContainText('P10–P90');
+  await expect(page.getByRole('region',{name:'Quick player projections'})).toBeVisible();
+  await expect(page.getByTestId('nfl-coverage')).toContainText('FORECAST COVERAGE');
+  await expect(page.getByTestId('nfl-coverage')).toContainText('Model last published:');
+  await expect(page.getByText('TOP MODEL TARGETS')).toBeVisible();
+  await expect(page.getByTestId('today-best').first()).toContainText('projected median');
+  await expect(page.getByTestId('game-quick-picks')).toHaveCount(1);
+  await expect(page.getByTestId('game-quick-picks')).toContainText('MODEL MEDIAN');
+
+  const game=page.getByTestId('nfl-game');await expect(game).toContainText('10 SYSTEM PICKS');await expect(game).toContainText('TOP TARGET: dandre swift');
   await expect(game.getByRole('button').filter({has:page.locator('h2')})).toHaveAttribute('aria-expanded','false');await expect(page.getByTestId('system-pick')).toHaveCount(0);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
   for(const label of ['SYSTEM PICKS','BETTABLE NOW','MODEL BOARD','T90','T24','ALL','PASS','RUSH','REC','TD','Refresh NFL forecasts']){
@@ -25,7 +39,9 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   }
   await page.screenshot({path:`${screen()}/nfl-system-picks-360.png`});
   await page.getByTestId('today-best').first().click();await expect(game.getByRole('button').filter({has:page.locator('h2')}).first()).toHaveAttribute('aria-expanded','true');await expect(page.getByTestId('system-pick')).toHaveCount(10);
-  const pick=page.getByTestId('system-pick').first();await expect(pick).toContainText('MODEL HIT PROBABILITY');await expect(pick.getByTestId('system-details')).not.toHaveAttribute('open','');
+  const pick=page.getByTestId('system-pick').first();await expect(pick).toContainText('MODEL HIT PROBABILITY');
+  await expect(pick.getByTestId('primary-projection')).toContainText('PREDICTED STAT · MODEL MEDIAN');
+  await expect(pick).toContainText('NOT A SPORTSBOOK BET');await expect(pick.getByTestId('system-details')).not.toHaveAttribute('open','');
   await expect(pick.getByTestId('system-target')).toContainText('1+ RECEPTIONS');
   await page.locator('#nfl-scroll-area').evaluate(el=>{const game=el.querySelector('[data-testid="nfl-game"]')!;el.scrollTop+=game.getBoundingClientRect().top-el.getBoundingClientRect().top;});await page.screenshot({path:`${screen()}/nfl-nyj-chi-expanded-360.png`});
   await pick.getByText('VIEW DETAILS ▾',{exact:true}).click();await expect(pick.getByTestId('system-details')).toHaveAttribute('open','');await expect(pick.getByText('Expected opportunities',{exact:true})).toBeVisible();
