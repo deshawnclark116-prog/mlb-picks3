@@ -19,7 +19,9 @@ export function quickForecasts(view: Phase1View, horizon: Horizon, search='', fa
     .sort((a,b)=> (b.median!-a.median!) || (b.mean!-a.mean!) || (b.p_active!-a.p_active!) || a.id.localeCompare(b.id))
     .slice(0,perOutcome));
 }
-/** A successful HTTP retrieval is NOT a freshly calculated forecast. */
+/** A successful HTTP retrieval is NOT a freshly calculated forecast.
+ * `planned` counts remaining PLANNED ledger keys, not all scheduled games.
+ */
 export function publicationCoverage(view: Phase1View, horizon: Horizon) {
   const x=view.artifact.status.counts[horizon];
   const n=(key:string)=>typeof x[key]==='number' && Number.isFinite(x[key]) && x[key]>=0?x[key] as number:null;
