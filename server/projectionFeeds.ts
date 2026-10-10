@@ -15,7 +15,8 @@ const finite = (x: unknown): x is number => typeof x === "number" && Number.isFi
 const fail = (what: string): never => { throw new Error("PROJECTION_CONTRACT_REJECTED: " + what); };
 const obj = (x: unknown): x is Record<string, any> => x !== null && typeof x === "object" && !Array.isArray(x);
 
-export function validateCfb(x: unknown) {
+export function validateCfb(input: unknown): Record<string, any> {
+  const x: any = input;
   if (!obj(x) || x.schema !== "cfb-player-stat-projections-research-v1"
     || x.research_only !== true || x.is_live_predictions_feed !== false
     || x.official_new_betting_picks !== 0 || x.backfilled_forecasts !== 0
@@ -51,7 +52,8 @@ export function validateCfb(x: unknown) {
   return x;
 }
 
-export function validateNhl(x: unknown) {
+export function validateNhl(input: unknown): Record<string, any> {
+  const x: any = input;
   if (!obj(x) || x.schema !== "nhl-v2-sog-nfl-style-shadow-v1"
     || x.status !== "RESEARCH_ONLY_NOT_VALIDATED_FOR_BETTING"
     || x.verified_original_hash_chain !== true || x.verified_frozen_code_and_model_lock !== true
