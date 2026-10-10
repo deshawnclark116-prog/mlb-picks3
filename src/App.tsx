@@ -13,6 +13,7 @@ import NflTodayScreen from "./components/NflTodayScreen";
 import CfbTodayScreen from "./components/CfbTodayScreen";
 import TennisTodayScreen from "./components/TennisTodayScreen";
 import NhlTodayScreen from "./components/NhlTodayScreen";
+import SportProjectionScreen from "./components/SportProjectionScreen";
 import { deduplicatePredictions, deduplicateCfbPredictions, deduplicateTennisPredictions, deduplicateNhlPredictions } from "./utils";
 import { TrendingUp, Calendar, Activity, ShieldCheck, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
@@ -210,14 +211,16 @@ export default function App() {
         );
       case "CFB":
         return (
-          <CfbTodayScreen
-            predictions={cfbPredictions}
-            season={cfbSeason}
-            week={cfbWeek}
-            loading={loading}
-            error={cfbError}
-            onRefresh={loadCfbData}
-          />
+          <SportProjectionScreen sport="cfb" legacy={
+            <CfbTodayScreen
+              predictions={cfbPredictions}
+              season={cfbSeason}
+              week={cfbWeek}
+              loading={loading}
+              error={cfbError}
+              onRefresh={loadCfbData}
+            />
+          }/>
         );
       case "TENNIS":
         return (
@@ -230,13 +233,15 @@ export default function App() {
         );
       case "NHL":
         return (
-          <NhlTodayScreen
-            predictions={nhlPredictions}
-            gameDate={nhlGameDate}
-            loading={loading}
-            error={nhlError}
-            onRefresh={loadNhlData}
-          />
+          <SportProjectionScreen sport="nhl" legacy={
+            <NhlTodayScreen
+              predictions={nhlPredictions}
+              gameDate={nhlGameDate}
+              loading={loading}
+              error={nhlError}
+              onRefresh={loadNhlData}
+            />
+          }/>
         );
       default:
         return null;
