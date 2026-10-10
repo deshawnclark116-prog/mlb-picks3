@@ -43,5 +43,5 @@ test('Published coverage is a separate operational signal from model reliability
   v.artifact.status.counts.T90.missed=11;
   v.artifact.status.counts.T90.valid_games=2;
   const c=publicationCoverage(v,'T90');
-  assert.deepEqual(c,{captured:2,planned:14,missed:11,failed:null});
+  assert.deepEqual(c,{captured:2,planned:14,missed:11,failed:0});
 });
