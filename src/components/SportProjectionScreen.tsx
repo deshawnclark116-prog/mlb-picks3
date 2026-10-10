@@ -79,7 +79,7 @@ function NhlModelRows({ doc, query, horizon, date, limit }: {
   ), [doc,horizon,date,query,fields]);
   return <>
     <div className="text-[11px] text-gray-400 py-2">{rows.length} historically recorded {horizon} player-shot projections</div>
-    {rows.slice(0,limit).map((r,i) => <article key={String(get(r,"game_id")) + "|" + String(get(r,"team")) + "|" + String(get(r,"player")) + "|" + i} className="rounded-2xl border border-[#292929] bg-[#171717] p-4 space-y-3">
+    {rows.slice(0,limit).map((r,i) => <article key={String(get(r,"game_id")) + "|" + String(get(r,"player_id")) + "|" + horizon + "|" + i} className="rounded-2xl border border-[#292929] bg-[#171717] p-4 space-y-3">
       <div>
         <div className="font-bold text-stone-100">{String(get(r,"player"))}</div>
         <div className="text-[11px] text-gray-400">{String(get(r,"team"))} vs {String(get(r,"opponent"))} · {String(get(r,"game_date"))} · {horizon}</div>
