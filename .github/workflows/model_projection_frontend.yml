@@ -1,0 +1,34 @@
+name: Verify model-projection frontend integration
+on:
+  push:
+    branches: [feature/unified-model-projection-delivery]
+  pull_request:
+    paths:
+      - 'server/projectionFeeds.ts'
+      - 'src/components/SportProjectionScreen.tsx'
+      - 'src/App.tsx'
+      - 'server.ts'
+      - 'tests/projectionFeeds.test.ts'
+      - '.github/workflows/model_projection_frontend.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Type-check and build actual React frontend
+        run: |
+          npm run lint
+          npm run build
+      - name: Existing NFL source-verified frontend tests
+        run: npm test
+      - name: Adversarial CFB/NHL model projection contract tests
+        run: node --import tsx --test tests/projectionFeeds.test.ts
