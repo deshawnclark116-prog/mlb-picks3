@@ -14,9 +14,9 @@ const cfb = () => ({
     monte_carlo:null}],
 });
 const nhl = () => {
-  const row_fields = ["game_id","player","team","game_date","mean","median","sd","p10","p25","p75","p90",
+  const row_fields = ["game_id","player_id","player","team","game_date","scheduled_start","mean","median","sd","p10","p25","p75","p90",
     "p0","p_ge1","p_ge2","p_ge3","p_ge4","p_ge5"];
-  const row = ["game","Skater","PIT","2026-10-07",2.4,2,1.5,0,1,3,5,.15,.85,.65,.4,.2,.08];
+  const row = ["game","nhl-player-123","Skater","PIT","2026-10-07","2026-10-07T23:00:00Z",2.4,2,1.5,0,1,3,5,.15,.85,.65,.4,.2,.08];
   return {
     schema:"nhl-v2-sog-nfl-style-shadow-v1",status:"RESEARCH_ONLY_NOT_VALIDATED_FOR_BETTING",
     verified_original_hash_chain:true,verified_frozen_code_and_model_lock:true,
@@ -37,7 +37,7 @@ test("NHL count distribution must remain historical, certified ledger and unpric
   assert.throws(() => validateNhl({...nhl(),dressed_lineups_verified:true}),/REJECTED/);
   assert.throws(() => validateNhl({...nhl(),verified_original_hash_chain:false}),/REJECTED/);
   const shifted=nhl();
-  shifted.forecasts.T90[0][13]=.9;
+  shifted.forecasts.T90[0][15]=.9;
   assert.throws(() => validateNhl(shifted),/survival probabilities/);
 });
 test("An unavailable CFB source fails closed rather than loading old classifiers", async () => {
