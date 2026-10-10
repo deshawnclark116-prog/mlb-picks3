@@ -1,5 +1,6 @@
 import express from "express";
 import { phase1Handler } from "./server/nflPhase1.ts";
+import { projectionFeedHandler } from "./server/projectionFeeds.ts";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import {
@@ -167,6 +168,9 @@ async function startServer() {
 
   // Read-only new-engine feed; never falls back to the legacy Render route.
   app.get("/api/nfl-phase1-predictions", phase1Handler());
+
+  // Verify original research artifacts; never fall back to Render classifiers.
+  app.get("/api/model-projections/:sport", projectionFeedHandler());
 
   // API Route - Proxy NFL Predictions
   app.get("/api/nfl-predictions", async (req, res) => {
