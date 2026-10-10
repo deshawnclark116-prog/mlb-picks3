@@ -354,7 +354,7 @@ export default function CfbTodayScreen({
                   </button>
                 </div>
                 {moneylinePicks.slice(0, 4).map((p) => (
-                  <div key={(p.game_id || "") + "|" + p.team + "|" + p.market}
+                  <div key={String(p.week) + "|" + p.team + "|" + p.market}
                     className="bg-[#141414] border border-[#29312b] rounded-xl p-3 flex justify-between gap-3 items-center">
                     <div className="min-w-0">
                       <div className="text-sm font-bold text-white">{p.pick}</div>
