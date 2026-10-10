@@ -75,7 +75,7 @@ function NhlModelRows({ doc, query, horizon, date, limit }: {
   const get = (r: unknown[], k: string) => r[fields[k]];
   const rows = useMemo(() => (doc.forecasts[horizon] || []).filter(r =>
     (!date || get(r,"game_date") === date) &&
-    (!query || String(get(r,"player") + " " + get(r,"team") + " " + get(r,"opponent")).toLowerCase().includes(query))
+    (!query || (String(get(r,"player")) + " " + String(get(r,"team")) + " " + String(get(r,"opponent"))).toLowerCase().includes(query))
   ), [doc,horizon,date,query,fields]);
   return <>
     <div className="text-[11px] text-gray-400 py-2">{rows.length} historically recorded {horizon} player-shot projections</div>
