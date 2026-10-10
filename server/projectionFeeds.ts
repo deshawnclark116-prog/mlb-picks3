@@ -61,7 +61,7 @@ export function validateNhl(input: unknown): Record<string, any> {
     || x.historical_corrected_probabilities_were_not_published_pregame !== true
     || !Array.isArray(x.row_fields) || !Array.isArray(x.horizons)
     || !obj(x.forecasts) || !Array.isArray(x.dates)) fail("NHL source or status");
-  const need = ["game_id","player","team","game_date","mean","median","sd","p10","p25","p75","p90",
+  const need = ["game_id","player_id","player","team","game_date","scheduled_start","mean","median","sd","p10","p25","p75","p90",
     "p0","p_ge1","p_ge2","p_ge3","p_ge4","p_ge5"];
   if (new Set(x.row_fields).size !== x.row_fields.length || need.some(k => !x.row_fields.includes(k)))
     fail("NHL row-field mapping");
@@ -74,8 +74,8 @@ export function validateNhl(input: unknown): Record<string, any> {
       count++;
       if (!Array.isArray(row) || row.length !== x.row_fields.length
         || typeof row[idx.player] !== "string" || !row[idx.player]
-        || !row[idx.game_id] || !row[idx.team] || !row[idx.game_date]
-        || need.slice(4).some(k => !finite(row[idx[k]]))) fail("NHL forecast row");
+        || !row[idx.game_id] || !row[idx.player_id] || !row[idx.team] || !row[idx.game_date] || !row[idx.scheduled_start]
+        || need.slice(6).some(k => !finite(row[idx[k]]))) fail("NHL forecast row");
       if (row[idx.mean] < 0 || row[idx.sd] < 0
         || row[idx.p10] > row[idx.p25] || row[idx.p25] > row[idx.median]
         || row[idx.median] > row[idx.p75] || row[idx.p75] > row[idx.p90]) fail("NHL quantiles");
@@ -83,7 +83,7 @@ export function validateNhl(input: unknown): Record<string, any> {
       if (probs.some(p => p < 0 || p > 1)
         || probs[1] > 1 - probs[0] + 0.002
         || probs.slice(2).some((p,i) => p > probs[i+1] + 0.002)) fail("NHL survival probabilities");
-      const id = [row[idx.game_id],row[idx.player],row[idx.team],row[idx.game_date]].join("|");
+      const id = [row[idx.game_id],row[idx.scheduled_start],row[idx.player_id]].join("|");
       if (seen.has(id)) fail("NHL duplicate player/game identity within horizon");
       seen.add(id);
     }
