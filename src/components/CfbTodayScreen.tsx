@@ -161,7 +161,12 @@ export default function CfbTodayScreen({
 
   const marketsPresent = Array.from(new Set(predictions.map((p) => p.market))).filter(
     (m) => MARKET_LABELS[m]
-  );
+  ).sort((a, b) => Number(!a.startsWith("moneyline")) - Number(!b.startsWith("moneyline")));
+  // Market-specific, existing serving model output: never derive sportsbook odds
+  // or convert archival three-game means into new betting picks.
+  const moneylinePicks = predictions.filter((p) =>
+    p.market === "moneyline" || p.market === "moneyline_early_season"
+  ).sort((a, b) => (b.model_prob ?? 0) - (a.model_prob ?? 0));
 
   const sortedPredictions = [...predictions].sort((a, b) => (b.prob_pct ?? 0) - (a.prob_pct ?? 0));
 
@@ -205,7 +210,7 @@ export default function CfbTodayScreen({
             PROP <span className="text-[#00FF41]">EDGE</span>
           </h1>
           <p className="text-[9px] text-gray-500 uppercase tracking-widest mt-0.5 font-mono">
-            CFB Player Props{season ? ` • ${season} Week ${week ?? "-"}` : ""}
+            CFB Predictions{season ? ` • ${season} Week ${week ?? "-"}` : ""}
           </p>
           {getLatestGeneratedAt(predictions) && (
             <p className="text-[8px] text-[#00FF41]/80 font-mono mt-1 uppercase tracking-wider">
@@ -335,6 +340,37 @@ export default function CfbTodayScreen({
           </div>
         ) : (
           <div id="cfb-games-list" className="space-y-4">
+            {marketFilter === "ALL" && confidenceFilter === "ALL" && searchQuery.trim() === "" && moneylinePicks.length > 0 && (
+              <section aria-label="Current CFB moneyline model predictions" className="rounded-2xl border border-[#00FF41]/25 bg-[#101b13] p-3 space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-sm font-extrabold text-white uppercase">Moneyline model predictions</h3>
+                    <p className="text-[10px] text-gray-400 mt-1">{moneylinePicks.length} current team-win selections · model probabilities, not sportsbook prices</p>
+                  </div>
+                  <button id="cfb-show-all-moneylines" type="button"
+                    onClick={() => setMarketFilter(moneylinePicks.some(p => p.market === "moneyline") ? "moneyline" : "moneyline_early_season")}
+                    className="shrink-0 min-h-[44px] px-3 rounded-lg bg-[#00FF41] text-black font-bold text-xs">
+                    View all {moneylinePicks.length}
+                  </button>
+                </div>
+                {moneylinePicks.slice(0, 4).map((p) => (
+                  <div key={(p.game_id || "") + "|" + p.team + "|" + p.market}
+                    className="bg-[#141414] border border-[#29312b] rounded-xl p-3 flex justify-between gap-3 items-center">
+                    <div className="min-w-0">
+                      <div className="text-sm font-bold text-white">{p.pick}</div>
+                      <div className="text-[10px] text-gray-400">vs {p.opponent}</div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="font-black text-[#00FF41] text-lg">
+                        {typeof p.model_prob === "number" && Number.isFinite(p.model_prob) && p.model_prob >= 0 && p.model_prob <= 1
+                          ? (p.model_prob * 100).toFixed(1) + "%" : "–"}
+                      </div>
+                      <div className="text-[9px] text-gray-400">model chance</div>
+                    </div>
+                  </div>
+                ))}
+              </section>
+            )}
             <AnimatePresence mode="popLayout">
               {gameGroups.map((game, idx) => {
                 const isExpanded = expandedGameKey === game.key;
