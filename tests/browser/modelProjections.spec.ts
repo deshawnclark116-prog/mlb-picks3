@@ -9,11 +9,11 @@ const cfb={
   baseline:{mean:61,median:60,last_three:[57,60,66]},
   monte_carlo:{mean:72,median:70,p10:35,p90:110,n_simulations:4000}}]
 };
-const rowFields=["game_id","player","team","opponent","game_date","mean","median","sd","p10","p25","p75","p90","p0","p_ge1","p_ge2","p_ge3","p_ge4","p_ge5"];
+const rowFields=["game_id","player_id","player","team","opponent","game_date","scheduled_start","mean","median","sd","p10","p25","p75","p90","p0","p_ge1","p_ge2","p_ge3","p_ge4","p_ge5"];
 const nhl={
  schema:"nhl-v2-sog-nfl-style-shadow-v1",status:"RESEARCH_ONLY_NOT_VALIDATED_FOR_BETTING",
  horizons:["T90"],dates:["2026-10-07"],total_valid_forecasts:1,row_fields:rowFields,
- forecasts:{T90:[["nhl-game","Skater Example","PIT","WSH","2026-10-07",2.4,2,1.5,0,1,3,5,.15,.85,.65,.4,.2,.08]]}
+ forecasts:{T90:[["nhl-game","nhl-player-123","Skater Example","PIT","WSH","2026-10-07","2026-10-07T23:00:00Z",2.4,2,1.5,0,1,3,5,.15,.85,.65,.4,.2,.08]]}
 };
 async function setup(page:any,cfbFailed=false) {
  await page.route("**/api/**", route=>{
