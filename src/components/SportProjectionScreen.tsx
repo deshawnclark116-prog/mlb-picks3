@@ -106,9 +106,9 @@ function NhlModelRows({ doc, query, horizon, date, limit }: {
   </>;
 }
 
-/** Model forecasts are the primary view. Legacy classifiers require an explicit click. */
+/** Current predictions open first; frozen research stays available but separate. */
 export default function SportProjectionScreen({ sport, legacy }: { sport: Sport; legacy: React.ReactNode }) {
-  const [mode, setMode] = useState<"MODEL"|"LEGACY">("MODEL");
+  const [mode, setMode] = useState<"CURRENT"|"RESEARCH">("CURRENT");
   const [doc, setDoc] = useState<Feed | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -147,13 +147,13 @@ export default function SportProjectionScreen({ sport, legacy }: { sport: Sport;
 
   return <div className="flex flex-col h-full w-full bg-[#0D0D0D]">
     <div className="shrink-0 px-4 pt-3 pb-2 border-b border-[#222] bg-[#111]">
-      <div className="text-sm font-bold text-stone-100">{sport.toUpperCase()} PLAYER PROJECTIONS</div>
+      <div className="text-sm font-bold text-stone-100">{sport.toUpperCase()} PREDICTIONS</div>
       <div className="flex gap-2 mt-2">
-        <button type="button" onClick={() => setMode("MODEL")} aria-pressed={mode==="MODEL"} className={`flex-1 py-2 rounded-lg text-xs font-bold ${mode==="MODEL" ? "bg-[#00FF41] text-black" : "bg-[#262626] text-gray-300"}`}>Model stats</button>
-        <button type="button" onClick={() => setMode("LEGACY")} aria-pressed={mode==="LEGACY"} className={`flex-1 py-2 rounded-lg text-xs font-bold ${mode==="LEGACY" ? "bg-[#00FF41] text-black" : "bg-[#262626] text-gray-300"}`}>Legacy picks</button>
+        <button type="button" onClick={() => setMode("CURRENT")} aria-pressed={mode==="CURRENT"} className={`flex-1 py-2 rounded-lg text-xs font-bold ${mode==="CURRENT" ? "bg-[#00FF41] text-black" : "bg-[#262626] text-gray-300"}`}>Current predictions</button>
+        <button type="button" onClick={() => setMode("RESEARCH")} aria-pressed={mode==="RESEARCH"} className={`flex-1 py-2 rounded-lg text-xs font-bold ${mode==="RESEARCH" ? "bg-[#00FF41] text-black" : "bg-[#262626] text-gray-300"}`}>Research archive</button>
       </div>
     </div>
-    {mode === "LEGACY" ? <div className="flex-1 min-h-0">{legacy}</div> :
+    {mode === "CURRENT" ? <div className="flex-1 min-h-0">{legacy}</div> :
       <div className="flex-1 overflow-y-auto min-h-0 p-4 pb-28 space-y-3">
         <div className="rounded-xl border border-amber-700/50 bg-amber-950/20 p-3 text-amber-200 text-xs leading-relaxed">
           <strong>RESEARCH — NOT OFFICIAL PICKS.</strong> {sport==="cfb"
