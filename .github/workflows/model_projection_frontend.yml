@@ -45,3 +45,7 @@ jobs:
             console.log(sport+" ORIGINAL-SOURCE VERIFIED RESEARCH rows="+count);
           }
           '
+      - name: Install Chromium for 360px actual React browser acceptance
+        run: npx playwright install chromium
+      - name: Mobile browser tests for actual CFB/NHL projection screens
+        run: npx playwright test tests/browser/modelProjections.spec.ts --reporter=line
