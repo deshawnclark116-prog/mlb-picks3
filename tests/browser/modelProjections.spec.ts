@@ -30,7 +30,7 @@ test("CFB model stats are primary, Monte Carlo labeled; legacy is explicit, no m
  await page.locator("#tab-btn-cfb").click();
  await expect(page.getByText("CFB PLAYER PROJECTIONS")).toBeVisible();
  await expect(page.getByText("Alex Runner")).toBeVisible();
- await expect(page.getByText("72.0", {exact:true})).toBeVisible();
+ await expect(page.getByText(/72\\.0\\s*yards/)).toBeVisible();
  await expect(page.getByText("UNCALIBRATED MC")).toBeVisible();
  await expect(page.getByRole("button",{name:"Model stats"})).toHaveAttribute("aria-pressed","true");
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
