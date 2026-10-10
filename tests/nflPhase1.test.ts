@@ -178,7 +178,12 @@ test('system cards lead with target/likelihood; technical details start collapse
 });
 test('MODEL BOARD preserves 286 rows; decoding/calculation/transport/other sports remain byte-identical',()=>{
   const v=nyj();assert.equal(groupGames(v,'T90')[0].rows.length,286);const before=JSON.stringify(v);systemGames(v,'T90');executableGames(v,'T90');assert.equal(JSON.stringify(v),before);
-  const base=execFileSync('git',['merge-base','HEAD','origin/main'],{encoding:'utf8'}).trim();for(const file of ['src/App.tsx','src/nfl/phase1.ts','src/nfl/usePhase1.ts','server/nflPhase1.ts','server.ts'])assert.equal(readFileSync(file,'utf8'),execFileSync('git',['show',`${base}:${file}`],{encoding:'utf8'}));
+  const base=execFileSync('git',['merge-base','HEAD','origin/main'],{encoding:'utf8'}).trim();
+  for(const file of ['src/nfl/phase1.ts','src/nfl/usePhase1.ts','server/nflPhase1.ts'])assert.equal(readFileSync(file,'utf8'),execFileSync('git',['show',`${base}:${file}`],{encoding:'utf8'}));
+  // This integration deliberately changes the CFB/NHL app and adds an independent API route.
+  // The NFL tab switch case remains EXACTLY the same as main.
+  const nflCase=(a:string)=>a.slice(a.indexOf('case "NFL":'),a.indexOf('case "CFB":'));
+  assert.equal(nflCase(readFileSync('src/App.tsx','utf8')),nflCase(execFileSync('git',['show',`${base}:src/App.tsx`],{encoding:'utf8'})));
 });
 
 test('uncapped system eligibility retains all 26 NYJ/CHI targets; default top ten is unchanged',()=>{
@@ -278,7 +283,7 @@ test('unknown team branding uses a safe neutral fallback; all NFL teams have loc
 });
 test('poster creation leaves interactive SYSTEM behavior, 286 outcomes and protected files unchanged',()=>{
  const v=nyj(),before=JSON.stringify(v),top=picks(v);shareData(v);shareData(v,'bettable');assert.equal(JSON.stringify(v),before);assert.deepEqual(picks(v),top);assert.equal(v.rows.T90.length,286);
- const base=execFileSync('git',['merge-base','HEAD','origin/main'],{encoding:'utf8'}).trim();for(const file of ['src/nfl/bettable.ts','src/nfl/phase1.ts','src/nfl/usePhase1.ts','server/nflPhase1.ts','src/App.tsx'])assert.equal(readFileSync(file,'utf8'),execFileSync('git',['show',`${base}:${file}`],{encoding:'utf8'}));
+ const base=execFileSync('git',['merge-base','HEAD','origin/main'],{encoding:'utf8'}).trim();for(const file of ['src/nfl/bettable.ts','src/nfl/phase1.ts','src/nfl/usePhase1.ts','server/nflPhase1.ts'])assert.equal(readFileSync(file,'utf8'),execFileSync('git',['show',`${base}:${file}`],{encoding:'utf8'}));
 });
 test('native file sharing tests supported, unsupported, not-allowed and cancellation separately',async()=>{
  const blob=new Blob(['png'],{type:'image/png'}),name='test.png';let received:any;
