@@ -36,12 +36,30 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   await expect(quick.first()).toContainText('median');
   await expect(quick.first()).toContainText('Mean');
   await expect(quick.first()).toContainText('P10–P90');
-  await expect(page.getByTestId('existing-nfl-slate')).toContainText('NFL COMPLETE GAME SCHEDULE · EXISTING MODEL');
+  await expect(page.getByTestId('existing-nfl-slate')).toContainText('NFL GAME-DAY PROJECTIONS');
   await expect(page.getByTestId('existing-nfl-game')).toHaveCount(3);
-  await expect(page.getByTestId('existing-nfl-slate')).toContainText('No eligible player yardage projections published for this scheduled game');
+  await expect(page.getByTestId('existing-nfl-slate')).toContainText('No eligible player projections yet');
   await expect(page.getByTestId('existing-nfl-slate')).toContainText('Early Runner');
   await expect(page.getByTestId('existing-nfl-slate')).toContainText('68');
-  await expect(page.getByTestId('existing-nfl-slate')).toContainText('Not T24/T90 forecasts');
+  // The entire schedule stays visible, but only ONE selected game's players
+  // expand. Regression for the oversized player dump shown on Android.
+  await expect(page.getByTestId('existing-nfl-toggle')).toHaveCount(3);
+  await expect(page.getByTestId('existing-nfl-expanded')).toHaveCount(0);
+  await expect(page.getByTestId('existing-nfl-projection')).toHaveCount(0);
+  await expect(page.getByTestId('existing-nfl-preview')).toHaveCount(2);
+  const toggles=page.getByTestId('existing-nfl-toggle');
+  await toggles.nth(0).click();
+  await expect(toggles.nth(0)).toHaveAttribute('aria-expanded','true');
+  await expect(page.getByTestId('existing-nfl-expanded')).toHaveCount(1);
+  await expect(page.getByTestId('existing-nfl-projection')).toHaveCount(1);
+  await expect(page.getByTestId('existing-nfl-expanded')).toContainText('Not T24/T90 forecasts');
+  await toggles.nth(1).click();
+  await expect(toggles.nth(0)).toHaveAttribute('aria-expanded','false');
+  await expect(toggles.nth(1)).toHaveAttribute('aria-expanded','true');
+  await expect(page.getByTestId('existing-nfl-expanded')).toHaveCount(1);
+  await toggles.nth(1).click();
+  await expect(page.getByTestId('existing-nfl-expanded')).toHaveCount(0);
+
   await expect(page.getByText('OPTIONAL T24/T90 RESEARCH SNAPSHOTS')).toBeVisible();
   const gameDayPrecedesResearch=await page.evaluate(()=>{
     const slate=document.querySelector('[data-testid="existing-nfl-slate"]');
