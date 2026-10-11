@@ -37,14 +37,14 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   await expect(page.getByTestId('existing-nfl-preview')).toHaveCount(1);
   await expect(page.getByTestId('existing-nfl-projection')).toHaveCount(0);
   await expect(page.getByTestId('existing-nfl-expanded')).toHaveCount(0);
-  await expect(page.getByTestId('existing-nfl-slate')).toContainText('JAX vs PHI');
+  await expect(page.getByTestId('existing-nfl-slate')).toContainText('PHI vs JAX');
   await expect(page.getByTestId('existing-nfl-slate')).toContainText('LV vs NE');
   await expect(page.getByTestId('existing-nfl-slate')).not.toContainText('NYJ vs CHI');
   await expect(page.getByTestId('existing-nfl-preview')).toContainText('Early Runner');
   await expect(page.getByTestId('existing-nfl-preview')).toContainText('68');
   // Codex's per-game 1080x1350 share-image workflow is preserved for
   // the original new-engine game and now also available for missing games.
-  await expect(page.getByRole('button',{name:'Create share card for JAX vs PHI'})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Create share card for PHI vs JAX'})).toBeVisible();
   await expect(page.getByRole('button',{name:'Create share card for NYJ vs CHI'})).toBeVisible();
   const toggles=page.getByTestId('existing-nfl-toggle');
   await toggles.first().click();
@@ -53,7 +53,7 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   await expect(page.getByTestId('existing-nfl-expanded')).toHaveCount(1);
   await toggles.nth(1).click();
   await expect(page.getByTestId('existing-nfl-expanded')).toHaveCount(0);
-  await page.getByRole('button',{name:'Create share card for JAX vs PHI'}).click();
+  await page.getByRole('button',{name:'Create share card for PHI vs JAX'}).click();
   await expect(page.getByRole('heading',{name:'CREATE GAME CARD'})).toBeVisible();
   await expect(page.getByTestId('game-share-poster')).toBeVisible();
   await expect(page.getByTestId('existing-poster-projections')).toContainText('68');
