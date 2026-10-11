@@ -3,7 +3,7 @@ import React,{useEffect,useState} from 'react';
 import {ChevronDown,Image} from 'lucide-react';
 import NflExistingShareModal from './NflExistingShareModal';
 import {formatET,type Horizon,type Phase1View} from '../nfl/phase1';
-import {parseExistingNfl,type ExistingNflSlate,type ExistingNflGame,type ExistingYardProjection} from '../nfl/existing';
+import {parseExistingNfl,existingMatchup,type ExistingNflSlate,type ExistingNflGame,type ExistingYardProjection} from '../nfl/existing';
 const n=(x:number)=>x.toLocaleString('en-US',{maximumFractionDigits:1});
 const label=(m:string)=>m==='rushing_yards'?'RUSH YDS':'REC YDS';
 function matches(p:ExistingYardProjection,search:string,family:string){
@@ -75,7 +75,7 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
             className="flex min-h-20 min-w-0 flex-1 items-center gap-3 p-4 text-left">
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-baseline justify-between gap-1">
-                <h2 className="text-base font-bold text-white">{g.teams.join(' vs ')}</h2>
+                <h2 className="text-base font-bold text-white">{existingMatchup(g)}</h2>
                 <span className="text-[11px] text-gray-500">{formatET(g.kickoff_utc)}</span>
               </div>
               <p className="mt-2 text-[10px] font-bold text-gray-400">{g.projections.length} PLAYER PROJECTIONS · EXISTING MODEL</p>
@@ -85,7 +85,7 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
             </div>
             <ChevronDown size={16} className={`shrink-0 text-gray-500 ${opened?'rotate-180':''}`}/>
           </button>
-          <button aria-label={`Create share card for ${g.teams.join(' vs ')}`} onClick={()=>setShareGame(g)}
+          <button aria-label={`Create share card for ${existingMatchup(g)}`} onClick={()=>setShareGame(g)}
             className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-xl border border-[#333] bg-[#1B211E] text-gray-300">
             <Image size={18}/>
           </button>
