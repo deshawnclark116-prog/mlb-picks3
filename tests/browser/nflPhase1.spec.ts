@@ -16,7 +16,8 @@ async function setup(page:any,get=()=>structuredClone(source)) {
           {home_team:'NE',away_team:'LV',kickoff_utc:'2026-10-04T17:00:00Z'}
         ],picks:[
         {market:'rushing_yards',player_id:'demo-1',player:'Early Runner',team:'JAX',opponent:'PHI',kickoff_utc:'2026-10-04T13:30:00Z',
-          projected_median:68,projected_mean:69,projected_low:10,projected_high:124,unagraded:true,model_source:'existing_v2'},
+          projected_median:68,projected_mean:69,projected_low:10,projected_high:124,unagraded:true,model_source:'existing_v2',
+          confidence:'HIGH',games_played:8},
         {market:'receiving_yards',player_id:'demo-2',player:'Sunday Receiver',team:'NYJ',opponent:'CHI',kickoff_utc:'2026-10-04T17:00:00Z',
           projected_median:55,projected_mean:57,projected_low:4,projected_high:122,unagraded:true,model_source:'existing_v2'}
       ]}});
@@ -57,6 +58,7 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   await expect(page.getByRole('heading',{name:'CREATE GAME CARD'})).toBeVisible();
   await expect(page.getByTestId('game-share-poster')).toBeVisible();
   await expect(page.getByTestId('existing-poster-projections')).toContainText('68');
+  await expect(page.getByTestId('existing-poster-projections')).toContainText('HIGH STABILITY');
   // Save the *actual generated image*, not just the preview. Inspect the PNG
   // header for the exact 1080×1350 dimensions from Codex's original design.
   await expect(page.getByRole('button',{name:'SAVE PNG'})).toBeEnabled({timeout:20000});

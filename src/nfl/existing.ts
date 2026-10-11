@@ -8,6 +8,8 @@ export interface ExistingYardProjection {
   kickoff_utc: string; projected_median: number; projected_mean: number;
   projected_low: number; projected_high: number; model_source: string;
   ungraded: boolean; player_id: string;
+  /** Historical simulator workload stability, NOT calibrated yardage-hit likelihood. */
+  confidence: 'HIGH'|'MEDIUM'|'LOW'|null; games_played: number|null;
 }
 export interface ExistingNflGame {
   id: string; kickoff_utc: string; teams: [string,string]; home?: string; away?: string; projections: ExistingYardProjection[];
@@ -82,7 +84,9 @@ export function parseExistingNfl(raw:unknown,now=new Date(),expected?:{season:nu
       kickoff_utc:row.kickoff_utc,projected_median:row.projected_median,projected_mean:row.projected_mean,
       projected_low:row.projected_low,projected_high:row.projected_high,
       model_source:typeof row.model_source==='string'?row.model_source:'unlabeled_existing_model',
-      ungraded:row.ungraded!==false,player_id:typeof row.player_id==='string'?row.player_id:''
+      ungraded:row.ungraded!==false,player_id:typeof row.player_id==='string'?row.player_id:'',
+      confidence:['HIGH','MEDIUM','LOW'].includes(row.confidence)?row.confidence:null,
+      games_played:Number.isInteger(row.games_played)&&row.games_played>0?row.games_played:null
     };
     if(!games.has(id))games.set(id,{id,kickoff_utc:row.kickoff_utc,teams,projections:[]});
     games.get(id)!.projections.push(item);
