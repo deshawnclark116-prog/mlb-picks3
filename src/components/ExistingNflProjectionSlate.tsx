@@ -3,7 +3,7 @@ import React,{useEffect,useState} from 'react';
 import {ChevronDown,Image} from 'lucide-react';
 import NflExistingShareModal from './NflExistingShareModal';
 import {formatET,type Horizon,type Phase1View} from '../nfl/phase1';
-import {parseExistingNfl,type ExistingNflSlate,type ExistingYardProjection} from '../nfl/existing';
+import {parseExistingNfl,type ExistingNflSlate,type ExistingNflGame,type ExistingYardProjection} from '../nfl/existing';
 const n=(x:number)=>x.toLocaleString('en-US',{maximumFractionDigits:1});
 const label=(m:string)=>m==='rushing_yards'?'RUSH YDS':'REC YDS';
 function matches(p:ExistingYardProjection,search:string,family:string){
