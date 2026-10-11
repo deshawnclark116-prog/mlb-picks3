@@ -7,7 +7,7 @@ const green='#79FF48',muted='#9FABB0';
 const fmt=(n:number)=>n.toLocaleString('en-US',{maximumFractionDigits:1});
 /** A dedicated 1080x1350 card. Do not convert a yard projection into a 65% target or sportsbook bet. */
 export default function NflExistingShareCard({game,week,mode,cardRef}:PosterProps){
- const away=teamBrand(game.teams[0]),home=teamBrand(game.teams[1]);
+ const away=teamBrand(game.away||game.teams[0]),home=teamBrand(game.home||game.teams[1]);
  const kickoff=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'}).format(new Date(game.kickoff_utc)).toUpperCase();
  const core=game.projections.slice(0,6);
  return <div ref={cardRef} data-testid="game-share-poster" style={{width:EXPORT_WIDTH,height:EXPORT_HEIGHT,padding:44,boxSizing:'border-box',fontFamily:'Arial, Helvetica, sans-serif',background:'#090D10',color:'#F0F4F5',position:'relative',overflow:'hidden'}}>
