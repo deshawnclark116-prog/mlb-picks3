@@ -6,7 +6,7 @@ import ExistingNflProjectionSlate from './ExistingNflProjectionSlate';
 import { usePhase1 } from '../nfl/usePhase1';
 import { HORIZONS, OUTCOMES, altFor, formatET, groupGames, type ForecastRow, type Horizon, type Phase1View } from '../nfl/phase1';
 import { systemGames, todaysBest, executableGames, lineFreshness, matchesFilter, targetText, type Family, type SystemPick, type Execution } from '../nfl/bettable';
-import { quickForecasts, publicationCoverage } from '../nfl/readable';
+import { publicationCoverage } from '../nfl/readable';
 const number=(n?:number|null)=>n==null?'—':new Intl.NumberFormat('en-US',{maximumFractionDigits:1}).format(n);
 const percent=(n?:number|null)=>n==null?'—':`${(n*100).toFixed(1)}%`;
 const unit=(outcome:string)=>outcome.endsWith('_yds')?' yds':'';
@@ -76,15 +76,6 @@ export function SystemPickCard({pick,view,horizon,execution}:{pick:SystemPick;vi
     </details>
   </article>;
 }
-function QuickProjection({row}:{row:ForecastRow}) {
-  return <div data-testid="quick-projection" className="min-w-0 rounded-xl border border-[#2F3931] bg-[#172018] p-3">
-    <p className="truncate text-[11px] font-bold capitalize text-white">{row.player} <span className="text-gray-400">· {row.team}</span></p>
-    <p className="mt-0.5 text-[10px] text-gray-400">{OUTCOMES[row.outcome] || row.outcome} · vs {row.opp}</p>
-    <p className="mt-2 text-2xl font-black text-[#00FF41]">{number(row.median)}{unit(row.outcome)}
-      <span className="ml-1 text-[10px] font-normal text-gray-400">median</span></p>
-    <p className="mt-1 text-[11px] text-gray-300">Mean {number(row.mean)}{unit(row.outcome)} · P10–P90 {number(row.p10)}–{number(row.p90)}{unit(row.outcome)}</p>
-  </div>;
-}
 type Mode='SYSTEM PICKS'|'BETTABLE NOW'|'MODEL BOARD';
 interface BoardProps {view:Phase1View|null;loading:boolean;error:string|null;retrievedAt:string|null;refresh:()=>Promise<void>}
 export function NflPhase1Board({view,loading,error,retrievedAt,refresh}:BoardProps) {
@@ -103,7 +94,6 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh}:BoardPro
     return {...game,picks,visibleRows:game.rows.filter(r=>matchesFilter(r,search,family,outcome))};
   }):[];
   const best=view?todaysBest(view,selected,search,family):[];
-  const quick=view?quickForecasts(view,selected,search,family):[];
   const coverage=view?publicationCoverage(view,selected):null;
   const freshness=view?lineFreshness(view,clock):null;
   const toggle=(id:string)=>{setExpanded(v=>v===id?null:id);setLimit(40);};
@@ -115,44 +105,30 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh}:BoardPro
   return <div id="nfl-today-screen-wrapper" className="flex h-full min-w-0 flex-col overflow-hidden bg-[#0D0D0D] text-gray-200">
     <header className="flex shrink-0 items-center justify-between gap-3 border-b border-[#222] px-4 py-3">
       <div className="min-w-0"><h1 className="text-xl font-black tracking-tighter text-white">PROP <span className="text-[#00FF41]">EDGE</span></h1>
-        <p className="mt-1 text-[10px] font-mono text-gray-400"> NFL · GAME-DAY MODEL · RESEARCH WEEK {view?.artifact.status.week || '—'} · SHADOW DATA CHECKED {etTime(retrievedAt)}</p>
+        <p className="mt-1 text-[10px] font-mono text-gray-400"> NFL · {view?.artifact.status.season || '—'} WEEK {view?.artifact.status.week || '—'} · DATA CHECKED {etTime(retrievedAt)}</p>
       </div><button aria-label="Refresh NFL forecasts" disabled={loading} onClick={()=>void refresh()} className={`${touch} flex min-w-11 items-center justify-center text-[#00FF41] disabled:opacity-40`}><RefreshCw size={17} className={loading?'animate-spin':''}/></button>
     </header>
     <div className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden px-3 pb-28" id="nfl-scroll-area">
       <div className="mt-3 grid grid-cols-3 gap-1" aria-label="NFL board mode">{(['SYSTEM PICKS','BETTABLE NOW','MODEL BOARD'] as Mode[]).map(m=><button key={m} onClick={()=>setMode(m)} aria-pressed={mode===m} className={`${touch} !px-1 text-[10px] font-bold whitespace-nowrap ${mode===m?'!border-[#00FF41]/50 !bg-[#00FF41]/10 text-[#00FF41]':'text-gray-400'}`}>{m}</button>)}</div>
+      <div className="mt-2 flex gap-2" aria-label="Forecast horizon">{HORIZONS.map(h=><button key={h} disabled={!view?.rows[h].length} aria-pressed={selected===h} onClick={()=>setHorizon(h)} className={`${touch} min-w-20 px-5 font-bold disabled:opacity-30 ${selected===h?'text-[#00FF41]':'text-gray-400'}`}>{h}</button>)}</div>
       <div className="mt-2 flex gap-1 overflow-x-auto" aria-label="Outcome family">{(['ALL','PASS','RUSH','REC','TD'] as Family[]).map(f=><button key={f} aria-pressed={family===f} onClick={()=>setFamily(f)} className={`${touch} shrink-0 ${family===f?'!border-[#00FF41]/40 text-[#00FF41]':'text-gray-400'}`}>{f}</button>)}</div>
       <div className="mt-2 flex min-w-0 gap-2"><input type="search" aria-label="Search player or team" placeholder="Search player or team" value={search} onChange={e=>setSearch(e.target.value)} className={`${touch} min-w-0 w-full text-gray-200`}/>
         {mode==='MODEL BOARD' && <select aria-label="Filter NFL outcome" value={outcome} onChange={e=>setOutcome(e.target.value)} className={`${touch} min-w-0 w-1/2 text-gray-300`}><option value="">All outcomes</option>{Object.entries(OUTCOMES).map(([k,v])=><option key={k} value={k}>{v}</option>)}</select>}</div>
-      <ExistingNflProjectionSlate view={view} search={search} family={family} visible={true}/>
-      <div className="mt-5 rounded-xl border border-[#313131] bg-[#111111] px-3 py-2">
-        <p className="text-xs font-black text-gray-200">OPTIONAL T24/T90 RESEARCH SNAPSHOTS</p>
-        <p className="mt-1 text-[11px] text-gray-400">These fixed-time research captures are not required for the live NFL game-day projections above.</p>
-        <div className="mt-2 flex gap-2" aria-label="Forecast horizon">{HORIZONS.map(h=><button key={h} disabled={!view?.rows[h].length} aria-pressed={selected===h} onClick={()=>setHorizon(h)} className={`${touch} px-5 font-bold disabled:opacity-30 ${selected===h?'text-[#00FF41]':'text-gray-400'}`}>{h}</button>)}
-          {view && !view.rows.T24.length && <span className="self-center text-[10px] text-gray-500">No valid T24 forecast captured.</span>}</div>
-      </div>
-      <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] text-gray-400"><span className="rounded-md bg-[#222] px-2 py-1">RESEARCH / UNVALIDATED</span><span className="rounded-md bg-[#222] px-2 py-1">BOOK LINES UNVERIFIED</span></div>
-      {view && <div data-testid="nfl-coverage" className={`mt-3 rounded-xl border p-3 text-xs ${(coverage?.missed || 0)>0 || !view.artifact.status.readiness_ready?'border-amber-800/60 bg-amber-950/20 text-amber-100':'border-[#2C4230] bg-[#102018] text-gray-200'}`}>
-        <p className="font-bold">FORECAST COVERAGE · {selected}</p>
-        <p className="mt-1">{coverage?.captured ?? 0} games captured{coverage?.planned!=null?` · ${coverage.planned} pending`:''}{coverage?.missed!=null&&coverage.missed>0?` · ${coverage.missed} missed cutoff(s)`:''}{coverage?.failed!=null&&coverage.failed>0?` · ${coverage.failed} failed`:''}</p>
-        <p className="mt-1 text-[11px] text-gray-300">Last pipeline check: {formatET(view.artifact.status.last_shadow_run_utc)} · Not the forecast generation time.</p>
-        {view.artifact.status.readiness_ready !== true && <p className="mt-1 text-[11px] font-semibold">Experimental shadow model; not cleared for official betting picks.</p>}
-      </div>}
+      <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] text-gray-400"><span className="rounded-md bg-[#222] px-2 py-1">SHADOW RESEARCH</span><span className="rounded-md bg-[#222] px-2 py-1">NO VERIFIED SPORTSBOOK INPUTS</span></div>
       {mode==='BETTABLE NOW' && view && <div className="mt-3 rounded-xl border border-[#333] p-3 text-[11px] text-gray-400"><p className="text-[10px]">SPORTSBOOK LINES UPDATED</p><p className="mt-1">{formatET(freshness?.timestamp)}</p>
         {(freshness?.stale || freshness?.unknown) && <p role="status" className="mt-2 font-bold text-amber-300">LINE MAY HAVE MOVED<br/>VERIFY BEFORE PLACING{freshness?.unknown?' · Timestamp unavailable or invalid.':''}</p>}</div>}
-      {error?<div role="alert" className="mt-4 rounded-xl border border-red-900 p-4 text-sm text-red-300">NFL forecast unavailable<p className="mt-2 break-words">{error}</p><button className={`${touch} mt-3 w-full`} onClick={()=>void refresh()}>Retry new-engine feed</button></div>
-      :!view?<p role="status" className="py-8 text-center text-sm text-gray-500">{loading?'Loading Phase 1 forecasts…':empty}</p>:<>
-        {mode==='SYSTEM PICKS' && <section className="mt-4" aria-label="Quick player projections">
-          <div className="flex items-center justify-between gap-2"><div><h2 className="text-sm font-black text-white">PLAYER PROJECTIONS</h2><p className="mt-1 text-[11px] text-gray-400">Actual model medians and ranges. Sampled by stat type; not ranked as bets.</p></div>
-          <button type="button" onClick={()=>{setMode('MODEL BOARD');setExpanded(groups[0]?.game_id||null);}} className={`${touch} shrink-0 font-bold text-[#00FF41]`}>ALL STATS →</button></div>
-          <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">{quick.map(row=><QuickProjection key={row.id} row={row}/>)}</div>
-          {!quick.length && <p className="mt-2 text-xs text-amber-300">No qualifying numerical projections for these filters. The model will not fill in made-up statistics.</p>}
+      {error?<><ExistingNflProjectionSlate view={null} search={search} family={family} visible={true} horizon={selected} mode={mode}/><div role="alert" className="mt-4 rounded-xl border border-red-900 p-4 text-sm text-red-300">T24/T90 research unavailable<p className="mt-2 break-words">{error}</p><button className={`${touch} mt-3 w-full`} onClick={()=>void refresh()}>Retry research feed</button></div></>
+      :!view?<><ExistingNflProjectionSlate view={null} search={search} family={family} visible={true} horizon={selected} mode={mode}/><p role="status" className="py-4 text-center text-xs text-gray-500">{loading?'Loading T24/T90 research…':empty}</p></>:<>
+        {mode==='SYSTEM PICKS' && best.length>0 && <section className="mt-6" aria-label="Today's best">
+          <h2 className="mb-3 text-sm font-black text-gray-200">TODAY'S BEST</h2>
+          <div className="flex gap-3 overflow-x-auto pb-2">{best.map(p=><button data-testid="today-best" key={p.row.id}
+            onClick={()=>jump(p)} className="flex min-h-36 w-52 shrink-0 flex-col items-start rounded-2xl border border-[#292929] bg-[#181818] p-4 text-left">
+            <p className="break-words text-xs font-bold uppercase text-gray-200">{p.row.player} · {p.row.team}</p>
+            <p className="mt-2 text-base font-black text-[#00FF41]">{targetText(p,true)}</p>
+            <p className="mt-auto pt-3 text-2xl font-black text-[#00FF41]">{percent(p.target.probability)}</p>
+          </button>)}</div>
         </section>}
-        {mode==='SYSTEM PICKS' && best.length>0 && <section className="mt-5" aria-label="Today's best"><h2 className="text-xs font-black text-gray-200">TOP MODEL TARGETS</h2><p className="mt-1 text-[11px] text-gray-400">Ranked by simulated chance of clearing the stated target, NOT by predicted total or betting value.</p><div className="mt-2 flex gap-2 overflow-x-auto pb-1">{best.map(p=><button data-testid="today-best" key={p.row.id} onClick={()=>jump(p)} className="flex min-h-32 w-48 shrink-0 flex-col items-start gap-1.5 rounded-xl border border-[#292929] bg-[#171717] p-3 text-left">
-          <p className="break-words text-[11px] font-bold uppercase text-gray-200">{p.row.player} · {p.row.team}</p>
-          <p className="text-[10px] text-gray-400">{OUTCOMES[p.row.outcome]}</p>
-          <p className="text-xl font-black text-[#00FF41]">{number(p.row.median)}{unit(p.row.outcome)} <span className="text-[10px] font-normal text-gray-300">projected median</span></p>
-          <p className="text-xs font-semibold text-gray-200">{targetText(p,true)} · {percent(p.target.probability)}</p>
-          </button>)}</div></section>}
+        <ExistingNflProjectionSlate view={view} search={search} family={family} visible={true} horizon={selected} mode={mode}/>
         {groups.length===0 && <p role="status" className="mt-4 rounded-xl border border-[#222] p-4 text-sm text-gray-500">{empty}</p>}
         <div className="mt-4 space-y-3">{groups.map(game=>{
           const preview=game.picks[0];const count=mode==='MODEL BOARD'?game.visibleRows.length:game.picks.length;
@@ -163,14 +139,6 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh}:BoardPro
             </div><ChevronDown size={16} className={`shrink-0 text-gray-500 ${expanded===game.game_id?'rotate-180':''}`}/></button>
               <button aria-label={`Create share card for ${game.away} vs ${game.home}`} onClick={()=>setShare({view,gameId:game.game_id,horizon:selected})} className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-xl border border-[#333] bg-[#1B211E] text-gray-300"><Image size={18}/></button>
             </div>
-            {mode==='SYSTEM PICKS' && expanded!==game.game_id && game.picks.length>0 && <div data-testid="game-quick-picks" className="border-t border-[#292929] px-3 pb-3 pt-2">
-              {game.picks.slice(0,3).map(p=><div key={p.row.id} className="flex items-center justify-between gap-2 py-2 text-xs border-b border-[#292929] last:border-0">
-                <div className="min-w-0"><p className="truncate font-semibold capitalize text-white">{p.row.player} · {OUTCOMES[p.row.outcome]}</p>
-                  <p className="mt-1 text-[10px] text-gray-400">{targetText(p,true)} · hit chance {percent(p.target.probability)}</p></div>
-                <div className="shrink-0 text-right"><p className="text-lg font-black text-[#00FF41]">{number(p.row.median)}{unit(p.row.outcome)}</p><p className="text-[9px] text-gray-400">MODEL MEDIAN</p></div>
-              </div>)}
-              {game.picks.length>3 && <button type="button" onClick={()=>toggle(game.game_id)} className="mt-2 min-h-11 w-full rounded-xl border border-[#00FF41]/40 bg-[#00FF41]/10 text-xs font-bold text-[#00FF41]">SHOW ALL {game.picks.length} TARGETS ↓</button>}
-            </div>}
             {expanded===game.game_id && <div id={`rows-${game.game_id}`} className="space-y-3 border-t border-[#292929] p-3">
               {count===0 && <p className="p-2 text-sm text-gray-500">{empty}</p>}
               {mode==='MODEL BOARD'?game.visibleRows.slice(0,limit).map(row=><OutcomeCard key={row.id} row={row} view={view}/>):game.picks.map(p=><SystemPickCard key={p.row.id} pick={p} view={view} horizon={selected} execution={p.execution}/>)}
@@ -179,6 +147,12 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh}:BoardPro
           </section>;
         })}</div>
       </>}
+      {view && <div data-testid="nfl-coverage" className={`mt-3 rounded-xl border p-3 text-xs ${(coverage?.missed || 0)>0 || !view.artifact.status.readiness_ready?'border-amber-800/60 bg-amber-950/20 text-amber-100':'border-[#2C4230] bg-[#102018] text-gray-200'}`}>
+        <p className="font-bold">FORECAST COVERAGE · {selected}</p>
+        <p className="mt-1">{coverage?.captured ?? 0} games captured{coverage?.planned!=null?` · ${coverage.planned} pending`:''}{coverage?.missed!=null&&coverage.missed>0?` · ${coverage.missed} missed cutoff(s)`:''}{coverage?.failed!=null&&coverage.failed>0?` · ${coverage.failed} failed`:''}</p>
+        <p className="mt-1 text-[11px] text-gray-300">Last pipeline check: {formatET(view.artifact.status.last_shadow_run_utc)} · Not the forecast generation time.</p>
+        {view.artifact.status.readiness_ready !== true && <p className="mt-1 text-[11px] font-semibold">Experimental shadow model; not cleared for official betting picks.</p>}
+      </div>}
       <details className="mt-4 rounded-xl border border-[#252525] px-3 text-[11px] text-gray-500"><summary className="flex min-h-11 cursor-pointer items-center font-bold">MODEL STATUS / ABOUT ▾</summary><div className="space-y-2 pb-3 break-words">
         <p>NEW NFL OUTCOME ENGINE · SHADOW / RESEARCH · NOT YET PROMOTED TO PRODUCTION</p><p>Model / football data → player outcome distribution → system-derived target → optional sportsbook execution check.</p>
         <p>R11: {view?.artifact.status.r11 || 'Unavailable'}</p><p>Last forecast retrieval: {formatET(retrievedAt)}</p><p>Last shadow publication/run: {formatET(view?.artifact.status.last_shadow_run_utc)}</p><p className="break-all">Model version: {view?.artifact.status.model_versions.join(', ') || 'Unavailable'}</p>

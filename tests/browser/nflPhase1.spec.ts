@@ -30,52 +30,53 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   const check=await setup(page);
   await expect(page.getByRole('button',{name:'SYSTEM PICKS',exact:true})).toHaveAttribute('aria-pressed','true');
   await expect(page.getByTestId('today-best')).toHaveCount(5);
-  // Actual numerical model projections are visible without tapping a single game.
-  const quick=page.getByTestId('quick-projection');
-  expect(await quick.count()).toBeGreaterThan(0);
-  await expect(quick.first()).toContainText('median');
-  await expect(quick.first()).toContainText('Mean');
-  await expect(quick.first()).toContainText('P10–P90');
-  await expect(page.getByTestId('existing-nfl-slate')).toContainText('NFL GAME-DAY PROJECTIONS');
-  await expect(page.getByTestId('existing-nfl-game')).toHaveCount(3);
-  await expect(page.getByTestId('existing-nfl-slate')).toContainText('No eligible player projections yet');
-  await expect(page.getByTestId('existing-nfl-slate')).toContainText('Early Runner');
-  await expect(page.getByTestId('existing-nfl-slate')).toContainText('68');
-  // The entire schedule stays visible, but only ONE selected game's players
-  // expand. Regression for the oversized player dump shown on Android.
-  await expect(page.getByTestId('existing-nfl-toggle')).toHaveCount(3);
-  await expect(page.getByTestId('existing-nfl-expanded')).toHaveCount(0);
+  // Original user-approved layout: Today's Best first, the existing
+  // game cards inline, game-by-game export buttons (no giant player dump).
+  await expect(page.getByRole('heading',{name:"TODAY'S BEST"})).toBeVisible();
+  await expect(page.getByTestId('existing-nfl-game')).toHaveCount(2);
+  await expect(page.getByTestId('existing-nfl-preview')).toHaveCount(1);
   await expect(page.getByTestId('existing-nfl-projection')).toHaveCount(0);
-  await expect(page.getByTestId('existing-nfl-preview')).toHaveCount(2);
+  await expect(page.getByTestId('existing-nfl-expanded')).toHaveCount(0);
+  await expect(page.getByTestId('existing-nfl-slate')).toContainText('PHI vs JAX');
+  await expect(page.getByTestId('existing-nfl-slate')).toContainText('LV vs NE');
+  await expect(page.getByTestId('existing-nfl-slate')).not.toContainText('NYJ vs CHI');
+  await expect(page.getByTestId('existing-nfl-preview')).toContainText('Early Runner');
+  await expect(page.getByTestId('existing-nfl-preview')).toContainText('68');
+  // Codex's per-game 1080x1350 share-image workflow is preserved for
+  // the original new-engine game and now also available for missing games.
+  await expect(page.getByRole('button',{name:'Create share card for PHI vs JAX'})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Create share card for NYJ vs CHI'})).toBeVisible();
   const toggles=page.getByTestId('existing-nfl-toggle');
-  await toggles.nth(0).click();
-  await expect(toggles.nth(0)).toHaveAttribute('aria-expanded','true');
-  await expect(page.getByTestId('existing-nfl-expanded')).toHaveCount(1);
+  await toggles.first().click();
   await expect(page.getByTestId('existing-nfl-projection')).toHaveCount(1);
-  await expect(page.getByTestId('existing-nfl-expanded')).toContainText('Not T24/T90 forecasts');
   await toggles.nth(1).click();
-  await expect(toggles.nth(0)).toHaveAttribute('aria-expanded','false');
-  await expect(toggles.nth(1)).toHaveAttribute('aria-expanded','true');
   await expect(page.getByTestId('existing-nfl-expanded')).toHaveCount(1);
   await toggles.nth(1).click();
   await expect(page.getByTestId('existing-nfl-expanded')).toHaveCount(0);
-
-  await expect(page.getByText('OPTIONAL T24/T90 RESEARCH SNAPSHOTS')).toBeVisible();
-  const gameDayPrecedesResearch=await page.evaluate(()=>{
-    const slate=document.querySelector('[data-testid="existing-nfl-slate"]');
-    const research=[...document.querySelectorAll('p')].find(el=>el.textContent==='OPTIONAL T24/T90 RESEARCH SNAPSHOTS');
-    return Boolean(slate&&research&&(slate.compareDocumentPosition(research)&Node.DOCUMENT_POSITION_FOLLOWING));
-  });
-  expect(gameDayPrecedesResearch).toBe(true);
-  await expect(page.getByRole('region',{name:'Quick player projections'})).toBeVisible();
+  await page.getByRole('button',{name:'Create share card for PHI vs JAX'}).click();
+  await expect(page.getByRole('heading',{name:'CREATE GAME CARD'})).toBeVisible();
+  await expect(page.getByTestId('game-share-poster')).toBeVisible();
+  await expect(page.getByTestId('existing-poster-projections')).toContainText('68');
+  // Save the *actual generated image*, not just the preview. Inspect the PNG
+  // header for the exact 1080×1350 dimensions from Codex's original design.
+  await expect(page.getByRole('button',{name:'SAVE PNG'})).toBeEnabled({timeout:20000});
+  const downloadPromise=page.waitForEvent('download');
+  await page.getByRole('button',{name:'SAVE PNG'}).click();
+  const download=await downloadPromise;
+  expect(download.suggestedFilename()).toMatch(/^prop-edge-.*-existing-system-w04\.png$/);
+  const png=readFileSync(await download.path());
+  expect(png.subarray(1,4).toString()).toBe('PNG');
+  expect(png.readUInt32BE(16)).toBe(1080);
+  expect(png.readUInt32BE(20)).toBe(1350);
+  await expect(page.getByRole('button',{name:'SYSTEM CARD'})).toHaveAttribute('aria-pressed','true');
+  await page.getByRole('button',{name:'BETTABLE CARD'}).click();
+  await expect(page.getByTestId('existing-poster-no-lines')).toContainText('NO VERIFIED SPORTSBOOK MARKETS');
+  await page.getByRole('button',{name:'SYSTEM CARD'}).click();
+  await expect(page.getByTestId('existing-poster-projections')).toContainText('Early Runner');
+  await page.getByRole('button',{name:'CLOSE',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'CREATE GAME CARD'})).toHaveCount(0);
   await expect(page.getByTestId('nfl-coverage')).toContainText('FORECAST COVERAGE');
   await expect(page.getByTestId('nfl-coverage')).toContainText('Last pipeline check:');
-  await expect(page.getByTestId('nfl-coverage')).not.toContainText('scheduled games captured');
-  await expect(page.getByText('TOP MODEL TARGETS')).toBeVisible();
-  await expect(page.getByTestId('today-best').first()).toContainText('projected median');
-  await expect(page.getByTestId('game-quick-picks')).toHaveCount(1);
-  await expect(page.getByTestId('game-quick-picks')).toContainText('MODEL MEDIAN');
-
   const game=page.getByTestId('nfl-game');await expect(game).toContainText('10 SYSTEM PICKS');await expect(game).toContainText('TOP TARGET: dandre swift');
   await expect(game.getByRole('button').filter({has:page.locator('h2')})).toHaveAttribute('aria-expanded','false');await expect(page.getByTestId('system-pick')).toHaveCount(0);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
@@ -91,7 +92,7 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   await page.locator('#nfl-scroll-area').evaluate(el=>{const game=el.querySelector('[data-testid="nfl-game"]')!;el.scrollTop+=game.getBoundingClientRect().top-el.getBoundingClientRect().top;});await page.screenshot({path:`${screen()}/nfl-nyj-chi-expanded-360.png`});
   await pick.getByText('VIEW DETAILS ▾',{exact:true}).click();await expect(pick.getByTestId('system-details')).toHaveAttribute('open','');await expect(pick.getByText('Expected opportunities',{exact:true})).toBeVisible();
   await page.getByRole('button',{name:'BETTABLE NOW',exact:true}).click();
-  await expect(page.getByTestId('existing-nfl-game')).toHaveCount(3);
+  await expect(page.getByTestId('existing-nfl-game')).toHaveCount(2);
   await expect(game).toContainText('0 BETTABLE NOW');await game.getByRole('button').filter({has:page.locator('h2')}).click();
   await expect(page.getByText("No current sportsbook market matches this game's system picks.",{exact:true})).toBeVisible();await expect(page.getByText('LINE MAY HAVE MOVED',{exact:false})).toBeVisible();
   await page.locator('#nfl-scroll-area').evaluate(el=>el.scrollTop=0);await page.screenshot({path:`${screen()}/nfl-bettable-now-360.png`});

@@ -10,7 +10,7 @@ export interface ExistingYardProjection {
   ungraded: boolean; player_id: string;
 }
 export interface ExistingNflGame {
-  id: string; kickoff_utc: string; teams: [string,string]; projections: ExistingYardProjection[];
+  id: string; kickoff_utc: string; teams: [string,string]; home?: string; away?: string; projections: ExistingYardProjection[];
 }
 export interface ExistingNflSlate {
   season: number; week: number; generated_at_utc: string;
@@ -54,7 +54,7 @@ export function parseExistingNfl(raw:unknown,now=new Date(),expected?:{season:nu
       const teams=[scheduled.home_team,scheduled.away_team].sort() as [string,string];
       const id=new Date(scheduled.kickoff_utc).toISOString()+'|'+teams.join('_');
       if(games.has(id))fail('duplicated game in scheduled manifest');
-      games.set(id,{id,kickoff_utc:scheduled.kickoff_utc,teams,projections:[]});
+      games.set(id,{id,kickoff_utc:scheduled.kickoff_utc,teams,home:scheduled.home_team,away:scheduled.away_team,projections:[]});
     }
   }
   const dedupe=new Set<string>();
@@ -93,4 +93,11 @@ export function parseExistingNfl(raw:unknown,now=new Date(),expected?:{season:nu
     projections:listed.reduce((n,g)=>n+g.projections.length,0),
     scheduledGames:Array.isArray(officialSchedule)?officialSchedule.length:listed.length,
     scheduleComplete:Array.isArray(officialSchedule)};
+}
+
+/** Prefer source-confirmed away/home from the real NFL schedule.
+ * The older projection-only feed contains an unordered pair and must not
+ * pretend its alphabetical order establishes home field. */
+export function existingMatchup(game:ExistingNflGame):string{
+  return game.away&&game.home?`${game.away} vs ${game.home}`:game.teams.join(' vs ');
 }
