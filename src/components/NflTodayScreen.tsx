@@ -6,7 +6,7 @@ import ExistingNflProjectionSlate from './ExistingNflProjectionSlate';
 import { usePhase1 } from '../nfl/usePhase1';
 import { HORIZONS, OUTCOMES, altFor, formatET, groupGames, type ForecastRow, type Horizon, type Phase1View } from '../nfl/phase1';
 import { systemGames, todaysBest, executableGames, lineFreshness, matchesFilter, targetText, type Family, type SystemPick, type Execution } from '../nfl/bettable';
-import { quickForecasts, publicationCoverage } from '../nfl/readable';
+import { publicationCoverage } from '../nfl/readable';
 const number=(n?:number|null)=>n==null?'—':new Intl.NumberFormat('en-US',{maximumFractionDigits:1}).format(n);
 const percent=(n?:number|null)=>n==null?'—':`${(n*100).toFixed(1)}%`;
 const unit=(outcome:string)=>outcome.endsWith('_yds')?' yds':'';
@@ -76,15 +76,6 @@ export function SystemPickCard({pick,view,horizon,execution}:{pick:SystemPick;vi
     </details>
   </article>;
 }
-function QuickProjection({row}:{row:ForecastRow}) {
-  return <div data-testid="quick-projection" className="min-w-0 rounded-xl border border-[#2F3931] bg-[#172018] p-3">
-    <p className="truncate text-[11px] font-bold capitalize text-white">{row.player} <span className="text-gray-400">· {row.team}</span></p>
-    <p className="mt-0.5 text-[10px] text-gray-400">{OUTCOMES[row.outcome] || row.outcome} · vs {row.opp}</p>
-    <p className="mt-2 text-2xl font-black text-[#00FF41]">{number(row.median)}{unit(row.outcome)}
-      <span className="ml-1 text-[10px] font-normal text-gray-400">median</span></p>
-    <p className="mt-1 text-[11px] text-gray-300">Mean {number(row.mean)}{unit(row.outcome)} · P10–P90 {number(row.p10)}–{number(row.p90)}{unit(row.outcome)}</p>
-  </div>;
-}
 type Mode='SYSTEM PICKS'|'BETTABLE NOW'|'MODEL BOARD';
 interface BoardProps {view:Phase1View|null;loading:boolean;error:string|null;retrievedAt:string|null;refresh:()=>Promise<void>}
 export function NflPhase1Board({view,loading,error,retrievedAt,refresh}:BoardProps) {
@@ -103,7 +94,6 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh}:BoardPro
     return {...game,picks,visibleRows:game.rows.filter(r=>matchesFilter(r,search,family,outcome))};
   }):[];
   const best=view?todaysBest(view,selected,search,family):[];
-  const quick=view?quickForecasts(view,selected,search,family):[];
   const coverage=view?publicationCoverage(view,selected):null;
   const freshness=view?lineFreshness(view,clock):null;
   const toggle=(id:string)=>{setExpanded(v=>v===id?null:id);setLimit(40);};
@@ -127,8 +117,8 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh}:BoardPro
       <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] text-gray-400"><span className="rounded-md bg-[#222] px-2 py-1">SHADOW RESEARCH</span><span className="rounded-md bg-[#222] px-2 py-1">NO VERIFIED SPORTSBOOK INPUTS</span></div>
       {mode==='BETTABLE NOW' && view && <div className="mt-3 rounded-xl border border-[#333] p-3 text-[11px] text-gray-400"><p className="text-[10px]">SPORTSBOOK LINES UPDATED</p><p className="mt-1">{formatET(freshness?.timestamp)}</p>
         {(freshness?.stale || freshness?.unknown) && <p role="status" className="mt-2 font-bold text-amber-300">LINE MAY HAVE MOVED<br/>VERIFY BEFORE PLACING{freshness?.unknown?' · Timestamp unavailable or invalid.':''}</p>}</div>}
-      {error?<div role="alert" className="mt-4 rounded-xl border border-red-900 p-4 text-sm text-red-300">NFL forecast unavailable<p className="mt-2 break-words">{error}</p><button className={`${touch} mt-3 w-full`} onClick={()=>void refresh()}>Retry new-engine feed</button></div>
-      :!view?<p role="status" className="py-8 text-center text-sm text-gray-500">{loading?'Loading Phase 1 forecasts…':empty}</p>:<>
+      {error?<><ExistingNflProjectionSlate view={null} search={search} family={family} visible={true} horizon={selected} mode={mode}/><div role="alert" className="mt-4 rounded-xl border border-red-900 p-4 text-sm text-red-300">T24/T90 research unavailable<p className="mt-2 break-words">{error}</p><button className={`${touch} mt-3 w-full`} onClick={()=>void refresh()}>Retry research feed</button></div></>
+      :!view?<><ExistingNflProjectionSlate view={null} search={search} family={family} visible={true} horizon={selected} mode={mode}/><p role="status" className="py-4 text-center text-xs text-gray-500">{loading?'Loading T24/T90 research…':empty}</p></>:<>
         {mode==='SYSTEM PICKS' && best.length>0 && <section className="mt-6" aria-label="Today's best">
           <h2 className="mb-3 text-sm font-black text-gray-200">TODAY'S BEST</h2>
           <div className="flex gap-3 overflow-x-auto pb-2">{best.map(p=><button data-testid="today-best" key={p.row.id}
