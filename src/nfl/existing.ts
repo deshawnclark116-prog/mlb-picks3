@@ -30,7 +30,9 @@ const fail=(reason:string):never=>{throw new Error('Existing NFL projection feed
 export function parseExistingNfl(raw:unknown,now=new Date(),expected?:{season:number|null;week:number|null}):ExistingNflSlate{
   if(!record(raw)||!Array.isArray(raw.picks)||!Number.isInteger(raw.season)||!Number.isInteger(raw.week)||!time(raw.generated_at_utc))
     fail('missing weekly metadata');
-  const season=raw.season as number,week=raw.week as number,generated_at_utc=raw.generated_at_utc as string;
+  // Runtime guards above precede this local view; each projected field is separately validated.
+  const doc=raw as Record<string,any>;
+  const season=doc.season as number,week=doc.week as number,generated_at_utc=doc.generated_at_utc as string;
   if(season<2020||week<1||week>22)fail('invalid season/week');
   if(expected?.season!=null&&expected?.week!=null&&(season!==expected.season||week!==expected.week))
     fail('weekly feed differs from Phase1 season/week');
@@ -39,7 +41,7 @@ export function parseExistingNfl(raw:unknown,now=new Date(),expected?:{season:nu
     fail('weekly forecast timestamp expired or in the future');
   const games=new Map<string,ExistingNflGame>();
   const dedupe=new Set<string>();
-  for(const row of raw.picks){
+  for(const row of doc.picks){
     if(!record(row)||!markets.includes(row.market as ExistingYardMarket))continue;
     if(!team(row.team)||!team(row.opponent)||row.team===row.opponent||
        !time(row.kickoff_utc)||typeof row.player!=='string'||!row.player.trim()||
