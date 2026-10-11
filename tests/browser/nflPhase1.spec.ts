@@ -25,7 +25,8 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   await expect(quick.first()).toContainText('P10–P90');
   await expect(page.getByRole('region',{name:'Quick player projections'})).toBeVisible();
   await expect(page.getByTestId('nfl-coverage')).toContainText('FORECAST COVERAGE');
-  await expect(page.getByTestId('nfl-coverage')).toContainText('Model last published:');
+  await expect(page.getByTestId('nfl-coverage')).toContainText('Last pipeline check:');
+  await expect(page.getByTestId('nfl-coverage')).not.toContainText('scheduled games captured');
   await expect(page.getByText('TOP MODEL TARGETS')).toBeVisible();
   await expect(page.getByTestId('today-best').first()).toContainText('projected median');
   await expect(page.getByTestId('game-quick-picks')).toHaveCount(1);

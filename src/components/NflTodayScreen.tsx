@@ -127,8 +127,8 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh}:BoardPro
       <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] text-gray-400"><span className="rounded-md bg-[#222] px-2 py-1">RESEARCH / UNVALIDATED</span><span className="rounded-md bg-[#222] px-2 py-1">BOOK LINES UNVERIFIED</span></div>
       {view && <div data-testid="nfl-coverage" className={`mt-3 rounded-xl border p-3 text-xs ${(coverage?.missed || 0)>0 || !view.artifact.status.readiness_ready?'border-amber-800/60 bg-amber-950/20 text-amber-100':'border-[#2C4230] bg-[#102018] text-gray-200'}`}>
         <p className="font-bold">FORECAST COVERAGE · {selected}</p>
-        <p className="mt-1">{coverage?.captured ?? 0}{coverage?.planned==null?' captured games':` of ${coverage.planned} scheduled games captured`}{coverage?.missed!=null&&coverage.missed>0?` · ${coverage.missed} missed cutoff(s)`:''}</p>
-        <p className="mt-1 text-[11px] text-gray-300">Model last published: {formatET(view.artifact.status.last_shadow_run_utc)} · Not the same as app refresh time.</p>
+        <p className="mt-1">{coverage?.captured ?? 0} games captured{coverage?.planned!=null?` · ${coverage.planned} pending`:''}{coverage?.missed!=null&&coverage.missed>0?` · ${coverage.missed} missed cutoff(s)`:''}{coverage?.failed!=null&&coverage.failed>0?` · ${coverage.failed} failed`:''}</p>
+        <p className="mt-1 text-[11px] text-gray-300">Last pipeline check: {formatET(view.artifact.status.last_shadow_run_utc)} · Not the forecast generation time.</p>
         {view.artifact.status.readiness_ready !== true && <p className="mt-1 text-[11px] font-semibold">Experimental shadow model; not cleared for official betting picks.</p>}
       </div>}
       {mode==='BETTABLE NOW' && view && <div className="mt-3 rounded-xl border border-[#333] p-3 text-[11px] text-gray-400"><p className="text-[10px]">SPORTSBOOK LINES UPDATED</p><p className="mt-1">{formatET(freshness?.timestamp)}</p>
