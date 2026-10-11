@@ -97,13 +97,19 @@ test('upstream errors and mismatched distribution fail; no silent fallback',asyn
   await phase1Handler((async()=>new Response('{}')) as any,()=>now)({} as any,res as any);
   assert.equal(code,502);assert.match(body.error,/unavailable or invalid/);assert.match(headers['Cache-Control'],/no-store/);
 });
-test('NFL legacy route and all non-CFB sport components are byte-identical to base',()=>{
+test('Other sports stay byte-identical; only audited NFL direct-source route may change',()=>{
   const base=execFileSync('git',['merge-base','HEAD','origin/main'],{encoding:'utf8'}).trim();
   const old=(p:string)=>execFileSync('git',['show',`${base}:${p}`],{encoding:'utf8'});
-  for(const p of ['src/components/TodayScreen.tsx','src/components/NhlTodayScreen.tsx','src/components/TennisTodayScreen.tsx','src/types.ts','src/utils.ts']) assert.equal(readFileSync(p,'utf8'),old(p));
+  for(const p of ['src/components/TodayScreen.tsx','src/components/NhlTodayScreen.tsx','src/components/TennisTodayScreen.tsx','src/types.ts','src/utils.ts'])
+    assert.equal(readFileSync(p,'utf8'),old(p));
   const route=(s:string)=>s.slice(s.indexOf('app.get("/api/nfl-predictions"'),s.indexOf('app.get("/api/cfb-predictions"'));
-  assert.equal(route(readFileSync('server.ts','utf8')),route(old('server.ts')));
+  const server=readFileSync('server.ts','utf8');
+  assert.match(route(server),/loadCurrentNfl/);
+  assert.doesNotMatch(route(server),/fetchUpstream/);
+  assert.match(server,/import \{ loadCurrentNfl \} from "\.\/server\/nflCurrent\.ts"/);
   assert(!readFileSync('src/App.tsx','utf8').includes('/api/nfl-predictions'));
+  const other=(s:string)=>s.slice(s.indexOf('app.get("/api/cfb-predictions"'));
+  assert.equal(other(server),other(old('server.ts')));
 });
 
 import { systemCandidates, compareSystem, systemGames, todaysBest, bestExecution, executableGames, lineFreshness, targetText } from '../src/nfl/bettable.ts';
