@@ -8,20 +8,27 @@ export const NFL_GITHUB_PUBLISHED =
 export const NFL_RENDER_READONLY = 'https://prop-edge-api.onrender.com/nfl/predictions';
 type Fetcher=typeof fetch;
 type Current={document:Record<string,unknown>;origin:'github_main'|'render_outage_fallback'};
+class SourceUnavailable extends Error {}
 
 function validate(doc:unknown,when:Date) {
   if(!doc||typeof doc!=='object'||Array.isArray(doc))
     throw new Error('NFL published file is not a JSON document');
   const slate=parseExistingNfl(doc,when);
-  if(slate.games.length===0 || slate.projections===0)
+  if(slate.games.length===0 || (slate.projections===0&&!slate.scheduleComplete))
     throw new Error('NFL published file lacks any game-day yardage projections');
   return doc as Record<string,unknown>;
 }
 async function read(url:string,fetcher:Fetcher,clock:()=>number) {
-  const response=await fetcher(url+(url.includes('?')?'&':'?')+'t='+clock(),
-    {cache:'no-store',headers:{'Cache-Control':'no-cache, no-store, must-revalidate',
-      Pragma:'no-cache',Accept:'application/json'},signal:AbortSignal.timeout(18000)});
-  if(!response.ok)throw new Error('Upstream HTTP '+response.status);
+  let response:Response;
+  try {
+    response=await fetcher(url+(url.includes('?')?'&':'?')+'t='+clock(),
+      {cache:'no-store',headers:{'Cache-Control':'no-cache, no-store, must-revalidate',
+        Pragma:'no-cache',Accept:'application/json'},signal:AbortSignal.timeout(18000)});
+  }catch(error) {
+    throw new SourceUnavailable('Source transport unavailable: '+String(error));
+  }
+  if(!response.ok)throw new SourceUnavailable('Upstream HTTP '+response.status);
+  // Malformed JSON is a publication-integrity failure, not an outage fallback.
   return response.json();
 }
 
@@ -34,8 +41,11 @@ export async function loadCurrentNfl(fetcher:Fetcher=fetch,clock=Date.now):Promi
   try{
     upstream=await read(NFL_GITHUB_PUBLISHED,fetcher,clock);
   }catch(error){
-    // A network/5xx outage is not a permission to serve stale or expired output.
+    if(!(error instanceof SourceUnavailable))throw error;
+    // A network/5xx outage is not permission to serve indefinitely stale data.
     const fallback=validate(await read(NFL_RENDER_READONLY,fetcher,clock),instant);
+    if(instant.getTime()-Date.parse(String(fallback.generated_at_utc))>36*3600000)
+      throw new Error('Render fallback older than 36 hours; refusing stale NFL forecasts');
     return {document:fallback,origin:'render_outage_fallback'};
   }
   return {document:validate(upstream,instant),origin:'github_main'};
