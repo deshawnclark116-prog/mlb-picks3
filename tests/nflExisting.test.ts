@@ -49,3 +49,28 @@ test('Prior local calendar game days are excluded, not served as current games',
   const s=parseExistingNfl(doc,now);
   assert.equal(s.projections,2);
 });
+
+test('Authoritative weekly schedule includes a morning, early and late game even without player projections',()=>{
+  const doc={...fixture(),scheduled_games:[
+    {home_team:'JAX',away_team:'PHI',kickoff_utc:'2026-10-11T13:30:00Z'},
+    {home_team:'PIT',away_team:'IND',kickoff_utc:'2026-10-11T17:00:00Z'},
+    {home_team:'ARI',away_team:'DET',kickoff_utc:'2026-10-11T20:25:00Z'}
+  ]};
+  const result=parseExistingNfl(doc,now);
+  assert.equal(result.scheduleComplete,true);
+  assert.equal(result.scheduledGames,3);
+  assert.equal(result.games.length,3);
+  assert.equal(result.games[2].projections.length,0);
+  assert.deepEqual(result.games[2].teams,['ARI','DET']);
+});
+test('No unknown matchup or duplicate game can be smuggled into the current published schedule',()=>{
+  const doc={...fixture(),scheduled_games:[
+    {home_team:'JAX',away_team:'PHI',kickoff_utc:'2026-10-11T13:30:00Z'},
+    {home_team:'PIT',away_team:'IND',kickoff_utc:'2026-10-11T17:00:00Z'}
+  ]};
+  doc.scheduled_games[1].away_team='DET';
+  assert.throws(()=>parseExistingNfl(doc,now),/authoritative game schedule/);
+  doc.scheduled_games[1].away_team='IND';
+  doc.scheduled_games.push({...doc.scheduled_games[0]});
+  assert.throws(()=>parseExistingNfl(doc,now),/duplicated game/);
+});

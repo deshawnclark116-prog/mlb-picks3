@@ -9,7 +9,12 @@ async function setup(page:any,get=()=>structuredClone(source)) {
     if(url.includes('/api/nfl-phase1-predictions')){requests.push(url);await route.fulfill({json:get(),headers:{'X-Forecast-Retrieved-At':'2026-10-04T17:00:00Z'}});}
     else if(url.includes('/api/nfl-predictions')) {
       legacy++;
-      await route.fulfill({json:{season:2026,week:4,generated_at_utc:'2026-10-03T23:00:00Z',picks:[
+      await route.fulfill({json:{season:2026,week:4,generated_at_utc:'2026-10-03T23:00:00Z',
+        scheduled_games:[
+          {home_team:'JAX',away_team:'PHI',kickoff_utc:'2026-10-04T13:30:00Z'},
+          {home_team:'NYJ',away_team:'CHI',kickoff_utc:'2026-10-04T17:00:00Z'},
+          {home_team:'NE',away_team:'LV',kickoff_utc:'2026-10-04T17:00:00Z'}
+        ],picks:[
         {market:'rushing_yards',player_id:'demo-1',player:'Early Runner',team:'JAX',opponent:'PHI',kickoff_utc:'2026-10-04T13:30:00Z',
           projected_median:68,projected_mean:69,projected_low:10,projected_high:124,unagraded:true,model_source:'existing_v2'},
         {market:'receiving_yards',player_id:'demo-2',player:'Sunday Receiver',team:'NYJ',opponent:'CHI',kickoff_utc:'2026-10-04T17:00:00Z',
@@ -31,8 +36,9 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   await expect(quick.first()).toContainText('median');
   await expect(quick.first()).toContainText('Mean');
   await expect(quick.first()).toContainText('P10–P90');
-  await expect(page.getByTestId('existing-nfl-slate')).toContainText('FULL NFL SLATE · EXISTING MODEL');
-  await expect(page.getByTestId('existing-nfl-game')).toHaveCount(2);
+  await expect(page.getByTestId('existing-nfl-slate')).toContainText('NFL COMPLETE GAME SCHEDULE · EXISTING MODEL');
+  await expect(page.getByTestId('existing-nfl-game')).toHaveCount(3);
+  await expect(page.getByTestId('existing-nfl-slate')).toContainText('No eligible player yardage projections published for this scheduled game');
   await expect(page.getByTestId('existing-nfl-slate')).toContainText('Early Runner');
   await expect(page.getByTestId('existing-nfl-slate')).toContainText('68');
   await expect(page.getByTestId('existing-nfl-slate')).toContainText('Not T24/T90 forecasts');

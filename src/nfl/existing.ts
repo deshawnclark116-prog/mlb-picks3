@@ -14,7 +14,7 @@ export interface ExistingNflGame {
 }
 export interface ExistingNflSlate {
   season: number; week: number; generated_at_utc: string;
-  games: ExistingNflGame[]; projections: number;
+  games: ExistingNflGame[]; projections: number; scheduledGames: number; scheduleComplete: boolean;
 }
 const record=(x:unknown):x is Record<string,unknown>=>x!=null&&typeof x==='object'&&!Array.isArray(x);
 const finite=(x:unknown):x is number=>typeof x==='number'&&Number.isFinite(x);
@@ -40,6 +40,23 @@ export function parseExistingNfl(raw:unknown,now=new Date(),expected?:{season:nu
   if(generated>now.getTime()+10*60000||now.getTime()-generated>8*86400000)
     fail('weekly forecast timestamp expired or in the future');
   const games=new Map<string,ExistingNflGame>();
+  const officialSchedule=doc.scheduled_games;
+  if(officialSchedule!==undefined && (!Array.isArray(officialSchedule)||officialSchedule.length===0))
+    fail('scheduled game manifest invalid');
+  // New serving contract: all matchups originate from the foundation game's
+  // schedule, not from player eligibility. No fake or averaged projections.
+  if(Array.isArray(officialSchedule)){
+    for(const scheduled of officialSchedule){
+      if(!record(scheduled)||!team(scheduled.home_team)||!team(scheduled.away_team)||
+         scheduled.home_team===scheduled.away_team||!time(scheduled.kickoff_utc))
+        fail('invalid scheduled NFL game');
+      if(etDate(scheduled.kickoff_utc)<etDate(now))continue;
+      const teams=[scheduled.home_team,scheduled.away_team].sort() as [string,string];
+      const id=new Date(scheduled.kickoff_utc).toISOString()+'|'+teams.join('_');
+      if(games.has(id))fail('duplicated game in scheduled manifest');
+      games.set(id,{id,kickoff_utc:scheduled.kickoff_utc,teams,projections:[]});
+    }
+  }
   const dedupe=new Set<string>();
   for(const row of doc.picks){
     // Keep raw values dynamically validated below; the type predicate's unknown
@@ -54,7 +71,9 @@ export function parseExistingNfl(raw:unknown,now=new Date(),expected?:{season:nu
     if(etDate(row.kickoff_utc)<etDate(now))continue;
     if(Date.parse(row.kickoff_utc)<generated)fail('forecast generated after its game kicked off');
     const teams=[row.team,row.opponent].sort() as [string,string];
-    const id=row.kickoff_utc+'|'+teams.join('_');
+    const id=new Date(row.kickoff_utc).toISOString()+'|'+teams.join('_');
+    if(Array.isArray(officialSchedule)&&!games.has(id))
+      fail('NFL player projection does not match the authoritative game schedule');
     const identity=id+'|'+row.market+'|'+row.team+'|'+(row.player_id||row.player).toString().toLowerCase();
     if(dedupe.has(identity))fail('duplicate player outcome in weekly document');
     dedupe.add(identity);
@@ -70,5 +89,8 @@ export function parseExistingNfl(raw:unknown,now=new Date(),expected?:{season:nu
   }
   const listed=[...games.values()].sort((a,b)=>Date.parse(a.kickoff_utc)-Date.parse(b.kickoff_utc)||a.id.localeCompare(b.id));
   for(const g of listed)g.projections.sort((a,b)=>a.market.localeCompare(b.market)||b.projected_median-a.projected_median||a.player.localeCompare(b.player));
-  return {season,week,generated_at_utc,games:listed,projections:listed.reduce((n,g)=>n+g.projections.length,0)};
+  return {season,week,generated_at_utc,games:listed,
+    projections:listed.reduce((n,g)=>n+g.projections.length,0),
+    scheduledGames:Array.isArray(officialSchedule)?officialSchedule.length:listed.length,
+    scheduleComplete:Array.isArray(officialSchedule)};
 }
