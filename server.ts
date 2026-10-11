@@ -145,6 +145,27 @@ async function startServer() {
     }
   });
 
+  // Only the exact scheduled game may request live bookmaker availability.
+  // The backend owns the bookmaker credentials and the 15-minute quota cache.
+  app.get("/api/nfl-live-markets", async (req,res)=>{
+    const home=typeof req.query.home==='string'?req.query.home.toUpperCase():'';
+    const away=typeof req.query.away==='string'?req.query.away.toUpperCase():'';
+    if(!/^[A-Z]{2,3}$/.test(home)||!/^[A-Z]{2,3}$/.test(away)||home===away)
+      return res.status(400).json({status:'INVALID_MATCHUP',lines:[]});
+    try{
+      const params=new URLSearchParams({home,away});
+      const url='https://prop-edge-api.onrender.com/nfl/live-markets?'+params.toString();
+      const response=await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(16000)});
+      if(!response.ok)throw new Error('NFL quote source HTTP '+response.status);
+      const payload=await response.json();
+      res.setHeader('Cache-Control','no-store, max-age=0');
+      return res.json(payload);
+    }catch(e){
+      res.setHeader('Cache-Control','no-store, max-age=0');
+      return res.json({status:'ODDS_PROVIDER_UNAVAILABLE',lines:[]});
+    }
+  });
+
   // API Route - Proxy Predictions (enriched with pitch_tensor)
   app.get("/api/predictions", async (req, res) => {
     try {
