@@ -1,7 +1,7 @@
 import React,{useEffect,useLayoutEffect,useMemo,useRef,useState} from 'react';
 import {createPortal} from 'react-dom';
 import NflExistingShareCard from './NflExistingShareCard';
-import type {ExistingNflGame} from '../nfl/existing';
+import {existingMatchup,type ExistingNflGame} from '../nfl/existing';
 import {downloadBlob,renderElementToPng,shareBlob} from '../lib/exportImage';
 const button='min-h-11 rounded-xl border border-[#333] px-3 text-xs font-bold disabled:opacity-40';
 type Props={game:ExistingNflGame;week:number;onClose:()=>void};
@@ -13,7 +13,7 @@ export default function NflExistingShareModal({game,week,onClose}:Props){
  const ready=prepared?.key===key;
  const lock=useRef(false),dialog=useRef<HTMLDialogElement>(null),wrapper=useRef<HTMLDivElement>(null),card=useRef<HTMLDivElement>(null);
  const slug=(x:string)=>x.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
- const filename=`prop-edge-${slug(game.teams[0])}-${slug(game.teams[1])}-existing-${mode}-w${String(week).padStart(2,'0')}.png`;
+ const filename=`prop-edge-${slug(game.away||game.teams[0])}-${slug(game.home||game.teams[1])}-existing-${mode}-w${String(week).padStart(2,'0')}.png`;
  useEffect(()=>{
   let cancelled=false;setPrepared(null);setError(null);setMessage(null);
   void renderElementToPng(card.current!).then(blob=>{
@@ -52,7 +52,7 @@ export default function NflExistingShareModal({game,week,onClose}:Props){
   <style>{'dialog[aria-labelledby="nfl-existing-share-title"]::backdrop{background:#000c;backdrop-filter:blur(4px)}'}</style>
   <header className="flex items-center justify-between gap-2"><div>
     <h2 id="nfl-existing-share-title" className="text-sm font-bold">CREATE GAME CARD</h2>
-    <p className="mt-1 text-xs text-gray-400">{game.teams.join(' vs ')} · Existing weekly model</p>
+    <p className="mt-1 text-xs text-gray-400">{existingMatchup(game)} · Existing weekly model</p>
    </div><span className="text-[10px] text-gray-500">1080 × 1350</span></header>
   <div className="my-3 grid grid-cols-2 gap-2">{(['system','bettable'] as const).map(m=>
    <button key={m} aria-pressed={mode===m} disabled={busy} onClick={()=>setMode(m)}
