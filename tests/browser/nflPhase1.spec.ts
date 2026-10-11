@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 const source=JSON.parse(readFileSync(new URL('../fixtures/nfl-nyj-chi-bettable.json',import.meta.url),'utf8'));
 async function setup(page:any,get=()=>structuredClone(source),live=false) {
-  await page.clock.install({time:new Date(live?'2026-10-04T12:00:00Z':'2026-10-04T17:00:00Z')});
+  await page.clock.install({time:new Date('2026-10-04T17:00:00Z')});
   let legacy=0;const requests:string[]=[];
   await page.route('**/api/**',async(route:any)=>{
     const url=route.request().url();
@@ -60,6 +60,9 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   await expect(page.getByTestId('existing-nfl-expanded')).toHaveCount(1);
   await toggles.nth(1).click();
   await expect(page.getByTestId('existing-nfl-expanded')).toHaveCount(0);
+  // Preserve the validated Phase1 fixture's default clock; rewind only
+  // before testing the *pregame* live book quote for the 9:30 match.
+  await page.clock.setFixedTime(new Date('2026-10-04T12:00:00Z'));
   await page.getByRole('button',{name:'Create share card for PHI vs JAX'}).click();
   await expect(page.getByRole('heading',{name:'CREATE GAME CARD'})).toBeVisible();
   await expect(page.getByTestId('game-share-poster')).toBeVisible();
