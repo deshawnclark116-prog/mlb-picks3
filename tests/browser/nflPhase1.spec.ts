@@ -57,6 +57,17 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   await expect(page.getByRole('heading',{name:'CREATE GAME CARD'})).toBeVisible();
   await expect(page.getByTestId('game-share-poster')).toBeVisible();
   await expect(page.getByTestId('existing-poster-projections')).toContainText('68');
+  // Save the *actual generated image*, not just the preview. Inspect the PNG
+  // header for the exact 1080×1350 dimensions from Codex's original design.
+  await expect(page.getByRole('button',{name:'SAVE PNG'})).toBeEnabled({timeout:20000});
+  const downloadPromise=page.waitForEvent('download');
+  await page.getByRole('button',{name:'SAVE PNG'}).click();
+  const download=await downloadPromise;
+  expect(download.suggestedFilename()).toMatch(/^prop-edge-.*-existing-system-w04\\.png$/);
+  const png=readFileSync(await download.path());
+  expect(png.subarray(1,4).toString()).toBe('PNG');
+  expect(png.readUInt32BE(16)).toBe(1080);
+  expect(png.readUInt32BE(20)).toBe(1350);
   await expect(page.getByRole('button',{name:'SYSTEM CARD'})).toHaveAttribute('aria-pressed','true');
   await page.getByRole('button',{name:'BETTABLE CARD'}).click();
   await expect(page.getByTestId('existing-poster-no-lines')).toContainText('NO VERIFIED SPORTSBOOK MARKETS');
