@@ -1,5 +1,6 @@
 import express from "express";
 import { phase1Handler } from "./server/nflPhase1.ts";
+import { loadCurrentNfl } from "./server/nflCurrent.ts";
 import { projectionFeedHandler } from "./server/projectionFeeds.ts";
 import path from "path";
 import { createServer as createViteServer } from "vite";
@@ -175,9 +176,10 @@ async function startServer() {
   // API Route - Proxy NFL Predictions
   app.get("/api/nfl-predictions", async (req, res) => {
     try {
-      const data = await fetchUpstream("/nfl/predictions");
+      const {document,origin}=await loadCurrentNfl();
       res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-      res.json(data);
+      res.setHeader("X-NFL-Forecast-Source",origin);
+      res.json({...document,serving_origin:origin});
     } catch (error: any) {
       console.error("[Proxy Server] Error fetching NFL predictions:", error);
       res.status(502).json({ error: "Failed to fetch NFL predictions from upstream API", details: error.message });
