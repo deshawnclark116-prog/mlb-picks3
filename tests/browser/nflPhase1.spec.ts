@@ -63,7 +63,7 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   const downloadPromise=page.waitForEvent('download');
   await page.getByRole('button',{name:'SAVE PNG'}).click();
   const download=await downloadPromise;
-  expect(download.suggestedFilename()).toMatch(/^prop-edge-.*-existing-system-w04\\.png$/);
+  expect(download.suggestedFilename()).toMatch(/^prop-edge-.*-existing-system-w04\.png$/);
   const png=readFileSync(await download.path());
   expect(png.subarray(1,4).toString()).toBe('PNG');
   expect(png.readUInt32BE(16)).toBe(1080);
