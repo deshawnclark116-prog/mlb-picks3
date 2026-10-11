@@ -50,7 +50,7 @@ export default function ExistingNflProjectionSlate({view,search,family,visible}:
     {error&&<p role="alert" className="mt-2 text-xs text-amber-300">Existing-model forecasts unavailable: {error}</p>}
     {!loading&&!error&&!mismatch&&!hasData&&<p className="mt-2 text-xs text-amber-300">No current game-day projections in the existing-model feed.</p>}
     <div className="mt-3 space-y-2">{games.map(g=>{
-      const phase1=view?.games.find(x=>x.kickoff_utc===g.kickoff_utc&&[x.away,x.home].sort().join('_')===g.teams.join('_'));
+      const phase1=view?.games.find(x=>Date.parse(x.kickoff_utc)===Date.parse(g.kickoff_utc)&&[x.away,x.home].sort().join('_')===g.teams.join('_'));
       const captured=phase1&&Object.keys(phase1.horizons).filter(h=>h==='T24'||h==='T90');
       return <article key={g.id} data-testid="existing-nfl-game" className="rounded-xl border border-[#2b3c31] bg-[#151a17] p-3">
         <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="text-sm font-bold text-white">{g.teams.join(' vs ')}</h3><p className="text-xs text-gray-300">{formatET(g.kickoff_utc)}</p></div>
