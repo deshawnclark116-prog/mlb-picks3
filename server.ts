@@ -145,6 +145,26 @@ async function startServer() {
     }
   });
 
+  // Current independent pregame role evidence, published as-of with the
+  // existing NFL numerical forecast. Never substitute stale or missing
+  // role snapshots with a HIGH workload stability badge.
+  app.get("/api/nfl-role-snapshot",async(_req,res)=>{
+    try{
+      const url="https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks2/main/docs/nfl_role_snapshot.json";
+      const upstream=await fetch(url,{cache:"no-store",signal:AbortSignal.timeout(12000)});
+      if(!upstream.ok)throw new Error("Role snapshot unavailable");
+      const doc=await upstream.json();
+      if(!doc||doc.schema!=="nfl-role-evidence-coverage-v1"||
+         doc.status!=="PREGAME_RESEARCH_ROLE_SNAPSHOT"||
+         !Array.isArray(doc.player_market_evidence))throw new Error("Role snapshot invalid");
+      res.setHeader("Cache-Control","no-store, max-age=0");
+      res.json(doc);
+    }catch{
+      res.setHeader("Cache-Control","no-store, max-age=0");
+      res.json({status:"ROLE_EVIDENCE_UNAVAILABLE",player_market_evidence:[]});
+    }
+  });
+
   // Only the exact scheduled game may request live bookmaker availability.
   // The backend owns the bookmaker credentials and the 15-minute quota cache.
   app.get("/api/nfl-live-markets", async (req,res)=>{

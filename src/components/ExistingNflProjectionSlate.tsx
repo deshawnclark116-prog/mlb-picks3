@@ -97,6 +97,7 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
         </div>}
       </section>;
     })}
-    {shareGame&&slate&&<NflExistingShareModal game={shareGame} week={slate.week} onClose={()=>setShareGame(null)}/>}
+    {shareGame&&slate&&<NflExistingShareModal game={shareGame} week={slate.week}
+      forecastGeneratedAtUtc={slate.generated_at_utc} onClose={()=>setShareGame(null)}/>}
   </div>;
 }
