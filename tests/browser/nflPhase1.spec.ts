@@ -42,6 +42,13 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   await expect(page.getByTestId('existing-nfl-slate')).toContainText('Early Runner');
   await expect(page.getByTestId('existing-nfl-slate')).toContainText('68');
   await expect(page.getByTestId('existing-nfl-slate')).toContainText('Not T24/T90 forecasts');
+  await expect(page.getByText('OPTIONAL T24/T90 RESEARCH SNAPSHOTS')).toBeVisible();
+  const gameDayPrecedesResearch=await page.evaluate(()=>{
+    const slate=document.querySelector('[data-testid="existing-nfl-slate"]');
+    const research=[...document.querySelectorAll('p')].find(el=>el.textContent==='OPTIONAL T24/T90 RESEARCH SNAPSHOTS');
+    return Boolean(slate&&research&&(slate.compareDocumentPosition(research)&Node.DOCUMENT_POSITION_FOLLOWING));
+  });
+  expect(gameDayPrecedesResearch).toBe(true);
   await expect(page.getByRole('region',{name:'Quick player projections'})).toBeVisible();
   await expect(page.getByTestId('nfl-coverage')).toContainText('FORECAST COVERAGE');
   await expect(page.getByTestId('nfl-coverage')).toContainText('Last pipeline check:');
@@ -65,7 +72,9 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   await expect(pick.getByTestId('system-target')).toContainText('1+ RECEPTIONS');
   await page.locator('#nfl-scroll-area').evaluate(el=>{const game=el.querySelector('[data-testid="nfl-game"]')!;el.scrollTop+=game.getBoundingClientRect().top-el.getBoundingClientRect().top;});await page.screenshot({path:`${screen()}/nfl-nyj-chi-expanded-360.png`});
   await pick.getByText('VIEW DETAILS ▾',{exact:true}).click();await expect(pick.getByTestId('system-details')).toHaveAttribute('open','');await expect(pick.getByText('Expected opportunities',{exact:true})).toBeVisible();
-  await page.getByRole('button',{name:'BETTABLE NOW',exact:true}).click();await expect(game).toContainText('0 BETTABLE NOW');await game.getByRole('button').filter({has:page.locator('h2')}).click();
+  await page.getByRole('button',{name:'BETTABLE NOW',exact:true}).click();
+  await expect(page.getByTestId('existing-nfl-game')).toHaveCount(3);
+  await expect(game).toContainText('0 BETTABLE NOW');await game.getByRole('button').filter({has:page.locator('h2')}).click();
   await expect(page.getByText("No current sportsbook market matches this game's system picks.",{exact:true})).toBeVisible();await expect(page.getByText('LINE MAY HAVE MOVED',{exact:false})).toBeVisible();
   await page.locator('#nfl-scroll-area').evaluate(el=>el.scrollTop=0);await page.screenshot({path:`${screen()}/nfl-bettable-now-360.png`});
   await page.getByRole('button',{name:'MODEL BOARD',exact:true}).click();await expect(game).toContainText('286 player outcomes');await game.getByRole('button').filter({has:page.locator('h2')}).click();
@@ -99,7 +108,7 @@ test('polling refreshes; older publications and upstream errors clear previous g
   await page.clock.fastForward(30000);await expect.poll(()=>check.requests.length).toBeGreaterThanOrEqual(2);
   current.status.last_shadow_run_utc='2026-10-04T15:00:00Z';await page.getByRole('button',{name:'Refresh NFL forecasts'}).click();await expect(page.getByRole('alert')).toContainText('predates the last accepted artifact');
   await page.route('**/api/nfl-phase1-predictions?*',route=>route.fulfill({status:502,json:{error:'NFL Phase 1 upstream unavailable',details:'GitHub HTTP 503'}}));
-  await page.getByRole('button',{name:'Refresh NFL forecasts'}).click();await expect(page.getByRole('alert')).toContainText('GitHub HTTP 503');await expect(page.getByTestId('nfl-game')).toHaveCount(0);expect(check.legacy()).toBeGreaterThan(0);
+  await page.getByRole('button',{name:'Refresh NFL forecasts'}).click();await expect(page.getByRole('alert')).toContainText('GitHub HTTP 503');await expect(page.getByTestId('nfl-game')).toHaveCount(0);await expect(page.getByTestId('existing-nfl-game')).toHaveCount(3);expect(check.legacy()).toBeGreaterThan(0);
 });
 test('360px filters/search discover uncapped targets; executable Geno target survives outside default ten',async({page})=>{
   let current=structuredClone(source);await setup(page,()=>current);
