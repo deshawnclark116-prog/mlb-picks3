@@ -1,6 +1,7 @@
 import React from 'react';
 import {teamBrand} from '../nfl/teamBrand';
 import type {ExistingNflGame} from '../nfl/existing';
+import {rankedExistingCardProjections} from '../nfl/existingCardRank';
 import {EXPORT_WIDTH,EXPORT_HEIGHT} from '../lib/exportImage';
 type PosterProps={game:ExistingNflGame;week:number;mode:'system'|'bettable';cardRef?:React.Ref<HTMLDivElement>};
 const green='#79FF48',muted='#9FABB0';
@@ -9,7 +10,7 @@ const fmt=(n:number)=>n.toLocaleString('en-US',{maximumFractionDigits:1});
 export default function NflExistingShareCard({game,week,mode,cardRef}:PosterProps){
  const away=teamBrand(game.away||game.teams[0]),home=teamBrand(game.home||game.teams[1]);
  const kickoff=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',timeZoneName:'short'}).format(new Date(game.kickoff_utc)).toUpperCase();
- const core=game.projections.slice(0,6);
+ const core=rankedExistingCardProjections(game.projections,6);
  return <div ref={cardRef} data-testid="game-share-poster" style={{width:EXPORT_WIDTH,height:EXPORT_HEIGHT,padding:44,boxSizing:'border-box',fontFamily:'Arial, Helvetica, sans-serif',background:'#090D10',color:'#F0F4F5',position:'relative',overflow:'hidden'}}>
    <div style={{position:'absolute',inset:0,pointerEvents:'none',background:`radial-gradient(ellipse at 10% 20%, ${away.primary}35, transparent 42%), radial-gradient(ellipse at 85% 18%, ${home.primary}30, transparent 48%)`}}/>
    <div style={{position:'relative',display:'flex',justifyContent:'space-between',alignItems:'center',borderBottom:'1px solid #334045',paddingBottom:24}}>
@@ -23,24 +24,27 @@ export default function NflExistingShareCard({game,week,mode,cardRef}:PosterProp
     <div style={{marginTop:18,fontSize:20,color:'#C3CED3'}}>{kickoff}</div>
    </div>
    <div style={{position:'relative',padding:'24px 0',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-     <strong style={{fontSize:30}}>{mode==='system'?'MODEL PLAYER PROJECTIONS':'BETTABLE NOW'}</strong>
-     <span style={{fontSize:16,color:muted}}>{mode==='system'?`${game.projections.length} MODEL STATS`:'0 VERIFIED MARKETS'}</span>
+     <strong style={{fontSize:30}}>{mode==='system'?'TOP WORKLOAD-STABILITY PROJECTIONS':'BETTABLE NOW'}</strong>
+     <span style={{fontSize:16,color:muted}}>{mode==='system'?`${core.length} OF ${game.projections.length} RANKED`:'0 VERIFIED MARKETS'}</span>
    </div>
    {mode==='system'?<div data-testid="existing-poster-projections" style={{position:'relative',display:'grid',gridTemplateColumns:'1fr 1fr',gridTemplateRows:'repeat(3, 168px)',gap:12}}>
       {core.map(p=><div key={p.team+'|'+p.player_id+'|'+p.market} style={{border:'1px solid #31413C',borderRadius:16,background:'#192326',padding:18,overflow:'hidden'}}>
-       <div style={{fontSize:15,color:muted}}>{p.team} · {p.market==='rushing_yards'?'RUSHING YARDS':'RECEIVING YARDS'}</div>
+       <div style={{display:'flex',justifyContent:'space-between',gap:8,fontSize:14,color:muted}}>
+         <span>{p.team} · {p.market==='rushing_yards'?'RUSH YDS':'REC YDS'}</span>
+         <span style={{fontWeight:800,color:p.confidence==='HIGH'?green:'#DAE6DC'}}>{p.confidence} STABILITY</span>
+       </div>
        <div style={{fontSize:23,fontWeight:800,textTransform:'uppercase',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis',marginTop:12}}>{p.player}</div>
        <div style={{fontSize:45,fontWeight:900,color:green,marginTop:12}}>{fmt(p.projected_median)} <span style={{fontSize:18}}>YDS</span></div>
-       <div style={{fontSize:14,color:muted,marginTop:4}}>Model range {fmt(p.projected_low)}–{fmt(p.projected_high)}</div>
+       <div style={{fontSize:13,color:muted,marginTop:4}}>Model range {fmt(p.projected_low)}–{fmt(p.projected_high)} · {p.games_played??'N/A'} past games</div>
       </div>)}
-      {!core.length&&<div style={{gridColumn:'1 / -1',padding:40,background:'#192326',borderRadius:18,fontSize:32}}>No qualifying numerical player projections for this matchup.</div>}
+      {!core.length&&<div style={{gridColumn:'1 / -1',padding:40,background:'#192326',borderRadius:18,fontSize:32}}>No source-graded workload-stability projections for this matchup. No confident picks invented.</div>}
     </div>:<div data-testid="existing-poster-no-lines" style={{position:'relative',background:'#192326',borderRadius:18,border:'1px solid #31413C',height:520,padding:55,display:'flex',flexDirection:'column',justifyContent:'center'}}>
       <h2 style={{fontSize:47,lineHeight:1.1,margin:0}}>NO VERIFIED SPORTSBOOK MARKETS</h2>
       <p style={{fontSize:24,color:'#A8B6BE',lineHeight:1.5}}>This model supplies real player yardage projections, not validated betting selections. No sportsbook line or odds have been verified for this export.</p>
     </div>}
    <footer style={{position:'absolute',bottom:38,left:44,right:44,borderTop:'1px solid #334045',paddingTop:22}}>
-     <p style={{fontSize:19,fontWeight:900,color:green,margin:'0 0 12px'}}>{mode==='system'?'NUMERICAL MODEL PROJECTIONS · NO SPORTSBOOK INPUTS':'NO VERIFIED EXECUTION · DO NOT PRESENT AS A BET'}</p>
-     <p style={{color:muted,fontSize:16,lineHeight:1.45}}>Existing weekly model · Numbers are model estimates, not guarantees, 65% targets or verified betting edges. Generated strictly from previously published game-day data.</p>
+     <p style={{fontSize:19,fontWeight:900,color:green,margin:'0 0 12px'}}>{mode==='system'?'RANKED BY SIMULATED WORKLOAD STABILITY · NO BOOK LINES':'NO VERIFIED EXECUTION · DO NOT PRESENT AS A BET'}</p>
+     <p style={{color:muted,fontSize:16,lineHeight:1.45}}>HIGH/MEDIUM/LOW reflects earlier simulation workload consistency, not likelihood of accurate yards. The context model can adjust yard estimates without recalibrating this grade. Not a validated betting edge.</p>
    </footer>
  </div>;
 }
