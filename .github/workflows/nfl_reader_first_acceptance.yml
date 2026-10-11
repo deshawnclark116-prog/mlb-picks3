@@ -13,6 +13,9 @@ on:
       - 'tests/nflCurrent.test.ts'
       - 'tests/nflExisting.test.ts'
       - 'src/nfl/existingCardRank.ts'
+      - 'src/nfl/verifiedMarkets.ts'
+      - 'tests/nflVerifiedMarkets.test.ts'
+      - 'src/components/NflExistingShareModal.tsx'
       - 'src/components/NflExistingShareCard.tsx'
       - 'tests/nflExistingCardRank.test.ts'
       - 'tests/nflReadable.test.ts'
@@ -41,7 +44,7 @@ jobs:
       - name: Existing NFL security, probability and delivery regressions
         run: npm test
       - name: Numeric projection clarity and no-fake-pick unit tests
-        run: node --import tsx --test tests/nflReadable.test.ts tests/nflExisting.test.ts tests/nflExistingCardRank.test.ts tests/nflCurrent.test.ts
+        run: node --import tsx --test tests/nflReadable.test.ts tests/nflExisting.test.ts tests/nflExistingCardRank.test.ts tests/nflVerifiedMarkets.test.ts tests/nflCurrent.test.ts
       - name: Install Chromium
         run: npx playwright install chromium
       - name: Real 360x800 NFL board and data failure browser acceptance
