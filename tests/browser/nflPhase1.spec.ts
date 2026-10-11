@@ -1,12 +1,18 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 const source=JSON.parse(readFileSync(new URL('../fixtures/nfl-nyj-chi-bettable.json',import.meta.url),'utf8'));
-async function setup(page:any,get=()=>structuredClone(source)) {
-  await page.clock.install({time:new Date('2026-10-04T17:00:00Z')});
+async function setup(page:any,get=()=>structuredClone(source),live=false) {
+  await page.clock.install({time:new Date(live?'2026-10-04T12:00:00Z':'2026-10-04T17:00:00Z')});
   let legacy=0;const requests:string[]=[];
   await page.route('**/api/**',async(route:any)=>{
     const url=route.request().url();
     if(url.includes('/api/nfl-phase1-predictions')){requests.push(url);await route.fulfill({json:get(),headers:{'X-Forecast-Retrieved-At':'2026-10-04T17:00:00Z'}});}
+    else if(url.includes('/api/nfl-live-markets')) {
+      await route.fulfill({json:live?{status:'VERIFIED_QUOTES',checked_at_utc:'2026-10-04T11:58:00Z',
+        lines:[{player:'Early Runner',market:'rushing_yards',line:60.5,over_price:-110,under_price:-105,
+          book:'fanduel',market_updated_at_utc:'2026-10-04T11:57:00Z',home:'JAX',away:'PHI',
+          kickoff_utc:'2026-10-04T13:30:00Z'}]}:{status:'NO_VERIFIED_PLAYER_MARKETS',lines:[]}});
+    }
     else if(url.includes('/api/nfl-predictions')) {
       legacy++;
       await route.fulfill({json:{season:2026,week:4,generated_at_utc:'2026-10-03T23:00:00Z',
@@ -28,7 +34,7 @@ async function setup(page:any,get=()=>structuredClone(source)) {
 }
 const screen=()=>process.env.NFL_SCREENSHOT_DIR || '/workspace/scratch';
 test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit universe and genuine empty execution screenshots',async({page})=>{
-  const check=await setup(page);
+  const check=await setup(page,()=>structuredClone(source),true);
   await expect(page.getByRole('button',{name:'SYSTEM PICKS',exact:true})).toHaveAttribute('aria-pressed','true');
   await expect(page.getByTestId('today-best')).toHaveCount(5);
   // Original user-approved layout: Today's Best first, the existing
@@ -59,6 +65,7 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   await expect(page.getByTestId('game-share-poster')).toBeVisible();
   await expect(page.getByTestId('existing-poster-projections')).toContainText('68');
   await expect(page.getByTestId('existing-poster-projections')).toContainText('HIGH STABILITY');
+  await expect(page.getByTestId('existing-poster-projections')).toContainText('FanDuel OVER 60.5');
   // Save the *actual generated image*, not just the preview. Inspect the PNG
   // header for the exact 1080×1350 dimensions from Codex's original design.
   await expect(page.getByRole('button',{name:'SAVE PNG'})).toBeEnabled({timeout:20000});
@@ -72,7 +79,7 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   expect(png.readUInt32BE(20)).toBe(1350);
   await expect(page.getByRole('button',{name:'SYSTEM CARD'})).toHaveAttribute('aria-pressed','true');
   await page.getByRole('button',{name:'BETTABLE CARD'}).click();
-  await expect(page.getByTestId('existing-poster-no-lines')).toContainText('NO VERIFIED SPORTSBOOK MARKETS');
+  await expect(page.getByTestId('existing-poster-projections')).toContainText('OVER 60.5');
   await page.getByRole('button',{name:'SYSTEM CARD'}).click();
   await expect(page.getByTestId('existing-poster-projections')).toContainText('Early Runner');
   await page.getByRole('button',{name:'CLOSE',exact:true}).click();
@@ -103,6 +110,17 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   await expect(page.getByTestId('forecast-row')).toHaveCount(286);expect(check.legacy()).toBeGreaterThan(0);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
 });
+test('no actual sportsbook market disables export instead of showing six fake top picks',async({page})=>{
+  await setup(page);
+  await page.getByRole('button',{name:'Create share card for PHI vs JAX'}).click();
+  await expect(page.getByTestId('verified-nfl-quote-status')).toContainText('0 verified model-matchable markets');
+  await expect(page.getByTestId('existing-poster-no-lines')).toContainText('NO VERIFIED BOOK-LISTED MODEL SELECTIONS');
+  await expect(page.getByRole('button',{name:'SAVE PNG'})).toBeDisabled();
+  await expect(page.getByRole('button',{name:'SHARE IMAGE'})).toBeDisabled();
+  await page.getByRole('button',{name:'BETTABLE CARD'}).click();
+  await expect(page.getByRole('button',{name:'SAVE PNG'})).toBeDisabled();
+});
+
 test('deleting all sportsbook data preserves system targets and filtering; exact execution stays secondary',async({page})=>{
   let current=structuredClone(source);delete current.lines;delete current.lines_meta;
   await setup(page,()=>current);await page.getByTestId('nfl-game').getByRole('button').filter({has:page.locator('h2')}).click();
