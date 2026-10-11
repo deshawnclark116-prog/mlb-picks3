@@ -13,6 +13,22 @@ async function setup(page:any,get=()=>structuredClone(source),live=false) {
           book:'fanduel',market_updated_at_utc:'2026-10-04T11:57:00Z',home:'JAX',away:'PHI',
           kickoff_utc:'2026-10-04T13:30:00Z'}]}:{status:'NO_VERIFIED_PLAYER_MARKETS',lines:[]}});
     }
+    else if(url.includes('/api/nfl-role-snapshot')) {
+      await route.fulfill({json:live?{
+        schema:'nfl-role-evidence-coverage-v1',status:'PREGAME_RESEARCH_ROLE_SNAPSHOT',
+        season:2026,week:4,forecast_generated_at_utc:'2026-10-03T23:00:00Z',
+        captured_at_utc:'2026-10-04T11:58:00Z',
+        starter_status_verified:false,is_betting_probability_calibrated:false,
+        player_market_evidence:[{
+          player:'Early Runner',team:'JAX',opponent:'PHI',market:'rushing_yards',
+          kickoff_utc:'2026-10-04T13:30:00Z',published_model_median:68,
+          published_model_source:'existing_v2',roster_status:'ROSTER_LISTED_NOT_STARTER_VERIFIED',
+          observed_stat_rows:3,recent_opportunities_per_observed_game:12,
+          recent_team_share:.62,role_evidence_complete_for_showcase:true,
+          has_verified_starting_role:false,has_calibrated_book_bet_probability:false,warnings:[]
+        }]
+      }:{status:'ROLE_EVIDENCE_UNAVAILABLE',player_market_evidence:[]}});
+    }
     else if(url.includes('/api/nfl-predictions')) {
       legacy++;
       await route.fulfill({json:{season:2026,week:4,generated_at_utc:'2026-10-03T23:00:00Z',
@@ -67,7 +83,7 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   await expect(page.getByRole('heading',{name:'CREATE GAME CARD'})).toBeVisible();
   await expect(page.getByTestId('game-share-poster')).toBeVisible();
   await expect(page.getByTestId('existing-poster-projections')).toContainText('68');
-  await expect(page.getByTestId('existing-poster-projections')).toContainText('HIGH STABILITY');
+  await expect(page.getByTestId('existing-poster-projections')).toContainText('ROLE HISTORY VERIFIED');
   await expect(page.getByTestId('existing-poster-projections')).toContainText('FanDuel OVER 60.5');
   // Save the *actual generated image*, not just the preview. Inspect the PNG
   // header for the exact 1080×1350 dimensions from Codex's original design.
@@ -82,7 +98,8 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   expect(png.readUInt32BE(20)).toBe(1350);
   await expect(page.getByRole('button',{name:'SYSTEM CARD'})).toHaveAttribute('aria-pressed','true');
   await page.getByRole('button',{name:'BETTABLE CARD'}).click();
-  await expect(page.getByTestId('existing-poster-projections')).toContainText('OVER 60.5');
+  await expect(page.getByTestId('existing-poster-no-lines')).toContainText('NO CALIBRATED BETTING SELECTIONS');
+  await expect(page.getByRole('button',{name:'SAVE PNG'})).toBeDisabled();
   await page.getByRole('button',{name:'SYSTEM CARD'}).click();
   await expect(page.getByTestId('existing-poster-projections')).toContainText('Early Runner');
   await page.getByRole('button',{name:'CLOSE',exact:true}).click();
@@ -116,8 +133,8 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
 test('no actual sportsbook market disables export instead of showing six fake top picks',async({page})=>{
   await setup(page);
   await page.getByRole('button',{name:'Create share card for PHI vs JAX'}).click();
-  await expect(page.getByTestId('verified-nfl-quote-status')).toContainText('0 verified model-matchable markets');
-  await expect(page.getByTestId('existing-poster-no-lines')).toContainText('NO VERIFIED BOOK-LISTED MODEL SELECTIONS');
+  await expect(page.getByTestId('verified-nfl-quote-status')).toContainText('0 market-matched lines');
+  await expect(page.getByTestId('existing-poster-no-lines')).toContainText('NO ROLE-SUPPORTED FEATURED PROJECTIONS');
   await expect(page.getByRole('button',{name:'SAVE PNG'})).toBeDisabled();
   await expect(page.getByRole('button',{name:'SHARE IMAGE'})).toBeDisabled();
   await page.getByRole('button',{name:'BETTABLE CARD'}).click();
