@@ -1,13 +1,16 @@
 name: NFL reader-first forecast delivery UI acceptance
 on:
   push:
-    branches: [fix/nfl-reader-first-verified-projections]
+    branches: [fix/nfl-reader-first-verified-projections, fix/nfl-authoritative-github-serving-game-schedule]
   pull_request:
     paths:
       - 'src/components/NflTodayScreen.tsx'
       - 'src/nfl/readable.ts'
       - 'src/nfl/existing.ts'
       - 'src/components/ExistingNflProjectionSlate.tsx'
+      - 'server/nflCurrent.ts'
+      - 'server.ts'
+      - 'tests/nflCurrent.test.ts'
       - 'tests/nflExisting.test.ts'
       - 'tests/nflReadable.test.ts'
       - 'tests/browser/nflPhase1.spec.ts'
@@ -35,7 +38,7 @@ jobs:
       - name: Existing NFL security, probability and delivery regressions
         run: npm test
       - name: Numeric projection clarity and no-fake-pick unit tests
-        run: node --import tsx --test tests/nflReadable.test.ts tests/nflExisting.test.ts
+        run: node --import tsx --test tests/nflReadable.test.ts tests/nflExisting.test.ts tests/nflCurrent.test.ts
       - name: Install Chromium
         run: npx playwright install chromium
       - name: Real 360x800 NFL board and data failure browser acceptance
