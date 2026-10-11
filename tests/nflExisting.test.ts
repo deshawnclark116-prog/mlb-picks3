@@ -27,9 +27,7 @@ test('Older weekly projections restore multiple actual game matchups independent
 test('Does not repurpose scores, TD probabilities or sportsbook odds as median projections',()=>{
   const d=fixture();
   d.picks.push({market:'rushing_yards',player:'Fake',player_id:'z',team:'NYJ',opponent:'CLE',kickoff_utc:'2026-10-11T17:00:00Z',model_prob:.9} as any);
-  const s=parseExistingNfl(d,now);
-  assert.equal(s.projections,3);
-  assert(s.games.every(g=>g.projections.every(p=>Number.isFinite(p.projected_median))));
+  assert.throws(()=>parseExistingNfl(d,now),/invalid yardage row/);
 });
 test('Expired data, future timestamps and conflicting week are rejected rather than mixing seasons',()=>{
   assert.throws(()=>parseExistingNfl(fixture(),now,{season:2026,week:4}),/differs/);
