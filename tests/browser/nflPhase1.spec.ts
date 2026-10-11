@@ -38,7 +38,7 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   await expect(page.getByTestId('existing-nfl-projection')).toHaveCount(0);
   await expect(page.getByTestId('existing-nfl-expanded')).toHaveCount(0);
   await expect(page.getByTestId('existing-nfl-slate')).toContainText('JAX vs PHI');
-  await expect(page.getByTestId('existing-nfl-slate')).toContainText('NE vs LV');
+  await expect(page.getByTestId('existing-nfl-slate')).toContainText('LV vs NE');
   await expect(page.getByTestId('existing-nfl-slate')).not.toContainText('NYJ vs CHI');
   await expect(page.getByTestId('existing-nfl-preview')).toContainText('Early Runner');
   await expect(page.getByTestId('existing-nfl-preview')).toContainText('68');
@@ -116,7 +116,7 @@ test('polling refreshes; older publications and upstream errors clear previous g
   await page.clock.fastForward(30000);await expect.poll(()=>check.requests.length).toBeGreaterThanOrEqual(2);
   current.status.last_shadow_run_utc='2026-10-04T15:00:00Z';await page.getByRole('button',{name:'Refresh NFL forecasts'}).click();await expect(page.getByRole('alert')).toContainText('predates the last accepted artifact');
   await page.route('**/api/nfl-phase1-predictions?*',route=>route.fulfill({status:502,json:{error:'NFL Phase 1 upstream unavailable',details:'GitHub HTTP 503'}}));
-  await page.getByRole('button',{name:'Refresh NFL forecasts'}).click();await expect(page.getByRole('alert')).toContainText('GitHub HTTP 503');await expect(page.getByTestId('nfl-game')).toHaveCount(0);await expect(page.getByTestId('existing-nfl-game')).toHaveCount(2);expect(check.legacy()).toBeGreaterThan(0);
+  await page.getByRole('button',{name:'Refresh NFL forecasts'}).click();await expect(page.getByRole('alert')).toContainText('GitHub HTTP 503');await expect(page.getByTestId('nfl-game')).toHaveCount(0);await expect(page.getByTestId('existing-nfl-game')).toHaveCount(3);expect(check.legacy()).toBeGreaterThan(0);
 });
 test('360px filters/search discover uncapped targets; executable Geno target survives outside default ten',async({page})=>{
   let current=structuredClone(source);await setup(page,()=>current);
