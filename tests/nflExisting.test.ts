@@ -45,7 +45,7 @@ test('Rejects fake yard values, contradictory ranges, duplicate outcome or forec
 });
 test('Prior local calendar game days are excluded, not served as current games',()=>{
   const doc=fixture();
-  doc.picks[0].kickoff_utc='2026-10-10T17:00:00Z';
+  doc.picks[0].kickoff_utc='2026-10-09T17:00:00Z';
   const s=parseExistingNfl(doc,now);
   assert.equal(s.projections,2);
 });
