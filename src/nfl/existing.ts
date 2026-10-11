@@ -42,7 +42,9 @@ export function parseExistingNfl(raw:unknown,now=new Date(),expected?:{season:nu
   const games=new Map<string,ExistingNflGame>();
   const dedupe=new Set<string>();
   for(const row of doc.picks){
-    if(!record(row)||!markets.includes(row.market as ExistingYardMarket))continue;
+    // Keep raw values dynamically validated below; the type predicate's unknown
+    // index signature would otherwise erase TypeScript narrowing for fields.
+    if(!row||typeof row!=='object'||Array.isArray(row)||!markets.includes(row.market as ExistingYardMarket))continue;
     if(!team(row.team)||!team(row.opponent)||row.team===row.opponent||
        !time(row.kickoff_utc)||typeof row.player!=='string'||!row.player.trim()||
        !finite(row.projected_median)||!finite(row.projected_mean)||!finite(row.projected_low)||!finite(row.projected_high)||
