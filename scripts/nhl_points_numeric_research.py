@@ -108,10 +108,13 @@ def forward_grade(rows: list[dict], start_season=2025, end_season=2026):
     by_player = defaultdict(list)
     errors = defaultdict(list)
     examples = []
+    by_date = defaultdict(list)
+    for row in rows:
+        by_date[row["game_date"]].append(row)
     # Enumerate strictly by game_date. Same-day multiple matches must not
     # provide one game's result to another; snapshot history before date.
-    for date in sorted({r["game_date"] for r in rows}):
-        batch = [r for r in rows if r["game_date"] == date]
+    for date in sorted(by_date):
+        batch = by_date[date]
         for r in batch:
             if not start_season <= r["season"] <= end_season:
                 continue
@@ -185,11 +188,6 @@ def future_board(history: list[dict], upstream: dict, as_of: datetime, *, publis
             # for a game already underway, even if its features predate it.
             continue
         date = as_date(item["game_date"])
-        if date != kickoff.astimezone(timezone.utc).strftime("%Y-%m-%d"):
-            # NHL night UTC date can cross midnight; use authoritative
-            # season-date supplied by the upstream model for lookup,
-            # don't silently guess by UTC.
-            pass
         key = (pid, item["team"], item["opponent"], item["game_date"])
         if key in seen:
             # Two binary models for the same player do not become two
