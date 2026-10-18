@@ -64,10 +64,37 @@ test('duplicate original V2 horizon/player forecast is quarantined',()=>{
  assert.throws(()=>reduceFrozenNhlShots(d,'2026-10-18'),/duplicate player\/game|DUPLICATE_FROZEN/i);
 });
 
-test('wrong NHL matchup identity and kickoff may not inherit real projections',()=>{
+test('independent frozen shot-count matchup exists even when current points model offers no pick',()=>{
  const d=reduceFrozenNhlShots(src(),'2026-10-18') as unknown as NhlSogResearch;
- assert.equal(addTrueNhlShotCounts([{...baseGame,when:'2026-10-19T22:00:00Z'}],d)[0].picks.length,1);
- assert.equal(addTrueNhlShotCounts([{...baseGame,label:'BOS vs CBJ'}],d)[0].picks.length,1);
+ const games=addTrueNhlShotCounts([],d);
+ assert.equal(games.length,1);
+ assert.equal(games[0].label,'MIN vs CBJ');
+ assert.equal(games[0].when,'2026-10-18T22:00:00Z');
+ assert.equal(games[0].picks[0].market,'shots_on_goal');
+ assert.equal(games[0].picks[0].prediction,3.2);
+ assert.equal(games[0].picks[0].modelProbability,null);
+ assert.match(games[0].sourceLabel,/FROZEN V2 SOG COUNT/);
+});
+
+test('wrong point-classifier matchup or kickoff cannot inherit count forecasts',()=>{
+ const d=reduceFrozenNhlShots(src(),'2026-10-18') as unknown as NhlSogResearch;
+ for(const broken of [{...baseGame,when:'2026-10-19T22:00:00Z'},
+                      {...baseGame,label:'BOS vs CBJ'}]){
+   const result=addTrueNhlShotCounts([broken],d);
+   assert.equal(result.length,2);
+   assert.equal(result.find(g=>g.id===broken.id)!.picks.length,1);
+   const frozen=result.find(g=>g.id.startsWith('NHL-FROZEN-COUNT-'))!;
+   assert.equal(frozen.label,'MIN vs CBJ');
+   assert.equal(frozen.picks[0].prediction,3.2);
+ }
+});
+
+test('conflicting identity in frozen game can never manufacture a blended matchup',()=>{
+ const d=reduceFrozenNhlShots(src(),'2026-10-18') as unknown as NhlSogResearch;
+ d.projections.push({...d.projections[0],player_id:'other',player:'Other',
+   team:'BOS',opponent:'MTL'});
+ d.projected_count=2;
+ assert.throws(()=>addTrueNhlShotCounts([],d),/NHL_SOURCE_GAME_ID_TEAM_OR_KICKOFF_CONFLICT/);
 });
 
 test('server read-only research endpoint uses source frozen snapshot and no market fallback',async()=>{
