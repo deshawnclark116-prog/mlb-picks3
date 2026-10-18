@@ -11,12 +11,21 @@ function matches(p:ExistingYardProjection,search:string,family:string){
     (family==='ALL'||(family==='RUSH'&&p.market==='rushing_yards')||(family==='REC'&&p.market==='receiving_yards'));
 }
 function Projection({p}:{p:ExistingYardProjection}){
-  return <div data-testid="existing-nfl-projection" className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-[#303030] py-3 last:border-b-0">
-    <div className="min-w-0"><p className="truncate text-xs font-semibold capitalize text-white">{p.player} · {p.team}</p>
-      <p className="mt-1 text-[10px] text-gray-400">{label(p.market)} · {p.model_source}</p>
-      <p className="mt-1 text-[10px] text-gray-400">Model low–high {n(p.projected_low)}–{n(p.projected_high)} yds · Not verified sportsbook odds</p>
-    </div><div className="text-right"><p className="text-xl font-black text-[#00FF41]">{n(p.projected_median)}</p><p className="text-[9px] text-gray-400">PROJECTED YDS</p></div>
-  </div>;
+  return <article data-testid="existing-nfl-projection" className="min-w-0 rounded-2xl border border-[#292929] bg-[#1C1C1C] p-4">
+    <h3 className="break-words text-base font-bold capitalize text-white">{p.player}</h3>
+    <p className="mt-1 text-[11px] text-gray-400">{p.team} · {label(p.market)}</p>
+    <div data-testid="existing-nfl-median" className="my-4 rounded-xl border border-[#00FF41]/25 bg-[#0E1D14] p-3">
+      <p className="text-[10px] font-bold tracking-wide text-gray-300">PREDICTED STAT · MODEL MEDIAN</p>
+      <p className="mt-1 text-3xl font-black text-[#00FF41]">{n(p.projected_median)} yds</p>
+      <p className="mt-1 text-xs text-gray-400">Mean: {n(p.projected_mean)} yds · Model range: {n(p.projected_low)}–{n(p.projected_high)} yds</p>
+    </div>
+    <p className="text-[11px] text-gray-400">WEEKLY MODEL · {p.model_source} · separate from frozen V2 T24/T90 forecasts</p>
+    <p className="mt-2 text-[11px] text-gray-400">A numerical projection is not an offered sportsbook line. {p.confidence?'Original workload stability: '+p.confidence+'. ':''}No calibrated hit probability is supplied here.</p>
+    <details className="mt-3 border-t border-[#303030] pt-2">
+      <summary className="flex min-h-11 items-center text-[11px] font-bold text-gray-400">VIEW DETAILS ▾</summary>
+      <p className="pb-3 text-[11px] text-gray-400">Historical games considered: {p.games_played??'unknown'} · Weekly data source is independent of the shadow V2 simulation.</p>
+    </details>
+  </article>;
 }
 type Props={view:Phase1View|null;search:string;family:string;visible:boolean;horizon:Horizon;mode:string};
 export default function ExistingNflProjectionSlate({view,search,family,visible,horizon,mode}:Props){
@@ -78,7 +87,7 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
                 <h2 className="text-base font-bold text-white">{existingMatchup(g)}</h2>
                 <span className="text-[11px] text-gray-500">{formatET(g.kickoff_utc)}</span>
               </div>
-              <p className="mt-2 text-[10px] font-bold text-gray-400">{g.projections.length} PLAYER PROJECTIONS · EXISTING MODEL</p>
+              <p className="mt-2 text-[10px] font-bold text-gray-400">{g.projections.length} PLAYER OUTCOMES · WEEKLY MODEL</p>
               {preview&&<p data-testid="existing-nfl-preview" className="mt-2 truncate text-[11px] text-gray-300">MODEL MEDIAN: <span className="capitalize text-white">{preview.player}</span> · <span className="font-black text-[#00FF41]">{n(preview.projected_median)} {label(preview.market)}</span></p>}
               {!preview&&<p role="status" className="mt-1 text-[11px] text-amber-200">{g.projections.length===0?'No eligible player projections for this matchup':'No matching projected stats'}</p>}
               {started&&<p className="mt-1 text-[10px] text-gray-500">Kickoff passed · archived pregame projections</p>}
@@ -90,9 +99,9 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
             <Image size={18}/>
           </button>
         </div>
-        {opened&&<div id={`existing-game-${g.id}`} data-testid="existing-nfl-expanded" className="space-y-1 border-t border-[#292929] p-3">
+        {opened&&<div id={`existing-game-${g.id}`} data-testid="existing-nfl-expanded" className="space-y-3 border-t border-[#292929] p-3">
           <p className="text-[11px] text-gray-400">Numerical weekly projections, not 65%+ system targets or verified sportsbook bets. {mode==='BETTABLE NOW'?'No verified book lines supplied.':''}</p>
-          {g.shown.length>0?<div>{g.shown.map(p=><Projection key={p.player_id+'|'+p.player+'|'+p.team+'|'+p.market} p={p}/>)}</div>
+          {g.shown.length>0?<div className="space-y-3">{g.shown.map(p=><Projection key={p.player_id+'|'+p.player+'|'+p.team+'|'+p.market} p={p}/>)}</div>
           :<p className="py-2 text-xs text-gray-400">No qualifying numerical projections available for this game and filter.</p>}
         </div>}
       </section>;
