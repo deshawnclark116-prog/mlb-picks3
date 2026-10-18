@@ -1,0 +1,34 @@
+name: CFB first-pregame player-stat truth audit
+on:
+  pull_request:
+    paths:
+      - research/cfb_firstseen_2026-10-17_backtest.json
+      - research/CFB_WEEK7_FIRSTSEEN_BACKTEST_2026-10-17.md
+      - tests/cfbFirstseenBacktest.test.ts
+      - .github/workflows/cfb_firstseen_backtest.yml
+  push:
+    branches: [main]
+    paths:
+      - research/cfb_firstseen_2026-10-17_backtest.json
+      - research/CFB_WEEK7_FIRSTSEEN_BACKTEST_2026-10-17.md
+      - tests/cfbFirstseenBacktest.test.ts
+      - .github/workflows/cfb_firstseen_backtest.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  verify-first-seen-vs-official-finals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Recompute the audited individual CFB error and threshold grade totals
+        run: node --import tsx --test tests/cfbFirstseenBacktest.test.ts
+      - name: Ensure first-pregame observation did not mutate any model
+        run: |
+          git diff --exit-code -- src/nfl src/components/CfbTodayScreen.tsx server.ts
