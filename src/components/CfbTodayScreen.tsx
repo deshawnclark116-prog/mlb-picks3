@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useRef } from "react";
+import UnifiedSportGameCards, {type UnifiedGame} from './UnifiedSportGameCards';
 import { motion, AnimatePresence } from "motion/react";
 import { TrendingUp, RefreshCw, AlertTriangle, Search, ChevronDown, ChevronUp } from "lucide-react";
 import { CfbPrediction } from "../types";
@@ -184,6 +185,24 @@ export default function CfbTodayScreen({
   });
 
   const gameGroups = groupPredictionsByGame(filteredPredictions);
+  const unifiedGames:UnifiedGame[]=gameGroups.map(g=>({
+      id:g.key,label:g.teamA+' vs '+g.teamB,when:g.kickoff_utc,
+      sourceLabel:'CFB CURRENT MODEL · FIXED-LINE CLASSIFIER',
+      subtitle:'2026 · WEEK '+g.week,
+      picks:g.predictions.map((p,i)=>({
+        id:getCfbPredictionKey(p)+'|'+i,player:p.player,team:p.team,
+        market:p.market,target:p.pick,
+        modelProbability:Number.isFinite(p.model_prob)?p.model_prob:null,
+        prediction:p.sim_median!=null&&Number.isFinite(p.sim_median)?p.sim_median:
+          p.projected!=null&&Number.isFinite(p.projected)?p.projected:null,
+        predictionKind:p.sim_median!=null&&Number.isFinite(p.sim_median)?'median' as const:
+          p.projected!=null&&Number.isFinite(p.projected)?'mean' as const:'not_published' as const,
+        unit:p.market.includes('yards')?'yds':p.market.includes('touchdowns')?'TD':'',
+        confidence:p.confidence,source:p.model_source||'CFB current champion classifier',
+        detail:(p.games_played!=null?'Historical games: '+p.games_played+'. ':'')+
+          (p.validation_note||'Fixed threshold is not a player-stat median.')
+      }))
+    }));
 
   return (
     <div
@@ -371,139 +390,7 @@ export default function CfbTodayScreen({
                 ))}
               </section>
             )}
-            <AnimatePresence mode="popLayout">
-              {gameGroups.map((game, idx) => {
-                const isExpanded = expandedGameKey === game.key;
-                return (
-                  <motion.div
-                    id={`cfb-game-card-${idx}`}
-                    key={game.key}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.22, delay: Math.min(idx * 0.03, 0.3) }}
-                    onClick={() => toggleExpand(game.key)}
-                    className={`bg-[#141414] rounded-3xl p-5 border cursor-pointer select-none transition-all duration-200 flex flex-col ${
-                      isExpanded ? "border-[#00FF41]/40 shadow-[0_0_15px_rgba(0,255,65,0.04)] bg-[#171717]" : "border-[#1F1F1F] hover:border-gray-800"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <div className="flex-1 min-w-0">
-                        <h2 className="text-lg font-bold text-white leading-tight tracking-tight truncate">
-                          {game.teamA} <span className="text-gray-600 font-mono text-sm">vs</span> {game.teamB}
-                        </h2>
-                        <p className="text-[10px] text-gray-500 font-mono uppercase tracking-wider mt-1">
-                          {formatKickoff(game.kickoff_utc) || `${game.season} • Week ${game.week}`}
-                        </p>
-                      </div>
-                      <div className="flex flex-col items-end gap-1.5 shrink-0 pl-4">
-                        <span className="text-[9px] font-black px-2 py-0.5 rounded border tracking-wider font-mono uppercase bg-[#252525] text-gray-400 border-[#333]">
-                          {game.predictions.length} {game.predictions.length === 1 ? "PROP" : "PROPS"}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-center mt-3 pt-2 border-t border-[#1F1F1F]/50">
-                      {isExpanded ? (
-                        <ChevronUp className="w-4 h-4 text-gray-500" />
-                      ) : (
-                        <ChevronDown className="w-4 h-4 text-gray-500" />
-                      )}
-                    </div>
-
-                    <AnimatePresence initial={false}>
-                      {isExpanded && (
-                        <motion.div
-                          id={`cfb-game-props-expanded-${idx}`}
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                          transition={{ duration: 0.22, ease: "easeInOut" }}
-                          className="overflow-hidden mt-4 pt-4 border-t border-[#1F1F1F] w-full"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <div className="space-y-3 pb-1">
-                            {game.predictions.map((pred) => (
-                              <div
-                                key={getCfbPredictionKey(pred)}
-                                className="bg-[#1C1C1C] rounded-2xl p-4 border border-[#242424] space-y-3"
-                              >
-                                <div className="flex justify-between items-start">
-                                  <div className="min-w-0 flex-1 pr-2">
-                                    <h4 className="text-sm font-bold text-white tracking-tight truncate">
-                                      {pred.player}
-                                      <span className="text-gray-500 font-normal"> ({pred.team})</span>
-                                    </h4>
-                                    <p className="text-[10px] text-gray-400 mt-0.5">
-                                      {MARKET_LABELS[pred.market] || pred.market} •{" "}
-                                      <span className="text-white font-semibold italic">{pred.pick}</span>
-                                    </p>
-                                  </div>
-                                  {pred.confidence && (
-                                    <span
-                                      className={`text-[8px] uppercase font-mono font-bold tracking-wider px-1.5 py-0.5 border rounded shrink-0 ${
-                                        pred.confidence === "HIGH"
-                                          ? "bg-[#00FF41]/10 text-[#00FF41] border-[#00FF41]/20"
-                                          : pred.confidence === "MEDIUM"
-                                          ? "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
-                                          : "bg-zinc-500/10 text-zinc-400 border-zinc-500/20"
-                                      }`}
-                                    >
-                                      {pred.confidence}
-                                    </span>
-                                  )}
-                                </div>
-
-                                <div className="bg-[#141414] rounded-xl p-2.5 border border-[#222] flex flex-col items-center justify-center text-center shadow-inner">
-                                  <span className="text-[8px] font-semibold text-gray-500 uppercase tracking-widest font-mono mb-0.5">
-                                    Hit Probability
-                                  </span>
-                                  <span className="text-2xl font-black font-mono text-[#00FF41] tracking-tight drop-shadow-[0_0_8px_rgba(0,255,65,0.15)]">
-                                    {pred.prob_pct !== undefined && pred.prob_pct !== null ? `${pred.prob_pct.toFixed(1)}%` : "N/A"}
-                                  </span>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-2 text-center bg-[#141414] p-2 rounded-xl border border-[#222] text-[9.5px] font-mono">
-                                  <div>
-                                    <p className="text-[#555] font-bold uppercase leading-none mb-1">Line</p>
-                                    <p className="text-white font-bold text-xs">{pred.line}</p>
-                                  </div>
-                                  <div>
-                                    <p className="text-[#555] font-bold uppercase leading-none mb-1">Games Played</p>
-                                    <p className="text-white font-bold text-xs">
-                                      {pred.games_played !== undefined && pred.games_played !== null ? pred.games_played : "N/A"}
-                                    </p>
-                                  </div>
-                                </div>
-
-                                {pred.projected !== undefined && pred.projected !== null && (
-                                  <div className="grid grid-cols-2 gap-2 text-center bg-[#141414] p-2 rounded-xl border border-[#222] text-[9.5px] font-mono">
-                                    <div>
-                                      <p className="text-[#555] font-bold uppercase leading-none mb-1">Projected</p>
-                                      <p className="text-white font-bold text-xs">{pred.projected.toFixed(1)}</p>
-                                    </div>
-                                    <div>
-                                      <p className="text-[#555] font-bold uppercase leading-none mb-1">Sim Confidence</p>
-                                      <p className="text-white font-bold text-xs">{pred.sim_confidence ?? "N/A"}</p>
-                                    </div>
-                                  </div>
-                                )}
-
-                                {pred.validation_note && (
-                                  <p className="text-[9px] text-gray-600 font-mono leading-tight border-t border-[#1F1F1F] pt-2">
-                                    {pred.validation_note}
-                                  </p>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
+            <UnifiedSportGameCards sport="CFB" prefix="cfb-game-card-" games={unifiedGames}/>
           </div>
         )}
       </div>
