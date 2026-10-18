@@ -8,9 +8,11 @@
     "source_report_asof_utc": "2026-10-18T01:19:17+00:00",
     "outcome_completeness": "PARTIAL_GAME_FINALS_AS_OF_SOURCE_REPORT; several games still underway",
     "first_pregame_only": true,
-    "not_all_week_7": false,
     "not_betting_record": true,
-    "numerical_forecasts_are_uncalibrated_expected_means_NOT_medians": true
+    "numerical_forecasts_are_uncalibrated_expected_means_NOT_medians": true,
+    "one_et_kickoff_date_only": true,
+    "completed_games_only_per_source_snapshot": true,
+    "all_games_for_day_have_final_player_stats_verified": false
   },
   "provenance": {
     "source_repository": "deshawnclark116-prog/mlb-picks2",
@@ -72,10 +74,7 @@
     },
     "numerical": {
       "n": 72,
-      "mae": 15.759,
-      "bias_projected_minus_actual": 3.358,
-      "within_10_yards": null,
-      "errors_over_50_yards": null
+      "description": "Do not average errors across yards and TD counts: different units. Use numerical_by_market."
     },
     "numerical_by_market": {
       "passing_touchdowns": {
@@ -101,16 +100,17 @@
       "live_graded": 905,
       "all_markets_graded_since_week1": 905
     },
-    "source_ungraded_global": {
+    "global_ungraded_not_date_scoped": {
       "player_no_stat_line_after_final": 113,
       "UNRESOLVED_GAME": 48,
       "unfinished": 110
     },
-    "numerical_ungraded_global": {
+    "numeric_ungraded_not_date_scoped": {
       "game_not_final": 71,
       "game_unresolved": 14,
       "player_no_stat_line_after_final_NOT_ZERO": 16
-    }
+    },
+    "week7_total_live_graded_all_dates": 154
   },
   "limitations": [
     "Live thresholds are model-defined (69.5 rush yards, 1.5 passing TDs, 0.5 anytime TD), NOT verified market lines; do not claim sportsbook profit or executable wagers.",
