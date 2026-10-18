@@ -4,8 +4,10 @@ import { ChevronDown, RefreshCw, Image } from 'lucide-react';
 import NflShareModal from './NflShareModal';
 import ExistingNflProjectionSlate from './ExistingNflProjectionSlate';
 import { usePhase1 } from '../nfl/usePhase1';
+import { useNflRoleResearch } from '../nfl/useNflRoleResearch';
+import { teamKey, statKey, type NflRoleResearch, type RoleStat } from '../nfl/roleResearch';
 import { HORIZONS, OUTCOMES, altFor, formatET, groupGames, type ForecastRow, type Horizon, type Phase1View } from '../nfl/phase1';
-import { systemGames, todaysBest, executableGames, lineFreshness, matchesFilter, targetText, type Family, type SystemPick, type Execution } from '../nfl/bettable';
+import { systemGames, executableGames, systemCandidates, compareSystem, lineFreshness, matchesFilter, targetText, type Family, type SystemPick, type Execution } from '../nfl/bettable';
 import { publicationCoverage } from '../nfl/readable';
 const number=(n?:number|null)=>n==null?'—':new Intl.NumberFormat('en-US',{maximumFractionDigits:1}).format(n);
 const percent=(n?:number|null)=>n==null?'—':`${(n*100).toFixed(1)}%`;
@@ -21,7 +23,7 @@ function ModelAlt({row,view}:{row:ForecastRow;view:Phase1View}) {
     {alt?.method==='quantile_grid_99_conservative' && <p className="mt-1 text-[11px] text-gray-500">Conservative simulated quantile estimate · ~1 percentage point resolution</p>}
   </div>;
 }
-export function OutcomeCard({ row, view }: { row: ForecastRow; view: Phase1View }) {
+export function OutcomeCard({ row, view, roleStat }: { row: ForecastRow; view: Phase1View; roleStat?: RoleStat }) {
   const cells = [
     ['Expected average (mean)', number(row.mean)+unit(row.outcome)],
     ['Middle 50% (P25–P75)', `${number(row.p25)}–${number(row.p75)}${unit(row.outcome)}`],
@@ -33,9 +35,14 @@ export function OutcomeCard({ row, view }: { row: ForecastRow; view: Phase1View 
   return <article className="min-w-0 rounded-2xl border border-[#292929] bg-[#1C1C1C] p-4" data-testid="forecast-row">
     <div className="break-words text-base font-bold capitalize text-white">{row.player || 'Player name unavailable'}</div>
     <div className="mt-1 text-xs text-gray-400">{row.team}{row.pos ? ` · ${row.pos}` : ''} · {OUTCOMES[row.outcome] || row.outcome}</div>
+    {roleStat && <div data-testid="nfl-role-corrected-projection" className="mt-4 rounded-xl border border-amber-600/50 bg-amber-950/20 p-3">
+      <div className="text-[11px] font-bold tracking-wide text-amber-200">UPDATED ROLE-CONDITIONED MEDIAN · NOT A VERIFIED BET</div>
+      <div className="mt-1 text-3xl font-black text-amber-100">{number(roleStat.correctedMedian)}{unit(row.outcome)}</div>
+      <div className="mt-1 text-xs text-amber-200">Assumes {roleStat.starter} starts and plays the game. {roleStat.sourceTier==='OFFICIAL_TEAM_STARTER_SOURCE'?'Starting QB confirmed by team source.':roleStat.sourceTier==='NFL_NETWORK_EXPECTED_START_NOT_ACTIVE_VERIFIED'?'Expected to start; not certified active.':'ESPN QB1; not a confirmed starter.'} {roleStat.draws.toLocaleString()} full-game draws.</div>
+    </div>}
     <div className="my-4" data-testid="model-projection">
-      <div className="text-[11px] font-mono font-bold tracking-wide text-gray-400">MODEL PROJECTION · MEDIAN</div>
-      <div className="text-3xl font-black text-[#00FF41]">{number(row.median)}{unit(row.outcome)}</div>
+      <div className="text-[11px] font-mono font-bold tracking-wide text-gray-400">{roleStat?'ORIGINAL FROZEN V2 MEDIAN · BEFORE ROLE CORRECTION':'MODEL PROJECTION · MEDIAN'}</div>
+      <div className={roleStat?'text-xl font-semibold text-gray-400':'text-3xl font-black text-[#00FF41]'}>{number(row.median)}{unit(row.outcome)}</div>
     </div>
     <dl className="grid min-w-0 grid-cols-2 gap-x-3 gap-y-3">
       {cells.map(([label, value]) => <div key={label} className="min-w-0"><dt className="text-[11px] leading-4 text-gray-400">{label}</dt><dd className="mt-0.5 break-words text-sm font-semibold text-gray-100">{value}</dd></div>)}
@@ -77,8 +84,9 @@ export function SystemPickCard({pick,view,horizon,execution}:{pick:SystemPick;vi
   </article>;
 }
 type Mode='SYSTEM PICKS'|'BETTABLE NOW'|'MODEL BOARD';
-interface BoardProps {view:Phase1View|null;loading:boolean;error:string|null;retrievedAt:string|null;refresh:()=>Promise<void>}
-export function NflPhase1Board({view,loading,error,retrievedAt,refresh}:BoardProps) {
+interface BoardProps {view:Phase1View|null;loading:boolean;error:string|null;retrievedAt:string|null;refresh:()=>Promise<void>;
+  role?:NflRoleResearch|null;roleError?:string|null;roleLoading?:boolean}
+export function NflPhase1Board({view,loading,error,retrievedAt,refresh,role=null,roleError=null,roleLoading=false}:BoardProps) {
   const [share,setShare]=useState<{view:Phase1View;gameId:string;horizon:Horizon}|null>(null);
   const [mode,setMode]=useState<Mode>('SYSTEM PICKS'),[horizon,setHorizon]=useState<Horizon>('T90');
   const [family,setFamily]=useState<Family>('ALL'),[search,setSearch]=useState(''),[outcome,setOutcome]=useState('');
@@ -86,14 +94,22 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh}:BoardPro
   useEffect(()=>{const timer=setInterval(()=>setClock(Date.now()),30000);return()=>clearInterval(timer);},[]);
   const selected=view && !view.rows[horizon].length?view.defaultHorizon:horizon;
   useEffect(()=>{setExpanded(null);setLimit(40);},[mode,selected,view?.publicationMs]);
-  const systems=!view ? [] : mode==='BETTABLE NOW'
+  const isRoleBlocked=(row:ForecastRow)=>role?.blocked.has(teamKey(row.game_id,selected,row.team))===true;
+  // Do not promote original model targets on a team whose starting-QB
+  // probabilities contradict the published source. Show the corrected
+  // RESEARCH scenario on the numerical board instead, not a fabricated bet.
+  const systems=(!view ? [] : mode==='BETTABLE NOW'
     ? executableGames(view,selected,search,family)
-    : systemGames(view,selected,search,family).map(g=>({...g,picks:g.picks.map(p=>({...p,execution:null}))}));
+    : systemGames(view,selected,search,family).map(g=>({...g,picks:g.picks.map(p=>({...p,execution:null}))})))
+    .map(g=>({...g,picks:g.picks.filter(p=>!isRoleBlocked(p.row))}));
   const groups=view?groupGames(view,selected).map(game=>{
     const picks=systems.find(g=>g.game_id===game.game_id)!.picks;
     return {...game,picks,visibleRows:game.rows.filter(r=>matchesFilter(r,search,family,outcome))};
   }):[];
-  const best=view?todaysBest(view,selected,search,family):[];
+  const best=view?systemCandidates(view,selected)
+    .filter(p=>!isRoleBlocked(p.row)&&matchesFilter(p.row,search,family))
+    .sort(compareSystem).slice(0,5):[];
+  const visibleConflicts=role?.conflicts.filter(x=>x.horizon===selected)||[];
   const coverage=view?publicationCoverage(view,selected):null;
   const freshness=view?lineFreshness(view,clock):null;
   const toggle=(id:string)=>{setExpanded(v=>v===id?null:id);setLimit(40);};
@@ -115,6 +131,19 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh}:BoardPro
       <div className="mt-2 flex min-w-0 gap-2"><input type="search" aria-label="Search player or team" placeholder="Search player or team" value={search} onChange={e=>setSearch(e.target.value)} className={`${touch} min-w-0 w-full text-gray-200`}/>
         {mode==='MODEL BOARD' && <select aria-label="Filter NFL outcome" value={outcome} onChange={e=>setOutcome(e.target.value)} className={`${touch} min-w-0 w-1/2 text-gray-300`}><option value="">All outcomes</option>{Object.entries(OUTCOMES).map(([k,v])=><option key={k} value={k}>{v}</option>)}</select>}</div>
       <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] text-gray-400"><span className="rounded-md bg-[#222] px-2 py-1">SHADOW RESEARCH</span><span className="rounded-md bg-[#222] px-2 py-1">NO VERIFIED SPORTSBOOK INPUTS</span></div>
+      {view && roleLoading && !role && <p role="status" className="mt-2 text-xs text-gray-400">Checking updated quarterback roles…</p>}
+      {view && roleError && <p role="status" data-testid="nfl-role-feed-unavailable" className="mt-2 rounded-xl border border-amber-900 p-3 text-xs text-amber-300">Updated QB role assessment unavailable. Original frozen predictions remain research-only and have not been certified for betting.</p>}
+      {visibleConflicts.length>0 && <section data-testid="nfl-starter-role-corrections" aria-label="NFL role-adjusted predictions" className="mt-3 rounded-xl border border-amber-800/70 bg-[#231B13] p-3">
+        <p className="text-xs font-bold text-amber-200">STARTER / OPPORTUNITY CORRECTIONS · {selected}</p>
+        <p className="mt-1 text-[11px] text-gray-300">The original model has contradictory QB participation assumptions. These teams are removed from original-model system targets below; their separate conditional projections remain visible in MODEL BOARD.</p>
+        {visibleConflicts.map(c=>{
+          const stats=[...role!.corrected.values()].filter(x=>x.gameId===c.gameId&&x.team===c.team&&x.horizon===c.horizon&&x.outcome==='pass_yds'&&x.player.toLowerCase()===c.starter?.toLowerCase());
+          const starter=stats[0];
+          return <p key={teamKey(c.gameId,c.horizon,c.team)} className="mt-2 text-xs text-gray-100">
+            <strong>{c.team}:</strong> {starter?<>{starter.starter} · role-conditioned passing median <strong>{number(starter.correctedMedian)} yds</strong> (frozen V2 {number(starter.originalMedian)}). {starter.sourceTier==='OFFICIAL_TEAM_STARTER_SOURCE'?'Team-confirmed starting role.':'Conditional start, game-day status not verified.'}</>:'Starting QB workload unresolved; original targets withheld.'}
+          </p>;
+        })}
+      </section>}
       {mode==='BETTABLE NOW' && view && <div className="mt-3 rounded-xl border border-[#333] p-3 text-[11px] text-gray-400"><p className="text-[10px]">SPORTSBOOK LINES UPDATED</p><p className="mt-1">{formatET(freshness?.timestamp)}</p>
         {(freshness?.stale || freshness?.unknown) && <p role="status" className="mt-2 font-bold text-amber-300">LINE MAY HAVE MOVED<br/>VERIFY BEFORE PLACING{freshness?.unknown?' · Timestamp unavailable or invalid.':''}</p>}</div>}
       {error?<><ExistingNflProjectionSlate view={null} search={search} family={family} visible={true} horizon={selected} mode={mode}/><div role="alert" className="mt-4 rounded-xl border border-red-900 p-4 text-sm text-red-300">T24/T90 research unavailable<p className="mt-2 break-words">{error}</p><button className={`${touch} mt-3 w-full`} onClick={()=>void refresh()}>Retry research feed</button></div></>
@@ -141,7 +170,8 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh}:BoardPro
             </div>
             {expanded===game.game_id && <div id={`rows-${game.game_id}`} className="space-y-3 border-t border-[#292929] p-3">
               {count===0 && <p className="p-2 text-sm text-gray-500">{empty}</p>}
-              {mode==='MODEL BOARD'?game.visibleRows.slice(0,limit).map(row=><OutcomeCard key={row.id} row={row} view={view}/>):game.picks.map(p=><SystemPickCard key={p.row.id} pick={p} view={view} horizon={selected} execution={p.execution}/>)}
+              {mode==='MODEL BOARD'?game.visibleRows.slice(0,limit).map(row=><OutcomeCard key={row.id} row={row} view={view}
+                roleStat={role?.corrected.get(statKey(row.game_id,selected,row.team,row.player,row.outcome))}/>):game.picks.map(p=><SystemPickCard key={p.row.id} pick={p} view={view} horizon={selected} execution={p.execution}/>)}
               {mode==='MODEL BOARD' && game.visibleRows.length>limit && <button className={`${touch} w-full text-gray-300`} onClick={()=>setLimit(n=>n+40)}>Show more outcomes ({game.visibleRows.length-limit} remaining)</button>}
             </div>}
           </section>;
@@ -162,4 +192,8 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh}:BoardPro
     {share && <NflShareModal {...share} onClose={()=>setShare(null)}/>}
   </div>;
 }
-export default function NflTodayScreen(){return <NflPhase1Board {...usePhase1()}/>;}
+export default function NflTodayScreen(){
+  const phase=usePhase1();
+  const roles=useNflRoleResearch(phase.view);
+  return <NflPhase1Board {...phase} role={roles.data} roleError={roles.error} roleLoading={roles.loading}/>;
+}

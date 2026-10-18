@@ -5,6 +5,11 @@ on:
   pull_request:
     paths:
       - 'src/components/NflTodayScreen.tsx'
+      - 'src/nfl/roleResearch.ts'
+      - 'src/nfl/useNflRoleResearch.ts'
+      - 'server/nflRoleResearch.ts'
+      - 'tests/nflRoleResearch.test.ts'
+      - 'package.json'
       - 'src/nfl/readable.ts'
       - 'src/nfl/existing.ts'
       - 'src/components/ExistingNflProjectionSlate.tsx'

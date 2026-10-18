@@ -1,5 +1,6 @@
 import express from "express";
 import { phase1Handler } from "./server/nflPhase1.ts";
+import { nflRoleResearchHandler } from "./server/nflRoleResearch.ts";
 import { loadCurrentNfl } from "./server/nflCurrent.ts";
 import { projectionFeedHandler } from "./server/projectionFeeds.ts";
 import path from "path";
@@ -210,6 +211,10 @@ async function startServer() {
 
   // Read-only new-engine feed; never falls back to the legacy Render route.
   app.get("/api/nfl-phase1-predictions", phase1Handler());
+
+  // Updated NFL role-adjusted projections belong on the picks3 app.
+  // Kept separate from immutable T24/T90 numbers and legacy selections.
+  app.get("/api/nfl-role-research", nflRoleResearchHandler());
 
   // Verify original research artifacts; never fall back to Render classifiers.
   app.get("/api/model-projections/:sport", projectionFeedHandler());
