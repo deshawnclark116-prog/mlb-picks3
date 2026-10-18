@@ -116,8 +116,12 @@ export function parseNflRoleResearch(raw: unknown, view: Phase1View, now = Date.
       const after=effect.verified_starter_role_scenario.median,mean=effect.verified_starter_role_scenario.mean;
       // No hindsight overwrite: only show an as-of result that reproduces
       // the frozen original to rounding precision on the SAME player/market.
+      // Baseline is a NEW equal-seed Monte Carlo rerun, not byte-identical
+      // archived draws. Integer yards fluctuate a little (Chicago: 75 vs 76).
+      // Require close agreement, do NOT overwrite the immutable median.
+      const mcTolerance=row.outcome.endsWith('_yds')?3:1;
       if (!validNumber(before) || !validNumber(after) || !validNumber(mean)
-        || !validNumber(row.median) || Math.abs(before-row.median)>.15
+        || !validNumber(row.median) || Math.abs(before-row.median)>mcTolerance
         || after<0 || mean<0) continue;
       const id=statKey(s.game_id,s.horizon,s.team,row.player,row.outcome);
       if(seen.has(id))throw Error('Duplicate NFL role-player simulation');
