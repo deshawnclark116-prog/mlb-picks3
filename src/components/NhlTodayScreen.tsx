@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import UnifiedSportGameCards, {type UnifiedGame} from './UnifiedSportGameCards';
+import {addTrueNhlShotCounts,NHL_COUNT_SCHEMA,type NhlSogResearch} from "../nhl/countResearch";
 import { motion, AnimatePresence } from "motion/react";
 import { TrendingUp, RefreshCw, AlertTriangle, Search, ChevronDown, ChevronUp } from "lucide-react";
 import { NhlPrediction } from "../types";
@@ -104,6 +105,28 @@ export default function NhlTodayScreen({
   const [marketFilter, setMarketFilter] = useState<MarketFilter>("ALL");
   const [confidenceFilter, setConfidenceFilter] = useState<"ALL" | "HIGH" | "MEDIUM" | "LOW">("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [numericSog, setNumericSog] = useState<NhlSogResearch|null>(null);
+  const [numericSogError, setNumericSogError] = useState<string|null>(null);
+  useEffect(()=>{
+    if(!gameDate){setNumericSog(null);return;}
+    const ctl=new AbortController();
+    setNumericSog(null);setNumericSogError(null);
+    void (async()=>{
+      try{
+        const response=await fetch('/api/nhl-count-research?date='+encodeURIComponent(gameDate),{
+          cache:'no-store',signal:ctl.signal});
+        if(!response.ok)throw Error('NHL V2 frozen count source HTTP '+response.status);
+        const doc=await response.json();
+        if(doc?.schema!==NHL_COUNT_SCHEMA || doc?.game_date!==gameDate ||
+          doc?.research_only!==true || doc?.not_an_official_betting_board!==true)
+          throw Error('Unverified NHL numerical shot-count source');
+        if(!ctl.signal.aborted)setNumericSog(doc as NhlSogResearch);
+      }catch(e){
+        if(!ctl.signal.aborted)setNumericSogError(e instanceof Error?e.message:String(e));
+      }
+    })();
+    return()=>ctl.abort();
+  },[gameDate]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullY, setPullY] = useState(0);
   const [expandedGameKey, setExpandedGameKey] = useState<string | null>(null);
@@ -149,9 +172,10 @@ export default function NhlTodayScreen({
     touchStartY.current = -1;
   };
 
-  const marketsPresent = Array.from(new Set(predictions.map((p) => p.market))).filter(
-    (m) => MARKET_LABELS[m]
-  );
+  const marketsPresent = Array.from(new Set([
+    ...predictions.map((p) => p.market),
+    ...(numericSog?.projected_count ? ['shots_on_goal'] : [])
+  ])).filter((m) => MARKET_LABELS[m]);
 
   const sortedPredictions = [...predictions].sort((a, b) => (b.prob_pct ?? 0) - (a.prob_pct ?? 0));
 
@@ -169,7 +193,7 @@ export default function NhlTodayScreen({
   });
 
   const gameGroups = groupPredictionsByGame(filteredPredictions);
-  const unifiedGames:UnifiedGame[]=gameGroups.map(g=>({
+  const originalGames:UnifiedGame[]=gameGroups.map(g=>({
       id:g.key,label:g.teamA+' vs '+g.teamB,when:g.kickoff_utc,
       sourceLabel:'NHL CURRENT MODEL · FIXED-LINE CLASSIFIER',
       subtitle:g.game_date,
@@ -185,6 +209,13 @@ export default function NhlTodayScreen({
           'No numeric player-stat median is present in this current predictions feed.'
       }))
     }));
+  const filteredSog=(marketFilter==='ALL'||marketFilter==='shots_on_goal') &&
+    confidenceFilter==='ALL' && numericSog
+      ?{...numericSog,projections:numericSog.projections.filter(p=>
+         !searchQuery.trim() || (p.player+' '+p.team+' '+p.opponent).toLowerCase()
+           .includes(searchQuery.trim().toLowerCase()))}
+      :null;
+  const unifiedGames=addTrueNhlShotCounts(originalGames,filteredSog);
 
   return (
     <div
@@ -341,7 +372,9 @@ export default function NhlTodayScreen({
           </div>
         ) : (
           <div id="nhl-games-list" className="space-y-4">
-            <UnifiedSportGameCards sport="NHL" prefix="nhl-game-card-" games={unifiedGames}/>
+            {numericSogError&&<p role="status" className="mb-2 text-[11px] text-amber-300">Independent NHL shot-count research unavailable. Point-target chances remain separate; no numerical substitute was invented.</p>}
+          {numericSog&&numericSog.projected_count>0&&<p role="status" className="mb-2 text-[11px] text-gray-400">Frozen V2 numerical shot forecasts for this date: {numericSog.projected_count}. Research only; game-day participation and sportsbook lines not verified. Points targets remain binary event probabilities.</p>}
+          <UnifiedSportGameCards sport="NHL" prefix="nhl-game-card-" games={unifiedGames}/>
           </div>
         )}
       </div>

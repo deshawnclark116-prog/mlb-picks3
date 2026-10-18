@@ -1,0 +1,67 @@
+name: NHL V2 real numerical shot-count app research
+
+on:
+  push:
+    branches: [feat/nhl-real-v2-sog-count-to-picks3-20261018]
+    paths:
+      - server/nhlCountResearch.ts
+      - src/nhl/countResearch.ts
+      - src/components/NhlTodayScreen.tsx
+      - server.ts
+      - tests/nhlCountResearch.test.ts
+      - .github/workflows/nhl_numeric_count_app.yml
+  pull_request:
+    paths:
+      - server/nhlCountResearch.ts
+      - src/nhl/countResearch.ts
+      - src/components/NhlTodayScreen.tsx
+      - server.ts
+      - tests/nhlCountResearch.test.ts
+      - .github/workflows/nhl_numeric_count_app.yml
+
+permissions:
+  contents: read
+
+jobs:
+  real-nhl-count-projection:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Compile existing app and preserve other sports
+        run: |
+          npm run lint
+          npm run build
+      - name: Fail-closed frozen NHL V2 numerical distributions and wrong-player identity tests
+        run: node --import tsx --test tests/nhlCountResearch.test.ts tests/unifiedSportCards.test.ts
+      - name: Existing NFL/CFL sports accuracy source contracts unchanged
+        run: npm test
+      - name: Inspect REAL 8MB NHL V2 research artifact for today's game; no fake lines
+        run: |
+          node --import tsx --input-type=module - <<'JS'
+          import {loadNhlCountResearch} from './server/nhlCountResearch.ts';
+          for(const date of ['2026-10-17','2026-10-18']){
+            const b=await loadNhlCountResearch(date,fetch,Date.now());
+            console.log('NHL_TRUE_NUMERIC_SOG',JSON.stringify({
+              date,sourceSha:b.source_snapshot_commit_sha,
+              n:b.projected_count,top:b.projections.slice(0,5).map(x=>({
+                name:x.player,team:x.team,opponent:x.opponent,
+                mean:x.mean,median:x.median,generated_at:x.source_generated_at}))
+            }));
+            if(date==='2026-10-18')
+              console.log('MIN_CBJ_FROZEN_SOG_COUNT',
+                b.projections.filter(x=>['MIN','CBJ'].includes(x.team) &&
+                  ['MIN','CBJ'].includes(x.opponent)).length);
+            if(b.projections.some(x=>x.real_player_book_line_verified!==false||
+                x.not_an_official_betting_prediction!==true))
+              throw Error('NHL numerical research mislabeled as betting');
+          }
+          JS
+      - run: git diff --check
