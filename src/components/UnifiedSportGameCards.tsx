@@ -26,10 +26,12 @@ const stamp=(iso?:string)=>{
   return new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(iso))+' ET';
 };
 const canNumeric=(p:UnifiedPick)=>p.prediction!=null&&Number.isFinite(p.prediction)&&p.prediction>=0;
-const value=(p:UnifiedPick)=>canNumeric(p)?fmt(p.prediction!)+(p.unit?' '+p.unit:''):'NOT PUBLISHED';
+const value=(p:UnifiedPick)=>canNumeric(p)?fmt(p.prediction!)+(p.unit?' '+p.unit:''):pct(p.modelProbability);
+const primaryLabel=(p:UnifiedPick)=>canNumeric(p)?projectionLabel(p):'MODEL CHANCE OF TARGET · COUNT NOT FORECAST';
 const projectionLabel=(p:UnifiedPick)=>p.predictionKind==='mean'?'MODEL PROJECTION · MEAN':
   p.predictionKind==='median'?'MODEL PROJECTION · MEDIAN':'NUMERIC PLAYER-STAT PROJECTION';
-const rank=(a:UnifiedPick,b:UnifiedPick)=>(b.modelProbability??-1)-(a.modelProbability??-1)
+const rank=(a:UnifiedPick,b:UnifiedPick)=>Number(canNumeric(b))-Number(canNumeric(a))
+  ||(b.modelProbability??-1)-(a.modelProbability??-1)
   ||a.player.localeCompare(b.player)||a.id.localeCompare(b.id);
 
 export function PredictionCard({pick}:{pick:UnifiedPick}){
@@ -41,9 +43,9 @@ export function PredictionCard({pick}:{pick:UnifiedPick}){
      {pick.confidence&&<span className="rounded-md border border-[#333] px-2 py-1 text-[10px] font-bold text-gray-300">{pick.confidence}</span>}
    </div>
    <div data-testid="unified-predicted-stat" className="my-3 rounded-xl border border-[#00FF41]/25 bg-[#0E1D14] p-3">
-     <p className="text-[10px] font-bold tracking-wide text-gray-300">{projectionLabel(pick)}</p>
+     <p className="text-[10px] font-bold tracking-wide text-gray-300">{primaryLabel(pick)}</p>
      <p className="mt-1 break-words text-2xl font-black text-[#00FF41]">{value(pick)}</p>
-     {!canNumeric(pick)&&<p className="mt-1 text-[10px] text-gray-400">This model published a threshold or event probability, not a numerical player-stat forecast.</p>}
+     {!canNumeric(pick)&&<p className="mt-1 text-[10px] text-amber-200">No modelled point/shot count exists for this player. The number above is ONLY the chance of the target below.</p>}
    </div>
    <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-xl border border-[#303030] p-3">
      <div className="min-w-0">
@@ -67,6 +69,7 @@ export function Poster({sport,game,picks,cardRef}:{
  sport:SportId;game:UnifiedGame;picks:UnifiedPick[];cardRef?:React.Ref<HTMLDivElement>;
 }){
  const sections=picks.slice(0,6);
+ const hasNumeric=sections.some(canNumeric);
  return <div ref={cardRef} data-testid="unified-sport-share-poster" style={{
    width:EXPORT_WIDTH,height:EXPORT_HEIGHT,boxSizing:'border-box',padding:44,
    background:'#090D10',color:'#F0F4F5',fontFamily:'Arial, Helvetica, sans-serif',
@@ -83,14 +86,14 @@ export function Poster({sport,game,picks,cardRef}:{
      <p style={{fontSize:20,color:'#9EACB1'}}>{stamp(game.when)} {game.subtitle?' · '+game.subtitle:''}</p>
    </div>
    <div style={{height:75,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-     <strong style={{fontSize:25}}>MODEL STAT PROJECTIONS</strong>
+     <strong style={{fontSize:25}}>{hasNumeric?'MODEL STAT PROJECTIONS':'MODEL EVENT PROBABILITIES · NO NUMERIC STATS'}</strong>
      <span style={{fontSize:15,color:'#9EACB1'}}>{sections.length} FEATURED · {game.picks.length} AVAILABLE</span>
    </div>
    <section data-testid="unified-poster-core" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gridTemplateRows:'repeat(3, 1fr)',gap:12,height:555}}>
      {sections.map(p=><div key={p.id} style={{minWidth:0,padding:18,border:'1px solid #ffffff20',borderRadius:17,background:'linear-gradient(130deg,#202A30,#11181E)'}}>
        <p style={{fontSize:12,color:'#9EACB1',margin:0}}>{p.team||sport} · {p.market.toUpperCase().replaceAll('_',' ')}</p>
        <strong style={{fontSize:21,display:'block',marginTop:10,overflowWrap:'anywhere'}}>{p.player.toUpperCase()}</strong>
-       <p style={{fontSize:11,color:'#A5B1B9',letterSpacing:1.2,margin:'15px 0 2px'}}>{projectionLabel(p)}</p>
+       <p style={{fontSize:11,color:'#A5B1B9',letterSpacing:1.2,margin:'15px 0 2px'}}>{primaryLabel(p)}</p>
        <p style={{fontSize:canNumeric(p)?31:20,color:'#79FF48',fontWeight:900,margin:'0 0 16px',overflowWrap:'anywhere'}}>{value(p).toUpperCase()}</p>
        <p style={{fontSize:14,fontWeight:700,color:'#DCE5E7',margin:0,overflowWrap:'anywhere'}}>TARGET: {p.target}</p>
        <p style={{fontSize:14,color:'#AAB8C0',margin:'6px 0 0'}}>Model P(target): {pct(p.modelProbability)}</p>
@@ -98,7 +101,7 @@ export function Poster({sport,game,picks,cardRef}:{
    </section>
    <footer style={{position:'absolute',bottom:38,left:44,right:44,borderTop:'1px solid #334045',paddingTop:22}}>
      <p style={{fontSize:16,fontWeight:800,color:'#79FF48'}}>{game.sourceLabel.toUpperCase()} · NOT CERTIFIED BETTING PICKS</p>
-     <p style={{fontSize:13,lineHeight:1.6,color:'#9EACB1'}}>Numerical projection is shown only when actually published. A lower milestone target and its probability are separate from the predicted stat. No verified live sportsbook execution or profitability is claimed.</p>
+     <p style={{fontSize:13,lineHeight:1.6,color:'#9EACB1'}}>{hasNumeric?'Stat projections are separate from target chances. ':'No numerical player-stat forecast was published for the featured players. Percentages are target event probabilities, NOT expected goals, assists, points or shots. '}No verified live sportsbook execution or profitability is claimed.</p>
    </footer>
  </div>;
 }
@@ -146,7 +149,7 @@ function GameShareModal({sport,game,onClose}:{sport:SportId;game:UnifiedGame;onC
    <h2 id="unified-sport-share-title" className="text-sm font-bold">CREATE GAME CARD</h2>
    <p className="mt-1 text-xs text-gray-400">{game.label} · {sport}</p>
    <div className="my-3 grid grid-cols-2 gap-2">
-     <button aria-pressed="true" className="min-h-11 rounded-xl border border-[#79FF48]/50 bg-[#79FF48]/10 text-[#79FF48] text-xs font-bold">SYSTEM CARD</button>
+     <button aria-pressed="true" className="min-h-11 rounded-xl border border-[#79FF48]/50 bg-[#79FF48]/10 text-[#79FF48] text-xs font-bold">{ranked.some(canNumeric)?'SYSTEM CARD · STAT PROJECTIONS':'MODEL EVENT CARD · NO STAT PROJECTIONS'}</button>
      <button disabled title="No independently verified sportsbook executions" className="min-h-11 rounded-xl border border-[#333] text-gray-500 text-xs font-bold">BETTABLE CARD</button>
    </div>
    <div ref={wrapper} style={{width:'100%',height:EXPORT_HEIGHT*scale,position:'relative',overflow:'hidden',borderRadius:10}}>
@@ -197,8 +200,7 @@ export default function UnifiedSportGameCards({sport,games,prefix}:{
              <p className="mt-2 text-[10px] font-bold text-gray-400">{game.shown.length} {mode} · {game.sourceLabel}</p>
              {mode!=='BETTABLE NOW'&&preview&&<p className="mt-2 break-words text-[11px] text-gray-300">
                TOP: <span className="text-white">{preview.player}</span> ·
-               MODEL {preview.predictionKind==='mean'?'MEAN':'MEDIAN'} {canNumeric(preview)?value(preview):'NOT PUBLISHED'} ·
-               TARGET {preview.target} ({pct(preview.modelProbability)})
+               {canNumeric(preview)?<>MODEL {preview.predictionKind==='mean'?'MEAN':'MEDIAN'} {value(preview)} · TARGET {preview.target} ({pct(preview.modelProbability)})</>:<>ONLY MODEL P(TARGET) {pct(preview.modelProbability)} · TARGET {preview.target} · NO NUMERIC FORECAST</>}
              </p>}
            </div>
            <ChevronDown size={16} className={`shrink-0 text-gray-500 ${opened?'rotate-180':''}`}/>
