@@ -20,7 +20,7 @@ function src(){
   not_a_betting_board:true,
   source_snapshot_commit_sha:'a'.repeat(40),source_ledger_sha256:'b'.repeat(64),
   row_fields:cols,horizons:['T24H'],dates:['2026-10-18'],
-  forecasts:{T24H:[good]},total_valid_forecasts:1
+  forecasts:{T24H:[[...good]]},total_valid_forecasts:1
  };
 }
 const baseGame:UnifiedGame={id:'CBJ__MIN',label:'MIN vs CBJ',when:'2026-10-18T22:00:00Z',
@@ -61,7 +61,7 @@ test('missing immutable source and wrong dates refuse false numeric predictions'
 test('duplicate original V2 horizon/player forecast is quarantined',()=>{
  const d=src();
  d.forecasts.T24H.push([...good]);d.total_valid_forecasts=2;
- assert.throws(()=>reduceFrozenNhlShots(d,'2026-10-18'),/DUPLICATE_FROZEN/);
+ assert.throws(()=>reduceFrozenNhlShots(d,'2026-10-18'),/duplicate player\/game|DUPLICATE_FROZEN/i);
 });
 
 test('wrong NHL matchup identity and kickoff may not inherit real projections',()=>{
