@@ -23,6 +23,13 @@ test('360px modal, canonical source despite filters, real PNG download, exact di
  const modal=await open(page);await expect(modal).toBeVisible();await expect(accordion).toHaveAttribute('aria-expanded','false');
  await expect(modal.getByRole('button',{name:'SYSTEM CARD',exact:true})).toHaveAttribute('aria-pressed','true');
  const poster=modal.getByTestId('game-share-poster');await expect(poster).toContainText('NYJ');await expect(poster).toContainText('CHI');await expect(poster).toContainText('26');await expect(poster.getByTestId('poster-core')).toContainText('dandre swift');await expect(poster.getByTestId('poster-core')).toContainText('kalif raymond');
+ // Compare the rendered 1080x1350 image SOURCE against the normal player
+ // forecast screen: actual medians must lead; lower targets stay secondary.
+ await expect(poster).toContainText('PREDICTED PLAYER STATS');
+ await expect(poster.getByTestId('poster-model-median')).toHaveCount(6);
+ await expect(poster.getByTestId('poster-core')).toContainText('MODEL PROJECTION · MEDIAN');
+ await expect(poster.getByTestId('poster-core')).toContainText('TARGET:');
+ await expect(poster.getByTestId('poster-core')).toContainText('TARGET HIT CHANCE · NOT MEDIAN ACCURACY');
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
  const preview=await modal.getByTestId('share-preview').boundingBox();expect(preview!.x).toBeGreaterThanOrEqual(0);expect(preview!.x+preview!.width).toBeLessThanOrEqual(360);
  await page.screenshot({path:`${artifacts}/nfl-share-modal-360.png`});
