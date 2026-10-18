@@ -95,21 +95,21 @@ test("NHL shot-count forecast renders the model mean and horizon without fabrica
 });
 test("missing model feed fails closed; no legacy auto-fallback",async ({page})=>{
  await setup(page,true);await page.locator("#tab-btn-cfb").click();
- await expect(page.getByText("Oregon State Beavers ML")).toBeVisible();
+ await expect(page.getByRole("region",{name:"Current CFB moneyline model predictions"})).toContainText("Oregon State Beavers ML");
  await page.getByRole("button",{name:"Research archive"}).click();
  await expect(page.getByRole("alert")).toContainText("Original artifact missing");
  await expect(page.getByText("Alex Runner")).toHaveCount(0);
  await expect(page.getByRole("button",{name:"Research archive"})).toHaveAttribute("aria-pressed","true");
  await page.getByRole("button",{name:"Current predictions"}).click();
- await expect(page.getByText("Oregon State Beavers ML")).toBeVisible();
+ await expect(page.getByRole("region",{name:"Current CFB moneyline model predictions"})).toContainText("Oregon State Beavers ML");
 });
 
 test("current CFB and NHL use the same NFL-style grouped matchup and share-card layout",async ({page})=>{
  await setup(page);
  await page.locator("#tab-btn-cfb").click();
  await expect(page.getByTestId("unified-sport-board")).toBeVisible();
- await expect(page.getByRole("button",{name:"SYSTEM PICKS"})).toBeVisible();
- await expect(page.getByRole("button",{name:"MODEL BOARD"})).toBeVisible();
+ await expect(page.getByRole("button",{name:"SYSTEM PICKS",exact:true})).toBeVisible();
+ await expect(page.getByRole("button",{name:"MODEL BOARD",exact:true})).toBeVisible();
  const cfb=page.getByTestId("unified-sport-game").first();
  await expect(cfb).toBeVisible();
  await cfb.locator('button[aria-expanded]').click();
@@ -119,11 +119,11 @@ test("current CFB and NHL use the same NFL-style grouped matchup and share-card 
  const nhl=page.getByTestId("unified-sport-game").first();
  await expect(nhl).toContainText("PIT vs WSH");
  await nhl.locator('button[aria-expanded]').click();
- await expect(nhl.getByTestId("unified-predicted-stat")).toContainText("NOT PUBLISHED");
+ await expect(nhl.getByTestId("unified-predicted-stat")).toContainText("MODEL CHANCE OF TARGET");
  await expect(nhl.getByTestId("unified-sport-projection")).toContainText("OVER 2.5");
  await nhl.getByRole("button",{name:/Create share card/}).click();
  await expect(page.getByRole("dialog")).toContainText("CREATE GAME CARD");
- await expect(page.getByTestId("unified-sport-share-poster")).toContainText("MODEL STAT PROJECTIONS");
+ await expect(page.getByTestId("unified-sport-share-poster")).toContainText("MODEL EVENT PROBABILITIES · NO NUMERIC STATS");
  await expect(page.getByRole("button",{name:"BETTABLE CARD"})).toBeDisabled();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
 });
