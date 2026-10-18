@@ -56,12 +56,40 @@ export function addTrueNhlShotCounts(games:UnifiedGame[],source:NhlSogResearch|n
        '. Player dressed/ice-time role not independently verified. Research only.'
    });
  }
- // No guesses about opponent/team or date: each frozen shot-count forecast
- // must match a real published matchup/clock exactly before the app shows it.
- return games.map(game=>{
-    const additions=list.filter((_,i)=>match(game,named[i]));
-    return additions.length?{...game,
-       sourceLabel:'NHL REAL V2 SOG COUNT + SEPARATE POINTS CLASSIFIER · RESEARCH',
-       picks:[...additions,...game.picks]}:game;
+ // Frozen shot-count forecasts are a valid independent research feed:
+ // they MUST NOT depend on an unrelated fixed-line POINTS classifier game
+ // existing. Match existing cards by exact teams/clock when possible; then
+ // create a separate game from the *source's* game_id/teams/clock. Never
+ // invent a fixture, duplicate a game, infer a point count or add a book.
+ const assigned=new Set<string>();
+ const attached=games.map(game=>{
+   const additions=list.filter((_,i)=>match(game,named[i]));
+   additions.forEach(p=>assigned.add(p.id));
+   return additions.length?{...game,
+      sourceLabel:'NHL REAL V2 SOG COUNT + SEPARATE POINTS CLASSIFIER · RESEARCH',
+      picks:[...additions,...game.picks]}:game;
  });
+ const missing=new Map<string,{game_id:string;when:string;teams:string;label:string;picks:UnifiedPick[]}>();
+ for(let i=0;i<named.length;i++){
+   const p=named[i],pick=list[i];
+   if(assigned.has(pick.id))continue;
+   const teams=[p.team,p.opponent].sort().join('|');
+   const existing=missing.get(p.game_id);
+   if(existing && (existing.when!==p.scheduled_start||existing.teams!==teams))
+     throw Error('NHL_SOURCE_GAME_ID_TEAM_OR_KICKOFF_CONFLICT');
+   if(existing)existing.picks.push(pick);
+   else missing.set(p.game_id,{
+     game_id:p.game_id,when:p.scheduled_start,teams,
+     label:p.team+' vs '+p.opponent,picks:[pick]
+   });
+ }
+ const independent:UnifiedGame[]=[...missing.values()].map(g=>({
+   id:'NHL-FROZEN-COUNT-'+g.game_id,label:g.label,when:g.when,
+   subtitle:source.game_date,
+   sourceLabel:'NHL ORIGINAL FROZEN V2 SOG COUNT · RESEARCH ONLY',
+   picks:g.picks
+ }));
+ return [...attached,...independent].sort((a,b)=>
+   (a.when||'9999').localeCompare(b.when||'9999')||a.label.localeCompare(b.label));
+
 }

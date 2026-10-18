@@ -95,21 +95,21 @@ test("NHL shot-count forecast renders the model mean and horizon without fabrica
 });
 test("missing model feed fails closed; no legacy auto-fallback",async ({page})=>{
  await setup(page,true);await page.locator("#tab-btn-cfb").click();
- await expect(page.getByText("Oregon State Beavers ML")).toBeVisible();
+ await expect(page.getByRole("region",{name:"Current CFB moneyline model predictions"})).toContainText("Oregon State Beavers ML");
  await page.getByRole("button",{name:"Research archive"}).click();
  await expect(page.getByRole("alert")).toContainText("Original artifact missing");
  await expect(page.getByText("Alex Runner")).toHaveCount(0);
  await expect(page.getByRole("button",{name:"Research archive"})).toHaveAttribute("aria-pressed","true");
  await page.getByRole("button",{name:"Current predictions"}).click();
- await expect(page.getByText("Oregon State Beavers ML")).toBeVisible();
+ await expect(page.getByRole("region",{name:"Current CFB moneyline model predictions"})).toContainText("Oregon State Beavers ML");
 });
 
 test("current CFB and NHL use the same NFL-style grouped matchup and share-card layout",async ({page})=>{
  await setup(page);
  await page.locator("#tab-btn-cfb").click();
  await expect(page.getByTestId("unified-sport-board")).toBeVisible();
- await expect(page.getByRole("button",{name:"SYSTEM PICKS"})).toBeVisible();
- await expect(page.getByRole("button",{name:"MODEL BOARD"})).toBeVisible();
+ await expect(page.getByRole("button",{name:"SYSTEM PICKS",exact:true})).toBeVisible();
+ await expect(page.getByRole("button",{name:"MODEL BOARD",exact:true})).toBeVisible();
  const cfb=page.getByTestId("unified-sport-game").first();
  await expect(cfb).toBeVisible();
  await cfb.locator('button[aria-expanded]').click();
@@ -119,13 +119,89 @@ test("current CFB and NHL use the same NFL-style grouped matchup and share-card 
  const nhl=page.getByTestId("unified-sport-game").first();
  await expect(nhl).toContainText("PIT vs WSH");
  await nhl.locator('button[aria-expanded]').click();
- await expect(nhl.getByTestId("unified-predicted-stat")).toContainText("NOT PUBLISHED");
+ await expect(nhl.getByTestId("unified-predicted-stat")).toContainText("MODEL CHANCE OF TARGET");
  await expect(nhl.getByTestId("unified-sport-projection")).toContainText("OVER 2.5");
  await nhl.getByRole("button",{name:/Create share card/}).click();
  await expect(page.getByRole("dialog")).toContainText("CREATE GAME CARD");
- await expect(page.getByTestId("unified-sport-share-poster")).toContainText("MODEL STAT PROJECTIONS");
+ await expect(page.getByTestId("unified-sport-share-poster")).toContainText("MODEL EVENT PROBABILITIES · NO NUMERIC STATS");
  await expect(page.getByRole("button",{name:"BETTABLE CARD"})).toBeDisabled();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
+});
+
+test("Minnesota-Columbus six-player poster shows frozen numerical shot projections, not 0.5 point targets",async ({page})=>{
+ await setup(page);
+ const kickoff="2026-10-18T22:00:00Z";
+ const current={...currentNhl,game_date:"2026-10-18",picks:[{
+    ...currentNhl.picks[0],player:"Kirill Kaprizov",team:"MIN",opponent:"CBJ",
+    market:"points",prop_type:"points",pick:"OVER 0.5",line:.5,
+    kickoff_utc:kickoff,model_prob:.744,prob_pct:74.4
+ }]};
+ const players=[
+   ["Matt Boldy","MIN",3.9464,4],
+   ["Zach Werenski","CBJ",3.2464,3],
+   ["Joel Eriksson Ek","MIN",3.0564,3],
+   ["Kirill Kaprizov","MIN",3.0177,3],
+   ["Marcus Johansson","MIN",2.842,3],
+   ["Cole Sillinger","CBJ",2.621,2]
+ ] as const;
+ const source={
+   schema:"NHL_APP_VERIFIED_SOG_COUNT_RESEARCH_V1",
+   research_only:true,not_an_official_betting_board:true,
+   game_date:"2026-10-18",projected_count:players.length,
+   projections:players.map(([player,team,mean,median],i)=>({
+     game_id:"2026020048",player_id:String(8478864+i),player,team,
+     opponent:team==="MIN"?"CBJ":"MIN",game_date:"2026-10-18",
+     scheduled_start:kickoff,mean,median,sd:1.4,p10:1,p90:6,
+     forecast_horizon:"T24H",source_generated_at:"2026-10-17T21:48:31Z",
+     source_cutoff_at:"2026-10-17T22:00:00Z",
+     research_only:true,not_an_official_betting_prediction:true
+   }))
+ };
+ await page.route("**/api/nhl-predictions**",route=>route.fulfill({json:current}));
+ await page.route("**/api/nhl-count-research**",route=>route.fulfill({json:source}));
+ await page.locator("#tab-btn-nhl").click();
+ await expect(page.getByText(/Frozen V2 numerical shot forecasts for this date: 6/)).toBeVisible();
+ const game=page.getByTestId("unified-sport-game").filter({hasText:"CBJ"});
+ await expect(game).toContainText("MIN vs CBJ");
+ await game.locator('button[aria-expanded]').click();
+ const featured=game.getByTestId("unified-sport-projection");
+ await expect(featured.first()).toContainText("Matt Boldy");
+ await expect(featured.first().getByTestId("unified-predicted-stat")).toContainText("3.9 shots");
+ await expect(featured.first()).toContainText("NO VERIFIED SPORTSBOOK SHOT LINE");
+ await game.getByRole("button",{name:/Create share card/}).click();
+ const poster=page.getByTestId("unified-sport-share-poster");
+ await expect(poster).toContainText("MODEL STAT PROJECTIONS");
+ await expect(poster).toContainText("MATT BOLDY");
+ await expect(poster).toContainText("3.9 SHOTS");
+ await expect(poster).not.toContainText("NOT PUBLISHED");
+ await expect(poster).not.toContainText("OVER 0.5");
+ await expect(page.getByRole("button",{name:"BETTABLE CARD"})).toBeDisabled();
+});
+
+test("frozen NHL numerical game remains visible with ZERO point-classifier picks",async ({page})=>{
+ await setup(page);
+ const current={...currentNhl,picks:[]};
+ await page.route("**/api/nhl-predictions**",route=>route.fulfill({json:current}));
+ await page.route("**/api/nhl-count-research**",route=>route.fulfill({json:{
+   schema:"NHL_APP_VERIFIED_SOG_COUNT_RESEARCH_V1",research_only:true,
+   not_an_official_betting_board:true,game_date:"2026-10-18",
+   projected_count:1,projections:[{
+     game_id:"2026020048",player_id:"8478864",player:"Kirill Kaprizov",
+     team:"MIN",opponent:"CBJ",game_date:"2026-10-18",
+     scheduled_start:"2026-10-18T22:00:00Z",mean:3.02,median:3,
+     sd:1.4,p10:1,p90:6,forecast_horizon:"T24H",
+     source_generated_at:"2026-10-17T21:48:31Z",
+     source_cutoff_at:"2026-10-17T22:00:00Z",
+     research_only:true,not_an_official_betting_prediction:true
+   }]
+ }}));
+ await page.locator("#tab-btn-nhl").click();
+ const games=page.getByTestId("unified-sport-game");
+ await expect(games).toHaveCount(1);
+ await expect(games.first()).toContainText("MIN vs CBJ");
+ await games.first().locator('button[aria-expanded]').click();
+ await expect(games.first().getByTestId("unified-predicted-stat")).toContainText("3 shots");
+ await expect(games.first()).not.toContainText("OVER 0.5");
 });
 
 test("tennis shares the same NFL-style page and exposes a real published projected MEAN",async ({page})=>{

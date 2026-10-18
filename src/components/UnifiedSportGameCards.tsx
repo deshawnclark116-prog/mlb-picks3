@@ -30,8 +30,14 @@ const value=(p:UnifiedPick)=>canNumeric(p)?fmt(p.prediction!)+(p.unit?' '+p.unit
 const primaryLabel=(p:UnifiedPick)=>canNumeric(p)?projectionLabel(p):'MODEL CHANCE OF TARGET · COUNT NOT FORECAST';
 const projectionLabel=(p:UnifiedPick)=>p.predictionKind==='mean'?'MODEL PROJECTION · MEAN':
   p.predictionKind==='median'?'MODEL PROJECTION · MEDIAN':'NUMERIC PLAYER-STAT PROJECTION';
+// Numeric shot-count research has no calibrated hit probability or book line.
+ // For NHL SOG-only rows, feature higher projected shot VOLUME ahead of
+ // alphabetic order. This is NOT a confidence, accuracy or wager ranking.
 const rank=(a:UnifiedPick,b:UnifiedPick)=>Number(canNumeric(b))-Number(canNumeric(a))
   ||(b.modelProbability??-1)-(a.modelProbability??-1)
+  ||(canNumeric(a)&&canNumeric(b)&&a.market==='shots_on_goal'&&b.market==='shots_on_goal'
+       &&a.modelProbability==null&&b.modelProbability==null
+       ? b.prediction!-a.prediction! : 0)
   ||a.player.localeCompare(b.player)||a.id.localeCompare(b.id);
 
 export function PredictionCard({pick}:{pick:UnifiedPick}){
