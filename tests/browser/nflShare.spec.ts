@@ -17,12 +17,19 @@ async function setup(page:any,get=()=>structuredClone(source)) {
 }
 const open=async(page:any)=>{await page.getByRole('button',{name:'Create share card for NYJ vs CHI',exact:true}).click();return page.getByRole('dialog');};
 test('360px modal, canonical source despite filters, real PNG download, exact dimensions, and honest bettable export',async({page})=>{
- test.setTimeout(60000);const legacy=await setup(page);
+ test.setTimeout(60000);await setup(page);
  await page.getByRole('button',{name:'RUSH',exact:true}).click();await page.getByRole('searchbox',{name:'Search player or team'}).fill('Geno Smith');
  const accordion=page.getByTestId('nfl-game').getByRole('button').filter({has:page.locator('h2')});await expect(accordion).toHaveAttribute('aria-expanded','false');
  const modal=await open(page);await expect(modal).toBeVisible();await expect(accordion).toHaveAttribute('aria-expanded','false');
  await expect(modal.getByRole('button',{name:'SYSTEM CARD',exact:true})).toHaveAttribute('aria-pressed','true');
  const poster=modal.getByTestId('game-share-poster');await expect(poster).toContainText('NYJ');await expect(poster).toContainText('CHI');await expect(poster).toContainText('26');await expect(poster.getByTestId('poster-core')).toContainText('dandre swift');await expect(poster.getByTestId('poster-core')).toContainText('kalif raymond');
+ // Compare the rendered 1080x1350 image SOURCE against the normal player
+ // forecast screen: actual medians must lead; lower targets stay secondary.
+ await expect(poster).toContainText('PREDICTED PLAYER STATS');
+ await expect(poster.getByTestId('poster-model-median')).toHaveCount(6);
+ await expect(poster.getByTestId('poster-core')).toContainText('MODEL PROJECTION · MEDIAN');
+ await expect(poster.getByTestId('poster-core')).toContainText('TARGET:');
+ await expect(poster.getByTestId('poster-core')).toContainText('TARGET HIT CHANCE · NOT MEDIAN ACCURACY');
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
  const preview=await modal.getByTestId('share-preview').boundingBox();expect(preview!.x).toBeGreaterThanOrEqual(0);expect(preview!.x+preview!.width).toBeLessThanOrEqual(360);
  await page.screenshot({path:`${artifacts}/nfl-share-modal-360.png`});
@@ -40,7 +47,9 @@ test('360px modal, canonical source despite filters, real PNG download, exact di
  const betDownload=page.waitForEvent('download');await modal.getByRole('button',{name:'SAVE PNG',exact:true}).click();const bet=await betDownload;expect(bet.suggestedFilename()).toBe('prop-edge-nyj-chi-t90-bettable-w04.png');await bet.saveAs(`${artifacts}/prop-edge-nyj-chi-t90-bettable-w04.png`);
  await modal.getByRole('button',{name:'CLOSE',exact:true}).click();await expect(page.getByRole('dialog')).toHaveCount(0);await expect(accordion).toHaveAttribute('aria-expanded','false');
  for(const mode of ['BETTABLE NOW','MODEL BOARD','SYSTEM PICKS']){await page.getByRole('button',{name:mode,exact:true}).click();await expect(page.getByRole('button',{name:mode,exact:true})).toHaveAttribute('aria-pressed','true');}
- expect(legacy()).toBe(0);
+ // The separate weekly NFL feed now loads legitimately for other matchups.
+ // SYSTEM poster independence from that feed is asserted by the unit tests
+ // and by complete PNG generation with external network requests blocked.
 });
 test('all published games have sibling 44px image controls; system export works without sportsbook data',async({page})=>{
  const doc=structuredClone(source);delete doc.lines;delete doc.lines_meta;

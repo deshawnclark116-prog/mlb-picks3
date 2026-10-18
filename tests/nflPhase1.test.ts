@@ -299,14 +299,45 @@ test('native file sharing tests supported, unsupported, not-allowed and cancella
  await assert.rejects(shareBlob(blob,name,{canShare:()=>true,share:async()=>{throw Error('unexpected failure');}} as any),/unexpected failure/);
 });
 
+test('export SYSTEM card leads with numeric predicted median, not the easier 65% target',()=>{
+ const v=nyj(),example=systemCandidates(v,'T90')[0];
+ const row={...example.row,id:'prediction-versus-target',outcome:'rec',median:2,mean:2.4};
+ v.rows.T90=[row];
+ v.artifact.alt_65={[row.id]:{milestone:1,probability:.851,method:'empirical_cdf_lattice'}};
+ const data=shareData(v),html=renderToStaticMarkup(React.createElement(NflGameShareCard,{data}));
+ assert.equal(data.core.length,1);
+ assert.equal(data.core[0].row.median,2);
+ assert.equal(data.core[0].target.milestone,1);
+ assert.match(html,/PREDICTED PLAYER STATS/);
+ assert.match(html,/MODEL PROJECTION · MEDIAN/);
+ assert.match(html,/data-testid="poster-model-median"/);
+ assert.match(html,/>2 <span[^>]*>REC<\/span>/);
+ assert.match(html,/TARGET: 1\+ REC/);
+ assert.match(html,/85\.1%/);
+ assert.match(html,/TARGET HIT CHANCE · NOT MEDIAN ACCURACY/);
+ assert.doesNotMatch(html,/MODEL-DERIVED · 65%\+ TARGET/);
+});
+test('bettable card displays model median and independently sourced book line, not a blended statistic',()=>{
+ const v=nyj(),geno=systemCandidates(v,'T90').find(p=>p.row.player==='geno smith'&&p.row.outcome==='rush_yds')!;
+ v.artifact.lines=[{game_id:geno.row.game_id,horizon:'T90',player:geno.row.player,
+   outcome:geno.row.outcome,book:'FanDuel',line:9.5,over_price:-110}];
+ const data=shareData(v,'bettable'),html=renderToStaticMarkup(React.createElement(NflGameShareCard,{data}));
+ assert.equal(data.core.length,1);
+ assert.equal((html.match(/data-testid="poster-model-median"/g)||[]).length,1);
+ assert.match(html,/BOOK LINES · MODEL PROJECTIONS/);
+ assert.match(html,/MODEL PROJECTION · MEDIAN/);
+ assert.match(html,/TARGET:/);
+ assert.match(html,/BOOK · FanDuel OVER 9.5 · -110/);
+ assert.match(html,new RegExp('>'+geno.row.median+' <span[^>]*>RUSH YDS<\\/span>'));
+});
 test('poster claims separate model-only SYSTEM targets from BETTABLE execution data and leaders',()=>{
  const render=(mode:'system'|'bettable')=>renderToStaticMarkup(React.createElement(NflGameShareCard,{data:shareData(nyj(),mode)}));
  const system=render('system'),bet=render('bettable');
- assert.match(system,/MODEL-DERIVED 65%\+ TARGETS · NO SPORTSBOOK INPUTS/);
+ assert.match(system,/PLAYER-STAT MEDIANS · TARGET CHANCES SEPARATE · NO SPORTSBOOK INPUTS/);
  assert(!bet.includes('NO SPORTSBOOK INPUTS'));
- assert.match(bet,/MODEL TARGETS ARE SPORTSBOOK-INDEPENDENT · SPORTSBOOK DATA USED ONLY FOR EXECUTION/);
- assert.match(bet,/NO VERIFIED EXECUTION MATCHES/);assert.match(bet,/SYSTEM LEADERS · MODEL ONLY/);
- assert(!bet.includes('>MODEL LEADERS<'));assert.match(system,/>MODEL LEADERS</);
+ assert.match(bet,/PLAYER-STAT MEDIANS \+ REAL BOOK LINES · TARGET CHANCES SEPARATE/);
+ assert.match(bet,/NO VERIFIED EXECUTION MATCHES/);assert.match(bet,/MODEL PROJECTION LEADERS · NOT BOOK LINES/);
+ assert(!bet.includes('>MODEL PROJECTION LEADERS<'));assert.match(system,/>MODEL PROJECTION LEADERS</);
 });
 test('shareBlob enters native share immediately, before yielding to any asynchronous work',async()=>{
  let called=false;

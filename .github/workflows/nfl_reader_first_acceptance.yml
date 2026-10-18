@@ -5,6 +5,10 @@ on:
   pull_request:
     paths:
       - 'src/components/NflTodayScreen.tsx'
+      - 'src/components/NflGameShareCard.tsx'
+      - 'src/nfl/shareCard.ts'
+      - 'tests/nflPhase1.test.ts'
+      - 'tests/browser/nflShare.spec.ts'
       - 'src/nfl/roleResearch.ts'
       - 'src/nfl/useNflRoleResearch.ts'
       - 'server/nflRoleResearch.ts'
@@ -57,4 +61,4 @@ jobs:
       - name: Real 360x800 NFL board and data failure browser acceptance
         env:
           NFL_SCREENSHOT_DIR: ${{ runner.temp }}
-        run: npx playwright test tests/browser/nflPhase1.spec.ts --reporter=line
+        run: npx playwright test tests/browser/nflPhase1.spec.ts tests/browser/nflShare.spec.ts --reporter=line
