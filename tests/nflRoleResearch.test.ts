@@ -6,6 +6,8 @@ import {parseNflRoleResearch,statKey,teamKey} from '../src/nfl/roleResearch';
 import {OutcomeCard,NflPhase1Board} from '../src/components/NflTodayScreen';
 import {loadNflRoleResearch,nflRoleResearchHandler,NFL_ROLE_FULL_URL,NFL_ROLE_CONFLICTS_URL} from '../server/nflRoleResearch';
 import type {ForecastRow,Phase1View} from '../src/nfl/phase1';
+import {systemGames,executableGames} from '../src/nfl/bettable';
+import {roleEligibleGames} from '../src/nfl/roleEligibleRanking';
 
 const NOW=Date.parse('2026-10-18T02:00:00Z');
 const kickoff='2026-10-18T17:00:00Z';
@@ -122,6 +124,61 @@ test('quarantine both contradicted QB teams from SYSTEM PICKS without hiding goo
  const best=html.match(/data-testid="today-best"/g)||[];
  assert.equal(best.length,1);
  assert.match(html,/tyler huntley/);
+});
+
+test('the Eagles six-pick bug: role quarantine must happen BEFORE per-game ranking cap',()=>{
+ const v=view(), roles=parseNflRoleResearch(data(),v,NOW),g='2026_06_CAR_PHI';
+ // Four invalid PHI candidates take four of the top ten positions.
+ // Twelve CAR players have valid >=65% model targets but are ranked lower.
+ // Previously slice(0,10) then PHI filtering showed only SIX Carolina rows.
+ const targets=[] as ForecastRow[];
+ for(let i=0;i<16;i++){
+   const team=i<4?'PHI':'CAR';
+   const p:ForecastRow={...makeRow(g,team,team==='PHI'?'CAR':'PHI',`synthetic ${team} receiver ${i}`,35,.98),
+      id:`role-rank-test-${i}`,pos:'WR',outcome:'rec_yds'};
+   v.rows.T24.push(p);
+   (v.artifact.alt_65 as Record<string,unknown>)[p.id]={
+      milestone:10,probability:Number((.99-i*.01).toFixed(2)),method:'quantile_grid_99_conservative'};
+   targets.push(p);
+ }
+ const eligible=(row:ForecastRow)=>!roles.blocked.has(teamKey(row.game_id,'T24',row.team));
+ const before=systemGames(v,'T24').find(x=>x.game_id===g)!.picks;
+ assert.equal(before.length,10);
+ assert.equal(before.filter(x=>x.row.team==='CAR').length,6,
+    'reproduces the screenshot: cap then role removal leaves exactly six Carolina choices');
+ const after=roleEligibleGames(v,'T24','','ALL',eligible,'system').find(x=>x.game_id===g)!.picks;
+ assert.equal(after.length,10);
+ assert(after.every(x=>x.row.team==='CAR'));
+ assert.equal(after[0].row.player,'synthetic CAR receiver 4');
+ assert.equal(after[9].row.player,'synthetic CAR receiver 13');
+ const html=renderToStaticMarkup(React.createElement(NflPhase1Board,{
+   view:v,loading:false,error:null,retrievedAt:'2026-10-18T02:00:00Z',refresh:async()=>{},role:roles
+ }));
+ assert.match(html,/T24 · 10 SYSTEM PICKS/);
+ assert.match(html,/role-conditioned passing median/);
+ assert.doesNotMatch(html,/T24 · 6 SYSTEM PICKS/);
+});
+
+test('role exclusions also precede the independently capped verified-line board',()=>{
+ const v=view(),roles=parseNflRoleResearch(data(),v,NOW),g='2026_06_CAR_PHI';
+ const lines:Record<string,unknown>[]=[];
+ for(let i=0;i<16;i++){
+   const team=i<4?'PHI':'CAR',player=`market receiver ${i}`;
+   const p:ForecastRow={...makeRow(g,team,team==='PHI'?'CAR':'PHI',player,35,.98),
+      id:`verified-market-test-${i}`,pos:'WR',outcome:'rec_yds'};
+   v.rows.T24.push(p);
+   (v.artifact.alt_65 as Record<string,unknown>)[p.id]={
+      milestone:10,probability:Number((.99-i*.01).toFixed(2)),method:'quantile_grid_99_conservative'};
+   lines.push({game_id:g,horizon:'T24',player,outcome:'rec_yds',book:'FanDuel',
+      market_type:'over_under',side:'OVER',line:9.5,over_price:-110});
+ }
+ v.artifact.lines=lines as Phase1View['artifact']['lines'];
+ const eligible=(row:ForecastRow)=>!roles.blocked.has(teamKey(row.game_id,'T24',row.team));
+ const old=executableGames(v,'T24').find(x=>x.game_id===g)!.picks;
+ assert.equal(old.filter(x=>x.row.team==='CAR').length,6);
+ const revised=roleEligibleGames(v,'T24','','ALL',eligible,'bettable').find(x=>x.game_id===g)!.picks;
+ assert.equal(revised.length,10);
+ assert(revised.every(x=>x.row.team==='CAR'&&x.execution.line===9.5));
 });
 
 test('game share cards cannot republish contradicted original QB forecasts',()=>{
