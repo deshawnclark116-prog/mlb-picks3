@@ -154,7 +154,7 @@ test('reject forged or stale research, wrong team identity and uncertified expec
 test('after kickoff the app cannot advertise a new pregame role condition or bet',()=>{
  const x=parseNflRoleResearch(data(),view(),Date.parse('2026-10-18T18:00:00Z'));
  assert.equal(x.corrected.size,0);
- assert.equal(x.blocked.size,0);
+ assert.equal(x.blocked.size,2); // a started game cannot revive an invalid original betting card
 });
 
 test('server only fetches the two documented nfl research artifacts without caching or Render fallback',async()=>{
