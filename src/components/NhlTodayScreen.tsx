@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import UnifiedSportGameCards, {type UnifiedGame} from './UnifiedSportGameCards';
+import {addTrueNhlShotCounts,NHL_COUNT_SCHEMA,type NhlSogResearch} from "../nhl/countResearch";
 import { motion, AnimatePresence } from "motion/react";
 import { TrendingUp, RefreshCw, AlertTriangle, Search, ChevronDown, ChevronUp } from "lucide-react";
 import { NhlPrediction } from "../types";
@@ -104,6 +105,28 @@ export default function NhlTodayScreen({
   const [marketFilter, setMarketFilter] = useState<MarketFilter>("ALL");
   const [confidenceFilter, setConfidenceFilter] = useState<"ALL" | "HIGH" | "MEDIUM" | "LOW">("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [numericSog, setNumericSog] = useState<NhlSogResearch|null>(null);
+  const [numericSogError, setNumericSogError] = useState<string|null>(null);
+  useEffect(()=>{
+    if(!gameDate){setNumericSog(null);return;}
+    const ctl=new AbortController();
+    setNumericSog(null);setNumericSogError(null);
+    void (async()=>{
+      try{
+        const response=await fetch('/api/nhl-count-research?date='+encodeURIComponent(gameDate),{
+          cache:'no-store',signal:ctl.signal});
+        if(!response.ok)throw Error('NHL V2 frozen count source HTTP '+response.status);
+        const doc=await response.json();
+        if(doc?.schema!==NHL_COUNT_SCHEMA || doc?.game_date!==gameDate ||
+          doc?.research_only!==true || doc?.not_an_official_betting_board!==true)
+          throw Error('Unverified NHL numerical shot-count source');
+        if(!ctl.signal.aborted)setNumericSog(doc as NhlSogResearch);
+      }catch(e){
+        if(!ctl.signal.aborted)setNumericSogError(e instanceof Error?e.message:String(e));
+      }
+    })();
+    return()=>ctl.abort();
+  },[gameDate]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullY, setPullY] = useState(0);
   const [expandedGameKey, setExpandedGameKey] = useState<string | null>(null);
