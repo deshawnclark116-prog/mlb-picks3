@@ -6,6 +6,7 @@ import ExistingNflProjectionSlate from './ExistingNflProjectionSlate';
 import { usePhase1 } from '../nfl/usePhase1';
 import { useNflRoleResearch } from '../nfl/useNflRoleResearch';
 import { teamKey, statKey, type NflRoleResearch, type RoleStat } from '../nfl/roleResearch';
+import {roleEligibleGames} from '../nfl/roleEligibleRanking';
 import { HORIZONS, OUTCOMES, altFor, formatET, groupGames, type ForecastRow, type Horizon, type Phase1View } from '../nfl/phase1';
 import { systemGames, executableGames, systemCandidates, compareSystem, lineFreshness, matchesFilter, targetText, type Family, type SystemPick, type Execution } from '../nfl/bettable';
 import { publicationCoverage } from '../nfl/readable';
@@ -98,10 +99,15 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh,role=null
   // Do not promote original model targets on a team whose starting-QB
   // probabilities contradict the published source. Show the corrected
   // RESEARCH scenario on the numerical board instead, not a fabricated bet.
-  const systems=(!view ? [] : mode==='BETTABLE NOW'
-    ? executableGames(view,selected,search,family,row=>!isRoleBlocked(row))
-    : systemGames(view,selected,search,family,row=>!isRoleBlocked(row))
-        .map(g=>({...g,picks:g.picks.map(p=>({...p,execution:null}))})));
+  // For role-contradicted teams, gate the UNCAPPED candidate pool before
+  // ranking. Unaffected games still use the original, locked selection code.
+  const systems=(!view ? [] : role?.blocked.size
+    ? roleEligibleGames(view,selected,search,family,row=>!isRoleBlocked(row),
+        mode==='BETTABLE NOW'?'bettable':'system')
+    : mode==='BETTABLE NOW'
+      ? executableGames(view,selected,search,family)
+      : systemGames(view,selected,search,family)
+          .map(g=>({...g,picks:g.picks.map(p=>({...p,execution:null}))})));
   const groups=view?groupGames(view,selected).map(game=>{
     const picks=systems.find(g=>g.game_id===game.game_id)!.picks;
     return {...game,picks,visibleRows:game.rows.filter(r=>matchesFilter(r,search,family,outcome))};
