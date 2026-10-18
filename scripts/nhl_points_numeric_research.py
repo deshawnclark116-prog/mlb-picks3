@@ -52,6 +52,8 @@ def rows_from_db(path: Path) -> list[dict]:
     finally:
         con.close()
     seen = set()
+    valid = []
+    anomalous_toi = []
     for row in result:
         key = (str(row["player_id"]), str(row["game_id"]))
         if key in seen:
@@ -64,9 +66,20 @@ def rows_from_db(path: Path) -> list[dict]:
                 for k in ("points", "goals", "assists")) or
             row["points"] != row["goals"] + row["assists"] or
             not isinstance(row["toi_seconds"], (float, int)) or
-            not math.isfinite(row["toi_seconds"]) or row["toi_seconds"] <= 0):
+            not math.isfinite(row["toi_seconds"])):
             raise ValueError("BAD_OFFICIAL_SKATER_STAT_ROW")
-    return result
+        if row["toi_seconds"] <= 0:
+            anomalous_toi.append(key)
+            continue
+        valid.append(row)
+    # One historical 2020 NHL API row has 1 point with recorded TOI=0.
+    # Exclude it visibly from modeling rather than fabricate participation.
+    # A material source-quality collapse must still halt the pipeline.
+    if len(anomalous_toi) > max(1, len(result) // 10000):
+        raise ValueError("EXCESSIVE_ZERO_TOI_HISTORICAL_CORRUPTION")
+    print("NHL_SOURCE_QUARANTINED_NONPOSITIVE_TOI",
+          len(anomalous_toi), anomalous_toi[:5], flush=True)
+    return valid
 
 
 def projection(history: list[dict], season: int):
