@@ -29,7 +29,7 @@ function view():Phase1View{
  ];
  const alt_65=Object.fromEntries(rows.map(r=>[r.id,{milestone:100,probability:.8,method:'quantile_grid_99_conservative' as const}]));
  return {games,rows:{T24:rows,T90:[]},artifact:{
-   schema:'nfl-new-engine-shadow-v1',row_fields:[],games,forecasts:{T24:[],T90:[]},
+   schema:'nfl-new-engine-shadow-v1',row_fields:[],default_horizon:'T24',games,forecasts:{T24:[],T90:[]},
    status:{season:2026,week:6,r11:'UNRESOLVED',last_shadow_run_utc:'2026-10-18T01:50:00Z',
      model_versions:['test'],readiness_ready:false,counts:{T24:{valid_games:3},T90:{valid_games:0}}},
    alt_65
