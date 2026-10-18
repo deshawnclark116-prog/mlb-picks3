@@ -21,11 +21,8 @@ export function systemCandidates(view: Phase1View,horizon: Horizon): SystemPick[
   }));
 }
 /** Search/family eligibility precedes ranking and the per-game DISPLAY cap. */
-export function systemGames(view: Phase1View,horizon: Horizon,search='',family: Family='ALL',eligibleRow:(row:ForecastRow)=>boolean=()=>true) {
-  // Candidate eligibility (including source-backed injury / QB role blocks)
-  // MUST run before ranking/capping. Filtering after slice(0,10) hides valid
-  // alternatives and produces an arbitrarily depleted game board.
-  const candidates=systemCandidates(view,horizon).filter(p=>matchesFilter(p.row,search,family)&&eligibleRow(p.row));
+export function systemGames(view: Phase1View,horizon: Horizon,search='',family: Family='ALL') {
+  const candidates=systemCandidates(view,horizon).filter(p=>matchesFilter(p.row,search,family));
   return groupGames(view,horizon).map(game=>({...game,picks:candidates.filter(p=>p.row.game_id===game.game_id).sort(compareSystem).slice(0,10)}));
 }
 export function todaysBest(view: Phase1View,horizon: Horizon,search='',family: Family='ALL') {
@@ -66,8 +63,8 @@ export function bestExecution(view: Phase1View,horizon: Horizon,pick: SystemPick
   return options.sort((a,b)=>b.odds-a.odds || a.book.localeCompare(b.book) || a.kind.localeCompare(b.kind))[0] || null;
 }
 /** Execution intersects uncapped model eligibility; it has its OWN display cap. */
-export function executableGames(view: Phase1View,horizon: Horizon,search='',family: Family='ALL',eligibleRow:(row:ForecastRow)=>boolean=()=>true) {
-  const executable=systemCandidates(view,horizon).filter(p=>matchesFilter(p.row,search,family)&&eligibleRow(p.row)).flatMap(pick=>{
+export function executableGames(view: Phase1View,horizon: Horizon,search='',family: Family='ALL') {
+  const executable=systemCandidates(view,horizon).filter(p=>matchesFilter(p.row,search,family)).flatMap(pick=>{
     const execution=bestExecution(view,horizon,pick);return execution?[{...pick,execution}]:[];
   });
   return groupGames(view,horizon).map(game=>({...game,picks:executable.filter(p=>p.row.game_id===game.game_id).sort(compareSystem).slice(0,10)}));
