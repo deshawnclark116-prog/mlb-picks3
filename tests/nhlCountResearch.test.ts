@@ -37,7 +37,7 @@ test('frozen NHL V2 shot-count forecast independently supplies MEAN and MEDIAN, 
  assert.equal(reduced.projections[0].median,3);
  assert.equal(reduced.projections[0].forecast_horizon,'T24H');
  assert.equal(reduced.projections[0].source_cutoff_at,'2026-10-17T22:00:00Z');
- const game=addTrueNhlShotCounts([baseGame],reduced as NhlSogResearch)[0];
+ const game=addTrueNhlShotCounts([baseGame],reduced as unknown as NhlSogResearch)[0];
  assert.equal(game.picks.length,2);
  assert.equal(game.picks[0].market,'shots_on_goal');
  assert.equal(game.picks[0].prediction,3.2);
@@ -65,7 +65,7 @@ test('duplicate original V2 horizon/player forecast is quarantined',()=>{
 });
 
 test('wrong NHL matchup identity and kickoff may not inherit real projections',()=>{
- const d=reduceFrozenNhlShots(src(),'2026-10-18') as NhlSogResearch;
+ const d=reduceFrozenNhlShots(src(),'2026-10-18') as unknown as NhlSogResearch;
  assert.equal(addTrueNhlShotCounts([{...baseGame,when:'2026-10-19T22:00:00Z'}],d)[0].picks.length,1);
  assert.equal(addTrueNhlShotCounts([{...baseGame,label:'BOS vs CBJ'}],d)[0].picks.length,1);
 });
