@@ -7,6 +7,7 @@ import {OutcomeCard,NflPhase1Board} from '../src/components/NflTodayScreen';
 import {loadNflRoleResearch,nflRoleResearchHandler,NFL_ROLE_FULL_URL,NFL_ROLE_CONFLICTS_URL} from '../server/nflRoleResearch';
 import type {ForecastRow,Phase1View} from '../src/nfl/phase1';
 import {systemGames,executableGames} from '../src/nfl/bettable';
+import {roleEligibleGames} from '../src/nfl/roleEligibleRanking';
 
 const NOW=Date.parse('2026-10-18T02:00:00Z');
 const kickoff='2026-10-18T17:00:00Z';
@@ -145,7 +146,7 @@ test('the Eagles six-pick bug: role quarantine must happen BEFORE per-game ranki
  assert.equal(before.length,10);
  assert.equal(before.filter(x=>x.row.team==='CAR').length,6,
     'reproduces the screenshot: cap then role removal leaves exactly six Carolina choices');
- const after=systemGames(v,'T24','','ALL',eligible).find(x=>x.game_id===g)!.picks;
+ const after=roleEligibleGames(v,'T24','','ALL',eligible,'system').find(x=>x.game_id===g)!.picks;
  assert.equal(after.length,10);
  assert(after.every(x=>x.row.team==='CAR'));
  assert.equal(after[0].row.player,'synthetic CAR receiver 4');
@@ -175,7 +176,7 @@ test('role exclusions also precede the independently capped verified-line board'
  const eligible=(row:ForecastRow)=>!roles.blocked.has(teamKey(row.game_id,'T24',row.team));
  const old=executableGames(v,'T24').find(x=>x.game_id===g)!.picks;
  assert.equal(old.filter(x=>x.row.team==='CAR').length,6);
- const revised=executableGames(v,'T24','','ALL',eligible).find(x=>x.game_id===g)!.picks;
+ const revised=roleEligibleGames(v,'T24','','ALL',eligible,'bettable').find(x=>x.game_id===g)!.picks;
  assert.equal(revised.length,10);
  assert(revised.every(x=>x.row.team==='CAR'&&x.execution.line===9.5));
 });
