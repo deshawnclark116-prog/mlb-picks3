@@ -66,7 +66,9 @@ export function parseNflRoleResearch(raw: unknown, view: Phase1View, now = Date.
     const g=games.get(c.game_id);
     if (!g || !g.horizons[c.horizon as Horizon] || ![g.home,g.away].includes(c.team)
       || time(g.kickoff_utc)!==time(c.kickoff_utc)) continue;
-    if (time(g.kickoff_utc)<=now) continue; // no post-kickoff promotion
+    // Original QB-role contradiction remains visible throughout game day,
+    // including after kickoff. Never re-enable an invalid original share
+    // card just because the game started; only NEW scenarios stop at kickoff.
     const k=teamKey(c.game_id,c.horizon,c.team);
     if (known.has(k)) throw Error('Duplicate NFL quarterback contradiction');
     known.add(k);block.add(k);

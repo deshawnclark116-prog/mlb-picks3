@@ -124,6 +124,19 @@ test('quarantine both contradicted QB teams from SYSTEM PICKS without hiding goo
  assert.match(html,/tyler huntley/);
 });
 
+test('game share cards cannot republish contradicted original QB forecasts',()=>{
+ const v=view(), roles=parseNflRoleResearch(data(),v,NOW);
+ const html=renderToStaticMarkup(React.createElement(NflPhase1Board,{
+    view:v,loading:false,error:null,retrievedAt:'2026-10-18T02:00:00Z',
+    refresh:async()=>{},role:roles
+ }));
+ const card=(label:string)=>html.slice(html.indexOf('aria-label="Create share card for '+label+'"'),html.indexOf('aria-label="Create share card for '+label+'"')+650);
+ assert.match(card('CAR vs PHI'),/disabled=""/);
+ assert.match(card('CHI vs ATL'),/disabled=""/);
+ assert.doesNotMatch(card('BAL vs CLE'),/disabled=""/);
+ assert.equal((html.match(/data-testid="nfl-role-share-blocked"/g)||[]).length,2);
+});
+
 test('reject forged or stale research, wrong team identity and uncertified expectations',()=>{
  const v=view();
  let d=data();d.full_event.scenarios[1].starter_is_officially_source_verified=true;
@@ -141,7 +154,7 @@ test('reject forged or stale research, wrong team identity and uncertified expec
 test('after kickoff the app cannot advertise a new pregame role condition or bet',()=>{
  const x=parseNflRoleResearch(data(),view(),Date.parse('2026-10-18T18:00:00Z'));
  assert.equal(x.corrected.size,0);
- assert.equal(x.blocked.size,0);
+ assert.equal(x.blocked.size,2); // a started game cannot revive an invalid original betting card
 });
 
 test('server only fetches the two documented nfl research artifacts without caching or Render fallback',async()=>{

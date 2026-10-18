@@ -161,13 +161,19 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh,role=null
         {groups.length===0 && <p role="status" className="mt-4 rounded-xl border border-[#222] p-4 text-sm text-gray-500">{empty}</p>}
         <div className="mt-4 space-y-3">{groups.map(game=>{
           const preview=game.picks[0];const count=mode==='MODEL BOARD'?game.visibleRows.length:game.picks.length;
+          const cannotExportOriginal=role?.conflicts.some(r=>r.gameId===game.game_id&&r.horizon===selected)===true;
           return <section key={`${selected}|${game.game_id}`} data-testid="nfl-game" className="min-w-0 overflow-hidden rounded-2xl border border-[#292929] bg-[#141414]">
             <div className="flex items-center gap-1 pr-3"><button onClick={()=>toggle(game.game_id)} aria-expanded={expanded===game.game_id} aria-controls={`rows-${game.game_id}`} className="flex min-h-20 min-w-0 flex-1 items-center gap-3 p-4 text-left"><div className="min-w-0 flex-1"><div className="flex flex-wrap items-baseline justify-between gap-1"><h2 className="text-base font-bold text-white">{game.away} vs {game.home}</h2><span className="text-[11px] text-gray-500">{etTime(game.kickoff_utc)}</span></div>
               <p className="mt-2 text-[10px] font-bold text-gray-400">{selected} · {count} {mode==='MODEL BOARD'?'player outcomes':mode==='SYSTEM PICKS'?'SYSTEM PICKS':'BETTABLE NOW'}</p>
               {mode!=='MODEL BOARD' && preview && <p className="mt-2 break-words text-[11px] text-gray-300">TOP TARGET: <span className="capitalize text-white">{preview.row.player}</span> · MODEL MEDIAN {number(preview.row.median)}{unit(preview.row.outcome)} · {targetText(preview,true)} ({percent(preview.target.probability)})</p>}
             </div><ChevronDown size={16} className={`shrink-0 text-gray-500 ${expanded===game.game_id?'rotate-180':''}`}/></button>
-              <button aria-label={`Create share card for ${game.away} vs ${game.home}`} onClick={()=>setShare({view,gameId:game.game_id,horizon:selected})} className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-xl border border-[#333] bg-[#1B211E] text-gray-300"><Image size={18}/></button>
+              <button aria-label={`Create share card for ${game.away} vs ${game.home}`}
+                disabled={cannotExportOriginal}
+                title={cannotExportOriginal?'Original QB role projections are contradicted; corrected simulation has no certified betting card.':'Create game share card'}
+                onClick={()=>{if(!cannotExportOriginal)setShare({view,gameId:game.game_id,horizon:selected});}}
+                className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-xl border border-[#333] bg-[#1B211E] text-gray-300 disabled:cursor-not-allowed disabled:opacity-40"><Image size={18}/></button>
             </div>
+            {cannotExportOriginal && <p data-testid="nfl-role-share-blocked" className="px-4 pb-3 text-[11px] text-amber-300">Game card withheld: original QB role model contradicted. See role-conditioned numerical predictions; no certified corrected betting card.</p>}
             {expanded===game.game_id && <div id={`rows-${game.game_id}`} className="space-y-3 border-t border-[#292929] p-3">
               {count===0 && <p className="p-2 text-sm text-gray-500">{empty}</p>}
               {mode==='MODEL BOARD'?game.visibleRows.slice(0,limit).map(row=><OutcomeCard key={row.id} row={row} view={view}
