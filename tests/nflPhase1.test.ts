@@ -97,11 +97,17 @@ test('upstream errors and mismatched distribution fail; no silent fallback',asyn
   await phase1Handler((async()=>new Response('{}')) as any,()=>now)({} as any,res as any);
   assert.equal(code,502);assert.match(body.error,/unavailable or invalid/);assert.match(headers['Cache-Control'],/no-store/);
 });
-test('Other sports stay byte-identical; only audited NFL direct-source route may change',()=>{
+test('Shared sport-card redesign cannot change any source, player schemas or NFL projection contracts',()=>{
   const base=execFileSync('git',['merge-base','HEAD','origin/main'],{encoding:'utf8'}).trim();
   const old=(p:string)=>execFileSync('git',['show',`${base}:${p}`],{encoding:'utf8'});
-  for(const p of ['src/components/TodayScreen.tsx','src/components/NhlTodayScreen.tsx','src/components/TennisTodayScreen.tsx','src/types.ts','src/utils.ts'])
+  for(const p of ['src/components/TodayScreen.tsx','src/types.ts','src/utils.ts','src/nfl/bettable.ts','src/nfl/phase1.ts','server/projectionFeeds.ts'])
     assert.equal(readFileSync(p,'utf8'),old(p));
+  for(const p of ['src/components/NhlTodayScreen.tsx','src/components/TennisTodayScreen.tsx','src/components/CfbTodayScreen.tsx']){
+    const s=readFileSync(p,'utf8');
+    assert.match(s,/UnifiedSportGameCards/);
+    assert.match(s,/predictions/);
+    assert.match(s,/onRefresh/);
+  }
   const route=(s:string)=>s.slice(s.indexOf('app.get("/api/nfl-predictions"'),s.indexOf('app.get("/api/cfb-predictions"'));
   const server=readFileSync('server.ts','utf8');
   assert.match(route(server),/loadCurrentNfl/);
