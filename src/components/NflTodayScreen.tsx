@@ -99,9 +99,9 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh,role=null
   // probabilities contradict the published source. Show the corrected
   // RESEARCH scenario on the numerical board instead, not a fabricated bet.
   const systems=(!view ? [] : mode==='BETTABLE NOW'
-    ? executableGames(view,selected,search,family)
-    : systemGames(view,selected,search,family).map(g=>({...g,picks:g.picks.map(p=>({...p,execution:null}))})))
-    .map(g=>({...g,picks:g.picks.filter(p=>!isRoleBlocked(p.row))}));
+    ? executableGames(view,selected,search,family,row=>!isRoleBlocked(row))
+    : systemGames(view,selected,search,family,row=>!isRoleBlocked(row))
+        .map(g=>({...g,picks:g.picks.map(p=>({...p,execution:null}))})));
   const groups=view?groupGames(view,selected).map(game=>{
     const picks=systems.find(g=>g.game_id===game.game_id)!.picks;
     return {...game,picks,visibleRows:game.rows.filter(r=>matchesFilter(r,search,family,outcome))};
