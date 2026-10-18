@@ -361,7 +361,7 @@ export default function NhlTodayScreen({
               Retry Sync
             </button>
           </div>
-        ) : gameGroups.length === 0 ? (
+        ) : unifiedGames.length === 0 ? (
           <div id="nhl-empty-predictions-state" className="flex flex-col items-center justify-center py-16 px-4 text-center rounded-3xl border border-dashed border-[#222] bg-[#141414]/30">
             <TrendingUp className="w-8 h-8 text-gray-700 mb-3" />
             <h3 className="text-gray-300 text-sm font-semibold mb-1">No NHL picks found.</h3>
