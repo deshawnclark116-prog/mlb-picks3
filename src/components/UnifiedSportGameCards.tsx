@@ -32,7 +32,7 @@ const projectionLabel=(p:UnifiedPick)=>p.predictionKind==='mean'?'MODEL PROJECTI
 const rank=(a:UnifiedPick,b:UnifiedPick)=>(b.modelProbability??-1)-(a.modelProbability??-1)
   ||a.player.localeCompare(b.player)||a.id.localeCompare(b.id);
 
-function PredictionCard({pick}:{pick:UnifiedPick}){
+export function PredictionCard({pick}:{pick:UnifiedPick}){
  return <article data-testid="unified-sport-projection" className="min-w-0 rounded-2xl border border-[#292929] bg-[#1C1C1C] p-4">
    <div className="flex min-w-0 items-start justify-between gap-2">
      <div className="min-w-0"><h3 className="break-words text-base font-bold capitalize text-white">{pick.player}</h3>
@@ -63,7 +63,7 @@ function PredictionCard({pick}:{pick:UnifiedPick}){
  </article>;
 }
 
-function Poster({sport,game,picks,cardRef}:{
+export function Poster({sport,game,picks,cardRef}:{
  sport:SportId;game:UnifiedGame;picks:UnifiedPick[];cardRef?:React.Ref<HTMLDivElement>;
 }){
  const sections=picks.slice(0,6);
