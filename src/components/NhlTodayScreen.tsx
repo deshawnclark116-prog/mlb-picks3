@@ -5,7 +5,7 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import UnifiedSportGameCards, {type UnifiedGame} from './UnifiedSportGameCards';
-import {addTrueNhlShotCounts,NHL_COUNT_SCHEMA,type NhlSogResearch} from "../nhl/countResearch";
+import {addTrueNhlShotCounts,nhlCountGameDate,nhlVisibleGames,NHL_COUNT_SCHEMA,type NhlSogResearch} from "../nhl/countResearch";
 import { motion, AnimatePresence } from "motion/react";
 import { TrendingUp, RefreshCw, AlertTriangle, Search, ChevronDown, ChevronUp } from "lucide-react";
 import { NhlPrediction } from "../types";
@@ -107,17 +107,17 @@ export default function NhlTodayScreen({
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [numericSog, setNumericSog] = useState<NhlSogResearch|null>(null);
   const [numericSogError, setNumericSogError] = useState<string|null>(null);
+  const countDate=nhlCountGameDate(gameDate);
   useEffect(()=>{
-    if(!gameDate){setNumericSog(null);return;}
     const ctl=new AbortController();
     setNumericSog(null);setNumericSogError(null);
     void (async()=>{
       try{
-        const response=await fetch('/api/nhl-count-research?date='+encodeURIComponent(gameDate),{
+        const response=await fetch('/api/nhl-count-research?date='+encodeURIComponent(countDate),{
           cache:'no-store',signal:ctl.signal});
         if(!response.ok)throw Error('NHL V2 frozen count source HTTP '+response.status);
         const doc=await response.json();
-        if(doc?.schema!==NHL_COUNT_SCHEMA || doc?.game_date!==gameDate ||
+        if(doc?.schema!==NHL_COUNT_SCHEMA || doc?.game_date!==countDate ||
           doc?.research_only!==true || doc?.not_an_official_betting_board!==true)
           throw Error('Unverified NHL numerical shot-count source');
         if(!ctl.signal.aborted)setNumericSog(doc as NhlSogResearch);
@@ -126,7 +126,7 @@ export default function NhlTodayScreen({
       }
     })();
     return()=>ctl.abort();
-  },[gameDate]);
+  },[countDate]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullY, setPullY] = useState(0);
   const [expandedGameKey, setExpandedGameKey] = useState<string | null>(null);
@@ -172,12 +172,14 @@ export default function NhlTodayScreen({
     touchStartY.current = -1;
   };
 
+  // Do not mix stale points picks into an independent current SOG slate.
+  const currentPredictions=predictions.filter(p=>p.game_date===countDate);
   const marketsPresent = Array.from(new Set([
-    ...predictions.map((p) => p.market),
+    ...currentPredictions.map((p) => p.market),
     ...(numericSog?.projected_count ? ['shots_on_goal'] : [])
   ])).filter((m) => MARKET_LABELS[m]);
 
-  const sortedPredictions = [...predictions].sort((a, b) => (b.prob_pct ?? 0) - (a.prob_pct ?? 0));
+  const sortedPredictions = [...currentPredictions].sort((a, b) => (b.prob_pct ?? 0) - (a.prob_pct ?? 0));
 
   const filteredPredictions = sortedPredictions.filter((pred) => {
     if (marketFilter !== "ALL" && pred.market !== marketFilter) return false;
@@ -216,6 +218,7 @@ export default function NhlTodayScreen({
            .includes(searchQuery.trim().toLowerCase()))}
       :null;
   const unifiedGames=addTrueNhlShotCounts(originalGames,filteredSog);
+  const viewState=nhlVisibleGames(unifiedGames.length,loading&&currentPredictions.length===0,error);
 
   return (
     <div
@@ -242,7 +245,7 @@ export default function NhlTodayScreen({
             PROP <span className="text-[#00FF41]">EDGE</span>
           </h1>
           <p className="text-[9px] text-gray-500 uppercase tracking-widest mt-0.5 font-mono">
-            NHL{gameDate ? ` • ${gameDate}` : ""}
+            NHL • {countDate}
           </p>
           {getLatestGeneratedAt(predictions) && (
             <p className="text-[8px] text-[#00FF41]/80 font-mono mt-1 uppercase tracking-wider">
@@ -342,12 +345,12 @@ export default function NhlTodayScreen({
         onTouchEnd={handleTouchEnd}
         className="flex-1 overflow-y-auto px-4 py-4 space-y-4 pb-28 scroll-smooth no-scrollbar"
       >
-        {loading && predictions.length === 0 ? (
+        {viewState==="loading" ? (
           <div id="nhl-loading-spinner-state" className="flex flex-col items-center justify-center py-20 space-y-3">
             <RefreshCw className="w-8 h-8 text-[#00FF41] animate-spin" />
             <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">Loading NHL Board...</p>
           </div>
-        ) : error ? (
+        ) : viewState==="error" ? (
           <div id="nhl-error-alert-state" className="p-4 rounded-3xl bg-[#141414] border border-red-950 text-gray-300">
             <div className="flex items-center gap-2 text-red-500 font-bold text-xs mb-1.5 uppercase font-mono">
               <AlertTriangle className="w-4 h-4" />
@@ -361,17 +364,18 @@ export default function NhlTodayScreen({
               Retry Sync
             </button>
           </div>
-        ) : unifiedGames.length === 0 ? (
+        ) : viewState==="empty" ? (
           <div id="nhl-empty-predictions-state" className="flex flex-col items-center justify-center py-16 px-4 text-center rounded-3xl border border-dashed border-[#222] bg-[#141414]/30">
             <TrendingUp className="w-8 h-8 text-gray-700 mb-3" />
             <h3 className="text-gray-300 text-sm font-semibold mb-1">No NHL picks found.</h3>
             <p className="text-xs text-gray-500 max-w-xs leading-relaxed mt-1">
-              No real NHL games scheduled for the target date, or every eligible team already has
+              No source-verified NHL forecasts available for this game date, or every eligible game has
               a final result. Try changing filters, or check back closer to the next real slate.
             </p>
           </div>
         ) : (
           <div id="nhl-games-list" className="space-y-4">
+            {error&&<p role="status" className="mb-2 text-[11px] text-amber-300">Points classifier unavailable; independent V2 shot-count projections remain visible.</p>}
             {numericSogError&&<p role="status" className="mb-2 text-[11px] text-amber-300">Independent NHL shot-count research unavailable. Point-target chances remain separate; no numerical substitute was invented.</p>}
           {numericSog&&numericSog.projected_count>0&&<p role="status" className="mb-2 text-[11px] text-gray-400">Frozen V2 numerical shot forecasts for this date: {numericSog.projected_count}. Research only; game-day participation and sportsbook lines not verified. Points targets remain binary event probabilities.</p>}
           <UnifiedSportGameCards sport="NHL" prefix="nhl-game-card-" games={unifiedGames}/>
