@@ -1,0 +1,40 @@
+name: NHL and CFB numerical-stat versus event-target honesty
+
+on:
+  push:
+    branches: [fix/nhl-no-fake-stat-projection-on-event-forecast-card-20261018]
+    paths:
+      - src/components/UnifiedSportGameCards.tsx
+      - tests/unifiedSportCards.test.ts
+      - .github/workflows/nhl_honest_projection_cards.yml
+  pull_request:
+    paths:
+      - src/components/UnifiedSportGameCards.tsx
+      - tests/unifiedSportCards.test.ts
+      - .github/workflows/nhl_honest_projection_cards.yml
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: TypeScript and original app build
+        run: |
+          npm run lint
+          npm run build
+      - name: Reproduce actual MIN-CBJ six-player NHL screenshot and validate display correctness
+        run: node --import tsx --test tests/unifiedSportCards.test.ts
+      - name: Preserve NFL first-seen, betting line and game-card behavior
+        run: npm test
+      - name: No unreviewed model/forecast changes
+        run: git diff --check
