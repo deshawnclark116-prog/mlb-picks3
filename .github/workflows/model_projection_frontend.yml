@@ -1,11 +1,19 @@
 name: Verify model-projection frontend integration
 on:
   push:
-    branches: [feature/unified-model-projection-delivery]
+    branches: [main, feature/unified-model-projection-delivery]
   pull_request:
     paths:
       - 'server/projectionFeeds.ts'
       - 'src/components/SportProjectionScreen.tsx'
+      - 'src/components/NhlTodayScreen.tsx'
+      - 'src/components/CfbTodayScreen.tsx'
+      - 'src/components/UnifiedSportGameCards.tsx'
+      - 'src/nhl/countResearch.ts'
+      - 'server/nhlCountResearch.ts'
+      - 'tests/nhlCountResearch.test.ts'
+      - 'tests/unifiedSportCards.test.ts'
+      - 'tests/browser/modelProjections.spec.ts'
       - 'src/App.tsx'
       - 'server.ts'
       - 'tests/projectionFeeds.test.ts'
