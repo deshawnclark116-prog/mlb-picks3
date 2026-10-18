@@ -1,0 +1,70 @@
+name: NHL independently validated numerical POINT count shadow
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feat/nhl-numeric-points-first-historical-forward-validation-20261018
+    paths:
+      - scripts/nhl_points_numeric_research.py
+      - tests/test_nhl_points_numeric_research.py
+      - .github/workflows/nhl_numeric_points_forward_gate.yml
+  pull_request:
+    paths:
+      - scripts/nhl_points_numeric_research.py
+      - tests/test_nhl_points_numeric_research.py
+      - .github/workflows/nhl_numeric_points_forward_gate.yml
+
+permissions:
+  contents: read
+
+jobs:
+  independent-numeric-forward-grade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout correct application repository
+        uses: actions/checkout@v4
+        with:
+          path: app
+      - name: Read-only source checkout (historical NHL skater outcomes and original binary candidate board)
+        uses: actions/checkout@v4
+        with:
+          repository: deshawnclark116-prog/mlb-picks2
+          ref: main
+          path: upstream-frozen-source
+          sparse-checkout: |
+            nhl_models/nhl_model.sqlite
+            docs/nhl_predictions.json
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - name: Test strict chronology, frozen weighting and real stat counts
+        working-directory: app
+        run: |
+          python -m unittest discover -s tests -p 'test_nhl_points_numeric_research.py' -v
+          python -m py_compile scripts/nhl_points_numeric_research.py
+          git diff --check
+      - name: Run paired historical numerical accuracy and future-only count projection
+        working-directory: app
+        run: |
+          python scripts/nhl_points_numeric_research.py \
+            --db ../upstream-frozen-source/nhl_models/nhl_model.sqlite \
+            --upstream-board ../upstream-frozen-source/docs/nhl_predictions.json \
+            --out nhl_numeric_eval_report.json
+          python - <<'PY'
+          import json
+          d=json.load(open('nhl_numeric_eval_report.json'))
+          print('NHL POINT COUNT GATE:',d['validation']['research_display_gate_passed'])
+          print('TWO SEASONS:',json.dumps(d['validation']['by_season'],sort_keys=True))
+          print('FUTURE PRE-KICKOFF NUMERICAL ROWS:',len(d['predictions']))
+          assert d['schema']=='NHL_INDEPENDENT_POINTS_NUMERIC_RESEARCH_V1'
+          assert d['source_model_not_binary_points_classifier'] is True
+          assert d['status']=='RESEARCH_NUMERIC_ONLY_NO_BETTING_PROMOTION'
+          assert all(p['status']=='NEW_PREGAME_RESEARCH_ONLY' for p in d['predictions'])
+          PY
+      - name: Preserve exact forward report for independent review, without promoting old outcomes
+        uses: actions/upload-artifact@v4
+        with:
+          name: nhl-points-numeric-forward-research
+          path: app/nhl_numeric_eval_report.json
+          retention-days: 14
