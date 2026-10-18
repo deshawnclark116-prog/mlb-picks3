@@ -118,7 +118,7 @@ test('quarantine both contradicted QB teams from SYSTEM PICKS without hiding goo
  assert.match(html,/232.4/);
  assert.match(html,/226.6/);
  // Only unflagged Tyler Huntley remains eligible for original 65% target ranking
- assert.match(html,/TODAY.S BEST/);
+ assert.match(html,/TODAY(?:&#x27;|')S BEST/);
  const best=html.match(/data-testid="today-best"/g)||[];
  assert.equal(best.length,1);
  assert.match(html,/tyler huntley/);
