@@ -87,5 +87,5 @@ test('moneyline overconfidence and missing-player sample exclusion remain visibl
  assert(ml.average_stated_probability>ml.hit_rate+.2);
  assert(report.summary.global_ungraded_not_date_scoped.player_no_stat_line_after_final>0);
  assert(report.summary.numeric_ungraded_not_date_scoped.player_no_stat_line_after_final_NOT_ZERO>0);
- assert(report.limitations.some((s:string)=>s.includes('missing')));
+ assert(report.limitations.some((s:string)=>s.includes('players absent from recorded final stats')));
 });
