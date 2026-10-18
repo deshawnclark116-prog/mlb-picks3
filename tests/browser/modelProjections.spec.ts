@@ -28,11 +28,32 @@ const nhl={
  horizons:["T90"],dates:["2026-10-07"],total_valid_forecasts:1,row_fields:rowFields,
  forecasts:{T90:[["nhl-game","nhl-player-123","Skater Example","PIT","WSH","2026-10-07","2026-10-07T23:00:00Z",2.4,2,1.5,0,1,3,5,.15,.85,.65,.4,.2,.08]]}
 };
+const currentNhl={
+ generated_at_utc:"2026-10-18T20:45:00Z",season:2026,game_date:"2026-10-18",
+ markets:{shots_on_goal:{eligible:1}},picks:[{
+   market:"shots_on_goal",prop_type:"shots_on_goal",player_id:"nl-1",
+   player:"Current Skater",team:"PIT",opponent:"WSH",season:2026,
+   game_date:"2026-10-18",kickoff_utc:"2026-10-18T23:00:00Z",
+   pick:"OVER 2.5",line:2.5,model_prob:.74,prob_pct:74,confidence:"MEDIUM",games_played:5
+ }]
+};
+const currentTennis={
+ generated_at_utc:"2026-10-18T20:45:00Z",markets:{total_games:{eligible:1}},
+ picks:[{
+   market:"total_games",prop_type:"total_games",tour:"atp",tourney:"Test Open",
+   surface:"Hard",surface_confirmed:true,best_of:3,
+   player1:"Player Alpha",player1_id:"p1",player2:"Player Beta",player2_id:"p2",
+   start_time_utc:"2026-10-18T23:00:00Z",pick:"OVER 22.5",line:22.5,
+   predicted_mean:24.2,model_prob:.68,prob_pct:68,unagraded:true,model_source:"model_projected_line"
+ }]
+};
 async function setup(page:any,cfbFailed=false) {
  await page.route("**/api/**", route=>{
   const url=route.request().url();
   if(url.includes("/api/model-projections/cfb"))return route.fulfill(cfbFailed?{status:503,json:{error:"CFB research unavailable",details:"Original artifact missing"}}:{json:cfb});
   if(url.includes("/api/cfb-predictions"))return route.fulfill({json:currentCfb});
+  if(url.includes("/api/nhl-predictions"))return route.fulfill({json:currentNhl});
+  if(url.includes("/api/tennis-predictions"))return route.fulfill({json:currentTennis});
   if(url.includes("/api/model-projections/nhl"))return route.fulfill({json:nhl});
   if(url.includes("/api/predictions"))return route.fulfill({json:[]});
   return route.fulfill({json:{picks:[],predictions:[],games:[]}});
@@ -81,4 +102,40 @@ test("missing model feed fails closed; no legacy auto-fallback",async ({page})=>
  await expect(page.getByRole("button",{name:"Research archive"})).toHaveAttribute("aria-pressed","true");
  await page.getByRole("button",{name:"Current predictions"}).click();
  await expect(page.getByText("Oregon State Beavers ML")).toBeVisible();
+});
+
+test("current CFB and NHL use the same NFL-style grouped matchup and share-card layout",async ({page})=>{
+ await setup(page);
+ await page.locator("#tab-btn-cfb").click();
+ await expect(page.getByTestId("unified-sport-board")).toBeVisible();
+ await expect(page.getByRole("button",{name:"SYSTEM PICKS"})).toBeVisible();
+ await expect(page.getByRole("button",{name:"MODEL BOARD"})).toBeVisible();
+ const cfb=page.getByTestId("unified-sport-game").first();
+ await expect(cfb).toBeVisible();
+ await cfb.locator('button[aria-expanded]').click();
+ await expect(cfb.getByTestId("unified-sport-projection")).toBeVisible();
+ await page.locator("#tab-btn-nhl").click();
+ await expect(page.getByTestId("unified-sport-board")).toBeVisible();
+ const nhl=page.getByTestId("unified-sport-game").first();
+ await expect(nhl).toContainText("PIT vs WSH");
+ await nhl.locator('button[aria-expanded]').click();
+ await expect(nhl.getByTestId("unified-predicted-stat")).toContainText("NOT PUBLISHED");
+ await expect(nhl.getByTestId("unified-sport-projection")).toContainText("OVER 2.5");
+ await nhl.getByRole("button",{name:/Create share card/}).click();
+ await expect(page.getByRole("dialog")).toContainText("CREATE GAME CARD");
+ await expect(page.getByTestId("unified-sport-share-poster")).toContainText("MODEL STAT PROJECTIONS");
+ await expect(page.getByRole("button",{name:"BETTABLE CARD"})).toBeDisabled();
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
+});
+
+test("tennis shares the same NFL-style page and exposes a real published projected MEAN",async ({page})=>{
+ await setup(page);
+ await page.locator("#tab-btn-tennis").click();
+ await expect(page.getByTestId("unified-sport-board")).toBeVisible();
+ const game=page.getByTestId("unified-sport-game").first();
+ await expect(game).toContainText("Player Alpha vs Player Beta");
+ await game.locator('button[aria-expanded]').click();
+ await expect(game.getByTestId("unified-predicted-stat")).toContainText("24.2 games");
+ await expect(game.getByTestId("unified-sport-projection")).toContainText("OVER 22.5");
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
 });
