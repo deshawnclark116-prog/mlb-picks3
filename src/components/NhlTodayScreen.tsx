@@ -172,9 +172,10 @@ export default function NhlTodayScreen({
     touchStartY.current = -1;
   };
 
-  const marketsPresent = Array.from(new Set(predictions.map((p) => p.market))).filter(
-    (m) => MARKET_LABELS[m]
-  );
+  const marketsPresent = Array.from(new Set([
+    ...predictions.map((p) => p.market),
+    ...(numericSog?.projected_count ? ['shots_on_goal'] : [])
+  ])).filter((m) => MARKET_LABELS[m]);
 
   const sortedPredictions = [...predictions].sort((a, b) => (b.prob_pct ?? 0) - (a.prob_pct ?? 0));
 
@@ -192,7 +193,7 @@ export default function NhlTodayScreen({
   });
 
   const gameGroups = groupPredictionsByGame(filteredPredictions);
-  const unifiedGames:UnifiedGame[]=gameGroups.map(g=>({
+  const originalGames:UnifiedGame[]=gameGroups.map(g=>({
       id:g.key,label:g.teamA+' vs '+g.teamB,when:g.kickoff_utc,
       sourceLabel:'NHL CURRENT MODEL · FIXED-LINE CLASSIFIER',
       subtitle:g.game_date,
@@ -208,6 +209,13 @@ export default function NhlTodayScreen({
           'No numeric player-stat median is present in this current predictions feed.'
       }))
     }));
+  const filteredSog=(marketFilter==='ALL'||marketFilter==='shots_on_goal') &&
+    confidenceFilter==='ALL' && numericSog
+      ?{...numericSog,projections:numericSog.projections.filter(p=>
+         !searchQuery.trim() || (p.player+' '+p.team+' '+p.opponent).toLowerCase()
+           .includes(searchQuery.trim().toLowerCase()))}
+      :null;
+  const unifiedGames=addTrueNhlShotCounts(originalGames,filteredSog);
 
   return (
     <div
