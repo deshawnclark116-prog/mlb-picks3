@@ -52,7 +52,8 @@ class TestNhlNumeric(unittest.TestCase):
         post=datetime(2026,10,18,23,tzinfo=timezone.utc)
         self.assertEqual(future_board(hist,up,post,published_at="2026-10-18T23:00:00Z"),[])
         bad=dict(up,generated_at_utc="2026-10-19T00:00:00Z")
-        self.assertEqual(future_board(hist,bad,now,published_at="2026-10-18T17:00:00Z"),[])
+        with self.assertRaisesRegex(ValueError,"FUTURE_UPSTREAM_PUBLICATION_CLOCK"):
+            future_board(hist,bad,now,published_at="2026-10-18T17:00:00Z")
 
     def test_retrospective_forward_uses_only_prior_game_dates(self):
         hist=[played(1,2026,f"2026-10-{i:02}",v,game=i)
