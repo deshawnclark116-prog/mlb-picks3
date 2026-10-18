@@ -44,6 +44,23 @@ jobs:
           python -m unittest discover -s tests -p 'test_nhl_points_numeric_research.py' -v
           python -m py_compile scripts/nhl_points_numeric_research.py
           git diff --check
+      - name: Check skater-game source quality before numerical validation
+        working-directory: app
+        run: |
+          python - <<'PY'
+          import sqlite3
+          p='../upstream-frozen-source/nhl_models/nhl_model.sqlite'
+          db=sqlite3.connect(p)
+          print('SKATER GAMES TOTAL:',db.execute('SELECT count(*) FROM skater_games').fetchone()[0])
+          checks={
+            'goals_plus_assists_mismatch': 'points != goals + assists',
+            'nonpositive_toi': 'toi_seconds <= 0 OR toi_seconds IS NULL',
+            'null_official_count': 'points IS NULL OR goals IS NULL OR assists IS NULL',
+          }
+          for k,sql in checks.items():
+            print('SOURCE QC',k,db.execute(f'SELECT count(*) FROM skater_games WHERE {sql}').fetchone()[0])
+            print('EXAMPLES',db.execute(f'SELECT player_id,game_id,game_date,goals,assists,points,toi_seconds FROM skater_games WHERE {sql} LIMIT 5').fetchall())
+          PY
       - name: Run paired historical numerical accuracy and future-only count projection
         working-directory: app
         run: |
