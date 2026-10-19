@@ -1,5 +1,6 @@
 import {test, expect} from '@playwright/test';
-import saved from '../../docs/nba_v1_opening_week_research.json';
+import {readFileSync} from 'node:fs';
+const saved=JSON.parse(readFileSync(new URL('../../docs/nba_v1_opening_week_research.json',import.meta.url),'utf8'));
 
 async function launch(page: any, payload: unknown = saved) {
   await page.route('**/api/**', route => {
