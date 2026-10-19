@@ -1,0 +1,57 @@
+name: NBA V2 pregame rotations versus V1 on untouched historical games
+on:
+  pull_request:
+    paths:
+      - nba/nba_v2_rotation_research.py
+      - nba/nba_v2_rotation_backtest.py
+      - tests/test_nba_v2_rotation.py
+      - .github/workflows/nba_v2_rotation_holdout.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  scientific-challenger:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Adversarial look-ahead, roster-identity and scenario tests
+        run: |
+          PYTHONPATH=. python -m unittest -v tests.test_nba_v2_rotation tests.test_nba_v1_player_model tests.test_nba_v1_player_backtest
+          python -m py_compile nba/nba_v2_rotation_research.py nba/nba_v2_rotation_backtest.py
+      - uses: actions/cache@v4
+        with:
+          path: .cache/nba-v2-boxscores
+          key: nba-v2-real-completed-espm-boxes-${{ hashFiles('docs/nba_v1_forward_walkback.json') }}
+      - name: Load independently completed ESPN NBA games and score fixed challenger
+        run: |
+          PYTHONPATH=. python -u nba/nba_v2_rotation_backtest.py \
+            --team-report docs/nba_v1_forward_walkback.json \
+            --cache .cache/nba-v2-boxscores --first-n-games 730 \
+            --out docs/nba_v2_rotation_challenge.json
+      - name: Assert same-player paired scoring, untouched interval and NO official promotion
+        run: |
+          python - <<'PY'
+          import json
+          d=json.load(open('docs/nba_v2_rotation_challenge.json'))
+          assert d['schema']=='NBA_V2_PREGAME_ROLE_RESEARCH_COMPARATIVE_HOLDOUT_V1'
+          assert d['first_350_games_reserved_from_previous_experiment']
+          assert d['untouched_holdout_from']=='2026-01-10'
+          assert d['official_bets']==0 and d['independently_verified_book_odds']==0
+          assert d['paired_played_forecasts']>=400
+          assert d['stats']['holdout']['n_same_played_players']>=400
+          assert d['boxscore_verified']>=.98*d['boxscore_attempted']
+          assert d['decision'].startswith('RESEARCH_CHALLENGER_')
+          print('NBA_V2_SCIENCE_GATE',json.dumps({
+            'holdout':d['stats']['holdout'],'gate':d['promotion_gate'],
+            'decision':d['decision']},sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-v2-unaltered-paired-research-${{ github.run_id }}
+          path: docs/nba_v2_rotation_challenge.json
+          retention-days: 90
+      - run: git diff --check
