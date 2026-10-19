@@ -17,6 +17,30 @@ export interface NhlSogResearch {
  projected_count:number;projections:NhlSogCount[];
 }
 export const NHL_COUNT_SCHEMA='NHL_APP_VERIFIED_SOG_COUNT_RESEARCH_V1';
+/** A stale/missing POINTS-classifier day must not suppress real shot-count
+ * research on the current NHL date. Use Eastern game dates, never UTC date.
+ * An explicitly future classifier slate still selects its own future date.
+ */
+export function nhlCountGameDate(classifierGameDate:string|null,now:Date=new Date()):string{
+ if(!Number.isFinite(now.getTime()))throw Error('NHL_INVALID_CLOCK');
+ const parts=new Intl.DateTimeFormat('en-US',{
+   timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'
+ }).formatToParts(now);
+ const get=(part:string)=>parts.find(x=>x.type===part)?.value;
+ const today=get('year')+'-'+get('month')+'-'+get('day');
+ if(classifierGameDate && /^20\d{2}-\d{2}-\d{2}$/.test(classifierGameDate) &&
+    Number.isFinite(Date.parse(classifierGameDate+'T00:00:00Z')) &&
+    classifierGameDate>=today)return classifierGameDate;
+ return today;
+}
+
+export function nhlVisibleGames(count:number,loading:boolean,legacyError:string|null):'loading'|'error'|'games'|'empty' {
+ if(count>0)return 'games';
+ if(loading)return 'loading';
+ if(legacyError)return 'error';
+ return 'empty';
+}
+
 const finite=(v:unknown):v is number=>typeof v==='number'&&Number.isFinite(v);
 const stamp=(value:string)=>Date.parse(value);
 const match=(a:UnifiedGame,p:NhlSogCount)=> {

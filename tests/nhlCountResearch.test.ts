@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {reduceFrozenNhlShots,loadNhlCountResearch} from '../server/nhlCountResearch';
-import {addTrueNhlShotCounts,NHL_COUNT_SCHEMA,type NhlSogResearch} from '../src/nhl/countResearch';
+import {addTrueNhlShotCounts,nhlCountGameDate,nhlVisibleGames,NHL_COUNT_SCHEMA,type NhlSogResearch} from '../src/nhl/countResearch';
 import type {UnifiedGame} from '../src/components/UnifiedSportGameCards';
 
 const cols=['game_id','player_id','player','team','opponent','game_date','scheduled_start',
@@ -109,4 +109,22 @@ test('server read-only research endpoint uses source frozen snapshot and no mark
  assert.equal(out.projected_count,1);
  assert.equal(requests.length,1);
  assert.match(requests[0],/mlb-picks2\/main\/docs\/nhl_v2_shadow.json/);
+});
+
+test('NHL current shot projections are independent of missing or stale points feed date in ET',()=>{
+ const evening=new Date('2026-10-19T01:30:00Z'); // Oct 18 9:30 PM ET
+ assert.equal(nhlCountGameDate(null,evening),'2026-10-18');
+ assert.equal(nhlCountGameDate('2026-10-17',evening),'2026-10-18');
+ assert.equal(nhlCountGameDate('2026-10-18',evening),'2026-10-18');
+ assert.equal(nhlCountGameDate('2026-10-20',evening),'2026-10-20');
+ assert.equal(nhlCountGameDate('invalid',evening),'2026-10-18');
+ assert.equal(nhlCountGameDate(null,new Date('2026-10-19T05:30:00Z')),'2026-10-19');
+});
+
+test('a missing or failing points classifier cannot hide separately verified NHL shot-count games',()=>{
+ assert.equal(nhlVisibleGames(30,true,'points provider unavailable'),'games');
+ assert.equal(nhlVisibleGames(30,false,'points provider unavailable'),'games');
+ assert.equal(nhlVisibleGames(0,true,null),'loading');
+ assert.equal(nhlVisibleGames(0,false,'provider failed'),'error');
+ assert.equal(nhlVisibleGames(0,false,null),'empty');
 });
