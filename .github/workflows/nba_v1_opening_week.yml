@@ -1,0 +1,68 @@
+name: NBA V1 real opening-week roster-blind previews
+on:
+  push:
+    branches: [feat/nba-v1-opening-night-roster-blind-preview-20261018, main]
+    paths:
+      - nba/nba_v1_opening_week.py
+      - tests/test_nba_v1_opening_week.py
+      - .github/workflows/nba_v1_opening_week.yml
+  pull_request:
+    paths:
+      - nba/nba_v1_opening_week.py
+      - tests/test_nba_v1_opening_week.py
+      - .github/workflows/nba_v1_opening_week.yml
+  workflow_dispatch: {}
+permissions:
+  contents: write
+jobs:
+  published-prior-season-research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: No tips already played, roster uncertainty and price evidence tests
+        run: |
+          PYTHONPATH=. python -m unittest -v tests/test_nba_v1_opening_week.py
+          python -m py_compile nba/nba_v1_opening_week.py
+      - name: ESPN entire previous NBA season and Oct 20-21 2026 verified fixtures
+        run: |
+          PYTHONPATH=. python -u nba/nba_v1_opening_week.py \
+            --history-from 2025-10-21 \
+            --history-to 2026-04-12 \
+            --opening-dates 2026-10-20,2026-10-21 \
+            --cache "$RUNNER_TEMP/nba-preseason-boxscore-source" \
+            --out docs/nba_v1_opening_week_research.json
+      - name: No betting certification from last season alone
+        run: |
+          python - <<'PY'
+          import json
+          d=json.load(open('docs/nba_v1_opening_week_research.json'))
+          assert d['schema']=='NBA_V1_2026_OPENING_ROSTER_BLIND_RESEARCH_V1'
+          assert d['historical_completed_regular_games']>=1000
+          assert d['projected_games']>=3, 'Need ESPN source confirmed actual Oct 20 opener'
+          assert d['official_wagers']==0 and d['player_markets_official']==0
+          assert d['role_and_lineup_verification']=='MISSING_DO_NOT_BET'
+          assert all(x['role_availability_verified'] is False and x['wager_recommendation'] is False
+                     for x in d['forecasts'])
+          print('NBA_V1_PREGAME_MATCHUPS',[(x['away'],x['home'],
+                      x['home_win_probability'],x['projected_game_total_mean'])
+                       for x in d['forecasts']])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-v1-opening-week-research-${{ github.run_id }}
+          path: docs/nba_v1_opening_week_research.json
+          retention-days: 30
+      - name: Keep frozen pregame scenario on GitHub main
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/nba_v1_opening_week_research.json
+          if ! git diff --cached --quiet; then
+            git commit -m "NBA V1 first pregame source-frozen roster-unverified opening scenario"
+            git push origin HEAD:main
+          fi
