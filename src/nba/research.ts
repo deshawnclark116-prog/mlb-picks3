@@ -85,8 +85,15 @@ export function parseNbaResearch(raw: unknown): NbaResearchDocument {
       throw new Error('NBA game row cannot be certified as safe research');
     }
     const tip = Date.parse(String(row.tipoff_utc));
+    // The fixture source groups by EASTERN game day. Late ESPN games occur on
+    // Oct 22 in UTC while still being Oct 21 in the arena's local season schedule.
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit'
+    }).formatToParts(new Date(tip));
+    const dateParts = Object.fromEntries(parts.map(p => [p.type, p.value]));
+    const easternGameDay = `${dateParts.year}-${dateParts.month}-${dateParts.day}`;
     if (!Number.isFinite(tip) || frozenAt >= tip ||
-        !['2026-10-20', '2026-10-21'].includes(new Date(tip).toISOString().slice(0, 10))) {
+        !['2026-10-20', '2026-10-21'].includes(easternGameDay)) {
       throw new Error('NBA game was not frozen before its 2026 opening-week tipoff');
     }
     observed.add(row.game_id);
