@@ -52,6 +52,21 @@ class BoxscoreIntegrity(unittest.TestCase):
             "32","5","7","4","3-6"]
         with self.assertRaisesRegex(ValueError,"3-pointers exceed"):
             parse_final_boxscore(p,"401",["1","2"])
+    def test_missing_identity_on_unplayed_placeholder_can_be_quarantined(self):
+        p=summary()
+        placeholder=p["boxscore"]["players"][0]["statistics"][0]["athletes"][5]
+        placeholder["athlete"]={}
+        players,audit=parse_final_boxscore(p,"401",["1","2"])
+        self.assertEqual(len(players),10)
+        self.assertEqual(audit["missing_dnp"],2)
+
+    def test_missing_identity_with_actual_played_stats_must_fail_closed(self):
+        p=summary()
+        recorded=p["boxscore"]["players"][0]["statistics"][0]["athletes"][0]
+        recorded["athlete"]={}
+        with self.assertRaisesRegex(ValueError,"identity missing for played"):
+            parse_final_boxscore(p,"401",["1","2"])
+
     def test_minutes_are_the_first_stage_not_naive_last_game_points(self):
         h=[{"minutes":35.0,"points":20,"rebounds":9,
             "assists":6,"three_pointers_made":3} for _ in range(8)]
