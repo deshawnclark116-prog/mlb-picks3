@@ -59,12 +59,12 @@ const currentTennis={
    model_prob:.68,prob_pct:68,unagraded:true,model_source:"original_moneyline_research"
  }]
 };
-async function setup(page:any,cfbFailed=false) {
+async function setup(page:any,cfbFailed=false,nhlFixture=currentNhl) {
  await page.route("**/api/**", route=>{
   const url=route.request().url();
   if(url.includes("/api/model-projections/cfb"))return route.fulfill(cfbFailed?{status:503,json:{error:"CFB research unavailable",details:"Original artifact missing"}}:{json:cfb});
   if(url.includes("/api/cfb-predictions"))return route.fulfill({json:currentCfb});
-  if(url.includes("/api/nhl-predictions"))return route.fulfill({json:currentNhl});
+  if(url.includes("/api/nhl-predictions"))return route.fulfill({json:nhlFixture});
   if(url.includes("/api/tennis-predictions"))return route.fulfill({json:currentTennis});
   if(url.includes("/api/model-projections/nhl"))return route.fulfill({json:nhl});
   if(url.includes("/api/predictions"))return route.fulfill({json:[]});
@@ -127,8 +127,12 @@ test("current CFB and NHL use the same NFL-style grouped matchup and share-card 
  await cfb.locator('button[aria-expanded]').click();
  await expect(cfb.getByTestId("unified-sport-projection")).toBeVisible();
  await page.locator("#tab-btn-nhl").click();
- await expect(page.getByTestId("unified-sport-board")).toBeVisible();
- const nhl=page.getByTestId("unified-sport-game").first();
+ // Framer Motion deliberately retains the exiting CFB screen briefly.
+ // Match the ACTIVE NHL container, not an exiting CFB board.
+ const nhlScreen=page.locator("#motion-screen-NHL");
+ await expect(nhlScreen).toBeVisible();
+ await expect(nhlScreen.getByTestId("unified-sport-board")).toBeVisible();
+ const nhl=nhlScreen.getByTestId("unified-sport-game").first();
  await expect(nhl).toContainText("PIT vs WSH");
  await nhl.locator('button[aria-expanded]').click();
  await expect(nhl.getByTestId("unified-predicted-stat")).toContainText("MODEL CHANCE OF TARGET");
@@ -191,8 +195,10 @@ test("Minnesota-Columbus six-player poster shows frozen numerical shot projectio
 });
 
 test("frozen NHL numerical game remains visible with ZERO point-classifier picks",async ({page})=>{
- await setup(page);
  const current={...currentNhl,picks:[]};
+ // Seed zero classifier rows BEFORE app bootstrap, not after an in-flight
+ // initial GET can already populate a different synthetic PIT-WAS fixture.
+ await setup(page,false,current);
  await page.route("**/api/nhl-predictions**",route=>route.fulfill({json:current}));
  await page.route("**/api/nhl-count-research**",route=>route.fulfill({json:{
    schema:"NHL_APP_VERIFIED_SOG_COUNT_RESEARCH_V1",research_only:true,
