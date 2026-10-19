@@ -76,9 +76,11 @@ class NbaV1Tests(unittest.TestCase):
     def test_real_outcomes_and_projected_values_never_share_the_same_keys(self):
         g=sample(220)
         x=walk_forward(g,"2025-11-03","2025-11-24")
-        for i,r in enumerate(x["rows"]):
-            self.assertEqual(r["home_points"],g[i]["home_points"])
-            self.assertEqual(r["away_points"],g[i]["away_points"])
+        finals={row["game_id"]:row for row in g}
+        for r in x["rows"]:
+            original=finals[r["game_id"]]
+            self.assertEqual(r["home_points"],original["home_points"])
+            self.assertEqual(r["away_points"],original["away_points"])
             self.assertIn("pred_home_points",r)
             self.assertIn("pred_away_points",r)
             self.assertNotEqual(r["total_points"],r["home_points"]+r["away_points"])
