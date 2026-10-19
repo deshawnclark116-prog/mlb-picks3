@@ -136,7 +136,7 @@ def conditional_absence_scenario(team_projection, evidence, asof_utc, tipoff_utc
     initial_expected=sum(x["expected_minutes"] for x in copy["players"])
     lost=0.0
     for e in evidence:
-        if not isinstance(e,dict) or e.get("team_id")!=team_projection["team_id"] or
+        if (not isinstance(e,dict) or e.get("team_id")!=team_projection["team_id"] or
                 e.get("player_id") not in by_id or e.get("status") not in ("OUT","ACTIVE") or
                 e.get("independently_verified") is not True or
                 not str(e.get("source_url","")).startswith("https://")):
