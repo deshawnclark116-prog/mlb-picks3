@@ -181,8 +181,8 @@ def model_predict(h:Team,a:Team,avg_points:float,baseline_p:float)->dict:
     elo=elo_probability(h.elo,a.elo)
     coverage=min(1.0,min(h.n,a.n)/15)
     p=baseline_p*(1-coverage)+elo*coverage
-    return {"home_win_prob":round(p,6),"home_points":round(raw_home,2),
-            "away_points":round(raw_away,2),
+    return {"home_win_prob":round(p,6),"pred_home_points":round(raw_home,2),
+            "pred_away_points":round(raw_away,2),
             "total_points":round(raw_home+raw_away,2),
             "home_elo":round(h.elo,1),"away_elo":round(a.elo,1),
             "prior_games_home":h.n,"prior_games_away":a.n,
@@ -220,6 +220,10 @@ def walk_forward(games:list[dict],validation_start:str,holdout_start:str)->dict:
         for g in group:
             h=team[g["home_id"]];a=team[g["away_id"]]
             pred=model_predict(h,a,league_points,home_wins_prior)
+            # Treat observed results and model estimates as different fields.
+            # Silent same-key overwrites formerly made total MAE ~0!
+            if set(pred)&{"home_points","away_points","winner_is_home"}:
+                raise ValueError("MODEL_PREDICTION_OVERWROTE_ACTUAL_NBA_RESULT")
             eligible=h.n>=MIN_PRIOR_GAMES and a.n>=MIN_PRIOR_GAMES and completed_before>=50
             split="seed" if dd<validation_start else "validation" if dd<holdout_start else "holdout"
             o={**g,**pred,"eligible":eligible,"split":split,
