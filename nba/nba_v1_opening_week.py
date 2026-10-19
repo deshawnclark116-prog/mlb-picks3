@@ -90,6 +90,8 @@ def main():
     from collections import Counter
     counts=Counter(x for g in old for x in (g["home_id"],g["away_id"]))
     extra={team:n for team,n in sorted(counts.items()) if n>82}
+    print("NBA_ESPN_NONFRANCHISE_GAMES",json.dumps([g for g in old if int(g["home_id"])>30 or int(g["away_id"])>30]),flush=True)
+    print("NBA_ESPN_DEC_2025_NYK_SAS",json.dumps([g for g in old if {g["home_id"],g["away_id"]}=={"18","24"} and g["day_utc"][:7]=="2025-12"]),flush=True)
     if extra:
         print("NBA_ESPN_TYPE2_EXCESS_TEAM_GAMES",extra,flush=True)
         for team in extra:
