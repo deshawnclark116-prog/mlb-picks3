@@ -1,0 +1,66 @@
+name: Soccer V1 chronological five-league model and source integrity
+on:
+  push:
+    branches: [main]
+    paths:
+      - src/soccer/**
+      - server/soccerResearch.ts
+      - src/components/SoccerTodayScreen.tsx
+      - src/App.tsx
+      - server.ts
+      - tests/soccerModel.test.ts
+      - tests/soccerResearch.test.ts
+      - .github/workflows/soccer_v1_scientific_model.yml
+  pull_request:
+    paths:
+      - src/soccer/**
+      - server/soccerResearch.ts
+      - src/components/SoccerTodayScreen.tsx
+      - src/App.tsx
+      - server.ts
+      - tests/soccerModel.test.ts
+      - tests/soccerResearch.test.ts
+      - .github/workflows/soccer_v1_scientific_model.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  soccer-science-and-ui:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Compile the actual app and server
+        run: |
+          npm run lint
+          npm run build
+      - name: Guard leakage, separate research from betting, and preserve existing NFL logic
+        run: |
+          node --import tsx --test tests/soccerModel.test.ts tests/soccerResearch.test.ts
+          npm test
+      - name: Real multi-season five-league data source audit and chronological 3-way Brier challenge
+        run: |
+          node --import tsx --input-type=module - <<'JS'
+          import {computeSoccerResearch} from './server/soccerResearch.ts';
+          const r=await computeSoccerResearch(new Date(),fetch);
+          const d=r.historical_audit;
+          console.log('SOCCER_FIVE_LEAGUE_REAL_WALKFORWARD',JSON.stringify({
+            n:d.overall.n, model_brier:d.overall.brier,baseline_brier:d.overall.baselineBrier,
+            brier_advantage:d.overall.brierAdvantage,by_league:d.byLeague,
+            gate:d.promotionGate,fixtures:r.forecast_count,sources:r.original_source_receipts.length
+          }));
+          if(r.original_source_receipts.length!==20)throw Error('Missing source receipt');
+          if(d.overall.n<500)throw Error('Insufficient historical audit');
+          if(r.guardrails.official_bets!==0||r.guardrails.verified_live_book_lines!==0)
+            throw Error('Unverified wager promoted to official bet');
+          if(r.forecasts.some(f=>f.status!=='RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET'))
+            throw Error('Uncalibrated soccer probability mislabeled');
+          JS
+      - run: git diff --check
