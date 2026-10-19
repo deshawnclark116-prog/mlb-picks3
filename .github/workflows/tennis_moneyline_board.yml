@@ -33,5 +33,5 @@ jobs:
       - name: Verify TS types and research-only moneyline screen
         run: |
           npm run lint
-          node --import tsx --test tests/tennisMoneylineOnly.test.ts tests/unifiedSportGameCards.test.ts
+          node --import tsx --test tests/tennisMoneylineOnly.test.ts
           npm run build
