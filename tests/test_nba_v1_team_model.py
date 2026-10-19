@@ -36,6 +36,20 @@ class NbaV1Tests(unittest.TestCase):
         self.assertIsNone(out[1]["home_points"])
         with self.assertRaisesRegex(ValueError,"final tie"):
             extract_events({"events":[event("5",2,True,100,100)]})
+    def test_esppn_regular_season_type2_does_not_include_all_star_or_cup_final(self):
+        # ESPN marked these special events as season type=2, yet they
+        # were NOT among the 30 x 82 standard NBA standing games.
+        def event(gid,away_id):
+            return {"id":gid,"date":"2025-12-17T01:30:00Z",
+                "season":{"type":2},"competitions":[{
+                    "status":{"type":{"completed":True}},
+                    "competitors":[
+                    {"homeAway":"home","score":"124","team":{"id":"18","displayName":"Knicks"}},
+                    {"homeAway":"away","score":"113","team":{"id":away_id,"displayName":"Opponent"}}]}]}
+        legit=event("normal-regular-season","24")
+        self.assertEqual([x["game_id"] for x in extract_events(
+            {"events":[event("401809839","24"),event("401838140","132374"),legit]})],
+            ["normal-regular-season"])
     def test_strict_historical_identity_rejects_duplicate_id_and_finals(self):
         g=sample(8)
         with self.assertRaisesRegex(ValueError,"duplicate historical"):
