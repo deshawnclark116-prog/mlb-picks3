@@ -62,17 +62,22 @@ def parse_final_boxscore(payload,event_id,expected_team_ids):
         labels=[str(v).upper() for v in (group.get("labels") or group.get("names"))]
         if len(labels)!=len(set(labels)):raise ValueError("duplicate stat labels")
         for row in group.get("athletes") or []:
-            athlete=row.get("athlete") or {}
-            player_id=str(athlete.get("id") or "")
-            full_name=athlete.get("displayName") or athlete.get("fullName")
-            if not player_id or not full_name:raise ValueError("player identity missing")
-            key=(team,player_id)
-            if key in seen:raise ValueError("player duplicated in boxscore")
-            seen.add(key)
+            # ESPN can list DNP placeholders lacking full identity. A row
+            # without any recorded statistics is NOT an actual participant,
+            # so record its exclusion before enforcing played-player identity.
+            # A played row without an ID/name must always fail closed.
             values=row.get("stats")
             if not isinstance(values,list) or len(values)==0:
                 audit["missing_dnp"]+=1
                 continue
+            athlete=row.get("athlete") or {}
+            player_id=str(athlete.get("id") or "")
+            full_name=athlete.get("displayName") or athlete.get("fullName")
+            if not player_id or not full_name:
+                raise ValueError("player identity missing for played-stat row")
+            key=(team,player_id)
+            if key in seen:raise ValueError("player duplicated in boxscore")
+            seen.add(key)
             if len(values)!=len(labels):raise ValueError("misaligned ESPN player stats")
             stat=dict(zip(labels,values))
             minutes=parse_minutes(stat["MIN"])
