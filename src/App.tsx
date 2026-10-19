@@ -290,15 +290,15 @@ export default function App() {
         {/* Dynamic Bottom Tab Navigation */}
         <nav 
           id="bottom-tab-navigation" 
-          className="h-[64px] bg-[#0A0A0A] border-t border-[#1A1A1A] px-2 flex items-center gap-1 overflow-x-auto z-20 shrink-0 select-none"
+          className="h-[64px] bg-[#0A0A0A] border-t border-[#1A1A1A] px-0 flex items-center justify-between z-20 shrink-0 select-none"
         >
           {/* Today Button */}
           <button
             id="tab-btn-today"
             onClick={() => setActiveTab("TODAY")}
-            className="shrink-0 min-w-[56px] flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
+            className="flex-1 min-w-0 flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
           >
-            <div className={`w-10 h-6 rounded-full flex items-center justify-center transition-all ${
+            <div className={`w-8 h-6 rounded-full flex items-center justify-center transition-all ${
               activeTab === "TODAY" ? "bg-[#00FF41]/20" : "bg-transparent"
             }`}>
               <div className={`w-1.5 h-1.5 rounded-full transition-all ${
@@ -320,9 +320,9 @@ export default function App() {
           <button
             id="tab-btn-games"
             onClick={() => setActiveTab("GAMES")}
-            className="shrink-0 min-w-[56px] flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
+            className="flex-1 min-w-0 flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
           >
-            <div className={`w-10 h-6 rounded-full flex items-center justify-center transition-all ${
+            <div className={`w-8 h-6 rounded-full flex items-center justify-center transition-all ${
               activeTab === "GAMES" ? "bg-[#00FF41]/20" : "bg-transparent"
             }`}>
               <div className={`w-1.5 h-1.5 rounded-full transition-all ${
@@ -344,9 +344,9 @@ export default function App() {
           <button
             id="tab-btn-status"
             onClick={() => setActiveTab("STATUS")}
-            className="shrink-0 min-w-[56px] flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
+            className="flex-1 min-w-0 flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
           >
-            <div className={`w-10 h-6 rounded-full flex items-center justify-center transition-all ${
+            <div className={`w-8 h-6 rounded-full flex items-center justify-center transition-all ${
               activeTab === "STATUS" ? "bg-[#00FF41]/20" : "bg-transparent"
             }`}>
               <div className={`w-1.5 h-1.5 rounded-full transition-all ${
@@ -368,9 +368,9 @@ export default function App() {
           <button
             id="tab-btn-record"
             onClick={() => setActiveTab("RECORD")}
-            className="shrink-0 min-w-[56px] flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
+            className="flex-1 min-w-0 flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
           >
-            <div className={`w-10 h-6 rounded-full flex items-center justify-center transition-all ${
+            <div className={`w-8 h-6 rounded-full flex items-center justify-center transition-all ${
               activeTab === "RECORD" ? "bg-[#00FF41]/20" : "bg-transparent"
             }`}>
               <div className={`w-1.5 h-1.5 rounded-full transition-all ${
@@ -392,9 +392,9 @@ export default function App() {
           <button
             id="tab-btn-nfl"
             onClick={() => setActiveTab("NFL")}
-            className="shrink-0 min-w-[56px] flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
+            className="flex-1 min-w-0 flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
           >
-            <div className={`w-10 h-6 rounded-full flex items-center justify-center transition-all ${
+            <div className={`w-8 h-6 rounded-full flex items-center justify-center transition-all ${
               activeTab === "NFL" ? "bg-[#00FF41]/20" : "bg-transparent"
             }`}>
               <div className={`w-1.5 h-1.5 rounded-full transition-all ${
@@ -416,9 +416,9 @@ export default function App() {
           <button
             id="tab-btn-cfb"
             onClick={() => setActiveTab("CFB")}
-            className="shrink-0 min-w-[56px] flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
+            className="flex-1 min-w-0 flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
           >
-            <div className={`w-10 h-6 rounded-full flex items-center justify-center transition-all ${
+            <div className={`w-8 h-6 rounded-full flex items-center justify-center transition-all ${
               activeTab === "CFB" ? "bg-[#00FF41]/20" : "bg-transparent"
             }`}>
               <div className={`w-1.5 h-1.5 rounded-full transition-all ${
@@ -440,9 +440,9 @@ export default function App() {
           <button
             id="tab-btn-tennis"
             onClick={() => setActiveTab("TENNIS")}
-            className="shrink-0 min-w-[56px] flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
+            className="flex-1 min-w-0 flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
           >
-            <div className={`w-10 h-6 rounded-full flex items-center justify-center transition-all ${
+            <div className={`w-8 h-6 rounded-full flex items-center justify-center transition-all ${
               activeTab === "TENNIS" ? "bg-[#00FF41]/20" : "bg-transparent"
             }`}>
               <div className={`w-1.5 h-1.5 rounded-full transition-all ${
@@ -464,9 +464,9 @@ export default function App() {
           <button
             id="tab-btn-nhl"
             onClick={() => setActiveTab("NHL")}
-            className="shrink-0 min-w-[56px] flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
+            className="flex-1 min-w-0 flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
           >
-            <div className={`w-10 h-6 rounded-full flex items-center justify-center transition-all ${
+            <div className={`w-8 h-6 rounded-full flex items-center justify-center transition-all ${
               activeTab === "NHL" ? "bg-[#00FF41]/20" : "bg-transparent"
             }`}>
               <div className={`w-1.5 h-1.5 rounded-full transition-all ${
@@ -487,10 +487,10 @@ export default function App() {
           <button
             id="tab-btn-nba"
             onClick={() => setActiveTab("NBA")}
-            className="shrink-0 min-w-[56px] flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
+            className="flex-1 min-w-0 flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
             aria-label="NBA V1 research"
           >
-            <div className={`w-10 h-6 rounded-full flex items-center justify-center transition-all ${activeTab === "NBA" ? "bg-[#00FF41]/20" : "bg-transparent"}`}>
+            <div className={`w-8 h-6 rounded-full flex items-center justify-center transition-all ${activeTab === "NBA" ? "bg-[#00FF41]/20" : "bg-transparent"}`}>
               <div className={`w-1.5 h-1.5 rounded-full transition-all ${activeTab === "NBA" ? "bg-[#00FF41] shadow-[0_0_8px_#00FF41]" : "bg-white/40 group-hover:bg-white"}`} />
             </div>
             <span className={`text-[10px] font-bold uppercase tracking-tighter transition-colors duration-250 ${activeTab === "NBA" ? "text-[#00FF41]" : "text-white opacity-40 group-hover:opacity-80"}`}>NBA</span>
