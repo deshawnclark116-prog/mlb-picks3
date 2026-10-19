@@ -85,6 +85,16 @@ def main():
     now=dt.datetime.now(UTC)
     old,provenance=ingest(dt.date.fromisoformat(a.history_from),
                           dt.date.fromisoformat(a.history_to),a.cache)
+    # ESPN season-type 2 is not identical to 82 standings games by contract.
+    # Expose any excess before certifying as standard 82-game NBA research.
+    from collections import Counter
+    counts=Counter(x for g in old for x in (g["home_id"],g["away_id"]))
+    extra={team:n for team,n in sorted(counts.items()) if n>82}
+    if extra:
+        print("NBA_ESPN_TYPE2_EXCESS_TEAM_GAMES",extra,flush=True)
+        for team in extra:
+            affected=[g for g in old if team in (g["home_id"],g["away_id"])]
+            print("NBA_ESPN_EXTRA_TEAM_GAMES",team,json.dumps(affected[-9:]),flush=True)
     future=[];snapshot_dates=[]
     for ymd in a.opening_dates.split(","):
         d=dt.date.fromisoformat(ymd)
