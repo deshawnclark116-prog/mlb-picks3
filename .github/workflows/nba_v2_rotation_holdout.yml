@@ -2,6 +2,8 @@ name: NBA V2 pregame rotations versus V1 on untouched historical games
 on:
   pull_request:
     paths:
+      - nba/nba_v1_player_model.py
+      - tests/test_nba_v1_player_model.py
       - nba/nba_v2_rotation_research.py
       - nba/nba_v2_rotation_backtest.py
       - tests/test_nba_v2_rotation.py
