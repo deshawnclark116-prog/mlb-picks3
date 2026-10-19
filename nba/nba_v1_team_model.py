@@ -28,6 +28,14 @@ UTC=dt.timezone.utc
 MIN_PRIOR_GAMES=5
 HOME_ELO=55.0
 ELO_K=20.0
+# 2025-26 official 30 franchises use these ESPN IDs. ESPN also included
+# four 2026 All-Star mini-games as season.type=2; those are NOT standard
+# NBA league games and cannot be treated as 82-game season outcomes.
+NBA_FRANCHISE_ESPN_IDS=frozenset(str(i) for i in range(1,31))
+# Confirmed independent NBA Cup Championship (Spurs vs Knicks, Dec 16 2025,
+# 124-113, ESPN event ID 401809839) is an EXHIBITION 83rd game not included
+# in standard regular-season standings. Never silently include this.
+EXCLUDED_NON_STANDINGS_EVENT_IDS=frozenset({"401809839"})
 
 def day(s: str)->dt.date:
     return dt.date.fromisoformat(s)
@@ -65,6 +73,10 @@ def extract_events(blob:object)->list[dict]:
         home_team=home.get("team") or {};away_team=away.get("team") or {}
         hid=str(home_team.get("id") or "");aid=str(away_team.get("id") or "")
         if not hid or not aid or hid==aid:continue
+        if hid not in NBA_FRANCHISE_ESPN_IDS or aid not in NBA_FRANCHISE_ESPN_IDS:
+            continue
+        if game_id in EXCLUDED_NON_STANDINGS_EVENT_IDS:
+            continue
         status=competition.get("status") or e.get("status") or {}
         completed=bool((status.get("type") or {}).get("completed"))
         # Only completed finals with authentic scores are training labels.
