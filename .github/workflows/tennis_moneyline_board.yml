@@ -1,0 +1,37 @@
+name: Tennis moneyline-only app acceptance
+on:
+  push:
+    branches: [main, feat/tennis-ml-only-board-from-firstseen-20261019]
+    paths:
+      - src/components/TennisTodayScreen.tsx
+      - src/tennis/moneylineOnly.ts
+      - src/types.ts
+      - tests/tennisMoneylineOnly.test.ts
+      - .github/workflows/tennis_moneyline_board.yml
+  pull_request:
+    paths:
+      - src/components/TennisTodayScreen.tsx
+      - src/tennis/moneylineOnly.ts
+      - src/types.ts
+      - tests/tennisMoneylineOnly.test.ts
+      - .github/workflows/tennis_moneyline_board.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  moneyline-frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install lockfile dependencies
+        run: npm ci
+      - name: Verify TS types and research-only moneyline screen
+        run: |
+          npm run lint
+          node --import tsx --test tests/tennisMoneylineOnly.test.ts tests/unifiedSportGameCards.test.ts
+          npm run build
