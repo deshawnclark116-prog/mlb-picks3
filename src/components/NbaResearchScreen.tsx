@@ -2,6 +2,13 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { parseNbaResearch, type NbaResearchDocument } from '../nba/research';
 
 const pct = (v: number) => (v * 100).toFixed(1) + '%';
+const gameDayEastern = (iso: string) => {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit'
+  }).formatToParts(new Date(iso));
+  const p = Object.fromEntries(parts.map(x => [x.type, x.value]));
+  return `${p.year}-${p.month}-${p.day}`;
+};
 const tipLabel = (iso: string) =>
   new Date(iso).toLocaleString('en-US', {
     month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
@@ -38,9 +45,9 @@ export default function NbaResearchScreen() {
   }, []);
 
   const dates = useMemo(() => doc ? [...new Set(doc.forecasts.map(f =>
-    new Date(f.tipoff_utc).toISOString().slice(0,10)))].sort() : [], [doc]);
+    gameDayEastern(f.tipoff_utc)))].sort() : [], [doc]);
   const games = useMemo(() => (doc?.forecasts || []).filter(f =>
-    (day === 'ALL' || f.tipoff_utc.slice(0,10) === day) &&
+    (day === 'ALL' || gameDayEastern(f.tipoff_utc) === day) &&
     (!search || (f.home + ' ' + f.away).toLowerCase().includes(search.toLowerCase()))
   ).sort((a,b) => a.tipoff_utc.localeCompare(b.tipoff_utc)), [doc, day, search]);
 
