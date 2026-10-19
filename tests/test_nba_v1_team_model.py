@@ -16,7 +16,7 @@ def sample(n=100):
         dd=(start+dt.timedelta(days=i//4)).isoformat()
         h=(i%4)*2+1;a=(i%4)*2+2
         if (i//4)%2:h,a=a,h
-        ans.append(game(dd,i,h,a,110+i%9,100+i%13))
+        ans.append(game(dd,i,h,a,110+i%9,95+i%13))
     return ans
 
 class NbaV1Tests(unittest.TestCase):
