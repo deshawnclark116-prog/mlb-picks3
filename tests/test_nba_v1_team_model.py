@@ -73,6 +73,17 @@ class NbaV1Tests(unittest.TestCase):
         self.assertLess(result["rows"][0]["history_games_before_day"],1)
         with self.assertRaises(ValueError):
             walk_forward(g,"2025-12-01","2025-12-01")
+    def test_real_outcomes_and_projected_values_never_share_the_same_keys(self):
+        g=sample(220)
+        x=walk_forward(g,"2025-11-03","2025-11-24")
+        for i,r in enumerate(x["rows"]):
+            self.assertEqual(r["home_points"],g[i]["home_points"])
+            self.assertEqual(r["away_points"],g[i]["away_points"])
+            self.assertIn("pred_home_points",r)
+            self.assertIn("pred_away_points",r)
+            self.assertNotEqual(r["total_points"],r["home_points"]+r["away_points"])
+        self.assertGreater(x["metrics"]["holdout"]["total_points_mae_model"],1)
+        self.assertGreater(x["metrics"]["holdout"]["total_points_mae_baseline"],1)
     def test_high_elo_increases_win_probability(self):
         self.assertGreater(elo_probability(1650,1450),elo_probability(1450,1650))
     def test_missing_matches_are_not_implicitly_losses(self):
