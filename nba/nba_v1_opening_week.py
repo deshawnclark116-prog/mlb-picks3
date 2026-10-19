@@ -85,18 +85,16 @@ def main():
     now=dt.datetime.now(UTC)
     old,provenance=ingest(dt.date.fromisoformat(a.history_from),
                           dt.date.fromisoformat(a.history_to),a.cache)
-    # ESPN season-type 2 is not identical to 82 standings games by contract.
-    # Expose any excess before certifying as standard 82-game NBA research.
     from collections import Counter
     counts=Counter(x for g in old for x in (g["home_id"],g["away_id"]))
-    extra={team:n for team,n in sorted(counts.items()) if n>82}
-    print("NBA_ESPN_NONFRANCHISE_GAMES",json.dumps([g for g in old if int(g["home_id"])>30 or int(g["away_id"])>30]),flush=True)
-    print("NBA_ESPN_DEC_2025_NYK_SAS",json.dumps([g for g in old if {g["home_id"],g["away_id"]}=={"18","24"} and g["day_utc"][:7]=="2025-12"]),flush=True)
-    if extra:
-        print("NBA_ESPN_TYPE2_EXCESS_TEAM_GAMES",extra,flush=True)
-        for team in extra:
-            affected=[g for g in old if team in (g["home_id"],g["away_id"])]
-            print("NBA_ESPN_EXTRA_TEAM_GAMES",team,json.dumps(affected[-9:]),flush=True)
+    # Only the 1,230 official 82-game results may establish the source
+    # foundation. Four All-Star exhibition mini-games and the Cup final
+    # MUST NOT become previous-season team strengths.
+    if a.history_from=="2025-10-21" and a.history_to=="2026-04-12":
+        if len(old)!=1230 or len(counts)!=30 or any(n!=82 for n in counts.values()):
+            raise ValueError("ESPN_FULL_2025_26_NOT_EXACTLY_30x82_STANDARD_GAMES "+
+                             json.dumps({"game_count":len(old),"bad_teams":{
+                                 k:v for k,v in counts.items() if v!=82}}))
     future=[];snapshot_dates=[]
     for ymd in a.opening_dates.split(","):
         d=dt.date.fromisoformat(ymd)
