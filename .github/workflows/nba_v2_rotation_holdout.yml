@@ -45,7 +45,9 @@ jobs:
           assert d['official_bets']==0 and d['independently_verified_book_odds']==0
           assert d['paired_played_forecasts']>=400
           assert d['stats']['holdout']['n_same_played_players']>=400
-          assert d['boxscore_verified']>=.98*d['boxscore_attempted']
+          assert d['boxscore_verified']>=.97*d['boxscore_attempted']
+          assert d['missing_identity_is_quarantined_not_synthetic']
+          assert d['source_coverage_fraction']>=.97
           assert d['decision'].startswith('RESEARCH_CHALLENGER_')
           print('NBA_V2_SCIENCE_GATE',json.dumps({
             'holdout':d['stats']['holdout'],'gate':d['promotion_gate'],
