@@ -14,12 +14,13 @@ import CfbTodayScreen from "./components/CfbTodayScreen";
 import TennisTodayScreen from "./components/TennisTodayScreen";
 import NhlTodayScreen from "./components/NhlTodayScreen";
 import NbaResearchScreen from "./components/NbaResearchScreen";
+import SoccerTodayScreen from "./components/SoccerTodayScreen";
 import SportProjectionScreen from "./components/SportProjectionScreen";
 import { deduplicatePredictions, deduplicateCfbPredictions, deduplicateTennisPredictions, deduplicateNhlPredictions } from "./utils";
 import { TrendingUp, Calendar, Activity, ShieldCheck, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
-type TabType = "TODAY" | "GAMES" | "STATUS" | "RECORD" | "NFL" | "CFB" | "TENNIS" | "NHL" | "NBA";
+type TabType = "TODAY" | "GAMES" | "STATUS" | "RECORD" | "NFL" | "CFB" | "TENNIS" | "NHL" | "NBA" | "SOCCER";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>("TODAY");
@@ -246,6 +247,8 @@ export default function App() {
         );
       case "NBA":
         return <NbaResearchScreen />;
+      case "SOCCER":
+        return <SoccerTodayScreen />;
       default:
         return null;
     }
@@ -494,6 +497,15 @@ export default function App() {
               <div className={`w-1.5 h-1.5 rounded-full transition-all ${activeTab === "NBA" ? "bg-[#00FF41] shadow-[0_0_8px_#00FF41]" : "bg-white/40 group-hover:bg-white"}`} />
             </div>
             <span className={`text-[10px] font-bold uppercase tracking-tighter transition-colors duration-250 ${activeTab === "NBA" ? "text-[#00FF41]" : "text-white opacity-40 group-hover:opacity-80"}`}>NBA</span>
+          </button>
+          {/* Soccer V1 independently validated historical research; no betting certification */}
+          <button id="tab-btn-soccer" onClick={() => setActiveTab("SOCCER")}
+            aria-label="Soccer V1 research"
+            className="flex-1 min-w-0 flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer">
+            <div className={`w-8 h-6 rounded-full flex items-center justify-center transition-all ${activeTab === "SOCCER" ? "bg-[#00FF41]/20" : "bg-transparent"}`}>
+              <span className="text-sm" aria-hidden="true">⚽</span>
+            </div>
+            <span className={`text-[10px] font-bold uppercase tracking-tighter transition-colors duration-250 ${activeTab === "SOCCER" ? "text-[#00FF41]" : "text-white opacity-40 group-hover:opacity-80"}`}>Soccer</span>
           </button>
         </nav>
 
