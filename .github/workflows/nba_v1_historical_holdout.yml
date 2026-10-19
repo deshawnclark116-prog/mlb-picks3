@@ -1,0 +1,68 @@
+name: NBA V1 verified results and chronological holdout
+on:
+  push:
+    branches: [feat/nba-v1-firstseen-holdout-20261018, main]
+    paths:
+      - nba/**
+      - tests/test_nba_v1_team_model.py
+      - .github/workflows/nba_v1_historical_holdout.yml
+  pull_request:
+    paths:
+      - nba/**
+      - tests/test_nba_v1_team_model.py
+      - .github/workflows/nba_v1_historical_holdout.yml
+  workflow_dispatch: {}
+permissions:
+  contents: write
+jobs:
+  nba-source-and-holdout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate NBA pregame score source integrity
+        run: |
+          PYTHONPATH=. python -m unittest -v tests/test_nba_v1_team_model.py
+          python -m py_compile nba/nba_v1_team_model.py
+      - name: Independently fetch 2025-26 NBA ESPN regular-season finals and grade future-only window
+        run: |
+          python -u nba/nba_v1_team_model.py \
+            --from-date 2025-10-21 --to-date 2026-01-31 \
+            --validation-start 2025-12-01 \
+            --holdout-start 2026-01-01 \
+            --cache-dir "$RUNNER_TEMP/nba-v1-real-espn-scoreboards" \
+            --out docs/nba_v1_forward_walkback.json
+      - name: Do not present non-improvement or insufficient samples as a promoted NBA model
+        run: |
+          python - <<'PY'
+          import json
+          d=json.load(open('docs/nba_v1_forward_walkback.json'))
+          assert d['schema']=='NBA_V1_LEAKSAFE_ESPN_TEAM_HOLDOUT_V1'
+          assert d['research_only'] is True and d['official_bets']==0
+          assert d['market_lines_verified'] is False and d['player_prop_predictions']==0
+          assert d['source']['completed_unique_games']>=100, 'Not enough real 2025-26 regular-season games'
+          assert d['metrics']['validation']['n']>=30, 'Not enough real forward validation'
+          assert d['metrics']['holdout']['n']>=30, 'Not enough real unseen chronological games'
+          assert len({x['game_id'] for x in d['rows']})==len(d['rows'])
+          assert all(x['history_games_before_day']>=0 for x in d['rows'])
+          print('NBA_V1_HONEST_TEMPORAL_HOLDOUT',
+                {k:d['metrics'][k] for k in ('validation','holdout')})
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-v1-forward-holdout-${{ github.run_id }}
+          path: docs/nba_v1_forward_walkback.json
+          retention-days: 45
+      - name: Publish actual historical model failures/successes without altering any other sport
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/nba_v1_forward_walkback.json
+          if ! git diff --cached --quiet; then
+            git commit -m "NBA V1 research: complete immutable matchup holdout and baseline comparison"
+            git push origin HEAD:main
+          fi
