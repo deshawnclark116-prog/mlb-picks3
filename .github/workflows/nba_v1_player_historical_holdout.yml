@@ -1,0 +1,70 @@
+name: NBA V1 real player-stat holdout vs recent-average baseline
+on:
+  push:
+    branches: [feat/nba-v1-verified-player-minutes-stats-20261018, main]
+    paths:
+      - nba/nba_v1_player_model.py
+      - nba/nba_v1_player_backtest.py
+      - tests/test_nba_v1_player_model.py
+      - tests/test_nba_v1_player_backtest.py
+      - .github/workflows/nba_v1_player_historical_holdout.yml
+  pull_request:
+    paths:
+      - nba/nba_v1_player_model.py
+      - nba/nba_v1_player_backtest.py
+      - tests/test_nba_v1_player_model.py
+      - tests/test_nba_v1_player_backtest.py
+      - .github/workflows/nba_v1_player_historical_holdout.yml
+  workflow_dispatch: {}
+permissions:
+  contents: write
+jobs:
+  player-held-out:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Player-game source, fixed pregame snapshot tests
+        run: |
+          PYTHONPATH=. python -m unittest -v tests/test_nba_v1_player_model.py tests/test_nba_v1_player_backtest.py
+          python -m py_compile nba/nba_v1_player_model.py nba/nba_v1_player_backtest.py
+      - name: Retrieve real ESPN 2025-26 NBA player boxscores and construct day-frozen minutes-first predictions
+        run: |
+          PYTHONPATH=. python -u nba/nba_v1_player_backtest.py \
+            --team-report docs/nba_v1_forward_walkback.json \
+            --cache "$RUNNER_TEMP/nba-boxscore" \
+            --first-n-games 350 \
+            --validation-from 2025-11-15 \
+            --holdout-from 2025-11-29 \
+            --out docs/nba_v1_player_stat_walkback.json
+      - name: Verify real games and holdout without claiming sportsbook picks
+        run: |
+          python - <<'PY'
+          import json
+          d=json.load(open('docs/nba_v1_player_stat_walkback.json'))
+          assert d['schema']=='NBA_V1_FIRST_PREGAME_PLAYER_STAT_WALKBACK_V1'
+          assert d['official_bets']==0 and d['betting_lines']==0
+          assert d['boxscore_verified']>=300
+          assert d['stats']['validation']['played_player_forecasts']>=60
+          assert d['stats']['holdout']['played_player_forecasts']>=60
+          assert d['does_not_confirm_pregame_injuries_or_starting_fives']
+          print('NBA_PLAYER_REAL_HOLDOUT_ACCEPTANCE',json.dumps(d['stats'],sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-v1-player-forward-stats-${{ github.run_id }}
+          path: docs/nba_v1_player_stat_walkback.json
+          retention-days: 45
+      - name: Keep player research report on main, not invented game-day picks
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/nba_v1_player_stat_walkback.json
+          if ! git diff --cached --quiet; then
+            git commit -m "NBA V1 research: real player minutes and stats holdout"
+            git push origin HEAD:main
+          fi
