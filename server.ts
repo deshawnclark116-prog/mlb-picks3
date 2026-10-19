@@ -4,6 +4,7 @@ import { nflRoleResearchHandler } from "./server/nflRoleResearch.ts";
 import { loadCurrentNfl } from "./server/nflCurrent.ts";
 import { projectionFeedHandler } from "./server/projectionFeeds.ts";
 import { nhlCountResearchHandler } from "./server/nhlCountResearch.ts";
+import { nbaResearchHandler } from "./server/nbaResearch.ts";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import {
@@ -217,6 +218,9 @@ async function startServer() {
   // Kept separate from immutable T24/T90 numbers and legacy selections.
   app.get("/api/nfl-role-research", nflRoleResearchHandler());
   app.get("/api/nhl-count-research", nhlCountResearchHandler());
+
+  // Frozen 2026 opening-week team research from picks3; never proxy nonexistent Render NBA route.
+  app.get("/api/nba-research", nbaResearchHandler());
 
   // Verify original research artifacts; never fall back to Render classifiers.
   app.get("/api/model-projections/:sport", projectionFeedHandler());

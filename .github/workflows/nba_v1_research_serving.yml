@@ -1,0 +1,52 @@
+name: NBA V1 frozen research serving integrity
+
+on:
+  pull_request:
+    paths:
+      - server/nbaResearch.ts
+      - src/nba/research.ts
+      - src/components/NbaResearchScreen.tsx
+      - src/App.tsx
+      - docs/nba_v1_opening_week_research.json
+      - tests/nbaResearch.test.ts
+      - tests/browser/nbaResearch.spec.ts
+      - package.json
+      - .github/workflows/nba_v1_research_serving.yml
+  push:
+    branches: [main]
+    paths:
+      - server/nbaResearch.ts
+      - src/nba/research.ts
+      - src/components/NbaResearchScreen.tsx
+      - src/App.tsx
+      - docs/nba_v1_opening_week_research.json
+      - tests/nbaResearch.test.ts
+      - package.json
+      - .github/workflows/nba_v1_research_serving.yml
+
+permissions:
+  contents: read
+
+jobs:
+  serving-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # legacy protected-file regressions require origin/main merge-base
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Frozen NBA research boundary and preserved NFL regressions
+        run: npm test
+      - name: Typecheck complete existing app
+        run: npm run lint
+      - name: Build production Express and React
+        run: npm run build
+      - name: Install Chromium for actual 360px NBA tab acceptance
+        run: npx playwright install --with-deps chromium
+      - name: Source-frozen NBA rendering and fail-closed mobile browser tests
+        run: npx playwright test tests/browser/nbaResearch.spec.ts

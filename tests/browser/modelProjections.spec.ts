@@ -1,5 +1,17 @@
 import {test,expect} from "@playwright/test";
 
+// Synthetic NHL browser games must be UPCOMING Eastern-date fixtures.
+const futureDate=(()=>{
+ const tomorrow=new Date(Date.now()+2*86400000);
+ const parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',
+   year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(tomorrow);
+ const p=Object.fromEntries(parts.map(f=>[f.type,f.value]));
+ return `${p.year}-${p.month}-${p.day}`;
+})();
+const futureKickoff=futureDate+'T23:00:00Z';
+const originalCutoff=new Date(Date.parse(futureKickoff)-86400000).toISOString();
+const originalGenerated=new Date(Date.parse(futureKickoff)-90000000).toISOString();
+
 const cfb={
  schema:"cfb-player-stat-projections-research-v1",research_only:true,official_new_betting_picks:0,
  original_run_id:38053736857, original_baseline_generated_at:"2026-10-10T12:30:00Z",
@@ -29,30 +41,30 @@ const nhl={
  forecasts:{T90:[["nhl-game","nhl-player-123","Skater Example","PIT","WSH","2026-10-07","2026-10-07T23:00:00Z",2.4,2,1.5,0,1,3,5,.15,.85,.65,.4,.2,.08]]}
 };
 const currentNhl={
- generated_at_utc:"2026-10-18T20:45:00Z",season:2026,game_date:"2026-10-18",
+ generated_at_utc:"2026-10-18T20:45:00Z",season:2026,game_date:futureDate,
  markets:{shots_on_goal:{eligible:1}},picks:[{
    market:"shots_on_goal",prop_type:"shots_on_goal",player_id:"nl-1",
    player:"Current Skater",team:"PIT",opponent:"WSH",season:2026,
-   game_date:"2026-10-18",kickoff_utc:"2026-10-18T23:00:00Z",
+   game_date:futureDate,kickoff_utc:futureKickoff,
    pick:"OVER 2.5",line:2.5,model_prob:.74,prob_pct:74,confidence:"MEDIUM",games_played:5
  }]
 };
 const currentTennis={
- generated_at_utc:"2026-10-18T20:45:00Z",markets:{total_games:{eligible:1}},
+ generated_at_utc:"2026-10-18T20:45:00Z",markets:{moneyline:{eligible:1}},
  picks:[{
-   market:"total_games",prop_type:"total_games",tour:"atp",tourney:"Test Open",
+   market:"moneyline",prop_type:"moneyline",tour:"atp",tourney:"Test Open",
    surface:"Hard",surface_confirmed:true,best_of:3,
    player1:"Player Alpha",player1_id:"p1",player2:"Player Beta",player2_id:"p2",
-   start_time_utc:"2026-10-18T23:00:00Z",pick:"OVER 22.5",line:22.5,
-   predicted_mean:24.2,model_prob:.68,prob_pct:68,unagraded:true,model_source:"model_projected_line"
+   start_time_utc:futureKickoff,pick:"Player Alpha ML",
+   model_prob:.68,prob_pct:68,unagraded:true,model_source:"original_moneyline_research"
  }]
 };
-async function setup(page:any,cfbFailed=false) {
+async function setup(page:any,cfbFailed=false,nhlFixture=currentNhl) {
  await page.route("**/api/**", route=>{
   const url=route.request().url();
   if(url.includes("/api/model-projections/cfb"))return route.fulfill(cfbFailed?{status:503,json:{error:"CFB research unavailable",details:"Original artifact missing"}}:{json:cfb});
   if(url.includes("/api/cfb-predictions"))return route.fulfill({json:currentCfb});
-  if(url.includes("/api/nhl-predictions"))return route.fulfill({json:currentNhl});
+  if(url.includes("/api/nhl-predictions"))return route.fulfill({json:nhlFixture});
   if(url.includes("/api/tennis-predictions"))return route.fulfill({json:currentTennis});
   if(url.includes("/api/model-projections/nhl"))return route.fulfill({json:nhl});
   if(url.includes("/api/predictions"))return route.fulfill({json:[]});
@@ -115,8 +127,12 @@ test("current CFB and NHL use the same NFL-style grouped matchup and share-card 
  await cfb.locator('button[aria-expanded]').click();
  await expect(cfb.getByTestId("unified-sport-projection")).toBeVisible();
  await page.locator("#tab-btn-nhl").click();
- await expect(page.getByTestId("unified-sport-board")).toBeVisible();
- const nhl=page.getByTestId("unified-sport-game").first();
+ // Framer Motion deliberately retains the exiting CFB screen briefly.
+ // Match the ACTIVE NHL container, not an exiting CFB board.
+ const nhlScreen=page.locator("#motion-screen-NHL");
+ await expect(nhlScreen).toBeVisible();
+ await expect(nhlScreen.getByTestId("unified-sport-board")).toBeVisible();
+ const nhl=nhlScreen.getByTestId("unified-sport-game").first();
  await expect(nhl).toContainText("PIT vs WSH");
  await nhl.locator('button[aria-expanded]').click();
  await expect(nhl.getByTestId("unified-predicted-stat")).toContainText("MODEL CHANCE OF TARGET");
@@ -130,8 +146,8 @@ test("current CFB and NHL use the same NFL-style grouped matchup and share-card 
 
 test("Minnesota-Columbus six-player poster shows frozen numerical shot projections, not 0.5 point targets",async ({page})=>{
  await setup(page);
- const kickoff="2026-10-18T22:00:00Z";
- const current={...currentNhl,game_date:"2026-10-18",picks:[{
+ const kickoff=futureKickoff;
+ const current={...currentNhl,game_date:futureDate,picks:[{
     ...currentNhl.picks[0],player:"Kirill Kaprizov",team:"MIN",opponent:"CBJ",
     market:"points",prop_type:"points",pick:"OVER 0.5",line:.5,
     kickoff_utc:kickoff,model_prob:.744,prob_pct:74.4
@@ -147,13 +163,13 @@ test("Minnesota-Columbus six-player poster shows frozen numerical shot projectio
  const source={
    schema:"NHL_APP_VERIFIED_SOG_COUNT_RESEARCH_V1",
    research_only:true,not_an_official_betting_board:true,
-   game_date:"2026-10-18",projected_count:players.length,
+   game_date:futureDate,projected_count:players.length,
    projections:players.map(([player,team,mean,median],i)=>({
      game_id:"2026020048",player_id:String(8478864+i),player,team,
-     opponent:team==="MIN"?"CBJ":"MIN",game_date:"2026-10-18",
+     opponent:team==="MIN"?"CBJ":"MIN",game_date:futureDate,
      scheduled_start:kickoff,mean,median,sd:1.4,p10:1,p90:6,
-     forecast_horizon:"T24H",source_generated_at:"2026-10-17T21:48:31Z",
-     source_cutoff_at:"2026-10-17T22:00:00Z",
+     forecast_horizon:"T24H",source_generated_at:originalGenerated,
+     source_cutoff_at:originalCutoff,
      research_only:true,not_an_official_betting_prediction:true
    }))
  };
@@ -179,19 +195,21 @@ test("Minnesota-Columbus six-player poster shows frozen numerical shot projectio
 });
 
 test("frozen NHL numerical game remains visible with ZERO point-classifier picks",async ({page})=>{
- await setup(page);
  const current={...currentNhl,picks:[]};
+ // Seed zero classifier rows BEFORE app bootstrap, not after an in-flight
+ // initial GET can already populate a different synthetic PIT-WAS fixture.
+ await setup(page,false,current);
  await page.route("**/api/nhl-predictions**",route=>route.fulfill({json:current}));
  await page.route("**/api/nhl-count-research**",route=>route.fulfill({json:{
    schema:"NHL_APP_VERIFIED_SOG_COUNT_RESEARCH_V1",research_only:true,
-   not_an_official_betting_board:true,game_date:"2026-10-18",
+   not_an_official_betting_board:true,game_date:futureDate,
    projected_count:1,projections:[{
      game_id:"2026020048",player_id:"8478864",player:"Kirill Kaprizov",
-     team:"MIN",opponent:"CBJ",game_date:"2026-10-18",
-     scheduled_start:"2026-10-18T22:00:00Z",mean:3.02,median:3,
+     team:"MIN",opponent:"CBJ",game_date:futureDate,
+     scheduled_start:futureKickoff,mean:3.02,median:3,
      sd:1.4,p10:1,p90:6,forecast_horizon:"T24H",
-     source_generated_at:"2026-10-17T21:48:31Z",
-     source_cutoff_at:"2026-10-17T22:00:00Z",
+     source_generated_at:originalGenerated,
+     source_cutoff_at:originalCutoff,
      research_only:true,not_an_official_betting_prediction:true
    }]
  }}));
@@ -204,14 +222,15 @@ test("frozen NHL numerical game remains visible with ZERO point-classifier picks
  await expect(games.first()).not.toContainText("OVER 0.5");
 });
 
-test("tennis shares the same NFL-style page and exposes a real published projected MEAN",async ({page})=>{
+test("tennis serves match-winner model only and never restores unsupported totals",async ({page})=>{
  await setup(page);
  await page.locator("#tab-btn-tennis").click();
  await expect(page.getByTestId("unified-sport-board")).toBeVisible();
  const game=page.getByTestId("unified-sport-game").first();
  await expect(game).toContainText("Player Alpha vs Player Beta");
  await game.locator('button[aria-expanded]').click();
- await expect(game.getByTestId("unified-predicted-stat")).toContainText("24.2 games");
- await expect(game.getByTestId("unified-sport-projection")).toContainText("OVER 22.5");
+ await expect(game.getByTestId("unified-sport-projection")).toContainText("Player Alpha ML");
+ await expect(game).not.toContainText("OVER 22.5");
+ await expect(game).not.toContainText("24.2 games");
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
 });
