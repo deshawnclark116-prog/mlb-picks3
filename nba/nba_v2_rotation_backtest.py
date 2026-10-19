@@ -54,11 +54,15 @@ def paired_summary(items,market):
     }
 
 def evaluate(games,boxes,validation_from=VALIDATION_FROM,holdout_from=HOLDOUT_FROM):
-    ordered=sorted((g for g in games if g["completed"] and g["game_id"] in boxes),
-                    key=lambda g:(g["day_utc"],g["start_utc"],g["game_id"]))
-    if len(ordered)<550:raise ValueError("NBA_V2_INSUFFICIENT_NEW_UNTOUCHED_GAMES")
-    if ordered[FIRST_ORIGINAL_GAMES-1]["day_utc"]>"2025-12-07":
+    original_order=sorted((g for g in games if g["completed"]),
+                         key=lambda g:(g["day_utc"],g["start_utc"],g["game_id"]))
+    # Verify old 350-game research cutoff BEFORE quarantining source-invalid
+    # ESPN games. Otherwise the 350th accepted game shifts a few days later.
+    if (len(original_order)<FIRST_ORIGINAL_GAMES or
+        original_order[FIRST_ORIGINAL_GAMES-1]["day_utc"]>"2025-12-07"):
         raise ValueError("NBA_V2_ORIGINAL_HOLDOUT_BOUNDARY_CHANGED")
+    ordered=[g for g in original_order if g["game_id"] in boxes]
+    if len(ordered)<550:raise ValueError("NBA_V2_INSUFFICIENT_NEW_UNTOUCHED_GAMES")
     old=score(ordered,boxes,validation_from,holdout_from)
     v2=day_frozen_forecasts(ordered,boxes)
     keys=lambda r:(str(r["game_id"]),str(r["team_id"]),str(r["player_id"]))
