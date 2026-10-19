@@ -13,12 +13,13 @@ import NflTodayScreen from "./components/NflTodayScreen";
 import CfbTodayScreen from "./components/CfbTodayScreen";
 import TennisTodayScreen from "./components/TennisTodayScreen";
 import NhlTodayScreen from "./components/NhlTodayScreen";
+import SoccerTodayScreen from "./components/SoccerTodayScreen";
 import SportProjectionScreen from "./components/SportProjectionScreen";
 import { deduplicatePredictions, deduplicateCfbPredictions, deduplicateTennisPredictions, deduplicateNhlPredictions } from "./utils";
 import { TrendingUp, Calendar, Activity, ShieldCheck, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
-type TabType = "TODAY" | "GAMES" | "STATUS" | "RECORD" | "NFL" | "CFB" | "TENNIS" | "NHL";
+type TabType = "TODAY" | "GAMES" | "STATUS" | "RECORD" | "NFL" | "CFB" | "TENNIS" | "NHL" | "SOCCER";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>("TODAY");
@@ -231,6 +232,8 @@ export default function App() {
             onRefresh={loadTennisData}
           />
         );
+      case "SOCCER":
+        return <SoccerTodayScreen />;
       case "NHL":
         return (
           <SportProjectionScreen sport="nhl" legacy={
@@ -287,7 +290,7 @@ export default function App() {
         {/* Dynamic Bottom Tab Navigation */}
         <nav 
           id="bottom-tab-navigation" 
-          className="h-[64px] bg-[#0A0A0A] border-t border-[#1A1A1A] px-6 flex items-center justify-between z-20 shrink-0 select-none"
+          className="h-[64px] bg-[#0A0A0A] border-t border-[#1A1A1A] px-2 flex items-center gap-1 overflow-x-auto z-20 shrink-0 select-none"
         >
           {/* Today Button */}
           <button
@@ -479,6 +482,12 @@ export default function App() {
             >
               NHL
             </span>
+          </button>
+          {/* Soccer research: actual probabilities, separate from betting cards */}
+          <button id="tab-btn-soccer" onClick={()=>setActiveTab("SOCCER")}
+            className="min-w-[52px] shrink-0 flex flex-col items-center justify-center gap-1 h-full">
+            <span className={activeTab==="SOCCER"?"text-[#00FF41]":"text-white/40"}>⚽</span>
+            <span className={"text-[10px] uppercase font-bold "+(activeTab==="SOCCER"?"text-[#00FF41]":"text-white/40")}>Soccer</span>
           </button>
         </nav>
 
