@@ -262,7 +262,7 @@ export default function App() {
         
         {/* Dynamic screen element transition */}
         <div id="active-screen-container" className="flex-1 overflow-hidden relative bg-[#0D0D0D]">
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="sync">
             <motion.div
               id={`motion-screen-${activeTab}`}
               key={activeTab}
