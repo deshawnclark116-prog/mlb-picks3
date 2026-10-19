@@ -168,12 +168,22 @@ def main():
     if games[-1]["day_utc"]<"2026-01-20":
         raise ValueError("NBA_V2_NO_NEW_HOLDOUT_INTERVAL")
     boxes,failed=load_games(games,args.cache,workers=5)
-    if len(boxes)<.98*len(games):
+    # A minority of ESPN final-game player rows contain recorded stats
+    # WITHOUT a trustworthy player identity. Never assign them a guessed ID.
+    # Quarantine their WHOLE game from BOTH V1/V2 paired scoring. Original
+    # V1 required >=95%; this challenger requires >=97%, documenting every
+    # exclusion. This source-coverage adjustment followed source QA, NOT
+    # observation of any model performance or holdout MAE.
+    min_integrity_coverage=.97
+    if len(boxes)<min_integrity_coverage*len(games):
         raise ValueError(f"NBA_V2_BOXSCORE_COVERAGE_FAIL {len(boxes)}/{len(games)} errors={list(failed.items())[:5]}")
     report=evaluate(games,boxes)
     report.update({"source_team_sha256":doc["source"]["source_content_sha256"],
        "boxscore_attempted":len(games),"boxscore_verified":len(boxes),
        "boxscore_missing_reasons":failed,
+       "minimum_accepted_source_coverage":min_integrity_coverage,
+       "missing_identity_is_quarantined_not_synthetic":True,
+       "source_coverage_fraction":round(len(boxes)/len(games),5),
        "training_and_model_parameters_frozen_before_holdout_read":True})
     args.out.parent.mkdir(parents=True,exist_ok=True)
     args.out.write_text(json.dumps(report,indent=2,allow_nan=False)+"\n")
