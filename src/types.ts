@@ -293,9 +293,9 @@ export interface NhlPredictionsDoc {
 // total_aces, double_faults, moneyline, and games_spread all failed their
 // backtests and are never present in this feed at all.
 export interface TennisPrediction {
-  market: "total_games" | "set_betting";
+  market: "moneyline" | "total_games" | "set_betting";
   prop_type: string; // alias of market, added by the api.py route
-  tour: string; // "atp" -- WTA has no historical data source, ATP only
+  tour: string; // "atp" or "wta"; both now have real match history
   tourney: string;
   surface: string;
   surface_confirmed: boolean; // false means surface was guessed (defaulted to Hard), not looked up
@@ -305,7 +305,7 @@ export interface TennisPrediction {
   player1_id?: string;
   player2: string;
   player2_id?: string;
-  pick: string; // e.g. "UNDER 40.0" (total_games) or "Carlos Alcaraz 3-1" (set_betting)
+  pick: string; // e.g. "Carlos Alcaraz ML" (match winner); legacy total/set fields retained for archived types
   model_prob: number; // 0..1
   prob_pct?: number; // 0..100
   confidence?: "HIGH" | "MEDIUM" | "LOW"; // only when a real market line backs the pick (see unagraded)

@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { TrendingUp, RefreshCw, AlertTriangle, Search, ChevronDown, ChevronUp } from "lucide-react";
 import { TennisPrediction } from "../types";
 import { getTennisPredictionKey, getLatestGeneratedAt } from "../utils";
+import { liveTennisMoneylines } from '../tennis/moneylineOnly';
 
 interface TennisTodayScreenProps {
   predictions: TennisPrediction[];
@@ -17,19 +18,8 @@ interface TennisTodayScreenProps {
   onRefresh: () => Promise<void>;
 }
 
-// total_aces, double_faults, and games_spread all failed their backtests
-// and are never generated. moneyline ALSO failed its own gate on both
-// tours (see tennis_serving_builder_a.py's moneyline comment) but is
-// served anyway by explicit product decision -- see mlb-picks2's
-// tennis_serving_builder_a.py for the real numbers.
-const MARKET_LABELS: Record<string, string> = {
-  total_games: "Total Games",
-  set_betting: "Correct Score (Projection)",
-  moneyline: "Moneyline",
-};
-
-type MarketFilter = "ALL" | "total_games" | "set_betting" | "moneyline";
-
+// Only moneyline forecast rows are eligible. The model's historical
+// moneyline research gates failed both tours; no paid bookmaker edge proven.
 interface TennisMatchGroup {
   key: string;
   player1: string;
@@ -92,8 +82,6 @@ export default function TennisTodayScreen({
   error,
   onRefresh,
 }: TennisTodayScreenProps) {
-  const [marketFilter, setMarketFilter] = useState<MarketFilter>("ALL");
-  const [confidenceFilter, setConfidenceFilter] = useState<"ALL" | "HIGH" | "MEDIUM" | "LOW">("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullY, setPullY] = useState(0);
@@ -140,19 +128,9 @@ export default function TennisTodayScreen({
     touchStartY.current = -1;
   };
 
-  const marketsPresent = Array.from(new Set(predictions.map((p) => p.market))).filter(
-    (m) => MARKET_LABELS[m]
-  );
-
-  const sortedPredictions = [...predictions].sort((a, b) => (b.prob_pct ?? 0) - (a.prob_pct ?? 0));
-
+  const sortedPredictions = [...liveTennisMoneylines(predictions)]
+    .sort((a,b)=>(b.prob_pct ?? b.model_prob*100)-(a.prob_pct ?? a.model_prob*100));
   const filteredPredictions = sortedPredictions.filter((pred) => {
-    if (marketFilter !== "ALL" && pred.market !== marketFilter) return false;
-    // set_betting picks have no confidence field at all (unagraded, no
-    // real market to grade against) -- a confidence filter other than
-    // ALL should only ever show total_games picks, never hide them
-    // silently by matching undefined against a real tier.
-    if (confidenceFilter !== "ALL" && pred.confidence !== confidenceFilter) return false;
     if (searchQuery.trim() !== "") {
       const q = searchQuery.toLowerCase();
       const nameMatch =
@@ -167,7 +145,7 @@ export default function TennisTodayScreen({
   const matchGroups = groupPredictionsByMatch(filteredPredictions);
   const unifiedGames:UnifiedGame[]=matchGroups.map(g=>({
       id:g.key,label:g.player1+' vs '+g.player2,when:g.start_time_utc,
-      sourceLabel:'TENNIS CURRENT MODEL · PROJECTION CLASSIFIER',
+      sourceLabel:'ATP/WTA MATCH WINNER · RESEARCH ONLY',
       subtitle:g.tourney+' · '+g.surface+(g.surface_confirmed?'':' (unverified surface)'),
       picks:g.predictions.map((p,i)=>({
         id:getTennisPredictionKey(p)+'|'+i,player:p.player1+' vs '+p.player2,
@@ -179,7 +157,7 @@ export default function TennisTodayScreen({
           ?'mean' as const:'not_published' as const,
         unit:p.market==='total_games'?'games':'',confidence:p.confidence,
         source:p.model_source||'Tennis model',
-        detail:(p.unagraded?'Not graded against a real market. ':'')+
+        detail:'Unvalidated match-winner probability. No sportsbook price or calibrated market edge. '+
           (p.note||'')+' '+(p.book?'Published book: '+p.book+'. ': '')+
           'No independent current sportsbook availability is certified by this screen.'
       }))
@@ -210,7 +188,7 @@ export default function TennisTodayScreen({
             PROP <span className="text-[#00FF41]">EDGE</span>
           </h1>
           <p className="text-[9px] text-gray-500 uppercase tracking-widest mt-0.5 font-mono">
-            ATP Player Props
+            ATP & WTA · Match Winners
           </p>
           {getLatestGeneratedAt(predictions) && (
             <p className="text-[8px] text-[#00FF41]/80 font-mono mt-1 uppercase tracking-wider">
@@ -238,58 +216,13 @@ export default function TennisTodayScreen({
         </div>
       </header>
 
-      {/* Filters */}
-      <div id="tennis-filter-controls-board" className="px-6 py-4 bg-[#0D0D0D] border-b border-[#1A1A1A] flex flex-col gap-4">
-        <div>
-          <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block mb-2 font-mono">Market</span>
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar scrollbar-none">
-            {(["ALL", ...marketsPresent] as MarketFilter[]).map((m) => {
-              const active = marketFilter === m;
-              return (
-                <button
-                  id={`tennis-btn-market-${m}`}
-                  key={m}
-                  onClick={() => setMarketFilter(m)}
-                  className={`px-4 py-1.5 rounded-full text-[11px] font-semibold tracking-wide border transition-all cursor-pointer whitespace-nowrap uppercase ${
-                    active
-                      ? "bg-[#00FF41] text-black border-none font-bold"
-                      : "bg-[#141414] text-gray-400 border-[#222] hover:text-white hover:border-gray-700"
-                  }`}
-                >
-                  {m === "ALL" ? "All Markets" : MARKET_LABELS[m] || m}
-                </button>
-              );
-            })}
-          </div>
+      {/* Single-market moneyline board: no false confidence tabs or
+           non-ML sportsbook filters that the model hasn't validated. */}
+      <div id="tennis-filter-controls-board" className="px-6 py-4 bg-[#0D0D0D] border-b border-[#1A1A1A] flex flex-col gap-3">
+        <div className="rounded-xl border border-[#333] bg-[#141414] p-3">
+          <p className="text-[11px] font-bold uppercase text-[#00FF41]">Match winner (moneyline) only</p>
+          <p className="mt-1 text-[11px] text-gray-400">Model probability is not a verified sportsbook edge. ATP and WTA research forecasts only; no certified bets or odds.</p>
         </div>
-
-        <div>
-          <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block mb-2 font-mono">Confidence Group</span>
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar scrollbar-none">
-            {(["ALL", "HIGH", "MEDIUM", "LOW"] as const).map((conf) => {
-              const active = confidenceFilter === conf;
-              return (
-                <button
-                  id={`tennis-btn-conf-${conf}`}
-                  key={conf}
-                  onClick={() => setConfidenceFilter(conf)}
-                  className={`px-4 py-1.5 rounded-full text-[11px] font-semibold tracking-wide border transition-all cursor-pointer whitespace-nowrap uppercase ${
-                    active
-                      ? "bg-[#00FF41] text-black border-none font-bold"
-                      : "bg-[#141414] text-gray-400 border-[#222] hover:text-white hover:border-gray-700"
-                  }`}
-                >
-                  {conf === "ALL" ? "All Confidence" : `${conf} Conf`}
-                </button>
-              );
-            })}
-          </div>
-          <p className="text-[9px] text-gray-700 font-mono mt-1.5 leading-tight">
-            Correct-score picks are unagraded projections (no real market to grade against) and won't
-            match a confidence filter other than "All".
-          </p>
-        </div>
-
         <div className="relative">
           <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <Search className="h-3 w-3 text-gray-600" />
@@ -338,9 +271,8 @@ export default function TennisTodayScreen({
             <TrendingUp className="w-8 h-8 text-gray-700 mb-3" />
             <h3 className="text-gray-300 text-sm font-semibold mb-1">No tennis picks found.</h3>
             <p className="text-xs text-gray-500 max-w-xs leading-relaxed mt-1">
-              Picks only appear for matches where both players have enough ATP match history to rate,
-              and (for Total Games) a real market line was found. Try changing filters, or check back
-              when more matches are scheduled.
+              Moneyline forecasts appear only for matches where both players have sufficient history.
+              No other tennis markets are published. Check back when new ATP or WTA matches are scheduled.
             </p>
           </div>
         ) : (
