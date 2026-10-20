@@ -67,9 +67,9 @@ def verify_season_snapshot(rosters,fixture):
             if pid in duplicates:
                 raise ValueError(f"NBA_PLAYER_ON_MULTIPLE_ESPN_TEAM_ROSTERS_{pid}")
             duplicates[pid]=team
-    if fixture.get("schema")!="NBA_V1_2026_OPENING_ROSTER_BLIND_RESEARCH_V1" or
-       fixture.get("research_only") is not True or
-       fixture.get("official_wagers")!=0:
+    if (fixture.get("schema")!="NBA_V1_2026_OPENING_ROSTER_BLIND_RESEARCH_V1" or
+        fixture.get("research_only") is not True or
+        fixture.get("official_wagers")!=0):
         raise ValueError("NBA_UNTRUSTED_OPENING_FIXTURE")
     games=fixture.get("forecasts")
     if not isinstance(games,list) or len(games)!=14:raise ValueError("NBA_OPENING_FIXTURE_COUNT_CHANGED")
@@ -105,10 +105,11 @@ def snapshot(fixture,fetcher=fetch_roster,now=None):
         try:
             url,raw=fetcher(team)
             document=json.loads(raw)
-            return team,extract_roster(document,team),{
+            parsed=extract_roster(document,team)
+            return team,parsed,{
                 "url":url,"source_sha256":hashlib.sha256(raw).hexdigest(),
                 "retrieved_at_utc":dt.datetime.now(dt.timezone.utc).isoformat(),
-                "players":len(extract_roster(document,team))},None
+                "players":len(parsed)},None
         except Exception as e:return team,None,None,str(e)
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as pool:
         for team,parsed,receipt,error in pool.map(read,NBA_IDS):
