@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { parseNbaResearch, type NbaResearchDocument } from '../nba/research';
+import NbaPlayerResearchPanel from './NbaPlayerResearchPanel';
 
 const pct = (v: number) => (v * 100).toFixed(1) + '%';
 const gameDayEastern = (iso: string) => {
@@ -25,6 +26,7 @@ export default function NbaResearchScreen() {
   const [loading, setLoading] = useState(true);
   const [day, setDay] = useState('ALL');
   const [search, setSearch] = useState('');
+  const [mode, setMode] = useState<'TEAMS'|'PLAYERS'>('TEAMS');
 
   useEffect(() => {
     let mounted = true;
@@ -53,13 +55,13 @@ export default function NbaResearchScreen() {
 
   return <main className="h-full overflow-y-auto bg-[#0D0D0D] p-4 pb-28 space-y-4 text-stone-100" data-testid="nba-research-screen">
     <div className="space-y-1">
-      <h1 className="text-xl font-black tracking-wide">NBA V1</h1>
-      <p className="text-xs text-gray-400">October 20–21, 2026 · Frozen opening-week team projections</p>
+      <h1 className="text-xl font-black tracking-wide">NBA Models</h1>
+      <p className="text-xs text-gray-400">October 20–21, 2026 · Source-frozen team and player research</p>
     </div>
     <section className="rounded-2xl border border-amber-700/60 bg-amber-950/20 p-3 space-y-1 text-xs text-amber-200">
       <strong className="block">RESEARCH ONLY · NO VERIFIED BETS</strong>
-      <p>Previous-season team form, with offseason uncertainty. No certified current rosters, injuries, starters, player minutes or bookmaker lines. Percentages estimate winners, not profit or a betting edge.</p>
-      <p>NBA player points and assists have NOT passed the baseline gate; no player props are published here.</p>
+      <p>Team forecasts come from last season; V2 player research adds current ESPN roster membership and actual previous-season player box scores. No game-day dressed status, verified injuries, confirmed starters, bookmaker lines or betting edge.</p>
+      <p>NBA V1 player points/assists did not beat the baseline. V2 passed its separate historical numeric holdout but remains unverified for 2026–27 game-day minutes and injuries. Research projections are not official player props.</p>
     </section>
     {loading && <p className="text-sm text-gray-400">Loading saved pregame research…</p>}
     {error && <p role="alert" className="rounded-xl border border-red-700/50 bg-red-950/20 p-3 text-xs text-red-200">NBA data unavailable: {error}. No guesses or fallback betting picks will appear.</p>}
@@ -67,6 +69,14 @@ export default function NbaResearchScreen() {
       <div className="text-[11px] text-gray-400 space-y-1">
         <p>Original forecast frozen {tipLabel(doc.generated_at_utc)} · {doc.projected_games} historical opening-week previews</p>
         <p>Verified source foundation: {doc.historical_completed_regular_games.toLocaleString()} prior regular-season games · ESPN event IDs</p>
+      </div>
+      <div className="grid grid-cols-2 gap-2" role="group" aria-label="NBA research model view">
+        <button type="button" onClick={()=>setMode('TEAMS')}
+          aria-pressed={mode==='TEAMS'}
+          className={`rounded-lg px-3 py-2 text-xs font-bold ${mode==='TEAMS'?'bg-[#00FF41] text-black':'bg-[#262626] text-gray-200'}`}>Team forecasts</button>
+        <button type="button" onClick={()=>setMode('PLAYERS')}
+          aria-pressed={mode==='PLAYERS'}
+          className={`rounded-lg px-3 py-2 text-xs font-bold ${mode==='PLAYERS'?'bg-[#00FF41] text-black':'bg-[#262626] text-gray-200'}`}>V2 player stats</button>
       </div>
       <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="NBA fixture date">
         {['ALL', ...dates].map(d => <button key={d} type="button" onClick={() => setDay(d)}
@@ -77,6 +87,8 @@ export default function NbaResearchScreen() {
       </div>
       <input aria-label="Find NBA team" placeholder="Search a team" value={search} onChange={e => setSearch(e.target.value)}
         className="w-full rounded-xl border border-[#333] bg-[#191919] px-4 py-3 text-sm text-stone-100" />
+      {mode==='PLAYERS' && <NbaPlayerResearchPanel day={day} search={search} />}
+      {mode==='TEAMS' && <>
       <div className="text-xs text-gray-400">{games.length} matching historical pregame forecasts</div>
       {games.map(f => <article key={f.game_id} className="rounded-2xl border border-[#303030] bg-[#171717] p-4 space-y-3">
         <div className="text-[11px] text-gray-400">{tipLabel(f.tipoff_utc)} · ESPN #{f.game_id}</div>
@@ -103,6 +115,7 @@ export default function NbaResearchScreen() {
       </article>)}
       {!games.length && <p className="text-xs text-gray-400">No games match the selected date and team.</p>}
       <p className="text-[10px] text-gray-500">Immutable source SHA-256: {doc.historical_source_sha256}. Forecasts are original October 19 research, not updated injury-adjusted game-day advice.</p>
+      </>}
     </>}
   </main>;
 }
