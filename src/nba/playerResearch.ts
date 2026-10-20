@@ -61,7 +61,7 @@ export function parseNbaPlayerResearch(raw:unknown):NbaPlayerResearch {
        Date.parse(row.retrieved_at_utc as string)>generated||
        row.url!=='https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/'+id+'/roster'||
        !num(row.players,8,35))bad('missing or future roster identity');
-    rosters+=row.players as number;
+    rosters+=(row as Record<string,unknown>).players as number;
   }
   if(rosters!==d.source_roster_count)bad('roster count not preserved');
   const games=new Set<string>(),ids=new Set<string>();
