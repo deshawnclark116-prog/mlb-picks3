@@ -5,6 +5,7 @@ import { loadCurrentNfl } from "./server/nflCurrent.ts";
 import { projectionFeedHandler } from "./server/projectionFeeds.ts";
 import { nhlCountResearchHandler } from "./server/nhlCountResearch.ts";
 import { nbaResearchHandler } from "./server/nbaResearch.ts";
+import { nbaPlayerResearchHandler } from "./server/nbaPlayerResearch.ts";
 import { soccerResearchHandler } from "./server/soccerResearch.ts";
 import path from "path";
 import { createServer as createViteServer } from "vite";
@@ -222,6 +223,8 @@ async function startServer() {
 
   // Frozen 2026 opening-week team research from picks3; never proxy nonexistent Render NBA route.
   app.get("/api/nba-research", nbaResearchHandler());
+  // First-seen NBA V2 played-player statistical research, NOT sports betting.
+  app.get("/api/nba-player-research", nbaPlayerResearchHandler());
 
   // Existing PR #30 five-league source-first research only; no bookmaker or player prop claims.
   app.get("/api/soccer-research", soccerResearchHandler());
