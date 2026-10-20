@@ -7,7 +7,7 @@ NOW=dt.datetime(2026,10,20,16,0,tzinfo=UTC)
 def event(gid, when, status=False, season=2):
     def competitor(side,tid,name):
         return {"homeAway":side,"team":{"id":tid,"displayName":name},
-                "score":"100"}
+                "score":"101" if side=="home" else "100"}
     return {"id":gid,"date":when,"season":{"type":season},
             "competitions":[{"competitors":[competitor("home","2","Boston Celtics"),
                                             competitor("away","8","Detroit Pistons")],
