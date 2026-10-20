@@ -6,6 +6,7 @@ import { projectionFeedHandler } from "./server/projectionFeeds.ts";
 import { nhlCountResearchHandler } from "./server/nhlCountResearch.ts";
 import { nbaResearchHandler } from "./server/nbaResearch.ts";
 import { nbaPlayerResearchHandler } from "./server/nbaPlayerResearch.ts";
+import { nbaRollingResearchHandler, nbaRollingGradeHandler } from "./server/nbaRollingResearch.ts";
 import { soccerResearchHandler } from "./server/soccerResearch.ts";
 import path from "path";
 import { createServer as createViteServer } from "vite";
@@ -225,6 +226,10 @@ async function startServer() {
   app.get("/api/nba-research", nbaResearchHandler());
   // First-seen NBA V2 played-player statistical research, NOT sports betting.
   app.get("/api/nba-player-research", nbaPlayerResearchHandler());
+  // Daily genuine pre-tip NBA V2 originals, never modeled from postgame boxes.
+  app.get("/api/nba-rolling-research", nbaRollingResearchHandler());
+  // Outcome grades for all original NBA rolling player stats, not betting targets.
+  app.get("/api/nba-rolling-grades", nbaRollingGradeHandler());
 
   // Existing PR #30 five-league source-first research only; no bookmaker or player prop claims.
   app.get("/api/soccer-research", soccerResearchHandler());
