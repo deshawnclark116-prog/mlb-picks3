@@ -33,26 +33,27 @@ const sha=(v:unknown)=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v);
 const validTime=(v:unknown)=>typeof v==='string'&&Number.isFinite(Date.parse(v));
 const bad=(s:string):never=>{throw new Error('NBA original player research source violation: '+s);};
 export function parseNbaPlayerResearch(raw:unknown):NbaPlayerResearch {
-  if(!obj(raw))bad('document is not an object');
-  if(raw.schema!==NBA_PLAYER_SCHEMA || raw.model_version!==NBA_PLAYER_MODEL ||
-     raw.research_only!==true||raw.official_bets!==0 ||
-     raw.no_sportsbook_pricing_or_Kelly!==true ||
-     raw.game_roster_active_injury_starter_status_unknown!==true ||
-     raw.current_season!=='2026-27'||!validTime(raw.generated_at_utc)||
-     !sha(raw.history_game_identity_sha256)||
-     !num(raw.previous_season_games_replayed,100,1000)||
-     !num(raw.verified_previous_season_full_boxscores,95,1000)||
-     raw.verified_previous_season_full_boxscores<raw.previous_season_games_replayed*.95 ||
-     !num(raw.source_roster_count,300,800)||!obj(raw.source_roster_receipts)||
-     Object.keys(raw.source_roster_receipts).length!==30 ||
-     !Array.isArray(raw.forecasts)||!num(raw.games_forecast,1,14)||
-     raw.forecasts.length!==raw.games_forecast ||
-     !num(raw.number_of_player_stat_predictions,1,3000)||
-     typeof raw.warning!=='string'||!raw.warning.includes('not official')){
+  if(!obj(raw))throw new Error('NBA original player research source violation: document is not an object');
+  const d=raw as Record<string,any>;
+  if(d.schema!==NBA_PLAYER_SCHEMA || d.model_version!==NBA_PLAYER_MODEL ||
+     d.research_only!==true||d.official_bets!==0 ||
+     d.no_sportsbook_pricing_or_Kelly!==true ||
+     d.game_roster_active_injury_starter_status_unknown!==true ||
+     d.current_season!=='2026-27'||!validTime(d.generated_at_utc)||
+     !sha(d.history_game_identity_sha256)||
+     !num(d.previous_season_games_replayed,100,1000)||
+     !num(d.verified_previous_season_full_boxscores,95,1000)||
+     d.verified_previous_season_full_boxscores<d.previous_season_games_replayed*.95 ||
+     !num(d.source_roster_count,300,800)||!obj(d.source_roster_receipts)||
+     Object.keys(d.source_roster_receipts).length!==30 ||
+     !Array.isArray(d.forecasts)||!num(d.games_forecast,1,14)||
+     d.forecasts.length!==d.games_forecast ||
+     !num(d.number_of_player_stat_predictions,1,3000)||
+     typeof d.warning!=='string'||!d.warning.includes('not official')){
     bad('document source, coverage, or betting boundary invalid');
   }
-  const generated=Date.parse(raw.generated_at_utc as string);
-  const receipts=raw.source_roster_receipts as Record<string,unknown>;
+  const generated=Date.parse(d.generated_at_utc as string);
+  const receipts=d.source_roster_receipts as Record<string,unknown>;
   let rosters=0;
   for(let id=1;id<=30;id++){
     const row=receipts[String(id)];
@@ -62,10 +63,10 @@ export function parseNbaPlayerResearch(raw:unknown):NbaPlayerResearch {
        !num(row.players,8,35))bad('missing or future roster identity');
     rosters+=row.players as number;
   }
-  if(rosters!==raw.source_roster_count)bad('roster count not preserved');
+  if(rosters!==d.source_roster_count)bad('roster count not preserved');
   const games=new Set<string>(),ids=new Set<string>();
   let stats=0;
-  for(const game of raw.forecasts){
+  for(const game of d.forecasts){
     if(!obj(game)||typeof game.game_id!=='string'||!/^\d{8,12}$/.test(game.game_id)||
        games.has(game.game_id)||!validTime(game.tipoff_utc)||
        Date.parse(game.tipoff_utc as string)<=generated||
@@ -109,6 +110,6 @@ export function parseNbaPlayerResearch(raw:unknown):NbaPlayerResearch {
     }
     stats+=game.player_predictions_count as number;
   }
-  if(stats!==raw.number_of_player_stat_predictions)bad('model markets missing');
-  return raw as unknown as NbaPlayerResearch;
+  if(stats!==d.number_of_player_stat_predictions)bad('model markets missing');
+  return d as unknown as NbaPlayerResearch;
 }
