@@ -1,0 +1,115 @@
+name: NBA 2026 first-seen pretip V2 player forecast
+on:
+  pull_request:
+    paths:
+      - nba/nba_v2_firstseen_player_opening.py
+      - tests/test_nba_v2_firstseen_player_opening.py
+      - .github/workflows/nba_v2_firstseen_player_opening.yml
+  push:
+    branches: [main]
+    paths:
+      - nba/nba_v2_firstseen_player_opening.py
+      - tests/test_nba_v2_firstseen_player_opening.py
+      - .github/workflows/nba_v2_firstseen_player_opening.yml
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: nba-v2-first-pregame-original
+  cancel-in-progress: false
+jobs:
+  research-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prove no hindsight, no fake roster status, unique pregame player forecast IDs
+        run: |
+          PYTHONPATH=. python -m unittest -v tests.test_nba_v2_firstseen_player_opening tests.test_nba_v2_rotation tests.test_nba_2026_roster_source
+          python -m py_compile nba/nba_v2_firstseen_player_opening.py
+          git diff --check
+  capture-forward:
+    needs: research-proof
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/cache@v4
+        with:
+          path: .cache/nba-opening-player-source
+          key: nba-v2-real-2025-26-last-18-team-games-source-v1
+      - name: Verify previously saved first-seen artifact remains authentic
+        if: hashFiles('docs/nba_v2_opening_player_firstseen.json') != ''
+        run: |
+          python - <<'PY'
+          import json
+          d=json.load(open("docs/nba_v2_opening_player_firstseen.json"))
+          assert d["schema"]=="NBA_2026_27_V2_FIRST_SEEN_PLAYER_RESEARCH_V1"
+          assert d["official_bets"]==0 and d["number_of_player_stat_predictions"]>0
+          assert all(d["generated_at_utc"]<f["tipoff_utc"] for f in d["forecasts"])
+          print("NBA_ORIGINAL_FIRST_SEEN_UNALTERED")
+          PY
+      - name: Fetch genuine 2025-26 prior game summaries and current 30 rosters
+        if: hashFiles('docs/nba_v2_opening_player_firstseen.json') == ''
+        run: |
+          PYTHONPATH=. python -u nba/nba_v2_firstseen_player_opening.py \
+            --fixtures docs/nba_v1_opening_week_research.json \
+            --cache .cache/nba-opening-player-source \
+            --out docs/nba-original-candidate.json
+      - name: Validate all real first-seen player predictions and no betting promotion
+        if: hashFiles('docs/nba_v2_opening_player_firstseen.json') == ''
+        run: |
+          python - <<'PY'
+          import json
+          d=json.load(open('docs/nba-original-candidate.json'))
+          assert d["research_only"] and d["official_bets"]==0
+          assert d["games_forecast"]>0 and d["number_of_player_stat_predictions"]>=40
+          assert d["verified_previous_season_full_boxscores"]>=.95*d["previous_season_games_replayed"]
+          assert len(d["source_roster_receipts"])==30
+          for g in d["forecasts"]:
+              assert d["generated_at_utc"]<g["tipoff_utc"]
+              for p in g["players"]:
+                  assert set(p["predictions"])=={"points","rebounds","assists","three_pointers_made"}
+                  assert not p["official_pick"] and not p["game_day_active_certified"]
+                  assert p["stat_market_lines"] is None
+          print("NBA_V2_PRETIP_RESEARCH_VERIFIED",d["games_forecast"],d["number_of_player_stat_predictions"])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: hashFiles('docs/nba_v2_opening_player_firstseen.json') == ''
+        with:
+          name: nba-original-forward-first-seen-player-research
+          path: docs/nba-original-candidate.json
+          if-no-files-found: error
+          retention-days: 90
+      - name: Save original forecast on main exactly once
+        if: hashFiles('docs/nba_v2_opening_player_firstseen.json') == ''
+        run: |
+          set -euo pipefail
+          git config user.name "nba-firstseen[bot]"
+          git config user.email "nba-firstseen[bot]@users.noreply.github.com"
+          for n in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            if [ -f docs/nba_v2_opening_player_firstseen.json ]; then
+              echo "NBA_FROZEN_ORIGINAL_ALREADY_EXISTS_REFUSE_OVERWRITE"
+              exit 0
+            fi
+            cp docs/nba-original-candidate.json docs/nba_v2_opening_player_firstseen.json
+            git add docs/nba_v2_opening_player_firstseen.json
+            git commit -m "Freeze genuine NBA V2 pretip 2026 player predictions"
+            if git push origin HEAD:main; then
+              echo "NBA_GENUINE_FIRST_SEEN_PREGAME_ARCHIVED"
+              exit 0
+            fi
+            if [ "$n" = 4 ]; then exit 1; fi
+          done
