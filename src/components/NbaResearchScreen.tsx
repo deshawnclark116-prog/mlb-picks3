@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { parseNbaResearch, type NbaResearchDocument } from '../nba/research';
 import NbaPlayerResearchPanel from './NbaPlayerResearchPanel';
+import NbaRollingPlayerPanel from './NbaRollingPlayerPanel';
 
 const pct = (v: number) => (v * 100).toFixed(1) + '%';
 const gameDayEastern = (iso: string) => {
@@ -17,8 +18,8 @@ const tipLabel = (iso: string) =>
   });
 
 /**
- * Opening-week NBA V1 research only. This component NEVER presents model
- * targets as sportsbook lines or the unpromoted player model as picks.
+ * NBA V2 rolling firstseen player research PLUS frozen opening-week audits.
+ * Does not present model targets as sportsbook lines or official bets.
  */
 export default function NbaResearchScreen() {
   const [doc, setDoc] = useState<NbaResearchDocument | null>(null);
@@ -26,7 +27,7 @@ export default function NbaResearchScreen() {
   const [loading, setLoading] = useState(true);
   const [day, setDay] = useState('ALL');
   const [search, setSearch] = useState('');
-  const [mode, setMode] = useState<'TEAMS'|'PLAYERS'>('TEAMS');
+  const [mode, setMode] = useState<'ROLLING'|'TEAMS'|'PLAYERS'>('ROLLING');
 
   useEffect(() => {
     let mounted = true;
@@ -56,37 +57,41 @@ export default function NbaResearchScreen() {
   return <main className="h-full overflow-y-auto bg-[#0D0D0D] p-4 pb-28 space-y-4 text-stone-100" data-testid="nba-research-screen">
     <div className="space-y-1">
       <h1 className="text-xl font-black tracking-wide">NBA Models</h1>
-      <p className="text-xs text-gray-400">October 20–21, 2026 · Source-frozen team and player research</p>
+      <p className="text-xs text-gray-400">2026–27 season · Saved original pre-tip forecasts and historical research</p>
     </div>
     <section className="rounded-2xl border border-amber-700/60 bg-amber-950/20 p-3 space-y-1 text-xs text-amber-200">
       <strong className="block">RESEARCH ONLY · NO VERIFIED BETS</strong>
-      <p>Team forecasts come from last season; V2 player research adds current ESPN roster membership and actual previous-season player box scores. No game-day dressed status, verified injuries, confirmed starters, bookmaker lines or betting edge.</p>
-      <p>NBA V1 player points/assists did not beat the baseline. V2 passed its separate historical numeric holdout but remains unverified for 2026–27 game-day minutes and injuries. Research projections are not official player props.</p>
+      <p>Rolling NBA V2 projections update from completed current-season games and current ESPN rosters. The opening-week V2 forecasts are preserved separately. Current game-day dressed status, certified injuries, confirmed starters and bookmaker lines remain unverified.</p>
+      <p>V2 passed its separate historical numerical holdout, but its current-season injuries and minutes have not earned live prop-betting certification. Projected stats are conditional on participation, not actual sportsbook wagers.</p>
     </section>
     {loading && <p className="text-sm text-gray-400">Loading saved pregame research…</p>}
     {error && <p role="alert" className="rounded-xl border border-red-700/50 bg-red-950/20 p-3 text-xs text-red-200">NBA data unavailable: {error}. No guesses or fallback betting picks will appear.</p>}
     {doc && <>
-      <div className="text-[11px] text-gray-400 space-y-1">
+      {mode!=='ROLLING' && <div className="text-[11px] text-gray-400 space-y-1">
         <p>Original forecast frozen {tipLabel(doc.generated_at_utc)} · {doc.projected_games} historical opening-week previews</p>
         <p>Verified source foundation: {doc.historical_completed_regular_games.toLocaleString()} prior regular-season games · ESPN event IDs</p>
-      </div>
-      <div className="grid grid-cols-2 gap-2" role="group" aria-label="NBA research model view">
+      </div>}
+      <div className="grid grid-cols-3 gap-2" role="group" aria-label="NBA research model view">
+        <button type="button" onClick={()=>setMode('ROLLING')}
+          aria-pressed={mode==='ROLLING'}
+          className={`rounded-lg px-2 py-2 text-xs font-bold ${mode==='ROLLING'?'bg-[#00FF41] text-black':'bg-[#262626] text-gray-200'}`}>Live V2</button>
         <button type="button" onClick={()=>setMode('TEAMS')}
           aria-pressed={mode==='TEAMS'}
-          className={`rounded-lg px-3 py-2 text-xs font-bold ${mode==='TEAMS'?'bg-[#00FF41] text-black':'bg-[#262626] text-gray-200'}`}>Team forecasts</button>
+          className={`rounded-lg px-3 py-2 text-xs font-bold ${mode==='TEAMS'?'bg-[#00FF41] text-black':'bg-[#262626] text-gray-200'}`}>Opening teams</button>
         <button type="button" onClick={()=>setMode('PLAYERS')}
           aria-pressed={mode==='PLAYERS'}
-          className={`rounded-lg px-3 py-2 text-xs font-bold ${mode==='PLAYERS'?'bg-[#00FF41] text-black':'bg-[#262626] text-gray-200'}`}>V2 player stats</button>
+          className={`rounded-lg px-3 py-2 text-xs font-bold ${mode==='PLAYERS'?'bg-[#00FF41] text-black':'bg-[#262626] text-gray-200'}`}>Opening V2</button>
       </div>
-      <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="NBA fixture date">
+      {mode!=='ROLLING' && <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="NBA fixture date">
         {['ALL', ...dates].map(d => <button key={d} type="button" onClick={() => setDay(d)}
           aria-pressed={day === d}
           className={`shrink-0 rounded-lg px-3 py-2 text-xs font-bold ${day === d ? 'bg-[#00FF41] text-black' : 'bg-[#252525] text-gray-300'}`}>
           {d === 'ALL' ? 'All games' : d.slice(5)}
         </button>)}
-      </div>
-      <input aria-label="Find NBA team" placeholder="Search a team" value={search} onChange={e => setSearch(e.target.value)}
+      </div>}
+      <input aria-label="Find NBA team or player" placeholder="Search a team" value={search} onChange={e => setSearch(e.target.value)}
         className="w-full rounded-xl border border-[#333] bg-[#191919] px-4 py-3 text-sm text-stone-100" />
+      {mode==='ROLLING' && <NbaRollingPlayerPanel search={search} />}
       {mode==='PLAYERS' && <NbaPlayerResearchPanel day={day} search={search} />}
       {mode==='TEAMS' && <>
       <div className="text-xs text-gray-400">{games.length} matching historical pregame forecasts</div>

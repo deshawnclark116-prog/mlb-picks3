@@ -1,0 +1,155 @@
+name: NBA V2 all-original rolling player result grading
+on:
+  pull_request:
+    paths:
+      - nba/nba_v2_rolling_grade.py
+      - tests/test_nba_v2_rolling_grade.py
+      - src/nba/rollingResearch.ts
+      - server/nbaRollingResearch.ts
+      - server.ts
+      - src/components/NbaRollingPlayerPanel.tsx
+      - src/components/NbaResearchScreen.tsx
+      - tests/nbaRollingResearch.test.ts
+      - package.json
+      - .github/workflows/nba_v2_rolling_grade.yml
+  push:
+    branches: [main]
+    paths:
+      - nba/nba_v2_rolling_grade.py
+      - tests/test_nba_v2_rolling_grade.py
+      - docs/nba_rolling_predictions/**
+      - .github/workflows/nba_v2_rolling_grade.yml
+  schedule:
+    - cron: "28 15 * * *"
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: nba-v2-rolling-player-all-actuals
+  cancel-in-progress: false
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify authentic first-seen/actual, DNP, missing actual and every market
+        run: |
+          PYTHONPATH=. python -m unittest -v tests.test_nba_v2_rolling_grade tests.test_nba_v2_original_opening_grade
+          python -m py_compile nba/nba_v2_rolling_grade.py
+          git diff --check
+  test-app-native-rolling-nba-api:
+    runs-on: ubuntu-latest
+    timeout-minutes: 11
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - name: Assert original-model serving, type integrity and responsive bundle
+        run: |
+          npm run lint
+          node --import tsx --test tests/nbaRollingResearch.test.ts
+          npm run build
+  grade-verified-completed-games:
+    needs: [regression,test-app-native-rolling-nba-api]
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Restore immutable historical NBA final evidence, never cache live outcomes
+        uses: actions/cache@v4
+        with:
+          path: .cache/nba-v2-rolling-grade
+          key: nba-v2-rolling-grade-finals-v1-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            nba-v2-rolling-grade-finals-v1-${{ runner.os }}-
+      - name: Grade every original game/player/stat against independently completed ESPN finals
+        run: |
+          PYTHONPATH=. python -u nba/nba_v2_rolling_grade.py \
+            --archive-root docs/nba_rolling_predictions \
+            --cache .cache/nba-v2-rolling-grade \
+            --out "$RUNNER_TEMP/nba-rolling-grade-candidate.json"
+      - name: Assert exact original forecast ledger reconciliation, no invented bets
+        run: |
+          python - "$RUNNER_TEMP/nba-rolling-grade-candidate.json" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          assert d['schema']=='NBA_V2_ALL_IMMUTABLE_ROLLING_PLAYER_STATS_ACTUAL_GRADES_V1'
+          assert d['original_player_forecasts']*4==d['all_original_four_market_stat_forecasts_accounted']
+          assert (d['verified_played_stat_outcomes']+
+                  d['verified_DNP_conditional_stats_not_applicable']+
+                  d['unverified_conditional_stats']==
+                  d['all_original_four_market_stat_forecasts_accounted'])
+          assert d['player_status_verified']+d['player_status_unverified']==d['original_player_forecasts']
+          assert d['official_bets']==0 and d['bookmaker_win_loss_record'] is None
+          assert d['originals_immutable'] and d['played_vs_DNP_never_fabricated']
+          print('NBA_EVERY_ORIGINAL_MODEL_PREDICTION_ACCOUNTED',
+                'original_players',d['original_player_forecasts'],
+                'played_market_actuals',d['verified_played_stat_outcomes'],
+                'unverified_market_actuals',d['unverified_conditional_stats'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nba-every-frozen-prediction-actual-${{ github.run_id }}
+          path: ${{ runner.temp }}/nba-rolling-grade-candidate.json
+          retention-days: 90
+      - name: Publish auditable raw results plus compact game-by-game grading status
+        run: |
+          set -euo pipefail
+          FILE="$RUNNER_TEMP/nba-rolling-grade-candidate.json"
+          git config user.name "nba-v2-truth-grade[bot]"
+          git config user.email "nba-v2-truth-grade[bot]@users.noreply.github.com"
+          for n in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            python - "$FILE" <<'PY'
+          import json,pathlib,sys
+          source=json.load(open(sys.argv[1]))
+          path=pathlib.Path('docs/nba_v2_rolling_player_grades.json')
+          exists=path.exists()
+          if exists:
+              old=json.loads(path.read_text())
+              if (old.get('player_rows')==source['player_rows'] and
+                  old.get('games')==source['games']):
+                  print('NBA_NO_CHANGED_ACTUAL_RESULTS',flush=True)
+                  raise SystemExit(0)
+          path.write_text(json.dumps(source,sort_keys=True,indent=2,allow_nan=False)+'\n')
+          status={k:source[k] for k in (
+              'schema','graded_at_utc','status','original_rolling_games',
+              'original_player_forecasts','all_original_four_market_stat_forecasts_accounted',
+              'verified_played_stat_outcomes','verified_DNP_conditional_stats_not_applicable',
+              'unverified_conditional_stats','player_status_verified',
+              'player_status_unverified','play_probability_brier',
+              'conditional_stat_mae','expected_minutes_mae','official_bets')}
+          status['games']=source['games']
+          status['originals_immutable']=True
+          pathlib.Path('docs/nba_v2_rolling_grade_status.json').write_text(
+              json.dumps(status,sort_keys=True,indent=2,allow_nan=False)+'\n')
+          print('NBA_ORIGINAL_ROLLING_GRADE_PUBLISHED',source['original_player_forecasts'])
+          PY
+            git add docs/nba_v2_rolling_player_grades.json docs/nba_v2_rolling_grade_status.json
+            if git diff --cached --quiet; then
+              echo "NBA_NO_NEW_MODEL_OUTCOME_GRADES"
+              exit 0
+            fi
+            git commit -m "Grade all original NBA V2 rolling stats and first-seen probabilities against real finals"
+            if git push origin HEAD:main; then
+              echo "NBA_ALL_PLAYER_MARKETS_POSTGAME_GRADED"
+              exit 0
+            fi
+            if [ "$n" = 4 ]; then exit 1; fi
+          done
