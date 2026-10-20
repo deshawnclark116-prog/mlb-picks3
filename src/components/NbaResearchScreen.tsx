@@ -100,14 +100,11 @@ export default function NbaResearchScreen() {
       <p role="alert" className="rounded-xl border border-red-700 p-3 text-xs text-red-200">
         Archived original NBA research unavailable: {error}</p>}
     {(mode==='TEAMS'||mode==='PLAYERS')&&doc && <>
-      {mode!=='ROLLING' && <div className="text-[11px] text-gray-400 space-y-1">
+      <div className="text-[11px] text-gray-400 space-y-1">
         <p>Original forecast frozen {tipLabel(doc.generated_at_utc)} · {doc.projected_games} historical opening-week previews</p>
         <p>Verified source foundation: {doc.historical_completed_regular_games.toLocaleString()} prior regular-season games · ESPN event IDs</p>
-      </div>}
-      <div className="grid grid-cols-3 gap-2" role="group" aria-label="NBA research model view">
-        <button type="button" onClick={()=>setMode('ROLLING')}
-          aria-pressed={mode==='ROLLING'}
-          className={`rounded-lg px-2 py-2 text-xs font-bold ${mode==='ROLLING'?'bg-[#00FF41] text-black':'bg-[#262626] text-gray-200'}`}>Live V2</button>
+      </div>
+      <div className="grid grid-cols-2 gap-2" role="group" aria-label="NBA research model view">
         <button type="button" onClick={()=>setMode('TEAMS')}
           aria-pressed={mode==='TEAMS'}
           className={`rounded-lg px-3 py-2 text-xs font-bold ${mode==='TEAMS'?'bg-[#00FF41] text-black':'bg-[#262626] text-gray-200'}`}>Opening teams</button>
@@ -115,14 +112,13 @@ export default function NbaResearchScreen() {
           aria-pressed={mode==='PLAYERS'}
           className={`rounded-lg px-3 py-2 text-xs font-bold ${mode==='PLAYERS'?'bg-[#00FF41] text-black':'bg-[#262626] text-gray-200'}`}>Opening V2</button>
       </div>
-      {mode!=='ROLLING' && <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="NBA fixture date">
+      <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="NBA fixture date">
         {['ALL', ...dates].map(d => <button key={d} type="button" onClick={() => setDay(d)}
           aria-pressed={day === d}
           className={`shrink-0 rounded-lg px-3 py-2 text-xs font-bold ${day === d ? 'bg-[#00FF41] text-black' : 'bg-[#252525] text-gray-300'}`}>
           {d === 'ALL' ? 'All games' : d.slice(5)}
         </button>)}
-      </div>}
-
+      </div>
 
       {mode==='PLAYERS' && <NbaPlayerResearchPanel day={day} search={search} />}
       {mode==='TEAMS' && <>
