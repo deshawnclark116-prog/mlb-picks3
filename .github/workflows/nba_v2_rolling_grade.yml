@@ -4,6 +4,13 @@ on:
     paths:
       - nba/nba_v2_rolling_grade.py
       - tests/test_nba_v2_rolling_grade.py
+      - src/nba/rollingResearch.ts
+      - server/nbaRollingResearch.ts
+      - server.ts
+      - src/components/NbaRollingPlayerPanel.tsx
+      - src/components/NbaResearchScreen.tsx
+      - tests/nbaRollingResearch.test.ts
+      - package.json
       - .github/workflows/nba_v2_rolling_grade.yml
   push:
     branches: [main]
@@ -34,8 +41,23 @@ jobs:
           PYTHONPATH=. python -m unittest -v tests.test_nba_v2_rolling_grade tests.test_nba_v2_original_opening_grade
           python -m py_compile nba/nba_v2_rolling_grade.py
           git diff --check
+  test-app-native-rolling-nba-api:
+    runs-on: ubuntu-latest
+    timeout-minutes: 11
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - name: Assert original-model serving, type integrity and responsive bundle
+        run: |
+          npm run lint
+          node --import tsx --test tests/nbaRollingResearch.test.ts
+          npm run build
   grade-verified-completed-games:
-    needs: regression
+    needs: [regression,test-app-native-rolling-nba-api]
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 20
