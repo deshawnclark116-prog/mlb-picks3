@@ -33,7 +33,8 @@ const sha=(v:unknown)=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v);
 const validTime=(v:unknown)=>typeof v==='string'&&Number.isFinite(Date.parse(v));
 const bad=(s:string):never=>{throw new Error('NBA original player research source violation: '+s);};
 export function parseNbaPlayerResearch(raw:unknown):NbaPlayerResearch {
-  if(!obj(raw) || raw.schema!==NBA_PLAYER_SCHEMA || raw.model_version!==NBA_PLAYER_MODEL ||
+  if(!obj(raw))bad('document is not an object');
+  if(raw.schema!==NBA_PLAYER_SCHEMA || raw.model_version!==NBA_PLAYER_MODEL ||
      raw.research_only!==true||raw.official_bets!==0 ||
      raw.no_sportsbook_pricing_or_Kelly!==true ||
      raw.game_roster_active_injury_starter_status_unknown!==true ||
