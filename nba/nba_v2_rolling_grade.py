@@ -85,7 +85,7 @@ def load_original_forecasts(root:Path):
     return games,files
 
 def capture_verified_actuals(originals,now,fetch_board=get_scoreboard,
-                            fetch_box=fetch_summary):
+                            fetch_box=fetch_summary,cache_root=None):
     """Only ESPN completed scores and complete independent two-team final boxes."""
     date_games=collections.defaultdict(set)
     for gid,g in originals.items():
@@ -94,10 +94,20 @@ def capture_verified_actuals(originals,now,fetch_board=get_scoreboard,
         date_games[tip.astimezone(ZoneInfo("America/New_York")).date()].add(gid)
         date_games[tip.date()].add(gid)
     final={};boxes={};source={"scoreboards":{},"boxes":{},"errors":{}}
+    cache_root=Path(cache_root) if cache_root else None
     for day,gids in sorted(date_games.items()):
         label=day.isoformat()
         try:
-            observed_date,raw=fetch_board(day)
+            cache=(cache_root/"scoreboards"/(label+".json")) if cache_root else None
+            # Completed past slates are immutable source data. A live/current
+            # calendar day must NEVER be re-used as a finalized snapshot.
+            if cache and cache.exists() and (now.date()-day).days>=4:
+                observed_date,raw=label,json.loads(cache.read_text())
+            else:
+                observed_date,raw=fetch_board(day)
+                if cache and (now.date()-day).days>=4:
+                    cache.parent.mkdir(parents=True,exist_ok=True)
+                    cache.write_text(json.dumps(raw,sort_keys=True)+"\n")
             if observed_date!=label:
                 raise ValueError("NBA_ESPN_SCOREBOARD_WRONG_REQUESTED_DATE")
             source["scoreboards"][label]={
@@ -120,10 +130,17 @@ def capture_verified_actuals(originals,now,fetch_board=get_scoreboard,
     for gid,g in sorted(final.items()):
         if not g["completed"]:continue
         try:
-            raw=fetch_box(gid)
+            cache=(cache_root/"boxes"/(gid+".json")) if cache_root else None
+            if cache and cache.exists():
+                raw=json.loads(cache.read_text())
+            else:
+                raw=fetch_box(gid)
             players,audit=parse_final_boxscore(raw,gid,(g["home_id"],g["away_id"]))
             if (len(players)<10 or {p["team_id"] for p in players}!={g["home_id"],g["away_id"]}):
                 raise ValueError("NBA_FINAL_PLAYER_BOX_NOT_BOTH_TEAMS")
+            if cache and not cache.exists():
+                cache.parent.mkdir(parents=True,exist_ok=True)
+                cache.write_text(json.dumps(raw,sort_keys=True)+"\n")
             boxes[gid]=players
             source["boxes"][gid]={"sha256":_sha(raw),
                 "retrieved_at_utc":now.isoformat(),
@@ -259,10 +276,11 @@ def main():
     p=argparse.ArgumentParser()
     p.add_argument("--archive-root",default=Path("docs/nba_rolling_predictions"),type=Path)
     p.add_argument("--out",type=Path,required=True)
+    p.add_argument("--cache",type=Path,default=Path(".cache/nba-v2-rolling-grade"))
     a=p.parse_args()
     originals,files=load_original_forecasts(a.archive_root)
     now=dt.datetime.now(UTC)
-    finals,boxes,receipt=capture_verified_actuals(originals,now)
+    finals,boxes,receipt=capture_verified_actuals(originals,now,cache_root=a.cache)
     d=grade_originals(originals,finals,boxes,receipt,now)
     d["original_source_files"]=files
     a.out.parent.mkdir(parents=True,exist_ok=True)
