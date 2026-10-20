@@ -1,0 +1,110 @@
+name: NBA all-original 2026 opening player and team outcome grading
+on:
+  pull_request:
+    paths:
+      - nba/nba_v2_original_opening_grade.py
+      - tests/test_nba_v2_original_opening_grade.py
+      - .github/workflows/nba_v2_original_opening_grade.yml
+  push:
+    branches: [main]
+    paths:
+      - nba/nba_v2_original_opening_grade.py
+      - tests/test_nba_v2_original_opening_grade.py
+      - .github/workflows/nba_v2_original_opening_grade.yml
+  schedule:
+    - cron: "28 15 * * *"
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: nba-original-player-postgame-grades
+  cancel-in-progress: false
+jobs:
+  test-no-hindsight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Regression real 14 saved fixtures 225 preserved players and 900 statistical predictions
+        run: |
+          PYTHONPATH=. python -m unittest -v tests.test_nba_v2_original_opening_grade
+          python -m py_compile nba/nba_v2_original_opening_grade.py
+          git diff --check
+  grade-authentic-completed-games:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: test-no-hindsight
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Grade EVERY original NBA team and player stat using independently COMPLETED ESPN boxes
+        run: |
+          PYTHONPATH=. python -u nba/nba_v2_original_opening_grade.py \
+            --team docs/nba_v1_opening_week_research.json \
+            --players docs/nba_v2_opening_player_firstseen.json \
+            --out docs/.nba-original-graded-candidate.json
+      - name: Reject missing-original, fabricated winning sportsbook bets and silent DNP zeroes
+        run: |
+          python - <<'PY'
+          import json
+          d=json.load(open('docs/.nba-original-graded-candidate.json'))
+          assert d['schema']=='NBA_2026_ORIGINAL_TEAM_AND_V2_PLAYER_COMPLETE_GAME_GRADES_V1'
+          assert d['original_player_predictions']==225
+          assert d['original_player_stat_forecasts']==900
+          assert d['player_originals_accounted']==225
+          assert d['player_status_verified']+d['player_status_unverified']==225
+          assert d['team_originals']==14
+          assert d['official_bets']==0 and d['bookmaker_win_loss_record'] is None
+          assert d['not_played_conditional_stats_not_scored_as_zero']
+          assert d['originals_immutable_and_all_accounted']
+          print('NBA_ALL_ORIGINAL_900_STATS_ACCOUNTED',d['team_originals_graded'],
+                d['player_status_verified'],d['player_status_unverified'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-original-2026-player-and-team-grade-report
+          path: docs/.nba-original-graded-candidate.json
+          if-no-files-found: error
+          retention-days: 90
+      - name: Commit corrected actuals only when substantive grades change; never touch pregame forecast
+        run: |
+          set -euo pipefail
+          git config user.name "nba-outcome-grade[bot]"
+          git config user.email "nba-outcome-grade[bot]@users.noreply.github.com"
+          for n in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            python - <<'PY'
+          import json,pathlib
+          candidate=json.load(open('docs/.nba-original-graded-candidate.json'))
+          path=pathlib.Path('docs/nba_v2_original_opening_player_grade.json')
+          if path.exists():
+              old=json.loads(path.read_text())
+              keys=('team_forecast_rows','player_forecast_rows')
+              if all(old.get(k)==candidate.get(k) for k in keys):
+                  print('NBA_NO_NEW_SUBSTANTIVE_ACTUALS')
+                  raise SystemExit(0)
+          path.write_text(json.dumps(candidate,indent=2,sort_keys=True,allow_nan=False)+'\n')
+          print('NBA_NEW_REAL_PLAYER_AND_TEAM_GRADES')
+          PY
+            git add docs/nba_v2_original_opening_player_grade.json
+            if git diff --cached --quiet; then
+              echo "NBA_NO_CHANGED_GRADE_ROWS"
+              break
+            fi
+            git commit -m "Grade exact original NBA player forecasts against verified completed games"
+            if git push origin HEAD:main; then
+              echo "NBA_COMPLETE_ORIGINAL_FORECAST_GRADE_PUBLISHED"
+              break
+            fi
+            if [ "$n" = 4 ]; then exit 1; fi
+          done
