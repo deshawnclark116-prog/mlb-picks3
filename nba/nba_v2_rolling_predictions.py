@@ -30,6 +30,7 @@ from nba.nba_v2_firstseen_player_opening import (
 )
 from nba.nba_v2_rotation_research import team_forecasts, MARKETS, VERSION
 from nba.nba_rolling_future_fixtures import SCHEMA as FIXTURE_SCHEMA
+from nba.nba_live_injury_source import validate as validate_espn_reported_injuries
 
 SCHEMA="NBA_V2_2026_27_IMMUTABLE_ROLLING_PLAYER_PREDICTIONS_V1"
 SEASON_START=dt.date(2026,10,20)
@@ -146,12 +147,16 @@ def _source_rosters(rosters,receipts,asof):
             all_ids[pid]=tid
 
 def forecast_roll(fixtures,opening,existing,rosters,receipts,
-                  historical_games,boxes,asof,history_meta=None,source_errors=None):
+                  historical_games,boxes,asof,history_meta=None,source_errors=None,
+                  injury_snapshot=None):
     """Pure forward-only planner; exact player model unchanged."""
     if asof.tzinfo is None:raise ValueError("NBA_NAIVE_MODEL_CLOCK")
     asof=asof.astimezone(UTC)
     validate_fixture_source(fixtures,asof)
     _source_rosters(rosters,receipts,asof)
+    if injury_snapshot is not None:validate_espn_reported_injuries(injury_snapshot,asof)
+    listed={(x["team_id"],x["player_id"]):x for x in
+            (injury_snapshot or {}).get("injuries",[])}
     if len(boxes)/len(historical_games)<MIN_PREVIOUS_SOURCE_COVERAGE:
         raise ValueError("NBA_HISTORY_BOXSCORE_COMPLETENESS_GATE")
     if not historical_games:raise ValueError("NBA_NO_ACTUAL_HISTORICAL_SOURCE")
@@ -178,6 +183,25 @@ def forecast_roll(fixtures,opening,existing,rosters,receipts,
                 team_projection,roster_ids,g,asof.isoformat(),
                 receipts[tid]["retrieved_at_utc"])
             for row in predicted:
+                observed=listed.get((tid,row["player_id"]))
+                source_status=(observed or {}).get("source_reported_status")
+                row["espn_source_reported_injury_status"]=source_status or (
+                    "NOT_LISTED_NOT_PROOF_OF_ACTIVE" if injury_snapshot else
+                    "ESPN_INJURY_FEED_UNAVAILABLE")
+                row["espn_source_reported_injury_detail"]=(observed or {}).get("detail")
+                row["reported_injury_is_not_official_game_active_status"]=True
+                row["source_reported_injury_observed_at_utc"]=(
+                    injury_snapshot or {}).get("captured_at_utc")
+                # Preserve the frozen model's raw historical P(play). A
+                # clearly listed ESPN OUT is evidence for a distinct,
+                # NOT-official scenario only for games within the next day.
+                # Do not alter the V2 model, release false wagers or treat
+                # everyone absent from ESPN's injuries feed as ACTIVE.
+                near=dt.timedelta(0)<tip-asof<=dt.timedelta(hours=24)
+                row["reported_out_in_24h_conditional_scenario_p_play"]=(
+                    0.0 if source_status=="OUT" and near else None)
+                row["reported_out_in_24h_conditional_scenario_expected_minutes"]=(
+                    0.0 if source_status=="OUT" and near else None)
                 if row["forecast_id"] in ids:raise ValueError("NBA_DUPLICATE_NEW_PROJECTION")
                 ids.add(row["forecast_id"])
                 if row["game_id"]!=gid or row["tipoff_utc"]!=g["tipoff_utc"]:
@@ -231,6 +255,14 @@ def forecast_roll(fixtures,opening,existing,rosters,receipts,
         "missing_actual_history_boxes":source_errors or {},
         "source_roster_count":sum(map(len,rosters.values())),
         "source_roster_receipts":receipts,
+        "reported_injury_source":(
+            "ESPN_REPORTED_NOT_OFFICIAL_NBA_INJURY_CERTIFICATION"
+            if injury_snapshot else "INJURY_SOURCE_UNAVAILABLE_NO_ONE_CERTIFIED_ACTIVE"),
+        "reported_injury_source_sha256":(
+            injury_snapshot or {}).get("source_sha256"),
+        "reported_injury_capture_utc":(
+            injury_snapshot or {}).get("captured_at_utc"),
+        "reported_injury_source_entries":len(listed),
         "forward_fixture_receipts":fixtures["scoreboard_source_receipts"],
         "fixture_source_sha256":_source_sha(fixtures),
         "fixture_source_captured_at_utc":fixtures["source_captured_at_utc"],
@@ -286,6 +318,7 @@ def main():
     parser.add_argument("--archive-root",type=Path,default=Path("docs"))
     parser.add_argument("--cache",type=Path,default=Path(".cache/nba-v2-rolling"))
     parser.add_argument("--out",required=True,type=Path)
+    parser.add_argument("--injury-snapshot",type=Path)
     parser.add_argument("--per-team-games",type=int,default=HISTORY_GAMES_PER_TEAM)
     args=parser.parse_args()
     if args.out.exists():raise ValueError("NBA_FIRST_SEEN_OUTPUT_ALREADY_EXISTS")
@@ -303,8 +336,11 @@ def main():
                                        per_team=args.per_team_games)
         rosters,receipts=live_rosters()
         asof=dt.datetime.now(UTC)
+        injuries=(json.loads(args.injury_snapshot.read_text())
+                  if args.injury_snapshot and args.injury_snapshot.is_file() else None)
         doc=forecast_roll(fixture,opening,existing,rosters,receipts,
-                games,boxes,asof,history_meta=meta,source_errors=failed)
+                games,boxes,asof,history_meta=meta,source_errors=failed,
+                injury_snapshot=injuries)
     else:
         # Explicit source-only status; NEVER treat it as a V2 prediction.
         asof=before

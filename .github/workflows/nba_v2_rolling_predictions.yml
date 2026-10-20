@@ -3,12 +3,16 @@ on:
   pull_request:
     paths:
       - nba/nba_v2_rolling_predictions.py
+      - nba/nba_live_injury_source.py
+      - tests/test_nba_live_injury_source.py
       - tests/test_nba_v2_rolling_predictions.py
       - .github/workflows/nba_v2_rolling_predictions.yml
   push:
     branches: [main]
     paths:
       - nba/nba_v2_rolling_predictions.py
+      - nba/nba_live_injury_source.py
+      - tests/test_nba_live_injury_source.py
       - tests/test_nba_v2_rolling_predictions.py
       - .github/workflows/nba_v2_rolling_predictions.yml
   schedule:
@@ -30,8 +34,8 @@ jobs:
         with:
           python-version: "3.12"
       - run: |
-          PYTHONPATH=. python -m unittest -v tests.test_nba_v2_rolling_predictions tests.test_nba_v2_firstseen_player_opening tests.test_nba_v2_rotation
-          python -m py_compile nba/nba_v2_rolling_predictions.py
+          PYTHONPATH=. python -m unittest -v tests.test_nba_v2_rolling_predictions tests.test_nba_live_injury_source tests.test_nba_v2_firstseen_player_opening tests.test_nba_v2_rotation
+          python -m py_compile nba/nba_v2_rolling_predictions.py nba/nba_live_injury_source.py
           git diff --check
   archive:
     needs: regression
@@ -63,11 +67,17 @@ jobs:
           fi
           PYTHONPATH=. python -u nba/nba_rolling_future_fixtures.py \
             --days 4 --out "$RUNNER_TEMP/nba-forward-schedule.json"
+      - name: Capture independently reported ESPN injuries before forecasts
+        continue-on-error: true
+        run: |
+          PYTHONPATH=. python -u nba/nba_live_injury_source.py \
+            --out "$RUNNER_TEMP/nba-es-pregame-injury-context.json"
       - name: Run unchanged V2 model on completed past games and live current rosters
         run: |
           set -euo pipefail
           if ! test -s "$RUNNER_TEMP/nba-forward-schedule.json"; then exit 0; fi
           PYTHONPATH=. python -u nba/nba_v2_rolling_predictions.py \
+            --injury-snapshot "$RUNNER_TEMP/nba-es-pregame-injury-context.json" \
             --fixture "$RUNNER_TEMP/nba-forward-schedule.json" \
             --opening docs/nba_v2_opening_player_firstseen.json \
             --archive-root docs \
@@ -102,6 +112,7 @@ jobs:
           path: |
             ${{ runner.temp }}/nba-forward-schedule.json
             ${{ runner.temp }}/nba-new-firstseen.json
+            ${{ runner.temp }}/nba-es-pregame-injury-context.json
           if-no-files-found: warn
           retention-days: 90
       - name: Commit append-only original predictions, never rewrite any game

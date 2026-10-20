@@ -10,6 +10,12 @@ export interface RollingPlayer {
   tipoff_utc:string;forecast_generated_at_utc:string;
   conditional_minutes_mean:number;expected_minutes:number;
   p_play_unverified:number;research_only:true;official_pick:false;
+  espn_source_reported_injury_status?:string;
+  espn_source_reported_injury_detail?:string|null;
+  reported_injury_is_not_official_game_active_status?:true;
+  source_reported_injury_observed_at_utc?:string|null;
+  reported_out_in_24h_conditional_scenario_p_play?:number|null;
+  reported_out_in_24h_conditional_scenario_expected_minutes?:number|null;
   game_day_active_certified:false;starting_lineup_certified:false;
   stat_market_lines:null;
   predictions:{points:number;rebounds:number;assists:number;three_pointers_made:number};
@@ -114,6 +120,18 @@ export function parseRollingNbaOriginal(raw:unknown):RollingFile {
          !finite(p.predictions.assists,0,25)||
          !finite(p.predictions.three_pointers_made,0,15)){
         fail('invalid player forecast and/or imagined injury/odds');
+      }
+      if(p.espn_source_reported_injury_status!==undefined){
+        if(typeof p.espn_source_reported_injury_status!=='string'||
+           p.reported_injury_is_not_official_game_active_status!==true||
+           (p.source_reported_injury_observed_at_utc!=null&&
+            (!iso(p.source_reported_injury_observed_at_utc)||
+             Date.parse(p.source_reported_injury_observed_at_utc)>generated))||
+           !(p.reported_out_in_24h_conditional_scenario_p_play===null||
+             p.reported_out_in_24h_conditional_scenario_p_play===undefined||
+             p.reported_out_in_24h_conditional_scenario_p_play===0)){
+          fail('untrustworthy ESPN-reported game-availability context');
+        }
       }
       people.add(p.team_id+'|'+p.player_id);ids.add(p.forecast_id);
     }
