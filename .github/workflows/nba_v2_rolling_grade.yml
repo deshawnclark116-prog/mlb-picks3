@@ -5,6 +5,10 @@ on:
       - nba/nba_v2_rolling_grade.py
       - tests/test_nba_v2_rolling_grade.py
       - src/nba/rollingResearch.ts
+      - src/nba/decisionBoard.ts
+      - server/nbaSystemPicks.ts
+      - src/components/NbaSystemPicksPanel.tsx
+      - tests/nbaDecisionBoard.test.ts
       - server/nbaRollingResearch.ts
       - server.ts
       - src/components/NbaRollingPlayerPanel.tsx
@@ -54,7 +58,7 @@ jobs:
       - name: Assert original-model serving, type integrity and responsive bundle
         run: |
           npm run lint
-          node --import tsx --test tests/nbaRollingResearch.test.ts
+          node --import tsx --test tests/nbaRollingResearch.test.ts tests/nbaDecisionBoard.test.ts
           npm run build
   grade-verified-completed-games:
     needs: [regression,test-app-native-rolling-nba-api]

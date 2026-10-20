@@ -7,6 +7,7 @@ import { nhlCountResearchHandler } from "./server/nhlCountResearch.ts";
 import { nbaResearchHandler } from "./server/nbaResearch.ts";
 import { nbaPlayerResearchHandler } from "./server/nbaPlayerResearch.ts";
 import { nbaRollingResearchHandler, nbaRollingGradeHandler } from "./server/nbaRollingResearch.ts";
+import { nbaSystemPicksHandler } from "./server/nbaSystemPicks.ts";
 import { soccerResearchHandler } from "./server/soccerResearch.ts";
 import path from "path";
 import { createServer as createViteServer } from "vite";
@@ -227,6 +228,8 @@ async function startServer() {
   // First-seen NBA V2 played-player statistical research, NOT sports betting.
   app.get("/api/nba-player-research", nbaPlayerResearchHandler());
   // Daily genuine pre-tip NBA V2 originals, never modeled from postgame boxes.
+  // Ranked NBA model candidates like NFL SYSTEM PICKS; no fabricated sportsbook bets.
+  app.get("/api/nba-system-picks", nbaSystemPicksHandler());
   app.get("/api/nba-rolling-research", nbaRollingResearchHandler());
   // Outcome grades for all original NBA rolling player stats, not betting targets.
   app.get("/api/nba-rolling-grades", nbaRollingGradeHandler());
