@@ -1,0 +1,151 @@
+name: NBA V2 daily first-seen player forecasts
+on:
+  pull_request:
+    paths:
+      - nba/nba_v2_rolling_predictions.py
+      - tests/test_nba_v2_rolling_predictions.py
+      - .github/workflows/nba_v2_rolling_predictions.yml
+  push:
+    branches: [main]
+    paths:
+      - nba/nba_v2_rolling_predictions.py
+      - tests/test_nba_v2_rolling_predictions.py
+      - .github/workflows/nba_v2_rolling_predictions.yml
+  schedule:
+    - cron: "42 15 * * *"
+    - cron: "32 18 * * *"
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: nba-v2-rolling-firstseen
+  cancel-in-progress: false
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          PYTHONPATH=. python -m unittest -v tests.test_nba_v2_rolling_predictions tests.test_nba_v2_firstseen_player_opening tests.test_nba_v2_rotation
+          python -m py_compile nba/nba_v2_rolling_predictions.py
+          git diff --check
+  archive:
+    needs: regression
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Cache only independently sourced past ESPN games and boxes
+        uses: actions/cache@v4
+        with:
+          path: .cache/nba-v2-rolling
+          key: nba-v2-rolling-prior-games-v1-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            nba-v2-rolling-prior-games-v1-${{ runner.os }}-
+      - name: Capture upcoming fixtures with independent ESPN source
+        run: |
+          set -euo pipefail
+          TODAY="$(date -u +%Y-%m-%d)"
+          if [[ "$TODAY" < "2026-10-20" || "$TODAY" > "2027-04-11" ]]; then
+            echo "NBA_OUTSIDE_REGULAR_SEASON"
+            exit 0
+          fi
+          PYTHONPATH=. python -u nba/nba_rolling_future_fixtures.py \
+            --days 4 --out "$RUNNER_TEMP/nba-forward-schedule.json"
+      - name: Run unchanged V2 model on completed past games and live current rosters
+        run: |
+          set -euo pipefail
+          if ! test -s "$RUNNER_TEMP/nba-forward-schedule.json"; then exit 0; fi
+          PYTHONPATH=. python -u nba/nba_v2_rolling_predictions.py \
+            --fixture "$RUNNER_TEMP/nba-forward-schedule.json" \
+            --opening docs/nba_v2_opening_player_firstseen.json \
+            --archive-root docs \
+            --cache .cache/nba-v2-rolling \
+            --out "$RUNNER_TEMP/nba-new-firstseen.json"
+          python - "$RUNNER_TEMP/nba-new-firstseen.json" <<'PY'
+          import json,sys,datetime
+          d=json.load(open(sys.argv[1]))
+          assert d['schema']=='NBA_V2_2026_27_IMMUTABLE_ROLLING_PLAYER_PREDICTIONS_V1'
+          assert d['research_only'] is True and d['official_bets']==0
+          assert d['number_of_player_stat_predictions']==sum(
+              g['player_predictions_count'] for g in d['forecasts'])
+          assert d['games_forecast']==len(d['forecasts'])
+          asof=datetime.datetime.fromisoformat(d['generated_at_utc'])
+          for g in d['forecasts']:
+              assert datetime.datetime.fromisoformat(g['tipoff_utc'])>asof
+              assert g['player_predictions_count']==len(g['players'])*4
+              assert g['no_wagers'] is True
+              assert len(set(p['forecast_id'] for p in g['players']))==len(g['players'])
+              for p in g['players']:
+                  assert p['official_pick'] is False
+                  assert p['stat_market_lines'] is None
+                  assert p['starting_lineup_certified'] is False
+                  assert set(p['predictions'])=={'points','rebounds','assists','three_pointers_made'}
+          print('NBA_V2_FORWARDED_FROZEN',d['games_forecast'],
+                d['number_of_player_stat_predictions'],flush=True)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nba-v2-forward-source-and-original-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/nba-forward-schedule.json
+            ${{ runner.temp }}/nba-new-firstseen.json
+          if-no-files-found: warn
+          retention-days: 90
+      - name: Commit append-only original predictions, never rewrite any game
+        run: |
+          set -euo pipefail
+          CANDIDATE="$RUNNER_TEMP/nba-new-firstseen.json"
+          if ! test -s "$CANDIDATE"; then exit 0; fi
+          N="$(python - "$CANDIDATE" <<'PY'
+          import json,sys
+          print(json.load(open(sys.argv[1]))['games_forecast'])
+          PY
+          )"
+          if test "$N" -eq 0; then
+            echo "NBA_ALREADY_HAS_FIRSTSEEN_ALL_SCHEDULED_GAMES"
+            exit 0
+          fi
+          FILE="docs/nba_rolling_predictions/$(date -u +%Y-%m-%dT%H%M%SZ).json"
+          git config user.name "nba-v2-firstseen[bot]"
+          git config user.email "nba-v2-firstseen[bot]@users.noreply.github.com"
+          for n in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            PYTHONPATH=. python - "$CANDIDATE" <<'PY'
+          import json,sys
+          from pathlib import Path
+          from nba.nba_v2_rolling_predictions import existing_games
+          old=json.load(open('docs/nba_v2_opening_player_firstseen.json'))
+          already,_=existing_games(Path('docs'),old)
+          new=json.load(open(sys.argv[1]))
+          overlap=already.intersection(g['game_id'] for g in new['forecasts'])
+          if overlap:
+              raise SystemExit('NBA_CONCURRENT_ORIGINAL_FORECAST_COLLISION '+str(sorted(overlap)))
+          PY
+            if test -e "$FILE"; then
+              echo "NBA_IMMUTABLE_FILE_ALREADY_EXISTS"
+              exit 1
+            fi
+            mkdir -p docs/nba_rolling_predictions
+            cp "$CANDIDATE" "$FILE"
+            git add "$FILE"
+            git commit -m "Freeze original NBA V2 player projections for $N new games"
+            if git push origin HEAD:main; then
+              echo "NBA_GENUINE_NEW_GAMES_FROZEN $FILE"
+              exit 0
+            fi
+            if [ "$n" = 4 ]; then exit 1; fi
+          done
