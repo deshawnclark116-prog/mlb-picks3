@@ -97,3 +97,26 @@ test('rolling grading endpoint never fabricates wins when there are no finals',(
   assert(!('bookmaker_win_loss_record' in payload)||
     payload.bookmaker_win_loss_record===null);
 });
+
+
+test('ESPN OUT source context is not automatically an official NBA active/game starter report',()=>{
+  const doc=original();
+  const p=doc.forecasts[0].players[0];
+  p.espn_source_reported_injury_status='OUT';
+  p.reported_injury_is_not_official_game_active_status=true;
+  p.source_reported_injury_observed_at_utc=doc.generated_at_utc;
+  p.reported_out_in_24h_conditional_scenario_p_play=0;
+  p.reported_out_in_24h_conditional_scenario_expected_minutes=0;
+  const result=parseRollingNbaOriginal(doc);
+  assert.equal(result.forecasts[0].players[0].p_play_unverified,p.p_play_unverified);
+  assert.equal(result.forecasts[0].players[0].reported_out_in_24h_conditional_scenario_p_play,0);
+  const forged=original();
+  forged.forecasts[0].players[0].espn_source_reported_injury_status='OUT';
+  forged.forecasts[0].players[0].reported_injury_is_not_official_game_active_status=false;
+  assert.throws(()=>parseRollingNbaOriginal(forged),/availability context/);
+  const future=original();
+  future.forecasts[0].players[0].espn_source_reported_injury_status='OUT';
+  future.forecasts[0].players[0].reported_injury_is_not_official_game_active_status=true;
+  future.forecasts[0].players[0].source_reported_injury_observed_at_utc='2027-01-01T00:00:00Z';
+  assert.throws(()=>parseRollingNbaOriginal(future),/availability context/);
+});
