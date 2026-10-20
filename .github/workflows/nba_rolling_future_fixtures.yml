@@ -1,0 +1,95 @@
+name: NBA rolling forward game source (no fabricated predictions)
+on:
+  pull_request:
+    paths:
+      - nba/nba_rolling_future_fixtures.py
+      - tests/test_nba_rolling_future_fixtures.py
+      - .github/workflows/nba_rolling_future_fixtures.yml
+  push:
+    branches: [main]
+    paths:
+      - nba/nba_rolling_future_fixtures.py
+      - tests/test_nba_rolling_future_fixtures.py
+      - .github/workflows/nba_rolling_future_fixtures.yml
+  schedule:
+    - cron: "10 15 * * *"
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: nba-rolling-forward-source
+  cancel-in-progress: false
+jobs:
+  test-source-boundaries:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Strict future-only source integrity tests
+        run: |
+          PYTHONPATH=. python -m unittest -v tests.test_nba_rolling_future_fixtures
+          python -m py_compile nba/nba_rolling_future_fixtures.py
+          git diff --check
+  capture-immutable-forward-fixtures:
+    needs: test-source-boundaries
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Capture genuinely upcoming games, once per UTC date
+        run: |
+          set -euo pipefail
+          DATE="$(date -u +%Y-%m-%d)"
+          if [[ "$DATE" < "2026-10-20" || "$DATE" > "2027-04-11" ]]; then
+            echo "NBA_REGULAR_SEASON_OUTSIDE_CAPTURE_WINDOW"
+            exit 0
+          fi
+          OUT="docs/nba_rolling_fixtures/$DATE.json"
+          if test -e "$OUT"; then
+            echo "NBA_SOURCE_ALREADY_IMMUTABLY_ARCHIVED"
+            exit 0
+          fi
+          PYTHONPATH=. python -u nba/nba_rolling_future_fixtures.py --days 3 --out "$OUT"
+          python - "$OUT" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          assert d["schema"]=="NBA_2026_27_ROLLING_FUTURE_ESPN_FIXTURES_V1"
+          assert d["no_post_tip_reconstruction"] and d["official_bets"]==0
+          assert all(g["verified_before_tip"] and g["model_prediction"] is None for g in d["games"])
+          print("NBA_REAL_FORWARD_FIXTURE_SOURCE_ONLY",d["future_games"])
+          PY
+      - name: Publish original source without overwriting historical captures
+        run: |
+          set -euo pipefail
+          DATE="$(date -u +%Y-%m-%d)"
+          OUT="docs/nba_rolling_fixtures/$DATE.json"
+          if ! test -f "$OUT"; then exit 0; fi
+          cp "$OUT" "$RUNNER_TEMP/nba-future-original.json"
+          git config user.name "nba-future-source[bot]"
+          git config user.email "nba-future-source[bot]@users.noreply.github.com"
+          for n in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            if test -f "$OUT"; then
+              echo "NBA_SOURCE_ALREADY_PUBLISHED_DO_NOT_OVERWRITE"
+              exit 0
+            fi
+            mkdir -p "$(dirname "$OUT")"
+            cp "$RUNNER_TEMP/nba-future-original.json" "$OUT"
+            git add "$OUT"
+            git commit -m "Freeze NBA source-only upcoming games $DATE before tipoff"
+            if git push origin HEAD:main; then
+              echo "NBA_ORIGINAL_FUTURE_FIXTURES_ARCHIVED"
+              exit 0
+            fi
+            if [ "$n" = 4 ]; then exit 1; fi
+          done
