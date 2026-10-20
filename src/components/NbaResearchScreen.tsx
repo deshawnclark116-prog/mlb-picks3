@@ -70,7 +70,7 @@ export default function NbaResearchScreen() {
       {mode!=='ROLLING' && <div className="text-[11px] text-gray-400 space-y-1">
         <p>Original forecast frozen {tipLabel(doc.generated_at_utc)} · {doc.projected_games} historical opening-week previews</p>
         <p>Verified source foundation: {doc.historical_completed_regular_games.toLocaleString()} prior regular-season games · ESPN event IDs</p>
-      </div>
+      </div>}
       <div className="grid grid-cols-3 gap-2" role="group" aria-label="NBA research model view">
         <button type="button" onClick={()=>setMode('ROLLING')}
           aria-pressed={mode==='ROLLING'}
@@ -88,7 +88,7 @@ export default function NbaResearchScreen() {
           className={`shrink-0 rounded-lg px-3 py-2 text-xs font-bold ${day === d ? 'bg-[#00FF41] text-black' : 'bg-[#252525] text-gray-300'}`}>
           {d === 'ALL' ? 'All games' : d.slice(5)}
         </button>)}
-      </div>
+      </div>}
       <input aria-label="Find NBA team or player" placeholder="Search a team" value={search} onChange={e => setSearch(e.target.value)}
         className="w-full rounded-xl border border-[#333] bg-[#191919] px-4 py-3 text-sm text-stone-100" />
       {mode==='ROLLING' && <NbaRollingPlayerPanel search={search} />}
