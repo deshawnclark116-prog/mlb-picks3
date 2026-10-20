@@ -140,12 +140,26 @@ export default function NbaRollingPlayerPanel({search}:{search:string}){
                  data-testid="nba-live-player-projection">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <strong className="text-sm">{p.player}</strong>
-                  <span className="text-[10px] text-amber-200">Active/injury status unverified</span>
+                  <span className="text-[10px] text-amber-200">
+                    {p.espn_source_reported_injury_status==='OUT'
+                      ? 'ESPN REPORTED OUT · game-day status not independently certified'
+                      : p.espn_source_reported_injury_status&&
+                        p.espn_source_reported_injury_status!=='NOT_LISTED_NOT_PROOF_OF_ACTIVE'&&
+                        p.espn_source_reported_injury_status!=='ESPN_INJURY_FEED_UNAVAILABLE'
+                      ? 'ESPN reported '+p.espn_source_reported_injury_status+' · unverified for tip'
+                      : 'Game-day availability/injuries not confirmed'}
+                  </span>
                 </div>
                 <p className="text-[11px] text-gray-400">
                   Expected minutes if playing {fmt(p.conditional_minutes_mean)}
                   {' · '}Historical P(plays) {pct(p.p_play_unverified)}
                 </p>
+                {p.reported_out_in_24h_conditional_scenario_p_play===0 &&
+                   <p className="text-[11px] text-amber-200">
+                     Conditional ESPN-reported OUT scenario: P(plays) 0% if this
+                     status holds. Original historical model P(plays) remains above;
+                     ESPN is not the official game active list.
+                   </p>}
                 <div className="grid grid-cols-4 gap-1 text-center">
                   {([['PTS',p.predictions.points],['REB',p.predictions.rebounds],
                      ['AST',p.predictions.assists],['3PM',p.predictions.three_pointers_made]] as const)
