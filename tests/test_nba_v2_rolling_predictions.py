@@ -127,9 +127,10 @@ class Rolling(unittest.TestCase):
 
     def test_recent_complete_2026_games_take_precedence_over_spring(self):
         games,boxes=verified_history()
-        # Include nine October games for club 1: 2026 season role change
+        later_asof=dt.datetime(2026,11,1,16,40,tzinfo=UTC)
+        # Include nine completed 2026-27 games for club 1 after the Oct20 season start
         for k in range(9):
-            date=dt.datetime(2026,10,10+k,19,tzinfo=UTC)
+            date=dt.datetime(2026,10,20+k,19,tzinfo=UTC)
             gid=str(401904000+k)
             g={"game_id":gid,"start_utc":date.isoformat(),
                "day_utc":date.date().isoformat(),"completed":True,
@@ -141,14 +142,18 @@ class Rolling(unittest.TestCase):
                "points":28,"rebounds":8,"assists":7,"three_pointers_made":3}
               for t in ("1","2")]
         selected,counts=R.select_recent_games(
-            games[:225],games[225:],NOW,per_team=18)
+            games[:225],games[225:],later_asof,per_team=18)
         self.assertEqual(counts["1"]["current_season_games"],9)
         self.assertEqual(counts["2"]["current_season_games"],9)
         self.assertGreaterEqual(sum(x["game_id"].startswith("401904") for x in selected),9)
         rosters,receipts=source_rosters()
         relevant={x["game_id"]:boxes[x["game_id"]] for x in selected}
-        d=R.forecast_roll(fixture(),{"forecasts":[]},set(),
-                            rosters,receipts,selected,relevant,NOW)
+        upcoming=fixture()
+        upcoming["source_captured_at_utc"]=(later_asof-dt.timedelta(minutes=2)).isoformat()
+        upcoming["scoreboard_source_receipts"][0]["retrieved_at_utc"]=upcoming["source_captured_at_utc"]
+        upcoming["games"][0]["tipoff_utc"]=(later_asof+dt.timedelta(days=2)).isoformat()
+        d=R.forecast_roll(upcoming,{"forecasts":[]},set(),
+                            rosters,receipts,selected,relevant,later_asof)
         real1=next(x for x in d["forecasts"][0]["players"] if x["team_id"]=="1")
         self.assertGreater(real1["predictions"]["points"],20)
         self.assertEqual(d["current_season_prior_completed_game_count"],9)
