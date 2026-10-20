@@ -145,7 +145,13 @@ def grade_originals(team,players,scoreboard,boxes,truth,asof):
         scheduled=pg["players"] if pg else []
         played_index={}
         if gid in boxes and final:
-            for p in boxes[gid]:
+            certified=((truth or {}).get("boxscore_by_game") or {}).get(gid) or {}
+            actual_rows=boxes[gid]
+            if (certified.get("actual_source")!="ESPN_FINAL_TWO_TEAM_PLAYER_BOX" or
+                certified.get("played_players")!=len(actual_rows) or len(actual_rows)<10 or
+                {p["team_id"] for p in actual_rows}!={game["home_id"],game["away_id"]}):
+                raise ValueError("NBA_NOT_INDEPENDENTLY_VERIFIED_COMPLETE_TWO_TEAM_BOX")
+            for p in actual_rows:
                 key=(p["team_id"],p["player_id"])
                 if key in played_index:
                     raise ValueError("NBA_DUPLICATE_PLAYED_ATHLETE_IN_ESPN_FINAL")
