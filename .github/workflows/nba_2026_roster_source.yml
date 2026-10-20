@@ -1,0 +1,52 @@
+name: NBA 2026 opening-week roster identity and source-coverage audit
+on:
+  pull_request:
+    paths:
+      - nba/nba_2026_roster_source.py
+      - tests/test_nba_2026_roster_source.py
+      - .github/workflows/nba_2026_roster_source.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  current-roster-source-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test genuine identity, 30-team completeness and no game-day certification
+        run: |
+          PYTHONPATH=. python -m unittest -v tests.test_nba_2026_roster_source
+          python -m py_compile nba/nba_2026_roster_source.py
+      - name: Fetch 30 free ESPN NBA rosters with date-stamped SHA provenance
+        run: |
+          PYTHONPATH=. python -u nba/nba_2026_roster_source.py \
+            --fixtures docs/nba_v1_opening_week_research.json \
+            --out docs/nba_2026_roster_source_snapshot.json
+      - name: Confirm zero official injury and starting-five assertions
+        run: |
+          python - <<'PY'
+          import json
+          d=json.load(open('docs/nba_2026_roster_source_snapshot.json'))
+          assert d['teams_source_covered']==30
+          assert d['distinct_roster_athletes']>=300
+          assert len(d['opening_game_ids_with_team_roster_membership'])==14
+          assert d['source_only_no_pregame_active_certification']
+          assert d['verified_official_NBA_injury_designations']==0
+          assert d['verified_current_starting_fives']==0
+          assert d['player_stat_forecasts_published']==0
+          assert d['official_bets']==0
+          print('NBA_ROSTER_SOURCE_COVERAGE',json.dumps({
+            'roster_players':d['distinct_roster_athletes'],
+            'teams':d['teams_source_covered'],
+            'game_ids':len(d['opening_game_ids_with_team_roster_membership'])}))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-2026-roster-membership-first-observed-${{ github.run_id }}
+          path: docs/nba_2026_roster_source_snapshot.json
+          retention-days: 90
+      - run: git diff --check
