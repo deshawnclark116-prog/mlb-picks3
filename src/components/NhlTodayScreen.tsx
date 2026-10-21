@@ -12,15 +12,7 @@ import { TrendingUp, RefreshCw, AlertTriangle, Search, ChevronDown, ChevronUp } 
 import { NhlPrediction } from "../types";
 import { getNhlPredictionKey, getLatestGeneratedAt } from "../utils";
 
-// Groups a flat list of picks into one card per real-world game, matching
-// CfbTodayScreen/NflTodayScreen's treatment -- NHL predictions carry team/
-// opponent per pick (no separate schedule feed), and now that points/
-// shots_on_goal/goalie_saves/moneyline can all fire for the same game at
-// once (243 picks on a 5-game slate isn't unusual), a flat list of
-// ungrouped cards doesn't scale the way it did when NHL only had a
-// handful of moneyline-only picks a day. Keyed on the unordered team pair
-// since a single game produces picks for both sides (and both team-level
-// moneyline picks and player-level prop picks together).
+// Franchise-aware grouping keeps all current NHL model projections under each real game.
 function formatKickoff(iso?: string): string | null {
   if (!iso) return null;
   const d = new Date(iso);
