@@ -5,6 +5,7 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import UnifiedSportGameCards, {type UnifiedGame} from './UnifiedSportGameCards';
+import {groupNhlPredictionsByGame} from '../nhl/gameGrouping';
 import {addTrueNhlShotCounts,nhlCountGameDate,nhlVisibleGames,NHL_COUNT_SCHEMA,type NhlSogResearch} from "../nhl/countResearch";
 import { motion, AnimatePresence } from "motion/react";
 import { TrendingUp, RefreshCw, AlertTriangle, Search, ChevronDown, ChevronUp } from "lucide-react";
@@ -20,40 +21,6 @@ import { getNhlPredictionKey, getLatestGeneratedAt } from "../utils";
 // handful of moneyline-only picks a day. Keyed on the unordered team pair
 // since a single game produces picks for both sides (and both team-level
 // moneyline picks and player-level prop picks together).
-interface NhlGameGroup {
-  key: string;
-  teamA: string;
-  teamB: string;
-  season: number;
-  game_date: string;
-  kickoff_utc?: string;
-  predictions: NhlPrediction[];
-}
-
-function groupPredictionsByGame(preds: NhlPrediction[]): NhlGameGroup[] {
-  const map = new Map<string, NhlGameGroup>();
-  for (const p of preds) {
-    if (!p.team || !p.opponent) continue;
-    const key = [p.team, p.opponent].sort().join("__");
-    let group = map.get(key);
-    if (!group) {
-      group = {
-        key, teamA: p.team, teamB: p.opponent, season: p.season, game_date: p.game_date,
-        kickoff_utc: p.kickoff_utc, predictions: [],
-      };
-      map.set(key, group);
-    } else if (!group.kickoff_utc && p.kickoff_utc) {
-      group.kickoff_utc = p.kickoff_utc;
-    }
-    group.predictions.push(p);
-  }
-  // Real kickoff time first, same fix as CFB/NFL's (found live
-  // 2026-09-27, user asked why every sport wasn't fixed alongside CFB).
-  return Array.from(map.values()).sort((a, b) =>
-    (a.kickoff_utc || "9999").localeCompare(b.kickoff_utc || "9999")
-  );
-}
-
 function formatKickoff(iso?: string): string | null {
   if (!iso) return null;
   const d = new Date(iso);
@@ -194,7 +161,10 @@ export default function NhlTodayScreen({
     return true;
   });
 
-  const gameGroups = groupPredictionsByGame(filteredPredictions);
+  // Moneyline full team names and player-stat NHL abbreviations refer to the
+  // same actual game. Normalize both before passing to the unified board.
+  // No sportsbook line is necessary to preserve an original model projection.
+  const gameGroups = groupNhlPredictionsByGame(filteredPredictions);
   const originalGames:UnifiedGame[]=gameGroups.map(g=>({
       id:g.key,label:g.teamA+' vs '+g.teamB,when:g.kickoff_utc,
       sourceLabel:'NHL CURRENT MODEL · FIXED-LINE CLASSIFIER',
