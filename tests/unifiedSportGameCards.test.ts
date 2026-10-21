@@ -16,8 +16,9 @@ const game=(picks:UnifiedPick[]):UnifiedGame=>({
 
 test('NHL fixed-line classifier never disguises 2.5-shot threshold as median',()=>{
  const html=renderToStaticMarkup(React.createElement(PredictionCard,{pick:pick()}));
- assert.match(html,/NUMERIC PLAYER-STAT PROJECTION/);
- assert.match(html,/NOT PUBLISHED/);
+ assert.match(html,/MODEL CHANCE OF TARGET · COUNT NOT FORECAST/);
+ assert.match(html,/No modelled point\/shot count exists/);
+ assert.match(html,/PUBLISHED MODEL TARGET · NOT VERIFIED BOOK LINE/);
  assert.match(html,/OVER 2.5/);
  assert.match(html,/73.0%/);
  assert.doesNotMatch(html,/MODEL PROJECTION · MEDIAN/);
@@ -46,7 +47,7 @@ test('Tennis publishes only the available projected mean, not a fake correct-sco
  const html=renderToStaticMarkup(React.createElement(Poster,{sport:'TENNIS',game:games,picks:games.picks}));
  assert.match(html,/22.7 GAMES/);
  assert.match(html,/MODEL PROJECTION · MEAN/);
- assert.match(html,/NOT PUBLISHED/);
+ assert.match(html,/MODEL CHANCE OF TARGET · COUNT NOT FORECAST/);
  assert.match(html,/Player A 2-0/);
  assert.doesNotMatch(html,/100\.0%/);
 });
@@ -60,6 +61,10 @@ test('all sport slates share NFL-style mode tabs and collapsible game cards',()=
    assert.match(html,/Create share card for PIT vs NYR/);
    assert.match(html,/unified-sport-game/);
    assert.match(html,/PIT vs NYR/);
-   assert.match(html,/NOT PUBLISHED/);
+   // The default game card is COLLAPSED. Its unpriced model-target summary
+   // must still communicate that no numeric count was published; don't
+   // expect the unopened PredictionCard's body in server-rendered markup.
+   assert.match(html,/aria-expanded="false"/);
+   assert.match(html,/NO NUMERIC FORECAST/);
  }
 });
