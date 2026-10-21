@@ -78,7 +78,6 @@ export function canonicalNhlTeam(name:string):string {
 /** Do not combine different puck-drop times into a fictional single event. */
 export function groupNhlPredictionsByGame(preds:NhlPrediction[]):NhlGameGroup[]{
   const groups=new Map<string,NhlGameGroup>();
-  const seenInputs=new Set<string>();
   for(const p of preds){
     if(!p.team||!p.opponent)continue;
     const left=canonicalNhlTeam(p.team),right=canonicalNhlTeam(p.opponent);
@@ -101,7 +100,6 @@ export function groupNhlPredictionsByGame(preds:NhlPrediction[]):NhlGameGroup[]{
     // forecasts; do not dedupe across markets or remove without book offers.
     // Upstream src/utils.ts already handles exact source row dedupe.
     group.predictions.push(p);
-    seenInputs.add(identity);
   }
   return [...groups.values()].sort((a,b)=>
     (a.kickoff_utc||'9999').localeCompare(b.kickoff_utc||'9999')||
