@@ -3,39 +3,44 @@
   "bookmaker_win_loss_record": null,
   "conditional_stat_mae": {
     "assists": {
-      "mae": null,
-      "n": 0
+      "mae": 1.4854,
+      "n": 31
     },
     "points": {
-      "mae": null,
-      "n": 0
+      "mae": 5.07,
+      "n": 31
     },
     "rebounds": {
-      "mae": null,
-      "n": 0
+      "mae": 2.0515,
+      "n": 31
     },
     "three_pointers_made": {
-      "mae": null,
-      "n": 0
+      "mae": 0.7777,
+      "n": 31
     }
   },
   "expected_minutes_mae": {
-    "mae": null,
-    "n": 0
+    "mae": 7.9554,
+    "n": 40
   },
   "games": [
     {
       "away": "Cleveland Cavaliers",
-      "box_verified": false,
-      "final_away_points": null,
-      "final_complete": false,
-      "final_home_points": null,
+      "box_verified": true,
+      "final_away_points": 106,
+      "final_complete": true,
+      "final_home_points": 114,
       "game_id": "401909093",
       "home": "Philadelphia 76ers",
       "original_player_forecasts": 19,
       "original_unmodeled_roster_players": 15,
       "player_status_counts": {
-        "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX": 19
+        "VERIFIED_DID_NOT_PLAY": 6,
+        "VERIFIED_PLAYED": 13,
+        "assists_VERIFIED": 13,
+        "points_VERIFIED": 13,
+        "rebounds_VERIFIED": 13,
+        "three_pointers_made_VERIFIED": 13
       },
       "source_error": null,
       "stat_forecasts_accounted": 76,
@@ -43,16 +48,21 @@
     },
     {
       "away": "Denver Nuggets",
-      "box_verified": false,
-      "final_away_points": null,
-      "final_complete": false,
-      "final_home_points": null,
+      "box_verified": true,
+      "final_away_points": 84,
+      "final_complete": true,
+      "final_home_points": 96,
       "game_id": "401909094",
       "home": "Oklahoma City Thunder",
       "original_player_forecasts": 21,
       "original_unmodeled_roster_players": 13,
       "player_status_counts": {
-        "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX": 21
+        "VERIFIED_DID_NOT_PLAY": 3,
+        "VERIFIED_PLAYED": 18,
+        "assists_VERIFIED": 18,
+        "points_VERIFIED": 18,
+        "rebounds_VERIFIED": 18,
+        "three_pointers_made_VERIFIED": 18
       },
       "source_error": null,
       "stat_forecasts_accounted": 84,
@@ -263,7 +273,7 @@
       "tipoff_original_utc": "2026-10-24T02:00:00+00:00"
     }
   ],
-  "graded_at_utc": "2026-10-20T17:51:02.732120+00:00",
+  "graded_at_utc": "2026-10-23T19:22:10.206160+00:00",
   "note": "Every original conditional PTS/REB/AST/3PM receives a real played stat if appeared; DNP is not a fake 0-point betting loss; unknown complete box remains unverified. Never a sportsbook wager.",
   "official_bets": 0,
   "original_player_forecasts": 233,
@@ -286,1808 +296,1808 @@
   },
   "originals_immutable": true,
   "play_probability_brier": {
-    "mae": null,
-    "n": 0
+    "mae": 0.1821,
+    "n": 40
   },
   "played_vs_DNP_never_fabricated": true,
   "player_rows": [
     {
-      "actual_minutes": null,
+      "actual_minutes": 33.0,
       "forecast_id": "ae994ad24fa72798f5232a5c270e84c35277068323600725379a6eb219f55d0e",
       "game_id": "401909093",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 3.6026,
+      "minutes_error_unconditional": 1.7724,
+      "observed_played": true,
       "original_conditional_minutes": 36.6026,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.95,
       "original_unconditional_minutes": 34.7724,
       "player": "VJ Edgecombe",
       "player_id": "5124612",
-      "playing_brier": null,
+      "playing_brier": 0.0025,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 1.0368,
           "original_prediction_if_played": 4.9632,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 6.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 5.7532,
           "original_prediction_if_played": 16.7532,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 11.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 0.8055,
           "original_prediction_if_played": 6.1945,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 7.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 0.8119,
           "original_prediction_if_played": 1.8119,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 1.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "20",
       "tipoff_original_utc": "2026-10-22T23:00:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 42.0,
       "forecast_id": "801295f87033d49a90dc90dfbec3957b4982ce11dd1c8797ce105453fa953dc4",
       "game_id": "401909093",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 6.8436,
+      "minutes_error_unconditional": 10.3592,
+      "observed_played": true,
       "original_conditional_minutes": 35.1564,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.9,
       "original_unconditional_minutes": 31.6408,
       "player": "Tyrese Maxey",
       "player_id": "4431678",
-      "playing_brier": null,
+      "playing_brier": 0.01,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 1.2883,
           "original_prediction_if_played": 4.7117,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 6.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 11.464,
           "original_prediction_if_played": 20.536,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 32.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 1.271,
           "original_prediction_if_played": 4.271,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 3.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 0.2537,
           "original_prediction_if_played": 1.7463,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 2.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "20",
       "tipoff_original_utc": "2026-10-22T23:00:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 34.0,
       "forecast_id": "27abf2a7ba15be5b0d6c7b43125a85c966d3d3f431db84546f3221212fa18375",
       "game_id": "401909093",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 0.2,
+      "minutes_error_unconditional": 10.06,
+      "observed_played": true,
       "original_conditional_minutes": 34.2,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.7,
       "original_unconditional_minutes": 23.94,
       "player": "Joel Embiid",
       "player_id": "3059318",
-      "playing_brier": null,
+      "playing_brier": 0.09,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 2.6198,
           "original_prediction_if_played": 3.6198,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 1.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 1.6936,
           "original_prediction_if_played": 22.3064,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 24.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 0.2161,
           "original_prediction_if_played": 7.2161,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 7.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 0.6877,
           "original_prediction_if_played": 1.6877,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 1.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "20",
       "tipoff_original_utc": "2026-10-22T23:00:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 0,
       "forecast_id": "43f38ee2fc487dab9a3bd5aa20e113a4b6fcbade7d0fbddf776809076a8d78e7",
       "game_id": "401909093",
       "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_unconditional": 18.8326,
+      "observed_played": false,
       "original_conditional_minutes": 19.8238,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.95,
       "original_unconditional_minutes": 18.8326,
       "player": "Dominick Barlow",
       "player_id": "4870562",
-      "playing_brier": null,
+      "playing_brier": 0.9025,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
           "abs_error": null,
           "original_prediction_if_played": 1.3583,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "points": {
           "abs_error": null,
           "original_prediction_if_played": 5.6149,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "rebounds": {
           "abs_error": null,
           "original_prediction_if_played": 4.0363,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "three_pointers_made": {
           "abs_error": null,
           "original_prediction_if_played": 0.185,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_DID_NOT_PLAY",
       "team_id": "20",
       "tipoff_original_utc": "2026-10-22T23:00:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 14.0,
       "forecast_id": "04ade9a4347f441041b9c76bf53487e490c21ae85f5511e1ff482e5272addf60",
       "game_id": "401909093",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 2.406,
+      "minutes_error_unconditional": 0.7654,
+      "observed_played": true,
       "original_conditional_minutes": 16.406,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.9,
       "original_unconditional_minutes": 14.7654,
       "player": "Adem Bona",
       "player_id": "5105637",
-      "playing_brier": null,
+      "playing_brier": 0.01,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 0.9001,
           "original_prediction_if_played": 0.9001,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 3.563,
           "original_prediction_if_played": 5.563,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 2.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 1.1992,
           "original_prediction_if_played": 3.1992,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 2.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 0.1676,
           "original_prediction_if_played": 0.1676,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "20",
       "tipoff_original_utc": "2026-10-22T23:00:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 0,
       "forecast_id": "8215d8d490fc0120ba20a76e72ed6f3052153c4f000f47be3844809e1b3e142f",
       "game_id": "401909093",
       "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_unconditional": 12.2133,
+      "observed_played": false,
       "original_conditional_minutes": 13.5703,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.9,
       "original_unconditional_minutes": 12.2133,
       "player": "Justin Edwards",
       "player_id": "4711297",
-      "playing_brier": null,
+      "playing_brier": 0.81,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
           "abs_error": null,
           "original_prediction_if_played": 0.9726,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "points": {
           "abs_error": null,
           "original_prediction_if_played": 5.9122,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "rebounds": {
           "abs_error": null,
           "original_prediction_if_played": 1.1171,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "three_pointers_made": {
           "abs_error": null,
           "original_prediction_if_played": 0.8688,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_DID_NOT_PLAY",
       "team_id": "20",
       "tipoff_original_utc": "2026-10-22T23:00:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 4.0,
       "forecast_id": "b4595c5d057e9ed504bcec112785c338910b29bbae5230ccf712dc216d6434ec",
       "game_id": "401909093",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 2.7656,
+      "minutes_error_unconditional": 0.7359,
+      "observed_played": true,
       "original_conditional_minutes": 6.7656,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.7,
       "original_unconditional_minutes": 4.7359,
       "player": "Jabari Walker",
       "player_id": "4432446",
-      "playing_brier": null,
+      "playing_brier": 0.09,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 0.517,
           "original_prediction_if_played": 0.517,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 0.861,
           "original_prediction_if_played": 2.861,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 2.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 0.1922,
           "original_prediction_if_played": 1.1922,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 1.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 0.2793,
           "original_prediction_if_played": 0.2793,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "20",
       "tipoff_original_utc": "2026-10-22T23:00:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 33.0,
       "forecast_id": "ee5defc01aa8046a1e65408e57cc7bb4b121bddcef585793a793425105d7dbe6",
       "game_id": "401909093",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 0.3582,
+      "minutes_error_unconditional": 5.2545,
+      "observed_played": true,
       "original_conditional_minutes": 32.6418,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.85,
       "original_unconditional_minutes": 27.7455,
       "player": "James Harden",
       "player_id": "3992",
-      "playing_brier": null,
+      "playing_brier": 0.0225,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 0.7072,
           "original_prediction_if_played": 5.7072,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 5.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 3.1167,
           "original_prediction_if_played": 19.1167,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 16.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 0.8172,
           "original_prediction_if_played": 3.8172,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 3.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 0.357,
           "original_prediction_if_played": 2.643,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 3.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "5",
       "tipoff_original_utc": "2026-10-22T23:00:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 35.0,
       "forecast_id": "8dad13975db0b7862782307a60a04a8fe60402d5be0f93315bd7b36eb372a58a",
       "game_id": "401909093",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 2.193,
+      "minutes_error_unconditional": 8.7544,
+      "observed_played": true,
       "original_conditional_minutes": 32.807,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.8,
       "original_unconditional_minutes": 26.2456,
       "player": "Donovan Mitchell",
       "player_id": "3908809",
-      "playing_brier": null,
+      "playing_brier": 0.04,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 1.5293,
           "original_prediction_if_played": 4.5293,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 3.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 8.9639,
           "original_prediction_if_played": 23.0361,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 32.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 5.4079,
           "original_prediction_if_played": 4.5921,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 10.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 0.1771,
           "original_prediction_if_played": 1.8229,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 2.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "5",
       "tipoff_original_utc": "2026-10-22T23:00:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 34.0,
       "forecast_id": "14e5e2bbf6d49f7693c3d6962988324803fc983c9ee6bff06e971dc8a142c865",
       "game_id": "401909093",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 5.5182,
+      "minutes_error_unconditional": 9.7905,
+      "observed_played": true,
       "original_conditional_minutes": 28.4818,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.85,
       "original_unconditional_minutes": 24.2095,
       "player": "Evan Mobley",
       "player_id": "4432158",
-      "playing_brier": null,
+      "playing_brier": 0.0225,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 1.1333,
           "original_prediction_if_played": 3.1333,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 2.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 2.2749,
           "original_prediction_if_played": 15.7251,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 18.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 0.2311,
           "original_prediction_if_played": 8.2311,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 8.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 0.6711,
           "original_prediction_if_played": 0.3289,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 1.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "5",
       "tipoff_original_utc": "2026-10-22T23:00:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 24.0,
       "forecast_id": "1403a74084ad7b5cd01fe7a499ee92802f9f8ddcac93bd72bfb6ef327dc24999",
       "game_id": "401909093",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 3.4663,
+      "minutes_error_unconditional": 3.4002,
+      "observed_played": true,
       "original_conditional_minutes": 27.4663,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.75,
       "original_unconditional_minutes": 20.5998,
       "player": "Sam Merrill",
       "player_id": "4066757",
-      "playing_brier": null,
+      "playing_brier": 0.0625,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 0.8916,
           "original_prediction_if_played": 2.8916,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 2.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 6.024,
           "original_prediction_if_played": 11.024,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 5.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 1.7731,
           "original_prediction_if_played": 3.2269,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 5.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 0.6796,
           "original_prediction_if_played": 1.6796,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 1.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "5",
       "tipoff_original_utc": "2026-10-22T23:00:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 0,
       "forecast_id": "300def6e6995a99cb8819fef25b0118776a46ee6dae4003cb6d2c3bfb5459f0c",
       "game_id": "401909093",
       "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_unconditional": 16.8262,
+      "observed_played": false,
       "original_conditional_minutes": 19.7956,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.85,
       "original_unconditional_minutes": 16.8262,
       "player": "Nae'Qwan Tomlin",
       "player_id": "5106268",
-      "playing_brier": null,
+      "playing_brier": 0.7225,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
           "abs_error": null,
           "original_prediction_if_played": 1.4675,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "points": {
           "abs_error": null,
           "original_prediction_if_played": 7.8248,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "rebounds": {
           "abs_error": null,
           "original_prediction_if_played": 3.7948,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "three_pointers_made": {
           "abs_error": null,
           "original_prediction_if_played": 0.7704,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_DID_NOT_PLAY",
       "team_id": "5",
       "tipoff_original_utc": "2026-10-22T23:00:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 28.0,
       "forecast_id": "41855b312e7c9d46a231b49a2500d2b4c91958c01c1926b6a31f2ba0f19ba2f9",
       "game_id": "401909093",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 5.0,
+      "minutes_error_unconditional": 11.9,
+      "observed_played": true,
       "original_conditional_minutes": 23.0,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.7,
       "original_unconditional_minutes": 16.1,
       "player": "Jarrett Allen",
       "player_id": "4066328",
-      "playing_brier": null,
+      "playing_brier": 0.09,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 1.3506,
           "original_prediction_if_played": 1.3506,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 1.4919,
           "original_prediction_if_played": 12.5081,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 14.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 0.9906,
           "original_prediction_if_played": 6.0094,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 7.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 0.3289,
           "original_prediction_if_played": 0.3289,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "5",
       "tipoff_original_utc": "2026-10-22T23:00:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 8.0,
       "forecast_id": "53a53337366a77c5919612258ecc04b7e683ac18644e354e9781c16ca6a0999f",
       "game_id": "401909093",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 13.1787,
+      "minutes_error_unconditional": 7.8841,
+      "observed_played": true,
       "original_conditional_minutes": 21.1787,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.75,
       "original_unconditional_minutes": 15.8841,
       "player": "Craig Porter Jr.",
       "player_id": "4701233",
-      "playing_brier": null,
+      "playing_brier": 0.0625,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 2.5061,
           "original_prediction_if_played": 2.5061,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 6.4891,
           "original_prediction_if_played": 6.4891,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 0.9329,
           "original_prediction_if_played": 3.9329,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 3.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 0.5721,
           "original_prediction_if_played": 0.5721,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "5",
       "tipoff_original_utc": "2026-10-22T23:00:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 0,
       "forecast_id": "2107a92c87124dbe4751dd1c54e99e77de3741cd2ce2ce673d9fb7710ed84c98",
       "game_id": "401909093",
       "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_unconditional": 13.9994,
+      "observed_played": false,
       "original_conditional_minutes": 18.6659,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.75,
       "original_unconditional_minutes": 13.9994,
       "player": "Thomas Bryant",
       "player_id": "3934723",
-      "playing_brier": null,
+      "playing_brier": 0.5625,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
           "abs_error": null,
           "original_prediction_if_played": 0.8631,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "points": {
           "abs_error": null,
           "original_prediction_if_played": 8.3417,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "rebounds": {
           "abs_error": null,
           "original_prediction_if_played": 4.4978,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "three_pointers_made": {
           "abs_error": null,
           "original_prediction_if_played": 0.9369,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_DID_NOT_PLAY",
       "team_id": "5",
       "tipoff_original_utc": "2026-10-22T23:00:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 5.0,
       "forecast_id": "3402bb4ab5487d44310cde95c1abeee00a51fcb7221795917182aa229c2b0c0f",
       "game_id": "401909093",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 10.9235,
+      "minutes_error_unconditional": 8.535,
+      "observed_played": true,
       "original_conditional_minutes": 15.9235,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.85,
       "original_unconditional_minutes": 13.535,
       "player": "Tyrese Proctor",
       "player_id": "5023693",
-      "playing_brier": null,
+      "playing_brier": 0.0225,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 2.1467,
           "original_prediction_if_played": 2.1467,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 8.1952,
           "original_prediction_if_played": 8.1952,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 2.674,
           "original_prediction_if_played": 2.674,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 0.9563,
           "original_prediction_if_played": 0.9563,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "5",
       "tipoff_original_utc": "2026-10-22T23:00:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 24.0,
       "forecast_id": "9b80b57d340ae0ce3d37877a48f43fec53bf28767ed1bb08fbb6cb4002a2aacd",
       "game_id": "401909093",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 2.6369,
+      "minutes_error_unconditional": 12.2503,
+      "observed_played": true,
       "original_conditional_minutes": 21.3631,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.55,
       "original_unconditional_minutes": 11.7497,
       "player": "Jaylon Tyson",
       "player_id": "4683747",
-      "playing_brier": null,
+      "playing_brier": 0.2025,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 0.2601,
           "original_prediction_if_played": 2.2601,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 2.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 7.0796,
           "original_prediction_if_played": 10.0796,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 3.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 2.3361,
           "original_prediction_if_played": 3.6639,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 6.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 1.0668,
           "original_prediction_if_played": 1.0668,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "5",
       "tipoff_original_utc": "2026-10-22T23:00:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 0,
       "forecast_id": "291828cbf0ba55c8e3316acbf2c6a8a02d3c0be1995eca7a60038d3c82be3dfa",
       "game_id": "401909093",
       "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_unconditional": 7.44,
+      "observed_played": false,
       "original_conditional_minutes": 12.4,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.6,
       "original_unconditional_minutes": 7.44,
       "player": "Tristan Enaruna",
       "player_id": "4431734",
-      "playing_brier": null,
+      "playing_brier": 0.36,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
           "abs_error": null,
           "original_prediction_if_played": 1.0765,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "points": {
           "abs_error": null,
           "original_prediction_if_played": 5.1644,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "rebounds": {
           "abs_error": null,
           "original_prediction_if_played": 1.6624,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "three_pointers_made": {
           "abs_error": null,
           "original_prediction_if_played": 0.4333,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_DID_NOT_PLAY",
       "team_id": "5",
       "tipoff_original_utc": "2026-10-22T23:00:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 0,
       "forecast_id": "3814153acda693919f608b5b884a86d85f6f38214dbbf51869abf8253458fcca",
       "game_id": "401909093",
       "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_unconditional": 5.7716,
+      "observed_played": false,
       "original_conditional_minutes": 8.8793,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.65,
       "original_unconditional_minutes": 5.7716,
       "player": "Riley Minix",
       "player_id": "5177362",
-      "playing_brier": null,
+      "playing_brier": 0.4225,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
           "abs_error": null,
           "original_prediction_if_played": 0.7785,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "points": {
           "abs_error": null,
           "original_prediction_if_played": 3.8379,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "rebounds": {
           "abs_error": null,
           "original_prediction_if_played": 1.1232,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "three_pointers_made": {
           "abs_error": null,
           "original_prediction_if_played": 0.3363,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_DID_NOT_PLAY",
       "team_id": "5",
       "tipoff_original_utc": "2026-10-22T23:00:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 35.0,
       "forecast_id": "2d9aa17f9b228de7b9c2651c2f80a49567c4f68dc4cb694e29c90a242cd9f994",
       "game_id": "401909094",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 3.9132,
+      "minutes_error_unconditional": 8.5763,
+      "observed_played": true,
       "original_conditional_minutes": 31.0868,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.85,
       "original_unconditional_minutes": 26.4237,
       "player": "Shai Gilgeous-Alexander",
       "player_id": "4278073",
-      "playing_brier": null,
+      "playing_brier": 0.0225,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 2.5229,
           "original_prediction_if_played": 5.5229,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 3.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 7.66,
           "original_prediction_if_played": 24.66,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 17.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 1.7053,
           "original_prediction_if_played": 3.7053,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 2.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 1.5891,
           "original_prediction_if_played": 1.4109,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 3.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "25",
       "tipoff_original_utc": "2026-10-23T01:30:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 28.0,
       "forecast_id": "b3c4f436ea4d5ec734392952667cbbd2375cc37f6c16afbdc771a5d4c30771ad",
       "game_id": "401909094",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 2.4439,
+      "minutes_error_unconditional": 7.5551,
+      "observed_played": true,
       "original_conditional_minutes": 25.5561,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.8,
       "original_unconditional_minutes": 20.4449,
       "player": "Chet Holmgren",
       "player_id": "4433255",
-      "playing_brier": null,
+      "playing_brier": 0.04,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 0.3803,
           "original_prediction_if_played": 1.6197,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 2.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 2.5819,
           "original_prediction_if_played": 14.5819,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 12.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 9.9872,
           "original_prediction_if_played": 7.0128,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 17.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 1.2498,
           "original_prediction_if_played": 1.2498,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "25",
       "tipoff_original_utc": "2026-10-23T01:30:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 33.0,
       "forecast_id": "ca0d59c94dae0b9441518e23e37b47a5b8d507297be3b92352422fb763378c7b",
       "game_id": "401909094",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 6.1709,
+      "minutes_error_unconditional": 12.8781,
+      "observed_played": true,
       "original_conditional_minutes": 26.8291,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.75,
       "original_unconditional_minutes": 20.1219,
       "player": "Jalen Williams",
       "player_id": "4593803",
-      "playing_brier": null,
+      "playing_brier": 0.0625,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 1.5535,
           "original_prediction_if_played": 4.5535,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 3.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 7.1578,
           "original_prediction_if_played": 13.8422,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 21.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 0.667,
           "original_prediction_if_played": 4.333,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 5.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 1.4427,
           "original_prediction_if_played": 0.5573,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 2.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "25",
       "tipoff_original_utc": "2026-10-23T01:30:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 23.0,
       "forecast_id": "9ff73fabe40ffa4d372db534438270a6886313363055fbbce029a095bc30e49e",
       "game_id": "401909094",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 0.2264,
+      "minutes_error_unconditional": 3.2576,
+      "observed_played": true,
       "original_conditional_minutes": 23.2264,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.85,
       "original_unconditional_minutes": 19.7424,
       "player": "Ajay Mitchell",
       "player_id": "4900671",
-      "playing_brier": null,
+      "playing_brier": 0.0225,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 2.9533,
           "original_prediction_if_played": 2.9533,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 2.1159,
           "original_prediction_if_played": 9.8841,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 12.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 2.8367,
           "original_prediction_if_played": 2.8367,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 0.8062,
           "original_prediction_if_played": 0.8062,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "25",
       "tipoff_original_utc": "2026-10-23T01:30:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 24.0,
       "forecast_id": "241fe1ea238044fdbcd638e71b05699be53e240fdfd51b132eccbc415568d445",
       "game_id": "401909094",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 1.641,
+      "minutes_error_unconditional": 4.9948,
+      "observed_played": true,
       "original_conditional_minutes": 22.359,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.85,
       "original_unconditional_minutes": 19.0052,
       "player": "Cason Wallace",
       "player_id": "4683692",
-      "playing_brier": null,
+      "playing_brier": 0.0225,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 0.7811,
           "original_prediction_if_played": 1.7811,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 1.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 0.7439,
           "original_prediction_if_played": 8.2561,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 9.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 1.8417,
           "original_prediction_if_played": 2.8417,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 1.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 1.7621,
           "original_prediction_if_played": 1.2379,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 3.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "25",
       "tipoff_original_utc": "2026-10-23T01:30:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 0,
       "forecast_id": "df576fd8ab2153f1b505aba12e4333a35891a3d3d2a20fad6625a24e51082e60",
       "game_id": "401909094",
       "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_unconditional": 17.7882,
+      "observed_played": false,
       "original_conditional_minutes": 21.6,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.82353,
       "original_unconditional_minutes": 17.7882,
       "player": "Nikola Topic",
       "player_id": "5159925",
-      "playing_brier": null,
+      "playing_brier": 0.678202,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
           "abs_error": null,
           "original_prediction_if_played": 4.2442,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "points": {
           "abs_error": null,
           "original_prediction_if_played": 7.8442,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "rebounds": {
           "abs_error": null,
           "original_prediction_if_played": 2.6905,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "three_pointers_made": {
           "abs_error": null,
           "original_prediction_if_played": 0.6973,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_DID_NOT_PLAY",
       "team_id": "25",
       "tipoff_original_utc": "2026-10-23T01:30:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 18.0,
       "forecast_id": "017f41ec8971534f65d494f386cb18c5b1174276e1cb5d673e327d81f4857c6a",
       "game_id": "401909094",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 0.4897,
+      "minutes_error_unconditional": 1.3652,
+      "observed_played": true,
       "original_conditional_minutes": 17.5103,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.95,
       "original_unconditional_minutes": 16.6348,
       "player": "Jared McCain",
       "player_id": "4683778",
-      "playing_brier": null,
+      "playing_brier": 0.0025,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 0.3564,
           "original_prediction_if_played": 1.3564,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 1.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 4.0751,
           "original_prediction_if_played": 8.0751,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 4.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 2.0224,
           "original_prediction_if_played": 2.0224,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 0.9888,
           "original_prediction_if_played": 0.9888,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "25",
       "tipoff_original_utc": "2026-10-23T01:30:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 23.0,
       "forecast_id": "830615e9ffeb9b8ef30b6de4f1936fe7366c1492fdef9a08b6b5297e3ab906be",
       "game_id": "401909094",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 3.7811,
+      "minutes_error_unconditional": 7.6249,
+      "observed_played": true,
       "original_conditional_minutes": 19.2189,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.8,
       "original_unconditional_minutes": 15.3751,
       "player": "Isaiah Hartenstein",
       "player_id": "4222252",
-      "playing_brier": null,
+      "playing_brier": 0.04,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 0.5368,
           "original_prediction_if_played": 2.5368,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 2.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 0.4626,
           "original_prediction_if_played": 6.4626,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 6.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 0.9006,
           "original_prediction_if_played": 6.9006,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 6.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 0.1883,
           "original_prediction_if_played": 0.1883,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "25",
       "tipoff_original_utc": "2026-10-23T01:30:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 15.0,
       "forecast_id": "00a59c542364599deb694d11f07d02ff9ae26b38de891717dbee32586b2d2e14",
       "game_id": "401909094",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 1.8635,
+      "minutes_error_unconditional": 0.666,
+      "observed_played": true,
       "original_conditional_minutes": 16.8635,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.85,
       "original_unconditional_minutes": 14.334,
       "player": "Jaylin Williams",
       "player_id": "4432823",
-      "playing_brier": null,
+      "playing_brier": 0.0225,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 1.1931,
           "original_prediction_if_played": 1.8069,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 3.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 2.9834,
           "original_prediction_if_played": 5.9834,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 3.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 2.3449,
           "original_prediction_if_played": 4.6551,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 7.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 0.0389,
           "original_prediction_if_played": 1.0389,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 1.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "25",
       "tipoff_original_utc": "2026-10-23T01:30:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 6.0,
       "forecast_id": "0528d8ca944e9451e94b03be7b77db7ec1d428de79fe4ed1b9893c89b66b3394",
       "game_id": "401909094",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 10.1607,
+      "minutes_error_unconditional": 7.7366,
+      "observed_played": true,
       "original_conditional_minutes": 16.1607,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.85,
       "original_unconditional_minutes": 13.7366,
       "player": "Kenrich Williams",
       "player_id": "3133626",
-      "playing_brier": null,
+      "playing_brier": 0.0225,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 0.6969,
           "original_prediction_if_played": 1.6969,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 1.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 3.6071,
           "original_prediction_if_played": 6.6071,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 3.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 2.549,
           "original_prediction_if_played": 3.549,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 1.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 0.3663,
           "original_prediction_if_played": 0.6337,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 1.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "25",
       "tipoff_original_utc": "2026-10-23T01:30:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 20.0,
       "forecast_id": "05434d8d7504bbf7218e7474d8e453d9b284126042d50ebbf21cd2e6e52750b4",
       "game_id": "401909094",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 3.4578,
+      "minutes_error_unconditional": 6.7663,
+      "observed_played": true,
       "original_conditional_minutes": 16.5422,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.8,
       "original_unconditional_minutes": 13.2337,
       "player": "Alex Caruso",
       "player_id": "2991350",
-      "playing_brier": null,
+      "playing_brier": 0.04,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 3.3537,
           "original_prediction_if_played": 1.6463,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 5.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 1.4746,
           "original_prediction_if_played": 5.5254,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 7.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 1.3621,
           "original_prediction_if_played": 2.6379,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 4.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 0.3111,
           "original_prediction_if_played": 0.6889,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 1.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "25",
       "tipoff_original_utc": "2026-10-23T01:30:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 2.0,
       "forecast_id": "3f7c4c3ce3324fe16c241c7084667ddb5ef0c2abc90dbc84bd61767e340f5374",
       "game_id": "401909094",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 11.7432,
+      "minutes_error_unconditional": 6.9331,
+      "observed_played": true,
       "original_conditional_minutes": 13.7432,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.65,
       "original_unconditional_minutes": 8.9331,
       "player": "Brooks Barnhizer",
       "player_id": "4684208",
-      "playing_brier": null,
+      "playing_brier": 0.1225,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 0.0375,
           "original_prediction_if_played": 1.0375,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 1.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 4.4611,
           "original_prediction_if_played": 4.4611,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 2.4323,
           "original_prediction_if_played": 2.4323,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 0.3483,
           "original_prediction_if_played": 0.3483,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "25",
       "tipoff_original_utc": "2026-10-23T01:30:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 37.0,
       "forecast_id": "e96e68669cb627272a9fd23d4ff9c5b85894bed62472fcb32c41b30a39b18db4",
       "game_id": "401909094",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 0.6625,
+      "minutes_error_unconditional": 4.9869,
+      "observed_played": true,
       "original_conditional_minutes": 37.6625,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.85,
       "original_unconditional_minutes": 32.0131,
       "player": "Jamal Murray",
       "player_id": "3936299",
-      "playing_brier": null,
+      "playing_brier": 0.0225,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 3.3642,
           "original_prediction_if_played": 6.3642,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 3.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 16.9433,
           "original_prediction_if_played": 22.9433,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 6.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 5.1094,
           "original_prediction_if_played": 4.8906,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 10.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 3.5837,
           "original_prediction_if_played": 3.5837,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "7",
       "tipoff_original_utc": "2026-10-23T01:30:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 35.0,
       "forecast_id": "b47a4571c5db2980450ed6843c3d72cfd6b2e8fef072b590669963dbd11d907e",
       "game_id": "401909094",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 0.5172,
+      "minutes_error_unconditional": 3.9655,
+      "observed_played": true,
       "original_conditional_minutes": 34.4828,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.9,
       "original_unconditional_minutes": 31.0345,
       "player": "Nikola Jokic",
       "player_id": "3112335",
-      "playing_brier": null,
+      "playing_brier": 0.01,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 4.0567,
           "original_prediction_if_played": 9.0567,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 5.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 9.4069,
           "original_prediction_if_played": 22.4069,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 13.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 4.4627,
           "original_prediction_if_played": 11.4627,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 7.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 0.0156,
           "original_prediction_if_played": 1.0156,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 1.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "7",
       "tipoff_original_utc": "2026-10-23T01:30:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 33.0,
       "forecast_id": "43bf81fb34bcf12022c4850da74e7abbcfff959cff54d8eec763a56569a61dd6",
       "game_id": "401909094",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 0.16,
+      "minutes_error_unconditional": 4.814,
+      "observed_played": true,
       "original_conditional_minutes": 33.16,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.85,
       "original_unconditional_minutes": 28.186,
       "player": "Christian Braun",
       "player_id": "4431767",
-      "playing_brier": null,
+      "playing_brier": 0.0225,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 1.4181,
           "original_prediction_if_played": 2.4181,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 1.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 7.6345,
           "original_prediction_if_played": 14.6345,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 7.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 1.1742,
           "original_prediction_if_played": 4.8258,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 6.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 0.1877,
           "original_prediction_if_played": 1.1877,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 1.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "7",
       "tipoff_original_utc": "2026-10-23T01:30:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 11.0,
       "forecast_id": "bac06aa07be31f1a3da7cb3fc09f8afe1487ab4b15b1c58895439c3a81dafc54",
       "game_id": "401909094",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 20.3588,
+      "minutes_error_unconditional": 15.6549,
+      "observed_played": true,
       "original_conditional_minutes": 31.3588,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.85,
       "original_unconditional_minutes": 26.6549,
       "player": "Cameron Johnson",
       "player_id": "3138196",
-      "playing_brier": null,
+      "playing_brier": 0.0225,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 2.0406,
           "original_prediction_if_played": 3.0406,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 1.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 9.5307,
           "original_prediction_if_played": 14.5307,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 5.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 2.5055,
           "original_prediction_if_played": 4.5055,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 2.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 1.2482,
           "original_prediction_if_played": 2.2482,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 1.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "7",
       "tipoff_original_utc": "2026-10-23T01:30:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 29.0,
       "forecast_id": "5b6f7c888d387790883a5a2d078b1fcec8d1a1a69a8a15b49511f7d16165a026",
       "game_id": "401909094",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 0.7613,
+      "minutes_error_unconditional": 6.679,
+      "observed_played": true,
       "original_conditional_minutes": 29.7613,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.75,
       "original_unconditional_minutes": 22.321,
       "player": "Aaron Gordon",
       "player_id": "3064290",
-      "playing_brier": null,
+      "playing_brier": 0.0625,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 2.0171,
           "original_prediction_if_played": 3.0171,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 1.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 6.2472,
           "original_prediction_if_played": 13.7528,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 20.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 0.8543,
           "original_prediction_if_played": 5.1457,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 6.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 1.6633,
           "original_prediction_if_played": 1.3367,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 3.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "7",
       "tipoff_original_utc": "2026-10-23T01:30:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 0,
       "forecast_id": "ccbff7f349a664fa65416ac49b5540b959ec38a3ec7c91a623adde8760196c4f",
       "game_id": "401909094",
       "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_unconditional": 19.1145,
+      "observed_played": false,
       "original_conditional_minutes": 20.1205,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.95,
       "original_unconditional_minutes": 19.1145,
       "player": "Julian Strawther",
       "player_id": "4432181",
-      "playing_brier": null,
+      "playing_brier": 0.9025,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
           "abs_error": null,
           "original_prediction_if_played": 1.7295,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "points": {
           "abs_error": null,
           "original_prediction_if_played": 10.1736,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "rebounds": {
           "abs_error": null,
           "original_prediction_if_played": 2.6833,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "three_pointers_made": {
           "abs_error": null,
           "original_prediction_if_played": 1.4476,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_DID_NOT_PLAY",
       "team_id": "7",
       "tipoff_original_utc": "2026-10-23T01:30:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 0,
       "forecast_id": "47c03dd588e1d55b9123566a05dec80387d220815f6bc08b7227e1e2259bf0df",
       "game_id": "401909094",
       "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_unconditional": 6.5188,
+      "observed_played": false,
       "original_conditional_minutes": 10.0289,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.65,
       "original_unconditional_minutes": 6.5188,
       "player": "Zeke Nnaji",
       "player_id": "4431690",
-      "playing_brier": null,
+      "playing_brier": 0.4225,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
           "abs_error": null,
           "original_prediction_if_played": 0.8757,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "points": {
           "abs_error": null,
           "original_prediction_if_played": 3.2821,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "rebounds": {
           "abs_error": null,
           "original_prediction_if_played": 1.6382,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         },
         "three_pointers_made": {
           "abs_error": null,
           "original_prediction_if_played": 0.2398,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
+          "status": "ORIGINAL_PLAYER_DID_NOT_PLAY_CONDITIONAL_STAT_NOT_APPLICABLE",
           "verified_actual_if_played": null
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_DID_NOT_PLAY",
       "team_id": "7",
       "tipoff_original_utc": "2026-10-23T01:30:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 10.0,
       "forecast_id": "85b048450c1cd6b89efc441e48230f6f98b87388a1a7144e42b8fe97f61556ec",
       "game_id": "401909094",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 0.3022,
+      "minutes_error_unconditional": 3.6964,
+      "observed_played": true,
       "original_conditional_minutes": 9.6978,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.65,
       "original_unconditional_minutes": 6.3036,
       "player": "Tyus Jones",
       "player_id": "3135046",
-      "playing_brier": null,
+      "playing_brier": 0.1225,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 1.1373,
           "original_prediction_if_played": 1.1373,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 1.385,
           "original_prediction_if_played": 3.385,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 2.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 1.5117,
           "original_prediction_if_played": 1.5117,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 0.4317,
           "original_prediction_if_played": 0.4317,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 0.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "7",
       "tipoff_original_utc": "2026-10-23T01:30:00+00:00"
     },
     {
-      "actual_minutes": null,
+      "actual_minutes": 2.0,
       "forecast_id": "1ffa3a357c918699b2b37959e6ea597e017648b6f1ceba94724e5c7d7f9fd896",
       "game_id": "401909094",
-      "minutes_error_if_played": null,
-      "minutes_error_unconditional": null,
-      "observed_played": null,
+      "minutes_error_if_played": 1.0,
+      "minutes_error_unconditional": 0.1,
+      "observed_played": true,
       "original_conditional_minutes": 3,
       "original_model_version": "nba-v2-rotation-and-exposure-frozen-challenger-20261019",
       "original_play_probability": 0.7,
       "original_unconditional_minutes": 2.1,
       "player": "DaRon Holmes II",
       "player_id": "4433607",
-      "playing_brier": null,
+      "playing_brier": 0.09,
       "saved_original_utc": "2026-10-20T17:34:47.833984+00:00",
       "stats": {
         "assists": {
-          "abs_error": null,
+          "abs_error": 0.76,
           "original_prediction_if_played": 0.24,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 1.0
         },
         "points": {
-          "abs_error": null,
+          "abs_error": 1.7275,
           "original_prediction_if_played": 1.2725,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 3.0
         },
         "rebounds": {
-          "abs_error": null,
+          "abs_error": 0.4815,
           "original_prediction_if_played": 0.5185,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 1.0
         },
         "three_pointers_made": {
-          "abs_error": null,
+          "abs_error": 0.8788,
           "original_prediction_if_played": 0.1212,
-          "status": "WAITING_FOR_VERIFIED_FINAL_BOX",
-          "verified_actual_if_played": null
+          "status": "VERIFIED_PLAYED_STAT",
+          "verified_actual_if_played": 1.0
         }
       },
-      "status": "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX",
+      "status": "VERIFIED_PLAYED",
       "team_id": "7",
       "tipoff_original_utc": "2026-10-23T01:30:00+00:00"
     },
@@ -10777,29 +10787,44 @@
       "tipoff_original_utc": "2026-10-24T02:00:00+00:00"
     }
   ],
-  "player_status_unverified": 233,
-  "player_status_verified": 0,
+  "player_status_unverified": 193,
+  "player_status_verified": 40,
   "schema": "NBA_V2_ALL_IMMUTABLE_ROLLING_PLAYER_STATS_ACTUAL_GRADES_V1",
   "status": "ALL_ORIGINALS_ACCOUNTED_PARTIAL_ACTUAL_VERIFICATION",
   "truth_receipts": {
-    "boxes": {},
+    "boxes": {
+      "401909093": {
+        "actual_source": "ESPN_FINAL_BOTH_TEAM_PLAYER_STATS",
+        "dnp_reported": 9,
+        "played_players": 19,
+        "retrieved_at_utc": "2026-10-23T19:22:10.206160+00:00",
+        "sha256": "c40525d917b8d9c75bbc925157a405a010537d63e20fd8425b74cb7453eaaf89"
+      },
+      "401909094": {
+        "actual_source": "ESPN_FINAL_BOTH_TEAM_PLAYER_STATS",
+        "dnp_reported": 1,
+        "played_players": 26,
+        "retrieved_at_utc": "2026-10-23T19:22:10.206160+00:00",
+        "sha256": "431393cccdfa37746120d3ba92361cba82c875507132b0be542c8b3814b19812"
+      }
+    },
     "errors": {},
     "scoreboards": {
       "2026-10-22": {
-        "retrieved_at_utc": "2026-10-20T17:51:02.732120+00:00",
-        "sha256": "c7b1aa0ebd4e9be8a50bd55c337e35ee30e4f954442cb0731f9f2c65f120d524"
+        "retrieved_at_utc": "2026-10-23T19:22:10.206160+00:00",
+        "sha256": "692b288fb6cc1d12a6b93bc8e92522baef4cfae3a2f4d1f49eda2da4ff3c2c02"
       },
       "2026-10-23": {
-        "retrieved_at_utc": "2026-10-20T17:51:02.732120+00:00",
-        "sha256": "0ef4e14fd9135b3f64e722c74a8f56f4f278479c3d896d0378972c5a976a8716"
+        "retrieved_at_utc": "2026-10-23T19:22:10.206160+00:00",
+        "sha256": "da5a35393394778572286a56056c11126d486a95a3f1640f8e4637fe7251c45e"
       },
       "2026-10-24": {
-        "retrieved_at_utc": "2026-10-20T17:51:02.732120+00:00",
-        "sha256": "bd093273f54c1022445e321ca6dc152c86477318dd8a013f8e1d6e7e255acf13"
+        "retrieved_at_utc": "2026-10-23T19:22:10.206160+00:00",
+        "sha256": "67c996883fad64c42911a0c10edb19dcf09668fab43ad91a9ba2d30755347e04"
       }
     }
   },
-  "unverified_conditional_stats": 932,
-  "verified_DNP_conditional_stats_not_applicable": 0,
-  "verified_played_stat_outcomes": 0
+  "unverified_conditional_stats": 772,
+  "verified_DNP_conditional_stats_not_applicable": 36,
+  "verified_played_stat_outcomes": 124
 }
