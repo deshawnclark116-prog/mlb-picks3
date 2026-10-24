@@ -93,8 +93,11 @@ test('live API loads saved opening AND rolling forecasts, ranks tonight instead 
  const asof=Date.parse('2026-10-20T18:28:00Z');
  const archived=readdirSync('docs/nba_rolling_predictions')
    .filter(n=>/^20\d\d-\d\d-\d\dT\d{6}Z\.json$/.test(n))
-   .flatMap(n=>(JSON.parse(readFileSync(path.join('docs/nba_rolling_predictions',n),'utf8'))
-     as {forecasts:Array<{game_id:string;tipoff_utc:string;player_predictions_count:number}>}).forecasts)
+   .flatMap(n=>{
+     const doc=JSON.parse(readFileSync('docs/nba_rolling_predictions/'+n,'utf8')) as
+       {forecasts:Array<{game_id:string;tipoff_utc:string;player_predictions_count:number}>};
+     return doc.forecasts;
+   })
    .filter(g=>Date.parse(g.tipoff_utc)>=asof-3*86400000&&
               Date.parse(g.tipoff_utc)<=asof+8*86400000);
  assert.equal(day.original_game_count,opening.forecasts.length+archived.length);
