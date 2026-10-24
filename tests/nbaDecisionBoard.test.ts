@@ -85,7 +85,7 @@ test('reject duplicate and post-tip original research; no made-up confidence',()
  assert.throws(()=>buildNbaSystemBoard(changed),/DROPPED_ORIGINAL_STAT/);
 });
 
-test('live API loads saved opening AND rolling forecasts, ranks tonight instead of showing all stat rows',()=>{
+test('live API loads saved opening AND rolling forecasts, ranks tonight instead of showing all stat rows',async()=>{
  const day=readVerifiedNbaSystemBoard(new Date('2026-10-20T18:28:00Z'));
  // Continuously append-only NBA forecasts cannot be checked against the
  // old October 20 (28-game) constant. Independently count archived actual
@@ -113,7 +113,14 @@ test('live API loads saved opening AND rolling forecasts, ranks tonight instead 
  let result:any;
  const res:any={setHeader:()=>res,status:(n:number)=>{throw Error('Unexpected HTTP '+n);},
    json:(x:any)=>{result=x;return res;}};
- nbaSystemPicksHandler()({} as any,res);
+ const feed={injuries:[
+   ...['1','2','3','4','5'].map((team,i)=>({
+     team:{id:team},athlete:{id:String(910001+i),displayName:'Synthetic player'},
+     status:'Out',date:'2026-10-20T17:00:00Z'
+   }))
+ ]};
+ const fetcher=(async()=>Response.json(feed)) as typeof fetch;
+ await nbaSystemPicksHandler(fetcher,()=>new Date('2026-10-20T18:28:00Z'))({} as any,res);
  assert.equal(result.schema,'NBA_V2_SAVED_PREGAME_SYSTEM_TARGET_BOARD_V1');
  assert.equal(result.official_bets,0);
 });

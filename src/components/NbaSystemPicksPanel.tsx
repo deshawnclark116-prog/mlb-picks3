@@ -49,6 +49,12 @@ export default function NbaSystemPicksPanel({mode,search}:{
  const [revision,setRevision]=useState(0),[date,setDate]=useState('TODAY');
  const [market,setMarket]=useState<'ALL'|NbaMarket>('ALL');
  const [expanded,setExpanded]=useState<string|null>(null);
+ // Availability can change AFTER the original model forecast is saved.
+ // Refresh the decision board without replacing any frozen prediction.
+ useEffect(()=>{
+   const timer=setInterval(()=>setRevision(n=>n+1),120000);
+   return ()=>clearInterval(timer);
+ },[]);
  useEffect(()=>{
    let live=true;setLoading(true);
    fetch('/api/nba-system-picks',{cache:'no-store'}).then(async r=>{
@@ -60,7 +66,9 @@ export default function NbaSystemPicksPanel({mode,search}:{
         d.probability_model_calibrated_for_NBA_targets!==false||
         !Array.isArray(d.games))throw new Error('NBA source or wagering contract failed');
      if(live){setBoard(d);setError('');}
-   }).catch(e=>{if(live){setBoard(null);setError(String(e));}})
+   }).catch(e=>{if(live){setBoard(null);setError(
+     String(e)+' · Current player availability could not be verified. The system is withholding unchecked NBA picks.'
+   );}})
      .finally(()=>{if(live)setLoading(false);});
    return ()=>{live=false;};
  },[revision]);
@@ -91,7 +99,7 @@ export default function NbaSystemPicksPanel({mode,search}:{
        Model-selected PTS, REB, AST and 3PM targets. Maximum two per matchup,
        one per player. Not all player projections.</p>
      <p className="mt-2 text-[11px] text-amber-200">
-       Unpriced model targets · No verified sportsbook line or calibrated bet probabilities yet.</p>
+       Unpriced model targets · Injury status checked on the serving request (refreshes every 2 minutes). Not an official active list or verified sportsbook bet.</p>
    </div>
    <div className="flex items-center justify-between gap-3 text-[11px] text-gray-400">
      <span>{loading?'Loading verified saved model selections…':
