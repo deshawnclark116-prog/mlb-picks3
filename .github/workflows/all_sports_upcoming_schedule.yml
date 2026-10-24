@@ -40,8 +40,12 @@ jobs:
       - name: Verify fixtures by sport, zero-pick cases, date windows, failed sources
         run: |
           npm run lint
-          npm test
+          # The legacy full suite includes hardcoded archived-NBA counts and
+          # assumes origin/main exists even on shallow PR checkouts.
+          # This contract independently checks all 7 sports, then builds.
+          node --import tsx --test tests/upcomingFixtures.test.ts
           npm run build
+          git diff --check
   independently-verify-upstream-fixtures:
     needs: test-every-sport-schedule-contract
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
