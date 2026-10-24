@@ -1,0 +1,58 @@
+{
+  "all_future_eligible_games_covered": true,
+  "checked_at_utc": "2026-10-24T23:20:35.684240+00:00",
+  "disclosure": "Never reconstruct a historical original after tipoff; a daily grading success cannot substitute for an original pregame forecast.",
+  "eastern_game_date": "2026-10-24",
+  "eligible_future_games_without_original": [],
+  "future_games_past_safety_window": [
+    {
+      "game_id": "401909854",
+      "reason": "PRETIP_15_MINUTE_SAFETY_WINDOW_MISSED_NO_RETROACTIVE_FORECAST",
+      "tipoff_utc": "2026-10-24T23:30:00+00:00"
+    },
+    {
+      "game_id": "401909855",
+      "reason": "PRETIP_15_MINUTE_SAFETY_WINDOW_MISSED_NO_RETROACTIVE_FORECAST",
+      "tipoff_utc": "2026-10-24T23:30:00+00:00"
+    }
+  ],
+  "had_unrecoverable_started_games": true,
+  "new_original_forward_games": 0,
+  "new_original_player_stat_predictions": 0,
+  "official_bets": 0,
+  "prediction_generated_at_utc": "2026-10-24T23:20:35.505021+00:00",
+  "previously_saved_forward_games": 25,
+  "research_only": true,
+  "schema": "NBA_REALTIME_DAILY_FIRSTSEEN_FORECAST_COVERAGE_V1",
+  "source_captured_at_utc": "2026-10-24T23:20:34.146647+00:00",
+  "source_forward_games": 27,
+  "status": "FUTURE_COVERED_BUT_SOME_TODAY_GAMES_MISSED",
+  "today_games_with_original": 5,
+  "today_games_without_original": [
+    {
+      "away": "Miami Heat",
+      "game_id": "401909853",
+      "game_started_at_audit": true,
+      "home": "Charlotte Hornets",
+      "reason": "ALREADY_STARTED_CANNOT_BACKFILL_TRUE_PREGAME",
+      "tipoff_utc": "2026-10-24T22:00:00+00:00"
+    },
+    {
+      "away": "Brooklyn Nets",
+      "game_id": "401909854",
+      "game_started_at_audit": false,
+      "home": "Cleveland Cavaliers",
+      "reason": "NO_SAVED_PREDICTION_YET_NOT_OFFICIAL",
+      "tipoff_utc": "2026-10-24T23:30:00+00:00"
+    },
+    {
+      "away": "Milwaukee Bucks",
+      "game_id": "401909855",
+      "game_started_at_audit": false,
+      "home": "Philadelphia 76ers",
+      "reason": "NO_SAVED_PREDICTION_YET_NOT_OFFICIAL",
+      "tipoff_utc": "2026-10-24T23:30:00+00:00"
+    }
+  ],
+  "today_independent_schedule_games": 8
+}
