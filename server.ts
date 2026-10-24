@@ -9,6 +9,7 @@ import { nbaPlayerResearchHandler } from "./server/nbaPlayerResearch.ts";
 import { nbaRollingResearchHandler, nbaRollingGradeHandler } from "./server/nbaRollingResearch.ts";
 import { nbaSystemPicksHandler } from "./server/nbaSystemPicks.ts";
 import { soccerResearchHandler } from "./server/soccerResearch.ts";
+import { upcomingFixturesHandler } from "./server/upcomingFixtures.ts";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import {
@@ -236,6 +237,10 @@ async function startServer() {
 
   // Existing PR #30 five-league source-first research only; no bookmaker or player prop claims.
   app.get("/api/soccer-research", soccerResearchHandler());
+
+  // Read-only, independently verified upcoming fixtures for EVERY sport.
+  // Not inferred from published picks, no sportsbook request or credit use.
+  app.get("/api/upcoming-fixtures/:sport", upcomingFixturesHandler());
 
   // Verify original research artifacts; never fall back to Render classifiers.
   app.get("/api/model-projections/:sport", projectionFeedHandler());

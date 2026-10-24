@@ -1,0 +1,69 @@
+name: All 7 sports upcoming schedule accuracy
+on:
+  pull_request:
+    paths:
+      - server/upcomingFixtures.ts
+      - server.ts
+      - src/App.tsx
+      - src/components/UpcomingGamesStrip.tsx
+      - scripts/auditUpcomingSports.ts
+      - tests/upcomingFixtures.test.ts
+      - package.json
+      - .github/workflows/all_sports_upcoming_schedule.yml
+  push:
+    branches: [main]
+    paths:
+      - server/upcomingFixtures.ts
+      - server.ts
+      - src/App.tsx
+      - src/components/UpcomingGamesStrip.tsx
+      - scripts/auditUpcomingSports.ts
+      - tests/upcomingFixtures.test.ts
+      - package.json
+      - .github/workflows/all_sports_upcoming_schedule.yml
+  schedule:
+    - cron: "5 14 * * *"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  test-every-sport-schedule-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Verify fixtures by sport, zero-pick cases, date windows, failed sources
+        run: |
+          npm run lint
+          # The legacy full suite includes hardcoded archived-NBA counts and
+          # assumes origin/main exists even on shallow PR checkouts.
+          # This contract independently checks all 7 sports, then builds.
+          node --import tsx --test tests/upcomingFixtures.test.ts
+          npm run build
+          git diff --check
+  independently-verify-upstream-fixtures:
+    needs: test-every-sport-schedule-contract
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Check all seven real sports schedules without sportsbook quotas
+        run: node --import tsx scripts/auditUpcomingSports.ts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: all-seven-sports-independent-upcoming-schedules-${{ github.run_id }}
+          path: audit-output/upcoming-sports-status.json
+          if-no-files-found: warn
+          retention-days: 30

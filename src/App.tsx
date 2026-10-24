@@ -15,6 +15,8 @@ import TennisTodayScreen from "./components/TennisTodayScreen";
 import NhlTodayScreen from "./components/NhlTodayScreen";
 import NbaResearchScreen from "./components/NbaResearchScreen";
 import SoccerTodayScreen from "./components/SoccerTodayScreen";
+import UpcomingGamesStrip from "./components/UpcomingGamesStrip";
+import type {ScheduleSport} from "../server/upcomingFixtures.ts";
 import SportProjectionScreen from "./components/SportProjectionScreen";
 import { deduplicatePredictions, deduplicateCfbPredictions, deduplicateTennisPredictions, deduplicateNhlPredictions } from "./utils";
 import { TrendingUp, Calendar, Activity, ShieldCheck, AlertCircle } from "lucide-react";
@@ -263,6 +265,10 @@ export default function App() {
         className="w-full max-w-[430px] h-full md:h-[840px] md:max-h-[92vh] md:rounded-[40px] bg-[#0A0A0A] md:border-[8px] md:border-[#1A1A1A] md:shadow-2xl flex flex-col relative overflow-hidden"
       >
         
+        {/* Actual future fixtures use independent schedule evidence even
+            when the prediction engine has no selection for a game. */}
+        {!['STATUS','RECORD'].includes(activeTab)&&<UpcomingGamesStrip
+          sport={(activeTab==='TODAY'||activeTab==='GAMES'?'MLB':activeTab) as ScheduleSport} />}
         {/* Dynamic screen element transition */}
         <div id="active-screen-container" className="flex-1 overflow-hidden relative bg-[#0D0D0D]">
           <AnimatePresence mode="wait">
