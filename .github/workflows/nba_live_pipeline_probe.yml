@@ -1,0 +1,76 @@
+name: NBA LIVE root-cause investigation, original forecast pipeline
+on:
+  pull_request:
+    paths:
+      - .github/workflows/nba_live_pipeline_probe.yml
+      - nba/nba_v2_rolling_predictions.py
+      - nba/nba_rolling_future_fixtures.py
+      - tests/test_nba_v2_rolling_predictions.py
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  live-ESPN-repro:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Diagnose October 24 source and frozen original coverage
+        env:
+          PYTHONPATH: .
+        run: |
+          python - <<'PY'
+          import json,glob,datetime
+          from pathlib import Path
+          from nba.nba_v2_rolling_predictions import existing_games
+          old=json.loads(Path('docs/nba_v2_opening_player_firstseen.json').read_text())
+          seen,_=existing_games(Path('docs'),old)
+          rolling=glob.glob('docs/nba_rolling_predictions/*.json')
+          print("NBA_PROBE_FROZEN_GAMES",len(seen),"rolling_files",len(rolling),flush=True)
+          now=datetime.datetime.now(datetime.timezone.utc)
+          print("NBA_PROBE_NOW_UTC",now.isoformat(),flush=True)
+          PY
+      - name: Reproduce production ESPN forward fixture source (live)
+        env:
+          PYTHONPATH: .
+        run: |
+          python -u nba/nba_rolling_future_fixtures.py --days 4 --out "$RUNNER_TEMP/nba-live-future.json"
+          python - "$RUNNER_TEMP/nba-live-future.json" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          print("NBA_PROBE_FUTURE_SOURCE",d['source_captured_at_utc'],
+             "games",d['future_games'],
+             "tipoffs",[(g['game_id'],g['tipoff_utc']) for g in d['games'][:15]],
+             flush=True)
+          PY
+      - name: Reproduce full deployed NBA V2 pretip model with all prior ESPN data (live)
+        env:
+          PYTHONPATH: .
+        run: |
+          python -u nba/nba_v2_rolling_predictions.py \
+            --fixture "$RUNNER_TEMP/nba-live-future.json" \
+            --opening docs/nba_v2_opening_player_firstseen.json \
+            --archive-root docs \
+            --cache "$RUNNER_TEMP/nba-live-prior-cache" \
+            --out "$RUNNER_TEMP/nba-probe-originals.json"
+          python - "$RUNNER_TEMP/nba-probe-originals.json" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          print("NBA_PROBE_PIPELINE_STATUS",d['status'],
+             "new_original_games",d['games_forecast'],
+             "new_stat_predictions",d['number_of_player_stat_predictions'],
+             "skips",d.get('skipped_original_or_late',[])[:10],flush=True)
+          PY
+      - name: Retain verifiable diagnostic source and candidate (not posted as past pretip original)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nba-live-forecast-pipeline-probe-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/nba-live-future.json
+            ${{ runner.temp }}/nba-probe-originals.json
+          if-no-files-found: warn
+          retention-days: 14
