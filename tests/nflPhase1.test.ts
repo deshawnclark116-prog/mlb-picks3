@@ -8,6 +8,17 @@ import { execFileSync } from 'node:child_process';
 import { parsePhase1, decodeRows, groupGames, deriveAlt65, PHASE1_URL } from '../src/nfl/phase1.ts';
 import { loadPhase1, verifyBatch, phase1Handler } from '../server/nflPhase1.ts';
 import { OutcomeCard } from '../src/components/NflTodayScreen.tsx';
+// GitHub's PR checkout can be shallow and omit origin/main entirely.
+// Fetch the actual base rather than deleting these source-integrity tests.
+function protectedBaseCommit():string {
+  try {
+    return execFileSync('git',['merge-base','HEAD','origin/main'],{encoding:'utf8'}).trim();
+  } catch {
+    execFileSync('git',['fetch','--no-tags','--deepen=50','origin','main:refs/remotes/origin/main'],
+      {encoding:'utf8'});
+    return execFileSync('git',['merge-base','HEAD','origin/main'],{encoding:'utf8'}).trim();
+  }
+}
 const original = JSON.parse(readFileSync(new URL('./fixtures/nfl-phase1-oct4.json', import.meta.url), 'utf8'));
 const records = JSON.parse(readFileSync(new URL('./fixtures/nfl-phase1-distributions.json', import.meta.url), 'utf8'));
 const now = Date.parse('2026-10-04T16:00:00Z');
@@ -98,7 +109,7 @@ test('upstream errors and mismatched distribution fail; no silent fallback',asyn
   assert.equal(code,502);assert.match(body.error,/unavailable or invalid/);assert.match(headers['Cache-Control'],/no-store/);
 });
 test('Shared sport-card redesign cannot change any source, player schemas or NFL projection contracts',()=>{
-  const base=execFileSync('git',['merge-base','HEAD','origin/main'],{encoding:'utf8'}).trim();
+  const base=protectedBaseCommit();
   const old=(p:string)=>execFileSync('git',['show',`${base}:${p}`],{encoding:'utf8'});
   for(const p of ['src/components/TodayScreen.tsx','src/types.ts','src/utils.ts','src/nfl/bettable.ts','src/nfl/phase1.ts','server/projectionFeeds.ts'])
     assert.equal(readFileSync(p,'utf8'),old(p));
@@ -190,7 +201,7 @@ test('system cards lead with target/likelihood; technical details start collapse
 });
 test('MODEL BOARD preserves 286 rows; decoding/calculation/transport/other sports remain byte-identical',()=>{
   const v=nyj();assert.equal(groupGames(v,'T90')[0].rows.length,286);const before=JSON.stringify(v);systemGames(v,'T90');executableGames(v,'T90');assert.equal(JSON.stringify(v),before);
-  const base=execFileSync('git',['merge-base','HEAD','origin/main'],{encoding:'utf8'}).trim();
+  const base=protectedBaseCommit();
   for(const file of ['src/nfl/phase1.ts','src/nfl/usePhase1.ts','server/nflPhase1.ts'])assert.equal(readFileSync(file,'utf8'),execFileSync('git',['show',`${base}:${file}`],{encoding:'utf8'}));
   // This integration deliberately changes the CFB/NHL app and adds an independent API route.
   // The NFL tab switch case remains EXACTLY the same as main.
@@ -295,7 +306,7 @@ test('unknown team branding uses a safe neutral fallback; all NFL teams have loc
 });
 test('poster creation leaves interactive SYSTEM behavior, 286 outcomes and protected files unchanged',()=>{
  const v=nyj(),before=JSON.stringify(v),top=picks(v);shareData(v);shareData(v,'bettable');assert.equal(JSON.stringify(v),before);assert.deepEqual(picks(v),top);assert.equal(v.rows.T90.length,286);
- const base=execFileSync('git',['merge-base','HEAD','origin/main'],{encoding:'utf8'}).trim();for(const file of ['src/nfl/bettable.ts','src/nfl/phase1.ts','src/nfl/usePhase1.ts','server/nflPhase1.ts'])assert.equal(readFileSync(file,'utf8'),execFileSync('git',['show',`${base}:${file}`],{encoding:'utf8'}));
+ const base=protectedBaseCommit();for(const file of ['src/nfl/bettable.ts','src/nfl/phase1.ts','src/nfl/usePhase1.ts','server/nflPhase1.ts'])assert.equal(readFileSync(file,'utf8'),execFileSync('git',['show',`${base}:${file}`],{encoding:'utf8'}));
 });
 test('native file sharing tests supported, unsupported, not-allowed and cancellation separately',async()=>{
  const blob=new Blob(['png'],{type:'image/png'}),name='test.png';let received:any;
