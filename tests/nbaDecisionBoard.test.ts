@@ -1,3 +1,4 @@
+import {readdirSync,readFileSync} from 'node:fs';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import opening from '../docs/nba_v2_opening_player_firstseen.json';
@@ -86,8 +87,20 @@ test('reject duplicate and post-tip original research; no made-up confidence',()
 
 test('live API loads saved opening AND rolling forecasts, ranks tonight instead of showing all stat rows',()=>{
  const day=readVerifiedNbaSystemBoard(new Date('2026-10-20T18:28:00Z'));
- assert.equal(day.original_game_count,28);
- assert.equal(day.original_player_stat_count,1832);
+ // Continuously append-only NBA forecasts cannot be checked against the
+ // old October 20 (28-game) constant. Independently count archived actual
+ // original game IDs in this exact reader window and the raw stat rows.
+ const asof=Date.parse('2026-10-20T18:28:00Z');
+ const archived=readdirSync('docs/nba_rolling_predictions')
+   .filter(n=>/^20\d\d-\d\d-\d\dT\d{6}Z\.json$/.test(n))
+   .flatMap(n=>(JSON.parse(readFileSync(path.join('docs/nba_rolling_predictions',n),'utf8'))
+     as {forecasts:Array<{game_id:string;tipoff_utc:string;player_predictions_count:number}>}).forecasts)
+   .filter(g=>Date.parse(g.tipoff_utc)>=asof-3*86400000&&
+              Date.parse(g.tipoff_utc)<=asof+8*86400000);
+ assert.equal(day.original_game_count,opening.forecasts.length+archived.length);
+ assert.equal(day.original_player_stat_count,
+   opening.number_of_player_stat_predictions+
+   archived.reduce((sum,g)=>sum+g.player_predictions_count,0));
  assert(day.games.some(g=>g.game_id===opening.forecasts[0].game_id));
  assert(day.games.some(g=>g.game_id===rolling.forecasts[0].game_id));
  assert(day.games.some(g=>g.picks.length));
