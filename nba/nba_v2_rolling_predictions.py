@@ -281,8 +281,22 @@ def forecast_roll(fixtures,opening,existing,rosters,receipts,
     }
 
 def collect(asof_day,cache_root:Path,per_team=HISTORY_GAMES_PER_TEAM,
-            ingest_fn=ingest,box_fn=load_games):
-    """Cache replay data: 2025 spring anchor and only 2026 days STRICTLY prior."""
+            ingest_fn=ingest,box_fn=load_games,*,asof_utc=None):
+    """Source completed games from strictly earlier ESPN EASTERN scoreboard dates.
+
+    A Friday 10:30 PM ET NBA game occurs SATURDAY in UTC. Its final boxscore
+    is legitimate on Saturday morning. Compare a real historical event's
+    completed status and start_utc against the actual forecast capture,
+    never reject completed previous-Eastern-day games based solely on UTC
+    calendar date.
+    """
+    if asof_utc is None:
+        raise ValueError("NBA_EXPLICIT_PREGAME_ASOF_TIMESTAMP_REQUIRED")
+    if asof_utc.tzinfo is None:
+        raise ValueError("NBA_PREGAME_ASOF_NAIVE")
+    asof_utc=asof_utc.astimezone(UTC)
+    if asof_utc.date()!=asof_day:
+        raise ValueError("NBA_PREGAME_ASOF_UTC_DAY_MISMATCH")
     spring,old_receipt=ingest_fn(PREVIOUS_HISTORY_START,PREVIOUS_HISTORY_END,
                                  cache_root/"prior_scoreboards")
     current=[];current_receipt={}
@@ -291,10 +305,12 @@ def collect(asof_day,cache_root:Path,per_team=HISTORY_GAMES_PER_TEAM,
         current,current_receipt=ingest_fn(SEASON_START,last,
                                           cache_root/"current_scoreboards")
     for r in current:
-        if dt.date.fromisoformat(r["day_utc"])>=asof_day:
-            raise ValueError("NBA_CURRENT_DAY_HISTORY_SOURCE_FORBIDDEN")
+        if not r.get("completed") or datetime_utc(r["start_utc"])>=asof_utc:
+            raise ValueError("NBA_NOT_FINAL_BEFORE_REAL_FORECAST_TIMESTAMP")
+        if datetime_utc(r["start_utc"]).date().isoformat()!=r["day_utc"]:
+            raise ValueError("NBA_HISTORICAL_UTC_GAME_DATE_IDENTITY_MISMATCH")
     selected,counts=select_recent_games(spring,current,
-                    dt.datetime.combine(asof_day,dt.time.min,tzinfo=UTC),per_team)
+                    asof_utc,per_team)
     boxes,missing=box_fn(selected,cache_root/"verified_boxes",workers=5)
     oldids={g["game_id"] for g in spring}
     before=[g for g in selected if g["game_id"] in oldids]
@@ -333,7 +349,8 @@ def main():
     # No expensive 30-roster and 200+ boxscore calls if no NEW future fixture.
     if upcoming:
         games,boxes,meta,failed=collect(before.date(),args.cache,
-                                       per_team=args.per_team_games)
+                                       per_team=args.per_team_games,
+                                       asof_utc=before)
         rosters,receipts=live_rosters()
         asof=dt.datetime.now(UTC)
         injuries=(json.loads(args.injury_snapshot.read_text())

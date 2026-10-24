@@ -176,4 +176,79 @@ class Rolling(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,"MULTIPLE_ORIGINAL"):
                 R.existing_games(Path(td),opening)
 
+
+    def test_live_oct24_previous_eastern_evening_final_is_valid_utc_same_day_history(self):
+        # Source Friday Oct23 Eastern 10:30 PM == Saturday Oct24 02:30 UTC.
+        # Exactly this false rejection blocked EVERY rolling NBA future
+        # prediction after Oct20. The independent game is completed before
+        # the forecast starts Saturday morning UTC.
+        previous,boxes=verified_history()
+        real_saturday=dt.datetime(2026,10,24,2,30,tzinfo=UTC)
+        finished={
+            "game_id":"401909849","start_utc":real_saturday.isoformat(),
+            "day_utc":"2026-10-24","completed":True,
+            "home_id":"1","away_id":"2"}
+        midnight_source=[finished]
+        boxes[finished["game_id"]]=[
+          {"event_id":finished["game_id"],"team_id":str(t),
+           "player_id":str(1000+t),"player":f"Real {t}",
+           "started":True,"minutes":32.0,"points":20,
+           "rebounds":7,"assists":4,"three_pointers_made":2}
+          for t in (1,2)]
+        captured=dt.datetime(2026,10,24,15,42,tzinfo=UTC)
+        def ingest_dates(first,last,cache):
+            return ((previous,{"source":"older 2025-26 finals"})
+                if first==R.PREVIOUS_HISTORY_START else
+                (midnight_source,{"source":"Friday Eastern game finals"}))
+        def boxes_for(games,cache,workers=5):
+            return {g["game_id"]:boxes[g["game_id"]] for g in games},{}
+        with tempfile.TemporaryDirectory() as tmp:
+            selected,played,meta,missing=R.collect(
+                captured.date(),Path(tmp),ingest_fn=ingest_dates,
+                box_fn=boxes_for,asof_utc=captured)
+        self.assertIn(finished["game_id"],{g["game_id"] for g in selected})
+        self.assertIn(finished["game_id"],played)
+        self.assertEqual(meta["current_boxes_requested"],1)
+        self.assertEqual(meta["current_boxes_verified"],1)
+
+    def test_live_model_never_ingests_game_that_started_after_original_capture(self):
+        previous,boxes=verified_history()
+        captured=dt.datetime(2026,10,24,15,42,tzinfo=UTC)
+        future={
+            "game_id":"401909999",
+            "start_utc":(captured+dt.timedelta(minutes=5)).isoformat(),
+            "day_utc":"2026-10-24","completed":True,
+            "home_id":"1","away_id":"2"}
+        def ingest_dates(first,last,cache):
+            return ((previous,{})
+                    if first==R.PREVIOUS_HISTORY_START else ([future],{}))
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaisesRegex(
+                    ValueError,"NBA_NOT_FINAL_BEFORE_REAL_FORECAST_TIMESTAMP"):
+                R.collect(captured.date(),Path(tmp),
+                          ingest_fn=ingest_dates,
+                          box_fn=lambda *a,**kw:({},{}),
+                          asof_utc=captured)
+
+    def test_live_model_rejects_current_utc_date_nonfinal_from_previous_espn_day(self):
+        previous,boxes=verified_history()
+        captured=dt.datetime(2026,10,24,15,42,tzinfo=UTC)
+        incomplete={
+            "game_id":"401909849",
+            "start_utc":"2026-10-24T02:30:00+00:00",
+            "day_utc":"2026-10-24","completed":False,
+            "home_id":"1","away_id":"2"}
+        def ingest_dates(first,last,cache):
+            return ((previous,{})
+                    if first==R.PREVIOUS_HISTORY_START else ([incomplete],{}))
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaisesRegex(ValueError,"NBA_NOT_FINAL_BEFORE"):
+                R.collect(captured.date(),Path(tmp),ingest_fn=ingest_dates,
+                          box_fn=lambda *a,**kw:({},{}),asof_utc=captured)
+
+    def test_live_model_requires_explicit_pregame_capture_not_utc_midnight(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaisesRegex(ValueError,"NBA_EXPLICIT_PREGAME_ASOF"):
+                R.collect(dt.date(2026,10,24),Path(tmp))
+
 if __name__=="__main__":unittest.main()
