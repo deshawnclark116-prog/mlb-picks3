@@ -3,6 +3,8 @@ on:
   pull_request:
     paths:
       - nba/nba_v2_rolling_predictions.py
+      - nba/nba_daily_prediction_coverage.py
+      - tests/test_nba_daily_prediction_coverage.py
       - nba/nba_live_injury_source.py
       - tests/test_nba_live_injury_source.py
       - tests/test_nba_v2_rolling_predictions.py
@@ -11,6 +13,8 @@ on:
     branches: [main]
     paths:
       - nba/nba_v2_rolling_predictions.py
+      - nba/nba_daily_prediction_coverage.py
+      - tests/test_nba_daily_prediction_coverage.py
       - nba/nba_live_injury_source.py
       - tests/test_nba_live_injury_source.py
       - tests/test_nba_v2_rolling_predictions.py
@@ -34,8 +38,8 @@ jobs:
         with:
           python-version: "3.12"
       - run: |
-          PYTHONPATH=. python -m unittest -v tests.test_nba_v2_rolling_predictions tests.test_nba_live_injury_source tests.test_nba_v2_firstseen_player_opening tests.test_nba_v2_rotation
-          python -m py_compile nba/nba_v2_rolling_predictions.py nba/nba_live_injury_source.py
+          PYTHONPATH=. python -m unittest -v tests.test_nba_v2_rolling_predictions tests.test_nba_daily_prediction_coverage tests.test_nba_live_injury_source tests.test_nba_v2_firstseen_player_opening tests.test_nba_v2_rotation
+          python -m py_compile nba/nba_v2_rolling_predictions.py nba/nba_daily_prediction_coverage.py nba/nba_live_injury_source.py
           git diff --check
   archive:
     needs: regression
@@ -105,6 +109,16 @@ jobs:
           print('NBA_V2_FORWARDED_FROZEN',d['games_forecast'],
                 d['number_of_player_stat_predictions'],flush=True)
           PY
+      - name: Prove today's game-by-game forward forecasts exist, independently of yesterday's grades
+        run: |
+          set -euo pipefail
+          if ! test -s "$RUNNER_TEMP/nba-new-firstseen.json"; then exit 0; fi
+          PYTHONPATH=. python -u nba/nba_daily_prediction_coverage.py \
+            --fixture "$RUNNER_TEMP/nba-forward-schedule.json" \
+            --candidate "$RUNNER_TEMP/nba-new-firstseen.json" \
+            --opening docs/nba_v2_opening_player_firstseen.json \
+            --archive-root docs \
+            --out "$RUNNER_TEMP/nba-daily-coverage.json"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -112,6 +126,7 @@ jobs:
           path: |
             ${{ runner.temp }}/nba-forward-schedule.json
             ${{ runner.temp }}/nba-new-firstseen.json
+            ${{ runner.temp }}/nba-daily-coverage.json
             ${{ runner.temp }}/nba-es-pregame-injury-context.json
           if-no-files-found: warn
           retention-days: 90
@@ -126,8 +141,7 @@ jobs:
           PY
           )"
           if test "$N" -eq 0; then
-            echo "NBA_ALREADY_HAS_FIRSTSEEN_ALL_SCHEDULED_GAMES"
-            exit 0
+            echo "NBA_ALREADY_HAS_FIRSTSEEN_ALL_SCHEDULED_GAMES; updating audit heartbeat"
           fi
           FILE="docs/nba_rolling_predictions/$(date -u +%Y-%m-%dT%H%M%SZ).json"
           git config user.name "nba-v2-firstseen[bot]"
@@ -146,14 +160,22 @@ jobs:
           if overlap:
               raise SystemExit('NBA_CONCURRENT_ORIGINAL_FORECAST_COLLISION '+str(sorted(overlap)))
           PY
-            if test -e "$FILE"; then
-              echo "NBA_IMMUTABLE_FILE_ALREADY_EXISTS"
-              exit 1
+            cp "$RUNNER_TEMP/nba-daily-coverage.json" docs/nba_daily_prediction_health.json
+            git add docs/nba_daily_prediction_health.json
+            if test "$N" -gt 0; then
+              if test -e "$FILE"; then
+                echo "NBA_IMMUTABLE_FILE_ALREADY_EXISTS"
+                exit 1
+              fi
+              mkdir -p docs/nba_rolling_predictions
+              cp "$CANDIDATE" "$FILE"
+              git add "$FILE"
             fi
-            mkdir -p docs/nba_rolling_predictions
-            cp "$CANDIDATE" "$FILE"
-            git add "$FILE"
-            git commit -m "Freeze original NBA V2 player projections for $N new games"
+            if git diff --cached --quiet; then
+              echo "NBA_NO_NEW_GAME_OR_HEARTBEAT_CHANGES"
+              exit 0
+            fi
+            git commit -m "Audit NBA daily original source coverage; freeze $N previously unforecast games"
             if git push origin HEAD:main; then
               echo "NBA_GENUINE_NEW_GAMES_FROZEN $FILE"
               exit 0
