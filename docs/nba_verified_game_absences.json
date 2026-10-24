@@ -1,0 +1,19 @@
+{
+  "schema": "NBA_GAME_SPECIFIC_VERIFIED_ABSENCE_EXCEPTION_V1",
+  "description": "Time-limited, independently sourced absence exceptions for breaking changes after original forecasts. Read only by current decision board; never edits saved pregame predictions. Live injury feed is separately required.",
+  "entries": [
+    {
+      "game_id": "401909858",
+      "team_id": "6",
+      "player_id": "5041939",
+      "player": "Cooper Flagg",
+      "status": "OUT",
+      "reason": "Mild left shoulder sprain; Mavericks confirmed OUT against Spurs on October 24",
+      "event_day_et": "2026-10-24",
+      "source_url": "https://www.fox4news.com/sports/flagg-miss-mavericks-home-opener-shoulder-injury",
+      "source_published_at_utc": "2026-10-24T18:38:00Z",
+      "valid_until_utc": "2026-10-25T06:00:00Z",
+      "not_applicable_to_future_games": true
+    }
+  ]
+}
