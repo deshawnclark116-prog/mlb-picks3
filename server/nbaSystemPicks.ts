@@ -7,6 +7,7 @@ import type {Request,Response} from 'express';
 import {readFileSync,readdirSync,existsSync} from 'node:fs';
 import path from 'node:path';
 import originalOpening from '../docs/nba_v2_opening_player_firstseen.json';
+import certifiedAbsences from '../docs/nba_verified_game_absences.json';
 import {parseNbaPlayerResearch} from '../src/nba/playerResearch.ts';
 import {combineRollingNbaOriginals} from '../src/nba/rollingResearch.ts';
 import {buildNbaSystemBoard,type InputGame,type InputPlayer} from '../src/nba/decisionBoard.ts';
@@ -47,11 +48,19 @@ export function readVerifiedNbaSystemBoard(current=now(),
   // are not hidden by an unavailable player ranking above them.
   const adjusted=source.map(g=>({...g,players:g.players.map(p=>{
     const live=injuryById?.get(p.team_id+'|'+p.player_id);
-    const blocked=live!=null&&
-      !['AVAILABLE','PROBABLE'].includes(live);
+    // Breaking team-confirmed injury changes are independently recorded with
+    // exact ESPN game, team and athlete IDs. They supersede slower ESPN
+    // league injury propagation but NEVER apply beyond this event/expiry.
+    const explicit=certifiedAbsences.entries.find(x=>
+      x.game_id===g.game_id&&x.team_id===p.team_id&&
+      x.player_id===p.player_id&&x.status==='OUT'&&
+      Date.parse(x.source_published_at_utc)<=current.getTime()&&
+      current.getTime()<Date.parse(x.valid_until_utc));
+    const blocked=!!explicit||(live!=null&&
+      !['AVAILABLE','PROBABLE'].includes(live));
     if(blocked)freshlyBlockedCount++;
     return {...p,
-      espn_source_reported_injury_status:blocked?live:
+      espn_source_reported_injury_status:explicit?'OUT':blocked?live:
         // Preserve older reported OUT/DOUBTFUL risk if the latest ESPN feed
         // simply stopped listing the player; absent != proven healthy.
         p.espn_source_reported_injury_status
