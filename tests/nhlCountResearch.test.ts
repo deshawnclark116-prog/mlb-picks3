@@ -124,8 +124,14 @@ test('conflicting identity in frozen game can never manufacture a blended matchu
  assert.throws(()=>addTrueNhlShotCounts([],d),/NHL_SOURCE_GAME_ID_TEAM_OR_KICKOFF_CONFLICT/);
 });
 
-test('server read-only research endpoint uses source frozen snapshot and no market fallback',async()=>{
- const data=src();
+test('NHL live shots get small source-exact daily distribution FIRST, no 14MB slow read when available',async()=>{
+ const data={...src(),
+  daily_partition_schema:'NHL_V2_ORIGINAL_SHOT_COUNT_DAILY_PARTITION_V1',
+  daily_partition_game_date:'2026-10-18',
+  dates:['2026-10-18'],
+  all_rows_exactly_preserved_from_original:true,
+  no_new_model_scoring_or_probability_calibration:true,
+  full_source_total_valid_forecasts:14506};
  const requests:string[]=[];
  const fetcher=async (u:string,opts:any)=>{
    requests.push(u);
@@ -135,7 +141,28 @@ test('server read-only research endpoint uses source frozen snapshot and no mark
  const out=await loadNhlCountResearch('2026-10-18',fetcher as any,42);
  assert.equal(out.projected_count,1);
  assert.equal(requests.length,1);
- assert.match(requests[0],/mlb-picks2\/main\/docs\/nhl_v2_shadow.json/);
+ assert.match(requests[0],/mlb-picks2\/main\/docs\/nhl_sog_daily\/2026-10-18.json/);
+});
+test('new NHL game-day daily source absent gives original 14MB archive fallback; corrupt daily source MUST fail closed',async()=>{
+ const requests:string[]=[];
+ const fetcher=async (u:string)=>{
+   requests.push(u);
+   if(u.includes('/nhl_sog_daily/'))return new Response('missing',{status:404});
+   return Response.json(src());
+ };
+ const out=await loadNhlCountResearch('2026-10-18',fetcher as any,84);
+ assert.equal(out.projected_count,1);
+ assert.equal(requests.length,2);
+ assert.match(requests[0],/nhl_sog_daily/);
+ assert.match(requests[1],/nhl_v2_shadow.json/);
+ const invalid=async()=>Response.json(src());
+ await assert.rejects(
+  loadNhlCountResearch('2026-10-18',invalid as any,87),/NHL_DAILY_SOG_SOURCE_PROVENANCE_INVALID/
+ );
+ const down=async()=>new Response('server broken',{status:503});
+ await assert.rejects(
+  loadNhlCountResearch('2026-10-18',down as any,90),/NHL_DAILY_SOG_SOURCE_UNAVAILABLE_HTTP_503/
+ );
 });
 
 test('NHL current shot projections are independent of missing or stale points feed date in ET',()=>{
