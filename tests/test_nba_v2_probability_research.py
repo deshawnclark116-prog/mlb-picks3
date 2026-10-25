@@ -72,7 +72,7 @@ class Prob(unittest.TestCase):
         duplicate=copy.deepcopy(data[0])
         # Authentic source parser works on ESPN games; the fitted probability
         # API rejects inconsistent target/missing market and bad P(play).
-        next(r for r in data if r['game_day']>=P.VALIDATION_FROM)['played']=False
+        next(r for r in data if r['game_day']>=P.VALIDATION_FROM and r['played'])['played']=False
         with self.assertRaisesRegex(ValueError,'CONTRADICTION'):
             P.fit_and_audit(data)
         with self.assertRaisesRegex(ValueError,'INVALID'):
