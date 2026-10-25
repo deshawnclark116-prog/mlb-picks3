@@ -9,6 +9,9 @@ export interface NhlSogCount {
  game_date:string;scheduled_start:string;
  mean:number;median:number;sd:number;p10:number;p90:number;
  forecast_horizon:string;source_generated_at:string;source_cutoff_at:string;
+ model_probability_milestones_research_only?:Record<'1'|'2'|'3'|'4'|'5',number>;
+ model_probability_forward_calibrated?:false;
+ probability_not_an_official_bet?:true;
  research_only:true;not_an_official_betting_prediction:true;
 }
 export interface NhlSogResearch {
@@ -17,6 +20,21 @@ export interface NhlSogResearch {
  projected_count:number;projections:NhlSogCount[];
 }
 export const NHL_COUNT_SCHEMA='NHL_APP_VERIFIED_SOG_COUNT_RESEARCH_V1';
+/** Original NHL V2 survival CDF, not a sportsbook or validated odds quote. */
+export function selectNhlShotMilestoneResearch(p:NhlSogCount){
+ const probabilities=p.model_probability_milestones_research_only;
+ if(!probabilities||p.model_probability_forward_calibrated!==false||
+    p.probability_not_an_official_bet!==true)return null;
+ const values=[1,2,3,4,5].map(k=>probabilities[String(k) as '1'|'2'|'3'|'4'|'5']);
+ if(values.some((v,i)=>typeof v!=='number'||!Number.isFinite(v)||
+      v<0||v>1||(i>0&&v>values[i-1]+.002)))
+    throw Error('NHL_SHOT_MILESTONE_CDF_FAILED_SURVIVAL_INVARIANT');
+ const chosen=([2,3,4,5] as const).filter(k=>
+   probabilities[String(k) as '2'|'3'|'4'|'5']>=.65).at(-1);
+ return chosen?{milestone:chosen,
+   model_probability:probabilities[String(chosen) as '2'|'3'|'4'|'5']}:null;
+}
+
 /** A stale/missing POINTS-classifier day must not suppress real shot-count
  * research on the current NHL date. Use Eastern game dates, never UTC date.
  * An explicitly future classifier slate still selects its own future date.
@@ -79,15 +97,18 @@ export function addTrueNhlShotCounts(games:UnifiedGame[],source:NhlSogResearch|n
    if(seen.has(id))throw Error('DUPLICATE_INDEPENDENT_NHL_COUNT');
    seen.add(id);
    named.push(p);
+   const modelMilestone=selectNhlShotMilestoneResearch(p);
    list.push({
       id:'NHL-V2-SOG-'+id,
       player:p.player,team:p.team,market:'shots_on_goal',
-      target:'NO VERIFIED SPORTSBOOK SHOT LINE',
-      modelProbability:null,
+      target:modelMilestone?
+       'MODEL EVENT '+modelMilestone.milestone+'+ SHOTS · UNVALIDATED RESEARCH':
+       'NO VERIFIED SPORTSBOOK SHOT LINE',
+      modelProbability:modelMilestone?.model_probability??null,
       prediction:p.mean,predictionKind:'mean',unit:'shots',
-      source:'Frozen original NHL V2 SOG count research · '+p.forecast_horizon,
+      source:'Locked NHL V2 SOG count distribution · '+p.forecast_horizon,
       detail:'Numerical median '+p.median+' shots · P10–P90 '+p.p10+'–'+p.p90+
-       '. Player dressed/ice-time role not independently verified. Research only.'
+       '. Model P(shots milestone), if displayed, is raw CDF research, NOT prospectively calibrated, certified active, a bookmaker line, or an official betting pick.'
    });
  }
  // Frozen shot-count forecasts are a valid independent research feed:

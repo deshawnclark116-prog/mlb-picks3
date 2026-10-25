@@ -339,7 +339,7 @@ export default function NhlTodayScreen({
           <div id="nhl-games-list" className="space-y-4">
             {error&&<p role="status" className="mb-2 text-[11px] text-amber-300">Points classifier unavailable; independent V2 shot-count projections remain visible.</p>}
             {numericSogError&&<p role="status" className="mb-2 text-[11px] text-amber-300">Independent NHL shot-count research unavailable. Point-target chances remain separate; no numerical substitute was invented.</p>}
-          {numericSog&&numericSog.projected_count>0&&<p role="status" className="mb-2 text-[11px] text-gray-400">Frozen V2 numerical shot forecasts for this date: {numericSog.projected_count}. Research only; game-day participation and sportsbook lines not verified. Points targets remain binary event probabilities.</p>}
+          {numericSog&&numericSog.projected_count>0&&<p role="status" className="mb-2 text-[11px] text-gray-400">Frozen V2 numerical shot forecasts for this date: {numericSog.projected_count}. Shot milestone probabilities come directly from the locked count distribution—NOT from a sportsbook—and remain UNCALIBRATED research until genuinely frozen pregame probability outcomes pass forward validation. Game-day participation not certified. Points targets remain binary event probabilities.</p>}
           <UnifiedSportGameCards sport="NHL" prefix="nhl-game-card-" games={unifiedGames}/>
           </div>
         )}

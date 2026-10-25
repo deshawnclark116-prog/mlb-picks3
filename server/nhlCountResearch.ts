@@ -57,6 +57,16 @@ export function reduceFrozenNhlShots(raw:unknown,gameDate:string){
        scheduled_start:r[f.scheduled_start],
        mean:r[f.mean],median:r[f.median],
        sd:r[f.sd],p10:r[f.p10],p90:r[f.p90],
+       // Existing locked NHL V2 count CDF survives independently of the
+       // fixed 2.5-shot classifier and does NOT use bookmaker odds.
+       // These numbers were NOT historically published as true pregame
+       // probabilities; hence NO forward calibration or betting promotion.
+       model_probability_milestones_research_only:{
+         '1':r[f.p_ge1],'2':r[f.p_ge2],'3':r[f.p_ge3],
+         '4':r[f.p_ge4],'5':r[f.p_ge5],
+       },
+       model_probability_forward_calibrated:false,
+       probability_not_an_official_bet:true,
        forecast_horizon:h,source_generated_at:r[f.generated_at],
        source_cutoff_at:r[f.cutoff_at],
        original_model_source:'FROZEN_NHL_V2_SOG_COUNT',
@@ -73,10 +83,13 @@ export function reduceFrozenNhlShots(raw:unknown,gameDate:string){
    source_has_original_hash_chain:true,not_an_official_betting_board:true,
    count_model_market:'shots_on_goal_NOT_points',
    inherited_points_probabilities:0,
+   probability_method:'ORIGINAL_LOCKED_NHL_V2_SOG_SURVIVAL_RESEARCH',
+   forward_game_day_probability_calibration_verified:false,
+   probability_source_is_not_sportsbook:true,
    projected_count:projections.length,
    projections:projections.slice(0,500),
    truncated:projections.length>500,
-   message:projections.length?'Frozen V2 shot-count mean/median, NOT a point classifier or verified sportsbook pick':
+   message:projections.length?'Locked V2 shot-count mean/median and original count-CDF milestone probabilities. Probabilities are research only, NOT prospectively calibrated, NOT a point classifier, NOT book odds or verified wagers':
        'No genuinely source-verified frozen NHL shot-count forecasts found for this game date. No fake numeric substitute.'
  };
 }
