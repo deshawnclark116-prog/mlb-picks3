@@ -11,7 +11,7 @@ def samples():
         for day in range(dates):
             when=('2025-12-'+f'{day+1:02d}') if period=='validation' else \
                  ('2026-01-'+f'{day+10:02d}' if day<22 else '2026-02-01')
-            for player in range(23):
+            for player in range(32):
                 on=(player+day)%7!=0
                 mean=17.0+player*.9
                 v=mean+((player*7+day*11)%13-6)*1.2
@@ -30,7 +30,7 @@ def samples():
 class Prob(unittest.TestCase):
     def test_empirical_distribution_probability_monotone_and_nonparticipation(self):
         r=samples();f=P.fit(r)
-        self.assertEqual(f['training_n_preselected_players'],31*23)
+        self.assertEqual(f['training_n_preselected_players'],24*32)
         self.assertEqual(f['source_cutoff_last_day'],'2026-01-09')
         p20=P.hit_probability(f,'points',27,.85,20)
         p25=P.hit_probability(f,'points',27,.85,25)
