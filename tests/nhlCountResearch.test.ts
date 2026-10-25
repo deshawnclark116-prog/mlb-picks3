@@ -194,7 +194,7 @@ test('NHL numeric shot card selects genuine most-recent T30 checkpoint over olde
  for(const [k,v] of [['mean',4.15],['median',4],['p10',2],['p25',3],['p75',5],['p90',7],
                       ['generated_at','2026-10-18T21:10:00Z'],['cutoff_at','2026-10-18T21:30:00Z']] as [string,number|string][])
     newer[cols.indexOf(k)]=v;
- archive.horizons=['T24H','T30'];archive.forecasts.T30=[newer];
+ archive.horizons=['T24H','T30'];(archive.forecasts as Record<string,typeof newer[]>).T30=[newer];
  archive.total_valid_forecasts=2;
  const latest=reduceFrozenNhlShots(archive,'2026-10-18');
  assert.equal(latest.projections[0].mean,4.15);
