@@ -5,7 +5,7 @@ import opening from '../docs/nba_v2_opening_player_firstseen.json';
 import rolling from '../docs/nba_rolling_predictions/2026-10-20T173448Z.json';
 import {buildNbaSystemBoard,targetFor,forecastEligible,
         type InputGame} from '../src/nba/decisionBoard.ts';
-import {readVerifiedNbaSystemBoard,nbaSystemPicksHandler} from '../server/nbaSystemPicks.ts';
+import {readVerifiedNbaSystemBoard,nbaSystemPicksHandler,loadNbaHistoricalProbabilityEvidence} from '../server/nbaSystemPicks.ts';
 
 const data=():InputGame[]=>[
  ...opening.forecasts.map(g=>({...g,source:'FROZEN_OPENING_V2' as const,
@@ -127,4 +127,43 @@ test('live API loads saved opening AND rolling forecasts, ranks tonight instead 
  await nbaSystemPicksHandler(fetcher,()=>new Date('2026-10-20T18:28:00Z'))({} as any,res);
  assert.equal(result.schema,'NBA_V2_SAVED_PREGAME_SYSTEM_TARGET_BOARD_V1');
  assert.equal(result.official_bets,0);
+});
+
+test('October 25 NBA qualification funnel explains seven games, 123 forecasts, and one genuine qualified selection without sportsbooks',()=>{
+ const doc=JSON.parse(readFileSync('docs/nba_rolling_predictions/2026-10-24T231511Z.json','utf8')) as
+   {generated_at_utc:string;forecasts:InputGame[]};
+ const probs=loadNbaHistoricalProbabilityEvidence();
+ assert(probs?.some_historical_market_passed);
+ const today=doc.forecasts.filter(g=>
+   new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',
+      year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(g.tipoff_utc))==='2026-10-25'
+ ).map(g=>({...g,source:'ROLLING_ORIGINAL_V2' as const,
+   original_at_utc:doc.generated_at_utc}));
+ const board=buildNbaSystemBoard(today,probs);
+ assert.equal(board.games.length,7);
+ assert.equal(board.evaluated_player_count,123);
+ assert.equal(board.eligible_player_count,25);
+ assert.equal(board.displayed_system_picks,1);
+ assert.equal(board.games_with_picks,1);
+ for(const g of board.games){
+   const x=g.qualification_audit;
+   assert.equal(x.total_player_forecasts,g.qualification_audit.total_player_forecasts);
+   assert.equal(x.total_player_forecasts,
+      x.blocked_by_recorded_injury+x.below_historical_play_threshold+
+      x.outside_required_minutes+x.eligible_but_no_qualified_probability+
+      x.qualified_system_picks);
+   assert.equal(x.eligible_role_and_availability,
+      x.eligible_but_no_qualified_probability+x.qualified_system_picks);
+   assert.equal(x.qualified_system_picks,g.picks.length);
+   if(x.largest_below_gate_probability){
+     assert(x.largest_below_gate_probability.probability<.65);
+     assert(x.largest_below_gate_probability.probability>=0);
+   }
+ }
+ const maxey=board.games.flatMap(g=>g.picks).find(p=>p.player==='Tyrese Maxey');
+ assert(maxey);
+ assert.equal(maxey.market,'points');
+ assert.equal(maxey.model_milestone,15);
+ assert(maxey.model_hit_probability!=null&&maxey.model_hit_probability>.77);
+ assert.equal(board.official_bets,0);
 });
