@@ -96,8 +96,8 @@ export default function NbaSystemPicksPanel({mode,search}:{
    <div className="rounded-xl border border-[#00FF41]/30 bg-[#0e2115] p-3">
      <h2 className="text-sm font-black text-[#00FF41]">NBA SYSTEM PICKS</h2>
      <p className="mt-1 text-xs text-gray-300">
-       Model-selected PTS, REB, AST and 3PM targets. Maximum two per matchup,
-       one per player. Not all player projections.</p>
+       All qualifying model-selected PTS, REB, AST and 3PM targets,
+       one strongest qualified market per player. No fixed two-per-game limit.</p>
      <p className="mt-2 text-[11px] text-amber-200">
        Unpriced model targets · Injury status checked on the serving request (refreshes every 2 minutes). Not an official active list or verified sportsbook bet.</p>
    </div>
@@ -152,6 +152,10 @@ export default function NbaSystemPicksPanel({mode,search}:{
            <h3 className="text-sm font-bold">{g.away} at {g.home}</h3>
            <p className="mt-1 text-[11px] text-gray-400">
              {whenET(g.tipoff_utc)} · {g.picks.length} selected model targets</p>
+           <p className="mt-1 text-[10px] text-gray-400">
+             Original forecast saved {whenET(g.original_at_utc)} ·
+             {' '}Each future game is an independent prediction, not an automatically refreshed live line
+           </p>
            <p className="mt-2 text-xs text-gray-200">
              TOP: {g.picks[0].player} · {g.picks[0].model_target}
              {' · '}Projected {fmt(g.picks[0].predicted_stat)} {UNIT[g.picks[0].market]}
