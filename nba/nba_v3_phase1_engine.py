@@ -167,7 +167,19 @@ def simulate_matchup(game_id,teams,*,asof_utc,tipoff_utc,
     # Common environment: one game pace draw, shared by teammates and
     # opponents. Data-based pace multiplier only when prior possessions are
     # independently available, never synthesized from boxscore points.
-    environment=np.clip(rng.lognormal(-.5*.07**2,.07,draws),.78,1.25)
+    pace_factor=1.
+    if pace_context:
+        if set(pace_context)!=set(teams):
+            raise ValueError("NBA_V3_MISSING_OPPONENT_PACE_IDENTITY")
+        evidence=list(pace_context.values())
+        if all(x.get("prior_games",0)>=6 and
+               85.<=x.get("prior_possessions_mean",0)<=125. for x in evidence):
+            pace_factor=_clip(sum(x["prior_possessions_mean"] for x in evidence)/200.,.84,1.17)
+        else:
+            # Unverified possession estimates never silently adjust volumes.
+            pace_factor=1.
+    environment=np.clip(
+        rng.lognormal(-.5*.07**2,.07,draws)*pace_factor,.70,1.42)
     for team_id,members in sorted(teams.items()):
         if not members:continue
         expected=np.asarray([m["minutes_if_playing"] for m in members])
@@ -274,5 +286,8 @@ def simulate_matchup(game_id,teams,*,asof_utc,tipoff_utc,
         "rows":outputs,"rows_count":len(outputs),
         "outcome_probability_source":"MONTE_CARLO_FROM_PAST_REAL_ROLES_AND_OPPORTUNITIES",
         "sportsbook_line_used":False,"no_game_day_starter_certification":True,
+        "historical_verified_pace_multiplier":round(pace_factor,5),
+        "opportunity_data_includes_real_boxscore_shot_attempts":any(
+          m.get("shot_profile") is not None for pool in teams.values() for m in pool),
         "official_bets":0,"historically_calibrated_for_current_season":False,
         "research_only":True}
