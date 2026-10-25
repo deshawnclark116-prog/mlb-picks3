@@ -88,9 +88,41 @@ def parse_final_boxscore(payload,event_id,expected_team_ids):
                for k,label in STAT_NAMES.items()}
             if v["points"] < 3*v["three_pointers_made"]:
                 raise ValueError("3-pointers exceed recorded scoring")
+            # Optional genuine shot-attempt and possession components.
+            # Absent ESPN labels MUST stay absent, not be silently fabricated.
+            # Existing V1/V2 five-core-stat contracts are unchanged.
+            extra={}
+            for label,fields in (
+                ("FG",("field_goals_made","field_goal_attempts")),
+                ("3PT",("three_pointers_made","three_point_attempts")),
+                ("FT",("free_throws_made","free_throw_attempts")),
+            ):
+                raw=stat.get(label)
+                if raw is None or "-" not in str(raw):continue
+                made,attempted=str(raw).split("-",1)
+                made,attempted=number(made),number(attempted)
+                if made>attempted:raise ValueError("NBA_BAD_SOURCE_SHOT_ATTEMPTS")
+                if fields[0]=="three_pointers_made":
+                    if made!=v["three_pointers_made"]:
+                        raise ValueError("NBA_CONTRADICTORY_THREE_MADE_SOURCE")
+                    extra[fields[1]]=attempted
+                else:
+                    extra[fields[0]]=made
+                    extra[fields[1]]=attempted
+            for label,output in (
+                ("OREB","offensive_rebounds"),
+                ("TO","turnovers"),
+            ):
+                if label in stat:extra[output]=number(stat[label])
+            if (extra.get("field_goal_attempts",0)<extra.get("field_goals_made",0) or
+                extra.get("three_point_attempts",0)<v["three_pointers_made"] or
+                "field_goal_attempts" in extra and
+                "three_point_attempts" in extra and
+                extra["field_goal_attempts"]<extra["three_point_attempts"]):
+                raise ValueError("NBA_INVALID_FGA_OR_3PA_SOURCE")
             out.append({"event_id":str(event_id),"team_id":team,"player_id":player_id,
                 "player":full_name,"minutes":minutes,"started":row.get("starter") is True,
-                **v})
+                **v,**extra})
     if teams!=set(map(str,expected_team_ids)):
         raise ValueError("box score participants not scoreboard game teams")
     if len(out)<10:raise ValueError("insufficient NBA completed box score participants")
