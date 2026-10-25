@@ -131,6 +131,7 @@ def grade(games,boxes,originals,v2_probability_doc,now=None):
     now=now or dt.datetime.now(UTC)
     result=[];pge=collections.defaultdict(list);v2event=collections.defaultdict(list)
     mae=collections.defaultdict(list);minutes=collections.defaultdict(list)
+    joint_brier=collections.defaultdict(list)
     verified_games=set()
     for gid,g in sorted(games.items()):
         players={}
@@ -175,7 +176,9 @@ def grade(games,boxes,originals,v2_probability_doc,now=None):
                                     v2mean,v2play,threshold)
                 if final:
                     pge[market].append((p_v3,outcome))
-                    if p_v2 is not None:v2event[market].append((p_v2,outcome))
+                    if p_v2 is not None:
+                        v2event[market].append((p_v2,outcome))
+                        joint_brier[market].append((p_v3,p_v2,outcome))
                 result.append({
                     "game_id":gid,"team_id":team,"player_id":pid,
                     "market":market,"threshold":threshold,
@@ -190,7 +193,11 @@ def grade(games,boxes,originals,v2_probability_doc,now=None):
         m=mae[market];paired=[x for x in m if x[2] is not None]
         mm=minutes[market] if market=="points" else []
         d=_summary(pge[market]);baseline=_summary(v2event[market])
-        pairs=[x for x in pge[market] if x]
+        comparable=joint_brier[market]
+        matched_v3_brier=(sum((x[0]-x[2])**2 for x in comparable)/len(comparable)
+                          if comparable else None)
+        matched_v2_brier=(sum((x[1]-x[2])**2 for x in comparable)/len(comparable)
+                          if comparable else None)
         # Source-only calibration gate. We require enough games and a
         # genuine outperforming comparison, but NEVER automatically
         # promote the challenger based on a historical burned holdout.
@@ -199,8 +206,8 @@ def grade(games,boxes,originals,v2_probability_doc,now=None):
               d["high_n"]>=REQUIRE_HIGH_CONF_EVENTS and
               d["ece"] is not None and d["ece"]<=MAX_ECE and
               d["high_gap"] is not None and d["high_gap"]<=MAX_HIGH_CONF_GAP and
-              baseline["brier"] is not None and
-              d["brier"]<=baseline["brier"]-MIN_BRIER_GAIN and
+              matched_v2_brier is not None and
+              matched_v3_brier<=matched_v2_brier-MIN_BRIER_GAIN and
               len(paired)>=200 and
               sum(x[1] for x in paired)<=sum(x[2] for x in paired))
         metrics[market]={
@@ -213,6 +220,11 @@ def grade(games,boxes,originals,v2_probability_doc,now=None):
           "played_player_paired_mae_original_v2":
              round(sum(x[2] for x in paired)/len(paired),6) if paired else None,
           "paired_players":len(paired),
+          "same_exact_threshold_comparison_n":len(comparable),
+          "paired_milestone_brier_v3":round(matched_v3_brier,6)
+             if matched_v3_brier is not None else None,
+          "paired_milestone_brier_original_v2":round(matched_v2_brier,6)
+             if matched_v2_brier is not None else None,
           "minutes_mae_v3":round(sum(x[1] for x in mm)/len(mm),6)
              if mm else None,
           "minutes_mae_v2":round(sum(x[2] for x in mm if x[2] is not None)/
