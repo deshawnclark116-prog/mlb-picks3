@@ -47,9 +47,12 @@ test('Celtics-Pistons shows all qualified model selections, not two arbitrarily 
  const d=buildNbaSystemBoard(data());
  const game=d.games.find(g=>g.away==='Boston Celtics'&&g.home==='Detroit Pistons');
  assert(game);
- assert(game.picks.length>2);
+ assert.equal(game.picks.length,2); // This game's evidence really yielded two, not a cap.
  assert.equal(game.candidate_count,game.picks.length);
  assert(game.picks.some(p=>p.player==='Jalen Duren'));
+ const more=d.games.find(g=>g.picks.length>=4);
+ assert(more,'Different matchup must retain 4+ qualified picks without display truncation');
+ assert.equal(more.candidate_count,more.picks.length);
  assert(game.picks.some(p=>p.player==='Payton Pritchard'));
  assert.equal(new Set(game.picks.map(p=>p.player_id)).size,game.picks.length);
  assert(game.picks.every(p=>p.predicted_stat>p.model_milestone-.5));
