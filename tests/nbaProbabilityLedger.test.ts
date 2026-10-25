@@ -74,7 +74,11 @@ const truth=(status:string,actual:number|null)=>{
     player_rows:[{game_id:'401999991',team_id:'6',player_id:'5041938',
       forecast_id:'first001',status,stats:{
         points:{verified_actual_if_played:actual,
-                status:'VERIFIED_PLAYED_STAT'}}}]};
+                status:'VERIFIED_PLAYED_STAT'},
+        rebounds:{verified_actual_if_played:null,status:'UNVERIFIED_PLAYER_ACTUAL'},
+        assists:{verified_actual_if_played:null,status:'UNVERIFIED_PLAYER_ACTUAL'},
+        three_pointers_made:{verified_actual_if_played:null,status:'UNVERIFIED_PLAYER_ACTUAL'}
+      }}]};
 };
 test('freeze all original model probabilities, grade real hit / miss / DNP with Brier, never invent a sportsbook outcome',()=>{
   const snapshot=freezeNbaProbabilities(fixture(),MODEL,NOW);
