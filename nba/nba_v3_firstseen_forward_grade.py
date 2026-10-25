@@ -80,7 +80,7 @@ def original_v2(docs:Path):
             if gid in bygame:raise ValueError("NBA_V2_ARCHIVE_DUPLICATE_ORIGINAL_GAME")
             if datetime_utc(d["generated_at_utc"])>=datetime_utc(g["tipoff_utc"]):
                 raise ValueError("NBA_V2_ARCHIVE_AFTER_TIP")
-            bygame[gid]=g
+            bygame[gid]={**g,"_v2_original_at_utc":d["generated_at_utc"]}
     return bygame
 
 def get_final_boxes(games,cache:Path,now=None,scoreboard=get_scoreboard,
@@ -133,6 +133,7 @@ def grade(games,boxes,originals,v2_probability_doc,now=None):
     mae=collections.defaultdict(list);minutes=collections.defaultdict(list)
     joint_brier=collections.defaultdict(list)
     verified_games=set()
+    comparable_horizon_games=set()
     for gid,g in sorted(games.items()):
         players={}
         if gid in boxes:
@@ -142,7 +143,15 @@ def grade(games,boxes,originals,v2_probability_doc,now=None):
                 if k in players:raise ValueError("NBA_V3_POSTGAME_DUPLICATE_PLAYER")
                 players[k]=p
         old=originals.get(gid)
-        orig={(p["team_id"],p["player_id"]):p for p in old["players"]} if old else {}
+        # A model refreshed days closer to tipoff has an information
+        # advantage. Only SAME-HORIZON (<6h apart) original V2 forecasts
+        # can decide V3 challenger promotion, even on matched game/players.
+        matched_horizon=(old is not None and
+          old.get("_v2_original_at_utc") is not None and
+          abs((datetime_utc(old["_v2_original_at_utc"])-
+               datetime_utc(g["forecast_at_utc"])).total_seconds())<=6*3600)
+        orig={(p["team_id"],p["player_id"]):p for p in old["players"]} if matched_horizon else {}
+        if matched_horizon:comparable_horizon_games.add(gid)
         for r in g["rows"]:
             market=r["market"];team=str(r["team_id"]);pid=str(r["player_id"])
             actual=players.get((team,pid))
@@ -236,12 +245,14 @@ def grade(games,boxes,originals,v2_probability_doc,now=None):
     return {"schema":SCHEMA,"graded_at_utc":now.isoformat(),
       "original_v3_games_frozen":len(games),
       "official_final_game_boxes_verified":len(verified_games),
+      "same_within_6h_original_v2_horizon_games":len(comparable_horizon_games),
+      "not_within_6h_v2_comparison_is_quarantined":True,
       "original_v3_thresholds_accounted":len(result),
       "verified_thresholds":sum(x["brier"] is not None for x in result),
       "unverified_thresholds":sum(x["brier"] is None for x in result),
       "markets":metrics,"rows":result,
       "source":"REAL_FIRSTSEEN_V3_ARCHIVE_VS_LATER_ESPN_COMPLETED_GAME_PLAYER_BOXES",
-      "original_V2_numerical_comparison":"MATCHED_SAME_PLAYER_GAME_ONLY",
+      "original_V2_numerical_comparison":"MATCHED_SAME_PLAYER_GAME_AND_WITHIN_6H_FORECAST_ORIGIN_ONLY",
       "prospective_2026_27_calibrated":False,
       "betting_model_promoted":False,"official_bets":0,
       "note":"Only future original V3 pre-tip captures scored. All threshold outcomes including DNP. Historic retrofits forbidden. Minimum sample and Brier/ECE/MAE gates explicit; external lineup, value/price verification still required."}
