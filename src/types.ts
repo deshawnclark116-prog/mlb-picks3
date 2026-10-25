@@ -265,7 +265,8 @@ export interface NhlPrediction {
   opp_games_played?: number; // moneyline only
   games_played?: number; // points/shots_on_goal/goalie_saves only
   generated_at?: string;
-  model_source?: string; // present on moneyline_early_season picks (prior-season-informed bootstrap)
+  model_source?: string; // published model provenance
+  source_market?: string; // original market label before collapsing duplicate points models
   prior_season?: number;
 }
 
