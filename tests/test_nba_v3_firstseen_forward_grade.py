@@ -28,7 +28,8 @@ class Grade(unittest.TestCase):
                 "conditional_minutes_mean":row["conditional_minutes_mean"],
                 "p_play_unverified":row["p_active"],"predictions":{}}
             fake[k]["predictions"][row["market"]]=row["mean"]
-        return g,doc,{"991":{"game_id":"991","players":list(fake.values())}}
+        return g,doc,{"991":{"game_id":"991","players":list(fake.values()),
+                 "_v2_original_at_utc":ASOF}}
 
     def test_same_game_two_team_all_four_stats_grades_prospectively_only(self):
         g,doc,old=self.fixture()
@@ -60,6 +61,21 @@ class Grade(unittest.TestCase):
         self.assertGreater(points["same_exact_threshold_comparison_n"],0)
         self.assertIsNotNone(points["paired_milestone_brier_v3"])
         self.assertIsNotNone(points["paired_milestone_brier_original_v2"])
+
+    def test_different_pregame_information_horizons_cannot_earn_v3_promotion(self):
+        g,doc,old=self.fixture()
+        old["991"]["_v2_original_at_utc"]="2026-10-20T12:00:00Z"
+        probs=json.load(open("docs/nba_v2_probability_distribution_v1.json"))
+        roster={(r["team_id"],r["player_id"]) for r in g["rows"]}
+        boxes={"991":[{"team_id":t,"player_id":pid,"minutes":20.,
+            "points":9,"rebounds":4,"assists":2,"three_pointers_made":1}
+            for t,pid in roster]}
+        result=grade({"991":g},boxes,old,probs,NOW)
+        self.assertEqual(result["same_within_6h_original_v2_horizon_games"],0)
+        self.assertTrue(result["not_within_6h_v2_comparison_is_quarantined"])
+        self.assertTrue(all(m["paired_players"]==0
+                            and m["candidate_meets_predeclared_shadow_gates"] is False
+                            for m in result["markets"].values()))
 
     def test_no_postgame_results_cannot_be_fabricated_from_mean(self):
         g,doc,old=self.fixture()
