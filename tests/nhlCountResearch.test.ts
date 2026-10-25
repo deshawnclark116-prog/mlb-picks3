@@ -1,7 +1,8 @@
+import {compactNhlShotDays,NHL_DAILY_COMPACT_SCHEMA} from '../scripts/buildNhlDailyShots.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {reduceFrozenNhlShots,loadNhlCountResearch} from '../server/nhlCountResearch';
-import {addTrueNhlShotCounts,selectNhlShotMilestoneResearch,nhlCountGameDate,nhlVisibleGames,NHL_COUNT_SCHEMA,type NhlSogResearch,type NhlSogCount} from '../src/nhl/countResearch';
+import {addTrueNhlShotCounts,selectNhlShotMilestoneResearch,nhlCountGameDate,nhlVisibleGames,NHL_COUNT_SCHEMA,dailyShotResearchForDate,type NhlSogResearch,type NhlSogCount} from '../src/nhl/countResearch';
 import type {UnifiedGame} from '../src/components/UnifiedSportGameCards';
 
 const cols=['game_id','player_id','player','team','opponent','game_date','scheduled_start',
@@ -159,4 +160,46 @@ test('a missing or failing points classifier cannot hide separately verified NHL
  assert.equal(nhlVisibleGames(0,true,null),'loading');
  assert.equal(nhlVisibleGames(0,false,'provider failed'),'error');
  assert.equal(nhlVisibleGames(0,false,null),'empty');
+});
+
+
+test('NHL model card uses freshest source-certified T30 count, not stale T24H',()=>{
+ const older=src();
+ const newer=[...good];
+ newer[cols.indexOf('mean')]=4.15;
+ newer[cols.indexOf('median')]=4;
+ newer[cols.indexOf('p10')]=2;
+ newer[cols.indexOf('p25')]=3;
+ newer[cols.indexOf('p75')]=5;
+ newer[cols.indexOf('p90')]=7;
+ newer[cols.indexOf('generated_at')]='2026-10-18T21:10:00Z';
+ newer[cols.indexOf('cutoff_at')]='2026-10-18T21:30:00Z';
+ older.horizons=['T24H','T30'];
+ older.forecasts.T30=[newer];
+ older.total_valid_forecasts=2;
+ const result=reduceFrozenNhlShots(older,'2026-10-18');
+ assert.equal(result.projected_count,1);
+ assert.equal(result.projections[0].forecast_horizon,'T30');
+ assert.equal(result.projections[0].mean,4.15);
+ assert.equal(result.projections[0].source_cutoff_at,'2026-10-18T21:30:00Z');
+ newer[cols.indexOf('generated_at')]='2026-10-18T22:02:00Z';
+ assert.equal(reduceFrozenNhlShots(older,'2026-10-18').projections[0].forecast_horizon,'T24H');
+});
+test('NHL compact STATIC daily shots source verifies original SHA, timestamp and no bookmaker',()=>{
+ const compact=compactNhlShotDays(src(),new Date('2026-10-17T23:15:00Z'));
+ assert.equal(compact.schema,NHL_DAILY_COMPACT_SCHEMA);
+ assert.equal(compact.source_verified_pregame_shot_player_forecasts,1);
+ assert.equal(compact.official_bets,0);
+ assert.equal(compact.probabilities_forward_calibrated,false);
+ assert.deepEqual(compact.covered_game_dates,['2026-10-18']);
+ const day=dailyShotResearchForDate(compact,'2026-10-18');
+ assert.equal(day.projections[0].mean,3.2);
+ assert.equal(day.projections[0].model_probability_milestones_research_only['3'],.65);
+ assert.throws(()=>dailyShotResearchForDate(compact,'2026-10-19'),/MISSING_DATE/);
+ const forged=JSON.parse(JSON.stringify(compact));
+ forged.days['2026-10-18'].source_ledger_sha256='f'.repeat(64);
+ assert.throws(()=>dailyShotResearchForDate(forged,'2026-10-18'),/ORIGINAL_PLAYER_SOURCE_INVALID/);
+ const fakeBet=JSON.parse(JSON.stringify(compact));
+ fakeBet.official_bets=1;
+ assert.throws(()=>dailyShotResearchForDate(fakeBet,'2026-10-18'),/MISSING_DATE_OR_SOURCE_PROOF/);
 });
