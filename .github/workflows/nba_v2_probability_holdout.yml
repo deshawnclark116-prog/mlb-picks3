@@ -1,0 +1,134 @@
+name: NBA V2 independently validated milestone probabilities
+on:
+  pull_request:
+    paths:
+      - nba/nba_v2_probability_research.py
+      - tests/test_nba_v2_probability_research.py
+      - src/nba/probabilityEngine.ts
+      - src/nba/decisionBoard.ts
+      - server/nbaSystemPicks.ts
+      - src/components/NbaSystemPicksPanel.tsx
+      - tests/nbaProbabilityEngine.test.ts
+      - tests/nbaDecisionBoard.test.ts
+      - .github/workflows/nba_v2_probability_holdout.yml
+      - package.json
+  push:
+    branches: [main]
+    paths:
+      - nba/nba_v2_probability_research.py
+      - tests/test_nba_v2_probability_research.py
+      - src/nba/probabilityEngine.ts
+      - src/nba/decisionBoard.ts
+      - server/nbaSystemPicks.ts
+      - src/components/NbaSystemPicksPanel.tsx
+      - tests/nbaProbabilityEngine.test.ts
+      - tests/nbaDecisionBoard.test.ts
+      - .github/workflows/nba_v2_probability_holdout.yml
+      - package.json
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: nba-v2-probability-source-validation
+  cancel-in-progress: false
+jobs:
+  probability-boundary-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Empirical CDF, future-holdout gate, no odds, source proof, NBA app build
+        run: |
+          PYTHONPATH=. python -m unittest -v tests.test_nba_v2_probability_research
+          python -m py_compile nba/nba_v2_probability_research.py
+          npm run lint
+          node --import tsx --test tests/nbaProbabilityEngine.test.ts tests/nbaDecisionBoard.test.ts tests/nbaLiveAvailability.test.ts
+          npm run build
+          git diff --check
+  fit-earlier-validation-and-grade-later-historical-holdout:
+    needs: probability-boundary-tests
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Reuse verified historic ESPN boxes from frozen NBA V2
+        uses: actions/cache@v4
+        with:
+          path: .cache/nba-v2-boxscores
+          key: nba-v2-real-completed-espm-boxes-${{ hashFiles('docs/nba_v1_forward_walkback.json') }}
+      - name: Fit distribution only before Jan10; grade later untouched outcomes
+        run: |
+          set -euo pipefail
+          if test -e docs/nba_v2_probability_distribution_v1.json; then
+            echo "NBA_PROBABILITY_HISTORICAL_ARTIFACT_ALREADY_FROZEN"
+            exit 0
+          fi
+          PYTHONPATH=. python -u nba/nba_v2_probability_research.py \
+            --team-report docs/nba_v1_forward_walkback.json \
+            --cache .cache/nba-v2-boxscores \
+            --out "$RUNNER_TEMP/nba-v2-probability-candidate.json"
+          python - "$RUNNER_TEMP/nba-v2-probability-candidate.json" <<'PY'
+          import json,sys
+          x=json.load(open(sys.argv[1]))
+          assert x['schema']=='NBA_V2_VALIDATION_FIT_FORWARD_HOLDOUT_PROBABILITY_DISTRIBUTIONS_V1'
+          assert x['official_bets']==0 and x['no_bookmaker_data_needed']
+          assert x['training_and_holdout_are_disjoint_games']
+          assert x['heldout_start_date']=='2026-01-10'
+          assert x['fit']['source_cutoff_last_day']=='2026-01-09'
+          assert x['calibrated_for_forward_2026_27'] is False
+          for name,market in x['markets'].items():
+              print('NBA_MARKET_HONEST_HOLDOUT',name,
+                  'passed',market['heldout_probability_gate_passed'],
+                  'Brier',market['brier_distribution'],
+                  'Brier gain',market['brier_improvement'],
+                  'ECE',market['ece_tenths'],
+                  '65pct_sample_n',market['n_ge65_probability'])
+              assert market['release_status'] in (
+                  'HISTORICAL_HOLDOUT_VALIDATED_2026_27_UNPROVEN',
+                  'HISTORICAL_PROBABILITY_GATE_FAILED')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nba-v2-strict-earlier-fit-forward-holdout-${{ github.run_id }}
+          path: ${{ runner.temp }}/nba-v2-probability-candidate.json
+          retention-days: 90
+          if-no-files-found: warn
+      - name: Immutable publish no refit after reviewing burned holdout
+        run: |
+          set -euo pipefail
+          FILE="$RUNNER_TEMP/nba-v2-probability-candidate.json"
+          if ! test -s "$FILE"; then exit 0; fi
+          git config user.name "nba-v2-probability-audit[bot]"
+          git config user.email "nba-v2-probability-audit[bot]@users.noreply.github.com"
+          for n in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            if test -e docs/nba_v2_probability_distribution_v1.json; then
+              echo "NBA_PROBABILITY_EXISTING_FIRST_EVIDENCE_MUST_NOT_BE_OVERWRITTEN"
+              exit 0
+            fi
+            cp "$FILE" docs/nba_v2_probability_distribution_v1.json
+            git add docs/nba_v2_probability_distribution_v1.json
+            git commit -m "Freeze NBA model milestone P(hit) empirical CDF and untouched forward historical holdout results"
+            if git push origin HEAD:main; then
+              echo "NBA_PROBABILITY_HISTORICAL_RESEARCH_PUBLISHED"
+              exit 0
+            fi
+            if [ "$n" = 4 ]; then exit 1; fi
+          done

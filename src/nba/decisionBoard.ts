@@ -1,3 +1,4 @@
+import {bestNbaMilestone, PROBABILITY_MIN, type NbaProbabilityArtifact} from './probabilityEngine.ts';
 /** NBA prediction DECISION layer: turns real frozen numerical V2 forecasts
  * into a restrained, reproducible list of MODEL targets. This is not an
  * independently calibrated price/EV model. The original ~900+ numerical
@@ -62,7 +63,9 @@ export type NbaSystemTarget={
   model_milestone:number;model_target:string;model_gap:number;
   gap_in_historical_mae_units:number;
   type:'UNPRICED_MODEL_TARGET_NOT_A_BOOK_BET';
-  model_hit_probability:null;bookmaker_line:null;bookmaker_odds:null;
+  model_hit_probability:number|null;bookmaker_line:null;bookmaker_odds:null;
+  probability_method:'HISTORICAL_VALIDATED_EMPIRICAL_CDF'|'PROBABILITY_RESEARCH_PENDING';
+  probability_historical_holdout_validated:boolean;
   confidence_is_not_calibrated:true;official_pick:false;
 };
 export type NbaSystemGame={
@@ -74,6 +77,9 @@ export type NbaSystemBoard={
   schema:typeof NBA_DECISION_SCHEMA;
   research_only:true;official_bets:0;verified_book_lines:0;
   probability_model_calibrated_for_NBA_targets:false;
+  historical_holdout_probability_markets:NbaMarket[];
+  historical_probability_distribution_loaded:boolean;
+  current_season_probability_calibration_verified:false;
   original_game_count:number;original_player_stat_count:number;
   evaluated_player_count:number;eligible_player_count:number;
   all_uncapped_system_candidate_count:number;
@@ -98,15 +104,27 @@ export function forecastEligible(p:InputPlayer,g:InputGame):boolean{
      BLOCKED.has(p.espn_source_reported_injury_status||''))return false;
   return Object.values(p.predictions).every(v=>num(v)&&v>=0);
 }
-export function targetFor(player:InputPlayer,g:InputGame):NbaSystemTarget|null{
+export function targetFor(player:InputPlayer,g:InputGame,
+  probabilities?:NbaProbabilityArtifact|null):NbaSystemTarget|null{
   if(!forecastEligible(player,g))return null;
   let candidates:NbaSystemTarget[]=[];
   for(const market of NBA_MARKETS){
     const projection=player.predictions[market];
     const mae=NBA_V2_HOLDOUT_MAE[market];
+    // Unlike old arbitrary MAE distance, this is an actual *threshold
+    // event probability* from a separately heldout residual distribution
+    // (DNP=0). Published book odds are not consulted.
+    const calibrated=probabilities?.markets[market]?.heldout_probability_gate_passed===true;
+    const pTarget=calibrated?bestNbaMilestone(probabilities!,market,projection,
+         player.p_play_unverified,PROBABILITY_MIN):null;
+    // If an independent probability report exists but this market FAILED
+    // its preregistered gate, DO NOT sneak the older uncalibrated target
+    // back onto NFL-style SYSTEM PICKS.
+    if(probabilities&&!calibrated)continue;
+    if(probabilities&&!pTarget)continue;
     const levels=MODEL_TARGETS[market].filter(v=>projection-v>=mae*MIN_STANDARDIZED_FORECAST_GAP);
-    if(!levels.length)continue;
-    const selected=Math.max(...levels);
+    if(!probabilities&&!levels.length)continue;
+    const selected=pTarget?pTarget.milestone-.5:Math.max(...levels);
     const gap=projection-selected;
     candidates.push({
       id:player.forecast_id+'|'+market,
@@ -120,19 +138,24 @@ export function targetFor(player:InputPlayer,g:InputGame):NbaSystemTarget|null{
       model_gap:Number(gap.toFixed(4)),
       gap_in_historical_mae_units:Number((gap/mae).toFixed(4)),
       type:'UNPRICED_MODEL_TARGET_NOT_A_BOOK_BET',
-      model_hit_probability:null,bookmaker_line:null,bookmaker_odds:null,
+      model_hit_probability:pTarget?.probability??null,bookmaker_line:null,bookmaker_odds:null,
+      probability_method:pTarget?'HISTORICAL_VALIDATED_EMPIRICAL_CDF':
+          'PROBABILITY_RESEARCH_PENDING',
+      probability_historical_holdout_validated:!!pTarget,
       confidence_is_not_calibrated:true,official_pick:false
     });
   }
   return candidates.sort(compareTarget)[0]||null;
 }
 export function compareTarget(a:NbaSystemTarget,b:NbaSystemTarget):number{
-  return b.gap_in_historical_mae_units-a.gap_in_historical_mae_units||
+  return (b.model_hit_probability??-1)-(a.model_hit_probability??-1)||
+    b.gap_in_historical_mae_units-a.gap_in_historical_mae_units||
     b.historical_p_play-a.historical_p_play||
     b.conditional_minutes-a.conditional_minutes||
     a.player.localeCompare(b.player)||a.id.localeCompare(b.id);
 }
-export function buildNbaSystemBoard(games:InputGame[]):NbaSystemBoard {
+export function buildNbaSystemBoard(games:InputGame[],
+ probabilities?:NbaProbabilityArtifact|null):NbaSystemBoard {
   let statRows=0,eligible=0,uncapped=0;
   const ids=new Set<string>(),forecastIds=new Set<string>();
   const board:NbaSystemGame[]=[];
@@ -153,7 +176,7 @@ export function buildNbaSystemBoard(games:InputGame[]):NbaSystemBoard {
         throw new Error('NBA_DUPLICATE_ORIGINAL_PLAYER_ID');
       forecastIds.add(p.forecast_id);
       if(forecastEligible(p,g))eligible++;
-      const pick=targetFor(p,g);
+      const pick=targetFor(p,g,probabilities);
       if(pick)all.push(pick);
     }
     uncapped+=all.length;
@@ -168,12 +191,18 @@ export function buildNbaSystemBoard(games:InputGame[]):NbaSystemBoard {
   return{
     schema:NBA_DECISION_SCHEMA,research_only:true,official_bets:0,
     verified_book_lines:0,probability_model_calibrated_for_NBA_targets:false,
+    historical_holdout_probability_markets:NBA_MARKETS.filter(m=>
+      probabilities?.markets[m]?.heldout_probability_gate_passed===true),
+    historical_probability_distribution_loaded:!!probabilities,
+    current_season_probability_calibration_verified:false,
     original_game_count:ids.size,original_player_stat_count:statRows,
     evaluated_player_count:forecastIds.size,eligible_player_count:eligible,
     all_uncapped_system_candidate_count:uncapped,
     displayed_system_picks:count,
     games_with_picks:board.filter(g=>g.picks.length).length,
     games:board,not_shown_raw_graded_predictions:statRows,
-    disclosure:'All qualifying players displayed (one strongest market per player), with NO arbitrary two-pick game cap. Ranked numerical model targets, not 65% hit-rate claims and NOT bookmaker betting lines. Gap/2026 played-player holdout MAE is not a probability, confidence or edge. No wager is certified until matching real sportsbook prices, calibrated conditional target probabilities and injury/participation validation exist. All original player/stat forecasts remain in the immutable grading archive.'
+    disclosure:probabilities?
+     'NFL-style NBA target probabilities use an earlier-only fitted empirical event distribution and an independent Jan-Feb 2026 historical holdout. Only markets passing Brier/ECE/high-probability reliability gates can publish a P(hit). DNP is counted as zero. No current-season probability calibration or sportsbook edge is certified; all original game/player stats are archived for 2026-27 grading.':
+     'NBA probability research artifact not yet independently validated/published. Historical MAE milestone targets are shown as uncalibrated RESEARCH ONLY, with no P(hit) or sportsbook value claim. Original forecasts remain archived.'
   };
 }
