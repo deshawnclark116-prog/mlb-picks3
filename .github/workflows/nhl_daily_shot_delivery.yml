@@ -1,0 +1,93 @@
+name: NHL verified daily SOG model delivery
+on:
+  pull_request:
+    paths:
+      - server/nhlCountResearch.ts
+      - src/nhl/countResearch.ts
+      - src/components/NhlTodayScreen.tsx
+      - scripts/buildNhlDailyShots.ts
+      - tests/nhlCountResearch.test.ts
+      - .github/workflows/nhl_daily_shot_delivery.yml
+  push:
+    branches: [main]
+    paths:
+      - server/nhlCountResearch.ts
+      - src/nhl/countResearch.ts
+      - src/components/NhlTodayScreen.tsx
+      - scripts/buildNhlDailyShots.ts
+      - tests/nhlCountResearch.test.ts
+      - .github/workflows/nhl_daily_shot_delivery.yml
+  schedule:
+    - cron: "17 */3 * * *"
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: nhl-daily-source-proven-shot-delivery
+  cancel-in-progress: false
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Real frozen count source, current NHL slate, newest safe pretip horizon
+        run: |
+          npm run lint
+          node --import tsx --test tests/nhlCountResearch.test.ts tests/nhlRealGameGrouping.test.ts
+          npm run build
+          git diff --check
+  publish-real-daily-shots:
+    needs: verify
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Download genuine source archive and reduce to verified today + tomorrow only
+        run: |
+          node --import tsx scripts/buildNhlDailyShots.ts \
+            --out "$RUNNER_TEMP/nhl-daily-shot-counts.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nhl-live-verified-compact-sog-${{ github.run_id }}
+          path: ${{ runner.temp }}/nhl-daily-shot-counts.json
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Publish exact verified compact slate without changing original model forecasts
+        run: |
+          set -euo pipefail
+          FILE="$RUNNER_TEMP/nhl-daily-shot-counts.json"
+          if ! test -s "$FILE"; then exit 1; fi
+          git config user.name "nhl-daily-shot-delivery[bot]"
+          git config user.email "nhl-daily-shot-delivery[bot]@users.noreply.github.com"
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            mkdir -p public
+            cp "$FILE" public/nhl-daily-shot-counts.json
+            git add public/nhl-daily-shot-counts.json
+            if git diff --cached --quiet; then
+              echo "NHL_SHOTS_ALREADY_CURRENT"; exit 0
+            fi
+            git commit -m "Publish source-verified current NHL shot forecasts for static and API frontends"
+            if git push origin HEAD:main; then
+              echo "NHL_REAL_MODEL_SHOTS_AVAILABLE_AS_COMPACT_PUBLIC_ASSET"
+              exit 0
+            fi
+            if test "$attempt" = 3; then exit 1; fi
+          done
