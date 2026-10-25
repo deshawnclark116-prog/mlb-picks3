@@ -8,6 +8,8 @@ import {validateNhl} from './projectionFeeds.ts';
 
 export const NHL_COUNT_SOURCE =
  'https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks2/main/docs/nhl_v2_shadow.json';
+export const NHL_DAILY_SOURCE_PREFIX=
+ 'https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks2/main/docs/nhl_sog_daily/';
 export const NHL_COUNT_SCHEMA='NHL_APP_VERIFIED_SOG_COUNT_RESEARCH_V1';
 const HORIZONS=['T24H','T90','T30'] as const;
 const finite=(x:unknown):x is number=>typeof x==='number'&&Number.isFinite(x);
@@ -94,23 +96,47 @@ export function reduceFrozenNhlShots(raw:unknown,gameDate:string){
  };
 }
 
-let cached:{at:number;promise:Promise<unknown>}|null=null;
-async function source(fetcher:typeof fetch,now:number):Promise<unknown>{
- if(fetcher===fetch&&cached&&now-cached.at<300000)return cached.promise;
+// Cache the actual validated model-source per DATE. A future slate should
+// never reuse yesterday's fetched count research, even for a shared minute.
+const cache=new Map<string,{at:number;promise:Promise<unknown>}>();
+async function source(fetcher:typeof fetch,now:number,date:string):Promise<unknown>{
+ if(!/^20\d{2}-\d{2}-\d{2}$/.test(date))
+   throw Error('NHL_INVALID_DAILY_SOURCE_DATE');
+ const prior=fetcher===fetch?cache.get(date):null;
+ if(prior&&now-prior.at<120000)return prior.promise;
+ const headers={'Cache-Control':'no-cache, no-store','Accept':'application/json'};
  const promise=(async()=>{
-  const res=await fetcher(NHL_COUNT_SOURCE+'?t='+now,{
-   cache:'no-store',headers:{'Cache-Control':'no-cache, no-store','Accept':'application/json'},
-   signal:AbortSignal.timeout(40000)
-  });
-  if(!res.ok)throw Error('NHL frozen source HTTP '+res.status);
-  return res.json();
+   const daily=await fetcher(NHL_DAILY_SOURCE_PREFIX+date+'.json?t='+now,{
+     cache:'no-store',headers,signal:AbortSignal.timeout(16000)
+   });
+   if(daily.ok){
+     const d=await daily.json();
+     if(d?.daily_partition_schema!=='NHL_V2_ORIGINAL_SHOT_COUNT_DAILY_PARTITION_V1'||
+        d?.daily_partition_game_date!==date||
+        d?.all_rows_exactly_preserved_from_original!==true||
+        d?.no_new_model_scoring_or_probability_calibration!==true||
+        d?.full_source_total_valid_forecasts<d?.total_valid_forecasts||
+        d?.dates?.length!==1||d.dates[0]!==date)
+        throw Error('NHL_DAILY_SOG_SOURCE_PROVENANCE_INVALID');
+     return d;
+   }
+   // 404 means a newly scheduled game/date is not yet partitioned. Fall
+   // back to the locked ORIGINAL source. No synthetic numbers, line guesses
+   // or dependence on the points classifier.
+   if(daily.status!==404&&daily.status!==410)
+      throw Error('NHL_DAILY_SOG_SOURCE_UNAVAILABLE_HTTP_'+daily.status);
+   const full=await fetcher(NHL_COUNT_SOURCE+'?t='+now,{
+     cache:'no-store',headers,signal:AbortSignal.timeout(40000)
+   });
+   if(!full.ok)throw Error('NHL_ORIGINAL_SOG_SOURCE_HTTP_'+full.status);
+   return full.json();
  })();
- if(fetcher===fetch)cached={at:now,promise};
- try{return await promise}catch(e){if(fetcher===fetch)cached=null;throw e;}
+ if(fetcher===fetch)cache.set(date,{at:now,promise});
+ try{return await promise}catch(e){if(fetcher===fetch)cache.delete(date);throw e;}
 }
 
 export async function loadNhlCountResearch(date:string,fetcher:typeof fetch=fetch,now=Date.now()){
- return reduceFrozenNhlShots(await source(fetcher,now),date);
+ return reduceFrozenNhlShots(await source(fetcher,now,date),date);
 }
 
 export function nhlCountResearchHandler(fetcher:typeof fetch=fetch,clock=Date.now){

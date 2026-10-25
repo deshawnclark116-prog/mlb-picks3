@@ -65,6 +65,9 @@ export default function NhlTodayScreen({
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [numericSog, setNumericSog] = useState<NhlSogResearch|null>(null);
   const [numericSogError, setNumericSogError] = useState<string|null>(null);
+  // The points feed and the shot-count API are separate requests. A manual
+  // Refresh must retry BOTH even when the game date hasn't changed.
+  const [shotRefreshSeq, setShotRefreshSeq] = useState(0);
   const countDate=nhlCountGameDate(gameDate);
   useEffect(()=>{
     const ctl=new AbortController();
@@ -73,7 +76,11 @@ export default function NhlTodayScreen({
       try{
         const response=await fetch('/api/nhl-count-research?date='+encodeURIComponent(countDate),{
           cache:'no-store',signal:ctl.signal});
-        if(!response.ok)throw Error('NHL V2 frozen count source HTTP '+response.status);
+        if(!response.ok){
+          const info=await response.json().catch(()=>null);
+          throw Error('NHL shots '+response.status+
+            (info?.details?': '+String(info.details):''));
+        }
         const doc=await response.json();
         if(doc?.schema!==NHL_COUNT_SCHEMA || doc?.game_date!==countDate ||
           doc?.research_only!==true || doc?.not_an_official_betting_board!==true)
@@ -84,7 +91,7 @@ export default function NhlTodayScreen({
       }
     })();
     return()=>ctl.abort();
-  },[countDate]);
+  },[countDate,shotRefreshSeq]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullY, setPullY] = useState(0);
   const [expandedGameKey, setExpandedGameKey] = useState<string | null>(null);
@@ -98,8 +105,9 @@ export default function NhlTodayScreen({
 
   const handleManualRefresh = async () => {
     setIsRefreshing(true);
-    await onRefresh();
-    setIsRefreshing(false);
+    setShotRefreshSeq(n=>n+1);
+    try{await onRefresh();}
+    finally{setIsRefreshing(false);}
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -121,9 +129,9 @@ export default function NhlTodayScreen({
     if (pullY > 50) {
       setIsRefreshing(true);
       setPullY(40);
-      await onRefresh();
-      setPullY(0);
-      setIsRefreshing(false);
+      setShotRefreshSeq(n=>n+1);
+      try{await onRefresh();}
+      finally{setPullY(0);setIsRefreshing(false);}
     } else {
       setPullY(0);
     }
@@ -338,8 +346,12 @@ export default function NhlTodayScreen({
         ) : (
           <div id="nhl-games-list" className="space-y-4">
             {error&&<p role="status" className="mb-2 text-[11px] text-amber-300">Points classifier unavailable; independent V2 shot-count projections remain visible.</p>}
-            {numericSogError&&<p role="status" className="mb-2 text-[11px] text-amber-300">Independent NHL shot-count research unavailable. Point-target chances remain separate; no numerical substitute was invented.</p>}
+            {numericSogError&&<div role="alert" className="mb-3 rounded-lg border border-amber-700/60 p-3 text-[11px] text-amber-200">
+              <p>Shots on Goal source unavailable for {countDate}: {numericSogError}</p>
+              <button type="button" onClick={handleManualRefresh} className="mt-2 rounded border border-amber-600 px-3 py-1 font-semibold">Retry Shots Feed</button>
+            </div>}
           {numericSog&&numericSog.projected_count>0&&<p role="status" className="mb-2 text-[11px] text-gray-400">Frozen V2 numerical shot forecasts for this date: {numericSog.projected_count}. Shot milestone probabilities come directly from the locked count distribution—NOT from a sportsbook—and remain UNCALIBRATED research until genuinely frozen pregame probability outcomes pass forward validation. Game-day participation not certified. Points targets remain binary event probabilities.</p>}
+          <p role="status" className="mb-2 text-[11px] text-gray-500">Anytime Goals: no source-verified goal-scoring model is connected yet. Anytime Point (goal OR assist) is a different event and is not substituted.</p>
           <UnifiedSportGameCards sport="NHL" prefix="nhl-game-card-" games={unifiedGames}/>
           </div>
         )}
