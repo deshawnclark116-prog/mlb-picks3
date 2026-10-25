@@ -22,6 +22,51 @@ export interface NhlSogResearch {
  projected_count:number;projections:NhlSogCount[];
 }
 export const NHL_COUNT_SCHEMA='NHL_APP_VERIFIED_SOG_COUNT_RESEARCH_V1';
+export const NHL_COMPACT_SCHEMA='NHL_APP_DAILY_VERIFIED_SOG_DELIVERY_V1';
+/** Strict proof-bearing compact original NHL research manifest for mobile/static
+ * frontends, not a proxy that invents missing points/goal bets.
+ */
+export function dailyShotResearchForDate(manifest:unknown,date:string):NhlSogResearch{
+ const raw=manifest as any;
+ if(!raw||raw.schema!==NHL_COMPACT_SCHEMA||
+    !/^[a-f0-9]{40}$/.test(raw.source_snapshot_commit_sha||'')||
+    !/^[a-f0-9]{64}$/.test(raw.source_ledger_sha256||'')||
+    raw.official_bets!==0||raw.source_is_not_sportsbook!==true||
+    raw.probabilities_forward_calibrated!==false||
+    !Array.isArray(raw.covered_game_dates)||!raw.covered_game_dates.includes(date))
+   throw Error('NHL_COMPACT_MISSING_DATE_OR_SOURCE_PROOF');
+ const doc=raw.days?.[date];
+ if(doc?.schema!==NHL_COUNT_SCHEMA||doc.game_date!==date||
+    doc.source_has_original_hash_chain!==true||
+    doc.source_snapshot_commit_sha!==raw.source_snapshot_commit_sha||
+    doc.source_ledger_sha256!==raw.source_ledger_sha256||
+    doc.research_only!==true||doc.not_an_official_betting_board!==true||
+    !Array.isArray(doc.projections)||doc.projections.length!==doc.projected_count||
+    doc.projections.some((p:NhlSogCount)=>
+       p.game_date!==date||p.research_only!==true||
+       p.not_an_official_betting_prediction!==true||
+       !(Date.parse(p.source_generated_at)<=Date.parse(p.source_cutoff_at)&&
+         Date.parse(p.source_cutoff_at)<Date.parse(p.scheduled_start))))
+   throw Error('NHL_COMPACT_ORIGINAL_PLAYER_SOURCE_INVALID');
+ return doc as NhlSogResearch;
+}
+
+/** Original NHL V2 survival CDF, not a sportsbook or validated odds quote. */
+export function selectNhlShotMilestoneResearch(p:NhlSogCount){
+ const probabilities=p.model_probability_milestones_research_only;
+ if(!probabilities||p.model_probability_forward_calibrated!==false||
+    p.probability_not_an_official_bet!==true)return null;
+ const values=[1,2,3,4,5].map(k=>probabilities[String(k) as '1'|'2'|'3'|'4'|'5']);
+ if(values.some((v,i)=>typeof v!=='number'||!Number.isFinite(v)||
+      v<0||v>1||(i>0&&v>values[i-1]+.002)))
+    throw Error('NHL_SHOT_MILESTONE_CDF_FAILED_SURVIVAL_INVARIANT');
+ const chosen=([2,3,4,5] as const).filter(k=>
+   probabilities[String(k) as '2'|'3'|'4'|'5']>=.65).at(-1);
+ return chosen?{milestone:chosen,
+   model_probability:probabilities[String(chosen) as '2'|'3'|'4'|'5']}:null;
+}
+
+
 /** Original NHL V2 survival CDF, not a sportsbook or validated odds quote. */
 export function selectNhlShotMilestoneResearch(p:NhlSogCount){
  const probabilities=p.model_probability_milestones_research_only;
