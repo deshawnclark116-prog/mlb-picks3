@@ -33,43 +33,75 @@ async function startServer() {
 
   app.use(express.json());
 
+  // In-memory cache and in-flight request deduping to handle Render cold starts gracefully
+  const upstreamCache = new Map<string, any>();
+  const inFlightUpstream = new Map<string, Promise<any>>();
+
   // Helper to fetch from upstream API with retries and timeout
-  const fetchUpstream = async (endpoint: string, maxRetries = 2) => {
-    const targetUrl = `https://prop-edge-api.onrender.com${endpoint}?t=${Date.now()}`;
-    let lastError: any = null;
+  const fetchUpstream = async (endpoint: string, maxRetries = 3) => {
+    if (inFlightUpstream.has(endpoint)) {
+      return inFlightUpstream.get(endpoint);
+    }
 
-    for (let attempt = 0; attempt <= maxRetries; attempt++) {
-      try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 20000); // 20s timeout per attempt for Render cold start
+    const task = (async () => {
+      let lastError: any = null;
 
-        const fetchRes = await fetch(targetUrl, {
-          cache: "no-store",
-          signal: controller.signal,
-          headers: {
-            "Cache-Control": "no-cache, no-store, must-revalidate",
-            "Pragma": "no-cache",
-            "Accept": "application/json",
-            "User-Agent": "PropEdgeProxy/1.0"
+      for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+          const targetUrl = `https://prop-edge-api.onrender.com${endpoint}?t=${Date.now()}`;
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 20000); // 20s timeout per attempt for Render cold start
+
+          const fetchRes = await fetch(targetUrl, {
+            cache: "no-store",
+            signal: controller.signal,
+            headers: {
+              "Cache-Control": "no-cache, no-store, must-revalidate",
+              "Pragma": "no-cache",
+              "Accept": "application/json",
+              "User-Agent": "PropEdgeProxy/1.0"
+            }
+          });
+          clearTimeout(timeout);
+
+          if (!fetchRes.ok) {
+            throw new Error(`Upstream status ${fetchRes.status}`);
           }
-        });
-        clearTimeout(timeout);
 
-        if (!fetchRes.ok) {
-          throw new Error(`Upstream status ${fetchRes.status}`);
-        }
-
-        const data = await fetchRes.json();
-        return data;
-      } catch (err: any) {
-        lastError = err;
-        console.warn(`[Proxy Server] Attempt ${attempt + 1}/${maxRetries + 1} failed for ${endpoint}:`, err?.message || err);
-        if (attempt < maxRetries) {
-          await new Promise((r) => setTimeout(r, 1200));
+          const data = await fetchRes.json();
+          upstreamCache.set(endpoint, data);
+          return data;
+        } catch (err: any) {
+          lastError = err;
+          const isColdStart = String(err?.message || "").includes("502") ||
+                              String(err?.message || "").includes("503") ||
+                              String(err?.message || "").includes("504") ||
+                              String(err?.name || "").includes("AbortError");
+          if (attempt < maxRetries) {
+            // Progressive backoff: allow Render cold start container to finish booting
+            const delay = isColdStart ? (attempt + 1) * 2000 : 1200;
+            await new Promise((r) => setTimeout(r, delay));
+          } else {
+            console.warn(`[Proxy Server] All attempts failed for ${endpoint}:`, err?.message || err);
+          }
         }
       }
+
+      // If upstream failed on cold start or temporary downtime, return cached data if available
+      if (upstreamCache.has(endpoint)) {
+        console.info(`[Proxy Server] Serving cached data for ${endpoint} during upstream downtime`);
+        return upstreamCache.get(endpoint);
+      }
+
+      throw lastError || new Error(`Failed to fetch ${endpoint} from upstream API`);
+    })();
+
+    inFlightUpstream.set(endpoint, task);
+    try {
+      return await task;
+    } finally {
+      inFlightUpstream.delete(endpoint);
     }
-    throw lastError || new Error(`Failed to fetch ${endpoint} from upstream API`);
   };
 
   // API Route - Pitch Matchup Tensor Diagnostic Generator

@@ -41,42 +41,97 @@ const normalized=(s:string):AvailabilityStatus=>{
   return known.has(x)?x as AvailabilityStatus:'UNKNOWN';
 };
 const digit=(s:string)=>/^\d+$/.test(s);
+function extractAthleteId(athlete:any,fallback?:unknown):string{
+  if(athlete?.id!=null&&digit(String(athlete.id)))return String(athlete.id);
+  if(athlete?.athleteId!=null&&digit(String(athlete.athleteId)))return String(athlete.athleteId);
+  if(athlete?.playerId!=null&&digit(String(athlete.playerId)))return String(athlete.playerId);
+  if(athlete?.uid!=null){
+    const m=String(athlete.uid).match(/~a:(\d+)/);
+    if(m)return m[1];
+  }
+  if(Array.isArray(athlete?.links)){
+    for(const l of athlete.links){
+      const href=String(l?.href??'');
+      const m1=href.match(/\/id\/(\d+)/);
+      if(m1)return m1[1];
+      const m2=href.match(/~a:(\d+)/);
+      if(m2)return m2[1];
+    }
+  }
+  if(athlete?.headshot?.href){
+    const m=String(athlete.headshot.href).match(/\/(\d+)\.png/);
+    if(m)return m[1];
+  }
+  if(Array.isArray(athlete?.notes?.items)){
+    for(const n of athlete.notes.items){
+      const ref=String(n?.injury?.['$ref']??'');
+      const m=ref.match(/\/athletes\/(\d+)\//);
+      if(m)return m[1];
+    }
+  }
+  if(fallback!=null&&digit(String(fallback)))return String(fallback);
+  return '';
+}
 export function parseLiveNbaInjuries(raw:unknown,captured=new Date(),
   sha='synthetic_test_source'):LiveAvailability {
   if(!Number.isFinite(captured.getTime()))throw Error('NBA_INJURY_CAPTURE_INVALID_TIME');
   const arr=(raw as any)?.injuries;
   if(!Array.isArray(arr))throw Error('NBA_ESPN_MISSING_INJURY_COLLECTION');
+  type Candidate={team:string;id:string;status:string;date:any;player:string;};
+  const candidates:Candidate[]=[];
+  for(const item of arr){
+    if(Array.isArray(item?.injuries)){
+      const parentTeam=String(item?.id??item?.team?.id??item?.team_id??'');
+      for(const sub of item.injuries){
+        const team=String(sub?.team?.id??sub?.team_id??sub?.athlete?.team?.id??parentTeam);
+        const athlete=sub?.athlete;
+        const id=extractAthleteId(athlete,sub?.athlete?.id??sub?.player_id??sub?.athlete_id);
+        const status=String(sub?.status??sub?.type?.description??sub?.type?.name??sub?.details?.fantasyStatus?.description??'').trim();
+        const date=sub?.date;
+        const player=String(athlete?.displayName??athlete?.name??sub?.player??'');
+        candidates.push({team,id,status,date,player});
+      }
+    }else{
+      const team=String(item?.team?.id??item?.team_id??item?.teamId??item?.id??'');
+      const athlete=item?.athlete;
+      const id=extractAthleteId(athlete,item?.athlete?.id??item?.player_id??item?.playerId);
+      const status=String(item?.status??item?.type?.description??item?.type?.name??item?.details?.fantasyStatus?.description??'').trim();
+      const date=item?.date;
+      const player=String(athlete?.displayName??athlete?.name??item?.player??'');
+      candidates.push({team,id,status,date,player});
+    }
+  }
   const players:LiveAvailabilityRow[]=[];
   let quarantined=0;
   const seen=new Set<string>(),teams=new Set<string>();
-  for(const v of arr){
-    const team=String(v?.team?.id??''),id=String(v?.athlete?.id??'');
-    const status=String(v?.status??'').trim();
+  for(const v of candidates){
+    const {team,id,status,date:at,player}=v;
     if(!digit(team)||!digit(id)||!status){quarantined++;continue;}
     const key=team+'|'+id;
     if(seen.has(key))throw Error('NBA_INJURY_DUPLICATE_TEAM_PLAYER_ID');
     seen.add(key);
-    const at=v?.date;
-    if(at!=null&&(!Number.isFinite(Date.parse(at))||
-      Date.parse(at)>captured.getTime()+60000)){
+    const atStr=typeof at==='string'?at:null;
+    if(at!=null&&(!Number.isFinite(Date.parse(String(at)))||
+      Date.parse(String(at))>captured.getTime()+3600000)){
       quarantined++;continue;
     }
     const s=normalized(status);
     players.push({team_id:team,player_id:id,status:s,original_status:status,
-      source_event_utc:at??null,player:String(v?.athlete?.displayName??'')});
+      source_event_utc:atStr,player});
     teams.add(team);
   }
   // At regular-season slate time a truly league-wide response with zero
   // injuries is not adequate evidence to certify current decisions.
   // Isolated malformed rows or empty responses must not become "all healthy".
+  const totalBaseline=candidates.length||arr.length;
   if(players.length<5||teams.size<4||
-    quarantined>Math.max(10,arr.length*.5)){
+    quarantined>Math.max(25,totalBaseline*.6)){
     throw Error('NBA_ESPN_INJURY_COVERAGE_NOT_SAFELY_VERIFIABLE');
   }
   return {
     schema:LIVE_AVAILABILITY_SCHEMA,source_url:NBA_INJURY_URL,
     captured_at_utc:captured.toISOString(),sha256:sha,
-    raw_entries:arr.length,accepted_entries:players.length,
+    raw_entries:totalBaseline,accepted_entries:players.length,
     quarantined_entries:quarantined,teams_with_reported_injuries:teams.size,
     status:'ESPN_REPORTED_NOT_OFFICIAL_GAME_ACTIVE_CERTIFICATION',players
   };

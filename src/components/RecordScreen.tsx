@@ -6,7 +6,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { RecordData, RecordResult } from "../types";
-import { formatRelativeTime, formatPercent, formatToEasternTime } from "../utils";
+import { formatRelativeTime, formatPercent, formatToEasternTime, deduplicateRecordResults } from "../utils";
 import { 
   History, 
   RefreshCw, 
@@ -55,7 +55,8 @@ export default function RecordScreen({
   const summary = recordData?.summary || { total: 0, hits: 0, misses: 0, hit_rate: 0 };
   const byProp = recordData?.by_prop || {};
   const byConfidence = recordData?.by_confidence || {};
-  const results = recordData?.results || [];
+  const rawResults = recordData?.results || [];
+  const results = deduplicateRecordResults(rawResults);
 
   const filteredResults = results.filter(res => {
     if (filterResult === "HIT") return res.result === "hit";
@@ -322,11 +323,12 @@ export default function RecordScreen({
                       const valEdge = res.value_edge ?? 0;
                       const edgeValue = valEdge <= 1 ? valEdge * 100 : valEdge;
                       const scoreColor = res.confidence === "HIGH" ? "text-emerald-400" : res.confidence === "MEDIUM" ? "text-amber-400" : "text-sky-400";
+                      const recordKey = `${res.player}-${res.date}-${res.prop_type}-${res.pick}-${res.actual ?? ''}-${index}`;
                       
                       return (
                         <motion.div 
                           id={`result-ledger-item-${index}`}
-                          key={`${res.player}-${res.date}-${res.prop_type}-${res.pick}`}
+                          key={recordKey}
                           initial={{ opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.18, delay: Math.min(index * 0.02, 0.2) }}

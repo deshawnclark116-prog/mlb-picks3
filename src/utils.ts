@@ -122,7 +122,7 @@ export function formatToEasternTime(dateInput: string | Date | null | undefined)
   }
 }
 
-import { Prediction, NflPrediction, CfbPrediction, TennisPrediction, NhlPrediction } from "./types";
+import { Prediction, NflPrediction, CfbPrediction, TennisPrediction, NhlPrediction, RecordResult } from "./types";
 
 /**
  * Returns a unique composite key for a prediction item based on:
@@ -364,3 +364,22 @@ export function deduplicateTennisPredictions(preds: TennisPrediction[]): TennisP
   }
   return Array.from(map.values());
 }
+
+/**
+ * Deduplicates record results ledger to prevent key collisions and redundant table entries.
+ */
+export function deduplicateRecordResults(results: RecordResult[]): RecordResult[] {
+  if (!Array.isArray(results)) return [];
+  const seen = new Set<string>();
+  const unique: RecordResult[] = [];
+  for (const res of results) {
+    if (!res || typeof res !== "object") continue;
+    const key = `${res.player?.trim().toLowerCase()}|${res.date?.trim()}|${res.prop_type?.trim().toLowerCase()}|${res.pick?.trim().toLowerCase()}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      unique.push(res);
+    }
+  }
+  return unique;
+}
+

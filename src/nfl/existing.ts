@@ -1,6 +1,6 @@
 /** Existing weekly NFL model output. Separate scientific product from T24/T90.
  * Never turn an ungraded projection into a wager, odds edge or Phase1 forecast. */
-import { etDate } from './phase1';
+import { etDate } from './phase1.ts';
 
 export type ExistingYardMarket = 'rushing_yards' | 'receiving_yards';
 export interface ExistingYardProjection {

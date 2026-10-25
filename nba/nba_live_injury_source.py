@@ -41,11 +41,30 @@ def snapshot(now=None,fetcher=None):
     if not isinstance(doc,dict) or not isinstance(doc.get("injuries"),list):
         raise ValueError("NBA_ESPN_INJURY_FEED_MISSING_EXPECTED_COLLECTION")
     observed=[];errors=[];seen=set()
+    flat_items=[]
     for i,x in enumerate(doc["injuries"]):
         if not isinstance(x,dict):
+            flat_items.append((i,x,None));continue
+        if isinstance(x.get("injuries"),list):
+            pteam=str(x.get("id") or (x.get("team") or {}).get("id") or "")
+            for sub in x["injuries"]:
+                flat_items.append((i,sub,pteam))
+        else:
+            flat_items.append((i,x,None))
+    for i,x,pteam in flat_items:
+        if not isinstance(x,dict):
             errors.append({"index":i,"reason":"NOT_AN_INJURY_OBJECT"});continue
-        team=str((x.get("team") or {}).get("id") or "")
-        player=str((x.get("athlete") or {}).get("id") or "")
+        team=str((x.get("team") or {}).get("id") or pteam or "")
+        athlete=x.get("athlete") or {}
+        player=str(athlete.get("id") or "")
+        if not player.isdigit():
+            import re
+            for link in athlete.get("links") or []:
+                m=re.search(r"/id/(\d+)",str(link.get("href") or "")) or re.search(r"~a:(\d+)",str(link.get("href") or ""))
+                if m:player=m.group(1);break
+            if not player.isdigit() and athlete.get("headshot"):
+                m=re.search(r"/(\d+)\.png",str(athlete["headshot"].get("href") or ""))
+                if m:player=m.group(1)
         status=str(x.get("status") or "").upper().strip()
         event_time=x.get("date")
         if team not in NBA_IDS or not player.isdigit():

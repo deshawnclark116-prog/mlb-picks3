@@ -5,8 +5,8 @@
  * platoon leverage weights, and calculates exposure probability vector for the bullpen.
  */
 
-import { PitchTensorData } from "../types";
-import { evaluatePitchMatchup, applyBayesShrinkage } from "./pitchMatchupTensor";
+import type { PitchTensorData } from "../types.ts";
+import { evaluatePitchMatchup, applyBayesShrinkage } from "./pitchMatchupTensor.ts";
 
 export interface RelieverProfile {
   reliever_id: string;

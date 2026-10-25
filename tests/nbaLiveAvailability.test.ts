@@ -95,3 +95,91 @@ test('fresh ESPN injury observations are cached two minutes without repeated pro
   await loadLiveNbaInjuries(f,new Date(NOW.getTime()+121000));
   assert.equal(count,2);
 });
+test('nested ESPN team injury collection structure is safely parsed and accepted',()=>{
+  const nestedPayload = {
+    injuries: [
+      {
+        id: TEAM_DAL,
+        displayName: 'Dallas Mavericks',
+        injuries: [
+          {
+            id: '-58751',
+            status: 'Out',
+            date: REPORT,
+            athlete: {
+              displayName: 'Cooper Flagg',
+              links: [{ href: `https://www.espn.com/nba/player/_/id/${ESPN_ID}/cooper-flagg` }]
+            }
+          }
+        ]
+      },
+      {
+        id: '1',
+        displayName: 'Atlanta Hawks',
+        injuries: [
+          {
+            id: '-58752',
+            status: 'Out',
+            date: REPORT,
+            athlete: {
+              displayName: 'Player One',
+              headshot: { href: 'https://a.espncdn.com/i/headshots/nba/players/full/700001.png' }
+            }
+          }
+        ]
+      },
+      {
+        id: '2',
+        displayName: 'Boston Celtics',
+        injuries: [
+          {
+            id: '-58753',
+            status: 'Doubtful',
+            date: REPORT,
+            athlete: {
+              displayName: 'Player Two',
+              links: [{ href: 'sportscenter://x-callback-url/showClubhouse?uid=s:40~l:46~a:700002&section=stats' }]
+            }
+          }
+        ]
+      },
+      {
+        id: '3',
+        displayName: 'Chicago Bulls',
+        injuries: [
+          {
+            id: '-58754',
+            status: 'Questionable',
+            date: REPORT,
+            athlete: {
+              displayName: 'Player Three',
+              notes: { items: [{ injury: { $ref: 'http://sports.core.api.espn.pvt/v2/sports/basketball/leagues/nba/seasons/2027/athletes/700003/injuries/-58754' } } ] }
+            }
+          }
+        ]
+      },
+      {
+        id: '4',
+        displayName: 'Denver Nuggets',
+        injuries: [
+          {
+            id: '-58755',
+            status: 'Day-To-Day',
+            date: REPORT,
+            athlete: {
+              id: '700004',
+              displayName: 'Player Four'
+            }
+          }
+        ]
+      }
+    ]
+  };
+  const v = parseLiveNbaInjuries(nestedPayload, NOW);
+  assert.equal(v.accepted_entries, 5);
+  assert.equal(v.teams_with_reported_injuries, 5);
+  assert.equal(v.players.find(p=>p.player_id===ESPN_ID)?.status, 'OUT');
+  assert.equal(v.players.find(p=>p.player_id==='700004')?.status, 'DAY_TO_DAY');
+  requireFreshLiveAvailability(v, NOW);
+});
+

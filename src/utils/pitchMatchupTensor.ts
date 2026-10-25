@@ -4,7 +4,7 @@
  * normalizes to a 0.0-1.0 Percentile Rank vs League Distribution, and isolates primary vulnerabilities.
  */
 
-import { PitchTensorData, PitchBreakdownItem } from "../types";
+import type { PitchTensorData, PitchBreakdownItem } from "../types.ts";
 
 export const PITCH_NAMES: Record<string, string> = {
   FF: "4-Seam Fastball",
