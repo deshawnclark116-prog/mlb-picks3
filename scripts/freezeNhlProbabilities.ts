@@ -4,6 +4,7 @@
 import {existsSync,readdirSync,readFileSync,mkdirSync,writeFileSync} from 'node:fs';
 import path from 'node:path';
 import {loadNhlCountResearch} from '../server/nhlCountResearch.ts';
+import type {NhlSogResearch} from '../src/nhl/countResearch.ts';
 import {freezeSourceNhlShotProbabilities,verifyFirstseenShotLedger,
  type FrozenNhlShotDoc} from '../src/nhl/probabilityForward.ts';
 const flag=process.argv.indexOf('--out');
@@ -26,7 +27,7 @@ const next=new Date(Date.parse(today+'T12:00:00Z')+86400000)
    .toISOString().slice(0,10);
 const rows=[];
 for(const day of [today,next]){
- const source=await loadNhlCountResearch(day);
+ const source=await loadNhlCountResearch(day) as unknown as NhlSogResearch;
  const doc=freezeSourceNhlShotProbabilities(source,clock,existing);
  rows.push(...doc.predictions);
 }
