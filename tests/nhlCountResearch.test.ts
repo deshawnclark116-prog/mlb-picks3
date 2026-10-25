@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {reduceFrozenNhlShots,loadNhlCountResearch} from '../server/nhlCountResearch';
-import {addTrueNhlShotCounts,nhlCountGameDate,nhlVisibleGames,NHL_COUNT_SCHEMA,type NhlSogResearch} from '../src/nhl/countResearch';
+import {addTrueNhlShotCounts,selectNhlShotMilestoneResearch,nhlCountGameDate,nhlVisibleGames,NHL_COUNT_SCHEMA,type NhlSogResearch} from '../src/nhl/countResearch';
 import type {UnifiedGame} from '../src/components/UnifiedSportGameCards';
 
 const cols=['game_id','player_id','player','team','opponent','game_date','scheduled_start',
@@ -41,13 +41,39 @@ test('frozen NHL V2 shot-count forecast independently supplies MEAN and MEDIAN, 
  assert.equal(game.picks.length,2);
  assert.equal(game.picks[0].market,'shots_on_goal');
  assert.equal(game.picks[0].prediction,3.2);
- assert.equal(game.picks[0].modelProbability,null);
+ assert.equal(game.picks[0].modelProbability,.65);
+ assert.equal(game.picks[0].target,'MODEL EVENT 3+ SHOTS · UNVALIDATED RESEARCH');
+ assert.match(game.picks[0].detail||'',/NOT prospectively calibrated/);
+ assert.equal(reduced.projections[0].model_probability_forward_calibrated,false);
+ assert.deepEqual(reduced.projections[0].model_probability_milestones_research_only,
+   {'1':.95,'2':.82,'3':.65,'4':.44,'5':.22});
  assert.equal(game.picks[0].predictionKind,'mean');
  assert.equal(game.picks[1].prediction,null);
  assert.equal(game.picks[1].modelProbability,.744);
  assert.match(game.sourceLabel,/SEPARATE POINTS CLASSIFIER/);
 });
 
+test('locked NHL SOG milestone CDF is NFL-style event probability, NOT a sportsbook line or a prospectively validated win rate',()=>{
+ const report=reduceFrozenNhlShots(src(),'2026-10-18');
+ const row=report.projections[0];
+ assert.deepEqual(selectNhlShotMilestoneResearch(row),{milestone:3,model_probability:.65});
+ const oneHigher={...row,model_probability_milestones_research_only:{
+   '1':.99,'2':.92,'3':.81,'4':.69,'5':.46
+ }};
+ assert.deepEqual(selectNhlShotMilestoneResearch(oneHigher),
+   {milestone:4,model_probability:.69});
+ const low={...row,model_probability_milestones_research_only:{
+   '1':.52,'2':.42,'3':.25,'4':.11,'5':.01
+ }};
+ assert.equal(selectNhlShotMilestoneResearch(low),null);
+ const noCal={...row,model_probability_forward_calibrated:undefined};
+ assert.equal(selectNhlShotMilestoneResearch(noCal),null);
+ const tamper={...row,model_probability_milestones_research_only:{
+   '1':.85,'2':.95,'3':.6,'4':.4,'5':.2
+ }};
+ assert.throws(()=>selectNhlShotMilestoneResearch(tamper),
+   /SURVIVAL_INVARIANT/);
+});
 test('original sourced NHL count cannot be generated after cutoff or puck drop',()=>{
  const d=src();d.forecasts.T24H[0][cols.indexOf('generated_at')]='2026-10-18T22:05:00Z';
  assert.equal(reduceFrozenNhlShots(d,'2026-10-18').projected_count,0);
