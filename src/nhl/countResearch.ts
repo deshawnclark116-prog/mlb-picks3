@@ -17,6 +17,8 @@ export interface NhlSogCount {
 export interface NhlSogResearch {
  schema:'NHL_APP_VERIFIED_SOG_COUNT_RESEARCH_V1';game_date:string;
  research_only:true;not_an_official_betting_board:true;
+ source_has_original_hash_chain?:true;
+ source_snapshot_commit_sha?:string;source_ledger_sha256?:string;
  projected_count:number;projections:NhlSogCount[];
 }
 export const NHL_COUNT_SCHEMA='NHL_APP_VERIFIED_SOG_COUNT_RESEARCH_V1';
