@@ -98,7 +98,8 @@ test('independent frozen shot-count matchup exists even when current points mode
  assert.equal(games[0].when,'2026-10-18T22:00:00Z');
  assert.equal(games[0].picks[0].market,'shots_on_goal');
  assert.equal(games[0].picks[0].prediction,3.2);
- assert.equal(games[0].picks[0].modelProbability,null);
+ assert.equal(games[0].picks[0].modelProbability,.65);
+ assert.match(games[0].picks[0].target,/3\+ SHOTS.*UNVALIDATED RESEARCH/);
  assert.match(games[0].sourceLabel,/FROZEN V2 SOG COUNT/);
 });
 
