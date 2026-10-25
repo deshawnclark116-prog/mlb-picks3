@@ -1,0 +1,37 @@
+{
+  "bookmaker_win_loss_record": null,
+  "by_market": {
+    "assists": {
+      "hit_rate": null,
+      "mean_brier": null,
+      "mean_model_p": null,
+      "verified_n": 0
+    },
+    "points": {
+      "hit_rate": null,
+      "mean_brier": null,
+      "mean_model_p": null,
+      "verified_n": 0
+    },
+    "rebounds": {
+      "hit_rate": null,
+      "mean_brier": null,
+      "mean_model_p": null,
+      "verified_n": 0
+    },
+    "three_pointers_made": {
+      "hit_rate": null,
+      "mean_brier": null,
+      "mean_model_p": null,
+      "verified_n": 0
+    }
+  },
+  "firstseen_games": 0,
+  "graded_at_utc": "2026-10-25T01:10:17.170Z",
+  "official_bets": 0,
+  "original_probabilistic_predictions": 0,
+  "predicted_vs_actual": [],
+  "schema": "NBA_V2_PROSPECTIVE_PROBABILITY_MILESTONE_ACTUAL_GRADE_V1",
+  "unverified": 0,
+  "verified_hit_or_miss": 0
+}
