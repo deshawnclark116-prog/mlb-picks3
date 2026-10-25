@@ -11,10 +11,25 @@ import certifiedAbsences from '../docs/nba_verified_game_absences.json';
 import {parseNbaPlayerResearch} from '../src/nba/playerResearch.ts';
 import {combineRollingNbaOriginals} from '../src/nba/rollingResearch.ts';
 import {buildNbaSystemBoard,type InputGame,type InputPlayer} from '../src/nba/decisionBoard.ts';
+import {parseNbaProbabilityArtifact,type NbaProbabilityArtifact} from '../src/nba/probabilityEngine.ts';
 import {loadLiveNbaInjuries,liveStatusMap,requireFreshLiveAvailability,
   type LiveAvailability} from './nbaLiveAvailability.ts';
 
 const ROOT=path.resolve(process.cwd(),'docs','nba_rolling_predictions');
+const PROB_ARTIFACT=path.resolve(process.cwd(),'docs','nba_v2_probability_distribution_v1.json');
+const V2_TEAM_HIST=path.resolve(process.cwd(),'docs','nba_v1_forward_walkback.json');
+/** No on-request calibration from already completed games: only an immutable
+ * archived fit/holdout report may authorize numerical NBA P(hit).
+ */
+export function loadNbaHistoricalProbabilityEvidence():NbaProbabilityArtifact|null{
+  if(!existsSync(PROB_ARTIFACT))return null;
+  const earlier=JSON.parse(readFileSync(V2_TEAM_HIST,'utf8'));
+  if(earlier.schema!=='NBA_V1_LEAKSAFE_ESPN_TEAM_HOLDOUT_V1'||
+     typeof earlier.source?.source_content_sha256!=='string')
+    throw Error('NBA_PROBABILITY_OLD_TEAM_SOURCE_CHANGED');
+  const raw=JSON.parse(readFileSync(PROB_ARTIFACT,'utf8'));
+  return parseNbaProbabilityArtifact(raw,earlier.source.source_content_sha256);
+}
 const now=()=>new Date();
 
 export function readVerifiedNbaSystemBoard(current=now(),
@@ -66,7 +81,8 @@ export function readVerifiedNbaSystemBoard(current=now(),
         p.espn_source_reported_injury_status
     } as InputPlayer;
   })}));
-  const board=buildNbaSystemBoard(adjusted);
+  const probabilityEvidence=loadNbaHistoricalProbabilityEvidence();
+  const board=buildNbaSystemBoard(adjusted,probabilityEvidence);
   // Limit mobile board to games close to today's action. The independent
   // grader retains ALL original game/player/stat predictions regardless.
   const left=current.getTime()-24*3600*1000;
@@ -82,6 +98,11 @@ export function readVerifiedNbaSystemBoard(current=now(),
     games_with_picks:games.filter(g=>g.picks.length).length,
     displayed_game_count:games.length,
     priced_market_status:'NO_VERIFIED_NBA_BOOKMAKER_PROP_LINE_FEED',
+    model_probability_source_status:probabilityEvidence?
+      'HISTORICAL_FIT_AND_INDEPENDENT_FORWARD_HOLDOUT_NOT_LIVE_CALIBRATED':
+      'NO_PROBABILITY_RESEARCH_ARTIFACT_AVAILABLE',
+    model_probabilities_require_no_bookmaker:true as const,
+    model_probability_heldout_validation_start:'2026-01-10',
     official_bets:0 as const,
     live_injury_check:availability?'LIVE_ESPN_SOURCE_VERIFIED':'NOT_CHECKED_RESEARCH_ONLY',
     live_injury_source_at_utc:availability?.captured_at_utc??null,
@@ -104,7 +125,7 @@ export function nbaSystemPicksHandler(fetcher:typeof fetch=fetch,clock=now){
         error:'NBA_LIVE_INJURY_VERIFICATION_UNAVAILABLE',
         status:'SYSTEM_PICKS_PAUSED_UNTIL_FRESH_INJURY_SOURCE',
         official_bets:0,
-        details:'Current NBA availability source is missing, stale, incomplete or invalid. Original research forecasts remain archived; no current SYSTEM PICKS may be served unchecked.'
+        details:'Current NBA live availability or source-verified probability evidence is missing, stale, incomplete or invalid. Original research forecasts remain archived; no invalid SYSTEM PICKS may be served.'
       });
     }
   };
