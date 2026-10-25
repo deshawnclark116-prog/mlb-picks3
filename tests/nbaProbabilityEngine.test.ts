@@ -51,11 +51,8 @@ function fixture():NbaProbabilityArtifact{
      training_n_preselected_players:700,training_n_played_players:600,
      training_games:75,source_cutoff_last_day:'2026-01-09',
      play_reliability_bins:bins,
-     conditional_scaled_residuals:Object.fromEntries(statistics.map(m=>[m,[...residuals]]))
-       as NbaProbabilityArtifact['fit']['conditional_scaled_residuals'],
-     training_target_baselines:Object.fromEntries(statistics.map(m=>[m,
-       Object.fromEntries(MILESTONES[m].map(k=>[String(k),.2]))]))
-       as NbaProbabilityArtifact['fit']['training_target_baselines']
+     conditional_scaled_residuals: Object.fromEntries(statistics.map(m=>[m,[...residuals]])) as NbaProbabilityArtifact['fit']['conditional_scaled_residuals'],
+     training_target_baselines: Object.fromEntries(statistics.map(m=>[m,Object.fromEntries(MILESTONES[m].map(k=>[String(k),.2]))])) as NbaProbabilityArtifact['fit']['training_target_baselines']
    },
    markets:{
      points:mk(true) as NbaProbabilityArtifact['markets']['points'],
