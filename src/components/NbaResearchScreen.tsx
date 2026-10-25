@@ -3,6 +3,7 @@ import { parseNbaResearch, type NbaResearchDocument } from '../nba/research';
 import NbaPlayerResearchPanel from './NbaPlayerResearchPanel';
 import NbaRollingPlayerPanel from './NbaRollingPlayerPanel';
 import NbaSystemPicksPanel from './NbaSystemPicksPanel';
+import NbaV3ResearchPanel from './NbaV3ResearchPanel';
 
 const pct = (v: number) => (v * 100).toFixed(1) + '%';
 const gameDayEastern = (iso: string) => {
@@ -28,7 +29,7 @@ export default function NbaResearchScreen() {
   const [loading, setLoading] = useState(true);
   const [day, setDay] = useState('ALL');
   const [search, setSearch] = useState('');
-  const [mode, setMode] = useState<'PICKS'|'BETTABLE'|'ROLLING'|'TEAMS'|'PLAYERS'>('PICKS');
+  const [mode, setMode] = useState<'PICKS'|'BETTABLE'|'ROLLING'|'V3'|'TEAMS'|'PLAYERS'>('PICKS');
 
   useEffect(() => {
     let mounted = true;
@@ -65,13 +66,13 @@ export default function NbaResearchScreen() {
       <p>Selected targets come from original V2 projections. No complete player-stat lists are presented as a betting card. Full original predictions remain archived for grading.</p>
       <p>Bettable Now requires real bookmaker lines, reliable injury evidence and calibrated target probabilities. These are not yet established for NBA.</p>
     </section>
-    <div className="grid grid-cols-3 gap-1" role="group" aria-label="NBA betting model view">
-      {(['PICKS','BETTABLE','ROLLING'] as const).map(m=><button key={m}
+    <div className="grid grid-cols-4 gap-1" role="group" aria-label="NBA betting model view">
+      {(['PICKS','BETTABLE','ROLLING','V3'] as const).map(m=><button key={m}
         type="button" aria-pressed={mode===m} onClick={()=>setMode(m)}
         className={'min-h-11 rounded-lg border px-1 text-[10px] font-bold '+
           (mode===m?'border-[#00FF41] bg-[#00FF41]/10 text-[#00FF41]':
                        'border-[#333] bg-[#242424] text-gray-300')}>
-        {m==='PICKS'?'SYSTEM PICKS':m==='BETTABLE'?'BETTABLE NOW':'MODEL BOARD'}
+        {m==='PICKS'?'SYSTEM PICKS':m==='BETTABLE'?'BETTABLE NOW':m==='ROLLING'?'MODEL BOARD':'V3 SHADOW'}
       </button>)}
     </div>
     <input aria-label="Find NBA team or player" placeholder="Search NBA picks, players or games"
@@ -80,6 +81,7 @@ export default function NbaResearchScreen() {
     {(mode==='PICKS'||mode==='BETTABLE')&&
       <NbaSystemPicksPanel mode={mode==='PICKS'?'SYSTEM PICKS':'BETTABLE NOW'} search={search}/>}
     {mode==='ROLLING'&&<NbaRollingPlayerPanel search={search}/>}
+    {mode==='V3'&&<NbaV3ResearchPanel search={search}/>}
     <details className="rounded-xl border border-[#303030] bg-[#171717] p-3 text-xs"
       open={mode==='TEAMS'||mode==='PLAYERS'}>
       <summary className="min-h-10 cursor-pointer font-bold text-gray-300">
