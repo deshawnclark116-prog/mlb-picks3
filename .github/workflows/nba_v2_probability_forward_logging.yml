@@ -1,0 +1,180 @@
+name: NBA probability first-observed snapshots and real forward calibration
+on:
+  pull_request:
+    paths:
+      - src/nba/probabilityLedger.ts
+      - scripts/freezeNbaProbabilities.ts
+      - scripts/gradeNbaProbabilities.ts
+      - tests/nbaProbabilityLedger.test.ts
+      - .github/workflows/nba_v2_probability_forward_logging.yml
+      - package.json
+  push:
+    branches: [main]
+    paths:
+      - src/nba/probabilityLedger.ts
+      - scripts/freezeNbaProbabilities.ts
+      - scripts/gradeNbaProbabilities.ts
+      - tests/nbaProbabilityLedger.test.ts
+      - docs/nba_v2_probability_distribution_v1.json
+      - docs/nba_rolling_predictions/**
+      - docs/nba_v2_rolling_player_grades.json
+      - docs/nba_v2_probability_snapshots/**
+      - .github/workflows/nba_v2_probability_forward_logging.yml
+      - package.json
+  schedule:
+    # Before US East afternoon slate, evening, and late starts.
+    - cron: "50 15 * * *"
+    - cron: "48 18 * * *"
+    - cron: "20 23 * * *"
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: nba-v2-forward-probability-firstseen
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Verify source-only pretip snapshot and exact ESPN final/DNP scoring
+        run: |
+          npm run lint
+          node --import tsx --test tests/nbaProbabilityLedger.test.ts tests/nbaProbabilityEngine.test.ts tests/nbaLiveAvailability.test.ts
+          npm run build
+          git diff --check
+  archive-first-seen-probabilities:
+    needs: validate
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Freeze every eligible future NBA probability with fresh independently sourced injuries
+        run: |
+          set -euo pipefail
+          if ! test -f docs/nba_v2_probability_distribution_v1.json; then
+            echo "NBA_PROBABILITY_HISTORICAL_ARTIFACT_NOT_YET_PUBLISHED"
+            exit 0
+          fi
+          node --import tsx scripts/freezeNbaProbabilities.ts \
+            --out "$RUNNER_TEMP/nba-firstseen-new.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nba-prospective-model-hit-probability-${{ github.run_id }}
+          path: ${{ runner.temp }}/nba-firstseen-new.json
+          if-no-files-found: warn
+          retention-days: 90
+      - name: Append immutable probability snapshots ONLY before the original tipoff
+        run: |
+          set -euo pipefail
+          FILE="$RUNNER_TEMP/nba-firstseen-new.json"
+          if ! test -s "$FILE"; then exit 0; fi
+          FROZEN="docs/nba_v2_probability_snapshots/$(date -u +%Y-%m-%dT%H%M%SZ).json"
+          git config user.name "nba-v2-probability-firstseen[bot]"
+          git config user.email "nba-v2-probability-firstseen[bot]@users.noreply.github.com"
+          for n in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            python - "$FILE" <<'PY'
+          import json,pathlib,sys,datetime
+          new=json.load(open(sys.argv[1]))
+          seen=set()
+          for p in pathlib.Path('docs/nba_v2_probability_snapshots').glob('*.json'):
+              for g in json.loads(p.read_text())['games']:
+                  if g['game_id'] in seen:raise SystemExit('DUPLICATE_EXISTING_GAME')
+                  seen.add(g['game_id'])
+          now=datetime.datetime.now(datetime.timezone.utc)
+          for g in new['games']:
+              if g['game_id'] in seen:
+                  raise SystemExit('NBA_PROBABILITY_SNAPSHOT_ALREADY_FROZEN_NO_REPLACEMENT')
+              tip=datetime.datetime.fromisoformat(g['tipoff_utc'])
+              if now>=tip:
+                  raise SystemExit('NBA_PROBABILITY_COMMIT_AFTER_GAME_STARTED')
+          PY
+            mkdir -p docs/nba_v2_probability_snapshots
+            if test -e "$FROZEN"; then exit 1; fi
+            cp "$FILE" "$FROZEN"
+            git add "$FROZEN"
+            git commit -m "Freeze first-seen NBA model P(hit) from prior distributions before new games start"
+            if git push origin HEAD:main; then
+              echo "NBA_PROBABILITY_FROZEN_WITH_INJURY_RECEIPTS"
+              exit 0
+            fi
+            if [ "$n" = 4 ]; then exit 1; fi
+          done
+  grade-original-model-probabilities:
+    needs: validate
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Grade frozen P(hit) vs original numeric forecast and independent ESPN actual
+        run: |
+          node --import tsx scripts/gradeNbaProbabilities.ts \
+             --out "$RUNNER_TEMP/nba-forward-probability-grade.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nba-forward-real-outcome-probability-grading-${{ github.run_id }}
+          path: ${{ runner.temp }}/nba-forward-probability-grade.json
+          if-no-files-found: warn
+          retention-days: 90
+      - name: Publish complete all-original P(hit) Brier and unverified statuses
+        run: |
+          set -euo pipefail
+          FILE="$RUNNER_TEMP/nba-forward-probability-grade.json"
+          if ! test -s "$FILE"; then exit 0; fi
+          git config user.name "nba-v2-probability-truth[bot]"
+          git config user.email "nba-v2-probability-truth[bot]@users.noreply.github.com"
+          for n in 1 2 3 4; do
+            git fetch origin main
+            git reset --hard origin/main
+            python - "$FILE" <<'PY'
+          import json,pathlib,sys
+          new=json.load(open(sys.argv[1]))
+          assert new['schema']=='NBA_V2_PROSPECTIVE_PROBABILITY_MILESTONE_ACTUAL_GRADE_V1'
+          assert new['official_bets']==0
+          assert new['original_probabilistic_predictions']==(
+              new['verified_hit_or_miss']+new['unverified'])
+          destination=pathlib.Path('docs/nba_v2_probability_forward_grade.json')
+          if destination.exists():
+              old=json.loads(destination.read_text())
+              if old.get('predicted_vs_actual')==new['predicted_vs_actual']:
+                  print('NBA_PROBABILITY_NO_NEW_VERIFIED_OUTCOMES')
+                  raise SystemExit(0)
+          destination.write_text(json.dumps(new,indent=2,sort_keys=True)+'\n')
+          PY
+            git add docs/nba_v2_probability_forward_grade.json
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m "Grade all first-seen NBA system milestone probabilities against independent real finals and DNP"
+            if git push origin HEAD:main; then
+              echo "NBA_PREGAME_PROBABILITY_GRADE_PUBLISHED"
+              exit 0
+            fi
+            if [ "$n" = 4 ]; then exit 1; fi
+          done
