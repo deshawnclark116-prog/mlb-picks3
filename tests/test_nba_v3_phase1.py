@@ -115,9 +115,33 @@ class NbaV3(unittest.TestCase):
                 self.assertEqual(r["p_active"],0)
                 self.assertEqual(r["model_target"],None)
         self.assertNotEqual(baseline,scenario)
+        # Genuine source-reported absence should redistribute measured minutes
+        # to other real roster players, not leave the replacement role frozen.
+        before={x["player_id"]:x for x in baseline["1"]}
+        after_surviving=[x for x in scenario["1"] if x["p_play"]>0]
+        self.assertTrue(any(x["minutes_if_playing"]>
+            before[x["player_id"]]["minutes_if_playing"] for x in after_surviving))
+        self.assertTrue(any(x["role_reallocated_expected_minutes"]>0
+            for x in after_surviving))
+        self.assertLessEqual(sum(x["minutes_if_playing"]*x["p_play"]
+            for x in scenario["1"]),TEAM_MINUTES)
         self.assertEqual(baseline["1"][0]["reported_status"],
                          "UNKNOWN_NOT_ACTIVE_CERTIFIED")
         self.assertFalse(after["game_day_active_certified"])
+
+    def test_sourced_player_out_reallocates_shot_attempt_volume_but_never_fabricates_uncertified_lineup(self):
+        baseline=inputs(profile=True)
+        absent=baseline["1"][0]["player_id"]
+        scenario=inputs(profile=True,drop=absent)
+        live=[x for x in scenario["1"] if x["p_play"]>0]
+        self.assertTrue(any(x["vacated_usage_factor"]>1.0 for x in live))
+        self.assertTrue(all(x["vacated_usage_factor"]<=1.18001 for x in live))
+        self.assertTrue(all(x["game_day_starter_certified"] is False
+                            and x["game_day_active_certified"] is False for x in live))
+        shadow=simulate_matchup("real-out",scenario,asof_utc=ASOF,tipoff_utc=TIP,draws=900)
+        self.assertTrue(any(r["vacated_usage_shot_attempt_factor"]>1.
+                     for r in shadow["rows"] if r["team_id"]=="1"))
+        self.assertEqual(shadow["official_bets"],0)
 
     def test_future_or_fabricated_roster_role_evidence_fails_closed(self):
         cases=[
