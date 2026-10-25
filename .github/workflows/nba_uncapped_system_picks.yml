@@ -1,0 +1,35 @@
+name: NBA no arbitrary pick cap
+on:
+  pull_request:
+    paths:
+      - src/nba/decisionBoard.ts
+      - src/components/NbaSystemPicksPanel.tsx
+      - tests/nbaDecisionBoard.test.ts
+      - .github/workflows/nba_uncapped_system_picks.yml
+  push:
+    branches: [main]
+    paths:
+      - src/nba/decisionBoard.ts
+      - src/components/NbaSystemPicksPanel.tsx
+      - tests/nbaDecisionBoard.test.ts
+      - .github/workflows/nba_uncapped_system_picks.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: All eligible model picks, immutable source, current injury gate, frontend build
+        run: |
+          npm run lint
+          node --import tsx --test tests/nbaDecisionBoard.test.ts tests/nbaLiveAvailability.test.ts
+          npm run build
+          git diff --check

@@ -15,7 +15,7 @@ const data=():InputGame[]=>[
 ] as unknown as InputGame[];
 const clone=<T>(r:T):T=>JSON.parse(JSON.stringify(r)) as T;
 
-test('NBA betting view is genuinely selected: 28 original games, 1832 raw market forecasts, max two system targets per game',()=>{
+test('NBA model board selects all qualifying players without arbitrary per-game limit and keeps 1832 raw predictions',()=>{
  const d=buildNbaSystemBoard(data());
  assert.equal(d.schema,'NBA_V2_SAVED_PREGAME_SYSTEM_TARGET_BOARD_V1');
  assert.equal(d.original_game_count,28);
@@ -23,9 +23,10 @@ test('NBA betting view is genuinely selected: 28 original games, 1832 raw market
  assert.equal(d.evaluated_player_count,225+233);
  assert(d.all_uncapped_system_candidate_count>20);
  assert(d.displayed_system_picks<d.evaluated_player_count);
- assert(d.displayed_system_picks<=2*28);
+ assert.equal(d.displayed_system_picks,d.all_uncapped_system_candidate_count);
  assert.equal(d.not_shown_raw_graded_predictions,1832);
- assert(d.games.every(g=>g.picks.length<=2));
+ assert(d.games.some(g=>g.picks.length>2));
+ assert(d.games.every(g=>g.picks.length===g.candidate_count));
  for(const g of d.games)for(const p of g.picks){
     assert.equal(p.type,'UNPRICED_MODEL_TARGET_NOT_A_BOOK_BET');
     assert.equal(p.official_pick,false);
@@ -42,15 +43,18 @@ test('NBA betting view is genuinely selected: 28 original games, 1832 raw market
  assert.equal(d.probability_model_calibrated_for_NBA_targets,false);
 });
 
-test('NBA TONIGHT Celtics-Pistons is TWO model choices not 22 full player profiles or 88 fake wagers',()=>{
+test('Celtics-Pistons shows all qualified model selections, not two arbitrarily sliced picks or full raw player dump',()=>{
  const d=buildNbaSystemBoard(data());
  const game=d.games.find(g=>g.away==='Boston Celtics'&&g.home==='Detroit Pistons');
  assert(game);
- assert.equal(game.picks.length,2);
- assert.equal(game.candidate_count>=game.picks.length,true);
+ assert.equal(game.picks.length,2); // This game's evidence really yielded two, not a cap.
+ assert.equal(game.candidate_count,game.picks.length);
  assert(game.picks.some(p=>p.player==='Jalen Duren'));
+ const more=d.games.find(g=>g.picks.length>=4);
+ assert(more,'Different matchup must retain 4+ qualified picks without display truncation');
+ assert.equal(more.candidate_count,more.picks.length);
  assert(game.picks.some(p=>p.player==='Payton Pritchard'));
- assert.equal(new Set(game.picks.map(p=>p.player_id)).size,2);
+ assert.equal(new Set(game.picks.map(p=>p.player_id)).size,game.picks.length);
  assert(game.picks.every(p=>p.predicted_stat>p.model_milestone-.5));
 });
 
@@ -107,7 +111,7 @@ test('live API loads saved opening AND rolling forecasts, ranks tonight instead 
  assert(day.games.some(g=>g.game_id===opening.forecasts[0].game_id));
  assert(day.games.some(g=>g.game_id===rolling.forecasts[0].game_id));
  assert(day.games.some(g=>g.picks.length));
- assert(day.games.every(g=>g.picks.length<=2));
+ assert(day.games.every(g=>g.picks.length===g.candidate_count));
  assert.equal(day.official_bets,0);
  assert.equal(day.priced_market_status,'NO_VERIFIED_NBA_BOOKMAKER_PROP_LINE_FEED');
  let result:any;
