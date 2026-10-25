@@ -1,3 +1,4 @@
+import {canonicalNhlTeam} from "./nhl/gameGrouping";
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -270,34 +271,59 @@ export function deduplicateCfbPredictions(preds: CfbPrediction[]): CfbPrediction
  * player_id is always null for moneyline (team-level, no player), same
  * reason getCfbPredictionKey falls back the way it does.
  */
-export function getNhlPredictionKey(pred: NhlPrediction): string {
-  if (!pred || typeof pred !== "object") return "";
-  const safeStr = (val: any): string => (val === null || val === undefined ? "" : String(val));
-  const teamKey = safeStr(pred.player_id || pred.team).trim().toLowerCase();
-  const marketKey = safeStr(pred.market).trim().toLowerCase();
-  const dateKey = safeStr(pred.game_date);
-  return `${teamKey}-${marketKey}-${dateKey}`;
-}
-
-/**
- * Deduplicates NHL predictions by their composite key, keeping the entry
- * with the most recent generated_at.
+/** NHL identity means one EVENT outcome, even if two model generations
+ * estimate that same event. Keep the originals in the upstream archive and
+ * only pick a deterministic serving champion for the app.
  */
-export function deduplicateNhlPredictions(preds: NhlPrediction[]): NhlPrediction[] {
-  if (!Array.isArray(preds)) return [];
-  const map = new Map<string, NhlPrediction>();
-  for (const pred of preds) {
-    const key = getNhlPredictionKey(pred);
-    if (!map.has(key)) {
-      map.set(key, pred);
-    } else {
-      const existing = map.get(key)!;
-      const newTime = pred.generated_at ? new Date(pred.generated_at).getTime() : 0;
-      const existingTime = existing.generated_at ? new Date(existing.generated_at).getTime() : 0;
-      if (newTime >= existingTime) map.set(key, pred);
+export const canonicalNhlMarket = (market:string):string => {
+  if(market==='points_early_season')return 'points';
+  if(market==='moneyline_early_season')return 'moneyline';
+  return market;
+};
+export function getNhlPredictionKey(pred: NhlPrediction): string {
+  if(!pred||typeof pred!=='object')return '';
+  const left=canonicalNhlTeam(String(pred.team||''));
+  const right=canonicalNhlTeam(String(pred.opponent||''));
+  const market=canonicalNhlMarket(pred.market);
+  const id=market==='moneyline'?left:
+    String(pred.player_id??'').trim()||'UNIDENTIFIED:'+String(pred.player||'').trim();
+  const event=[String(pred.season??''),pred.game_date||'',
+    ...[left,right].sort(),pred.kickoff_utc||''].join('|');
+  return [event,market,id].join('|');
+}
+export function deduplicateNhlPredictions(preds:NhlPrediction[]):NhlPrediction[]{
+  if(!Array.isArray(preds))return [];
+  const byEvent=new Map<string,NhlPrediction>();
+  const priority=(p:NhlPrediction)=>{
+    // A current-season model replaces, rather than doubles, an independent
+    // prior-year fallback. Never select the higher reported probability.
+    if(p.market==='points'||p.market==='moneyline')return 0;
+    if(p.market==='points_early_season'||p.market==='moneyline_early_season')return 1;
+    return 0;
+  };
+  for(const incoming of preds){
+    if(!incoming?.team||!incoming?.opponent||!incoming?.game_date)continue;
+    if(canonicalNhlTeam(incoming.team)===canonicalNhlTeam(incoming.opponent))continue;
+    const kind=canonicalNhlMarket(incoming.market);
+    if(kind==='points' && (!incoming.player_id||
+      incoming.pick!=='OVER 0.5'||!Number.isFinite(incoming.model_prob)||
+      incoming.model_prob<0||incoming.model_prob>1))continue;
+    const key=getNhlPredictionKey(incoming);
+    const old=byEvent.get(key);
+    const prefer=!old||priority(incoming)<priority(old)||
+      (priority(incoming)===priority(old)&&
+       Date.parse(incoming.generated_at||'')>Date.parse(old.generated_at||''));
+    if(prefer){
+      byEvent.set(key,{
+        ...incoming,source_market:incoming.source_market||incoming.market,
+        market:kind,
+        model_source:incoming.model_source||(
+          incoming.market.endsWith('_early_season')?
+            'prior_season_informed':'current_season')
+      });
     }
   }
-  return Array.from(map.values());
+  return [...byEvent.values()];
 }
 
 /**
