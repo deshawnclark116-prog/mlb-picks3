@@ -182,6 +182,29 @@ export default function NbaSystemPicksPanel({mode,search}:{
          <ChevronDown size={17} className={(expanded===g.game_id?'rotate-180 ':'')+'text-gray-400'}/>
        </button>
        {expanded===g.game_id&&<div className="space-y-2 border-t border-[#303030] p-3">
+         {g.qualification_audit&&<div data-testid="nba-gate-audit"
+             className="rounded-xl border border-[#404040] bg-[#1b1b1b] p-3 text-[11px] text-gray-300">
+           <p className="font-bold text-gray-100">Why players did or didn't qualify</p>
+           <p className="mt-1">{g.qualification_audit.total_player_forecasts} saved numerical player forecasts
+             {' · '}{g.qualification_audit.eligible_role_and_availability} passed availability/role rules
+             {' · '}{g.qualification_audit.qualified_system_picks} passed the final model target gate</p>
+           <p className="mt-1 text-gray-400">
+             Excluded: {g.qualification_audit.blocked_by_recorded_injury} injury restrictions
+             {' · '}{g.qualification_audit.below_historical_play_threshold} historical P(play) below 85%
+             {' · '}{g.qualification_audit.outside_required_minutes} modeled minutes outside 26–42
+             {' · '}{g.qualification_audit.eligible_but_no_qualified_probability} without a validated 65%+ milestone
+           </p>
+           {g.qualification_audit.largest_below_gate_probability&&
+             <p className="mt-2 text-amber-200">
+               Closest unqualified research estimate: {g.qualification_audit.largest_below_gate_probability.player}
+               {' · '}{g.qualification_audit.largest_below_gate_probability.milestone}+
+               {' '}{MARKETS_NAMED[g.qualification_audit.largest_below_gate_probability.market]}
+               {' · '}{pct(g.qualification_audit.largest_below_gate_probability.probability)}
+               {' · '}NOT a system pick
+             </p>}
+           <p className="mt-1 text-gray-500">Rejection counts are mutually exclusive and the
+             thresholds remain unchanged. Missing sportsbook lines are not the cause.</p>
+         </div>}
          {g.picks.length?g.picks.map(p=><NbaShortlistCard key={p.id} pick={p}/>):
            <p className="text-xs text-amber-200">
              The game is scheduled and its original numerical forecasts are saved,

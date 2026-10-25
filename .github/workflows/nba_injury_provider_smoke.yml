@@ -1,0 +1,45 @@
+name: NBA public injury source live smoke
+on:
+  pull_request:
+    paths:
+      - .github/workflows/nba_injury_provider_smoke.yml
+      - server/nbaLiveAvailability.ts
+      - server/nbaSystemPicks.ts
+      - src/nba/decisionBoard.ts
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  real-live-data-shape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Verify CURRENT public ESPN NBA injury endpoint and parser against real bytes
+        run: |
+          node --import tsx --input-type=module <<'JS'
+          import {NBA_INJURY_URL,loadLiveNbaInjuries} from './server/nbaLiveAvailability.ts';
+          try {
+            const res=await fetch(NBA_INJURY_URL,{signal:AbortSignal.timeout(10000)});
+            const body=await res.text();
+            const payload=(()=>{try{return JSON.parse(body)}catch{return {}}})();
+            console.log('NBA_PUBLIC_INJURY_HTTP',res.status);
+            console.log('NBA_PUBLIC_INJURY_TOP_LEVEL_KEYS',Object.keys(payload).slice(0,12));
+            console.log('NBA_PUBLIC_INJURY_GROUP_COUNT',Array.isArray(payload?.injuries)?payload.injuries.length:-1);
+            if(!res.ok)throw Error('LIVE_ESPN_NBA_INJURY_HTTP_'+res.status);
+            const data=await loadLiveNbaInjuries(async()=>
+              new Response(body,{status:res.status,headers:{'content-type':'application/json'}}),
+              new Date(),false);
+            console.log('NBA_PUBLIC_INJURY_VERIFIED',JSON.stringify({
+              accepted:data.accepted_entries,teams:data.teams_with_reported_injuries,
+              quarantined:data.quarantined_entries,status:data.status}));
+          }catch(err){
+            console.error('NBA_PUBLIC_INJURY_SOURCE_FAILS_REAL_SERVING_CONTRACT',String(err));
+            process.exitCode=1;
+          }
+          JS

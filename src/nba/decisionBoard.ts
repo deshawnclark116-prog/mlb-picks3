@@ -1,4 +1,4 @@
-import {bestNbaMilestone, PROBABILITY_MIN, type NbaProbabilityArtifact} from './probabilityEngine.ts';
+import {bestNbaMilestone,derivedNbaMilestoneProbability,MILESTONES,PROBABILITY_MIN, type NbaProbabilityArtifact} from './probabilityEngine.ts';
 /** NBA prediction DECISION layer: turns real frozen numerical V2 forecasts
  * into a restrained, reproducible list of MODEL targets. This is not an
  * independently calibrated price/EV model. The original ~900+ numerical
@@ -68,7 +68,18 @@ export type NbaSystemTarget={
   probability_historical_holdout_validated:boolean;
   confidence_is_not_calibrated:true;official_pick:false;
 };
+export type NbaSelectionGateAudit={
+  total_player_forecasts:number;
+  blocked_by_recorded_injury:number;
+  below_historical_play_threshold:number;
+  outside_required_minutes:number;
+  eligible_role_and_availability:number;
+  eligible_but_no_qualified_probability:number;
+  qualified_system_picks:number;
+  largest_below_gate_probability: {player:string; market:NbaMarket; milestone:number; probability:number}|null;
+};
 export type NbaSystemGame={
+  qualification_audit:NbaSelectionGateAudit;
   game_id:string;home:string;away:string;tipoff_utc:string;
   original_at_utc:string;source:InputGame['source'];
   candidate_count:number;picks:NbaSystemTarget[];
@@ -171,20 +182,68 @@ export function buildNbaSystemBoard(games:InputGame[],
       throw new Error('NBA_BETTING_BOARD_DROPPED_ORIGINAL_STAT_PREDICTIONS');
     statRows+=g.player_predictions_count;
     let all:NbaSystemTarget[]=[];
+    // The published board must explain *which* gate removed a forecast,
+    // without converting a rejected candidate into a betting pick.
+    // Rejections below are mutually exclusive, in this documented order.
+    const gate:NbaSelectionGateAudit={
+      total_player_forecasts:g.players.length,
+      blocked_by_recorded_injury:0,
+      below_historical_play_threshold:0,
+      outside_required_minutes:0,
+      eligible_role_and_availability:0,
+      eligible_but_no_qualified_probability:0,
+      qualified_system_picks:0,
+      largest_below_gate_probability:null
+    };
     for(const p of g.players){
       if(forecastIds.has(p.forecast_id))
         throw new Error('NBA_DUPLICATE_ORIGINAL_PLAYER_ID');
       forecastIds.add(p.forecast_id);
-      if(forecastEligible(p,g))eligible++;
+      const injuryRejected=BLOCKED.has(p.espn_source_reported_injury_status||'')||
+        p.reported_out_in_24h_conditional_scenario_p_play===0;
+      if(injuryRejected){gate.blocked_by_recorded_injury++;continue;}
+      if(!num(p.p_play_unverified)||p.p_play_unverified<MIN_HISTORICAL_PLAY_PROB){
+        gate.below_historical_play_threshold++;continue;
+      }
+      if(!num(p.conditional_minutes_mean)||
+         p.conditional_minutes_mean<MIN_ROLE_MINUTES||p.conditional_minutes_mean>42){
+        gate.outside_required_minutes++;continue;
+      }
+      if(!forecastEligible(p,g))
+        throw new Error('NBA_AUDIT_ELIGIBILITY_DIVERGES_FROM_SELECTION');
+      gate.eligible_role_and_availability++;
+      eligible++;
       const pick=targetFor(p,g,probabilities);
-      if(pick)all.push(pick);
+      if(pick){all.push(pick);gate.qualified_system_picks++;continue;}
+      gate.eligible_but_no_qualified_probability++;
+      if(probabilities){
+        for(const market of NBA_MARKETS){
+          if(!probabilities.markets[market]?.heldout_probability_gate_passed)continue;
+          const milestone=MILESTONES[market][0];
+          const pHit=derivedNbaMilestoneProbability(probabilities,market,
+            p.predictions[market],p.p_play_unverified,milestone);
+          if(pHit!=null&&pHit<PROBABILITY_MIN&&
+             (gate.largest_below_gate_probability==null||
+              pHit>gate.largest_below_gate_probability.probability)){
+            gate.largest_below_gate_probability={
+              player:p.player,market,milestone,probability:pHit
+            };
+          }
+        }
+      }
     }
+    if(gate.total_player_forecasts!==
+         gate.blocked_by_recorded_injury+gate.below_historical_play_threshold+
+         gate.outside_required_minutes+gate.qualified_system_picks+
+         gate.eligible_but_no_qualified_probability)
+      throw Error('NBA_SELECTION_GATE_AUDIT_COUNT_CONSERVATION_FAILED');
     uncapped+=all.length;
     all.sort(compareTarget);
     board.push({
       game_id:g.game_id,home:g.home,away:g.away,
       tipoff_utc:g.tipoff_utc,original_at_utc:g.original_at_utc,
-      source:g.source,candidate_count:all.length,picks:all
+      source:g.source,candidate_count:all.length,picks:all,
+      qualification_audit:gate
     });
   }
   const count=board.reduce((s,g)=>s+g.picks.length,0);
