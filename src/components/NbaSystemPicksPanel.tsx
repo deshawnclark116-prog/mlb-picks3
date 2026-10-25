@@ -25,6 +25,18 @@ export function NbaShortlistCard({pick}:{pick:NbaSystemTarget}){
      <p className="mt-1 text-3xl font-black text-[#00FF41]">{fmt(pick.predicted_stat)} {UNIT[pick.market]}</p>
      <p className="mt-1 text-[11px] text-gray-300">Historical P(plays) {pct(pick.historical_p_play)}
        {' · '}Modeled minutes if playing {fmt(pick.conditional_minutes)}</p>
+     <div className="mt-3 rounded-lg border border-[#2b7040] bg-[#0c2215] p-3"
+          data-testid="nba-model-hit-probability">
+       {pick.model_hit_probability!=null?
+         <>
+           <p className="text-[10px] font-bold text-gray-300">MODEL HIT PROBABILITY · HISTORICAL HOLDOUT</p>
+           <strong className="mt-1 block text-2xl text-[#00FF41]">{pct(pick.model_hit_probability)}</strong>
+           <p className="mt-1 text-[10px] text-amber-200">Independent 2026 historical holdout passed.
+             Not yet validated on 2026–27 or cleared as a sportsbook wager.</p>
+         </>:
+         <p className="text-[11px] text-amber-200">Model probability not yet validated for this target.
+           No invented confidence percentage.</p>}
+     </div>
    </div>
    <div className="rounded-xl border border-[#333] bg-[#151515] p-3">
      <p className="text-[10px] font-bold text-gray-400">MODEL TARGET · NOT A VERIFIED BOOKMAKER LINE</p>
@@ -34,9 +46,10 @@ export function NbaShortlistCard({pick}:{pick:NbaSystemTarget}){
    <details className="border-t border-[#333] pt-2 text-xs text-gray-400">
      <summary className="flex min-h-11 cursor-pointer items-center">VIEW MODEL EVIDENCE ▾</summary>
      <p className="pb-2">Gap / historical played-player holdout MAE:
-       {' '}{fmt(pick.gap_in_historical_mae_units)}. This is NOT a calibrated
-       probability or a price/value edge. Actual game-day availability and
-       sportsbook execution remain unverified.</p>
+       {' '}{fmt(pick.gap_in_historical_mae_units)}. The MAE ratio is NOT a
+       probability. When available above, the P(hit) comes from a separately
+       verified outcome CDF, independent of bookmaker prices. Current-season
+       calibration and official game-day active designation are unverified.</p>
      <p className="break-all pb-2 text-[10px]">Original saved forecast: {pick.forecast_id}</p>
    </details>
  </article>;
@@ -99,7 +112,7 @@ export default function NbaSystemPicksPanel({mode,search}:{
        All qualifying model-selected PTS, REB, AST and 3PM targets,
        one strongest qualified market per player. No fixed two-per-game limit.</p>
      <p className="mt-2 text-[11px] text-amber-200">
-       Unpriced model targets · Injury status checked on the serving request (refreshes every 2 minutes). Not an official active list or verified sportsbook bet.</p>
+       Model-generated threshold probabilities require NO sportsbook lines. Probabilities appear only for markets passing a separate historical forward holdout. Injury status refreshes every 2 minutes; current-season probability calibration and official NBA active lists remain unverified.</p>
    </div>
    <div className="flex items-center justify-between gap-3 text-[11px] text-gray-400">
      <span>{loading?'Loading verified saved model selections…':
@@ -140,7 +153,8 @@ export default function NbaSystemPicksPanel({mode,search}:{
           className="rounded-lg bg-[#232323] p-3 text-xs">
           <strong>{p.player} · {p.model_target}</strong>
           <p className="mt-1 text-gray-300">Model prediction {fmt(p.predicted_stat)} {UNIT[p.market]}
-            {' · '}P(plays) {pct(p.historical_p_play)}</p>
+            {' · '}P(plays) {pct(p.historical_p_play)}
+            {p.model_hit_probability!=null?' · P(hit) '+pct(p.model_hit_probability):' · P(hit) not validated'}</p>
         </div>)}
       </div>}
      {visible.map(g=><section key={g.game_id} data-testid="nba-selected-game"
