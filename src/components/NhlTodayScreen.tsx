@@ -6,7 +6,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import UnifiedSportGameCards, {type UnifiedGame} from './UnifiedSportGameCards';
 import {groupNhlPredictionsByGame} from '../nhl/gameGrouping';
-import {addTrueNhlShotCounts,nhlCountGameDate,nhlVisibleGames,NHL_COUNT_SCHEMA,type NhlSogResearch} from "../nhl/countResearch";
+import {addTrueNhlShotCounts,nhlCountGameDate,nhlVisibleGames,NHL_COUNT_SCHEMA,dailyShotResearchForDate,type NhlSogResearch} from "../nhl/countResearch";
 import { motion, AnimatePresence } from "motion/react";
 import { TrendingUp, RefreshCw, AlertTriangle, Search, ChevronDown, ChevronUp } from "lucide-react";
 import { NhlPrediction } from "../types";
@@ -74,18 +74,33 @@ export default function NhlTodayScreen({
     setNumericSog(null);setNumericSogError(null);
     void (async()=>{
       try{
-        const response=await fetch('/api/nhl-count-research?date='+encodeURIComponent(countDate),{
-          cache:'no-store',signal:ctl.signal});
-        if(!response.ok){
-          const info=await response.json().catch(()=>null);
-          throw Error('NHL shots '+response.status+
-            (info?.details?': '+String(info.details):''));
+        // Static or Google AI Studio preview gets compact source-proven
+        // current/next day forecasts without the full historical archive.
+        let shots:NhlSogResearch|null=null;
+        try{
+          const response=await fetch('/nhl-daily-shot-counts.json?t='+Date.now(),{
+            cache:'no-store',signal:ctl.signal});
+          if(!response.ok)throw Error('Compact NHL shots HTTP '+response.status);
+          shots=dailyShotResearchForDate(await response.json(),countDate);
+        }catch(compactError){
+          if(ctl.signal.aborted)return;
+          // Keep existing native endpoint as a source-validated fallback
+          // (its date-specific upstream partition was recently fixed).
+          const response=await fetch('/api/nhl-count-research?date='+encodeURIComponent(countDate),{
+            cache:'no-store',signal:ctl.signal});
+          if(!response.ok){
+            const info=await response.json().catch(()=>null);
+            throw Error('NHL shots '+response.status+
+              (info?.details?': '+String(info.details):'')+
+              ' · compact fallback unavailable');
+          }
+          const doc=await response.json();
+          if(doc?.schema!==NHL_COUNT_SCHEMA||doc?.game_date!==countDate||
+            doc?.research_only!==true||doc?.not_an_official_betting_board!==true)
+            throw Error('Unverified NHL numerical shot-count source');
+          shots=doc as NhlSogResearch;
         }
-        const doc=await response.json();
-        if(doc?.schema!==NHL_COUNT_SCHEMA || doc?.game_date!==countDate ||
-          doc?.research_only!==true || doc?.not_an_official_betting_board!==true)
-          throw Error('Unverified NHL numerical shot-count source');
-        if(!ctl.signal.aborted)setNumericSog(doc as NhlSogResearch);
+        if(!ctl.signal.aborted)setNumericSog(shots);
       }catch(e){
         if(!ctl.signal.aborted)setNumericSogError(e instanceof Error?e.message:String(e));
       }
