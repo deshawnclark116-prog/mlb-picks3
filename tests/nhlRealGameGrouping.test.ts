@@ -68,7 +68,8 @@ test('actual Oct 21 NHL 38-row source becomes TWO real game cards, not four card
   assert.equal(buffalo.predictions.length,18);
   assert(florida.predictions.some(v=>v.market==='moneyline'));
   assert(florida.predictions.some(v=>v.market==='points'));
-  assert(buffalo.predictions.some(v=>v.market==='points_early_season'));
+  assert(buffalo.predictions.some(v=>v.market==='points'&&v.source_market==='points_early_season'),
+    'Prior-season fallback remains attributable, but it is still the single anytime-points market');
   assert(buffalo.predictions.some(v=>v.market==='moneyline'));
   assert.equal(florida.kickoff_utc,'2026-10-21T23:30:00.000Z');
   assert.equal(buffalo.kickoff_utc,'2026-10-21T23:30:00.000Z');
