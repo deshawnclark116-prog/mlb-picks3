@@ -1,15 +1,12 @@
 import React,{useEffect,useMemo,useState} from 'react';
 import {ChevronDown,RefreshCw} from 'lucide-react';
 import {NBA_DECISION_SCHEMA,MARKETS_NAMED,type NbaSystemBoard,type NbaSystemTarget,type NbaMarket} from '../nba/decisionBoard.ts';
+import {nbaEasternGameDay,visibleNbaGameSlate} from '../nba/boardVisibility.ts';
 
 const fmt=(n:number)=>n.toLocaleString('en-US',{maximumFractionDigits:1});
 const pct=(n:number)=>(100*n).toFixed(0)+'%';
 const UNIT:Record<NbaMarket,string>={points:'PTS',rebounds:'REB',assists:'AST',three_pointers_made:'3PM'};
-const dateET=(iso:string)=>{
- const p=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',
-    year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date(iso)).map(x=>[x.type,x.value]));
- return p.year+'-'+p.month+'-'+p.day;
-};
+const dateET=nbaEasternGameDay;
 const whenET=(iso:string)=>new Date(iso).toLocaleString('en-US',{timeZone:'America/New_York',
    month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+' ET';
 
@@ -87,12 +84,11 @@ export default function NbaSystemPicksPanel({mode,search}:{
  },[revision]);
  const today=dateET(new Date().toISOString());
  const dates=useMemo(()=>board?[...new Set(board.games.map(g=>dateET(g.tipoff_utc)))].sort():[],[board]);
- const visible=useMemo(()=>board?board.games.map(g=>({...g,
-   picks:g.picks.filter(p=>(market==='ALL'||p.market===market)&&
-     (!search.trim()||(p.player+' '+g.away+' '+g.home+' '+MARKETS_NAMED[p.market])
-     .toLowerCase().includes(search.toLowerCase().trim())))
- })).filter(g=>(date==='ALL'||dateET(g.tipoff_utc)===(date==='TODAY'?today:date))&&
-   g.picks.length>0):[],[board,date,today,market,search]);
+ const visible=useMemo(()=>board?visibleNbaGameSlate(
+   board.games,date,today,market,search
+ ):[],[board,date,today,market,search]);
+ const visibleSelectedGames=visible.filter(g=>g.picks.length>0).length;
+ const visibleTotalPicks=visible.reduce((total,g)=>total+g.picks.length,0);
  const top=visible.flatMap(g=>g.picks).sort((a,b)=>
    b.gap_in_historical_mae_units-a.gap_in_historical_mae_units||
    b.historical_p_play-a.historical_p_play||a.player.localeCompare(b.player));
@@ -109,15 +105,17 @@ export default function NbaSystemPicksPanel({mode,search}:{
    <div className="rounded-xl border border-[#00FF41]/30 bg-[#0e2115] p-3">
      <h2 className="text-sm font-black text-[#00FF41]">NBA SYSTEM PICKS</h2>
      <p className="mt-1 text-xs text-gray-300">
-       All qualifying model-selected PTS, REB, AST and 3PM targets,
-       one strongest qualified market per player. No fixed two-per-game limit.</p>
+       Every scheduled matchup with an authentic frozen forecast remains visible,
+       including games with zero qualified picks. Picks are independently gated for
+       PTS, REB, AST and 3PM; no forced selection or two-per-game limit.</p>
      <p className="mt-2 text-[11px] text-amber-200">
        Model-generated threshold probabilities require NO sportsbook lines. Probabilities appear only for markets passing a separate historical forward holdout. Injury status refreshes every 2 minutes; current-season probability calibration and official NBA active lists remain unverified.</p>
    </div>
    <div className="flex items-center justify-between gap-3 text-[11px] text-gray-400">
      <span>{loading?'Loading verified saved model selections…':
-       board?String(board.displayed_system_picks)+' model selections across '+
-           String(board.games_with_picks)+' games · '+
+       board?String(visible.length)+' verified game forecasts · '+
+           String(visibleTotalPicks)+' qualified model picks across '+
+           String(visibleSelectedGames)+' games · '+
            String(board.original_player_stat_count)+' original stats retained for grading'
          :'No verified selection feed'}</span>
      <button type="button" disabled={loading} onClick={()=>setRevision(n=>n+1)}
@@ -165,25 +163,42 @@ export default function NbaSystemPicksPanel({mode,search}:{
          <div className="min-w-0 flex-1">
            <h3 className="text-sm font-bold">{g.away} at {g.home}</h3>
            <p className="mt-1 text-[11px] text-gray-400">
-             {whenET(g.tipoff_utc)} · {g.picks.length} selected model targets</p>
+             {whenET(g.tipoff_utc)} · {g.picks.length?
+               g.picks.length+' qualifying model picks':'NO QUALIFYING PICKS'}</p>
            <p className="mt-1 text-[10px] text-gray-400">
              Original forecast saved {whenET(g.original_at_utc)} ·
              {' '}Each future game is an independent prediction, not an automatically refreshed live line
            </p>
-           <p className="mt-2 text-xs text-gray-200">
-             TOP: {g.picks[0].player} · {g.picks[0].model_target}
-             {' · '}Projected {fmt(g.picks[0].predicted_stat)} {UNIT[g.picks[0].market]}
-           </p>
+           {g.picks.length?
+             <p className="mt-2 text-xs text-gray-200">
+               TOP: {g.picks[0].player} · {g.picks[0].model_target}
+               {' · '}Projected {fmt(g.picks[0].predicted_stat)} {UNIT[g.picks[0].market]}
+             </p>:
+             <p className="mt-2 text-xs text-amber-200">
+               Original game forecast saved · No player target qualifies under
+               the selected market, participation, injury and validated model-probability gates.
+             </p>}
          </div>
          <ChevronDown size={17} className={(expanded===g.game_id?'rotate-180 ':'')+'text-gray-400'}/>
        </button>
        {expanded===g.game_id&&<div className="space-y-2 border-t border-[#303030] p-3">
-         {g.picks.map(p=><NbaShortlistCard key={p.id} pick={p}/>)}
+         {g.picks.length?g.picks.map(p=><NbaShortlistCard key={p.id} pick={p}/>):
+           <p className="text-xs text-amber-200">
+             The game is scheduled and its original numerical forecasts are saved,
+             but no player cleared the decision gates. Use MODEL BOARD to examine
+             those original projections. No artificial picks have been created.
+           </p>}
        </div>}
      </section>)}
      {!visible.length&&<p role="status" className="rounded-xl border border-[#303030] p-4 text-xs text-gray-300">
-       No NBA model targets passed the historical role, participation, injury,
-       and model-margin gates for this game date/filter. No filler bets were added.</p>}
+       No original NBA game forecasts match this date or search. Check the independent
+       UPCOMING GAMES schedule above: a scheduled game without an archived pregame
+       forecast must never be invented or silently treated as a bet.</p>}
+     {visible.length>0&&visibleTotalPicks===0&&<p role="status"
+       className="rounded-xl border border-amber-800 p-4 text-xs text-amber-200">
+       {visible.length} game forecast{visible.length===1?'':'s'} on this slate,
+       but none of the player outcomes clear today's selection gates. Games remain
+       visible; the system has not issued substitute wagers.</p>}
      <p className="text-[10px] text-gray-500">{board.disclosure}</p>
    </>}
  </section>;
