@@ -1,0 +1,35 @@
+name: NHL tonight and upcoming game-date delivery
+on:
+  pull_request:
+    paths:
+      - src/nhl/countResearch.ts
+      - src/components/NhlTodayScreen.tsx
+      - tests/nhlCountResearch.test.ts
+      - .github/workflows/nhl_two_date_delivery.yml
+  push:
+    branches: [main]
+    paths:
+      - src/nhl/countResearch.ts
+      - src/components/NhlTodayScreen.tsx
+      - tests/nhlCountResearch.test.ts
+      - .github/workflows/nhl_two_date_delivery.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  correct-eastern-tonight-plus-tomorrow-slates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Test separate source-verified dates, not mixed points and shots, production UI
+        run: |
+          npm run lint
+          node --import tsx --test tests/nhlCountResearch.test.ts tests/nhlRealGameGrouping.test.ts
+          npm run build
+          git diff --check
