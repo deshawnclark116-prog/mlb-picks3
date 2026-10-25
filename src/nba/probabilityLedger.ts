@@ -25,7 +25,7 @@ export type FrozenProbPick={
   frozen_probability_at_utc:string;
   tipoff_utc:string;
   probability_historical_holdout_validated:true;
-  2026_27_calibration_verified:false;
+  current_season_calibration_verified:false;
   official_pick:false;bookmaker_line:null;bookmaker_odds:null;
 };
 export type FrozenProbGame={
@@ -38,7 +38,7 @@ export type FrozenProbSnapshot={
  prior_historical_team_source_sha256:string;
  live_espn_injury_source_sha256:string;
  probability_research_2026_27_not_yet_certified:true;
- sports_bookmarks_used:0;official_bets:0;first_observed_before_tip:true;
+ sportsbook_lines_used:0;official_bets:0;first_observed_before_tip:true;
  games:FrozenProbGame[];game_count:number;selected_predictions:number;
 };
 type SnapshotBoard={
@@ -96,7 +96,7 @@ export function freezeNbaProbabilities(board:SnapshotBoard,model:NbaProbabilityA
         source_numeric_original_at_utc:g.original_at_utc,
         frozen_probability_at_utc:iso,tipoff_utc:g.tipoff_utc,
         probability_historical_holdout_validated:true,
-        2026_27_calibration_verified:false,official_pick:false,
+        current_season_calibration_verified:false,official_pick:false,
         bookmaker_line:null,bookmaker_odds:null
       });
     }
@@ -111,7 +111,7 @@ export function freezeNbaProbabilities(board:SnapshotBoard,model:NbaProbabilityA
     prior_historical_team_source_sha256:model.source_team_sha256,
     live_espn_injury_source_sha256:board.live_injury_source_sha256,
     probability_research_2026_27_not_yet_certified:true,
-    sports_bookmarks_used:0,official_bets:0,first_observed_before_tip:true,
+    sportsbook_lines_used:0,official_bets:0,first_observed_before_tip:true,
     games,game_count:games.length,
     selected_predictions:games.reduce((n,g)=>n+g.player_predictions.length,0)
   };
@@ -137,7 +137,7 @@ export function verifyFrozenProbabilitySnapshots(
            p.frozen_probability_at_utc!==doc.frozen_at_utc||
            Date.parse(p.source_numeric_original_at_utc)>=Date.parse(doc.frozen_at_utc)||
            !p.probability_historical_holdout_validated||
-           p.2026_27_calibration_verified!==false||
+           p.current_season_calibration_verified!==false||
            p.official_pick!==false||p.bookmaker_line!==null||p.bookmaker_odds!==null||
            p.model_hit_probability<.65||p.model_hit_probability>1||
            !Number.isInteger(p.milestone)||players.has(p.player_id))
