@@ -203,7 +203,7 @@ export function gradeNhlOriginalShotProbabilities(
      observed_event_frequency:q.n?Number((q.hits/q.n).toFixed(6)):null,
      brier:q.n?Number((q.brierSum/q.n).toFixed(6)):null,
      ece_10bins:ece===null?null:Number(ece.toFixed(6)):null,
-     2026_27_market_certified:false};
+     current_season_market_certified:false};
  }
  return {
    schema:NHL_PROB_GRADE_SCHEMA,graded_at_utc:now.toISOString(),
