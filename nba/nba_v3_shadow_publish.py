@@ -107,7 +107,10 @@ def build(fixtures,rosters,receipts,games,boxes,asof,seen,
         teams={}
         for tid in (g["away_id"],g["home_id"]):
             roster={str(x["player_id"]) for x in rosters[tid]}
-            subset={k:v for k,v in histories.items() if k[0]==tid and k[1] in roster}
+            # Include proven old-team played histories for CURRENT roster
+            # members; the V3 role model conservatively chooses exactly one
+            # source team and does not create fictitious new-team appearances.
+            subset={k:v for k,v in histories.items() if k[1] in roster}
             statuses=[x for x in injury_by_team[tid] if x["player_id"] in roster]
             teams[tid]=role_pool(tid,subset,team_games,first,last,roster,
                 asof_utc=asof.isoformat(),tipoff_utc=g["tipoff_utc"],
