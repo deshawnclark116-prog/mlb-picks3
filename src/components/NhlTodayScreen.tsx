@@ -6,7 +6,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import UnifiedSportGameCards, {type UnifiedGame} from './UnifiedSportGameCards';
 import {groupNhlPredictionsByGame} from '../nhl/gameGrouping';
-import {addTrueNhlShotCounts,nhlCountGameDate,nhlVisibleGames,NHL_COUNT_SCHEMA,type NhlSogResearch} from "../nhl/countResearch";
+import {addTrueNhlShotCounts,nhlDisplayGameDates,nhlVisibleGames,NHL_COUNT_SCHEMA,type NhlSogResearch} from "../nhl/countResearch";
 import { motion, AnimatePresence } from "motion/react";
 import { TrendingUp, RefreshCw, AlertTriangle, Search, ChevronDown, ChevronUp } from "lucide-react";
 import { NhlPrediction } from "../types";
@@ -63,35 +63,44 @@ export default function NhlTodayScreen({
   const [marketFilter, setMarketFilter] = useState<MarketFilter>("ALL");
   const [confidenceFilter, setConfidenceFilter] = useState<"ALL" | "HIGH" | "MEDIUM" | "LOW">("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [numericSog, setNumericSog] = useState<NhlSogResearch|null>(null);
+  const [numericSog, setNumericSog] = useState<NhlSogResearch[]>([]);
   const [numericSogError, setNumericSogError] = useState<string|null>(null);
   // The points feed and the shot-count API are separate requests. A manual
   // Refresh must retry BOTH even when the game date hasn't changed.
   const [shotRefreshSeq, setShotRefreshSeq] = useState(0);
-  const countDate=nhlCountGameDate(gameDate);
+  const countDates=nhlDisplayGameDates(gameDate);
+  const countDatesKey=countDates.join('|');
   useEffect(()=>{
     const ctl=new AbortController();
-    setNumericSog(null);setNumericSogError(null);
+    setNumericSog([]);setNumericSogError(null);
     void (async()=>{
-      try{
-        const response=await fetch('/api/nhl-count-research?date='+encodeURIComponent(countDate),{
-          cache:'no-store',signal:ctl.signal});
+      // Request independently verified shot-model dates in parallel; one
+      // missing day's source must not hide other genuine, frozen forecasts.
+      const dates=countDatesKey.split('|');
+      const results=await Promise.allSettled(dates.map(async date=>{
+        const response=await fetch('/api/nhl-count-research?date='+encodeURIComponent(date),{
+          cache:'no-store',signal:ctl.signal
+        });
         if(!response.ok){
           const info=await response.json().catch(()=>null);
-          throw Error('NHL shots '+response.status+
+          throw Error(date+': NHL shots '+response.status+
             (info?.details?': '+String(info.details):''));
         }
         const doc=await response.json();
-        if(doc?.schema!==NHL_COUNT_SCHEMA || doc?.game_date!==countDate ||
-          doc?.research_only!==true || doc?.not_an_official_betting_board!==true)
-          throw Error('Unverified NHL numerical shot-count source');
-        if(!ctl.signal.aborted)setNumericSog(doc as NhlSogResearch);
-      }catch(e){
-        if(!ctl.signal.aborted)setNumericSogError(e instanceof Error?e.message:String(e));
-      }
+        if(doc?.schema!==NHL_COUNT_SCHEMA||doc?.game_date!==date||
+           doc?.research_only!==true||doc?.not_an_official_betting_board!==true)
+          throw Error(date+': Unverified NHL numerical shot-count source');
+        return doc as NhlSogResearch;
+      }));
+      if(ctl.signal.aborted)return;
+      setNumericSog(results.filter((r):r is PromiseFulfilledResult<NhlSogResearch>=>
+        r.status==='fulfilled').map(r=>r.value));
+      const failures=results.filter((r):r is PromiseRejectedResult=>r.status==='rejected');
+      if(failures.length)setNumericSogError(failures.map(r=>
+        r.reason instanceof Error?r.reason.message:String(r.reason)).join(' | '));
     })();
     return()=>ctl.abort();
-  },[countDate,shotRefreshSeq]);
+  },[countDatesKey,shotRefreshSeq]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullY, setPullY] = useState(0);
   const [expandedGameKey, setExpandedGameKey] = useState<string | null>(null);
@@ -139,10 +148,10 @@ export default function NhlTodayScreen({
   };
 
   // Do not mix stale points picks into an independent current SOG slate.
-  const currentPredictions=predictions.filter(p=>p.game_date===countDate);
+  const currentPredictions=predictions.filter(p=>countDates.includes(p.game_date));
   const marketsPresent = Array.from(new Set([
     ...currentPredictions.map((p) => p.market),
-    ...(numericSog?.projected_count ? ['shots_on_goal'] : [])
+    ...(numericSog.some(d=>d.projected_count>0) ? ['shots_on_goal'] : [])
   ])).filter((m) => MARKET_LABELS[m]);
 
   const sortedPredictions = [...currentPredictions].sort((a, b) => (b.prob_pct ?? 0) - (a.prob_pct ?? 0));
@@ -182,12 +191,15 @@ export default function NhlTodayScreen({
       }))
     }));
   const filteredSog=(marketFilter==='ALL'||marketFilter==='shots_on_goal') &&
-    confidenceFilter==='ALL' && numericSog
-      ?{...numericSog,projections:numericSog.projections.filter(p=>
-         !searchQuery.trim() || (p.player+' '+p.team+' '+p.opponent).toLowerCase()
-           .includes(searchQuery.trim().toLowerCase()))}
-      :null;
-  const unifiedGames=addTrueNhlShotCounts(originalGames,filteredSog);
+    confidenceFilter==='ALL'
+      ?numericSog.map(d=>({...d,projections:d.projections.filter(p=>
+          !searchQuery.trim() || (p.player+' '+p.team+' '+p.opponent).toLowerCase()
+            .includes(searchQuery.trim().toLowerCase()))}))
+      :[];
+  // Every dated source attaches only by exact original team/opponent/time.
+  // A future points feed and tonight's frozen shot feed remain separate games.
+  const unifiedGames=filteredSog.reduce<UnifiedGame[]>(
+    (acc,doc)=>addTrueNhlShotCounts(acc,doc),originalGames);
   const viewState=nhlVisibleGames(unifiedGames.length,loading&&currentPredictions.length===0,error);
 
   return (
@@ -215,7 +227,7 @@ export default function NhlTodayScreen({
             PROP <span className="text-[#00FF41]">EDGE</span>
           </h1>
           <p className="text-[9px] text-gray-500 uppercase tracking-widest mt-0.5 font-mono">
-            NHL • {countDate}
+            NHL • {countDates.join(' + ')}
           </p>
           {getLatestGeneratedAt(predictions) && (
             <p className="text-[8px] text-[#00FF41]/80 font-mono mt-1 uppercase tracking-wider">
@@ -347,10 +359,10 @@ export default function NhlTodayScreen({
           <div id="nhl-games-list" className="space-y-4">
             {error&&<p role="status" className="mb-2 text-[11px] text-amber-300">Points classifier unavailable; independent V2 shot-count projections remain visible.</p>}
             {numericSogError&&<div role="alert" className="mb-3 rounded-lg border border-amber-700/60 p-3 text-[11px] text-amber-200">
-              <p>Shots on Goal source unavailable for {countDate}: {numericSogError}</p>
+              <p>Shots on Goal source unavailable for one or more dates: {numericSogError}</p>
               <button type="button" onClick={handleManualRefresh} className="mt-2 rounded border border-amber-600 px-3 py-1 font-semibold">Retry Shots Feed</button>
             </div>}
-          {numericSog&&numericSog.projected_count>0&&<p role="status" className="mb-2 text-[11px] text-gray-400">Frozen V2 numerical shot forecasts for this date: {numericSog.projected_count}. Shot milestone probabilities come directly from the locked count distribution—NOT from a sportsbook—and remain UNCALIBRATED research until genuinely frozen pregame probability outcomes pass forward validation. Game-day participation not certified. Points targets remain binary event probabilities.</p>}
+          {numericSog.some(d=>d.projected_count>0)&&<p role="status" className="mb-2 text-[11px] text-gray-400">Frozen V2 numerical shot forecasts ({numericSog.map(d=>d.game_date+': '+d.projected_count).join(' · ')}). Shot milestone probabilities come directly from the locked count distribution—NOT from a sportsbook—and remain UNCALIBRATED research until genuinely frozen pregame probability outcomes pass forward validation. Game-day participation not certified. Points targets remain binary event probabilities.</p>}
           <p role="status" className="mb-2 text-[11px] text-gray-500">Anytime Goals: no source-verified goal-scoring model is connected yet. Anytime Point (goal OR assist) is a different event and is not substituted.</p>
           <UnifiedSportGameCards sport="NHL" prefix="nhl-game-card-" games={unifiedGames}/>
           </div>
