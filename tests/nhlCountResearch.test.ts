@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {reduceFrozenNhlShots,loadNhlCountResearch} from '../server/nhlCountResearch';
-import {addTrueNhlShotCounts,selectNhlShotMilestoneResearch,nhlCountGameDate,nhlVisibleGames,NHL_COUNT_SCHEMA,type NhlSogResearch,type NhlSogCount} from '../src/nhl/countResearch';
+import {addTrueNhlShotCounts,selectNhlShotMilestoneResearch,nhlCountGameDate,nhlDisplayGameDates,nhlVisibleGames,NHL_COUNT_SCHEMA,type NhlSogResearch,type NhlSogCount} from '../src/nhl/countResearch';
 import type {UnifiedGame} from '../src/components/UnifiedSportGameCards';
 
 const cols=['game_id','player_id','player','team','opponent','game_date','scheduled_start',
@@ -165,6 +165,32 @@ test('new NHL game-day daily source absent gives original 14MB archive fallback;
  );
 });
 
+test('NHL 10 PM Eastern: both tonight shots and tomorrow points/shots are visible as distinct, source-verified game dates',()=>{
+ const late=new Date('2026-10-25T02:22:00Z'); // October 24, 10:22 PM EDT
+ assert.deepEqual(nhlDisplayGameDates('2026-10-25',late),
+   ['2026-10-24','2026-10-25']);
+ assert.deepEqual(nhlDisplayGameDates(null,late),['2026-10-24']);
+ assert.deepEqual(nhlDisplayGameDates('2026-10-24',late),['2026-10-24']);
+ assert.deepEqual(nhlDisplayGameDates('2026-10-26',late),
+   ['2026-10-24','2026-10-26']);
+ const morning=new Date('2026-10-25T14:00:00Z');
+ assert.deepEqual(nhlDisplayGameDates('2026-10-25',morning),['2026-10-25']);
+});
+test('NHL two different original date-scoped shot partitions never create duplicate player/game or manufacture goals',()=>{
+ const prior=src();
+ const next=src();
+ next.dates=['2026-10-25'];next.forecasts.T24H[0][cols.indexOf('game_date')]='2026-10-25';
+ next.forecasts.T24H[0][cols.indexOf('game_id')]='2026020222';
+ next.forecasts.T24H[0][cols.indexOf('scheduled_start')]='2026-10-25T23:00:00Z';
+ next.forecasts.T24H[0][cols.indexOf('generated_at')]='2026-10-24T14:00:00Z';
+ next.forecasts.T24H[0][cols.indexOf('cutoff_at')]='2026-10-24T15:00:00Z';
+ const now=reduceFrozenNhlShots(prior,'2026-10-18') as unknown as NhlSogResearch;
+ const future=reduceFrozenNhlShots(next,'2026-10-25') as unknown as NhlSogResearch;
+ const combined=addTrueNhlShotCounts(addTrueNhlShotCounts([],now),future);
+ assert.equal(combined.length,2);
+ assert.equal(new Set(combined.map(g=>g.id)).size,2);
+ assert(combined.every(g=>g.picks.every(p=>p.market==='shots_on_goal')));
+});
 test('NHL current shot projections are independent of missing or stale points feed date in ET',()=>{
  const evening=new Date('2026-10-19T01:30:00Z'); // Oct 18 9:30 PM ET
  assert.equal(nhlCountGameDate(null,evening),'2026-10-18');
