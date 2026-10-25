@@ -1,0 +1,177 @@
+name: NHL forward calibration of original model shot milestones
+on:
+  pull_request:
+    paths:
+      - src/nhl/probabilityForward.ts
+      - src/nhl/countResearch.ts
+      - scripts/freezeNhlProbabilities.ts
+      - scripts/gradeNhlProbabilities.ts
+      - tests/nhlProbabilityForward.test.ts
+      - .github/workflows/nhl_probability_forward_ledger.yml
+  push:
+    branches: [main]
+    paths:
+      - src/nhl/probabilityForward.ts
+      - src/nhl/countResearch.ts
+      - scripts/freezeNhlProbabilities.ts
+      - scripts/gradeNhlProbabilities.ts
+      - tests/nhlProbabilityForward.test.ts
+      - .github/workflows/nhl_probability_forward_ledger.yml
+  schedule:
+    - cron: "18 15,18,21,23 * * *"
+    - cron: "18 1 * * *"
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: nhl-real-pregame-shot-probabilities-firstseen
+  cancel-in-progress: false
+jobs:
+  prove-immutable-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Regress 1–5 shot CDF pretip snapshots, original identities, official finals, DNP and Brier
+        run: |
+          npm run lint
+          node --import tsx --test tests/nhlProbabilityForward.test.ts tests/nhlCountResearch.test.ts tests/nhlRealGameGrouping.test.ts
+          npm run build
+          git diff --check
+  freeze-real-original-model-probabilities:
+    needs: prove-immutable-contract
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: First-observe ALL upcoming player count distributions, not selected bets or postgame retrofits
+        run: |
+          node --import tsx scripts/freezeNhlProbabilities.ts \
+            --out "$RUNNER_TEMP/nhl-prob-firstseen-new.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nhl-first-observed-real-pregame-model-pge-${{ github.run_id }}
+          path: ${{ runner.temp }}/nhl-prob-firstseen-new.json
+          if-no-files-found: warn
+          retention-days: 90
+      - name: Append-only Git receipt and enforce original 15-minute pretip cutoff at publication
+        run: |
+          set -euo pipefail
+          FILE="$RUNNER_TEMP/nhl-prob-firstseen-new.json"
+          if ! test -s "$FILE"; then exit 0; fi
+          git config user.name "nhl-v2-firstseen-probability[bot]"
+          git config user.email "nhl-v2-firstseen-probability[bot]@users.noreply.github.com"
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            python - "$FILE" <<'PY'
+          import json,pathlib,sys,datetime
+          new=json.load(open(sys.argv[1]))
+          now=datetime.datetime.now(datetime.timezone.utc)
+          seen=set()
+          for old in pathlib.Path('docs/nhl_v2_probability_firstseen').glob('*.json'):
+              for row in json.loads(old.read_text())['predictions']:
+                  key=(row['game_id'],row['player_id'],row['original_forecast_horizon'])
+                  if key in seen:raise SystemExit('EXISTING_FROZEN_PLAYER_SOURCE_DUPLICATE')
+                  seen.add(key)
+          for row in new['predictions']:
+              key=(row['game_id'],row['player_id'],row['original_forecast_horizon'])
+              if key in seen:raise SystemExit('NO_OVERWRITE_ALREADY_FROZEN_SHOT_PROBABILITY')
+              start=datetime.datetime.fromisoformat(row['scheduled_start'].replace('Z','+00:00'))
+              if start<=now+datetime.timedelta(minutes=15):
+                  raise SystemExit('NO_PUBLICATION_AFTER_15_MINUTE_PREGAME_CUTOFF')
+          PY
+            mkdir -p docs/nhl_v2_probability_firstseen
+            NAME="$(date -u +%Y-%m-%dT%H%M%SZ).json"
+            if test -e "docs/nhl_v2_probability_firstseen/$NAME"; then exit 1; fi
+            cp "$FILE" "docs/nhl_v2_probability_firstseen/$NAME"
+            git add "docs/nhl_v2_probability_firstseen/$NAME"
+            git commit -m "Freeze NHL pregame player distributions with authentic 1–5 shot hit probabilities"
+            if git push origin HEAD:main; then
+              echo "NHL_ALL_ACTUAL_SOURCE_PROBABILITIES_FROZEN_PRETIP"
+              exit 0
+            fi
+            if [ "$attempt" = 3 ]; then exit 1; fi
+          done
+  grade-firstseen-vs-official-final:
+    # Grade even if no new pregame probability exists or a live fixture source
+    # is temporarily unavailable; completed historical outcomes still mature.
+    needs: prove-immutable-contract
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: deshawnclark116-prog/mlb-picks3
+          ref: main
+          path: website
+          persist-credentials: true
+      - uses: actions/checkout@v4
+        with:
+          repository: deshawnclark116-prog/mlb-picks2
+          ref: feature/nhl-v2-nfl-style-projection-board
+          path: original
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+      - run: npm ci
+        working-directory: website
+      - name: Score ONLY our actual firstseen source and independently recorded official final/DNP truth
+        run: |
+          set -euo pipefail
+          cd website
+          node --import tsx scripts/gradeNhlProbabilities.ts \
+            --forecast-ledger "../original/nhl_models/nhl_player_outcome_v2/phase1a_sog_forward/ledger.jsonl" \
+            --official-grade-ledger "../original/nhl_models/nhl_player_outcome_v2/phase1a_sog_forward/graded.jsonl" \
+            --out "$RUNNER_TEMP/nhl-probability-forward-grade.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nhl-prospective-model-shot-probability-actual-final-grade-${{ github.run_id }}
+          path: ${{ runner.temp }}/nhl-probability-forward-grade.json
+          if-no-files-found: warn
+          retention-days: 90
+      - name: Publish recorded-vs-actual prospective hit rates and Brier, NEVER promote unearned calibration
+        working-directory: website
+        run: |
+          set -euo pipefail
+          FILE="$RUNNER_TEMP/nhl-probability-forward-grade.json"
+          if ! test -s "$FILE"; then exit 1; fi
+          git config user.name "nhl-v2-shot-probability-audit[bot]"
+          git config user.email "nhl-v2-shot-probability-audit[bot]@users.noreply.github.com"
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            python - "$FILE" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          assert d['schema']=='NHL_V2_PROSPECTIVE_SHOT_PROBABILITY_GRADE_V1'
+          assert d['official_bets']==0 and d['historical_market_promotion_claimed'] is False
+          assert d['original_milestone_predictions']==d['verified_milestone_outcomes']+d['unverified_milestone_outcomes']
+          PY
+            cp "$FILE" docs/nhl_v2_probability_forward_grade.json
+            git add docs/nhl_v2_probability_forward_grade.json
+            if git diff --cached --quiet; then exit 0; fi
+            git commit -m "Grade genuinely pregame NHL model shot event probabilities against official original finals"
+            if git push origin HEAD:main; then exit 0; fi
+            if [ "$attempt" = 3 ]; then exit 1; fi
+          done
