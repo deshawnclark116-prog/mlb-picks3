@@ -1,7 +1,8 @@
+import {compactNhlShotDays,NHL_DAILY_COMPACT_SCHEMA} from '../scripts/buildNhlDailyShots.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {reduceFrozenNhlShots,loadNhlCountResearch} from '../server/nhlCountResearch';
-import {addTrueNhlShotCounts,selectNhlShotMilestoneResearch,nhlCountGameDate,nhlVisibleGames,NHL_COUNT_SCHEMA,type NhlSogResearch,type NhlSogCount} from '../src/nhl/countResearch';
+import {addTrueNhlShotCounts,selectNhlShotMilestoneResearch,nhlCountGameDate,nhlVisibleGames,NHL_COUNT_SCHEMA,dailyShotResearchForDate,type NhlSogResearch,type NhlSogCount} from '../src/nhl/countResearch';
 import type {UnifiedGame} from '../src/components/UnifiedSportGameCards';
 
 const cols=['game_id','player_id','player','team','opponent','game_date','scheduled_start',
@@ -186,4 +187,32 @@ test('a missing or failing points classifier cannot hide separately verified NHL
  assert.equal(nhlVisibleGames(0,true,null),'loading');
  assert.equal(nhlVisibleGames(0,false,'provider failed'),'error');
  assert.equal(nhlVisibleGames(0,false,null),'empty');
+});
+
+test('NHL numeric shot card selects genuine most-recent T30 checkpoint over older T24H only if original predates puck drop',()=>{
+ const archive=src();const newer=[...good];
+ for(const [k,v] of [['mean',4.15],['median',4],['p10',2],['p25',3],['p75',5],['p90',7],
+                      ['generated_at','2026-10-18T21:10:00Z'],['cutoff_at','2026-10-18T21:30:00Z']] as [string,number|string][])
+    newer[cols.indexOf(k)]=v;
+ archive.horizons=['T24H','T30'];(archive.forecasts as Record<string,typeof newer[]>).T30=[newer];
+ archive.total_valid_forecasts=2;
+ const latest=reduceFrozenNhlShots(archive,'2026-10-18');
+ assert.equal(latest.projections[0].mean,4.15);
+ assert.equal(latest.projections[0].forecast_horizon,'T30');
+ newer[cols.indexOf('generated_at')]='2026-10-18T22:02:00Z';
+ assert.equal(reduceFrozenNhlShots(archive,'2026-10-18').projections[0].forecast_horizon,'T24H');
+});
+test('small daily static shot manifest is genuine frozen model data; no goal or bookmaker substitution',()=>{
+ const manifest=compactNhlShotDays(src(),new Date('2026-10-17T23:00:00Z'));
+ assert.equal(manifest.schema,NHL_DAILY_COMPACT_SCHEMA);
+ assert.deepEqual(manifest.covered_game_dates,['2026-10-18']);
+ assert.equal(manifest.source_verified_pregame_shot_player_forecasts,1);
+ assert.equal(manifest.official_bets,0);
+ const day=dailyShotResearchForDate(manifest,'2026-10-18');
+ assert.equal(day.projections[0].mean,3.2);
+ assert.equal(day.projections[0].model_probability_milestones_research_only['3'],.65);
+ assert.throws(()=>dailyShotResearchForDate(manifest,'2026-10-19'),/MISSING_DATE/);
+ const corrupted=JSON.parse(JSON.stringify(manifest));
+ corrupted.days['2026-10-18'].source_ledger_sha256='0'.repeat(64);
+ assert.throws(()=>dailyShotResearchForDate(corrupted,'2026-10-18'),/ORIGINAL_PLAYER_SOURCE_INVALID/);
 });
