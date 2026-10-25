@@ -109,7 +109,9 @@ jobs:
             if [ "$attempt" = 3 ]; then exit 1; fi
           done
   grade-firstseen-vs-official-final:
-    needs: [prove-immutable-contract,freeze-real-original-model-probabilities]
+    # Grade even if no new pregame probability exists or a live fixture source
+    # is temporarily unavailable; completed historical outcomes still mature.
+    needs: prove-immutable-contract
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 17
