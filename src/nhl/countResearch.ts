@@ -64,6 +64,21 @@ export function nhlCountGameDate(classifierGameDate:string|null,now:Date=new Dat
  return today;
 }
 
+/** The live publisher can correctly be on tomorrow while late US evening
+ * games are still active. Both source-verified slates must remain accessible:
+ * today first and the separately sourced upcoming day second. DO NOT relabel
+ * any forecast date or attach a player to the wrong game.
+ */
+export function nhlDisplayGameDates(classifierGameDate:string|null,now:Date=new Date()):string[]{
+ const current=nhlCountGameDate(classifierGameDate,now);
+ if(classifierGameDate&&/^20\d{2}-\d{2}-\d{2}$/.test(classifierGameDate)){
+   const ahead=Date.parse(classifierGameDate+'T00:00:00Z')-
+       Date.parse(current+'T00:00:00Z');
+   if(ahead>0&&ahead<=2*86400000)return [current,classifierGameDate];
+ }
+ return [current];
+}
+
 export function nhlVisibleGames(count:number,loading:boolean,legacyError:string|null):'loading'|'error'|'games'|'empty' {
  if(count>0)return 'games';
  if(loading)return 'loading';
