@@ -49,8 +49,19 @@ export function reduceFrozenNhlShots(raw:unknown,gameDate:string){
      const identity=key+'|'+h;
      if(identities.has(identity))throw Error('NHL_DUPLICATE_FROZEN_COUNT_PLAYER_HORIZON');
      identities.add(identity);
-     if(chosen.has(key))continue;
      if(!finite(r[f.mean])||!finite(r[f.median]))continue;
+     const previous=chosen.get(key);
+     if(previous){
+       if(previous.team!==team||previous.opponent!==opp||
+          previous.scheduled_start!==r[f.scheduled_start]||
+          previous.game_date!==gameDate)
+         throw Error('NHL_CONFLICTING_MULTIHORIZON_SOURCE_IDENTITY');
+       // The original code short-circuited on T24H, even when an
+       // independently frozen T90/T30 pregame revision was available.
+       // Always show the most recent source-certified pre-tip checkpoint,
+       // never a post-start edit or a reconstructed after-game model.
+       if(iso(previous.source_cutoff_at)>=cutoff)continue;
+     }
      chosen.set(key,{
        game_id:gid,player_id:pid,player:String(r[f.player]),
        team,opponent:opp,game_date:gameDate,
@@ -82,6 +93,7 @@ export function reduceFrozenNhlShots(raw:unknown,gameDate:string){
    source_ledger_sha256:d.source_ledger_sha256,
    source_has_original_hash_chain:true,not_an_official_betting_board:true,
    count_model_market:'shots_on_goal_NOT_points',
+   latest_valid_pregame_checkpoint_preferred:true,
    inherited_points_probabilities:0,
    probability_method:'ORIGINAL_LOCKED_NHL_V2_SOG_SURVIVAL_RESEARCH',
    forward_game_day_probability_calibration_verified:false,
