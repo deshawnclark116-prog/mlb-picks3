@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {reduceFrozenNhlShots,loadNhlCountResearch} from '../server/nhlCountResearch';
-import {addTrueNhlShotCounts,selectNhlShotMilestoneResearch,nhlCountGameDate,nhlVisibleGames,NHL_COUNT_SCHEMA,type NhlSogResearch} from '../src/nhl/countResearch';
+import {addTrueNhlShotCounts,selectNhlShotMilestoneResearch,nhlCountGameDate,nhlVisibleGames,NHL_COUNT_SCHEMA,type NhlSogResearch,type NhlSogCount} from '../src/nhl/countResearch';
 import type {UnifiedGame} from '../src/components/UnifiedSportGameCards';
 
 const cols=['game_id','player_id','player','team','opponent','game_date','scheduled_start',
@@ -55,7 +55,7 @@ test('frozen NHL V2 shot-count forecast independently supplies MEAN and MEDIAN, 
 
 test('locked NHL SOG milestone CDF is NFL-style event probability, NOT a sportsbook line or a prospectively validated win rate',()=>{
  const report=reduceFrozenNhlShots(src(),'2026-10-18');
- const row=report.projections[0];
+ const row=report.projections[0] as NhlSogCount;
  assert.deepEqual(selectNhlShotMilestoneResearch(row),{milestone:3,model_probability:.65});
  const oneHigher={...row,model_probability_milestones_research_only:{
    '1':.99,'2':.92,'3':.81,'4':.69,'5':.46
