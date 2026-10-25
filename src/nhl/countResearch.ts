@@ -67,21 +67,6 @@ export function selectNhlShotMilestoneResearch(p:NhlSogCount){
 }
 
 
-/** Original NHL V2 survival CDF, not a sportsbook or validated odds quote. */
-export function selectNhlShotMilestoneResearch(p:NhlSogCount){
- const probabilities=p.model_probability_milestones_research_only;
- if(!probabilities||p.model_probability_forward_calibrated!==false||
-    p.probability_not_an_official_bet!==true)return null;
- const values=[1,2,3,4,5].map(k=>probabilities[String(k) as '1'|'2'|'3'|'4'|'5']);
- if(values.some((v,i)=>typeof v!=='number'||!Number.isFinite(v)||
-      v<0||v>1||(i>0&&v>values[i-1]+.002)))
-    throw Error('NHL_SHOT_MILESTONE_CDF_FAILED_SURVIVAL_INVARIANT');
- const chosen=([2,3,4,5] as const).filter(k=>
-   probabilities[String(k) as '2'|'3'|'4'|'5']>=.65).at(-1);
- return chosen?{milestone:chosen,
-   model_probability:probabilities[String(chosen) as '2'|'3'|'4'|'5']}:null;
-}
-
 /** A stale/missing POINTS-classifier day must not suppress real shot-count
  * research on the current NHL date. Use Eastern game dates, never UTC date.
  * An explicitly future classifier slate still selects its own future date.
