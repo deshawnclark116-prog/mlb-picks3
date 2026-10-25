@@ -68,10 +68,25 @@ def role_pool(team_id,histories,team_games,first_seen,last_seen,roster_ids,
             raise ValueError("NBA_V3_UNVERIFIED_OR_DUPLICATE_INJURY")
         evidence[pid]=s["status"]
     members=[]
-    idx=int(team_games[team_id])
-    for (tid,pid),hist in histories.items():
-        if tid!=team_id or str(pid) not in roster or len(hist)<MIN_HISTORY:
-            continue
+    # ESPN confirms current TEAM MEMBERSHIP, not that a traded player has
+    # appeared for this team before. NFL's prior-season transfer fallback has
+    # an NBA analog: use prior completed old-team opportunity history with
+    # larger uncertainty, never incorrectly invent new-team box scores.
+    primary=[(tid,pid,h) for (tid,pid),h in histories.items()
+             if tid==team_id and str(pid) in roster and len(h)>=MIN_HISTORY]
+    represented={str(pid) for _,pid,_ in primary}
+    outsiders=defaultdict(list)
+    for (tid,pid),h in histories.items():
+        if (tid!=team_id and str(pid) in roster and str(pid) not in represented
+            and len(h)>=MIN_HISTORY):
+            outsiders[str(pid)].append((tid,pid,h))
+    # Multiple conflicting former-team histories cannot establish one
+    # authentic last assignment; leave that roster player unmodeled.
+    fallback=[options[0] for pid,options in sorted(outsiders.items())
+              if len(options)==1]
+    for tid,pid,hist in [*primary,*fallback]:
+        transferred=tid!=team_id
+        idx=int(team_games[tid])
         indices=[r.get("team_game_index") for r in hist]
         if (len(indices)!=len(set(indices)) or indices!=sorted(indices) or
             any(not isinstance(x,int) or x>=idx or x<0 for x in indices) or
@@ -94,9 +109,13 @@ def role_pool(team_id,histories,team_games,first_seen,last_seen,roster_ids,
         starting=sum(bool(r.get("started")) for r in recent[-5:])/min(len(recent),5)
         starterlong=sum(bool(r.get("started")) for r in recent)/len(recent)
         minutes=_clip(minutes+2.0*(starting-starterlong),3.,MAX_MINUTES)
+        if transferred:
+            minutes=_clip(.80*minutes+.20*20.,3.,37.)
+            p_play=min(p_play,.78)
         mm=np.asarray([float(r["minutes"]) for r in recent],dtype=float)
         if np.any(mm<=0) or np.any(mm>65):raise ValueError("NBA_V3_BAD_HISTORICAL_MINUTES")
         minute_sd=float(_clip(np.std(mm,ddof=1) if len(mm)>1 else 6.,2.5,12.))
+        if transferred:minute_sd=max(8.,minute_sd)
         absence=evidence.get(str(pid))
         prior_p_play=p_play
         if absence=="OUT":p_play=0.
@@ -139,7 +158,9 @@ def role_pool(team_id,histories,team_games,first_seen,last_seen,roster_ids,
             }
         else:profile=None
         members.append({
-            "team_id":str(tid),"player_id":str(pid),"player":hist[-1]["player"],
+            "team_id":str(team_id),"player_id":str(pid),"player":hist[-1]["player"],
+            "historical_opportunity_team_id":str(tid),
+            "new_team_role_unknown":transferred,
             "p_play":round(p_play,5),"p_play_before_status":round(prior_p_play,5),
             "minutes_if_playing":round(minutes,4),
             "minutes_sd":round(minute_sd,4),"prior_games":len(hist),
@@ -149,7 +170,8 @@ def role_pool(team_id,histories,team_games,first_seen,last_seen,roster_ids,
             "reported_status":absence or "UNKNOWN_NOT_ACTIVE_CERTIFIED",
             "role_reallocated_expected_minutes":0.,
             "vacated_usage_factor":1.,
-            "role_evidence":"PRIOR_REAL_COMPLETED_TEAM_GAMES",
+            "role_evidence":("PRIOR_REAL_COMPLETED_OTHER_TEAM_GAMES_TRANSFER_FALLBACK"
+                             if transferred else "PRIOR_REAL_COMPLETED_TEAM_GAMES"),
             "game_day_starter_certified":False,
             "game_day_active_certified":False,
         })
@@ -330,6 +352,8 @@ def simulate_matchup(game_id,teams,*,asof_utc,tipoff_utc,
                     "unc_reasons":[
                         "GAME_DAY_ACTIVE_NOT_CERTIFIED",
                         "STARTING_LINEUP_NOT_CERTIFIED",
+                        *(['TRANSFER_NEW_TEAM_ROLE_UNKNOWN']
+                          if m["new_team_role_unknown"] else []),
                         *([] if profile else ["ATTEMPT_PROFILE_UNAVAILABLE_DEGRADED_FALLBACK"]),
                         *([] if quality[team_id]["unmodeled_rotation_reserve"]<15 else
                             ["UNMODELED_TEAM_ROTATION_MINUTES"])
@@ -344,6 +368,8 @@ def simulate_matchup(game_id,teams,*,asof_utc,tipoff_utc,
                     "vacated_expected_minutes_reassigned":m["role_reallocated_expected_minutes"],
                     "vacated_usage_shot_attempt_factor":m["vacated_usage_factor"],
                     "reported_status":m["reported_status"],
+                    "new_team_role_unknown":m["new_team_role_unknown"],
+                    "historical_opportunity_team_id":m["historical_opportunity_team_id"],
                     "calibrated_for_2026_27":False,"research_only":True,
                     "not_an_official_bet":True,
                 })
