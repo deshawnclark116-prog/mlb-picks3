@@ -11,18 +11,25 @@ function doc(){
  const fields=['points','rebounds','assists','three_pointers_made'];
  return {
    schema:'NBA_V3_2026_27_FIRSTSEEN_FULL_DISTRIBUTION_SHADOW_V1',
+   model_version:'nba-v3-phase1-opportunity-role-mc-challenger-20261025',
+   upstream_fixtures_source_sha256:'a'.repeat(64),
+   prior_game_id_sha256:'b'.repeat(64),
+   roster_sources_verified_all_30:true,
+   historical_source_boxes:500,
    model_promoted:false,live_nba_system_board_changed:false,
    official_bets:0,research_only:true,no_lookahead_or_retrospective_backfill:true,
    games_forecast:1,
    games:[{game_id:'401123456',tipoff_utc:DATE,
     home:'Dallas Mavericks',away:'New York Knicks',
     forecast_at_utc:'2026-10-26T15:00:00Z',
+    seed_source_sha256:'c'.repeat(64),
     rows_count:4,
     rows:fields.map(m=>({
       game_id:'401123456',team_id:'6',player_id:'123456',player:'Test Player',
+      model_version:'nba-v3-phase1-opportunity-role-mc-challenger-20261025',
       market:m,mean:17.5,median:17,p_active:.87,sd:4.5,p10:8,p25:12,
       p75:21,p90:28,cdf_lattice:{step:1,cdf:[.1,.2,.7,1]},
-      model_target:{milestone:3,probability:.8,method:'pregame_full_game_mc_cdf'},
+      model_target:{milestone:2,probability:.8,method:'pregame_full_game_mc_cdf'},
       calibrated_for_2026_27:false,research_only:true,not_an_official_bet:true
     })),
     team_opportunity_diagnostics:{},
@@ -63,5 +70,8 @@ test('falsified source promotion, duplicate original game and posttip backfill f
   d.games[0].forecast_at_utc='2026-10-28T01:00:00Z';
   writeFileSync(path.join(root,filename),JSON.stringify(d));
   assert.throws(()=>loadNbaV3Shadow(NOW,root),/AFTER_TIP/);
+  const wrong=doc();wrong.games[0].rows[0].model_target!.probability=.99;
+  writeFileSync(path.join(root,filename),JSON.stringify(wrong));
+  assert.throws(()=>loadNbaV3Shadow(NOW,root),/FAKE_TARGET/);
  });
 });
