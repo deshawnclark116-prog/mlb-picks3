@@ -6,7 +6,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import UnifiedSportGameCards, {type UnifiedGame} from './UnifiedSportGameCards';
 import {groupNhlPredictionsByGame} from '../nhl/gameGrouping';
-import {addTrueNhlShotCounts,nhlDisplayGameDates,nhlVisibleGames,NHL_COUNT_SCHEMA,type NhlSogResearch} from "../nhl/countResearch";
+import {addTrueNhlShotCounts,nhlDisplayGameDates,nhlVisibleGames,NHL_COUNT_SCHEMA,dailyShotResearchForDate,type NhlSogResearch} from "../nhl/countResearch";
 import { motion, AnimatePresence } from "motion/react";
 import { TrendingUp, RefreshCw, AlertTriangle, Search, ChevronDown, ChevronUp } from "lucide-react";
 import { NhlPrediction } from "../types";
@@ -78,6 +78,18 @@ export default function NhlTodayScreen({
       // missing day's source must not hide other genuine, frozen forecasts.
       const dates=countDatesKey.split('|');
       const results=await Promise.allSettled(dates.map(async date=>{
+        // Works in both static AI Studio preview and the Node app.
+        // Require the *exact* requested date and original source SHA.
+        try{
+          const compact=await fetch('/nhl-daily-shot-counts.json?t='+Date.now(),{
+            cache:'no-store',signal:ctl.signal});
+          if(!compact.ok)throw Error('NHL compact source HTTP '+compact.status);
+          return dailyShotResearchForDate(await compact.json(),date);
+        }catch(compactUnavailable){
+          if(ctl.signal.aborted)throw compactUnavailable;
+        }
+        // Keep existing independently date-partitioned Express route as
+        // fallback, including its authenticated original archive fallback.
         const response=await fetch('/api/nhl-count-research?date='+encodeURIComponent(date),{
           cache:'no-store',signal:ctl.signal
         });
