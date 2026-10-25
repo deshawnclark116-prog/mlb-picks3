@@ -6,7 +6,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import UnifiedSportGameCards, {type UnifiedGame} from './UnifiedSportGameCards';
 import {groupNhlPredictionsByGame} from '../nhl/gameGrouping';
-import {addTrueNhlShotCounts,nhlCountGameDate,nhlVisibleGames,NHL_COUNT_SCHEMA,type NhlSogResearch} from "../nhl/countResearch";
+import {addTrueNhlShotCounts,nhlCountGameDate,nhlVisibleGames,NHL_COUNT_SCHEMA,dailyShotResearchForDate,type NhlSogResearch} from "../nhl/countResearch";
 import { motion, AnimatePresence } from "motion/react";
 import { TrendingUp, RefreshCw, AlertTriangle, Search, ChevronDown, ChevronUp } from "lucide-react";
 import { NhlPrediction } from "../types";
@@ -71,14 +71,30 @@ export default function NhlTodayScreen({
     setNumericSog(null);setNumericSogError(null);
     void (async()=>{
       try{
-        const response=await fetch('/api/nhl-count-research?date='+encodeURIComponent(countDate),{
-          cache:'no-store',signal:ctl.signal});
-        if(!response.ok)throw Error('NHL V2 frozen count source HTTP '+response.status);
-        const doc=await response.json();
-        if(doc?.schema!==NHL_COUNT_SCHEMA || doc?.game_date!==countDate ||
-          doc?.research_only!==true || doc?.not_an_official_betting_board!==true)
-          throw Error('Unverified NHL numerical shot-count source');
-        if(!ctl.signal.aborted)setNumericSog(doc as NhlSogResearch);
+        // Small source-verified daily snapshot works in static app previews.
+        // The full historical 14MB shadow is NEVER needed on the client.
+        let verified:NhlSogResearch|null=null;
+        try{
+          const compact=await fetch('/nhl-daily-shot-counts.json?t='+Date.now(),{
+            cache:'no-store',signal:ctl.signal});
+          if(!compact.ok)throw Error('NHL compact HTTP '+compact.status);
+          verified=dailyShotResearchForDate(await compact.json(),countDate);
+        }catch(err){
+          if(ctl.signal.aborted)return;
+          // The Express backend can still fetch the verified original
+          // research when the compact static file has not yet refreshed.
+          const response=await fetch('/api/nhl-count-research?date='+encodeURIComponent(countDate),{
+            cache:'no-store',signal:ctl.signal});
+          if(!response.ok)throw Error('No verified NHL shot data ('+
+            (err instanceof Error?err.message:'compact missing')+
+            '; fallback HTTP '+response.status+')');
+          const doc=await response.json();
+          if(doc?.schema!==NHL_COUNT_SCHEMA||doc?.game_date!==countDate||
+            doc?.research_only!==true||doc?.not_an_official_betting_board!==true)
+            throw Error('Unverified NHL numerical shot-count source');
+          verified=doc as NhlSogResearch;
+        }
+        if(!ctl.signal.aborted)setNumericSog(verified);
       }catch(e){
         if(!ctl.signal.aborted)setNumericSogError(e instanceof Error?e.message:String(e));
       }
