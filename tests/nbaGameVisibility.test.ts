@@ -40,7 +40,7 @@ test('market filter never removes empty-but-genuine matchup or manufactures subs
  assert.equal(board.original_game_count>7,true);
  assert.equal(board.games_with_picks>=1,true);
 });
-test('team and player search can narrow games; an empty selected game's pick list remains genuinely empty',()=>{
+test("team and player search can narrow games; an empty selected game's pick list remains genuinely empty",()=>{
  const board=readVerifiedNbaSystemBoard(ASOF);
  const byTeam=visibleNbaGameSlate(board.games,'TODAY','2026-10-25','ALL','Lakers');
  assert.equal(byTeam.length,1);
