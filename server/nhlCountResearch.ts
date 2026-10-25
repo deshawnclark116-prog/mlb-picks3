@@ -100,7 +100,7 @@ export function reduceFrozenNhlShots(raw:unknown,gameDate:string){
 // never reuse yesterday's fetched count research, even for a shared minute.
 const cache=new Map<string,{at:number;promise:Promise<unknown>}>();
 async function source(fetcher:typeof fetch,now:number,date:string):Promise<unknown>{
- if(!/^20\\d{2}-\\d{2}-\\d{2}$/.test(date))
+ if(!/^20\d{2}-\d{2}-\d{2}$/.test(date))
    throw Error('NHL_INVALID_DAILY_SOURCE_DATE');
  const prior=fetcher===fetch?cache.get(date):null;
  if(prior&&now-prior.at<120000)return prior.promise;
