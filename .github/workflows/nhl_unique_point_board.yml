@@ -1,0 +1,43 @@
+name: NHL one anytime point per player and correct Eastern dates
+on:
+  pull_request:
+    paths:
+      - src/utils.ts
+      - src/types.ts
+      - src/nhl/gameGrouping.ts
+      - src/nhl/countResearch.ts
+      - src/components/NhlTodayScreen.tsx
+      - tests/nhlRealGameGrouping.test.ts
+      - tests/nhlCountResearch.test.ts
+      - .github/workflows/nhl_unique_point_board.yml
+  push:
+    branches: [main]
+    paths:
+      - src/utils.ts
+      - src/types.ts
+      - src/nhl/gameGrouping.ts
+      - src/nhl/countResearch.ts
+      - src/components/NhlTodayScreen.tsx
+      - tests/nhlRealGameGrouping.test.ts
+      - tests/nhlCountResearch.test.ts
+      - .github/workflows/nhl_unique_point_board.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  no-double-points:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Actual source-shape 73-to-50, deterministic champion, US Eastern calendar, NHL projection integrity
+        run: |
+          npm run lint
+          node --import tsx --test tests/nhlRealGameGrouping.test.ts tests/nhlCountResearch.test.ts
+          npm run build
+          git diff --check
