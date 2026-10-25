@@ -297,8 +297,9 @@ export function deduplicateNhlPredictions(preds:NhlPrediction[]):NhlPrediction[]
   const priority=(p:NhlPrediction)=>{
     // A current-season model replaces, rather than doubles, an independent
     // prior-year fallback. Never select the higher reported probability.
-    if(p.market==='points'||p.market==='moneyline')return 0;
-    if(p.market==='points_early_season'||p.market==='moneyline_early_season')return 1;
+    const source=p.source_market||p.market;
+    if(source==='points'||source==='moneyline')return 0;
+    if(source==='points_early_season'||source==='moneyline_early_season')return 1;
     return 0;
   };
   for(const incoming of preds){
