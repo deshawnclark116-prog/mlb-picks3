@@ -202,7 +202,7 @@ export function gradeNhlOriginalShotProbabilities(
      average_model_probability:q.n?Number((q.pSum/q.n).toFixed(6)):null,
      observed_event_frequency:q.n?Number((q.hits/q.n).toFixed(6)):null,
      brier:q.n?Number((q.brierSum/q.n).toFixed(6)):null,
-     ece_10bins:ece===null?null:Number(ece.toFixed(6)):null,
+     ece_10bins:ece===null?null:Number(ece.toFixed(6)),
      current_season_market_certified:false};
  }
  return {
