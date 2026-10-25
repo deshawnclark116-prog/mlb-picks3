@@ -171,6 +171,39 @@ class NbaV3(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"AFTER_TIP"):
             simulate_matchup("991",inputs(),asof_utc=TIP,tipoff_utc=ASOF,draws=1000)
 
+    def test_authenticated_transfer_uses_real_old_team_stats_with_unknown_new_team_role(self):
+        histories,first,last,old_roster=players("2")
+        pid=sorted(old_roster)[0]
+        # ESPN current roster lists transferred athlete on team 1; there are
+        # NO games played for team 1 yet. The source history remains team 2.
+        group=role_pool("1",histories,Counter({"1":12,"2":12}),
+             first,last,{pid},asof_utc=ASOF,tipoff_utc=TIP)
+        self.assertEqual(len(group),1)
+        athlete=group[0]
+        self.assertEqual(athlete["team_id"],"1")
+        self.assertEqual(athlete["historical_opportunity_team_id"],"2")
+        self.assertTrue(athlete["new_team_role_unknown"])
+        self.assertLessEqual(athlete["p_play"],.78)
+        self.assertGreaterEqual(athlete["minutes_sd"],8.)
+        self.assertFalse(athlete["game_day_starter_certified"])
+        current=simulate_matchup("transferred",{"1":group,"2":inputs()["2"]},
+                    asof_utc=ASOF,tipoff_utc=TIP,draws=800)
+        row=next(r for r in current["rows"] if r["player_id"]==pid)
+        self.assertTrue(row["new_team_role_unknown"])
+        self.assertIn("TRANSFER_NEW_TEAM_ROLE_UNKNOWN",row["unc_reasons"])
+        self.assertEqual(current["official_bets"],0)
+
+    def test_ambiguous_prior_multiple_teams_never_forge_transfer_role(self):
+        old,f,l,roster=players("2")
+        pid=sorted(roster)[0]
+        fake=copy.deepcopy(old[("2",pid)])
+        for r in fake:r["team_id"]="3"
+        old[("3",pid)]=fake
+        f[("3",pid)]=0; l[("3",pid)]=11
+        group=role_pool("1",old,Counter({"1":12,"2":12,"3":12}),
+            f,l,{pid},asof_utc=ASOF,tipoff_utc=TIP)
+        self.assertEqual(group,[])
+
     def test_excluding_player_from_real_roster_does_not_grant_minutes_to_absent(self):
         h,first,last,roster=players("1")
         roster.remove("1000")
