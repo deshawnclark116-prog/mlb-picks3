@@ -38,7 +38,6 @@ const BLOCKED=new Set(['OUT','DOUBTFUL','QUESTIONABLE','DAY_TO_DAY',
 const MIN_ROLE_MINUTES=26;
 const MIN_HISTORICAL_PLAY_PROB=.85;
 const MIN_STANDARDIZED_FORECAST_GAP=.9;
-const MAX_PER_GAME=2;
 
 export type InputPlayer={
   forecast_id:string;game_id:string;team_id:string;player_id:string;player:string;
@@ -162,7 +161,7 @@ export function buildNbaSystemBoard(games:InputGame[]):NbaSystemBoard {
     board.push({
       game_id:g.game_id,home:g.home,away:g.away,
       tipoff_utc:g.tipoff_utc,original_at_utc:g.original_at_utc,
-      source:g.source,candidate_count:all.length,picks:all.slice(0,MAX_PER_GAME)
+      source:g.source,candidate_count:all.length,picks:all
     });
   }
   const count=board.reduce((s,g)=>s+g.picks.length,0);
@@ -175,6 +174,6 @@ export function buildNbaSystemBoard(games:InputGame[]):NbaSystemBoard {
     displayed_system_picks:count,
     games_with_picks:board.filter(g=>g.picks.length).length,
     games:board,not_shown_raw_graded_predictions:statRows,
-    disclosure:'Ranked numerical model targets, not 65% hit-rate claims and NOT bookmaker betting lines. Gap/2026 played-player holdout MAE is not a probability, confidence or edge. No wager is certified until matching real sportsbook prices, calibrated conditional target probabilities and injury/participation validation exist. All original player/stat forecasts remain in the immutable grading archive.'
+    disclosure:'All qualifying players displayed (one strongest market per player), with NO arbitrary two-pick game cap. Ranked numerical model targets, not 65% hit-rate claims and NOT bookmaker betting lines. Gap/2026 played-player holdout MAE is not a probability, confidence or edge. No wager is certified until matching real sportsbook prices, calibrated conditional target probabilities and injury/participation validation exist. All original player/stat forecasts remain in the immutable grading archive.'
   };
 }
