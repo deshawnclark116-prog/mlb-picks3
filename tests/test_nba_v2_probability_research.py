@@ -10,7 +10,7 @@ def samples():
     for period,dates in [('validation',31),('holdout',23)]:
         for day in range(dates):
             when=('2025-12-'+f'{day+1:02d}') if period=='validation' else \
-                 ('2026-01-'+f'{day+10:02d}')
+                 ('2026-01-'+f'{day+10:02d}' if day<22 else '2026-02-01')
             for player in range(23):
                 on=(player+day)%7!=0
                 mean=17.0+player*.9
