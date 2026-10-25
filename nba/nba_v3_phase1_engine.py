@@ -98,6 +98,7 @@ def role_pool(team_id,histories,team_games,first_seen,last_seen,roster_ids,
         if np.any(mm<=0) or np.any(mm>65):raise ValueError("NBA_V3_BAD_HISTORICAL_MINUTES")
         minute_sd=float(_clip(np.std(mm,ddof=1) if len(mm)>1 else 6.,2.5,12.))
         absence=evidence.get(str(pid))
+        prior_p_play=p_play
         if absence=="OUT":p_play=0.
         elif absence=="ACTIVE":p_play=max(p_play,.97)
         # Past actual player shots are opportunities, not current lineup
@@ -139,16 +140,81 @@ def role_pool(team_id,histories,team_games,first_seen,last_seen,roster_ids,
         else:profile=None
         members.append({
             "team_id":str(tid),"player_id":str(pid),"player":hist[-1]["player"],
-            "p_play":round(p_play,5),"minutes_if_playing":round(minutes,4),
+            "p_play":round(p_play,5),"p_play_before_status":round(prior_p_play,5),
+            "minutes_if_playing":round(minutes,4),
             "minutes_sd":round(minute_sd,4),"prior_games":len(hist),
             "historical_starter_share":round(starting,4),
             "rates_per_minute":rates,"shot_profile":profile,
             "profile_games":len(complete),
             "reported_status":absence or "UNKNOWN_NOT_ACTIVE_CERTIFIED",
+            "role_reallocated_expected_minutes":0.,
+            "vacated_usage_factor":1.,
             "role_evidence":"PRIOR_REAL_COMPLETED_TEAM_GAMES",
             "game_day_starter_certified":False,
             "game_day_active_certified":False,
         })
+    # NFL-style VACATED OPPORTUNITY LAYER, adapted to team 240 regulation
+    # minutes. Only source-timestamped reported-OUT players may release role
+    # opportunity; the rest stays reserved for unmodeled current-roster depth.
+    lost_minutes=sum(p["minutes_if_playing"]*p["p_play_before_status"]
+                     for p in members if p["reported_status"]=="OUT")
+    surviving=sum(p["minutes_if_playing"]*p["p_play"] for p in members)
+    if lost_minutes>0 and surviving>0:
+        reserved_unknown=15. # NEVER assume all actual 240 minutes are modeled
+        budget=max(0.,TEAM_MINUTES-reserved_unknown-surviving)
+        remaining=min(.60*lost_minutes,budget)
+        for _ in range(5):
+            available=[p for p in members if p["p_play"]>0 and
+                      p["minutes_if_playing"]<MAX_MINUTES-.001]
+            if not available or remaining<=1e-4:break
+            # Source-prior role share and observed starter usage, not
+            # postgame shot totals or an assumed replacement starter.
+            weights=[p["p_play"]*
+                   (.40+p["historical_starter_share"])*
+                   (8.+p["minutes_if_playing"]) for p in available]
+            denominator=sum(weights)
+            distributed=0.
+            for p,w in zip(available,weights):
+                increase=min(MAX_MINUTES-p["minutes_if_playing"],
+                    remaining*w/denominator/max(.01,p["p_play"]))
+                allocated=increase*p["p_play"]
+                p["minutes_if_playing"]=round(p["minutes_if_playing"]+increase,4)
+                p["role_reallocated_expected_minutes"]=round(
+                    p["role_reallocated_expected_minutes"]+allocated,4)
+                distributed+=allocated
+            if distributed<=1e-4:break
+            remaining=max(0.,remaining-distributed)
+        # Vacated shot opportunities are MORE uncertain than minutes.
+        # Redistribute at most 35% of *independently recorded* prior FG
+        # attempts, and cap each player's attempt/rate increase at 18%.
+        lost_fga=sum(
+            p["p_play_before_status"]*p["minutes_if_playing"]*
+            (p["shot_profile"]["two_pa_per_minute"]+
+             p["shot_profile"]["three_pa_per_minute"])
+            for p in members if p["reported_status"]=="OUT" and
+            p["shot_profile"] is not None)
+        active=[p for p in members if p["p_play"]>0 and
+                p["shot_profile"] is not None]
+        if lost_fga>0 and active:
+            attempted=sum(
+                p["p_play"]*p["minutes_if_playing"]*
+                (p["shot_profile"]["two_pa_per_minute"]+
+                 p["shot_profile"]["three_pa_per_minute"]) for p in active)
+            if attempted>0:
+                for p in active:
+                    present=(p["shot_profile"]["two_pa_per_minute"]+
+                             p["shot_profile"]["three_pa_per_minute"])
+                    if present<=0:continue
+                    add=min(.35*lost_fga*(p["p_play"]*p["minutes_if_playing"]*present)/
+                            attempted,
+                            .18*(p["p_play"]*p["minutes_if_playing"]*present))
+                    factor=1.+add/max(.01,
+                       p["p_play"]*p["minutes_if_playing"]*present)
+                    p["vacated_usage_factor"]=round(factor,5)
+                    for k in ("two_pa_per_minute","three_pa_per_minute","fta_per_minute"):
+                        p["shot_profile"][k]*=factor
+                    for k in ("points","three_pointers_made"):
+                        p["rates_per_minute"][k]*=factor
     # Individual pregame roles are modeled in competition, not independent
     # 42-minute entitlements. Unknown roster slots retain unmodeled reserve.
     members.sort(key=lambda x:(-x["minutes_if_playing"]*x["p_play"],x["player_id"]))
@@ -275,6 +341,8 @@ def simulate_matchup(game_id,teams,*,asof_utc,tipoff_utc,
                     "conditional_minutes_mean":m["minutes_if_playing"],
                     "prior_history_n":m["prior_games"],
                     "profile_coverage_n":m["profile_games"],
+                    "vacated_expected_minutes_reassigned":m["role_reallocated_expected_minutes"],
+                    "vacated_usage_shot_attempt_factor":m["vacated_usage_factor"],
                     "reported_status":m["reported_status"],
                     "calibrated_for_2026_27":False,"research_only":True,
                     "not_an_official_bet":True,
