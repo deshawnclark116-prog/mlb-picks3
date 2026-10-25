@@ -116,7 +116,12 @@ test('NHL current shot projections are independent of missing or stale points fe
  assert.equal(nhlCountGameDate(null,evening),'2026-10-18');
  assert.equal(nhlCountGameDate('2026-10-17',evening),'2026-10-18');
  assert.equal(nhlCountGameDate('2026-10-18',evening),'2026-10-18');
- assert.equal(nhlCountGameDate('2026-10-20',evening),'2026-10-20');
+ assert.equal(nhlCountGameDate('2026-10-20',evening),'2026-10-18',
+   'At 9:30PM ET, a tomorrow-classifier must not hide current NHL games');
+ assert.equal(nhlCountGameDate('2026-10-20',new Date('2026-10-19T15:00:00Z')),
+   '2026-10-20','A genuine future slate is available during the daytime');
+ assert.equal(nhlCountGameDate('2026-10-20',new Date('2026-10-19T08:30:00Z')),
+   '2026-10-19','Overnight NHL current-day cutoff extends through 5 AM ET');
  assert.equal(nhlCountGameDate('invalid',evening),'2026-10-18');
  assert.equal(nhlCountGameDate(null,new Date('2026-10-19T05:30:00Z')),'2026-10-19');
 });

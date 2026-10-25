@@ -28,9 +28,19 @@ export function nhlCountGameDate(classifierGameDate:string|null,now:Date=new Dat
  }).formatToParts(now);
  const get=(part:string)=>parts.find(x=>x.type===part)?.value;
  const today=get('year')+'-'+get('month')+'-'+get('day');
+ // Around 8–11:59 PM ET the UTC date is already TOMORROW.
+ // The NHL still has active North American games. Never auto-jump an
+ // evening view to tomorrow solely because an upstream server used UTC.
+ const localHour=Number(new Intl.DateTimeFormat('en-US',{
+   timeZone:'America/New_York',hour:'2-digit',hourCycle:'h23'
+ }).format(now));
  if(classifierGameDate && /^20\d{2}-\d{2}-\d{2}$/.test(classifierGameDate) &&
     Number.isFinite(Date.parse(classifierGameDate+'T00:00:00Z')) &&
-    classifierGameDate>=today)return classifierGameDate;
+    classifierGameDate>=today){
+   if(classifierGameDate>today&&(localHour>=18||localHour<5))
+     return today;
+   return classifierGameDate;
+ }
  return today;
 }
 

@@ -68,7 +68,8 @@ test('actual Oct 21 NHL 38-row source becomes TWO real game cards, not four card
   assert.equal(buffalo.predictions.length,18);
   assert(florida.predictions.some(v=>v.market==='moneyline'));
   assert(florida.predictions.some(v=>v.market==='points'));
-  assert(buffalo.predictions.some(v=>v.market==='points_early_season'));
+  assert(buffalo.predictions.some(v=>v.market==='points'&&v.source_market==='points_early_season'),
+    'Prior-season fallback remains attributable, but it is still the single anytime-points market');
   assert(buffalo.predictions.some(v=>v.market==='moneyline'));
   assert.equal(florida.kickoff_utc,'2026-10-21T23:30:00.000Z');
   assert.equal(buffalo.kickoff_utc,'2026-10-21T23:30:00.000Z');
@@ -136,12 +137,45 @@ test('same opponents on different dates or times must never be merged into a mad
   assert.equal(groups.reduce((n,g)=>n+g.predictions.length,0),3);
 });
 
-test('same player on two independently published original markets stays visible, not hidden for lack of sportsbook book line',()=>{
- const rows=[p('Tim Stützle','OTT','FLA','points','8479313'),
-             p('Tim Stützle','Ottawa Senators','Florida Panthers',
-               'points_early_season','8479313')];
- const groups=groupNhlPredictionsByGame(deduplicateNhlPredictions(rows));
- assert.equal(groups.length,1);
- assert.equal(groups[0].predictions.length,2);
- assert.equal(new Set(groups[0].predictions.map(v=>v.market)).size,2);
+test('same player 0.5 point event renders ONCE; current-season model is preferred, not the higher optimistic probability',()=>{
+ const base=p('Tim Stützle','OTT','FLA','points','8479313');
+ const first={...base,model_prob:.57,generated_at:'2026-10-21T12:00:00Z'};
+ const old={...p('Tim Stützle','Ottawa Senators','Florida Panthers',
+               'points_early_season','8479313'),model_prob:.83,
+               generated_at:'2026-10-21T18:00:00Z'};
+ const clean=deduplicateNhlPredictions([old,first]);
+ assert.equal(clean.length,1);
+ assert.equal(clean[0].market,'points');
+ assert.equal(clean[0].source_market,'points');
+ assert.equal(clean[0].model_prob,.57);
+ const games=groupNhlPredictionsByGame(clean);
+ assert.equal(games.length,1);
+ assert.equal(games[0].predictions.length,1);
+ const fallback=deduplicateNhlPredictions([old]);
+ assert.equal(fallback.length,1);
+ assert.equal(fallback[0].market,'points');
+ assert.equal(fallback[0].source_market,'points_early_season');
+ assert.equal(fallback[0].model_prob,.83);
+});
+test('same player different game, same date but distinct verified start, is not merged; different NHL player IDs never collide',()=>{
+ const same=p('Unique athlete','DAL','NYI','points','80001');
+ const again={...same,kickoff_utc:'2026-10-21T23:50:00Z'};
+ const other=p('Another athlete','DAL','NYI','points','80002');
+ assert.equal(deduplicateNhlPredictions([same,again,other]).length,3);
+});
+test('October 25 live source structure: 73 point model rows collapse to exactly 50 unique player point outcomes',()=>{
+ const rows:NhlPrediction[]=[];
+ for(let i=0;i<50;i++) {
+  const current=p('Synthetic '+i,'FLA','CHI','points',String(90000+i));
+  current.game_date='2026-10-25';
+  current.kickoff_utc='2026-10-25T23:00:00Z';
+  rows.push(current);
+  if(i<23)rows.push({...current,market:'points_early_season',
+    model_prob:.99,generated_at:'2026-10-25T22:00:00Z'});
+ }
+ assert.equal(rows.length,73);
+ const clean=deduplicateNhlPredictions(rows);
+ assert.equal(clean.length,50);
+ assert(clean.every(row=>row.market==='points'&&row.model_prob===.64));
+ assert.equal(groupNhlPredictionsByGame(clean)[0].predictions.length,50);
 });

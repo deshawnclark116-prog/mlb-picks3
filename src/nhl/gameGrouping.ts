@@ -95,10 +95,9 @@ export function groupNhlPredictionsByGame(preds:NhlPrediction[]):NhlGameGroup[]{
       };
       groups.set(identity,group);
     }
-    // The original points classifier can publish current and early-season
-    // probabilities for one player. Preserve BOTH as distinct original model
-    // forecasts; do not dedupe across markets or remove without book offers.
-    // Upstream src/utils.ts already handles exact source row dedupe.
+    // The model archive preserves both original generations. The live board
+    // must first select ONE current/fallback estimate per actual point event
+    // via deduplicateNhlPredictions, never both on a single game card.
     group.predictions.push(p);
   }
   return [...groups.values()].sort((a,b)=>
