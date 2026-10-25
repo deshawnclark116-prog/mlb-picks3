@@ -33,9 +33,10 @@ interface NhlTodayScreenProps {
 
 const MARKET_LABELS: Record<string, string> = {
   moneyline: "Moneyline",
-  moneyline_early_season: "Moneyline (Prior-Season-Informed)",
+  // Prior moneyline estimates are likewise alternate versions.
   points: "Anytime Point",
-  points_early_season: "Anytime Point (Prior-Season-Informed)",
+  // Earlier-model estimates are alternate versions of the SAME outcome.
+  // The source remains available in model_source; no duplicate filter.
   shots_on_goal: "Shots on Goal",
   shots_on_goal_early_season: "Shots on Goal (Prior-Season-Informed)",
   goalie_saves: "Goalie Saves",
@@ -47,10 +48,8 @@ const PLAYER_MARKETS = ["points", "points_early_season", "shots_on_goal",
 type MarketFilter =
   | "ALL"
   | "moneyline"
-  | "moneyline_early_season"
-  | "points"
-  | "points_early_season"
-  | "shots_on_goal"
+   | "points"
+   | "shots_on_goal"
   | "shots_on_goal_early_season"
   | "goalie_saves";
 
@@ -168,7 +167,8 @@ export default function NhlTodayScreen({
         prediction:null,predictionKind:'not_published' as const,
         unit:'',confidence:p.confidence,
         source:p.model_source||'NHL current fixed-line classifier',
-        detail:(p.line!=null?'Model evaluated line '+p.line+'. ':'')+
+        detail:(p.source_market?'Selected estimate: '+p.source_market+'. ':'')+
+          (p.line!=null?'Model evaluated line '+p.line+'. ':'')+
           (p.games_played!=null?'Historical player games: '+p.games_played+'. ':'')+
           'No numeric player-stat median is present in this current predictions feed.'
       }))
