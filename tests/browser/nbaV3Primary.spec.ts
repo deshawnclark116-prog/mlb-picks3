@@ -61,7 +61,7 @@ test('NBA opens V3 SYSTEM PICKS, not V2 or optional shadow view',async({page})=>
  await expect(g.getByTestId('nba-v3-system-pick')).toHaveCount(2);
  await expect(g.getByTestId('nba-v3-system-pick').first()).toContainText('26.7 PTS');
  await expect(g.getByTestId('nba-v3-system-pick').first()).toContainText('78.8%');
- await expect(g.getByTestId('nba-v3-system-pick')).not.toContainText('Reported Out');
+ await expect(g.getByTestId('nba-v3-system-pick').filter({hasText:'Reported Out'})).toHaveCount(0);
  await expect(g.getByTestId('nba-v3-system-pick').last()).toContainText('ASSISTS');
  await expect(page.getByText(/NOT YET PROSPECTIVELY CALIBRATED/)).toBeVisible();
 });
