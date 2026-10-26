@@ -8,10 +8,10 @@
       "verified_n": 0
     },
     "points": {
-      "hit_rate": null,
-      "mean_brier": null,
-      "mean_model_p": null,
-      "verified_n": 0
+      "hit_rate": 1,
+      "mean_brier": 0.048981,
+      "mean_model_p": 0.778683,
+      "verified_n": 1
     },
     "rebounds": {
       "hit_rate": null,
@@ -27,18 +27,18 @@
     }
   },
   "firstseen_games": 11,
-  "graded_at_utc": "2026-10-25T18:34:52.938Z",
+  "graded_at_utc": "2026-10-26T20:47:07.067Z",
   "official_bets": 0,
   "original_probabilistic_predictions": 23,
   "predicted_vs_actual": [
     {
-      "actual_stat": null,
+      "actual_stat": 29,
       "away": "Detroit Pistons",
       "bookmaker_line": null,
       "bookmaker_odds": null,
-      "brier": null,
+      "brier": 0.048981,
       "current_season_calibration_verified": false,
-      "event_happened": null,
+      "event_happened": true,
       "forecast_id": "479c518f231603e1c09877c2200e0e239efdf24c1cceb9b86b6e0c7d22f459e5",
       "frozen_probability_at_utc": "2026-10-25T16:48:48.006Z",
       "game_id": "401909866",
@@ -52,7 +52,7 @@
       "player_id": "4431678",
       "predicted_stat": 22.8558,
       "probability_historical_holdout_validated": true,
-      "result": "SOURCE_UNVERIFIED",
+      "result": "HIT",
       "source_numeric_original_at_utc": "2026-10-24T23:15:09.780715+00:00",
       "team_id": "20",
       "tipoff_utc": "2026-10-25T23:30:00+00:00"
@@ -631,6 +631,6 @@
     }
   ],
   "schema": "NBA_V2_PROSPECTIVE_PROBABILITY_MILESTONE_ACTUAL_GRADE_V1",
-  "unverified": 23,
-  "verified_hit_or_miss": 0
+  "unverified": 22,
+  "verified_hit_or_miss": 1
 }
