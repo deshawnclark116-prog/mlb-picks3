@@ -38,9 +38,11 @@ const research={
  sportsbook_lines_required:false
 };
 async function setup(page:any,v3:any=research){
+ // Last-added route has priority in Playwright. The V3-specific fixture
+ // MUST run before the generic application API catch-all.
+ await page.route('**/api/**',route=>route.fulfill({json:{games:[],picks:[]}}));
  await page.route('**/api/nba-v3-shadow**',route=>
   route.fulfill(typeof v3==='function'?v3():{json:v3}));
- await page.route('**/api/**',route=>route.fulfill({json:{games:[],picks:[]}}));
  await page.goto('/');
  await page.locator('#tab-btn-nba').click();
 }
