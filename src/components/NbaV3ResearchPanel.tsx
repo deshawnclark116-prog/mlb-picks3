@@ -1,31 +1,98 @@
-import React,{useCallback,useEffect,useState} from 'react';
-import {RefreshCw} from 'lucide-react';
+import React,{useCallback,useEffect,useMemo,useState} from 'react';
+import {RefreshCw,ChevronDown} from 'lucide-react';
 
 type Market='points'|'rebounds'|'assists'|'three_pointers_made';
+const MARKETS:Market[]=['points','rebounds','assists','three_pointers_made'];
 const NAME:Record<Market,string>={points:'POINTS',rebounds:'REBOUNDS',
  assists:'ASSISTS',three_pointers_made:'THREES'};
+const UNIT:Record<Market,string>={points:'PTS',rebounds:'REB',assists:'AST',
+ three_pointers_made:'3PM'};
 type Forecast={
  player:string;team_id:string;player_id:string;market:Market;
  mean:number;median:number;p10:number;p25:number;p75:number;p90:number;
  p_active:number;exp_opp:number;role_share:number;unc_reasons:string[];
+ reported_status:string;
  model_target:{milestone:number;probability:number;method:string}|null;
 };
 type Game={game_id:string;away:string;home:string;tipoff_utc:string;
  forecast_at_utc:string;rows_count:number;rows:Forecast[]};
 type Shadow={schema:string;status:string;upcoming_games:number;
  original_games_audited:number;research_only:true;official_bets:0;games:Game[];
- prospective_model_probability_calibration_verified:false};
+ prospective_model_probability_calibration_verified:false;
+ sportsbook_lines_required:false};
 const pct=(v:number)=>(v*100).toFixed(1)+'%';
 const fmt=(v:number)=>v.toLocaleString('en-US',{maximumFractionDigits:1});
+const dateET=(iso:string)=>{
+ const parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',
+ year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date(iso));
+ const vals=Object.fromEntries(parts.map(x=>[x.type,x.value]));
+ return vals.year+'-'+vals.month+'-'+vals.day;
+};
 const et=(iso:string)=>new Date(iso).toLocaleString('en-US',
  {timeZone:'America/New_York',month:'short',day:'numeric',hour:'numeric',
   minute:'2-digit'})+' ET';
-export default function NbaV3ResearchPanel({search=''}:{search?:string}){
+
+/** A system target is a true V3 model CDF event, NEVER a verified sportsbook
+ * wager or current-season calibrated hit rate. Reject known reported OUT.
+ * The V3 minutes/usage model supplies the player's role; we do NOT reuse
+ * the V2 hard 26-minute gate nor hard-cap at 2 picks per game.
+ */
+export function v3QualifiedResearchTargets(g:Game):Forecast[]{
+ const seen=new Set<string>();
+ return g.rows.filter(r=>{
+  if(!r.model_target||r.reported_status==='OUT'||r.p_active<.75||
+      r.model_target.probability<.65||!Number.isFinite(r.model_target.probability))
+    return false;
+  const key=[g.game_id,r.team_id,r.player_id,r.market].join('|');
+  if(seen.has(key))throw Error('NBA_V3_DUPLICATE_PLAYER_MARKET_OUTCOME');
+  seen.add(key);
+  return true;
+ }).sort((a,b)=>
+   (b.model_target?.probability||0)-(a.model_target?.probability||0)||
+   b.p_active-a.p_active||
+   a.player.localeCompare(b.player)||MARKETS.indexOf(a.market)-MARKETS.indexOf(b.market));
+}
+function V3Card({row}:{row:Forecast}){
+ const t=row.model_target!;
+ return <article data-testid="nba-v3-system-pick" className="rounded-xl border border-[#374239] bg-[#101912] p-3 space-y-2">
+  <div className="flex items-start justify-between gap-2">
+   <div><p className="text-sm font-bold text-white">{row.player}</p>
+    <p className="text-[11px] text-gray-400">{NAME[row.market]}</p></div>
+   <span className="text-[10px] border border-[#487b54] rounded-lg p-2 font-bold text-[#00FF41]">V3 MODEL TARGET</span>
+  </div>
+  <p data-testid="nba-v3-selected-target" className="text-base font-bold">
+   {t.milestone}+ {NAME[row.market]}
+  </p>
+  <div className="grid grid-cols-2 gap-2 rounded-lg border border-[#32533d] bg-[#102418] p-3">
+   <div><p className="text-[10px] text-gray-400">MODEL PROJECTION</p>
+    <p className="text-xl font-bold text-white">{fmt(row.mean)} {UNIT[row.market]}</p>
+    <p className="text-[10px] text-gray-400">Median {fmt(row.median)}</p></div>
+   <div><p className="text-[10px] text-gray-400">ESTIMATED P(HIT)</p>
+    <p data-testid="nba-v3-hit-probability" className="text-xl font-bold text-[#00FF41]">{pct(t.probability)}</p>
+    <p className="text-[10px] text-amber-200">Not yet forward-calibrated</p></div>
+  </div>
+  <p className="text-[11px] text-gray-300">
+   10th–90th percentile: {fmt(row.p10)}–{fmt(row.p90)} {UNIT[row.market]}
+   {' · '}Simulated P(plays) {pct(row.p_active)}
+   {' · '}Modeled share of team minutes {pct(row.role_share)}</p>
+  <details className="text-[11px] text-gray-400 border-t border-[#343434] pt-2">
+   <summary className="min-h-9 cursor-pointer font-bold">MODEL EVIDENCE</summary>
+   <p className="mt-1">Pregame NBA V3 shared-minute and opportunity simulation.
+    Historical role evidence only. Source status: {row.reported_status}.
+    {row.unc_reasons.length?' Uncertainty: '+row.unc_reasons.join(', '):''}
+    {' '}This threshold is model-generated, not a verified bookmaker line or certified betting probability.</p>
+  </details>
+ </article>;
+}
+export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
+ search?:string;mode?:'PICKS'|'BOARD'
+}){
  const [doc,setDoc]=useState<Shadow|null>(null);
  const [error,setError]=useState('');
  const [loading,setLoading]=useState(true);
- const [expanded,setExpanded]=useState('');
- const [full,setFull]=useState(false);
+ const [expanded,setExpanded]=useState<string|null>(null);
+ const [day,setDay]=useState('TODAY');
+ const [market,setMarket]=useState<'ALL'|Market>('ALL');
  const refresh=useCallback(async()=>{
   setLoading(true);
   try{
@@ -34,93 +101,113 @@ export default function NbaV3ResearchPanel({search=''}:{search?:string}){
    if(!r.ok)throw Error(x.error||'Source unavailable');
    if(x.schema!=='NBA_V3_FULL_GAME_DISTRIBUTION_READ_ONLY_V1'||
       x.research_only!==true||x.official_bets!==0||
+      x.sportsbook_lines_required!==false||
       x.prospective_model_probability_calibration_verified!==false||
-      !Array.isArray(x.games))throw Error('NBA_V3_INVALID_OR_PROMOTED_SHADOW');
+      !Array.isArray(x.games))throw Error('NBA_V3_INVALID_OR_PROMOTED_SOURCE');
    setDoc(x);setError('');
-  }catch(e){
-   setError(e instanceof Error?e.message:String(e));setDoc(null);
-  }finally{setLoading(false);}
+  }catch(e){setError(e instanceof Error?e.message:String(e));setDoc(null);}
+  finally{setLoading(false);}
  },[]);
  useEffect(()=>{
   void refresh();
-  const id=setInterval(()=>void refresh(),60000);
+  const id=setInterval(()=>void refresh(),120000);
   return()=>clearInterval(id);
  },[refresh]);
- return <section className="space-y-3" data-testid="nba-v3-phase1-shadow">
-  <div className="rounded-xl border border-amber-700/60 bg-amber-950/20 p-3 text-xs text-amber-200 space-y-2">
-   <div className="flex justify-between items-center gap-2">
-    <strong>NBA V3 · NFL-STYLE FULL GAME DISTRIBUTIONS</strong>
-    <button type="button" onClick={()=>void refresh()}
-       aria-label="Refresh NBA V3 forecasts" className="border border-[#444] rounded-lg min-h-10 min-w-10 flex items-center justify-center">
+ const today=dateET(new Date().toISOString());
+ const dates=useMemo(()=>[...new Set((doc?.games||[]).map(g=>dateET(g.tipoff_utc)))].sort(),[doc]);
+ const all=useMemo(()=>doc?.games.filter(g=>
+  (day==='ALL'||(day==='TODAY'?dateET(g.tipoff_utc)===today:dateET(g.tipoff_utc)===day))&&
+  (!search||(g.home+' '+g.away+' '+g.rows.map(r=>r.player).join(' ')).toLowerCase()
+    .includes(search.toLowerCase()))
+ )||[],[doc,day,today,search]);
+ const number=all.reduce((n,g)=>n+v3QualifiedResearchTargets(g).filter(r=>
+  market==='ALL'||r.market===market).length,0);
+ return <section className="space-y-3" data-testid="nba-v3-primary-board">
+  <div className="rounded-xl border border-[#00FF41]/30 bg-[#0e2115] p-3 text-xs space-y-1">
+   <div className="flex justify-between gap-2 items-center">
+    <strong className="text-[#00FF41]">{mode==='PICKS'?'NBA V3 · SYSTEM PICKS':'NBA V3 · FULL MODEL BOARD'}</strong>
+    <button type="button" onClick={()=>void refresh()} disabled={loading}
+      aria-label="Refresh NBA V3 forecasts" className="min-h-10 min-w-10 flex items-center justify-center border border-[#444] rounded-lg">
      <RefreshCw size={16}/></button>
    </div>
-   <p>Real pregame basketball roster and role evidence, shared rotation-minute
-    simulation, shot opportunities, game pace and full simulated outcomes.</p>
-   <p className="font-bold">RESEARCH ONLY · NOT YET FORWARD-CALIBRATED · NO BOOKMAKER REQUIRED.</p>
-   <p>V2 remains the system-picks champion until matching original future-game
-    forecasts prove V3 improves calibration and scoring.</p>
+   <p>Basketball-specific role, team-minute allocation, shot opportunities and full-game probability distributions.</p>
+   <p className="text-amber-200 font-bold">MODEL-ESTIMATED P(HIT) · NOT YET PROSPECTIVELY CALIBRATED OR A BOOKMAKER BET.</p>
+   <p className="text-gray-400">This is V3, not recycled V2 projections. All original V2 predictions stay in the archive for paired grading.</p>
   </div>
-  {loading&&!doc&&<p className="text-xs text-gray-400">Loading NBA V3 source-verified distributions…</p>}
-  {error&&<p role="alert" className="border border-red-700 p-3 rounded-lg text-xs text-red-200">{error}</p>}
-  {doc&&<p className="text-xs text-gray-400">
-    {doc.upcoming_games} upcoming games · {doc.original_games_audited} immutable source games audited
-  </p>}
-  {doc&&doc.status!=='AVAILABLE_RESEARCH_ONLY'&&<p className="border border-[#333] p-3 rounded-lg text-xs text-gray-400">
+  {loading&&!doc&&<p className="text-xs text-gray-400">Loading frozen original NBA V3 pregame simulations…</p>}
+  {error&&<p role="alert" className="border border-red-700 p-3 rounded-lg text-xs text-red-200">
+    NBA V3 source unavailable: {error}. No V2 substitution or invented picks.</p>}
+  {doc&&<div className="text-xs text-gray-400">
+   {all.length} matching V3 game forecasts · {mode==='PICKS'?number+' model research targets':
+       all.reduce((n,g)=>n+g.rows.length,0)+' numerical projections'}
+   {' · '}{doc.original_games_audited} original games audited
+  </div>}
+  {doc&&doc.status!=='AVAILABLE_RESEARCH_ONLY'&&<p data-testid="nba-v3-no-source"
+    className="border border-amber-800/70 p-3 rounded-lg text-xs text-amber-200">
    {doc.status==='NO_FIRSTSEEN_V3_SHADOW_YET'?
-      'First pregame V3 simulation has not been frozen yet. No past-game backfill will masquerade as a real forecast.':
-      'No current or upcoming frozen V3 shadow. Original forecasts remain archived for grading.'}
+    'V3 is the selected frontend model. Its first authentic pregame game distribution has not yet been published; old V2 predictions will NOT be mislabeled as V3.':
+    'No upcoming first-seen V3 game distributions are available. Predictions cannot be safely backfilled after tipoff.'}
   </p>}
-  {doc?.games.filter(g=>!search||(
-   g.home+' '+g.away+' '+g.rows.map(r=>r.player).join(' ')
-  ).toLowerCase().includes(search.toLowerCase())).map(g=>{
-   const targets=g.rows.filter(r=>r.model_target?.probability!=null&&
-     r.model_target.probability>=.65).sort((a,b)=>
-      (b.model_target?.probability||0)-(a.model_target?.probability||0));
-   const open=expanded===g.game_id;
-   return <article key={g.game_id}
-      className="rounded-xl border border-[#333] bg-[#191919]"
-      data-testid="nba-v3-shadow-game">
-    <button type="button" onClick={()=>setExpanded(open?'':g.game_id)}
-      aria-expanded={open} className="w-full min-h-16 text-left p-3 flex justify-between gap-2 items-center">
-     <div><strong className="text-sm">{g.away} @ {g.home}</strong>
-      <p className="text-[11px] text-gray-400">{et(g.tipoff_utc)} · {g.rows_count} player/stat projections
-       {' · '}{targets.length} research milestones</p></div>
-     <span className="text-[#00FF41] text-xl">{open?'−':'+'}</span>
-    </button>
-    {open&&<div className="border-t border-[#333] p-3 space-y-2">
-     <p className="text-[11px] text-gray-400">
-      Original forecast frozen {et(g.forecast_at_utc)}.
-      No active-list certification or calibrated betting probability is implied.</p>
-     {targets.slice(0,10).map(r=><div key={r.player_id+'|'+r.market}
-       className="rounded-lg border border-[#444] bg-[#111] p-3 space-y-1">
-      <div className="flex gap-2 justify-between text-xs">
-       <strong>{r.player} · {NAME[r.market]}</strong>
-       <strong className="text-[#00FF41]">{pct(r.model_target!.probability)}</strong>
-      </div>
-      <p className="text-xs text-amber-200">
-        MODEL {r.model_target!.milestone}+ {NAME[r.market]} · RESEARCH ONLY</p>
-      <p className="text-[11px] text-gray-300">
-       Prediction median {fmt(r.median)} · mean {fmt(r.mean)}
-       {' · '}P10–P90 {fmt(r.p10)}–{fmt(r.p90)}
-       {' · '}P(plays) {pct(r.p_active)}</p>
-     </div>)}
-     {!targets.length&&<p className="text-xs text-gray-400">
-      No model milestone exceeds 65%. Full stat distributions are still saved.</p>}
-     <button type="button" onClick={()=>setFull(v=>!v)}
-       className="min-h-10 border border-[#555] rounded-lg px-3 text-xs">
-      {full?'Hide numerical projections':'View all '+g.rows.length+' predictions'}</button>
-     {full&&g.rows.slice(0,180).map((r,i)=><div
-       key={r.player_id+'|'+r.market+'|'+i} className="border border-[#333] rounded-lg p-3 space-y-1 text-xs">
-       <strong>{r.player} · {NAME[r.market]}</strong>
-       <p>Median {fmt(r.median)} · mean {fmt(r.mean)}
-        {' · '}P25–P75 {fmt(r.p25)}–{fmt(r.p75)}
-        {' · '}P(plays) {pct(r.p_active)}
-        {' · '}Role minute share {pct(r.role_share)}</p>
-       <p className="text-[11px] text-gray-400">
-         Expected exposure {fmt(r.exp_opp)} · {r.unc_reasons.join(', ')}</p>
-     </div>)}
-    </div>}
-   </article>;
-  })}
+  {doc&&doc.status==='AVAILABLE_RESEARCH_ONLY'&&<>
+    <div className="flex gap-2 overflow-x-auto pb-1" aria-label="NBA V3 game date">
+      {['TODAY','ALL',...dates].map(d=><button type="button" key={d}
+       onClick={()=>{setDay(d);setExpanded(null);}} aria-pressed={day===d}
+       className={'min-h-10 shrink-0 rounded-lg border px-3 text-xs font-bold '+
+        (day===d?'border-[#00FF41] text-[#00FF41]':'border-[#333] text-gray-300')}>
+       {d==='TODAY'?"Today's games":d==='ALL'?'All upcoming':d.slice(5)}
+      </button>)}
+    </div>
+    <div className="grid grid-cols-5 gap-1" aria-label="NBA V3 market filter">
+    {(['ALL',...MARKETS] as const).map(m=><button type="button" key={m}
+      onClick={()=>setMarket(m)} aria-pressed={market===m}
+      className={'min-h-10 rounded-md border px-1 text-[10px] font-bold '+
+        (market===m?'border-[#00FF41] text-[#00FF41]':'border-[#333] text-gray-400')}>
+      {m==='ALL'?'ALL':UNIT[m]}</button>)}
+    </div>
+    {!all.length&&<p className="text-xs text-gray-400">No first-seen V3 forecasts on the selected date.
+      Select another date or All upcoming. No old-model picks are substituted.</p>}
+    {all.map(g=>{
+      const selected=v3QualifiedResearchTargets(g).filter(r=>
+        market==='ALL'||r.market===market);
+      const every=g.rows.filter(r=>market==='ALL'||r.market===market);
+      const shown=mode==='PICKS'?selected:every;
+      const open=expanded===g.game_id;
+      return <article key={g.game_id} data-testid="nba-v3-game"
+        className="rounded-xl border border-[#333] bg-[#191919] overflow-hidden">
+        <button type="button" aria-expanded={open}
+          onClick={()=>setExpanded(open?null:g.game_id)}
+          className="w-full min-h-20 p-3 flex items-center justify-between text-left gap-2">
+          <div>
+           <strong className="text-sm text-white">{g.away} at {g.home}</strong>
+           <p className="mt-1 text-[11px] text-gray-400">{et(g.tipoff_utc)}
+             {' · '}{selected.length} model targets{' · '}{every.length} stat projections</p>
+           {selected[0]&&<p className="mt-1 text-[11px] text-gray-200">
+             TOP: {selected[0].player} · {selected[0].model_target!.milestone}+
+             {' '}{NAME[selected[0].market]} · {pct(selected[0].model_target!.probability)}
+           </p>}
+           <p className="mt-1 text-[10px] text-gray-500">V3 first observed {et(g.forecast_at_utc)}
+             {' · '}No verified bookmaker line</p>
+          </div>
+          <ChevronDown className={'text-gray-400 '+(open?'rotate-180':'')} size={18}/>
+        </button>
+        {open&&<div className="p-3 border-t border-[#333] space-y-2">
+         {mode==='PICKS'?shown.map(r=><V3Card key={g.game_id+'|'+r.team_id+'|'+r.player_id+'|'+r.market} row={r}/>):
+          shown.map(r=><div key={g.game_id+'|'+r.team_id+'|'+r.player_id+'|'+r.market}
+             data-testid="nba-v3-stat-projection" className="rounded-lg border border-[#383838] p-3 space-y-1 text-xs">
+            <strong>{r.player} · {NAME[r.market]}</strong>
+            <p>Mean {fmt(r.mean)} {UNIT[r.market]} · Median {fmt(r.median)}
+             {' · '}P10–P90 {fmt(r.p10)}–{fmt(r.p90)}</p>
+            <p>P(plays) {pct(r.p_active)}
+              {r.model_target?' · Model target '+r.model_target.milestone+'+ · P(hit) '+
+               pct(r.model_target.probability)+' (unvalidated)':' · No 65%+ V3 milestone'}</p>
+            <p className="text-gray-400">{r.unc_reasons.join(', ')}</p>
+          </div>)}
+         {!shown.length&&<p className="text-xs text-amber-200">
+           This game's frozen V3 player outcomes have no model target passing the
+           participation and 65% simulation gates for this market. No forced selection.</p>}
+        </div>}
+      </article>;
+    })}
+  </>}
  </section>;
 }
