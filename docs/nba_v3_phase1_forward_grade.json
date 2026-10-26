@@ -1,0 +1,137 @@
+{
+  "betting_model_promoted": false,
+  "graded_at_utc": "2026-10-26T01:07:06.572017+00:00",
+  "markets": {
+    "assists": {
+      "automatically_promoted": false,
+      "candidate_meets_predeclared_shadow_gates": false,
+      "minutes_mae_v2": null,
+      "minutes_mae_v3": null,
+      "paired_milestone_brier_original_v2": null,
+      "paired_milestone_brier_v3": null,
+      "paired_players": 0,
+      "played_player_conditional_stat_mae_v3": null,
+      "played_player_paired_mae_original_v2": null,
+      "played_player_paired_mae_v3": null,
+      "prospective_v3_all_thresholds": {
+        "brier": null,
+        "ece": null,
+        "high_gap": null,
+        "high_n": 0,
+        "observed_frequency": null,
+        "verified_n": 0
+      },
+      "same_exact_threshold_comparison_n": 0,
+      "v2_comparator_on_eligible_matching_thresholds": {
+        "brier": null,
+        "ece": null,
+        "high_gap": null,
+        "high_n": 0,
+        "observed_frequency": null,
+        "verified_n": 0
+      }
+    },
+    "points": {
+      "automatically_promoted": false,
+      "candidate_meets_predeclared_shadow_gates": false,
+      "minutes_mae_v2": null,
+      "minutes_mae_v3": null,
+      "paired_milestone_brier_original_v2": null,
+      "paired_milestone_brier_v3": null,
+      "paired_players": 0,
+      "played_player_conditional_stat_mae_v3": null,
+      "played_player_paired_mae_original_v2": null,
+      "played_player_paired_mae_v3": null,
+      "prospective_v3_all_thresholds": {
+        "brier": null,
+        "ece": null,
+        "high_gap": null,
+        "high_n": 0,
+        "observed_frequency": null,
+        "verified_n": 0
+      },
+      "same_exact_threshold_comparison_n": 0,
+      "v2_comparator_on_eligible_matching_thresholds": {
+        "brier": null,
+        "ece": null,
+        "high_gap": null,
+        "high_n": 0,
+        "observed_frequency": null,
+        "verified_n": 0
+      }
+    },
+    "rebounds": {
+      "automatically_promoted": false,
+      "candidate_meets_predeclared_shadow_gates": false,
+      "minutes_mae_v2": null,
+      "minutes_mae_v3": null,
+      "paired_milestone_brier_original_v2": null,
+      "paired_milestone_brier_v3": null,
+      "paired_players": 0,
+      "played_player_conditional_stat_mae_v3": null,
+      "played_player_paired_mae_original_v2": null,
+      "played_player_paired_mae_v3": null,
+      "prospective_v3_all_thresholds": {
+        "brier": null,
+        "ece": null,
+        "high_gap": null,
+        "high_n": 0,
+        "observed_frequency": null,
+        "verified_n": 0
+      },
+      "same_exact_threshold_comparison_n": 0,
+      "v2_comparator_on_eligible_matching_thresholds": {
+        "brier": null,
+        "ece": null,
+        "high_gap": null,
+        "high_n": 0,
+        "observed_frequency": null,
+        "verified_n": 0
+      }
+    },
+    "three_pointers_made": {
+      "automatically_promoted": false,
+      "candidate_meets_predeclared_shadow_gates": false,
+      "minutes_mae_v2": null,
+      "minutes_mae_v3": null,
+      "paired_milestone_brier_original_v2": null,
+      "paired_milestone_brier_v3": null,
+      "paired_players": 0,
+      "played_player_conditional_stat_mae_v3": null,
+      "played_player_paired_mae_original_v2": null,
+      "played_player_paired_mae_v3": null,
+      "prospective_v3_all_thresholds": {
+        "brier": null,
+        "ece": null,
+        "high_gap": null,
+        "high_n": 0,
+        "observed_frequency": null,
+        "verified_n": 0
+      },
+      "same_exact_threshold_comparison_n": 0,
+      "v2_comparator_on_eligible_matching_thresholds": {
+        "brier": null,
+        "ece": null,
+        "high_gap": null,
+        "high_n": 0,
+        "observed_frequency": null,
+        "verified_n": 0
+      }
+    }
+  },
+  "not_within_6h_v2_comparison_is_quarantined": true,
+  "note": "Only future original V3 pre-tip captures scored. All threshold outcomes including DNP. Historic retrofits forbidden. Minimum sample and Brier/ECE/MAE gates explicit; external lineup, value/price verification still required.",
+  "official_bets": 0,
+  "official_final_game_boxes_verified": 0,
+  "original_V2_numerical_comparison": "MATCHED_SAME_PLAYER_GAME_AND_WITHIN_6H_FORECAST_ORIGIN_ONLY",
+  "original_v3_games_frozen": 0,
+  "original_v3_thresholds_accounted": 0,
+  "prospective_2026_27_calibrated": false,
+  "rows": [],
+  "same_within_6h_original_v2_horizon_games": 0,
+  "schema": "NBA_V3_GENUINE_2026_27_ORIGINAL_PLAYER_PROBABILITY_FORWARD_GRADE_V1",
+  "source": "REAL_FIRSTSEEN_V3_ARCHIVE_VS_LATER_ESPN_COMPLETED_GAME_PLAYER_BOXES",
+  "source_final_boxscore_errors": {},
+  "unverified_thresholds": 0,
+  "verified_thresholds": 0
+}
