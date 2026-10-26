@@ -20,8 +20,8 @@ const tipLabel = (iso: string) =>
   });
 
 /**
- * NBA V2 rolling firstseen player research PLUS frozen opening-week audits.
- * Does not present model targets as sportsbook lines or official bets.
+ * NBA V3 is the DEFAULT UI. Legacy V2 firstseen archives remain available
+ * for paired grading and audits, never silently substituted for unavailable V3.
  */
 export default function NbaResearchScreen() {
   const [doc, setDoc] = useState<NbaResearchDocument | null>(null);
@@ -29,7 +29,7 @@ export default function NbaResearchScreen() {
   const [loading, setLoading] = useState(true);
   const [day, setDay] = useState('ALL');
   const [search, setSearch] = useState('');
-  const [mode, setMode] = useState<'PICKS'|'BETTABLE'|'ROLLING'|'V3'|'TEAMS'|'PLAYERS'>('PICKS');
+  const [mode, setMode] = useState<'PICKS'|'BOARD'|'BETTABLE'|'V2'|'ROLLING'|'TEAMS'|'PLAYERS'>('PICKS');
 
   useEffect(() => {
     let mounted = true;
@@ -59,29 +59,36 @@ export default function NbaResearchScreen() {
   return <main className="h-full overflow-y-auto bg-[#0D0D0D] p-4 pb-28 space-y-4 text-stone-100" data-testid="nba-research-screen">
     <div className="space-y-1">
       <h1 className="text-xl font-black tracking-wide">NBA Predictions</h1>
-      <p className="text-xs text-gray-400">2026–27 NBA · Ranked game-by-game model selections</p>
+      <p className="text-xs text-gray-400">2026–27 NBA V3 · Full-game simulated model predictions</p>
     </div>
     <section className="rounded-2xl border border-amber-700/60 bg-amber-950/20 p-3 space-y-1 text-xs text-amber-200">
-      <strong className="block">NBA SYSTEM SELECTIONS · BOOKMAKER EXECUTION NOT YET CERTIFIED</strong>
-      <p>Selected targets come from original V2 projections. No complete player-stat lists are presented as a betting card. Full original predictions remain archived for grading.</p>
-      <p>Bettable Now requires real bookmaker lines, reliable injury evidence and calibrated target probabilities. These are not yet established for NBA.</p>
+      <strong className="block">NBA V3 IS THE PRIMARY DISPLAYED MODEL · RESEARCH PROBABILITIES</strong>
+      <p>SYSTEM PICKS now displays V3 basketball simulation targets and model-derived P(hit). MODEL BOARD shows every saved V3 player/stat distribution. V2 forecasts remain frozen separately for original result grading.</p>
+      <p>A sportsbook line is NOT needed for V3 model chances. They are not yet verified as calibrated on current-season results; official wagering status requires separately verified evidence.</p>
     </section>
     <div className="grid grid-cols-4 gap-1" role="group" aria-label="NBA betting model view">
-      {(['PICKS','BETTABLE','ROLLING','V3'] as const).map(m=><button key={m}
+      {(['PICKS','BOARD','BETTABLE','V2'] as const).map(m=><button key={m}
         type="button" aria-pressed={mode===m} onClick={()=>setMode(m)}
         className={'min-h-11 rounded-lg border px-1 text-[10px] font-bold '+
           (mode===m?'border-[#00FF41] bg-[#00FF41]/10 text-[#00FF41]':
                        'border-[#333] bg-[#242424] text-gray-300')}>
-        {m==='PICKS'?'SYSTEM PICKS':m==='BETTABLE'?'BETTABLE NOW':m==='ROLLING'?'MODEL BOARD':'V3 SHADOW'}
+        {m==='PICKS'?'SYSTEM PICKS':m==='BOARD'?'MODEL BOARD':m==='BETTABLE'?'BETTABLE NOW':'V2 ARCHIVE'}
       </button>)}
     </div>
     <input aria-label="Find NBA team or player" placeholder="Search NBA picks, players or games"
       value={search} onChange={e=>setSearch(e.target.value)}
       className="w-full rounded-xl border border-[#333] bg-[#191919] px-4 py-3 text-sm text-stone-100" />
-    {(mode==='PICKS'||mode==='BETTABLE')&&
-      <NbaSystemPicksPanel mode={mode==='PICKS'?'SYSTEM PICKS':'BETTABLE NOW'} search={search}/>}
+    {(mode==='PICKS'||mode==='BOARD')&&
+      <NbaV3ResearchPanel key={mode} mode={mode} search={search}/>}
+    {mode==='BETTABLE'&&<section data-testid="nba-v3-bettable-gate"
+      className="rounded-xl border border-amber-700 bg-amber-950/20 p-4 text-sm text-amber-100">
+      <strong>NBA V3 · NO VERIFIED EXECUTABLE BETS YET</strong>
+      <p className="mt-2 text-xs">V3 generates model targets and estimated chances without sportsbook data.
+        But it has not earned prospective probability calibration or independent game-day lineup certification.
+        No model target is being mislabeled as an executable sportsbook wager.</p>
+    </section>}
+    {mode==='V2'&&<NbaSystemPicksPanel mode="SYSTEM PICKS" search={search}/>}
     {mode==='ROLLING'&&<NbaRollingPlayerPanel search={search}/>}
-    {mode==='V3'&&<NbaV3ResearchPanel search={search}/>}
     <details className="rounded-xl border border-[#303030] bg-[#171717] p-3 text-xs"
       open={mode==='TEAMS'||mode==='PLAYERS'}>
       <summary className="min-h-10 cursor-pointer font-bold text-gray-300">
@@ -94,6 +101,9 @@ export default function NbaResearchScreen() {
         <button type="button" onClick={()=>setMode('PLAYERS')}
           aria-pressed={mode==='PLAYERS'}
           className="min-h-11 rounded-lg border border-[#444] p-2">All opening player stats</button>
+        <button type="button" onClick={()=>setMode('ROLLING')}
+          aria-pressed={mode==='ROLLING'}
+          className="min-h-11 rounded-lg border border-[#444] p-2 col-span-2">All frozen V2 rolling stats · original grading archive</button>
       </div>
     </details>
     {(mode==='TEAMS'||mode==='PLAYERS')&&loading &&
