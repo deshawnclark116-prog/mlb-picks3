@@ -1,0 +1,99 @@
+name: NBA V3 honest original forecast probability and V2 matched outcome grading
+on:
+  pull_request:
+    paths:
+      - nba/nba_v3_firstseen_forward_grade.py
+      - tests/test_nba_v3_firstseen_forward_grade.py
+      - .github/workflows/nba_v3_firstseen_forward_grade.yml
+  push:
+    branches: [main]
+    paths:
+      - nba/nba_v3_firstseen_forward_grade.py
+      - tests/test_nba_v3_firstseen_forward_grade.py
+      - .github/workflows/nba_v3_firstseen_forward_grade.yml
+      - docs/nba_v3_phase1_shadow/**
+  schedule:
+    - cron: "23 15 * * *"
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: nba-v3-prospective-v2-matched-grade
+  cancel-in-progress: false
+jobs:
+  verify-grading:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install "numpy>=2.1,<2.5"
+      - run: |
+          PYTHONPATH=. python -m unittest -v tests.test_nba_v3_firstseen_forward_grade
+          git diff --check
+  score-true-firstseen-v3:
+    needs: verify-grading
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install "numpy>=2.1,<2.5"
+      - uses: actions/cache@v4
+        with:
+          path: .cache/nba-v3-grade
+          key: nba-v3-real-official-final-boxes-${{ github.run_id }}
+          restore-keys: |
+            nba-v3-real-official-final-boxes-
+      - name: Score V3 original full-distribution thresholds vs later certified ESPN finals and matched frozen V2 forecasts
+        run: |
+          PYTHONPATH=. python -u nba/nba_v3_firstseen_forward_grade.py \
+            --shadow docs/nba_v3_phase1_shadow \
+            --docs docs \
+            --cache .cache/nba-v3-grade \
+            --probability docs/nba_v2_probability_distribution_v1.json \
+            --out "$RUNNER_TEMP/nba-v3-source-true-grade.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nba-v3-source-real-2026-27-v2-paired-original-result-${{ github.run_id }}
+          path: ${{ runner.temp }}/nba-v3-source-true-grade.json
+          if-no-files-found: warn
+          retention-days: 90
+      - name: Publish evidence but never automatically promote V3 or fabricate betting returns
+        run: |
+          set -euo pipefail
+          FILE="$RUNNER_TEMP/nba-v3-source-true-grade.json"
+          test -s "$FILE"
+          git config user.name "nba-v3-prospective-truth[bot]"
+          git config user.email "nba-v3-prospective-truth[bot]@users.noreply.github.com"
+          for n in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            python - "$FILE" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          assert d['schema']=='NBA_V3_GENUINE_2026_27_ORIGINAL_PLAYER_PROBABILITY_FORWARD_GRADE_V1'
+          assert d['official_bets']==0 and d['betting_model_promoted'] is False
+          assert d['prospective_2026_27_calibrated'] is False
+          assert d['original_v3_thresholds_accounted']==d['verified_thresholds']+d['unverified_thresholds']
+          assert len(d['rows'])==d['original_v3_thresholds_accounted']
+          PY
+            cp "$FILE" docs/nba_v3_phase1_forward_grade.json
+            git add docs/nba_v3_phase1_forward_grade.json
+            if git diff --cached --quiet; then echo "NBA_V3_NO_NEW_SCORE";exit 0;fi
+            git commit -m "Grade original NBA V3 future-game distributions versus official ESPN outcomes and matching V2"
+            if git push origin HEAD:main; then
+              echo "NBA_V3_GENUINE_PROSPECTIVE_SCORE_RECORDED"
+              exit 0
+            fi
+            if [ "$n" = 3 ]; then exit 1; fi
+          done

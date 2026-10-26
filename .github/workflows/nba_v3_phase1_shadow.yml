@@ -1,0 +1,136 @@
+name: NBA V3 Phase1 opportunity Monte Carlo shadow
+on:
+  pull_request:
+    paths:
+      - nba/nba_v3_phase1_engine.py
+      - nba/nba_v3_shadow_publish.py
+      - nba/nba_v1_player_model.py
+      - tests/test_nba_v3_phase1.py
+      - tests/test_nba_v3_pregame_source.py
+      - nba/nba_v3_firstseen_forward_grade.py
+      - tests/test_nba_v3_firstseen_forward_grade.py
+      - .github/workflows/nba_v3_phase1_shadow.yml
+  push:
+    branches: [main]
+    paths:
+      - nba/nba_v3_phase1_engine.py
+      - nba/nba_v3_shadow_publish.py
+      - nba/nba_v1_player_model.py
+      - tests/test_nba_v3_phase1.py
+      - tests/test_nba_v3_pregame_source.py
+      - nba/nba_v3_firstseen_forward_grade.py
+      - tests/test_nba_v3_firstseen_forward_grade.py
+      - .github/workflows/nba_v3_phase1_shadow.yml
+  schedule:
+    - cron: "11 14,18,22 * * *"
+    - cron: "11 1 * * *"
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: nba-v3-firstseen-independent-shadow
+  cancel-in-progress: false
+jobs:
+  phase1-model-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install "numpy>=2.1,<2.5"
+      - name: Model role/opportunities, full CDF and no-lookahead tests
+        run: |
+          PYTHONPATH=. python -m unittest -v tests.test_nba_v3_phase1 tests.test_nba_v3_pregame_source tests.test_nba_v3_firstseen_forward_grade tests.test_nba_v1_player_model tests.test_nba_v2_rotation
+          python -m py_compile nba/nba_v3_phase1_engine.py nba/nba_v3_shadow_publish.py nba/nba_v3_firstseen_forward_grade.py nba/nba_v1_player_model.py
+          git diff --check
+  first-observed-shadow:
+    needs: phase1-model-integrity
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install "numpy>=2.1,<2.5"
+      - uses: actions/cache@v4
+        with:
+          path: .cache/nba-v3-phase1
+          key: nba-v3-prior-espn-${{ github.run_id }}
+          restore-keys: |
+            nba-v3-prior-espn-
+      - name: Source complete upcoming fixtures
+        run: |
+          set -euo pipefail
+          TODAY="$(date -u +%Y-%m-%d)"
+          if [[ "$TODAY" < "2026-10-20" || "$TODAY" > "2027-04-11" ]]; then exit 0; fi
+          PYTHONPATH=. python -u nba/nba_rolling_future_fixtures.py \
+            --days 4 --out "$RUNNER_TEMP/nba-v3-fixtures.json"
+      - name: Independent nonofficial ESPN injury source
+        continue-on-error: true
+        run: |
+          PYTHONPATH=. python -u nba/nba_live_injury_source.py \
+            --out "$RUNNER_TEMP/nba-v3-injuries.json"
+      - name: Run all NBA player/outcome simulation before tipoff
+        run: |
+          set -euo pipefail
+          if ! test -s "$RUNNER_TEMP/nba-v3-fixtures.json"; then exit 0; fi
+          PYTHONPATH=. python -u nba/nba_v3_shadow_publish.py \
+            --fixture "$RUNNER_TEMP/nba-v3-fixtures.json" \
+            --injury-snapshot "$RUNNER_TEMP/nba-v3-injuries.json" \
+            --history-cache .cache/nba-v3-phase1 \
+            --archive-root docs/nba_v3_phase1_shadow \
+            --draws 8000 --out "$RUNNER_TEMP/nba-v3-shadow-new.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nba-v3-genuine-firstseen-distributions-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/nba-v3-fixtures.json
+            ${{ runner.temp }}/nba-v3-shadow-new.json
+            ${{ runner.temp }}/nba-v3-injuries.json
+          if-no-files-found: warn
+          retention-days: 90
+      - name: Append immutable game receipts; original V2 untouched
+        run: |
+          set -euo pipefail
+          FILE="$RUNNER_TEMP/nba-v3-shadow-new.json"
+          if ! test -s "$FILE"; then exit 0; fi
+          git config user.name "nba-v3-firstseen-shadow[bot]"
+          git config user.email "nba-v3-firstseen-shadow[bot]@users.noreply.github.com"
+          for n in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            python - "$FILE" <<'PY'
+          import json,datetime,sys
+          from pathlib import Path
+          from nba.nba_v3_shadow_publish import already_seen
+          doc=json.load(open(sys.argv[1]))
+          assert doc['schema']=='NBA_V3_2026_27_FIRSTSEEN_FULL_DISTRIBUTION_SHADOW_V1'
+          assert doc['official_bets']==0 and doc['model_promoted'] is False
+          assert doc['no_lookahead_or_retrospective_backfill'] is True
+          ids=already_seen(Path('docs/nba_v3_phase1_shadow'))
+          now=datetime.datetime.now(datetime.timezone.utc)
+          for g in doc['games']:
+              if g['game_id'] in ids:raise SystemExit('NBA_V3_GAME_ALREADY_FROZEN')
+              tip=datetime.datetime.fromisoformat(g['tipoff_utc'].replace('Z','+00:00'))
+              if tip<=now+datetime.timedelta(minutes=15):
+                  raise SystemExit('NBA_V3_CANNOT_PUBLISH_AFTER_TIPOFF_WINDOW')
+              assert all(r['calibrated_for_2026_27'] is False and
+                r['not_an_official_bet'] for r in g['rows'])
+          PY
+            TARGET="docs/nba_v3_phase1_shadow/$(date -u +%Y-%m-%dT%H%M%SZ).json"
+            mkdir -p docs/nba_v3_phase1_shadow
+            if test -e "$TARGET"; then exit 1; fi
+            cp "$FILE" "$TARGET"
+            git add "$TARGET"
+            git commit -m "Freeze NBA V3 original basketball opportunity Monte Carlo pregame shadow"
+            if git push origin HEAD:main; then echo "NBA_V3_ALL_EVENT_CDFS_FROZEN";exit 0;fi
+            if [ "$n" = 3 ]; then exit 1; fi
+          done

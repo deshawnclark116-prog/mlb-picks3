@@ -9,7 +9,7 @@
     "start": "node dist/server.cjs",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
-    "test": "node --import tsx --test tests/nflPhase1.test.ts tests/nflRoleResearch.test.ts tests/nbaResearch.test.ts tests/nbaPlayerResearch.test.ts tests/nbaRollingResearch.test.ts tests/nbaDecisionBoard.test.ts tests/nhlRealGameGrouping.test.ts tests/upcomingFixtures.test.ts tests/nbaLiveAvailability.test.ts tests/nbaProbabilityEngine.test.ts tests/nbaProbabilityLedger.test.ts tests/nhlCountResearch.test.ts tests/nhlProbabilityForward.test.ts tests/nbaGameVisibility.test.ts",
+    "test": "node --import tsx --test tests/nflPhase1.test.ts tests/nflRoleResearch.test.ts tests/nbaResearch.test.ts tests/nbaPlayerResearch.test.ts tests/nbaRollingResearch.test.ts tests/nbaDecisionBoard.test.ts tests/nhlRealGameGrouping.test.ts tests/upcomingFixtures.test.ts tests/nbaLiveAvailability.test.ts tests/nbaProbabilityEngine.test.ts tests/nbaProbabilityLedger.test.ts tests/nhlCountResearch.test.ts tests/nhlProbabilityForward.test.ts tests/nbaGameVisibility.test.ts tests/nbaV3ShadowApi.test.ts",
     "test:browser": "playwright test"
   },
   "dependencies": {

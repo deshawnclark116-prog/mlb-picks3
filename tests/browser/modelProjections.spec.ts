@@ -176,7 +176,7 @@ test("Minnesota-Columbus six-player poster shows frozen numerical shot projectio
  await page.route("**/api/nhl-predictions**",route=>route.fulfill({json:current}));
  await page.route("**/api/nhl-count-research**",route=>route.fulfill({json:source}));
  await page.locator("#tab-btn-nhl").click();
- await expect(page.getByText(/Frozen V2 numerical shot forecasts for this date: 6/)).toBeVisible();
+ await expect(page.getByText(/Frozen V2 numerical shot forecasts \([^)]+: 6\)/)).toBeVisible();
  const game=page.getByTestId("unified-sport-game").filter({hasText:"CBJ"});
  await expect(game).toContainText("MIN vs CBJ");
  await game.locator('button[aria-expanded]').click();
