@@ -7,6 +7,7 @@ on:
       - src/components/NbaV3ResearchPanel.tsx
       - src/components/NbaResearchScreen.tsx
       - tests/nbaV3ShadowApi.test.ts
+      - tests/browser/nbaV3Primary.spec.ts
       - package.json
       - .github/workflows/nba_v3_phase1_frontend.yml
   push:
@@ -39,3 +40,7 @@ jobs:
           node --import tsx --test tests/nbaV3ShadowApi.test.ts tests/nbaDecisionBoard.test.ts tests/nbaProbabilityEngine.test.ts
           npm run build
           git diff --check
+      - name: Install headless Chromium for NBA V3 default UI verification
+        run: npx playwright install --with-deps chromium
+      - name: Browser prove V3 default SYSTEM PICKS, V3 MODEL BOARD and V2 archive not silently substituted
+        run: npx playwright test tests/browser/nbaV3Primary.spec.ts
