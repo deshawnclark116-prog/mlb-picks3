@@ -54,6 +54,12 @@ test('NBA opens V3 SYSTEM PICKS, not V2 or optional shadow view',async({page})=>
  await expect(page.getByTestId('nba-v3-primary-board')).toBeVisible();
  await expect(page.getByText(/NBA V3 · SYSTEM PICKS/)).toBeVisible();
  await expect(page.getByTestId('nba-betting-style-decision-board')).toHaveCount(0);
+ // Sunday night default must show the NEXT independently captured V3 slate
+ // when no game has a first-observed forecast on the current Eastern date.
+ await expect(page.getByRole('button',{name:'Next slate'}))
+   .toHaveAttribute('aria-pressed','true');
+ await expect(page.getByTestId('nba-v3-game')).toHaveCount(1);
+ await expect(page.getByText(/Next available:/)).toBeVisible();
  await page.getByRole('button',{name:'All upcoming'}).click();
  const g=page.getByTestId('nba-v3-game');
  await expect(g).toHaveCount(1);

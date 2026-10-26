@@ -91,7 +91,7 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
  const [error,setError]=useState('');
  const [loading,setLoading]=useState(true);
  const [expanded,setExpanded]=useState<string|null>(null);
- const [day,setDay]=useState('TODAY');
+ const [day,setDay]=useState('AUTO');
  const [market,setMarket]=useState<'ALL'|Market>('ALL');
  const refresh=useCallback(async()=>{
   setLoading(true);
@@ -115,11 +115,16 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
  },[refresh]);
  const today=dateET(new Date().toISOString());
  const dates=useMemo(()=>[...new Set((doc?.games||[]).map(g=>dateET(g.tipoff_utc)))].sort(),[doc]);
+ // Always land on a real V3 slate. If all today's games have already
+ // started, display tomorrow's first verified pregame forecasts instead
+ // of looking empty while real future source records are available.
+ const nextSlate=dates.includes(today)?today:dates.find(d=>d>today)||dates[0]||today;
  const all=useMemo(()=>doc?.games.filter(g=>
-  (day==='ALL'||(day==='TODAY'?dateET(g.tipoff_utc)===today:dateET(g.tipoff_utc)===day))&&
+  (day==='ALL'||(day==='AUTO'?dateET(g.tipoff_utc)===nextSlate:
+   day==='TODAY'?dateET(g.tipoff_utc)===today:dateET(g.tipoff_utc)===day))&&
   (!search||(g.home+' '+g.away+' '+g.rows.map(r=>r.player).join(' ')).toLowerCase()
     .includes(search.toLowerCase()))
- )||[],[doc,day,today,search]);
+ )||[],[doc,day,today,nextSlate,search]);
  const number=all.reduce((n,g)=>n+v3QualifiedResearchTargets(g).filter(r=>
   market==='ALL'||r.market===market).length,0);
  return <section className="space-y-3" data-testid="nba-v3-primary-board">
@@ -138,7 +143,7 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
   {error&&<p role="alert" className="border border-red-700 p-3 rounded-lg text-xs text-red-200">
     NBA V3 source unavailable: {error}. No V2 substitution or invented picks.</p>}
   {doc&&<div className="text-xs text-gray-400">
-   {all.length} matching V3 game forecasts · {mode==='PICKS'?number+' model research targets':
+   {day==='AUTO'?'Next available: '+nextSlate+' · ':''}{all.length} matching V3 game forecasts · {mode==='PICKS'?number+' model research targets':
        all.reduce((n,g)=>n+g.rows.length,0)+' numerical projections'}
    {' · '}{doc.original_games_audited} original games audited
   </div>}
@@ -150,11 +155,11 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
   </p>}
   {doc&&doc.status==='AVAILABLE_RESEARCH_ONLY'&&<>
     <div className="flex gap-2 overflow-x-auto pb-1" aria-label="NBA V3 game date">
-      {['TODAY','ALL',...dates].map(d=><button type="button" key={d}
+      {['AUTO','TODAY','ALL',...dates].map(d=><button type="button" key={d}
        onClick={()=>{setDay(d);setExpanded(null);}} aria-pressed={day===d}
        className={'min-h-10 shrink-0 rounded-lg border px-3 text-xs font-bold '+
         (day===d?'border-[#00FF41] text-[#00FF41]':'border-[#333] text-gray-300')}>
-       {d==='TODAY'?"Today's games":d==='ALL'?'All upcoming':d.slice(5)}
+       {d==='AUTO'?'Next slate':d==='TODAY'?"Today's games":d==='ALL'?'All upcoming':d.slice(5)}
       </button>)}
     </div>
     <div className="grid grid-cols-5 gap-1" aria-label="NBA V3 market filter">
