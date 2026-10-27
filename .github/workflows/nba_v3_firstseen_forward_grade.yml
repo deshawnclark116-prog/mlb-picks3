@@ -11,7 +11,7 @@ on:
       - nba/nba_v3_firstseen_forward_grade.py
       - tests/test_nba_v3_firstseen_forward_grade.py
       - .github/workflows/nba_v3_firstseen_forward_grade.yml
-      - docs/nba_v3_phase1_shadow/**
+      - docs/nba_v3_phase1_corrected_shadow/**
   schedule:
     - cron: "23 15 * * *"
   workflow_dispatch: {}
@@ -56,7 +56,7 @@ jobs:
       - name: Score V3 original full-distribution thresholds vs later certified ESPN finals and matched frozen V2 forecasts
         run: |
           PYTHONPATH=. python -u nba/nba_v3_firstseen_forward_grade.py \
-            --shadow docs/nba_v3_phase1_shadow \
+            --shadow docs/nba_v3_phase1_corrected_shadow \
             --docs docs \
             --cache .cache/nba-v3-grade \
             --probability docs/nba_v2_probability_distribution_v1.json \

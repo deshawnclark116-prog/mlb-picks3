@@ -85,7 +85,7 @@ jobs:
             --fixture "$RUNNER_TEMP/nba-v3-fixtures.json" \
             --injury-snapshot "$RUNNER_TEMP/nba-v3-injuries.json" \
             --history-cache .cache/nba-v3-phase1 \
-            --archive-root docs/nba_v3_phase1_shadow \
+            --archive-root docs/nba_v3_phase1_corrected_shadow \
             --draws 8000 --out "$RUNNER_TEMP/nba-v3-shadow-new.json"
       - uses: actions/upload-artifact@v4
         if: always()
@@ -115,7 +115,7 @@ jobs:
           assert doc['schema']=='NBA_V3_2026_27_FIRSTSEEN_FULL_DISTRIBUTION_SHADOW_V1'
           assert doc['official_bets']==0 and doc['model_promoted'] is False
           assert doc['no_lookahead_or_retrospective_backfill'] is True
-          ids=already_seen(Path('docs/nba_v3_phase1_shadow'))
+          ids=already_seen(Path('docs/nba_v3_phase1_corrected_shadow'))
           now=datetime.datetime.now(datetime.timezone.utc)
           for g in doc['games']:
               if g['game_id'] in ids:raise SystemExit('NBA_V3_GAME_ALREADY_FROZEN')
@@ -125,8 +125,8 @@ jobs:
               assert all(r['calibrated_for_2026_27'] is False and
                 r['not_an_official_bet'] for r in g['rows'])
           PY
-            TARGET="docs/nba_v3_phase1_shadow/$(date -u +%Y-%m-%dT%H%M%SZ).json"
-            mkdir -p docs/nba_v3_phase1_shadow
+            TARGET="docs/nba_v3_phase1_corrected_shadow/$(date -u +%Y-%m-%dT%H%M%SZ).json"
+            mkdir -p docs/nba_v3_phase1_corrected_shadow
             if test -e "$TARGET"; then exit 1; fi
             cp "$FILE" "$TARGET"
             git add "$TARGET"
