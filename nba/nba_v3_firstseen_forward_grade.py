@@ -260,7 +260,7 @@ def grade(games,boxes,originals,v2_probability_doc,now=None):
 def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--shadow",type=Path,
-        default=Path("docs/nba_v3_phase1_shadow"))
+        default=Path("docs/nba_v3_phase1_corrected_shadow"))
     ap.add_argument("--docs",type=Path,default=Path("docs"))
     ap.add_argument("--cache",type=Path,default=Path(".cache/nba-v3-grade"))
     ap.add_argument("--out",type=Path,required=True)
