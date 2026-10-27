@@ -11,7 +11,7 @@ function doc(){
  const fields=['points','rebounds','assists','three_pointers_made'];
  return {
    schema:'NBA_V3_2026_27_FIRSTSEEN_FULL_DISTRIBUTION_SHADOW_V1',
-   model_version:'nba-v3-phase1-opportunity-role-mc-challenger-20261025',
+   model_version:'nba-v3-phase1-opportunity-role-mc-shotratefix-20261026',
    upstream_fixtures_source_sha256:'a'.repeat(64),
    prior_game_id_sha256:'b'.repeat(64),
    roster_sources_verified_all_30:true,
@@ -26,7 +26,7 @@ function doc(){
     rows_count:4,
     rows:fields.map(m=>({
       game_id:'401123456',team_id:'6',player_id:'123456',player:'Test Player',
-      model_version:'nba-v3-phase1-opportunity-role-mc-challenger-20261025',
+      model_version:'nba-v3-phase1-opportunity-role-mc-shotratefix-20261026',
       market:m,mean:17.5,median:17,p_active:.87,sd:4.5,p10:8,p25:12,
       p75:21,p90:28,cdf_lattice:{step:1,cdf:[.1,.2,.7,1]},
       model_target:{milestone:2,probability:.8,method:'pregame_full_game_mc_cdf'},
