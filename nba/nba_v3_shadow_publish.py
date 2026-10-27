@@ -29,7 +29,7 @@ from nba.nba_v3_phase1_engine import (
     VERSION,SCHEMA,role_pool,simulate_matchup,source_hash,TEAM_MINUTES
 )
 
-ROOT="docs/nba_v3_phase1_shadow"
+ROOT="docs/nba_v3_phase1_corrected_shadow"
 PUBLISH_SCHEMA="NBA_V3_2026_27_FIRSTSEEN_FULL_DISTRIBUTION_SHADOW_V1"
 
 def already_seen(folder:Path):
