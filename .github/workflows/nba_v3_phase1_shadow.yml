@@ -9,7 +9,7 @@ on:
       - tests/test_nba_v3_pregame_source.py
       - nba/nba_v3_firstseen_forward_grade.py
       - tests/test_nba_v3_firstseen_forward_grade.py
-      - .github/workflows/nba_v3_phase1_corrected_shadow.yml
+      - .github/workflows/nba_v3_phase1_shadow.yml
   push:
     branches: [main]
     paths:
@@ -20,7 +20,7 @@ on:
       - tests/test_nba_v3_pregame_source.py
       - nba/nba_v3_firstseen_forward_grade.py
       - tests/test_nba_v3_firstseen_forward_grade.py
-      - .github/workflows/nba_v3_phase1_corrected_shadow.yml
+      - .github/workflows/nba_v3_phase1_shadow.yml
   schedule:
     - cron: "11 14,18,22 * * *"
     - cron: "11 1 * * *"
