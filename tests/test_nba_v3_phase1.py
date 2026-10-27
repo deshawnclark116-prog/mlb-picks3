@@ -98,7 +98,24 @@ class NbaV3(unittest.TestCase):
         self.assertTrue(all(r["profile_coverage_n"]>=4 for r in out["rows"]))
         self.assertFalse(any("ATTEMPT_PROFILE_UNAVAILABLE_DEGRADED_FALLBACK"
              in r["unc_reasons"] for r in out["rows"]))
-        self.assertTrue(any(r["mean"]>1 for r in out["rows"] if r["market"]=="points"))
+        # Regression for a real scale mismatch discovered Oct 26: prior V3
+        # divided per-minute made shots by full-history attempt totals,
+        # making high-usage players score 1–6 points instead of full games.
+        p=roles["1"][0]["shot_profile"]
+        self.assertGreater(p["three_pct"],.30)
+        self.assertGreater(p["two_pct"],.30)
+        self.assertGreater(p["ft_pct"],.60)
+        top_id=roles["1"][0]["player_id"]
+        by_market={r["market"]:r for r in out["rows"] if
+                   r["player_id"]==top_id and r["team_id"]=="1"}
+        self.assertGreater(by_market["points"]["mean"],12.,
+                           "Full-game NBA scorer must not double-divide field goal conversion")
+        self.assertGreater(by_market["three_pointers_made"]["mean"],.8,
+                           "Three-point made must use the actual 3PM/3PA conversion")
+        self.assertIsNotNone(by_market["points"]["model_target"],
+                             "Points milestones must survive physically realistic 2pt/3pt/FT shot attempts")
+        self.assertIsNotNone(by_market["three_pointers_made"]["model_target"],
+                             "True shooting profiles can qualify 1+ three-point milestones")
 
     def test_authentic_reported_out_zero_probability_with_no_false_active_default(self):
         baseline=inputs()
