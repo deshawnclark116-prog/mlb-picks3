@@ -22,7 +22,7 @@ from collections import defaultdict
 from datetime import datetime, timezone
 import numpy as np
 
-VERSION="nba-v3-phase1-opportunity-role-mc-challenger-20261025"
+VERSION="nba-v3-phase1-opportunity-role-mc-shotratefix-20261026"
 SCHEMA="NBA_V3_FIRSTSEEN_PHASE1_PREGAME_OUTCOME_DISTRIBUTION_RESEARCH_V1"
 MARKETS=("points","rebounds","assists","three_pointers_made")
 RATE_PRIORS={"points":.45,"rebounds":.165,"assists":.105,"three_pointers_made":.050}
@@ -152,9 +152,17 @@ def role_pool(team_id,histories,team_games,first_seen,last_seen,roster_ids,
                 "two_pa_per_minute":max(0,fga-pa3),
                 "three_pa_per_minute":pa3,
                 "fta_per_minute":fta,
-                "two_pct":_clip((fgm-made3+.45*12)/(max(.01,fga-pa3)*total_minutes+12),.08,.75),
-                "three_pct":_clip((made3+.35*12)/(max(.01,pa3)*total_minutes+12),.08,.65),
-                "ft_pct":_clip((ftm+.75*12)/(max(.01,fta)*total_minutes+12),.35,.97)
+                # rate() outputs PER-MINUTE opportunity and made rates.
+                # Convert the made-per-minute numerators back into MADE
+                # COUNTS before applying the 12-attempt Beta prior.
+                # Prior V3 erroneously divided made-per-minute by attempts
+                # over all history minutes, suppressing PTS and 3PM badly.
+                "two_pct":_clip(((fgm-made3)*total_minutes+.45*12)/
+                               (max(.01,fga-pa3)*total_minutes+12),.08,.75),
+                "three_pct":_clip((made3*total_minutes+.35*12)/
+                                 (max(.01,pa3)*total_minutes+12),.08,.65),
+                "ft_pct":_clip((ftm*total_minutes+.75*12)/
+                              (max(.01,fta)*total_minutes+12),.35,.97)
             }
         else:profile=None
         members.append({
