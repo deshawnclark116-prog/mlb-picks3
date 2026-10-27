@@ -5,8 +5,8 @@ import {existsSync,readdirSync,readFileSync} from 'node:fs';
 import path from 'node:path';
 import type {Request,Response} from 'express';
 export const NBA_V3_READONLY_SCHEMA='NBA_V3_FULL_GAME_DISTRIBUTION_READ_ONLY_V1';
-const ROOT=path.resolve(process.cwd(),'docs','nba_v3_phase1_shadow');
-const VERSION='nba-v3-phase1-opportunity-role-mc-challenger-20261025';
+const ROOT=path.resolve(process.cwd(),'docs','nba_v3_phase1_corrected_shadow');
+const VERSION='nba-v3-phase1-opportunity-role-mc-shotratefix-20261026';
 const sha=(s:unknown)=>typeof s==='string'&&/^[0-9a-f]{64}$/.test(s);
 type ShadowRow={
  game_id:string;team_id:string;player_id:string;player:string;
