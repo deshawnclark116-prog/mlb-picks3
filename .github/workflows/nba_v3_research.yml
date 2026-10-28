@@ -1,0 +1,23 @@
+name: NBA V3 research simulation
+on:
+  pull_request:
+    paths:
+      - src/nba/v3GameSimulation.ts
+      - tests/nbaV3GameSimulation.test.ts
+      - .github/workflows/nba_v3_research.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: node --import tsx --test tests/nbaV3GameSimulation.test.ts
+      - run: npx tsc --noEmit
