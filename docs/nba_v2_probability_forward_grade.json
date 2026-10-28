@@ -8,10 +8,10 @@
       "verified_n": 0
     },
     "points": {
-      "hit_rate": 0.8,
-      "mean_brier": 0.144169,
-      "mean_model_p": 0.733759,
-      "verified_n": 5
+      "hit_rate": 0.833333,
+      "mean_brier": 0.129698,
+      "mean_model_p": 0.738221,
+      "verified_n": 6
     },
     "rebounds": {
       "hit_rate": 1,
@@ -20,14 +20,14 @@
       "verified_n": 3
     },
     "three_pointers_made": {
-      "hit_rate": 0.5,
-      "mean_brier": 0.334562,
-      "mean_model_p": 0.759623,
-      "verified_n": 2
+      "hit_rate": 0.666667,
+      "mean_brier": 0.245352,
+      "mean_model_p": 0.753512,
+      "verified_n": 3
     }
   },
   "firstseen_games": 20,
-  "graded_at_utc": "2026-10-27T22:39:58.805Z",
+  "graded_at_utc": "2026-10-28T20:37:14.535Z",
   "official_bets": 0,
   "original_probabilistic_predictions": 38,
   "predicted_vs_actual": [
@@ -292,13 +292,13 @@
       "tipoff_utc": "2026-10-27T02:00:00+00:00"
     },
     {
-      "actual_stat": null,
+      "actual_stat": 23,
       "away": "Portland Trail Blazers",
       "bookmaker_line": null,
       "bookmaker_odds": null,
-      "brier": null,
+      "brier": 0.057344,
       "current_season_calibration_verified": false,
-      "event_happened": null,
+      "event_happened": true,
       "forecast_id": "1656d61266d3ad9e8cd29e2a89c04e60293810dd40ffc383aa8df16bb889adb8",
       "frozen_probability_at_utc": "2026-10-25T16:48:48.006Z",
       "game_id": "401909880",
@@ -312,19 +312,19 @@
       "player_id": "4683021",
       "predicted_stat": 22.2298,
       "probability_historical_holdout_validated": true,
-      "result": "SOURCE_UNVERIFIED",
+      "result": "HIT",
       "source_numeric_original_at_utc": "2026-10-24T23:15:09.780715+00:00",
       "team_id": "22",
       "tipoff_utc": "2026-10-28T03:00:00+00:00"
     },
     {
-      "actual_stat": null,
+      "actual_stat": 4,
       "away": "Portland Trail Blazers",
       "bookmaker_line": null,
       "bookmaker_odds": null,
-      "brier": null,
+      "brier": 0.066931,
       "current_season_calibration_verified": false,
-      "event_happened": null,
+      "event_happened": true,
       "forecast_id": "90e7b3ab07c6503baa07b999fc888d2222e730c47537a786b88281662568aa93",
       "frozen_probability_at_utc": "2026-10-25T16:48:48.006Z",
       "game_id": "401909880",
@@ -338,7 +338,7 @@
       "player_id": "4431736",
       "predicted_stat": 3.228,
       "probability_historical_holdout_validated": true,
-      "result": "SOURCE_UNVERIFIED",
+      "result": "HIT",
       "source_numeric_original_at_utc": "2026-10-24T23:15:09.780715+00:00",
       "team_id": "22",
       "tipoff_utc": "2026-10-28T03:00:00+00:00"
@@ -1021,6 +1021,6 @@
     }
   ],
   "schema": "NBA_V2_PROSPECTIVE_PROBABILITY_MILESTONE_ACTUAL_GRADE_V1",
-  "unverified": 28,
-  "verified_hit_or_miss": 10
+  "unverified": 26,
+  "verified_hit_or_miss": 12
 }
