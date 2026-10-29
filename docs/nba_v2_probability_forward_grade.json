@@ -26,10 +26,10 @@
       "verified_n": 5
     }
   },
-  "firstseen_games": 24,
-  "graded_at_utc": "2026-10-29T20:41:11.212Z",
+  "firstseen_games": 25,
+  "graded_at_utc": "2026-10-29T23:01:24.015Z",
   "official_bets": 0,
-  "original_probabilistic_predictions": 47,
+  "original_probabilistic_predictions": 48,
   "predicted_vs_actual": [
     {
       "actual_stat": 29,
@@ -1252,9 +1252,35 @@
       "source_numeric_original_at_utc": "2026-10-28T20:32:21.330307+00:00",
       "team_id": "25",
       "tipoff_utc": "2026-11-01T00:30:00+00:00"
+    },
+    {
+      "actual_stat": null,
+      "away": "Toronto Raptors",
+      "bookmaker_line": null,
+      "bookmaker_odds": null,
+      "brier": null,
+      "current_season_calibration_verified": false,
+      "event_happened": null,
+      "forecast_id": "d6a68e8b4c67394b249ebcbc66aea9dbefc45990c2127b543fb6104e1510c671",
+      "frozen_probability_at_utc": "2026-10-29T20:41:06.857Z",
+      "game_id": "401909906",
+      "historical_p_play": 0.9,
+      "home": "Los Angeles Lakers",
+      "market": "points",
+      "milestone": 15,
+      "model_hit_probability": 0.659931,
+      "official_pick": false,
+      "player": "RJ Barrett",
+      "player_id": "4395625",
+      "predicted_stat": 19.4285,
+      "probability_historical_holdout_validated": true,
+      "result": "SOURCE_UNVERIFIED",
+      "source_numeric_original_at_utc": "2026-10-29T20:34:02.033170+00:00",
+      "team_id": "28",
+      "tipoff_utc": "2026-11-02T02:00:00+00:00"
     }
   ],
   "schema": "NBA_V2_PROSPECTIVE_PROBABILITY_MILESTONE_ACTUAL_GRADE_V1",
-  "unverified": 24,
+  "unverified": 25,
   "verified_hit_or_miss": 23
 }
