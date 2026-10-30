@@ -8,26 +8,26 @@
       "verified_n": 0
     },
     "points": {
-      "hit_rate": 0.9,
-      "mean_brier": 0.108468,
-      "mean_model_p": 0.735252,
-      "verified_n": 10
+      "hit_rate": 0.909091,
+      "mean_brier": 0.103821,
+      "mean_model_p": 0.73755,
+      "verified_n": 11
     },
     "rebounds": {
-      "hit_rate": 0.875,
-      "mean_brier": 0.124496,
-      "mean_model_p": 0.714831,
-      "verified_n": 8
+      "hit_rate": 0.8,
+      "mean_brier": 0.160465,
+      "mean_model_p": 0.716203,
+      "verified_n": 10
     },
     "three_pointers_made": {
-      "hit_rate": 0.8,
-      "mean_brier": 0.175849,
-      "mean_model_p": 0.745553,
-      "verified_n": 5
+      "hit_rate": 0.857143,
+      "mean_brier": 0.147312,
+      "mean_model_p": 0.739642,
+      "verified_n": 7
     }
   },
   "firstseen_games": 25,
-  "graded_at_utc": "2026-10-29T23:01:24.015Z",
+  "graded_at_utc": "2026-10-30T20:11:57.237Z",
   "official_bets": 0,
   "original_probabilistic_predictions": 48,
   "predicted_vs_actual": [
@@ -630,13 +630,13 @@
       "tipoff_utc": "2026-10-29T00:00:00+00:00"
     },
     {
-      "actual_stat": null,
+      "actual_stat": 8,
       "away": "Cleveland Cavaliers",
       "bookmaker_line": null,
       "bookmaker_odds": null,
-      "brier": null,
+      "brier": 0.080356,
       "current_season_calibration_verified": false,
-      "event_happened": null,
+      "event_happened": true,
       "forecast_id": "0a9db0e6a818e000abe9882bd5b49d7005d5550c181fbfc2beec23960e344da5",
       "frozen_probability_at_utc": "2026-10-26T20:47:03.110Z",
       "game_id": "401909893",
@@ -650,19 +650,19 @@
       "player_id": "4701230",
       "predicted_stat": 8.4271,
       "probability_historical_holdout_validated": true,
-      "result": "SOURCE_UNVERIFIED",
+      "result": "HIT",
       "source_numeric_original_at_utc": "2026-10-26T20:44:45.361392+00:00",
       "team_id": "1",
       "tipoff_utc": "2026-10-30T00:00:00+00:00"
     },
     {
-      "actual_stat": null,
+      "actual_stat": 4,
       "away": "Cleveland Cavaliers",
       "bookmaker_line": null,
       "bookmaker_odds": null,
-      "brier": null,
+      "brier": 0.085005,
       "current_season_calibration_verified": false,
-      "event_happened": null,
+      "event_happened": true,
       "forecast_id": "99cd2846e07a122ed3cb44ec5632eb363cf80aa8d8546784f15e92d6bbab1699",
       "frozen_probability_at_utc": "2026-10-26T20:47:03.110Z",
       "game_id": "401909893",
@@ -676,19 +676,19 @@
       "player_id": "4278039",
       "predicted_stat": 3.0391,
       "probability_historical_holdout_validated": true,
-      "result": "SOURCE_UNVERIFIED",
+      "result": "HIT",
       "source_numeric_original_at_utc": "2026-10-26T20:44:45.361392+00:00",
       "team_id": "1",
       "tipoff_utc": "2026-10-30T00:00:00+00:00"
     },
     {
-      "actual_stat": null,
+      "actual_stat": 2,
       "away": "Sacramento Kings",
       "bookmaker_line": null,
       "bookmaker_odds": null,
-      "brier": null,
+      "brier": 0.528323,
       "current_season_calibration_verified": false,
-      "event_happened": null,
+      "event_happened": false,
       "forecast_id": "cee48527114463deec4efd9919bc9b596e21357bfbf26c29b9e49b7d48ab946c",
       "frozen_probability_at_utc": "2026-10-26T20:47:03.110Z",
       "game_id": "401909894",
@@ -702,19 +702,19 @@
       "player_id": "4869780",
       "predicted_stat": 8.5518,
       "probability_historical_holdout_validated": true,
-      "result": "SOURCE_UNVERIFIED",
+      "result": "MISS",
       "source_numeric_original_at_utc": "2026-10-26T20:44:45.361392+00:00",
       "team_id": "3",
       "tipoff_utc": "2026-10-30T00:00:00+00:00"
     },
     {
-      "actual_stat": null,
+      "actual_stat": 24,
       "away": "Memphis Grizzlies",
       "bookmaker_line": null,
       "bookmaker_odds": null,
-      "brier": null,
+      "brier": 0.057344,
       "current_season_calibration_verified": false,
-      "event_happened": null,
+      "event_happened": true,
       "forecast_id": "d189da5f22337dcc27b79fde7986d4a88370efa54274979e0121b21e43c3656a",
       "frozen_probability_at_utc": "2026-10-26T20:47:03.110Z",
       "game_id": "401909895",
@@ -728,19 +728,19 @@
       "player_id": "4683021",
       "predicted_stat": 22.2298,
       "probability_historical_holdout_validated": true,
-      "result": "SOURCE_UNVERIFIED",
+      "result": "HIT",
       "source_numeric_original_at_utc": "2026-10-26T20:44:45.361392+00:00",
       "team_id": "22",
       "tipoff_utc": "2026-10-30T02:00:00+00:00"
     },
     {
-      "actual_stat": null,
+      "actual_stat": 3,
       "away": "Memphis Grizzlies",
       "bookmaker_line": null,
       "bookmaker_odds": null,
-      "brier": null,
+      "brier": 0.066931,
       "current_season_calibration_verified": false,
-      "event_happened": null,
+      "event_happened": true,
       "forecast_id": "86350ad07bcf617486acf31602263422ef48a96d71d368f27c2704996b7a9cee",
       "frozen_probability_at_utc": "2026-10-26T20:47:03.110Z",
       "game_id": "401909895",
@@ -754,7 +754,7 @@
       "player_id": "4431736",
       "predicted_stat": 3.228,
       "probability_historical_holdout_validated": true,
-      "result": "SOURCE_UNVERIFIED",
+      "result": "HIT",
       "source_numeric_original_at_utc": "2026-10-26T20:44:45.361392+00:00",
       "team_id": "22",
       "tipoff_utc": "2026-10-30T02:00:00+00:00"
@@ -1281,6 +1281,6 @@
     }
   ],
   "schema": "NBA_V2_PROSPECTIVE_PROBABILITY_MILESTONE_ACTUAL_GRADE_V1",
-  "unverified": 25,
-  "verified_hit_or_miss": 23
+  "unverified": 20,
+  "verified_hit_or_miss": 28
 }
