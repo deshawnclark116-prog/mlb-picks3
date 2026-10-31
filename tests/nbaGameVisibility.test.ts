@@ -7,10 +7,16 @@ import {nbaEasternGameDay,visibleNbaGameSlate} from '../src/nba/boardVisibility.
 const ASOF=new Date('2026-10-25T16:40:00Z');
 test('Oct 25 real independently audited seven-game slate survives even if only ONE matchup clears picks',()=>{
  const source=JSON.parse(readFileSync('docs/nba_daily_prediction_health.json','utf8'));
- assert.equal(source.eastern_game_date,'2026-10-25');
- assert.equal(source.today_independent_schedule_games,7);
- assert.equal(source.today_games_with_original,7);
- assert.deepEqual(source.today_games_without_original,[]);
+ // Daily status is mutable and advances every slate. Don't pin it to the
+ // historical fixture date; the separately frozen Oct 25 game board below
+ // remains the immutable regression under test.
+ assert.match(source.eastern_game_date,/^20\d{2}-\d{2}-\d{2}$/);
+ assert(Number.isInteger(source.today_independent_schedule_games));
+ assert(source.today_independent_schedule_games>=0);
+ assert(Number.isInteger(source.today_games_with_original));
+ assert(source.today_games_with_original>=0);
+ assert(source.today_games_with_original<=source.today_independent_schedule_games);
+ assert(Array.isArray(source.today_games_without_original));
  const board=readVerifiedNbaSystemBoard(ASOF);
  const games=visibleNbaGameSlate(board.games,'TODAY','2026-10-25');
  assert.equal(games.length,7,
