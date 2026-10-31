@@ -14,6 +14,8 @@ export interface UnifiedPick {
   predictionKind:'median'|'mean'|'not_published';
   unit:string;confidence?:string;source?:string;
   detail?:string;
+  /** Original source CDF P(actual integer stat >= ceil(numerical mean)). */
+  projectionChance?:{atLeast:number;probability:number;calibrated:false}|null;
 }
 export interface UnifiedGame {
   id:string;label:string;when?:string;subtitle?:string;
@@ -51,7 +53,13 @@ export function PredictionCard({pick}:{pick:UnifiedPick}){
    <div data-testid="unified-predicted-stat" className="my-3 rounded-xl border border-[#00FF41]/25 bg-[#0E1D14] p-3">
      <p className="text-[10px] font-bold tracking-wide text-gray-300">{primaryLabel(pick)}</p>
      <p className="mt-1 break-words text-2xl font-black text-[#00FF41]">{value(pick)}</p>
-     {!canNumeric(pick)&&<p className="mt-1 text-[10px] text-amber-200">No modelled point/shot count exists for this player. The number above is ONLY the chance of the target below.</p>}
+     {!canNumeric(pick)&&<p className="mt-1 text-[10px] text-amber-200">No numerical player-stat forecast is published; this percentage describes the specified event only.</p>}
+     {canNumeric(pick)&&pick.projectionChance&&<div data-testid="projection-reach-probability" className="mt-3 flex items-center justify-between gap-3 border-t border-[#7AFF85]/20 pt-3">
+       <div><p className="text-[11px] font-semibold text-gray-200">Chance to reach projection</p>
+         <p className="text-[10px] text-gray-400">Model P({pick.projectionChance.atLeast}+ shots) · Uncalibrated</p></div>
+       <strong className="text-[22px] font-black tabular-nums text-[#79FF48]">{pct(pick.projectionChance.probability)}</strong>
+     </div>}
+     {canNumeric(pick)&&pick.market==='shots_on_goal'&&!pick.projectionChance&&<p className="mt-2 text-[10px] text-gray-400">Projection probability not available from the original 1–5 shot distribution.</p>}
    </div>
    {pick.target&&<div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-xl border border-[#303030] p-3">
      <div className="min-w-0">
@@ -101,6 +109,10 @@ export function Poster({sport,game,picks,cardRef}:{
        <strong style={{fontSize:21,display:'block',marginTop:10,overflowWrap:'anywhere'}}>{p.player.toUpperCase()}</strong>
        <p style={{fontSize:11,color:'#A5B1B9',letterSpacing:1.2,margin:'15px 0 2px'}}>{primaryLabel(p)}</p>
        <p style={{fontSize:canNumeric(p)?31:20,color:'#79FF48',fontWeight:900,margin:'0 0 16px',overflowWrap:'anywhere'}}>{value(p).toUpperCase()}</p>
+       {p.projectionChance&&<div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:7,gap:8}}>
+         <span style={{fontSize:13,color:'#BBD5C3'}}>P({p.projectionChance.atLeast}+ SHOTS) · UNCALIBRATED</span>
+         <strong style={{fontSize:20,color:'#79FF48'}}>{pct(p.projectionChance.probability)}</strong>
+       </div>}
        {p.target&&<><p style={{fontSize:14,fontWeight:700,color:'#DCE5E7',margin:0,overflowWrap:'anywhere'}}>TARGET: {p.target}</p>
        <p style={{fontSize:14,color:'#AAB8C0',margin:'6px 0 0'}}>Model P(target): {pct(p.modelProbability)}</p></>}
      </div>)}
@@ -206,7 +218,7 @@ export default function UnifiedSportGameCards({sport,games,prefix}:{
              <p className="mt-2 text-[10px] font-bold text-gray-400">{game.shown.length} {mode} · {game.sourceLabel}</p>
              {mode!=='BETTABLE NOW'&&preview&&<p className="mt-2 break-words text-[11px] text-gray-300">
                TOP: <span className="text-white">{preview.player}</span> ·
-               {canNumeric(preview)?<>MODEL {preview.predictionKind==='mean'?'MEAN':'MEDIAN'} {value(preview)}{preview.target?<> · TARGET {preview.target} ({pct(preview.modelProbability)})</>:null}</>:<>ONLY MODEL P(TARGET) {pct(preview.modelProbability)} · TARGET {preview.target} · NO NUMERIC FORECAST</>}
+               {canNumeric(preview)?<>MODEL {preview.predictionKind==='mean'?'MEAN':'MEDIAN'} {value(preview)}{preview.projectionChance?<> · P({preview.projectionChance.atLeast}+) {pct(preview.projectionChance.probability)}</>:null}{preview.target?<> · TARGET {preview.target} ({pct(preview.modelProbability)})</>:null}</>:<>ONLY MODEL P(TARGET) {pct(preview.modelProbability)} · TARGET {preview.target} · NO NUMERIC FORECAST</>}
              </p>}
            </div>
            <ChevronDown size={16} className={`shrink-0 text-gray-500 ${opened?'rotate-180':''}`}/>
