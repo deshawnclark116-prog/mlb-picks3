@@ -173,7 +173,7 @@ export function addTrueNhlShotCounts(games:UnifiedGame[],source:NhlSogResearch|n
       prediction:p.mean,predictionKind:'mean',unit:'shots',
       source:'Locked NHL V2 SOG count distribution · '+p.forecast_horizon,
       detail:'Numerical median '+p.median+' shots · P10–P90 '+p.p10+'–'+p.p90+
-       '. Chance to meet the projected mean uses P(actual shots >= ceil(mean)) from the original frozen CDF. This is uncalibrated research, NOT sportsbook pricing or a validated betting probability.'
+       '. Chance to meet the mean uses P(actual shots >= ceil(mean)), reconstructed from the frozen count model. These probabilities were not originally published before puck drop and are not yet forward-calibrated or sportsbook prices.'
    });
  }
  // Frozen shot-count forecasts are a valid independent research feed:
