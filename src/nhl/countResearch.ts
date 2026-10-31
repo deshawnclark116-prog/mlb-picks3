@@ -116,6 +116,22 @@ export function nhlVisibleGames(count:number,loading:boolean,legacyError:string|
  return 'empty';
 }
 
+/** At an integer observed shot count, reaching a fractional mean requires ceil(mean).
+ * E.g. a 3.5-shot mean => 4+ shots. Never synthesize 6+ odds from a 1–5 CDF.
+ * Keep this separate from target selection and never call it calibrated.
+ */
+export function nhlProjectionReachProbability(p:NhlSogCount){
+ const k=Math.ceil(p.mean);
+ if(!Number.isFinite(p.mean)||p.mean<=0||k<1||k>5)return null;
+ const survival=p.model_probability_milestones_research_only;
+ if(!survival||p.model_probability_forward_calibrated!==false||
+    p.probability_not_an_official_bet!==true)return null;
+ const values=[1,2,3,4,5].map(j=>survival[String(j) as '1'|'2'|'3'|'4'|'5']);
+ if(values.some((v,i)=>typeof v!=='number'||!Number.isFinite(v)||
+      v<0||v>1||(i>0&&v>values[i-1]+.002)))
+   throw Error('NHL_SHOT_PROJECTION_CDF_FAILED_SURVIVAL_INVARIANT');
+ return {atLeast:k,probability:values[k-1],calibrated:false as const};
+}
 const finite=(v:unknown):v is number=>typeof v==='number'&&Number.isFinite(v);
 const stamp=(value:string)=>Date.parse(value);
 const match=(a:UnifiedGame,p:NhlSogCount)=> {
@@ -147,15 +163,17 @@ export function addTrueNhlShotCounts(games:UnifiedGame[],source:NhlSogResearch|n
    // Verify the source CDF without turning a low-odds milestone into a public pick.
    // Original probabilities are still preserved for independent research grading.
    selectNhlShotMilestoneResearch(p);
+   const reach=nhlProjectionReachProbability(p);
    list.push({
       id:'NHL-V2-SOG-'+id,
       player:p.player,team:p.team,market:'shots_on_goal',
       target:'',
       modelProbability:null,
+      projectionChance:reach,
       prediction:p.mean,predictionKind:'mean',unit:'shots',
       source:'Locked NHL V2 SOG count distribution · '+p.forecast_horizon,
       detail:'Numerical median '+p.median+' shots · P10–P90 '+p.p10+'–'+p.p90+
-       '. No automatically selected milestone or sportsbook line. The original CDF is preserved separately for prospective probability research.'
+       '. Chance to meet the projected mean uses P(actual shots >= ceil(mean)) from the original frozen CDF. This is uncalibrated research, NOT sportsbook pricing or a validated betting probability.'
    });
  }
  // Frozen shot-count forecasts are a valid independent research feed:
