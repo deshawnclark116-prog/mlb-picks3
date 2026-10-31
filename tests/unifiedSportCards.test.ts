@@ -40,7 +40,7 @@ test('individual NHL event-only card does not label probability as model mean or
  const html=renderToStaticMarkup(React.createElement(PredictionCard,{pick:first}));
  assert.match(html,/MODEL CHANCE OF TARGET/);
  assert.match(html,/74\.4%/);
- assert.match(html,/No modelled point\/shot count/);
+ assert.match(html,/No numerical player-stat forecast is published/);
  assert.doesNotMatch(html,/MODEL PROJECTION · MEDIAN/);
  assert.doesNotMatch(html,/MODEL PROJECTION · MEAN/);
 });
