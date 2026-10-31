@@ -45,7 +45,7 @@ test('frozen NHL V2 shot-count forecast independently supplies MEAN and MEDIAN, 
  assert.equal(game.picks[0].modelProbability,null);
  assert.equal(game.picks[0].target,'');
  assert.deepEqual(game.picks[0].projectionChance,{atLeast:4,probability:.44,calibrated:false});
- assert.match(game.picks[0].detail||'',/Chance to meet the projected mean/);
+ assert.match(game.picks[0].detail||'',/Chance to meet the mean/);
  assert.equal(reduced.projections[0].model_probability_forward_calibrated,false);
  assert.deepEqual(reduced.projections[0].model_probability_milestones_research_only,
    {'1':.95,'2':.82,'3':.65,'4':.44,'5':.22});
