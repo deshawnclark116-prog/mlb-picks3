@@ -59,3 +59,20 @@ test('real numerical stats, when independently available, remain primary and lab
  assert.match(html,/TARGET: OVER 0\.5/);
  assert.match(html,/74\.4%/);
 });
+
+test('NHL numeric shot forecasts show the actual 3.5-shot mean with no auto-selected betting target',()=>{
+ const shot:UnifiedPick={
+  ...first,id:'frozen-shot',player:'Example Shooter',team:'LAK',
+  market:'shots_on_goal',prediction:3.5,predictionKind:'mean',unit:'shots',
+  target:'',modelProbability:null,source:'Locked original NHL shot-count model'
+ };
+ const card=renderToStaticMarkup(React.createElement(PredictionCard,{pick:shot}));
+ assert.match(card,/MODEL PROJECTION · MEAN/);
+ assert.match(card,/3.5 shots/);
+ assert.doesNotMatch(card,/PUBLISHED MODEL TARGET|MODEL PROBABILITY|Model P\(target\)/);
+ const poster=renderToStaticMarkup(React.createElement(Poster,{
+  sport:'NHL',game:{...game,picks:[shot]},picks:[shot]
+ }));
+ assert.match(poster,/3.5 SHOTS/);
+ assert.doesNotMatch(poster,/TARGET:|Model P\(target\)/);
+});
