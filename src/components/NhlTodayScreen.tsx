@@ -60,8 +60,8 @@ export default function NhlTodayScreen({
   error,
   onRefresh,
 }: NhlTodayScreenProps) {
-  const [marketFilter, setMarketFilter] = useState<MarketFilter>("ALL");
-  const [confidenceFilter, setConfidenceFilter] = useState<"ALL" | "HIGH" | "MEDIUM" | "LOW">("ALL");
+  // Open on genuine numerical shot forecasts; binary point classifiers are opt-in.
+  const [marketFilter, setMarketFilter] = useState<MarketFilter>("shots_on_goal");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [numericSog, setNumericSog] = useState<NhlSogResearch[]>([]);
   const [numericSogError, setNumericSogError] = useState<string|null>(null);
@@ -170,7 +170,6 @@ export default function NhlTodayScreen({
 
   const filteredPredictions = sortedPredictions.filter((pred) => {
     if (marketFilter !== "ALL" && pred.market !== marketFilter) return false;
-    if (confidenceFilter !== "ALL" && pred.confidence !== confidenceFilter) return false;
     if (searchQuery.trim() !== "") {
       const q = searchQuery.toLowerCase();
       const teamMatch = pred.team?.toLowerCase().includes(q) || pred.opponent?.toLowerCase().includes(q);
@@ -202,8 +201,7 @@ export default function NhlTodayScreen({
           'No numeric player-stat median is present in this current predictions feed.'
       }))
     }));
-  const filteredSog=(marketFilter==='ALL'||marketFilter==='shots_on_goal') &&
-    confidenceFilter==='ALL'
+  const filteredSog=(marketFilter==='ALL'||marketFilter==='shots_on_goal')
       ?numericSog.map(d=>({...d,projections:d.projections.filter(p=>
           !searchQuery.trim() || (p.player+' '+p.team+' '+p.opponent).toLowerCase()
             .includes(searchQuery.trim().toLowerCase()))}))
@@ -232,101 +230,34 @@ export default function NhlTodayScreen({
         </span>
       </motion.div>
 
-      {/* Header */}
-      <header id="nhl-screen-header" className="pt-8 px-6 pb-4 bg-[#0A0A0A] border-b border-[#1A1A1A] flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-black tracking-tighter text-white uppercase font-sans">
-            PROP <span className="text-[#00FF41]">EDGE</span>
-          </h1>
-          <p className="text-[9px] text-gray-500 uppercase tracking-widest mt-0.5 font-mono">
-            NHL • {countDates.join(' + ')}
-          </p>
-          {getLatestGeneratedAt(predictions) && (
-            <p className="text-[8px] text-[#00FF41]/80 font-mono mt-1 uppercase tracking-wider">
-              Updated: {new Date(getLatestGeneratedAt(predictions)!).toLocaleString("en-US", {
-                month: "short", day: "numeric", hour: "numeric", minute: "2-digit", hour12: true, timeZone: "America/New_York",
-              })} ET
-            </p>
-          )}
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2 px-3 py-1 bg-[#141414] rounded-full border border-[#222]">
-            <div className="w-1.5 h-1.5 rounded-full bg-[#00FF41] shadow-[0_0_8px_#00FF41] animate-pulse"></div>
-            <span className="text-[9px] font-bold text-gray-300 uppercase tracking-wider font-mono">LIVE</span>
+      {/* Compact sport heading. Global shell provides brand and cross-sport navigation. */}
+      <header id="nhl-screen-header" className="shrink-0 border-b border-white/10 bg-[#111719] px-4 py-3">
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="text-[19px] font-black tracking-tight text-white">NHL <span className="text-[#79FF48]">Shot Forecasts</span></h1>
+            <p className="mt-0.5 text-[11px] text-gray-400">{countDates.join(' · ')} · Original pregame numerical models</p>
           </div>
-          <button
-            id="nhl-refresh-btn"
-            onClick={handleManualRefresh}
-            disabled={loading || isRefreshing}
-            className="p-1.5 rounded-lg bg-[#141414] hover:bg-[#1A1A1A] border border-[#222] text-gray-400 hover:text-[#00FF41] cursor-pointer transition-colors"
-            title="Refresh feed"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading || isRefreshing ? "animate-spin text-[#00FF41]" : ""}`} />
+          <button id="nhl-refresh-btn" type="button" onClick={handleManualRefresh}
+            disabled={loading||isRefreshing} aria-label="Refresh NHL projections"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-[#202a2c] text-[#79FF48] disabled:opacity-50">
+            <RefreshCw size={18} className={loading||isRefreshing?'animate-spin':''}/>
           </button>
         </div>
       </header>
-
-      {/* Filters */}
-      <div id="nhl-filter-controls-board" className="px-6 py-4 bg-[#0D0D0D] border-b border-[#1A1A1A] flex flex-col gap-4">
-        <div>
-          <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block mb-2 font-mono">Market</span>
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar scrollbar-none">
-            {(["ALL", ...marketsPresent] as MarketFilter[]).map((m) => {
-              const active = marketFilter === m;
-              return (
-                <button
-                  id={`nhl-btn-market-${m}`}
-                  key={m}
-                  onClick={() => setMarketFilter(m)}
-                  className={`px-4 py-1.5 rounded-full text-[11px] font-semibold tracking-wide border transition-all cursor-pointer whitespace-nowrap uppercase ${
-                    active
-                      ? "bg-[#00FF41] text-black border-none font-bold"
-                      : "bg-[#141414] text-gray-400 border-[#222] hover:text-white hover:border-gray-700"
-                  }`}
-                >
-                  {m === "ALL" ? "All Markets" : MARKET_LABELS[m] || m}
-                </button>
-              );
-            })}
-          </div>
+      <div id="nhl-filter-controls-board" className="shrink-0 space-y-3 border-b border-white/10 bg-[#111719] px-4 py-3">
+        <div className="flex gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="group" aria-label="NHL projection markets">
+          {(['shots_on_goal','points','ALL'] as MarketFilter[]).filter(m=>
+            m==='ALL'||m==='shots_on_goal'||marketsPresent.includes(m)).map(m=>
+            <button id={`nhl-btn-market-${m}`} key={m} type="button" onClick={()=>setMarketFilter(m)} aria-pressed={marketFilter===m}
+              className={`min-h-10 shrink-0 rounded-xl px-4 text-[12px] font-bold ${marketFilter===m?'bg-[#79FF48] text-[#111b13]':'border border-white/10 bg-[#202a2c] text-gray-200'}`}>
+              {m==='shots_on_goal'?'Shots on goal':m==='points'?'Anytime points':'All models'}
+            </button>)}
         </div>
-
-        <div>
-          <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block mb-2 font-mono">Confidence Group</span>
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar scrollbar-none">
-            {(["ALL", "HIGH", "MEDIUM", "LOW"] as const).map((conf) => {
-              const active = confidenceFilter === conf;
-              return (
-                <button
-                  id={`nhl-btn-conf-${conf}`}
-                  key={conf}
-                  onClick={() => setConfidenceFilter(conf)}
-                  className={`px-4 py-1.5 rounded-full text-[11px] font-semibold tracking-wide border transition-all cursor-pointer whitespace-nowrap uppercase ${
-                    active
-                      ? "bg-[#00FF41] text-black border-none font-bold"
-                      : "bg-[#141414] text-gray-400 border-[#222] hover:text-white hover:border-gray-700"
-                  }`}
-                >
-                  {conf === "ALL" ? "All Confidence" : `${conf} Conf`}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
         <div className="relative">
-          <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <Search className="h-3 w-3 text-gray-600" />
-          </span>
-          <input
-            id="nhl-team-search-input"
-            type="text"
-            placeholder="Filter by player, team, or pick..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full text-xs bg-[#141414] text-gray-200 pl-8 pr-4 py-2 rounded-xl border border-[#222] focus:border-[#00FF41]/40 focus:outline-none placeholder-gray-700 font-sans transition-all"
-          />
+          <Search size={17} className="pointer-events-none absolute left-3 top-3 text-gray-500"/>
+          <input id="nhl-team-search-input" type="search" value={searchQuery}
+            onChange={e=>setSearchQuery(e.target.value)} placeholder="Find a player or team"
+            className="min-h-11 w-full rounded-xl border border-white/10 bg-[#20282b] pl-10 pr-3 text-[13px] text-white outline-none focus:border-[#79FF48]/60"/>
         </div>
       </div>
 
@@ -337,7 +268,7 @@ export default function NhlTodayScreen({
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        className="flex-1 overflow-y-auto px-4 py-4 space-y-4 pb-28 scroll-smooth no-scrollbar"
+        className="min-h-0 flex-1 overflow-y-auto px-4 py-4 space-y-3 pb-8 scroll-smooth no-scrollbar"
       >
         {viewState==="loading" ? (
           <div id="nhl-loading-spinner-state" className="flex flex-col items-center justify-center py-20 space-y-3">
@@ -374,8 +305,8 @@ export default function NhlTodayScreen({
               <p>Shots on Goal source unavailable for one or more dates: {numericSogError}</p>
               <button type="button" onClick={handleManualRefresh} className="mt-2 rounded border border-amber-600 px-3 py-1 font-semibold">Retry Shots Feed</button>
             </div>}
-          {numericSog.some(d=>d.projected_count>0)&&<p role="status" className="mb-2 text-[11px] text-gray-400">Frozen V2 numerical shot forecasts ({numericSog.map(d=>d.game_date+': '+d.projected_count).join(' · ')}). Shot milestone probabilities come directly from the locked count distribution—NOT from a sportsbook—and remain UNCALIBRATED research until genuinely frozen pregame probability outcomes pass forward validation. Game-day participation not certified. Points targets remain binary event probabilities.</p>}
-          <p role="status" className="mb-2 text-[11px] text-gray-500">Anytime Goals: no source-verified goal-scoring model is connected yet. Anytime Point (goal OR assist) is a different event and is not substituted.</p>
+          {numericSog.some(d=>d.projected_count>0)&&<p role="status" className="mb-2 rounded-xl bg-[#172321] px-3 py-2 text-[11px] leading-relaxed text-gray-300">Showing {numericSog.reduce((n,d)=>n+d.projected_count,0)} original numerical shot forecasts. The chance to reach each forecast comes from the frozen model distribution and is <strong className="text-amber-200">not yet calibrated</strong>.</p>}
+          {marketFilter!=='shots_on_goal'&&<p role="status" className="mb-2 text-[11px] text-gray-400">Anytime points are binary event probabilities, not numerical goals or assists projections. No independent goals model is connected.</p>}
           <UnifiedSportGameCards sport="NHL" prefix="nhl-game-card-" games={unifiedGames}/>
           </div>
         )}
