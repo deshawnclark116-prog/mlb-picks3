@@ -120,10 +120,10 @@ test('original numeric SOG predictions, including players not offered by a sport
     sport:'NHL',games:merged,prefix:'nhl-test-'
   }));
   assert.equal((html.match(/data-testid="unified-sport-game"/g)||[]).length,2);
-  assert.match(html,/SYSTEM PICKS/);
-  assert.match(html,/MODEL BOARD/);
-  assert.match(html,/10 SYSTEM PICKS/);
-  assert.doesNotMatch(html,/1 SYSTEM PICKS/);
+  assert.match(html,/Top 10/);
+  assert.match(html,/All projections/);
+  assert.match(html,/20 model forecasts/);
+  assert.doesNotMatch(html,/1 model forecasts/);
 });
 
 test('same opponents on different dates or times must never be merged into a made-up game',()=>{
