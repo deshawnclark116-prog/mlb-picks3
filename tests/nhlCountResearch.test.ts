@@ -2,7 +2,7 @@ import {compactNhlShotDays,NHL_DAILY_COMPACT_SCHEMA} from '../scripts/buildNhlDa
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {reduceFrozenNhlShots,loadNhlCountResearch} from '../server/nhlCountResearch';
-import {addTrueNhlShotCounts,selectNhlShotMilestoneResearch,nhlCountGameDate,nhlDisplayGameDates,nhlVisibleGames,NHL_COUNT_SCHEMA,dailyShotResearchForDate,type NhlSogResearch,type NhlSogCount} from '../src/nhl/countResearch';
+import {addTrueNhlShotCounts,selectNhlShotMilestoneResearch,nhlProjectionReachProbability,nhlCountGameDate,nhlDisplayGameDates,nhlVisibleGames,NHL_COUNT_SCHEMA,dailyShotResearchForDate,type NhlSogResearch,type NhlSogCount} from '../src/nhl/countResearch';
 import type {UnifiedGame} from '../src/components/UnifiedSportGameCards';
 
 const cols=['game_id','player_id','player','team','opponent','game_date','scheduled_start',
@@ -44,7 +44,8 @@ test('frozen NHL V2 shot-count forecast independently supplies MEAN and MEDIAN, 
  assert.equal(game.picks[0].prediction,3.2);
  assert.equal(game.picks[0].modelProbability,null);
  assert.equal(game.picks[0].target,'');
- assert.match(game.picks[0].detail||'',/No automatically selected milestone/);
+ assert.deepEqual(game.picks[0].projectionChance,{atLeast:4,probability:.44,calibrated:false});
+ assert.match(game.picks[0].detail||'',/Chance to meet the projected mean/);
  assert.equal(reduced.projections[0].model_probability_forward_calibrated,false);
  assert.deepEqual(reduced.projections[0].model_probability_milestones_research_only,
    {'1':.95,'2':.82,'3':.65,'4':.44,'5':.22});
@@ -241,4 +242,16 @@ test('compact static NHL preview contains only original hash-proven 1–5 shot r
  const bad=JSON.parse(JSON.stringify(manifest));
  bad.days['2026-10-18'].source_ledger_sha256='0'.repeat(64);
  assert.throws(()=>dailyShotResearchForDate(bad,'2026-10-18'),/ORIGINAL_PLAYER_SOURCE_INVALID/);
+});
+
+test('mean 3.5 uses P(4+) rather than a convenient 2+ target, without invented probabilities',()=>{
+ const doc=reduceFrozenNhlShots(src(),'2026-10-18');
+ const row={...doc.projections[0],mean:3.5} as NhlSogCount;
+ assert.deepEqual(nhlProjectionReachProbability(row),{atLeast:4,probability:.44,calibrated:false});
+ assert.deepEqual(nhlProjectionReachProbability({...row,mean:3}),{atLeast:3,probability:.65,calibrated:false});
+ assert.equal(nhlProjectionReachProbability({...row,mean:5.2}),null);
+ assert.equal(nhlProjectionReachProbability({...row,model_probability_milestones_research_only:undefined}),null);
+ const cards=addTrueNhlShotCounts([],{...doc,projections:[row]} as NhlSogResearch);
+ assert.equal(cards[0].picks[0].target,'');
+ assert.equal(cards[0].picks[0].projectionChance?.atLeast,4);
 });
