@@ -57,11 +57,11 @@ export function PredictionCard({pick}:{pick:UnifiedPick}){
      <div className="min-w-0">
        <p className="text-[10px] font-bold text-gray-400">PUBLISHED MODEL TARGET · NOT VERIFIED BOOK LINE</p>
        <p className="mt-1 break-words text-sm font-bold text-gray-100">{pick.target}</p>
-     </div>}
+     </div>
      <div className="text-right"><p className="text-[10px] text-gray-400">MODEL PROBABILITY</p>
        <p className="mt-1 text-lg font-black text-[#00FF41]">{pct(pick.modelProbability)}</p>
      </div>
-   </div>
+   </div>}
    <details className="mt-3 border-t border-[#303030] pt-2 text-[11px] text-gray-400">
      <summary className="flex min-h-11 items-center font-bold">VIEW DETAILS ▾</summary>
      {pick.source&&<p className="pb-1">Source: {pick.source}</p>}
