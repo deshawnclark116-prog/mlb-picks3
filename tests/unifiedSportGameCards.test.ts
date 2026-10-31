@@ -17,7 +17,7 @@ const game=(picks:UnifiedPick[]):UnifiedGame=>({
 test('NHL fixed-line classifier never disguises 2.5-shot threshold as median',()=>{
  const html=renderToStaticMarkup(React.createElement(PredictionCard,{pick:pick()}));
  assert.match(html,/MODEL CHANCE OF TARGET · COUNT NOT FORECAST/);
- assert.match(html,/No modelled point\/shot count exists/);
+ assert.match(html,/No numerical player-stat forecast is published/);
  assert.match(html,/PUBLISHED MODEL TARGET · NOT VERIFIED BOOK LINE/);
  assert.match(html,/OVER 2.5/);
  assert.match(html,/73.0%/);
@@ -51,13 +51,19 @@ test('Tennis publishes only the available projected mean, not a fake correct-sco
  assert.match(html,/Player A 2-0/);
  assert.doesNotMatch(html,/100\.0%/);
 });
-test('all sport slates share NFL-style mode tabs and collapsible game cards',()=>{
+test('NHL uses two clear projection views while other sports retain their board modes',()=>{
  const groups=[game([pick({id:'1'})])];
  for(const sport of ['NHL','CFB','TENNIS'] as const){
    const html=renderToStaticMarkup(React.createElement(UnifiedSportGameCards,{sport,games:groups,prefix:sport+'-'}));
-   assert.match(html,/SYSTEM PICKS/);
-   assert.match(html,/BETTABLE NOW/);
-   assert.match(html,/MODEL BOARD/);
+   if(sport==='NHL'){
+     assert.match(html,/All projections/);
+     assert.match(html,/Top 10/);
+     assert.doesNotMatch(html,/BETTABLE NOW/);
+   }else{
+     assert.match(html,/SYSTEM PICKS/);
+     assert.match(html,/BETTABLE NOW/);
+     assert.match(html,/MODEL BOARD/);
+   }
    assert.match(html,/Create share card for PIT vs NYR/);
    assert.match(html,/unified-sport-game/);
    assert.match(html,/PIT vs NYR/);
