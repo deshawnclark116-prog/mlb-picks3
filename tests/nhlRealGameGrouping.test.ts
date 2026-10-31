@@ -113,7 +113,7 @@ test('original numeric SOG predictions, including players not offered by a sport
   assert.equal(buffalo.picks.filter(p=>p.market==='shots_on_goal').length,2);
   assert.equal(buffalo.picks.find(p=>p.player==='Tage Thompson')?.prediction,4.2);
   const unlisted=buffalo.picks.find(p=>p.player==='Player not listed at book')!;
-  assert.equal(unlisted.target,'NO VERIFIED SPORTSBOOK SHOT LINE');
+  assert.equal(unlisted.target,'');
   assert.equal(unlisted.modelProbability,null);
   assert.equal(unlisted.prediction,2.8);
   const html=renderToStaticMarkup(React.createElement(UnifiedSportGameCards,{

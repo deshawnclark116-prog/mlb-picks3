@@ -53,11 +53,11 @@ export function PredictionCard({pick}:{pick:UnifiedPick}){
      <p className="mt-1 break-words text-2xl font-black text-[#00FF41]">{value(pick)}</p>
      {!canNumeric(pick)&&<p className="mt-1 text-[10px] text-amber-200">No modelled point/shot count exists for this player. The number above is ONLY the chance of the target below.</p>}
    </div>
-   <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-xl border border-[#303030] p-3">
+   {pick.target&&<div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-xl border border-[#303030] p-3">
      <div className="min-w-0">
        <p className="text-[10px] font-bold text-gray-400">PUBLISHED MODEL TARGET · NOT VERIFIED BOOK LINE</p>
        <p className="mt-1 break-words text-sm font-bold text-gray-100">{pick.target}</p>
-     </div>
+     </div>}
      <div className="text-right"><p className="text-[10px] text-gray-400">MODEL PROBABILITY</p>
        <p className="mt-1 text-lg font-black text-[#00FF41]">{pct(pick.modelProbability)}</p>
      </div>
@@ -66,7 +66,7 @@ export function PredictionCard({pick}:{pick:UnifiedPick}){
      <summary className="flex min-h-11 items-center font-bold">VIEW DETAILS ▾</summary>
      {pick.source&&<p className="pb-1">Source: {pick.source}</p>}
      {pick.detail&&<p className="pb-1">{pick.detail}</p>}
-     <p className="pb-2">Model event probability is not the probability of finishing at the displayed numeric projection. Not a verified wager.</p>
+     <p className="pb-2">{pick.target?'Model event probability is not the probability of finishing at the displayed numeric projection. Not a verified wager.':'Original numerical projection; compare against final shots for accuracy. No automatically selected target or verified wager.'}</p>
    </details>
  </article>;
 }
@@ -101,13 +101,13 @@ export function Poster({sport,game,picks,cardRef}:{
        <strong style={{fontSize:21,display:'block',marginTop:10,overflowWrap:'anywhere'}}>{p.player.toUpperCase()}</strong>
        <p style={{fontSize:11,color:'#A5B1B9',letterSpacing:1.2,margin:'15px 0 2px'}}>{primaryLabel(p)}</p>
        <p style={{fontSize:canNumeric(p)?31:20,color:'#79FF48',fontWeight:900,margin:'0 0 16px',overflowWrap:'anywhere'}}>{value(p).toUpperCase()}</p>
-       <p style={{fontSize:14,fontWeight:700,color:'#DCE5E7',margin:0,overflowWrap:'anywhere'}}>TARGET: {p.target}</p>
-       <p style={{fontSize:14,color:'#AAB8C0',margin:'6px 0 0'}}>Model P(target): {pct(p.modelProbability)}</p>
+       {p.target&&<><p style={{fontSize:14,fontWeight:700,color:'#DCE5E7',margin:0,overflowWrap:'anywhere'}}>TARGET: {p.target}</p>
+       <p style={{fontSize:14,color:'#AAB8C0',margin:'6px 0 0'}}>Model P(target): {pct(p.modelProbability)}</p></>}
      </div>)}
    </section>
    <footer style={{position:'absolute',bottom:38,left:44,right:44,borderTop:'1px solid #334045',paddingTop:22}}>
      <p style={{fontSize:16,fontWeight:800,color:'#79FF48'}}>{game.sourceLabel.toUpperCase()} · NOT CERTIFIED BETTING PICKS</p>
-     <p style={{fontSize:13,lineHeight:1.6,color:'#9EACB1'}}>{hasNumeric?'Stat projections are separate from target chances. ':'No numerical player-stat forecast was published for the featured players. Percentages are target event probabilities, NOT expected goals, assists, points or shots. '}No verified live sportsbook execution or profitability is claimed.</p>
+     <p style={{fontSize:13,lineHeight:1.6,color:'#9EACB1'}}>{hasNumeric?'Numerical projections are assessed against actual player stats, not an automatically selected low threshold. ':'No numerical player-stat forecast was published for the featured players. Percentages are target event probabilities, NOT expected goals, assists, points or shots. '}No verified live sportsbook execution or profitability is claimed.</p>
    </footer>
  </div>;
 }
@@ -206,7 +206,7 @@ export default function UnifiedSportGameCards({sport,games,prefix}:{
              <p className="mt-2 text-[10px] font-bold text-gray-400">{game.shown.length} {mode} · {game.sourceLabel}</p>
              {mode!=='BETTABLE NOW'&&preview&&<p className="mt-2 break-words text-[11px] text-gray-300">
                TOP: <span className="text-white">{preview.player}</span> ·
-               {canNumeric(preview)?<>MODEL {preview.predictionKind==='mean'?'MEAN':'MEDIAN'} {value(preview)} · TARGET {preview.target} ({pct(preview.modelProbability)})</>:<>ONLY MODEL P(TARGET) {pct(preview.modelProbability)} · TARGET {preview.target} · NO NUMERIC FORECAST</>}
+               {canNumeric(preview)?<>MODEL {preview.predictionKind==='mean'?'MEAN':'MEDIAN'} {value(preview)}{preview.target?<> · TARGET {preview.target} ({pct(preview.modelProbability)})</>:null}</>:<>ONLY MODEL P(TARGET) {pct(preview.modelProbability)} · TARGET {preview.target} · NO NUMERIC FORECAST</>}
              </p>}
            </div>
            <ChevronDown size={16} className={`shrink-0 text-gray-500 ${opened?'rotate-180':''}`}/>

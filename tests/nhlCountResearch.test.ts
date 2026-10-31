@@ -42,9 +42,9 @@ test('frozen NHL V2 shot-count forecast independently supplies MEAN and MEDIAN, 
  assert.equal(game.picks.length,2);
  assert.equal(game.picks[0].market,'shots_on_goal');
  assert.equal(game.picks[0].prediction,3.2);
- assert.equal(game.picks[0].modelProbability,.65);
- assert.equal(game.picks[0].target,'MODEL EVENT 3+ SHOTS · UNVALIDATED RESEARCH');
- assert.match(game.picks[0].detail||'',/NOT prospectively calibrated/);
+ assert.equal(game.picks[0].modelProbability,null);
+ assert.equal(game.picks[0].target,'');
+ assert.match(game.picks[0].detail||'',/No automatically selected milestone/);
  assert.equal(reduced.projections[0].model_probability_forward_calibrated,false);
  assert.deepEqual(reduced.projections[0].model_probability_milestones_research_only,
    {'1':.95,'2':.82,'3':.65,'4':.44,'5':.22});
@@ -99,8 +99,8 @@ test('independent frozen shot-count matchup exists even when current points mode
  assert.equal(games[0].when,'2026-10-18T22:00:00Z');
  assert.equal(games[0].picks[0].market,'shots_on_goal');
  assert.equal(games[0].picks[0].prediction,3.2);
- assert.equal(games[0].picks[0].modelProbability,.65);
- assert.match(games[0].picks[0].target,/3\+ SHOTS.*UNVALIDATED RESEARCH/);
+ assert.equal(games[0].picks[0].modelProbability,null);
+ assert.equal(games[0].picks[0].target,'');
  assert.match(games[0].sourceLabel,/FROZEN V2 SOG COUNT/);
 });
 

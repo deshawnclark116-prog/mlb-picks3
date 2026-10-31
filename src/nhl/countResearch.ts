@@ -144,18 +144,18 @@ export function addTrueNhlShotCounts(games:UnifiedGame[],source:NhlSogResearch|n
    if(seen.has(id))throw Error('DUPLICATE_INDEPENDENT_NHL_COUNT');
    seen.add(id);
    named.push(p);
-   const modelMilestone=selectNhlShotMilestoneResearch(p);
+   // Verify the source CDF without turning a low-odds milestone into a public pick.
+   // Original probabilities are still preserved for independent research grading.
+   selectNhlShotMilestoneResearch(p);
    list.push({
       id:'NHL-V2-SOG-'+id,
       player:p.player,team:p.team,market:'shots_on_goal',
-      target:modelMilestone?
-       'MODEL EVENT '+modelMilestone.milestone+'+ SHOTS · UNVALIDATED RESEARCH':
-       'NO VERIFIED SPORTSBOOK SHOT LINE',
-      modelProbability:modelMilestone?.model_probability??null,
+      target:'',
+      modelProbability:null,
       prediction:p.mean,predictionKind:'mean',unit:'shots',
       source:'Locked NHL V2 SOG count distribution · '+p.forecast_horizon,
       detail:'Numerical median '+p.median+' shots · P10–P90 '+p.p10+'–'+p.p90+
-       '. Model P(shots milestone), if displayed, is raw CDF research, NOT prospectively calibrated, certified active, a bookmaker line, or an official betting pick.'
+       '. No automatically selected milestone or sportsbook line. The original CDF is preserved separately for prospective probability research.'
    });
  }
  // Frozen shot-count forecasts are a valid independent research feed:
