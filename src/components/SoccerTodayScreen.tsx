@@ -2,7 +2,12 @@ import React,{useEffect,useState} from 'react';
 import {RefreshCw,AlertTriangle} from 'lucide-react';
 import type {Forecast,League} from '../soccer/model';
 import {SOCCER_SCHEMA,LEAGUES} from '../soccer/model';
-type Summary={n:number;brier:number|null;baselineBrier:number|null;accuracy:number|null;baselineAccuracy:number|null;brierAdvantage:number|null};
+type GoalAudit={teamScores:number;meanAbsoluteError:number|null;
+  baselineMeanAbsoluteError:number|null; signedBias:number|null;
+  exactRoundedCountRate:number|null;withinOneActualGoalRate:number|null};
+type Summary={n:number;brier:number|null;baselineBrier:number|null;
+  accuracy:number|null;baselineAccuracy:number|null;brierAdvantage:number|null;
+  goalProjections?:GoalAudit};
 type Doc={schema:string;status:string;asof_calendar_day_utc:string;forecast_count:number;forecasts:Forecast[];
   historical_audit:{kind:string;overall:Summary;promotionGate:{passed:boolean}};
   guardrails:{official_bets:number;calibrated:boolean;verified_live_book_lines:number;player_prop_predictions:number}};
@@ -98,6 +103,18 @@ export default function SoccerTodayScreen(){
        <div className="font-semibold text-white">Backtest versus league baseline</div>
        <div>Model Brier: {audit?.overall.brier?.toFixed(4)??'–'} · Baseline: {audit?.overall.baselineBrier?.toFixed(4)??'–'}</div>
        <div>Improvement: {audit?.overall.brierAdvantage?.toFixed(4)??'–'} · Promotion threshold: {audit?.promotionGate.passed?'research threshold met; not live-proven':'not met'}</div>
+     </div>
+     <div data-testid="soccer-projection-accuracy" className="space-y-2 rounded-2xl border border-[#304d3e] bg-[#13251d] p-4">
+       <h2 className="text-sm font-black">Actual goal projection accuracy</h2>
+       <p className="text-[11px] text-gray-400">Original numerical model forecasts versus final team goals — not automatic targets.</p>
+       <div className="grid grid-cols-2 gap-2">
+         <div className="rounded-xl bg-black/20 p-3"><div className="text-[10px] text-gray-400">Model goal MAE</div>
+           <strong className="text-2xl text-[#79FF48]">{audit?.overall.goalProjections?.meanAbsoluteError?.toFixed(3)??'–'}</strong></div>
+         <div className="rounded-xl bg-black/20 p-3"><div className="text-[10px] text-gray-400">League baseline MAE</div>
+           <strong className="text-2xl text-white">{audit?.overall.goalProjections?.baselineMeanAbsoluteError?.toFixed(3)??'–'}</strong></div>
+       </div>
+       <p className="text-[11px] text-gray-300">{audit?.overall.goalProjections?.teamScores??0} graded team outcomes · Within ±1 goal: {audit?.overall.goalProjections?.withinOneActualGoalRate==null?'–':pct(audit.overall.goalProjections.withinOneActualGoalRate)} · Exact rounded goals: {audit?.overall.goalProjections?.exactRoundedCountRate==null?'–':pct(audit.overall.goalProjections.exactRoundedCountRate)}</p>
+       <p className="text-[10px] text-amber-200">Retrospective walk-forward reconstruction, not yet an immutable first-seen live record.</p>
      </div>
      <div className="flex gap-2 overflow-x-auto pb-2">
        {(['ALL',...leagues] as (League|'ALL')[]).map(l=>

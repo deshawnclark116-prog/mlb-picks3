@@ -60,6 +60,10 @@ test('historic wins cannot be given future knowledge under the walk-forward audi
  assert.equal(a.auditRows.length,3);
  assert.equal(a.status,'RETROSPECTIVE_WALKFORWARD_NOT_IMMUTABLE_PREGAME_PICKS');
  assert.equal(a.promotionGate.passed,false);
+ assert.equal(a.summary.goalProjections.teamScores,6);
+ assert(Number.isFinite(a.summary.goalProjections.meanAbsoluteError));
+ assert(Number.isFinite(a.summary.goalProjections.baselineMeanAbsoluteError));
+ assert.equal(a.projectionAuditContract,'PREGAME_EXPECTED_GOALS_VS_FINAL_TEAM_GOALS_NOT_EASY_THRESHOLDS');
 });
 test('prematch strength and home-advantage regression to prior for promoted/unknown teams',()=>{
  const hist:Match[]=[];
@@ -77,4 +81,18 @@ test('prematch strength and home-advantage regression to prior for promoted/unkn
 });
 test('reject asking future as-of to forecast an already completed past match',()=>{
  assert.throws(()=>forecastMatch([],fixture('2025-09-02','A','B',2,0),'2025-09-04'),/CANNOT_FORECAST/);
+});
+
+test('goal forecasts grade both team counts independently with future matches excluded',()=>{
+ const prior=[
+   fixture('2025-08-01','Arsenal','Liverpool',1,0),
+   fixture('2025-08-08','Chelsea','Brentford',0,2),
+   fixture('2025-09-01','Arsenal','Chelsea',2,2),
+   fixture('2025-09-08','Liverpool','Brentford',1,3)
+ ];
+ const clean=backtest(prior,'2025-09-09');
+ const tampered=backtest([...prior,fixture('2025-09-09','Brentford','Chelsea',31,0)],'2025-09-09');
+ assert.deepEqual(clean.summary.goalProjections,tampered.summary.goalProjections);
+ assert.equal(clean.summary.goalProjections.teamScores,8);
+ assert(clean.auditRows.every(row=>Number.isFinite(row.expectedHomeGoals)&&Number.isFinite(row.expectedAwayGoals)));
 });

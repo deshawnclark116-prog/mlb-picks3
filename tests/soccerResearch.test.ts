@@ -26,6 +26,9 @@ test('mock multi-league independent research does not invent bets and carries ba
  assert.equal(report.schema,'soccer-v1-five-league-raw-results-research-v1');
  assert.equal(report.league_count,5);
  assert(report.historical_audit.overall.n>=500);
+ assert.equal(report.historical_audit.overall.goalProjections.teamScores,2*report.historical_audit.overall.n);
+ assert(Number.isFinite(report.historical_audit.overall.goalProjections.meanAbsoluteError));
+ assert(Number.isFinite(report.historical_audit.overall.goalProjections.baselineMeanAbsoluteError));
  assert.equal(report.guardrails.official_bets,0);
  assert.equal(report.guardrails.verified_live_book_lines,0);
  assert.equal(report.guardrails.historical_backtest_was_not_original_frozen_firstseen,true);

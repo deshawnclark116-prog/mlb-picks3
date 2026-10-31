@@ -126,10 +126,6 @@ export function forecastMatch(history:Match[],fixture:Match,asof:string):Forecas
           awayWeightedMatches:round(aAtt.sample+aDef.sample),
           source:fixture.source,status:'RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET'};
 }
-function naiveLeagueProbability(history:Match[],fixture:Match){
-  const {meanH,meanA}=inputs(history,fixture,fixture.date);
-  return poissonProb(meanH,meanA);
-}
 const scores=(p:Probability,actual:Outcome)=>{
   const probs=[p.home,p.draw,p.away],observed=[actual==='H'?1:0,actual==='D'?1:0,actual==='A'?1:0];
   return {brier:probs.reduce((s,v,i)=>s+(v-observed[i])**2,0),
@@ -141,7 +137,10 @@ const scores=(p:Probability,actual:Outcome)=>{
 export type AuditRow = {league:League;season:string;date:string;home:string;away:string;
   actual:Outcome;model:Probability;baseline:Probability;
   modelBrier:number;baselineBrier:number;modelLogloss:number;baselineLogloss:number;
-  correct:boolean;baselineCorrect:boolean};
+  correct:boolean;baselineCorrect:boolean;
+  expectedHomeGoals:number;expectedAwayGoals:number;
+  baselineHomeGoals:number;baselineAwayGoals:number;
+  actualHomeGoals:number;actualAwayGoals:number;};
 export function backtest(matches:Match[],cutoff:string,holdoutSeason='2025-26') {
   if(!validDay(cutoff))throw Error('SOCCER_INVALID_BACKTEST_CUTOFF');
   const test=matches.filter(m=>m.season>=holdoutSeason&&m.date<cutoff
@@ -151,21 +150,63 @@ export function backtest(matches:Match[],cutoff:string,holdoutSeason='2025-26') 
   const rows:AuditRow[]=[];
   for(const m of test) {
     const prior=matches.filter(x=>x.date<m.date);
-    const p=forecastMatch(prior,{...m,homeGoals:null,awayGoals:null},m.date).probabilities;
-    const baseline=naiveLeagueProbability(prior,m);
+    const forecast=forecastMatch(prior,{...m,homeGoals:null,awayGoals:null},m.date);
+    const p=forecast.probabilities;
+    const baselineGoals=inputs(prior,m,m.date);
+    const baseline=poissonProb(baselineGoals.meanH,baselineGoals.meanA);
     const actual:Outcome=m.homeGoals!>m.awayGoals!?'H':m.homeGoals===m.awayGoals?'D':'A';
     const model=scores(p,actual),base=scores(baseline,actual);
     rows.push({league:m.league,season:m.season,date:m.date,home:m.home,away:m.away,
       actual,model:p,baseline,modelBrier:model.brier,baselineBrier:base.brier,
       modelLogloss:model.logloss,baselineLogloss:base.logloss,
-      correct:!!model.correct,baselineCorrect:!!base.correct});
+      correct:!!model.correct,baselineCorrect:!!base.correct,
+      expectedHomeGoals:forecast.expectedHomeGoals,expectedAwayGoals:forecast.expectedAwayGoals,
+      baselineHomeGoals:baselineGoals.meanH,baselineAwayGoals:baselineGoals.meanA,
+      actualHomeGoals:m.homeGoals!,actualAwayGoals:m.awayGoals!});
   }
   const summarize=(r:AuditRow[])=>{
     const n=r.length,avg=(fn:(v:AuditRow)=>number)=>n?round(r.reduce((s,x)=>s+fn(x),0)/n):null;
+    // Both teams' original numerical expected goals are graded against the
+    // exact full-time counts. No easy 0.5+ or 2+ goal targets are substituted.
+    const errorPair=(row:AuditRow,baseline=false)=>{
+      const h=baseline?row.baselineHomeGoals:row.expectedHomeGoals;
+      const a=baseline?row.baselineAwayGoals:row.expectedAwayGoals;
+      return [h-row.actualHomeGoals,a-row.actualAwayGoals];
+    };
+    const meanGoalMetric=(fn:(err:number)=>number,baseline=false)=>{
+      if(!n)return null;
+      return round(r.reduce((sum,row)=>
+        sum+errorPair(row,baseline).reduce((acc,e)=>acc+fn(e),0),0)/(2*n));
+    };
+    const roundedExact=(baseline=false)=>meanGoalMetric(
+      // The rounded-mean check is separate from continuous-model MAE.
+      (_e)=>0,baseline)===null?null:round(r.reduce((sum,row)=>{
+        const h=baseline?row.baselineHomeGoals:row.expectedHomeGoals;
+        const a=baseline?row.baselineAwayGoals:row.expectedAwayGoals;
+        return sum+Number(Math.round(h)===row.actualHomeGoals)
+          +Number(Math.round(a)===row.actualAwayGoals);
+      },0)/(2*n));
+    const rmse=(baseline=false)=>{
+      const mse=meanGoalMetric(e=>e*e,baseline);
+      return mse===null?null:round(Math.sqrt(mse));
+    };
     return {n,brier:avg(x=>x.modelBrier),baselineBrier:avg(x=>x.baselineBrier),
       logloss:avg(x=>x.modelLogloss),baselineLogloss:avg(x=>x.baselineLogloss),
       accuracy:avg(x=>+x.correct),baselineAccuracy:avg(x=>+x.baselineCorrect),
-      brierAdvantage:avg(x=>x.baselineBrier-x.modelBrier)};
+      brierAdvantage:avg(x=>x.baselineBrier-x.modelBrier),
+      goalProjections:{
+        teamScores:2*n,
+        meanAbsoluteError:meanGoalMetric(e=>Math.abs(e)),
+        baselineMeanAbsoluteError:meanGoalMetric(e=>Math.abs(e),true),
+        signedBias:meanGoalMetric(e=>e),
+        baselineSignedBias:meanGoalMetric(e=>e,true),
+        rootMeanSquareError:rmse(),
+        baselineRootMeanSquareError:rmse(true),
+        exactRoundedCountRate:roundedExact(),
+        baselineExactRoundedCountRate:roundedExact(true),
+        withinOneActualGoalRate:meanGoalMetric(e=>Number(Math.abs(e)<=1)),
+        baselineWithinOneActualGoalRate:meanGoalMetric(e=>Number(Math.abs(e)<=1),true)
+      }};
   };
   const byLeague=Object.fromEntries(Object.keys(LEAGUES).map(l=>[l,
     summarize(rows.filter(r=>r.league===l))]));
@@ -178,5 +219,6 @@ export function backtest(matches:Match[],cutoff:string,holdoutSeason='2025-26') 
       passed:summary.n>=1000&&summary.brierAdvantage!==null&&summary.brierAdvantage>=.003&&positive>=4,
       positiveLeagues:positive,
       warning:'A single reused holdout does not establish live calibration or profitability'},
+    projectionAuditContract:'PREGAME_EXPECTED_GOALS_VS_FINAL_TEAM_GOALS_NOT_EASY_THRESHOLDS',
     auditRows:rows};
 }
