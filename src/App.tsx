@@ -19,13 +19,15 @@ import UpcomingGamesStrip from "./components/UpcomingGamesStrip";
 import type {ScheduleSport} from "../server/upcomingFixtures.ts";
 import SportProjectionScreen from "./components/SportProjectionScreen";
 import { deduplicatePredictions, deduplicateCfbPredictions, deduplicateTennisPredictions, deduplicateNhlPredictions } from "./utils";
-import { TrendingUp, Calendar, Activity, ShieldCheck, AlertCircle } from "lucide-react";
+import { Home, Trophy, Activity, Waves, Menu, X, ChevronRight, LayoutGrid, CalendarDays, BarChart3 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 type TabType = "TODAY" | "GAMES" | "STATUS" | "RECORD" | "NFL" | "CFB" | "TENNIS" | "NHL" | "NBA" | "SOCCER";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>("TODAY");
+  const [moreOpen, setMoreOpen] = useState(false);
+  const navigateTo = (tab:TabType) => {setMoreOpen(false);setActiveTab(tab);};
   const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [games, setGames] = useState<Game[]>([]);
   const [health, setHealth] = useState<Health | null>(null);
@@ -256,265 +258,125 @@ export default function App() {
     }
   };
 
+  const quickSports: {tab:TabType;label:string}[]=[
+    {tab:'TODAY',label:'MLB'}, {tab:'NFL',label:'NFL'},
+    {tab:'NBA',label:'NBA'}, {tab:'NHL',label:'NHL'},
+    {tab:'CFB',label:'CFB'}, {tab:'TENNIS',label:'Tennis'},
+    {tab:'SOCCER',label:'Soccer'}
+  ];
+  const mainTabs=[
+    {tab:'TODAY' as TabType,label:'Home',Icon:Home},
+    {tab:'NFL' as TabType,label:'NFL',Icon:Trophy},
+    {tab:'NBA' as TabType,label:'NBA',Icon:Activity},
+    {tab:'NHL' as TabType,label:'NHL',Icon:Waves},
+  ];
+  const moreSections=[
+    {label:'More sports',items:[
+      {tab:'CFB' as TabType,label:'College football',desc:'CFB projections',Icon:Trophy},
+      {tab:'TENNIS' as TabType,label:'Tennis',desc:'Match forecasts',Icon:Activity},
+      {tab:'SOCCER' as TabType,label:'Soccer',desc:'Match and player models',Icon:LayoutGrid},
+      {tab:'GAMES' as TabType,label:'MLB schedule',desc:'Upcoming baseball games',Icon:CalendarDays}
+    ]},
+    {label:'Your system',items:[
+      {tab:'RECORD' as TabType,label:'Model record',desc:'Graded results and history',Icon:BarChart3},
+      {tab:'STATUS' as TabType,label:'System health',desc:'Feeds, connections and diagnostics',Icon:Activity}
+    ]}
+  ];
+  const activeLabel:Record<TabType,string>={
+    TODAY:'MLB',GAMES:'MLB Games',STATUS:'System health',RECORD:'Model record',
+    NFL:'NFL',CFB:'College football',TENNIS:'Tennis',NHL:'NHL',NBA:'NBA',SOCCER:'Soccer'
+  };
   return (
-    <div id="app-root-shell" className="h-dvh w-full bg-[#050505] md:py-6 flex items-center justify-center font-sans antialiased text-stone-200 select-none selection:bg-[#00FF41]/20 selection:text-[#00FF41]">
-      
-      {/* Phone frame wrapper container for immersive desktop feeling, fully fluid on mobile */}
-      <div 
-        id="phone-frame-container" 
-        className="w-full max-w-[430px] h-full md:h-[840px] md:max-h-[92vh] md:rounded-[40px] bg-[#0A0A0A] md:border-[8px] md:border-[#1A1A1A] md:shadow-2xl flex flex-col relative overflow-hidden"
-      >
-        
-        {/* Actual future fixtures use independent schedule evidence even
-            when the prediction engine has no selection for a game. */}
+    <div id="app-root-shell" className="h-dvh w-full bg-[#070b0d] text-gray-100 font-sans antialiased selection:bg-[#79FF48]/20 selection:text-[#79FF48] md:flex md:items-center md:justify-center">
+      <div id="phone-frame-container" className="relative flex h-full w-full min-w-0 flex-col overflow-hidden bg-[#0d1114] md:h-[92vh] md:max-h-[960px] md:max-w-[1050px] md:rounded-[28px] md:border md:border-white/10 md:shadow-[0_30px_100px_#000a]">
+        <header id="app-native-header" className="z-20 shrink-0 border-b border-white/10 bg-[#101719]">
+          <div className="flex min-h-[58px] items-center justify-between gap-3 px-4 sm:px-6">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] bg-[#79FF48] text-[#0b170b] shadow-[0_3px_16px_#79FF4825]">
+                <BarChart3 size={23} strokeWidth={2.6}/>
+              </div>
+              <div className="min-w-0">
+                <p className="truncate font-black tracking-[-.035em] text-[19px] leading-tight">PROP <span className="text-[#79FF48]">EDGE</span></p>
+                <p className="truncate text-[11px] text-gray-400">{activeLabel[activeTab]} · Model projections</p>
+              </div>
+            </div>
+            <button type="button" onClick={()=>setMoreOpen(true)}
+              aria-label="Open all sports and settings" className="flex min-h-11 items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 text-[12px] font-semibold text-gray-200 active:bg-white/10">
+              <LayoutGrid size={17}/> <span>Explore</span>
+            </button>
+          </div>
+          <nav aria-label="Switch sport" className="flex gap-2 overflow-x-auto px-4 pb-3 pt-1 sm:px-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {quickSports.map(({tab,label})=><button key={tab} type="button" id={'sport-chip-'+tab.toLowerCase()}
+              onClick={()=>navigateTo(tab)} aria-pressed={activeTab===tab}
+              className={`min-h-9 shrink-0 rounded-full border px-4 text-[12px] font-bold transition-colors ${activeTab===tab?'border-[#79FF48] bg-[#79FF48] text-[#111a12]':'border-white/10 bg-[#1e2629] text-gray-300 active:bg-[#303b3f]'}`}>
+              {label}
+            </button>)}
+          </nav>
+        </header>
+
+        {/* Official independent schedule stays accessible without crowding the page. */}
         {!['STATUS','RECORD'].includes(activeTab)&&<UpcomingGamesStrip
-          sport={(activeTab==='TODAY'||activeTab==='GAMES'?'MLB':activeTab) as ScheduleSport} />}
-        {/* Dynamic screen element transition */}
-        <div id="active-screen-container" className="flex-1 overflow-hidden relative bg-[#0D0D0D]">
+          sport={(activeTab==='TODAY'||activeTab==='GAMES'?'MLB':activeTab) as ScheduleSport}/>}
+
+        <main id="active-screen-container" className="relative min-h-0 flex-1 overflow-hidden bg-[#0c1114]">
           <AnimatePresence mode="wait">
-            <motion.div
-              id={`motion-screen-${activeTab}`}
-              key={activeTab}
-              initial={{ opacity: 0, x: 8 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -8 }}
-              transition={{ duration: 0.16, ease: "easeInOut" }}
-              className="absolute inset-0 h-full w-full"
-            >
+            <motion.div id={`motion-screen-${activeTab}`} key={activeTab}
+              initial={{opacity:0,x:12}} animate={{opacity:1,x:0}} exit={{opacity:0,x:-12}}
+              transition={{duration:0.14,ease:'easeOut'}} className="absolute inset-0 h-full w-full">
               {renderScreen()}
             </motion.div>
           </AnimatePresence>
-        </div>
+        </main>
 
-        {/* Global Footer Notes on every screen */}
-        <div 
-          id="global-legal-footer" 
-          className="absolute bottom-[66px] left-0 w-full px-5 py-2.5 bg-[#0A0A0A]/95 backdrop-blur-md border-t border-[#1A1A1A] text-center z-10"
-        >
-          <p className="text-[9px] text-gray-600 text-center leading-tight max-w-[280px] mx-auto">
-            Projections are statistical estimates, not guarantees. Bet responsibly. <strong className="text-[#00FF41] font-semibold">21+</strong>
-          </p>
-        </div>
-
-        {/* Dynamic Bottom Tab Navigation */}
-        <nav 
-          id="bottom-tab-navigation" 
-          className="h-[64px] bg-[#0A0A0A] border-t border-[#1A1A1A] px-0 flex items-center justify-between z-20 shrink-0 select-none"
-        >
-          {/* Today Button */}
-          <button
-            id="tab-btn-today"
-            onClick={() => setActiveTab("TODAY")}
-            className="flex-1 min-w-0 flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
-          >
-            <div className={`w-8 h-6 rounded-full flex items-center justify-center transition-all ${
-              activeTab === "TODAY" ? "bg-[#00FF41]/20" : "bg-transparent"
-            }`}>
-              <div className={`w-1.5 h-1.5 rounded-full transition-all ${
-                activeTab === "TODAY" ? "bg-[#00FF41] shadow-[0_0_8px_#00FF41]" : "bg-white/40 group-hover:bg-white"
-              }`} />
-            </div>
-            <span 
-              className={`text-[10px] font-bold uppercase tracking-tighter transition-colors duration-250 ${
-                activeTab === "TODAY" 
-                  ? "text-[#00FF41]" 
-                  : "text-white opacity-40 group-hover:opacity-80"
-              }`}
-            >
-              Today
-            </span>
-          </button>
-
-          {/* Games Button */}
-          <button
-            id="tab-btn-games"
-            onClick={() => setActiveTab("GAMES")}
-            className="flex-1 min-w-0 flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
-          >
-            <div className={`w-8 h-6 rounded-full flex items-center justify-center transition-all ${
-              activeTab === "GAMES" ? "bg-[#00FF41]/20" : "bg-transparent"
-            }`}>
-              <div className={`w-1.5 h-1.5 rounded-full transition-all ${
-                activeTab === "GAMES" ? "bg-[#00FF41] shadow-[0_0_8px_#00FF41]" : "bg-white/40 group-hover:bg-white"
-              }`} />
-            </div>
-            <span 
-              className={`text-[10px] font-bold uppercase tracking-tighter transition-colors duration-250 ${
-                activeTab === "GAMES" 
-                  ? "text-[#00FF41]" 
-                  : "text-white opacity-40 group-hover:opacity-80"
-              }`}
-            >
-              Games
-            </span>
-          </button>
-
-          {/* Status Button */}
-          <button
-            id="tab-btn-status"
-            onClick={() => setActiveTab("STATUS")}
-            className="flex-1 min-w-0 flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
-          >
-            <div className={`w-8 h-6 rounded-full flex items-center justify-center transition-all ${
-              activeTab === "STATUS" ? "bg-[#00FF41]/20" : "bg-transparent"
-            }`}>
-              <div className={`w-1.5 h-1.5 rounded-full transition-all ${
-                activeTab === "STATUS" ? "bg-[#00FF41] shadow-[0_0_8px_#00FF41]" : "bg-white/40 group-hover:bg-white"
-              }`} />
-            </div>
-            <span 
-              className={`text-[10px] font-bold uppercase tracking-tighter transition-colors duration-250 ${
-                activeTab === "STATUS" 
-                  ? "text-[#00FF41]" 
-                  : "text-white opacity-40 group-hover:opacity-80"
-              }`}
-            >
-              Status
-            </span>
-          </button>
-
-          {/* Record Button */}
-          <button
-            id="tab-btn-record"
-            onClick={() => setActiveTab("RECORD")}
-            className="flex-1 min-w-0 flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
-          >
-            <div className={`w-8 h-6 rounded-full flex items-center justify-center transition-all ${
-              activeTab === "RECORD" ? "bg-[#00FF41]/20" : "bg-transparent"
-            }`}>
-              <div className={`w-1.5 h-1.5 rounded-full transition-all ${
-                activeTab === "RECORD" ? "bg-[#00FF41] shadow-[0_0_8px_#00FF41]" : "bg-white/40 group-hover:bg-white"
-              }`} />
-            </div>
-            <span 
-              className={`text-[10px] font-bold uppercase tracking-tighter transition-colors duration-250 ${
-                activeTab === "RECORD" 
-                  ? "text-[#00FF41]" 
-                  : "text-white opacity-40 group-hover:opacity-80"
-              }`}
-            >
-              Record
-            </span>
-          </button>
-
-          {/* NFL Button */}
-          <button
-            id="tab-btn-nfl"
-            onClick={() => setActiveTab("NFL")}
-            className="flex-1 min-w-0 flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
-          >
-            <div className={`w-8 h-6 rounded-full flex items-center justify-center transition-all ${
-              activeTab === "NFL" ? "bg-[#00FF41]/20" : "bg-transparent"
-            }`}>
-              <div className={`w-1.5 h-1.5 rounded-full transition-all ${
-                activeTab === "NFL" ? "bg-[#00FF41] shadow-[0_0_8px_#00FF41]" : "bg-white/40 group-hover:bg-white"
-              }`} />
-            </div>
-            <span
-              className={`text-[10px] font-bold uppercase tracking-tighter transition-colors duration-250 ${
-                activeTab === "NFL"
-                  ? "text-[#00FF41]"
-                  : "text-white opacity-40 group-hover:opacity-80"
-              }`}
-            >
-              NFL
-            </span>
-          </button>
-
-          {/* CFB Button */}
-          <button
-            id="tab-btn-cfb"
-            onClick={() => setActiveTab("CFB")}
-            className="flex-1 min-w-0 flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
-          >
-            <div className={`w-8 h-6 rounded-full flex items-center justify-center transition-all ${
-              activeTab === "CFB" ? "bg-[#00FF41]/20" : "bg-transparent"
-            }`}>
-              <div className={`w-1.5 h-1.5 rounded-full transition-all ${
-                activeTab === "CFB" ? "bg-[#00FF41] shadow-[0_0_8px_#00FF41]" : "bg-white/40 group-hover:bg-white"
-              }`} />
-            </div>
-            <span
-              className={`text-[10px] font-bold uppercase tracking-tighter transition-colors duration-250 ${
-                activeTab === "CFB"
-                  ? "text-[#00FF41]"
-                  : "text-white opacity-40 group-hover:opacity-80"
-              }`}
-            >
-              CFB
-            </span>
-          </button>
-
-          {/* Tennis Button */}
-          <button
-            id="tab-btn-tennis"
-            onClick={() => setActiveTab("TENNIS")}
-            className="flex-1 min-w-0 flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
-          >
-            <div className={`w-8 h-6 rounded-full flex items-center justify-center transition-all ${
-              activeTab === "TENNIS" ? "bg-[#00FF41]/20" : "bg-transparent"
-            }`}>
-              <div className={`w-1.5 h-1.5 rounded-full transition-all ${
-                activeTab === "TENNIS" ? "bg-[#00FF41] shadow-[0_0_8px_#00FF41]" : "bg-white/40 group-hover:bg-white"
-              }`} />
-            </div>
-            <span
-              className={`text-[10px] font-bold uppercase tracking-tighter transition-colors duration-250 ${
-                activeTab === "TENNIS"
-                  ? "text-[#00FF41]"
-                  : "text-white opacity-40 group-hover:opacity-80"
-              }`}
-            >
-              Tennis
-            </span>
-          </button>
-
-          {/* NHL Button */}
-          <button
-            id="tab-btn-nhl"
-            onClick={() => setActiveTab("NHL")}
-            className="flex-1 min-w-0 flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
-          >
-            <div className={`w-8 h-6 rounded-full flex items-center justify-center transition-all ${
-              activeTab === "NHL" ? "bg-[#00FF41]/20" : "bg-transparent"
-            }`}>
-              <div className={`w-1.5 h-1.5 rounded-full transition-all ${
-                activeTab === "NHL" ? "bg-[#00FF41] shadow-[0_0_8px_#00FF41]" : "bg-white/40 group-hover:bg-white"
-              }`} />
-            </div>
-            <span
-              className={`text-[10px] font-bold uppercase tracking-tighter transition-colors duration-250 ${
-                activeTab === "NHL"
-                  ? "text-[#00FF41]"
-                  : "text-white opacity-40 group-hover:opacity-80"
-              }`}
-            >
-              NHL
-            </span>
-          </button>
-          {/* NBA V1 original-source research tab; not an official betting board */}
-          <button
-            id="tab-btn-nba"
-            onClick={() => setActiveTab("NBA")}
-            className="flex-1 min-w-0 flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer"
-            aria-label="NBA V1 research"
-          >
-            <div className={`w-8 h-6 rounded-full flex items-center justify-center transition-all ${activeTab === "NBA" ? "bg-[#00FF41]/20" : "bg-transparent"}`}>
-              <div className={`w-1.5 h-1.5 rounded-full transition-all ${activeTab === "NBA" ? "bg-[#00FF41] shadow-[0_0_8px_#00FF41]" : "bg-white/40 group-hover:bg-white"}`} />
-            </div>
-            <span className={`text-[10px] font-bold uppercase tracking-tighter transition-colors duration-250 ${activeTab === "NBA" ? "text-[#00FF41]" : "text-white opacity-40 group-hover:opacity-80"}`}>NBA</span>
-          </button>
-          {/* Soccer V1 independently validated historical research; no betting certification */}
-          <button id="tab-btn-soccer" onClick={() => setActiveTab("SOCCER")}
-            aria-label="Soccer V1 research"
-            className="flex-1 min-w-0 flex flex-col items-center justify-center gap-1 transition-all group relative h-full cursor-pointer">
-            <div className={`w-8 h-6 rounded-full flex items-center justify-center transition-all ${activeTab === "SOCCER" ? "bg-[#00FF41]/20" : "bg-transparent"}`}>
-              <span className="text-sm" aria-hidden="true">⚽</span>
-            </div>
-            <span className={`text-[10px] font-bold uppercase tracking-tighter transition-colors duration-250 ${activeTab === "SOCCER" ? "text-[#00FF41]" : "text-white opacity-40 group-hover:opacity-80"}`}>Soccer</span>
+        <nav id="bottom-tab-navigation" aria-label="Primary navigation"
+          className="z-30 flex shrink-0 items-stretch justify-around border-t border-white/10 bg-[#11191b] px-2 pt-1 shadow-[0_-8px_28px_#0004]"
+          style={{paddingBottom:'max(env(safe-area-inset-bottom), 6px)'}}>
+          {mainTabs.map(({tab,label,Icon})=><button key={tab} id={'tab-btn-'+tab.toLowerCase()}
+            type="button" onClick={()=>navigateTo(tab)} aria-current={activeTab===tab?'page':undefined}
+            className={`flex min-h-[58px] min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-xl px-1 transition-colors ${activeTab===tab&&!moreOpen?'text-[#79FF48]':'text-gray-400 active:bg-white/5'}`}>
+            <Icon size={21} strokeWidth={activeTab===tab?2.6:1.9}/>
+            <span className="text-[11px] font-bold">{label}</span>
+          </button>)}
+          <button id="tab-btn-more" type="button" onClick={()=>setMoreOpen(v=>!v)}
+            aria-expanded={moreOpen} aria-controls="app-more-sheet"
+            className={`flex min-h-[58px] min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-xl px-1 ${moreOpen?'text-[#79FF48]':'text-gray-400'}`}>
+            <Menu size={21} strokeWidth={moreOpen?2.6:1.9}/>
+            <span className="text-[11px] font-bold">More</span>
           </button>
         </nav>
 
+        {moreOpen&&<div id="app-more-overlay" className="absolute inset-0 z-40 flex flex-col justify-end">
+          <button type="button" aria-label="Close menu" onClick={()=>setMoreOpen(false)}
+            className="absolute inset-0 bg-black/65 backdrop-blur-[2px]"/>
+          <section id="app-more-sheet" role="dialog" aria-modal="true" aria-label="Explore Prop Edge"
+            className="relative max-h-[88%] w-full overflow-y-auto rounded-t-[28px] border-t border-white/15 bg-[#172023] px-5 pb-7 pt-4 shadow-[0_-20px_80px_#0008]">
+            <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-white/20"/>
+            <div className="mb-5 flex items-center justify-between">
+              <div>
+                <h2 className="text-[23px] font-black tracking-tight">Explore Prop Edge</h2>
+                <p className="mt-1 text-[12px] text-gray-400">All your sports and system tools</p>
+              </div>
+              <button type="button" onClick={()=>setMoreOpen(false)} aria-label="Close explore menu"
+                className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10"><X size={20}/></button>
+            </div>
+            {moreSections.map(section=><div key={section.label} className="mb-5">
+              <h3 className="mb-2 text-[11px] font-bold uppercase tracking-[.15em] text-gray-400">{section.label}</h3>
+              <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#1d292c]">
+                {section.items.map(({tab,label,desc,Icon},i)=><button type="button" key={tab}
+                  id={'tab-btn-'+tab.toLowerCase()} onClick={()=>navigateTo(tab)}
+                  className={`flex min-h-[64px] w-full items-center gap-3 px-4 text-left active:bg-white/10 ${i?'border-t border-white/10':''}`}>
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#79FF48]/10 text-[#79FF48]"><Icon size={20}/></span>
+                  <span className="min-w-0 flex-1"><span className="block text-[14px] font-bold">{label}</span>
+                    <span className="mt-0.5 block text-[11px] text-gray-400">{desc}</span></span>
+                  <ChevronRight size={17} className="text-gray-500"/>
+                </button>)}
+              </div>
+            </div>)}
+            <p className="border-t border-white/10 pt-4 text-[11px] leading-relaxed text-gray-400">
+              Projections are statistical estimates, not guarantees. Research probabilities may not be prospectively calibrated. Bet responsibly. 21+
+            </p>
+          </section>
+        </div>}
       </div>
     </div>
   );
