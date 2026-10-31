@@ -50,9 +50,9 @@ export function PredictionCard({pick}:{pick:UnifiedPick}){
      </div>
      {pick.confidence&&<span className="rounded-md border border-[#333] px-2 py-1 text-[10px] font-bold text-gray-300">{pick.confidence}</span>}
    </div>
-   <div data-testid="unified-predicted-stat" className="my-3 rounded-xl border border-[#00FF41]/25 bg-[#0E1D14] p-3">
+   <div data-testid="unified-predicted-stat" className="my-3 rounded-2xl border border-[#79FF48]/20 bg-[#12241b] p-4">
      <p className="text-[10px] font-bold tracking-wide text-gray-300">{primaryLabel(pick)}</p>
-     <p className="mt-1 break-words text-2xl font-black text-[#00FF41]">{value(pick)}</p>
+     <p className="mt-1 break-words text-[30px] leading-tight font-black tabular-nums tracking-tight text-[#79FF48]">{value(pick)}</p>
      {!canNumeric(pick)&&<p className="mt-1 text-[10px] text-amber-200">No numerical player-stat forecast is published; this percentage describes the specified event only.</p>}
      {canNumeric(pick)&&pick.projectionChance&&<div data-testid="projection-reach-probability" className="mt-3 flex items-center justify-between gap-3 border-t border-[#7AFF85]/20 pt-3">
        <div><p className="text-[11px] font-semibold text-gray-200">Chance to reach projection</p>
@@ -189,16 +189,16 @@ export default function UnifiedSportGameCards({sport,games,prefix}:{
 }){
  const [expanded,setExpanded]=useState<string|null>(null);
  const [share,setShare]=useState<string|null>(null);
- const [mode,setMode]=useState<'SYSTEM PICKS'|'BETTABLE NOW'|'MODEL BOARD'>('SYSTEM PICKS');
+ const [mode,setMode]=useState<'SYSTEM PICKS'|'BETTABLE NOW'|'MODEL BOARD'>(sport==='NHL'?'MODEL BOARD':'SYSTEM PICKS');
  const matched=games.map(game=>{
    const picks=[...game.picks].sort(rank);
    return {...game,shown:mode==='MODEL BOARD'?picks:mode==='BETTABLE NOW'?[]:picks.slice(0,10)};
  });
  return <div data-testid="unified-sport-board" className="space-y-3">
-   <div aria-label={sport+' board mode'} className="mt-2 grid grid-cols-3 gap-1">
-     {(['SYSTEM PICKS','BETTABLE NOW','MODEL BOARD'] as const).map(m=>
+   <div aria-label={sport+' board mode'} className={`mt-2 grid gap-2 ${sport==='NHL'?'grid-cols-2':'grid-cols-3'}`}>
+     {(sport==='NHL'?(['SYSTEM PICKS','MODEL BOARD'] as const):(['SYSTEM PICKS','BETTABLE NOW','MODEL BOARD'] as const)).map(m=>
        <button key={m} onClick={()=>{setMode(m);setExpanded(null);}} aria-pressed={mode===m}
-         className={`min-h-11 rounded-xl border border-[#282828] bg-[#181818] px-1 text-[10px] font-bold whitespace-nowrap ${mode===m?'!border-[#00FF41]/50 !bg-[#00FF41]/10 text-[#00FF41]':'text-gray-400'}`}>{m}</button>)}
+         className={`min-h-11 rounded-xl border px-2 text-[12px] font-bold whitespace-nowrap transition-colors ${mode===m?'border-[#79FF48]/80 bg-[#79FF48]/15 text-[#79FF48]':'border-white/10 bg-[#1d2629] text-gray-300'}`}>{sport==='NHL'?(m==='SYSTEM PICKS'?'Top 10':'All projections'):m}</button>)}
    </div>
    {mode==='BETTABLE NOW'&&<p role="status" className="rounded-xl border border-[#333] p-3 text-xs text-amber-200">No independently verified live sportsbook executions in this feed. Model targets alone are not executable wagers.</p>}
    {matched.map((game,i)=>{
@@ -215,7 +215,7 @@ export default function UnifiedSportGameCards({sport,games,prefix}:{
                <h2 className="break-words text-base font-bold text-white">{game.label}</h2>
                <span className="text-[11px] text-gray-500">{stamp(game.when)}</span>
              </div>
-             <p className="mt-2 text-[10px] font-bold text-gray-400">{game.shown.length} {mode} · {game.sourceLabel}</p>
+             <p className="mt-2 text-[12px] font-medium text-gray-400">{sport==='NHL'?game.shown.length+' model forecasts':game.shown.length+' '+mode+' · '+game.sourceLabel}</p>
              {mode!=='BETTABLE NOW'&&preview&&<p className="mt-2 break-words text-[11px] text-gray-300">
                TOP: <span className="text-white">{preview.player}</span> ·
                {canNumeric(preview)?<>MODEL {preview.predictionKind==='mean'?'MEAN':'MEDIAN'} {value(preview)}{preview.projectionChance?<> · P({preview.projectionChance.atLeast}+) {pct(preview.projectionChance.probability)}</>:null}{preview.target?<> · TARGET {preview.target} ({pct(preview.modelProbability)})</>:null}</>:<>ONLY MODEL P(TARGET) {pct(preview.modelProbability)} · TARGET {preview.target} · NO NUMERIC FORECAST</>}
