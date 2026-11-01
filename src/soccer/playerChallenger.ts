@@ -3,6 +3,7 @@
  * Provider facts -> historical usage and shooting rates -> uncalibrated
  * pregame number distributions; independent first-seen validation required.
  */
+import {wholeStatProjection} from '../lib/wholeStatProjection';
 export type PlayerMatch={
  game_id:string;game_date:string;team_id:string;team:string;
  minutes:number;starter:boolean;shots:number;shots_on_target:number;
@@ -26,6 +27,9 @@ export type PlayerForecast={
   * at the next integer observation; NOT a sportsbook betting target. */
  shotsReachCount:number;sotReachCount:number;
  pReachProjectedShots:number;pReachProjectedSot:number;
+ /** Newly saved pregame exact-count research probabilities, no retrospective
+  * rewriting of legacy original forecasts; old archives omit these. */
+ pExactRoundedShots?:number;pExactRoundedSot?:number;
  baselineShots:number;baselineSot:number;
  lineupState:'CONFIRMED_STARTER'|'CONFIRMED_BENCH'|'UNKNOWN';
  availabilityState:Availability;
@@ -40,6 +44,12 @@ const pPoissonAtLeast=(mean:number,k:number)=>{
  let p=Math.exp(-mean),cdf=p;
  for(let i=1;i<k;i++){p=p*mean/i;cdf+=p;}
  return bound(1-cdf,0,1);
+};
+const pPoissonExactly=(mean:number,k:number)=>{
+ if(!Number.isInteger(k)||k<0||mean<0)return 0;
+ let p=Math.exp(-mean);
+ for(let i=1;i<=k;i++)p=p*mean/i;
+ return bound(p,0,1);
 };
 const decay=(date:string,fixtureDate:string)=>Math.exp(
  -Math.log(2)*(Date.parse(fixtureDate+'T00:00:00Z')-Date.parse(date+'T00:00:00Z'))/86400000/60);
@@ -146,6 +156,13 @@ export function playerShotForecast(
    +(1-pStart)*pPoissonAtLeast(lambdaSub*sotFraction,1));
  const shotsReachCount=Math.max(1,Math.ceil(expectedShots));
  const sotReachCount=Math.max(1,Math.ceil(expectedSot));
+ const exactCount=(k:number,fraction:number)=>{
+   const played=pPlay*(pStart*pPoissonExactly(lambdaStarter*fraction,k)+
+     (1-pStart)*pPoissonExactly(lambdaSub*fraction,k));
+   return k===0?1-pPlay+played:played;
+ };
+ const pExactRoundedShots=exactCount(wholeStatProjection(expectedShots),1);
+ const pExactRoundedSot=exactCount(wholeStatProjection(expectedSot),sotFraction);
  const reach=(k:number,fraction:number)=>pPlay*(
    pStart*pPoissonAtLeast(lambdaStarter*fraction,k)+
    (1-pStart)*pPoissonAtLeast(lambdaSub*fraction,k));
@@ -164,6 +181,8 @@ export function playerShotForecast(
    shotsReachCount,sotReachCount,
    pReachProjectedShots:num(reach(shotsReachCount,1)),
    pReachProjectedSot:num(reach(sotReachCount,sotFraction)),
+   pExactRoundedShots:num(pExactRoundedShots),
+   pExactRoundedSot:num(pExactRoundedSot),
    baselineShots:num(rows.slice(0,10).reduce((s,g)=>s+g.shots,0)/Math.min(rows.length,10)),
    baselineSot:num(rows.slice(0,10).reduce((s,g)=>s+g.shots_on_target,0)/Math.min(rows.length,10)),
    lineupState,availabilityState:opts.availability,

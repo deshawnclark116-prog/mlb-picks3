@@ -16,6 +16,7 @@ export type GamePlayer={
   predictedShots:number;predictedShotsOnTarget:number;predictedMinutes:number;
   shotsReachCount:number;sotReachCount:number;
   pReachProjectedShots:number;pReachProjectedSot:number;
+  pExactRoundedShots?:number;pExactRoundedSot?:number;
   lineupState:'CONFIRMED_STARTER'|'CONFIRMED_BENCH'|'UNKNOWN';
   status:'RESEARCH_ONLY_NO_CALIBRATED_PROBABILITIES_NO_OFFICIAL_PICKS';
  };

@@ -3,6 +3,7 @@
  * a median: these forecasts use the distinct original NHL V2 count ledger.
  */
 import type {UnifiedGame,UnifiedPick} from '../components/UnifiedSportGameCards';
+import {wholeStatEvent} from '../lib/wholeStatProjection';
 
 export interface NhlSogCount {
  game_id:string;player_id:string;player:string;team:string;opponent:string;
@@ -164,12 +165,18 @@ export function addTrueNhlShotCounts(games:UnifiedGame[],source:NhlSogResearch|n
    // Original probabilities are still preserved for independent research grading.
    const milestone=selectNhlShotMilestoneResearch(p);
    const reach=nhlProjectionReachProbability(p);
+   const survival=p.model_probability_milestones_research_only;
+   const countEvent=wholeStatEvent(p.mean,survival?{
+     1:survival['1'],2:survival['2'],3:survival['3'],
+     4:survival['4'],5:survival['5']
+   }:null);
    list.push({
       id:'NHL-V2-SOG-'+id,
       player:p.player,team:p.team,market:'shots_on_goal',
       target:'',
       modelProbability:null,
       projectionChance:reach,
+      exactCountEvent:countEvent,
       nhlShotMilestone:milestone?{atLeast:milestone.milestone,probability:milestone.model_probability,calibrated:false}:null,
       prediction:p.mean,predictionKind:'mean',unit:'shots',
       source:'Locked NHL V2 SOG count distribution · '+p.forecast_horizon,
