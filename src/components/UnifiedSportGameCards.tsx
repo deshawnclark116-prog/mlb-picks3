@@ -6,6 +6,7 @@ import React,{useEffect,useLayoutEffect,useMemo,useRef,useState} from 'react';
 import {createPortal} from 'react-dom';
 import {ChevronDown,Image} from 'lucide-react';
 import {downloadBlob,renderElementToPng,shareBlob,EXPORT_WIDTH,EXPORT_HEIGHT} from '../lib/exportImage';
+import {wholeStatEvent,wholeStatProjection,type ExactCountEvent} from '../lib/wholeStatProjection';
 
 export type SportId='CFB'|'NHL'|'TENNIS';
 export interface UnifiedPick {
@@ -18,6 +19,7 @@ export interface UnifiedPick {
   projectionChance?:{atLeast:number;probability:number;calibrated:false}|null;
   /** A distinct threshold event calculated from the original frozen SOG distribution. */
   nhlShotMilestone?:{atLeast:number;probability:number;calibrated:false}|null;
+  exactCountEvent?:ExactCountEvent|null;
 }
 export interface UnifiedGame {
   id:string;label:string;when?:string;subtitle?:string;
@@ -30,26 +32,29 @@ const stamp=(iso?:string)=>{
   return new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(iso))+' ET';
 };
 const canNumeric=(p:UnifiedPick)=>p.prediction!=null&&Number.isFinite(p.prediction)&&p.prediction>=0;
-const value=(p:UnifiedPick)=>canNumeric(p)?fmt(p.prediction!)+(p.unit?' '+p.unit:''):pct(p.modelProbability);
-const primaryLabel=(p:UnifiedPick)=>canNumeric(p)?projectionLabel(p):'MODEL CHANCE OF TARGET · COUNT NOT FORECAST';
-/** Transparent research display threshold; not a calibrated live-pick approval.
- * A low P(ceil(mean)) may coexist with a strong distinct 2+ event. */
+const value=(p:UnifiedPick)=>canNumeric(p)?String(wholeStatProjection(p.prediction!))+(p.unit?' '+p.unit:''):pct(p.modelProbability);
+const primaryLabel=(p:UnifiedPick)=>canNumeric(p)?'MODEL PREDICTION · WHOLE NUMBER':'MODEL EVENT PROBABILITY · NO NUMERIC FORECAST';
+/** NHL research display filters: exact counts are different events from
+ * "at least" milestones, and cannot borrow a 65%-threshold probability. */
 export const NHL_RESEARCH_SHORTLIST_MIN_PROB=.65;
+export const NHL_EXACT_COUNT_DISPLAY_MIN=.25;
 export function nhlResearchShortlist(picks:UnifiedPick[]):UnifiedPick[]{
  const eligible=picks.filter(p=>{
   if(p.market==='shots_on_goal'&&canNumeric(p)){
-   const e=p.nhlShotMilestone;
-   return !!e&&e.calibrated===false&&
-     e.atLeast>=2&&e.atLeast<=5&&e.probability>=NHL_RESEARCH_SHORTLIST_MIN_PROB&&
-     e.probability<=1&&Number.isFinite(e.probability);
+   const e=p.exactCountEvent;
+   return e?.semantics==='EXACT_INTEGER_COUNT'&&
+    e.count===wholeStatProjection(p.prediction!)&&
+    e.probability!=null&&Number.isFinite(e.probability)&&
+    e.probability>=NHL_EXACT_COUNT_DISPLAY_MIN&&e.probability<=1;
   }
   return !!p.target&&['moneyline','points','goalie_saves','shots_on_goal'].includes(p.market)&&
-    p.modelProbability!=null&&Number.isFinite(p.modelProbability)&&
-    p.modelProbability>=NHL_RESEARCH_SHORTLIST_MIN_PROB&&p.modelProbability<=1;
+   p.modelProbability!=null&&Number.isFinite(p.modelProbability)&&
+   p.modelProbability>=NHL_RESEARCH_SHORTLIST_MIN_PROB&&p.modelProbability<=1;
  });
- const chance=(p:UnifiedPick)=>p.nhlShotMilestone?.probability??p.modelProbability??-1;
+ const chance=(p:UnifiedPick)=>p.market==='shots_on_goal'&&canNumeric(p)?
+   p.exactCountEvent?.probability??-1:p.modelProbability??-1;
  const ordered=eligible.sort((a,b)=>chance(b)-chance(a)||
-   a.player.localeCompare(b.player)||a.id.localeCompare(b.id));
+  a.player.localeCompare(b.player)||a.id.localeCompare(b.id));
  const seen=new Set<string>(),out:UnifiedPick[]=[];
  for(const p of ordered){
   const key=[(p.team||'').toUpperCase(),p.player.toLowerCase().trim(),p.market].join('|');
@@ -240,14 +245,14 @@ export default function UnifiedSportGameCards({sport,games,prefix}:{
          className={`min-h-11 rounded-xl border px-2 text-[12px] font-bold whitespace-nowrap transition-colors ${mode===m?'border-[#79FF48]/80 bg-[#79FF48]/15 text-[#79FF48]':'border-white/10 bg-[#1d2629] text-gray-300'}`}>{sport==='NHL'?(m==='SYSTEM PICKS'?'Best chances':'All projections'):m}</button>)}
    </div>
    {sport==='NHL'&&mode==='SYSTEM PICKS'&&<p data-testid="nhl-research-shortlist-note" className="rounded-xl border border-white/10 bg-[#172321] p-3 text-[11px] leading-relaxed text-gray-300">
-      Strongest currently supported modeled events (at least 65% estimated probability, up to 10 per game).
-      Shot thresholds are separately derived from frozen distributions, not probabilities of reaching the displayed mean.
-      Uncalibrated research—not verified hit rates or official betting picks.
-      Select All projections for the complete original model slate.
+      One whole-number forecast and its exact-count probability, when supported.
+      NHL shots need source-backed P(exact count) ≥ 25% for the research shortlist.
+      Separate binary events require ≥ 65%. These are not calibrated hit rates.
+      Select All projections for the complete original slate.
    </p>}
    {sport==='NHL'&&mode==='SYSTEM PICKS'&&visible.length===0&&games.length>0&&
      <p data-testid="nhl-no-shortlisted-events" className="rounded-xl border border-white/10 bg-[#192326] p-4 text-xs text-slate-300">
-       No events meet the 65% modeled research threshold. Select All projections to review every forecast.
+       No events meet the research display filters. Select All projections to review every forecast.
      </p>}
    {mode==='BETTABLE NOW'&&<p role="status" className="rounded-xl border border-[#333] p-3 text-xs text-amber-200">No independently verified live sportsbook executions in this feed. Model targets alone are not executable wagers.</p>}
    {visible.map((game,i)=>{
