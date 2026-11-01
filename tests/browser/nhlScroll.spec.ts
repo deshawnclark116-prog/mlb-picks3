@@ -70,7 +70,10 @@ test('NHL current game projections scroll by real phone swipe through expanded c
  expect(geometry.height).toBeGreaterThan(140);
  expect(geometry.scroll).toBeGreaterThan(geometry.height+400);
  expect(geometry.overflow).toBe('auto');
- expect(await scroll.evaluate(el=>el.scrollTop)).toBe(0);
+ // Clicking a game can scroll it into view before the gesture starts.
+ // Reset to the top so the test measures the swipe, not the click.
+ await scroll.evaluate(el=>{el.scrollTop=0;});
+ await expect.poll(()=>scroll.evaluate(el=>el.scrollTop)).toBe(0);
  await touchSwipe(page,scroll);
  await expect.poll(()=>scroll.evaluate(el=>el.scrollTop),{timeout:5000}).toBeGreaterThan(30);
  const after=await scroll.evaluate(el=>el.scrollTop);
