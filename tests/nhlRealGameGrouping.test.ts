@@ -125,7 +125,7 @@ test('original numeric SOG predictions, including players not offered by a sport
   assert.equal((html.match(/data-testid="unified-sport-game"/g)||[]).length,0);
   assert.match(html,/Best chances/);
   assert.match(html,/All projections/);
-  assert.match(html,/No events meet the 65% modeled research threshold/);
+  assert.match(html,/No events meet the research display filters/);
 });
 
 test('same opponents on different dates or times must never be merged into a made-up game',()=>{
