@@ -43,7 +43,7 @@ export function readNhlPublishedPregame(raw:unknown,asofUtc:string):VisibleNhlPu
  // prior-day source is never upgraded into a current prediction.
  if(doc.game_date!==local&&doc.game_date!==advance(local))return null;
  const pub=Date.parse(doc.generated_at_utc),now=Date.parse(asofUtc);
- const matches=NhlPrediction[]=[];
+ const matches:NhlPrediction[]=[];
  const seen=new Set<string>();
  for(const candidate of doc.picks){
   const p=obj(candidate);
