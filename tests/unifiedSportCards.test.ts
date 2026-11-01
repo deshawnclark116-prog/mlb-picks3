@@ -29,8 +29,8 @@ test('real MIN-CBJ NHL event-only screenshot must NOT say six numeric stat proje
  assert.match(html,/NO NUMERIC STATS/);
  assert.match(html,/KIRILL KAPRIZOV/);
  assert.match(html,/74\.4%/);
- assert.match(html,/TARGET: OVER 0\.5/);
- assert.match(html,/COUNT NOT FORECAST/);
+ assert.match(html,/P\(EVENT\): 74\.4%/);
+ assert.match(html,/NO NUMERIC FORECAST/);
  assert.doesNotMatch(html,/MODEL STAT PROJECTIONS/);
  assert.doesNotMatch(html,/NOT PUBLISHED/);
  assert.match(html,/Percentages are target event probabilities/);
@@ -38,9 +38,9 @@ test('real MIN-CBJ NHL event-only screenshot must NOT say six numeric stat proje
 
 test('individual NHL event-only card does not label probability as model mean or median',()=>{
  const html=renderToStaticMarkup(React.createElement(PredictionCard,{pick:first}));
- assert.match(html,/MODEL CHANCE OF TARGET/);
+ assert.match(html,/MODEL EVENT PROBABILITY/);
  assert.match(html,/74\.4%/);
- assert.match(html,/No numerical player-stat forecast is published/);
+ assert.match(html,/no invented numerical player stat/);
  assert.doesNotMatch(html,/MODEL PROJECTION · MEDIAN/);
  assert.doesNotMatch(html,/MODEL PROJECTION · MEAN/);
 });
@@ -54,13 +54,13 @@ test('real numerical stats, when independently available, remain primary and lab
    sport:'NHL',game:{...game,picks:[actual]},picks:[actual]
  }));
  assert.match(html,/MODEL STAT PROJECTIONS/);
- assert.match(html,/1\.2 POINTS/);
- assert.match(html,/MODEL PROJECTION · MEAN/);
- assert.match(html,/TARGET: OVER 0\.5/);
- assert.match(html,/74\.4%/);
+ assert.match(html,/1 POINTS/);
+ assert.match(html,/MODEL PREDICTION · WHOLE NUMBER/);
+ assert.match(html,/P\(EXACTLY 1\): —/);
+ assert.doesNotMatch(html,/P\(EXACTLY 1\): 74\.4%/);
 });
 
-test('NHL numeric shot forecasts show the actual 3.5-shot mean with no auto-selected betting target',()=>{
+test('NHL 3.5-shot mean becomes 3; do not substitute probability of 4+ shots',()=>{
  const shot:UnifiedPick={
   ...first,id:'frozen-shot',player:'Example Shooter',team:'LAK',
   market:'shots_on_goal',prediction:3.5,predictionKind:'mean',unit:'shots',
@@ -68,17 +68,18 @@ test('NHL numeric shot forecasts show the actual 3.5-shot mean with no auto-sele
   source:'Locked original NHL shot-count model'
  };
  const card=renderToStaticMarkup(React.createElement(PredictionCard,{pick:shot}));
- assert.match(card,/MODEL PROJECTION · MEAN/);
- assert.match(card,/3.5 shots/);
+ assert.match(card,/MODEL PREDICTION · WHOLE NUMBER/);
+ assert.match(card,/3 shots/);
+ assert.match(card,/Original mean: 3.5 shots/);
  assert.doesNotMatch(card,/PUBLISHED MODEL TARGET|MODEL PROBABILITY|Model P\(target\)/);
- assert.match(card,/Chance to reach projection/);
- assert.match(card,/Model P\(4\+ shots\)/);
+ assert.match(card,/Exact-count probability unavailable/);
+ assert.match(card,/Separate threshold event: P\(4\+ shots\)/);
  assert.match(card,/41.8%/);
  const poster=renderToStaticMarkup(React.createElement(Poster,{
   sport:'NHL',game:{...game,picks:[shot]},picks:[shot]
  }));
- assert.match(poster,/3.5 SHOTS/);
+ assert.match(poster,/3 SHOTS/);
  assert.doesNotMatch(poster,/TARGET:|Model P\(target\)/);
- assert.match(poster,/P\(4\+ SHOTS\)/);
- assert.match(poster,/41.8%/);
+ assert.match(poster,/P\(EXACTLY 3\): —/);
+ assert.doesNotMatch(poster,/P\(EXACTLY 3\): 41.8%/);
 });
