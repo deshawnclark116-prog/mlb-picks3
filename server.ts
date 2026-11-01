@@ -11,6 +11,7 @@ import { nbaRollingResearchHandler, nbaRollingGradeHandler } from "./server/nbaR
 import { nbaSystemPicksHandler } from "./server/nbaSystemPicks.ts";
 import { soccerResearchHandler } from "./server/soccerResearch.ts";
 import {soccerForwardStatusHandler} from "./server/soccerForwardStatus.ts";
+import {soccerPlayerResearchHandler} from "./server/soccerPlayerResearch.ts";
 import { upcomingFixturesHandler } from "./server/upcomingFixtures.ts";
 import path from "path";
 import { createServer as createViteServer } from "vite";
@@ -274,6 +275,11 @@ async function startServer() {
   // Existing PR #30 five-league source-first research only; no bookmaker or player prop claims.
   app.get("/api/soccer-research", soccerResearchHandler());
   app.get("/api/soccer-forward-scorecard", soccerForwardStatusHandler());
+  app.get("/api/soccer-player-research", soccerPlayerResearchHandler({
+    key:process.env.STRIKERAPI_API_KEY,
+    allowlist:(process.env.SOCCER_RESEARCH_PLAYER_IDS||'').split(',').map(s=>s.trim()).filter(Boolean),
+    maxProviderCallsPerDay:16
+  }));
 
   // Read-only, independently verified upcoming fixtures for EVERY sport.
   // Not inferred from published picks, no sportsbook request or credit use.

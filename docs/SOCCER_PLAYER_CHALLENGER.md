@@ -1,0 +1,29 @@
+# Soccer player intelligence: research challenger only
+
+Existing five-league match-goals champion remains unchanged. We have added
+a player role and shooting challenger, which consumes real match-by-match
+minutes, starting roles, shots, SOT and xG from StrikerAPI when connected.
+
+Credentials are required as server environment variables:
+- STRIKERAPI_API_KEY: secret; never commit to Git or paste in chat.
+- SOCCER_RESEARCH_PLAYER_IDS: exact provider player ID whitelist, e.g. 123,456.
+
+Research endpoint:
+GET /api/soccer-player-research?playerId=123&teamId=382&gameId=5000&date=2026-11-04
+
+No key or no allowlist => unavailable, zero simulated player picks.
+Provider calls are constrained to 16 per day, cached six hours and circuit-broken
+on 429. Pre-kickoff game ID/lineup is source verified; postkickoff lineups cannot
+become pregame features. Historical matches must precede as-of and fixture days.
+Missing actual shots/minutes are never imputed as zero; transfers use exact
+team IDs; confirmed OUT means no forecast. Injuries are still NOT connected,
+so all output remains UNVALIDATED RESEARCH and zero official picks.
+
+The challenger reports numerically projected minutes, shots and shots on target.
+It has a chronological shadow scorecard against a last-ten-game baseline, but
+no earned promotion gate or real prospectively calibrated probabilities.
+
+Next: authorized provider credentials, sample verified player histories and
+live lineup fixtures, an injury/suspension source, immutable first-seen player
+forecasts, prospective holdout and independent model-vs-baseline testing.
+Provider terms must permit the intended deployment and usage.
