@@ -5,6 +5,8 @@ import {SOCCER_SCHEMA,LEAGUES} from '../soccer/model';
 import {frozenSoccerBoard} from '../soccer/frozenBoardAssets';
 import {rankSoccerProjections,bestSoccerEvent} from '../soccer/topRanked';
 import {namedSoccerOutcomes} from '../soccer/matchLabels';
+import {savedEspnPlayerBoard} from '../soccer/espnBoardAssets';
+import {usableEspnPlayerBoard} from '../soccer/espnPlayerBoard';
 
 type Doc={schema:string;status:string;asof_calendar_day_utc:string;
  forecast_count:number;forecasts:Forecast[];
@@ -13,7 +15,7 @@ type Card={id:string;forecast:Forecast;origin:'FROZEN'|'LIVE'};
 type Section='TOP'|'MATCHES'|'PLAYERS';
 type PlayerCard={
  id:string;playerId:string;playerName:string;teamName:string;opponent:string;
- fixtureDate:string;source:'AUTHORIZED_PLAYER_MATCH_LOG';
+ fixtureDate:string;source:'AUTHORIZED_PLAYER_MATCH_LOG'|'ESPN_COMPLETED_MATCH_ROSTERS';
  forecast:{
   predictedShots:number;predictedShotsOnTarget:number;predictedMinutes:number;
   shotsReachCount:number;sotReachCount:number;
@@ -114,6 +116,7 @@ export default function SoccerTodayScreen(){
  const [loading,setLoading]=useState(false);
  const [players,setPlayers]=useState<PlayerCard[]>([]);
  const [playerFeedReady,setPlayerFeedReady]=useState(false);
+ const [playerLimit,setPlayerLimit]=useState(20);
  const [section,setSection]=useState<Section>('TOP');
  const [showFilters,setShowFilters]=useState(false);
  const [league,setLeague]=useState<League|'ALL'>('ALL');
@@ -127,11 +130,30 @@ export default function SoccerTodayScreen(){
  async function refresh(){
   setLoading(true);setLiveError(false);
   const playerLoad=(async()=>{
+    // Automatic ESPN first-seen forecast archive needs no paid API key.
+    // Prefer the current server snapshot, retain a static AI Studio fallback.
+    let early=savedEspnPlayerBoard(new Date().toISOString());
+    try{
+      const r=await fetch('/api/soccer-player-espn-board',{cache:'no-store'});
+      if(r.ok){
+        const raw:unknown=await r.json();
+        const live=usableEspnPlayerBoard(raw,new Date().toISOString());
+        if(live.length)early=live;
+      }
+    }catch{/* Preserve the authentic bundled archive. */}
+    if(early.length){
+      setPlayers(early.map(x=>({id:x.id,playerId:x.playerId,
+        playerName:x.playerName,teamName:x.teamName,opponent:x.opponent,
+        fixtureDate:x.fixtureDate,source:'ESPN_COMPLETED_MATCH_ROSTERS',
+        forecast:x.forecast})));
+      setPlayerFeedReady(true);return;
+    }
+    // Optional older paid pilot remains a fallback, not a dependency.
     try{
       const r=await fetch('/api/soccer-player-board',{cache:'no-store'});
-      if(!r.ok)throw Error('Player board offline');
+      if(!r.ok)throw Error('Paid pilot disconnected');
       const body:unknown=await r.json();
-      if(!validPlayerBoard(body))throw Error('Unverified player board');
+      if(!validPlayerBoard(body))throw Error('Unverified paid research');
       setPlayerFeedReady(body.status==='RESEARCH_PLAYER_FORECASTS');
       setPlayers(body.items);
     }catch{setPlayers([]);setPlayerFeedReady(false);}
@@ -248,9 +270,11 @@ export default function SoccerTodayScreen(){
       className="min-h-11 w-full rounded-xl bg-[#23362c] text-[12px] font-bold text-[#79FF48]">Show more top projections ({top.length-topLimit} remaining)</button>}
   </section>}
   {section==='PLAYERS'&&<section data-testid="soccer-player-props-board" className="space-y-2.5">
+    <p className="text-[11px] text-slate-400">Early player projections from verified completed-match shots and playing-time history. Lineups and injuries remain unverified.</p>
     {players.filter(p=>p.fixtureDate>=today).sort((a,b)=>
       Math.max(b.forecast.pReachProjectedShots,b.forecast.pReachProjectedSot)-
-      Math.max(a.forecast.pReachProjectedShots,a.forecast.pReachProjectedSot)).map(p=>
+      Math.max(a.forecast.pReachProjectedShots,a.forecast.pReachProjectedSot))
+      .slice(0,playerLimit).map(p=>
       <article data-testid="soccer-player-prop-card" key={p.id}
         className="rounded-[16px] border border-white/10 bg-[#192326] p-4">
         <p className="text-[11px] text-slate-400">{p.teamName} vs {p.opponent} · {dateLabel(p.fixtureDate)}</p>
@@ -276,14 +300,20 @@ export default function SoccerTodayScreen(){
           Starting lineup: {p.forecast.lineupState==='CONFIRMED_STARTER'?'confirmed starter':
             p.forecast.lineupState==='CONFIRMED_BENCH'?'confirmed bench':'not confirmed'}
         </p>
-        <p className="mt-2 text-[10px] text-amber-200">Uncalibrated research probability · Not a verified betting pick</p>
+        <p className="mt-2 text-[10px] text-amber-200">{p.source==='ESPN_COMPLETED_MATCH_ROSTERS'?'ESPN historical stats · Early pregame':'Authorized match history'} · Uncalibrated, not a verified betting pick</p>
       </article>)}
+    {players.filter(p=>p.fixtureDate>=today).length>playerLimit&&
+      <button type="button" onClick={()=>setPlayerLimit(n=>n+20)}
+        className="min-h-11 w-full rounded-xl bg-[#23362c] text-[12px] font-bold text-[#79FF48]">
+        Show more player projections ({players.filter(p=>p.fixtureDate>=today).length-playerLimit} remaining)
+      </button>}
     {(!playerFeedReady||players.filter(p=>p.fixtureDate>=today).length===0)&&
       <div className="rounded-[16px] border border-white/10 bg-[#192326] px-4 py-6">
         <p className="text-[16px] font-bold text-white">Player forecasts aren't connected yet</p>
         <p className="mt-2 text-[12px] leading-relaxed text-slate-300">
-          Shots, shots on target, and minutes are supported by our model, but this app
-          does not have a verified player-stat feed and pregame player list available.
+          The free soccer data pipeline is collecting real player minutes,
+          shots and shots on target from completed games. Early forecasts will
+          appear when enough eligible historical games are available.
           No player picks are being invented.
         </p>
       </div>}
