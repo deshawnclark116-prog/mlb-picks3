@@ -169,7 +169,8 @@ const board={
  status:live.length?'REAL_FIRSTSEEN_UNCALIBRATED':'NO_ELIGIBLE_FROZEN_FORECASTS',
  fullLeagueCoverageClaim:false,verifiedAvailabilityCoverage:false,
  provider:'ESPN_COMPLETED_MATCH_ROSTERS',officialPicks:0,
- fixturesSeen:upcoming.length,verifiedFinishedSourceGames:Object.keys(previous.events).length,
+ fixturesSeen:upcoming.length,fixtures:upcoming,
+ verifiedFinishedSourceGames:Object.keys(previous.events).length,
  sourceFailures:failures.length,items:live};
 writeFileSync(boardPath,JSON.stringify(board)+'\n');
 console.log('SOCCER_ESPN_PLAYER_ROLLING',JSON.stringify({
