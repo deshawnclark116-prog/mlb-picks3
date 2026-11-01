@@ -8,6 +8,9 @@ type GoalAudit={teamScores:number;meanAbsoluteError:number|null;
 type Summary={n:number;brier:number|null;baselineBrier:number|null;
   accuracy:number|null;baselineAccuracy:number|null;brierAdvantage:number|null;
   goalProjections?:GoalAudit};
+type Forward={schema:string;originallyFrozen:number;graded:number;ungraded:number;
+ gradedTeamScores:number;modelGoalMAE:number|null;baselineGoalMAE:number|null;
+ withinOneGoalRate:number|null;exactRoundedGoalRate:number|null;asofDateUTC:string};
 type Doc={schema:string;status:string;asof_calendar_day_utc:string;forecast_count:number;forecasts:Forecast[];
   historical_audit:{kind:string;overall:Summary;promotionGate:{passed:boolean}};
   guardrails:{official_bets:number;calibrated:boolean;verified_live_book_lines:number;player_prop_predictions:number}};
@@ -59,6 +62,7 @@ function MatchCard({p}:{p:Forecast}){
 }
 export default function SoccerTodayScreen(){
  const [doc,setDoc]=useState<Doc|null>(null),[error,setError]=useState<string|null>(null);
+ const [forward,setForward]=useState<Forward|null>(null);
  const [loading,setLoading]=useState(false),[league,setLeague]=useState<League|'ALL'>('ALL');
  async function refresh(){
    setLoading(true);setError(null);
@@ -68,6 +72,15 @@ export default function SoccerTodayScreen(){
      const d:unknown=await r.json();
      if(!valid(d))throw Error('Unverified soccer research contract');
      setDoc(d);
+     try{
+       const status=await fetch('/api/soccer-forward-scorecard',{cache:'no-store'});
+       if(!status.ok)throw Error('Forward journal not deployed');
+       const next=await status.json() as Forward;
+       if(next.schema!=='soccer-forward-scorecard-v1'||
+          next.graded>next.originallyFrozen||next.gradedTeamScores!==2*next.graded)
+          throw Error('Forward journal integrity');
+       setForward(next);
+     }catch{setForward(null);}
    }catch(e){setError(e instanceof Error?e.message:'Soccer research unavailable');}
    finally{setLoading(false);}
  }
@@ -103,6 +116,23 @@ export default function SoccerTodayScreen(){
        <div className="font-semibold text-white">Backtest versus league baseline</div>
        <div>Model Brier: {audit?.overall.brier?.toFixed(4)??'–'} · Baseline: {audit?.overall.baselineBrier?.toFixed(4)??'–'}</div>
        <div>Improvement: {audit?.overall.brierAdvantage?.toFixed(4)??'–'} · Promotion threshold: {audit?.promotionGate.passed?'research threshold met; not live-proven':'not met'}</div>
+     </div>
+     <div data-testid="soccer-forward-scorecard" className="space-y-2 rounded-2xl border border-[#79FF48]/20 bg-[#142019] p-4">
+       <div className="flex items-start justify-between gap-3">
+         <div><h2 className="text-sm font-black text-white">Real pregame tracking</h2>
+           <p className="mt-1 text-[11px] text-gray-400">Original forecasts saved before the match day · No hindsight</p></div>
+         <span className="rounded-lg bg-[#79FF48]/10 px-2 py-1 text-[10px] font-bold text-[#79FF48]">FORWARD</span>
+       </div>
+       {forward?<><div className="grid grid-cols-3 gap-2 text-center">
+         <div className="rounded-xl bg-black/20 p-3"><strong className="text-lg">{forward.originallyFrozen}</strong><p className="text-[10px] text-gray-400">Frozen</p></div>
+         <div className="rounded-xl bg-black/20 p-3"><strong className="text-lg">{forward.graded}</strong><p className="text-[10px] text-gray-400">Graded</p></div>
+         <div className="rounded-xl bg-black/20 p-3"><strong className="text-lg">{forward.ungraded}</strong><p className="text-[10px] text-gray-400">Pending</p></div>
+       </div>
+       {forward.graded>0?<p className="text-[12px] text-gray-200">Model goal MAE: <strong>{forward.modelGoalMAE?.toFixed(3)}</strong> ·
+         Within ±1 goal: <strong>{forward.withinOneGoalRate==null?'–':pct(forward.withinOneGoalRate)}</strong> ·
+         Baseline MAE: {forward.baselineGoalMAE?.toFixed(3)}</p>
+       :<p className="text-[11px] text-amber-200">Waiting for actual full-time results. No invented accuracy percentage.</p>}</>
+       :<p className="text-[11px] text-amber-200">Forward journal is not available on this deployment. Historical research is shown below.</p>}
      </div>
      <div data-testid="soccer-projection-accuracy" className="space-y-2 rounded-2xl border border-[#304d3e] bg-[#13251d] p-4">
        <h2 className="text-sm font-black">Actual goal projection accuracy</h2>
