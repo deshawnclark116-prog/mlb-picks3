@@ -3,6 +3,7 @@ import React,{useEffect,useState} from 'react';
 import {ChevronDown,Image} from 'lucide-react';
 import NflExistingShareModal from './NflExistingShareModal';
 import {formatET,type Horizon,type Phase1View} from '../nfl/phase1';
+import {wholeStatProjection} from '../lib/wholeStatProjection';
 import {parseExistingNfl,existingMatchup,type ExistingNflSlate,type ExistingNflGame,type ExistingYardProjection} from '../nfl/existing';
 const n=(x:number)=>x.toLocaleString('en-US',{maximumFractionDigits:1});
 const label=(m:string)=>m==='rushing_yards'?'RUSH YDS':'REC YDS';
@@ -16,8 +17,9 @@ function Projection({p}:{p:ExistingYardProjection}){
     <p className="mt-1 text-[11px] text-gray-400">{p.team} · {label(p.market)}</p>
     <div data-testid="existing-nfl-median" className="my-4 rounded-xl border border-[#00FF41]/25 bg-[#0E1D14] p-3">
       <p className="text-[10px] font-bold tracking-wide text-gray-300">PREDICTED STAT · MODEL MEDIAN</p>
-      <p className="mt-1 text-3xl font-black text-[#00FF41]">{n(p.projected_median)} yds</p>
-      <p className="mt-1 text-xs text-gray-400">Mean: {n(p.projected_mean)} yds · Model range: {n(p.projected_low)}–{n(p.projected_high)} yds</p>
+      <p className="mt-1 text-3xl font-black text-[#00FF41]">{wholeStatProjection(p.projected_median)} yds</p>
+      <p className="mt-1 text-xs text-amber-200">P(exactly this integer): unavailable. No probability distribution supplied.</p>
+       <p className="mt-1 text-xs text-gray-400">Mean: {n(p.projected_mean)} yds · Model range: {n(p.projected_low)}–{n(p.projected_high)} yds</p>
     </div>
     <p className="text-[11px] text-gray-400">WEEKLY MODEL · {p.model_source} · separate from frozen V2 T24/T90 forecasts</p>
     <p className="mt-2 text-[11px] text-gray-400">A numerical projection is not an offered sportsbook line. {p.confidence?'Original workload stability: '+p.confidence+'. ':''}No calibrated hit probability is supplied here.</p>
