@@ -69,7 +69,7 @@ test('NHL opens with strongest multi-market events, not raw 19% shots',async({pa
  await expect(game.getByTestId('unified-sport-projection').filter({hasText:'Shot Model Player'}).getByTestId('whole-stat-exact-probability')).toContainText('40.0%');
  await expect(game).toContainText('Chance of exactly 3');
  await expect(game).not.toContainText('Skater Weak');
- await expect(game.getByTestId('whole-stat-exact-probability')).not.toContainText('19.0%');
+ expect(await game.getByTestId('whole-stat-exact-probability').allTextContents()).not.toContain('19.0%');
  await expect(panel.getByTestId('nhl-research-shortlist-note')).toContainText('not calibrated hit rates');
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
 });
