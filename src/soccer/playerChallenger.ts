@@ -72,11 +72,17 @@ export function parsePlayerMatchLog(raw:unknown):PlayerHistory {
 export function playerShotForecast(
  history:PlayerHistory,fixtureDate:string,opts:{
    teamId:string;availability:Availability;lineup?:LineupEvidence;
-   asofUtc:string;fixtureGameId?:string;
+   asofUtc:string;fixtureGameId?:string;fixtureKickoffUtc?:string;
  }):PlayerForecast|null {
  const asof=new Date(opts.asofUtc);
  if(!validDate(fixtureDate)||!Number.isFinite(asof.getTime())||
-   asof.toISOString()!==opts.asofUtc||fixtureDate<=asof.toISOString().slice(0,10))
+   asof.toISOString()!==opts.asofUtc||
+   (opts.fixtureKickoffUtc?(
+     !Number.isFinite(Date.parse(opts.fixtureKickoffUtc))||
+     new Date(opts.fixtureKickoffUtc).toISOString()!==opts.fixtureKickoffUtc||
+     opts.fixtureKickoffUtc.slice(0,10)!==fixtureDate||
+     Date.parse(opts.fixtureKickoffUtc)-asof.getTime()<15*60_000
+   ):fixtureDate<=asof.toISOString().slice(0,10)))
    throw Error('SOCCER_PLAYER_NOT_VERIFIED_PREGAME_DATE');
  if(opts.availability==='CONFIRMED_OUT')return null;
  if(!['UNKNOWN','CONFIRMED_AVAILABLE','CONFIRMED_OUT'].includes(opts.availability)||
