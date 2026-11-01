@@ -19,6 +19,7 @@ on:
       - tests/soccerModel.test.ts
       - tests/soccerResearch.test.ts
       - tests/soccerFrozenBoard.test.ts
+      - tests/browser/soccerOfflineBoard.spec.ts
       - src/soccer/frozenBoardAssets.ts
       - src/soccer/frozenBoard.ts
       - .github/workflows/soccer_v1_scientific_model.yml
@@ -40,6 +41,7 @@ on:
       - tests/soccerModel.test.ts
       - tests/soccerResearch.test.ts
       - tests/soccerFrozenBoard.test.ts
+      - tests/browser/soccerOfflineBoard.spec.ts
       - src/soccer/frozenBoardAssets.ts
       - src/soccer/frozenBoard.ts
       - .github/workflows/soccer_v1_scientific_model.yml
@@ -90,4 +92,8 @@ jobs:
           if(r.forecasts.some(f=>f.status!=='RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET'))
             throw Error('Uncalibrated soccer probability mislabeled');
           JS
+      - name: Browser verify soccer archived projections on a 360px mobile screen with API offline
+        run: |
+          npx playwright install --with-deps chromium
+          npx playwright test tests/browser/soccerOfflineBoard.spec.ts
       - run: git diff --check
