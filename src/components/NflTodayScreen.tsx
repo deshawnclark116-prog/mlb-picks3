@@ -165,8 +165,8 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh,role=null
           <div className="flex gap-3 overflow-x-auto pb-2">{best.map(p=><button data-testid="today-best" key={p.row.id}
             onClick={()=>jump(p)} className="flex min-h-36 w-52 shrink-0 flex-col items-start rounded-2xl border border-[#292929] bg-[#181818] p-4 text-left">
             <p className="break-words text-xs font-bold uppercase text-gray-200">{p.row.player} · {p.row.team}</p>
-            <p className="mt-2 text-base font-black text-[#00FF41]">{targetText(p,true)}</p>
-            <p className="mt-auto pt-3 text-2xl font-black text-[#00FF41]">{percent(p.target.probability)}</p>
+            <p className="mt-2 text-base font-black text-[#00FF41]">Predicted {p.row.median!=null?wholeStatProjection(p.row.median):'—'}{unit(p.row.outcome)} {OUTCOMES[p.row.outcome]}</p>
+            <p className="mt-auto pt-3 text-[11px] text-amber-200">P(exact result) unavailable</p>
           </button>)}</div>
         </section>}
         <ExistingNflProjectionSlate view={view} search={search} family={family} visible={true} horizon={selected} mode={mode}/>
@@ -177,7 +177,7 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh,role=null
           return <section key={`${selected}|${game.game_id}`} data-testid="nfl-game" className="min-w-0 overflow-hidden rounded-2xl border border-[#292929] bg-[#141414]">
             <div className="flex items-center gap-1 pr-3"><button onClick={()=>toggle(game.game_id)} aria-expanded={expanded===game.game_id} aria-controls={`rows-${game.game_id}`} className="flex min-h-20 min-w-0 flex-1 items-center gap-3 p-4 text-left"><div className="min-w-0 flex-1"><div className="flex flex-wrap items-baseline justify-between gap-1"><h2 className="text-base font-bold text-white">{game.away} vs {game.home}</h2><span className="text-[11px] text-gray-500">{etTime(game.kickoff_utc)}</span></div>
               <p className="mt-2 text-[10px] font-bold text-gray-400">{selected} · {count} {mode==='MODEL BOARD'?'player outcomes':mode==='SYSTEM PICKS'?'SYSTEM PICKS':'BETTABLE NOW'}</p>
-              {mode!=='MODEL BOARD' && preview && <p className="mt-2 break-words text-[11px] text-gray-300">TOP TARGET: <span className="capitalize text-white">{preview.row.player}</span> · MODEL MEDIAN {number(preview.row.median)}{unit(preview.row.outcome)} · {targetText(preview,true)} ({percent(preview.target.probability)})</p>}
+              {mode!=='MODEL BOARD' && preview && <p className="mt-2 break-words text-[11px] text-gray-300">TOP MODEL FORECAST: <span className="capitalize text-white">{preview.row.player}</span> · {preview.row.median!=null?wholeStatProjection(preview.row.median):'—'}{unit(preview.row.outcome)} · P(exact result) unavailable</p>}
             </div><ChevronDown size={16} className={`shrink-0 text-gray-500 ${expanded===game.game_id?'rotate-180':''}`}/></button>
               <button aria-label={`Create share card for ${game.away} vs ${game.home}`}
                 disabled={cannotExportOriginal}
