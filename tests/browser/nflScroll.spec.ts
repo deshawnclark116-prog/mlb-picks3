@@ -77,7 +77,8 @@ test('NFL expanded player projections scroll to last cards without horizontal ov
  await expect.poll(()=>scroll.evaluate(e=>e.scrollTop)).toBeGreaterThan(300);
 });
 
-test('NFL stat filters still swipe horizontally on mobile after vertical scroll fix',async({page})=>{
+test('NFL stat filters still swipe horizontally on narrow mobile after vertical scroll fix',async({page})=>{
+ await page.setViewportSize({width:300,height:760});
  await openNfl(page);
  const filter=page.locator('[aria-label="Outcome family"]');
  // The stat chips can be wider than a 360px phone, but must remain usable.
@@ -88,10 +89,12 @@ test('NFL stat filters still swipe horizontally on mobile after vertical scroll 
  const cd=await page.context().newCDPSession(page);
  await cd.send('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:1});
  const y=Math.round(bounds!.y+bounds!.height/2);
- await cd.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:300,y,id:1}]});
+ const start=Math.round(bounds!.x+bounds!.width-22);
+ const end=Math.round(bounds!.x+22);
+ await cd.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:start,y,id:1}]});
  for(let i=1;i<=12;i++){
   await cd.send('Input.dispatchTouchEvent',{type:'touchMove',
-   touchPoints:[{x:300-Math.round(235*i/12),y,id:1}]});
+   touchPoints:[{x:Math.round(start+(end-start)*i/12),y,id:1}]});
   await new Promise(resolve=>setTimeout(resolve,18));
  }
  await cd.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
