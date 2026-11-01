@@ -76,47 +76,45 @@ const rank=(a:UnifiedPick,b:UnifiedPick)=>Number(canNumeric(b))-Number(canNumeri
   ||a.player.localeCompare(b.player)||a.id.localeCompare(b.id);
 
 export function PredictionCard({pick,nhlShortlist=false}:{pick:UnifiedPick;nhlShortlist?:boolean}){
+ const numeric=canNumeric(pick);
+ const actualEvent=numeric?pick.exactCountEvent??wholeStatEvent(pick.prediction!):null;
+ const validExact=actualEvent&&actualEvent.semantics==='EXACT_INTEGER_COUNT'&&
+  actualEvent.count===wholeStatProjection(pick.prediction!)&&
+  actualEvent.probability!=null&&Number.isFinite(actualEvent.probability)&&
+  actualEvent.probability>=0&&actualEvent.probability<=1;
  return <article data-testid="unified-sport-projection" className="min-w-0 rounded-2xl border border-[#292929] bg-[#1C1C1C] p-4">
-   <div className="flex min-w-0 items-start justify-between gap-2">
-     <div className="min-w-0"><h3 className="break-words text-base font-bold capitalize text-white">{pick.player}</h3>
-       <p className="mt-1 text-[11px] text-gray-400">{pick.team?pick.team+' · ':''}{pick.market.replaceAll('_',' ').toUpperCase()}</p>
-     </div>
-     {pick.confidence&&<span className="rounded-md border border-[#333] px-2 py-1 text-[10px] font-bold text-gray-300">{pick.confidence}</span>}
+  <div className="flex min-w-0 items-start justify-between gap-2">
+   <div className="min-w-0"><h3 className="break-words text-base font-bold capitalize text-white">{pick.player}</h3>
+    <p className="mt-1 text-[11px] text-gray-400">{pick.team?pick.team+' · ':''}{pick.market.replaceAll('_',' ').toUpperCase()}</p>
    </div>
-   <div data-testid="unified-predicted-stat" className="my-3 rounded-2xl border border-[#79FF48]/20 bg-[#12241b] p-4">
-     {nhlShortlist&&pick.nhlShotMilestone&&<div data-testid="nhl-research-strong-shots" className="mb-3 border-b border-[#79FF48]/20 pb-3">
-      <p className="text-[10px] font-bold text-gray-300">MODELED SHOT EVENT · RESEARCH ONLY</p>
-      <div className="mt-2 flex items-center justify-between gap-2">
-       <strong className="text-[16px] text-white">{pick.nhlShotMilestone.atLeast}+ shots on goal</strong>
-       <strong className="shrink-0 text-[24px] font-black text-[#79FF48]">{pct(pick.nhlShotMilestone.probability)}</strong>
-      </div>
-      <p className="mt-1 text-[10px] text-amber-200">Derived from original count model · Not forward-calibrated</p>
-     </div>}
-     <p className="text-[10px] font-bold tracking-wide text-gray-300">{primaryLabel(pick)}</p>
-     <p className="mt-1 break-words text-[30px] leading-tight font-black tabular-nums tracking-tight text-[#79FF48]">{value(pick)}</p>
-     {!canNumeric(pick)&&<p className="mt-1 text-[10px] text-amber-200">No numerical player-stat forecast is published; this percentage describes the specified event only.</p>}
-     {canNumeric(pick)&&pick.projectionChance&&!(nhlShortlist&&pick.nhlShotMilestone)&&<div data-testid="projection-reach-probability" className="mt-3 flex items-center justify-between gap-3 border-t border-[#7AFF85]/20 pt-3">
-       <div><p className="text-[11px] font-semibold text-gray-200">Chance to reach projection</p>
-         <p className="text-[10px] text-gray-400">Model P({pick.projectionChance.atLeast}+ shots) · Uncalibrated</p></div>
-       <strong className="text-[22px] font-black tabular-nums text-[#79FF48]">{pct(pick.projectionChance.probability)}</strong>
-     </div>}
-     {canNumeric(pick)&&pick.market==='shots_on_goal'&&!pick.projectionChance&&<p className="mt-2 text-[10px] text-gray-400">Projection probability not available from the original 1–5 shot distribution.</p>}
+   {pick.confidence&&<span className="rounded-md border border-[#333] px-2 py-1 text-[10px] font-bold text-gray-300">{pick.confidence}</span>}
+  </div>
+  <div data-testid="unified-predicted-stat" className="my-3 rounded-2xl border border-[#79FF48]/20 bg-[#12241b] p-4">
+   <p className="text-[10px] font-bold tracking-wide text-gray-300">{primaryLabel(pick)}</p>
+   <div className="mt-2 flex items-baseline justify-between gap-2">
+    <strong data-testid="whole-stat-prediction" className="min-w-0 break-words text-[28px] font-black tabular-nums leading-tight text-[#79FF48]">
+      {numeric?value(pick):pick.target||'Event forecast'}
+    </strong>
+    <strong data-testid="whole-stat-exact-probability" className="shrink-0 text-[22px] font-black tabular-nums text-[#79FF48]">
+      {numeric?(validExact?pct(actualEvent!.probability):'—'):pct(pick.modelProbability)}
+    </strong>
    </div>
-   {pick.target&&<div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-xl border border-[#303030] p-3">
-     <div className="min-w-0">
-       <p className="text-[10px] font-bold text-gray-400">PUBLISHED MODEL TARGET · NOT VERIFIED BOOK LINE</p>
-       <p className="mt-1 break-words text-sm font-bold text-gray-100">{pick.target}</p>
-     </div>
-     <div className="text-right"><p className="text-[10px] text-gray-400">MODEL PROBABILITY</p>
-       <p className="mt-1 text-lg font-black text-[#00FF41]">{pct(pick.modelProbability)}</p>
-     </div>
-   </div>}
-   <details className="mt-3 border-t border-[#303030] pt-2 text-[11px] text-gray-400">
-     <summary className="flex min-h-11 items-center font-bold">VIEW DETAILS ▾</summary>
-     {pick.source&&<p className="pb-1">Source: {pick.source}</p>}
-     {pick.detail&&<p className="pb-1">{pick.detail}</p>}
-     <p className="pb-2">{pick.target?'Model event probability is not the probability of finishing at the displayed numeric projection. Not a verified wager.':'Original numerical projection; compare against final shots for accuracy. No automatically selected target or verified wager.'}</p>
-   </details>
+   <p className="mt-2 text-[11px] text-gray-300">
+    {numeric?(validExact?'Chance of exactly '+actualEvent!.count+' · uncalibrated model estimate':
+      'Exact-count probability unavailable · not inferred from an easier threshold'):
+      'Probability of the displayed event · no invented numerical player stat'}
+   </p>
+  </div>
+  <details className="mt-3 border-t border-[#303030] pt-2 text-[11px] text-gray-400">
+   <summary className="flex min-h-11 cursor-pointer items-center font-bold">VIEW MODEL DETAILS ▾</summary>
+   {numeric&&<p className="pb-1">Original {pick.predictionKind==='mean'?'mean':'median'}: {fmt(pick.prediction!)} {pick.unit} · rounded with the .6 rule, unchanged in the underlying model.</p>}
+   {pick.source&&<p className="pb-1">Source: {pick.source}</p>}
+   {pick.detail&&<p className="pb-1">{pick.detail}</p>}
+   {pick.projectionChance&&<p className="pb-1">Separate threshold event: P({pick.projectionChance.atLeast}+ shots) {pct(pick.projectionChance.probability)}. NOT the exact-count probability.</p>}
+   {pick.nhlShotMilestone&&<p className="pb-1">Alternative threshold: P({pick.nhlShotMilestone.atLeast}+ shots) {pct(pick.nhlShotMilestone.probability)}. NOT the exact-count probability.</p>}
+   {!numeric&&<p className="pb-1">Original model event: {pick.target}. Its probability refers to this event only.</p>}
+   <p className="pb-2">Research estimates are not verified future hit rates or sportsbook wagers.</p>
+  </details>
  </article>;
 }
 
