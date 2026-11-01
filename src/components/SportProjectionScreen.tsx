@@ -145,7 +145,7 @@ export default function SportProjectionScreen({ sport, legacy }: { sport: Sport;
   const cfb = sport === "cfb" && doc?.schema === "cfb-player-stat-projections-research-v1" ? doc : null;
   const nhl = sport === "nhl" && doc?.schema === "nhl-v2-sog-nfl-style-shadow-v1" ? doc : null;
 
-  return <div className="flex flex-col h-full w-full bg-[#0D0D0D]">
+  return <div className="flex h-full min-h-0 min-w-0 w-full flex-col overflow-hidden bg-[#0D0D0D]">
     <div className="shrink-0 px-4 pt-3 pb-2 border-b border-[#222] bg-[#111]">
       <div className="text-sm font-bold text-stone-100">{sport.toUpperCase()} PREDICTIONS</div>
       <div className="flex gap-2 mt-2">
@@ -153,8 +153,8 @@ export default function SportProjectionScreen({ sport, legacy }: { sport: Sport;
         <button type="button" onClick={() => setMode("RESEARCH")} aria-pressed={mode==="RESEARCH"} className={`flex-1 py-2 rounded-lg text-xs font-bold ${mode==="RESEARCH" ? "bg-[#00FF41] text-black" : "bg-[#262626] text-gray-300"}`}>Research archive</button>
       </div>
     </div>
-    {mode === "CURRENT" ? <div className="flex-1 min-h-0">{legacy}</div> :
-      <div className="flex-1 overflow-y-auto min-h-0 p-4 pb-28 space-y-3">
+    {mode === "CURRENT" ? <div className="min-h-0 min-w-0 flex-1 overflow-hidden">{legacy}</div> :
+      <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain p-4 pb-28 space-y-3 [-webkit-overflow-scrolling:touch]">
         <div className="rounded-xl border border-amber-700/50 bg-amber-950/20 p-3 text-amber-200 text-xs leading-relaxed">
           <strong>RESEARCH — NOT OFFICIAL PICKS.</strong> {sport==="cfb"
           ? "Original 2026 Week 6 pregame three-game baselines and an uncalibrated rushing simulation subset. This is NOT a validated forward live projection system."

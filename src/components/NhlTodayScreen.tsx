@@ -3,11 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import UnifiedSportGameCards, {type UnifiedGame} from './UnifiedSportGameCards';
 import {groupNhlPredictionsByGame} from '../nhl/gameGrouping';
 import {addTrueNhlShotCounts,nhlDisplayGameDates,nhlVisibleGames,NHL_COUNT_SCHEMA,dailyShotResearchForDate,type NhlSogResearch} from "../nhl/countResearch";
-import { motion, AnimatePresence } from "motion/react";
 import { TrendingUp, RefreshCw, AlertTriangle, Search, ChevronDown, ChevronUp } from "lucide-react";
 import { NhlPrediction } from "../types";
 import { getNhlPredictionKey, getLatestGeneratedAt } from "../utils";
@@ -114,49 +113,20 @@ export default function NhlTodayScreen({
     return()=>ctl.abort();
   },[countDatesKey,shotRefreshSeq]);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [pullY, setPullY] = useState(0);
   const [expandedGameKey, setExpandedGameKey] = useState<string | null>(null);
 
   const toggleExpand = (key: string) => {
     setExpandedGameKey((cur) => (cur === key ? null : key));
   };
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const touchStartY = useRef<number>(0);
-
+  // Refresh explicitly via the button. The old touchmove handler called
+  // preventDefault() during a pull gesture and could steal vertical scrolling
+  // from the nested NHL projection panel on mobile WebViews.
   const handleManualRefresh = async () => {
     setIsRefreshing(true);
     setShotRefreshSeq(n=>n+1);
     try{await onRefresh();}
     finally{setIsRefreshing(false);}
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (!containerRef.current) return;
-    touchStartY.current = containerRef.current.scrollTop === 0 ? e.touches[0].clientY : -1;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (touchStartY.current === -1) return;
-    const diff = e.touches[0].clientY - touchStartY.current;
-    if (diff > 0) {
-      const damped = Math.min(80, Math.pow(diff, 0.8) * 1.5);
-      setPullY(damped);
-      if (diff > 10 && e.cancelable) e.preventDefault();
-    }
-  };
-
-  const handleTouchEnd = async () => {
-    if (pullY > 50) {
-      setIsRefreshing(true);
-      setPullY(40);
-      setShotRefreshSeq(n=>n+1);
-      try{await onRefresh();}
-      finally{setPullY(0);setIsRefreshing(false);}
-    } else {
-      setPullY(0);
-    }
-    touchStartY.current = -1;
   };
 
   // Do not mix stale points picks into an independent current SOG slate.
@@ -215,21 +185,8 @@ export default function NhlTodayScreen({
   return (
     <div
       id="nhl-today-screen-wrapper"
-      className="flex flex-col h-full bg-[#0D0D0D] text-gray-200 select-none overflow-hidden"
+      className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden bg-[#0D0D0D] text-gray-200"
     >
-      {/* Pull indicator */}
-      <motion.div
-        id="nhl-pull-indicator-bar"
-        className="flex items-center justify-center bg-[#0D0D0D] overflow-hidden text-[#00FF41] border-b border-[#1A1A1A]"
-        animate={{ height: pullY > 0 ? Math.max(32, pullY) : 0, opacity: pullY > 0 ? 1 : 0 }}
-        transition={{ type: "spring", stiffness: 350, damping: 30 }}
-      >
-        <span className="text-[10px] font-mono tracking-widest flex items-center gap-2">
-          <RefreshCw className={`w-3 h-3 ${isRefreshing ? "animate-spin" : ""}`} />
-          {pullY > 50 ? "RELEASE TO UPDATE" : "PULL TO REFRESH"}
-        </span>
-      </motion.div>
-
       {/* Compact sport heading. Global shell provides brand and cross-sport navigation. */}
       <header id="nhl-screen-header" className="shrink-0 border-b border-white/10 bg-[#111719] px-4 py-3">
         <div className="flex items-center justify-between gap-3">
@@ -264,11 +221,10 @@ export default function NhlTodayScreen({
       {/* Scroll area */}
       <div
         id="nhl-predictions-scroll-area"
-        ref={containerRef}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        className="min-h-0 flex-1 overflow-y-auto px-4 py-4 space-y-3 pb-8 scroll-smooth no-scrollbar"
+        role="region"
+        aria-label="Scrollable NHL model projections"
+        tabIndex={0}
+        className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain px-4 py-4 space-y-3 pb-28 no-scrollbar [-webkit-overflow-scrolling:touch]"
       >
         {viewState==="loading" ? (
           <div id="nhl-loading-spinner-state" className="flex flex-col items-center justify-center py-20 space-y-3">

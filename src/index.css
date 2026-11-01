@@ -28,3 +28,15 @@ html, body, #root {
    * NFL stat filters must respond to native mobile swipe gestures. */
 }
 
+
+/* NHL uses a fixed phone shell and a nested flex column, just like NFL.
+ * Give the projections a real flex-owned scrollport instead of allowing
+ * content sizing or the outer SportProjectionScreen to swallow touch scroll.
+ * The market chips remain independent horizontal scrollers. */
+#nhl-predictions-scroll-area {
+  min-height: 0;
+  height: 0; /* flex: 1 supplies the visible height, not content */
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+}
