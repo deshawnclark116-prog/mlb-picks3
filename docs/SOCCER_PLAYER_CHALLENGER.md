@@ -12,7 +12,7 @@ Research endpoint:
 GET /api/soccer-player-research?playerId=123&teamId=382&gameId=5000&date=2026-11-04
 
 No key or no allowlist => unavailable, zero simulated player picks.
-Provider calls are constrained to 16 per day, cached six hours and circuit-broken
+Provider calls are constrained to 2 per day (10 credits), cached six hours and circuit-broken
 on 429. Pre-kickoff game ID/lineup is source verified; postkickoff lineups cannot
 become pregame features. Historical matches must precede as-of and fixture days.
 Missing actual shots/minutes are never imputed as zero; transfers use exact

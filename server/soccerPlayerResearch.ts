@@ -8,13 +8,14 @@ type Config={key?:string;allowlist:string[];fetcher?:typeof fetch;clock?:()=>Dat
  maxProviderCallsPerDay?:number};
 const validId=(s:unknown):s is string=>typeof s==='string'&&/^[0-9A-Za-z_-]{1,40}$/.test(s);
 const validDay=(s:unknown):s is string=>typeof s==='string'&&/^20\d\d-\d\d-\d\d$/.test(s)&&
+ Number.isFinite(Date.parse(s+'T00:00:00Z'))&&
  new Date(s+'T00:00:00Z').toISOString().slice(0,10)===s;
 const hash=(s:string)=>createHash('sha256').update(s).digest('hex');
 type SourceResult={json:Record<string,unknown>;sha:string;captured:string};
 export function soccerPlayerResearchHandler(config:Config){
  const whitelist=new Set(config.allowlist.filter(validId));
  const fetcher=config.fetcher??fetch,clock=config.clock??(()=>new Date());
- const quota=Math.min(40,Math.max(1,config.maxProviderCallsPerDay??16));
+ const quota=Math.min(4,Math.max(1,config.maxProviderCallsPerDay??2));
  const daily=new Map<string,number>();
  const cache=new Map<string,{expires:number;result:SourceResult}>();
  const inFlight=new Map<string,Promise<SourceResult>>();
@@ -73,7 +74,7 @@ export function soccerPlayerResearchHandler(config:Config){
      const meta=l.json.game as Record<string,unknown>|undefined;
      if(meta?.game_id!==game)throw Error('SOCCER_LINEUP_GAME_ID_MISMATCH');
      const starts=typeof meta.starts_at==='string'?meta.starts_at:'';
-     if(Number.isFinite(Date.parse(starts))&&Date.parse(starts)>now.getTime()){
+     if(meta.date===date&&Number.isFinite(Date.parse(starts))&&Date.parse(starts)>now.getTime()){
       const teams=Array.isArray(l.json.lineups)?l.json.lineups:[];
       const matches=teams.filter(x=>x&&typeof x==='object'&&
         (x as Record<string,unknown>).team_id===team);

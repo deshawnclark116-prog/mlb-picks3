@@ -278,7 +278,7 @@ async function startServer() {
   app.get("/api/soccer-player-research", soccerPlayerResearchHandler({
     key:process.env.STRIKERAPI_API_KEY,
     allowlist:(process.env.SOCCER_RESEARCH_PLAYER_IDS||'').split(',').map(s=>s.trim()).filter(Boolean),
-    maxProviderCallsPerDay:16
+    maxProviderCallsPerDay:2
   }));
 
   // Read-only, independently verified upcoming fixtures for EVERY sport.

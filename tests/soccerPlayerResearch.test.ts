@@ -13,7 +13,7 @@ function make(){
   calls.push(String(url));
   assert.equal((opts?.headers as Record<string,string>)['x-api-key'],'secret');
   const obj=String(url).endsWith('get_player_games')?{player_id:'123',games}:{
-   game:{game_id:'5000',starts_at:'2026-10-04T16:00:00Z',status:'scheduled'},
+   game:{game_id:'5000',date:'2026-10-04',starts_at:'2026-10-04T16:00:00Z',status:'scheduled'},
    lineups:[{team_id:'382',starting_xi:[{player_id:'123'},
     ...Array.from({length:10},(_,i)=>({player_id:String(i+1000)}))]}]};
   return {ok:true,status:200,text:async()=>JSON.stringify(obj)} as Response;
