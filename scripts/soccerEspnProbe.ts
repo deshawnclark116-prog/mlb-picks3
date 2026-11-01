@@ -44,3 +44,13 @@ console.log('SOCCER_ESPN_ROSTERS',JSON.stringify({count:rosters.length,
    samples:Array.isArray(rosters[0].roster)?rosters[0].roster.slice(0,3):[]}:
    null}).slice(0,14000));
 if(players.length===0&&rosters.length===0)throw Error('ESPN soccer summary has no player roster or boxscore');
+
+const squad=rosters.flatMap(r=>Array.isArray(r.roster)?r.roster as Record<string,unknown>[]:[]);
+const subs=squad.filter(r=>r.subbedIn===true||r.subbedOut===true).slice(0,8).map(p=>({
+ athlete:(p.athlete as Record<string,unknown>|undefined)?.displayName,
+ starter:p.starter,in:p.subbedIn,out:p.subbedOut,active:p.active,
+ statsNames:Array.isArray(p.stats)?p.stats.map((z:Record<string,unknown>)=>z.name):[],
+ plays:p.plays
+}));
+console.log('SOCCER_ESPN_SUBSTITUTIONS',JSON.stringify({subCount:squad.filter(x=>x.subbedIn===true||x.subbedOut===true).length,
+ squadLength:squad.length,subs}).slice(0,13000));
