@@ -6,8 +6,8 @@ import type {Request,Response} from 'express';
 import {parsePlayerMatchLog,playerShotForecast,type LineupEvidence} from '../src/soccer/playerChallenger';
 type Config={key?:string;allowlist:string[];fetcher?:typeof fetch;clock?:()=>Date;
  maxProviderCallsPerDay?:number};
-const validId=(s:unknown)=>typeof s==='string'&&/^[0-9A-Za-z_-]{1,40}$/.test(s);
-const validDay=(s:unknown)=>typeof s==='string'&&/^20\d\d-\d\d-\d\d$/.test(s)&&
+const validId=(s:unknown):s is string=>typeof s==='string'&&/^[0-9A-Za-z_-]{1,40}$/.test(s);
+const validDay=(s:unknown):s is string=>typeof s==='string'&&/^20\d\d-\d\d-\d\d$/.test(s)&&
  new Date(s+'T00:00:00Z').toISOString().slice(0,10)===s;
 const hash=(s:string)=>createHash('sha256').update(s).digest('hex');
 type SourceResult={json:Record<string,unknown>;sha:string;captured:string};
