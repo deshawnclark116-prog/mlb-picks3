@@ -2,6 +2,7 @@ import React,{useEffect,useState} from 'react';
 import {RefreshCw,AlertTriangle} from 'lucide-react';
 import type {Forecast,League} from '../soccer/model';
 import {SOCCER_SCHEMA,LEAGUES} from '../soccer/model';
+import {frozenSoccerBoard} from '../soccer/frozenBoardAssets';
 type GoalAudit={teamScores:number;meanAbsoluteError:number|null;
   baselineMeanAbsoluteError:number|null; signedBias:number|null;
   exactRoundedCountRate:number|null;withinOneActualGoalRate:number|null};
@@ -36,11 +37,12 @@ function ProbabilityBar({name,value}:{name:string;value:number}){
    </div>
  </div>;
 }
-function MatchCard({p}:{p:Forecast}){
+function MatchCard({p,origin}:{p:Forecast;origin:'FROZEN'|'LIVE'}){
  return <article className="space-y-3 rounded-2xl border border-[#313131] bg-[#181818] p-4">
    <div className="flex justify-between gap-3 text-[10px] uppercase tracking-wider text-gray-400">
      <span>{LEAGUES[p.league].name}</span><span>{p.date} · kickoff unverified</span>
    </div>
+   <div className="flex items-center justify-start"><span className={`rounded-md px-2 py-1 text-[10px] font-bold ${origin==='FROZEN'?'bg-[#79FF48]/10 text-[#79FF48]':'bg-[#30414b] text-gray-200'}`}>{origin==='FROZEN'?'SAVED PREGAME MODEL':'LIVE RESEARCH MODEL'}</span></div>
    <div className="flex justify-between gap-3 text-sm font-bold">
      <span>{p.home}</span><span className="shrink-0 text-gray-500">vs</span><span className="text-right">{p.away}</span>
    </div>
@@ -61,101 +63,115 @@ function MatchCard({p}:{p:Forecast}){
  </article>;
 }
 export default function SoccerTodayScreen(){
- const [doc,setDoc]=useState<Doc|null>(null),[error,setError]=useState<string|null>(null);
+ const [doc,setDoc]=useState<Doc|null>(null);
+ const [liveError,setLiveError]=useState<string|null>(null);
  const [forward,setForward]=useState<Forward|null>(null);
- const [loading,setLoading]=useState(false),[league,setLeague]=useState<League|'ALL'>('ALL');
+ const [loading,setLoading]=useState(false);
+ const [league,setLeague]=useState<League|'ALL'>('ALL');
  async function refresh(){
-   setLoading(true);setError(null);
+   setLoading(true);setLiveError(null);
+   const scorecardTask=(async()=>{
+     try{
+       const r=await fetch('/api/soccer-forward-scorecard',{cache:'no-store'});
+       if(!r.ok)throw Error('scorecard API unavailable');
+       const d=await r.json() as Forward;
+       if(d.schema!=='soccer-forward-scorecard-v1'||
+          !Number.isInteger(d.originallyFrozen)||d.graded>d.originallyFrozen||
+          d.gradedTeamScores!==2*d.graded)
+         throw Error('invalid scorecard contract');
+       setForward(d);
+     }catch{setForward(null);}
+   })();
    try{
      const r=await fetch('/api/soccer-research',{cache:'no-store'});
-     if(!r.ok)throw Error('Soccer research source unavailable (HTTP '+r.status+')');
-     const d:unknown=await r.json();
-     if(!valid(d))throw Error('Unverified soccer research contract');
-     setDoc(d);
-     try{
-       const status=await fetch('/api/soccer-forward-scorecard',{cache:'no-store'});
-       if(!status.ok)throw Error('Forward journal not deployed');
-       const next=await status.json() as Forward;
-       if(next.schema!=='soccer-forward-scorecard-v1'||
-          next.graded>next.originallyFrozen||next.gradedTeamScores!==2*next.graded)
-          throw Error('Forward journal integrity');
-       setForward(next);
-     }catch{setForward(null);}
-   }catch(e){setError(e instanceof Error?e.message:'Soccer research unavailable');}
-   finally{setLoading(false);}
+     if(!r.ok)throw Error('Live soccer feed returned HTTP '+r.status);
+     const data:unknown=await r.json();
+     if(!valid(data))throw Error('Live soccer feed failed data validation');
+     setDoc(data);setLiveError(null);
+   }catch(e){
+     setLiveError(e instanceof Error?e.message:'Live source is unreachable');
+   }finally{setLoading(false);}
+   void scorecardTask;
  }
  useEffect(()=>{void refresh();},[]);
- const games=(doc?.forecasts??[]).filter(g=>league==='ALL'||g.league===league);
+ // Bundled immutable GitHub first-seen originals: works even if the API is
+ // unavailable, unavailable on static AI Studio, or an upstream request times out.
+ const saved=frozenSoccerBoard(new Date().toISOString());
+ type Card={forecast:Forecast;origin:'FROZEN'|'LIVE'};
+ const key=(f:Forecast)=>[f.league,f.season,f.date,f.home,f.away].join('|');
+ const all=new Map<string,Card>();
+ for(const item of saved)all.set(key(item.forecast),{forecast:item.forecast,origin:'FROZEN'});
+ const today=new Date().toISOString().slice(0,10);
+ for(const f of doc?.forecasts??[]){
+   if(f.date>=today&&!all.has(key(f)))
+     all.set(key(f),{forecast:f,origin:'LIVE'});
+ }
+ const games=[...all.values()].filter(x=>league==='ALL'||x.forecast.league===league)
+   .sort((a,b)=>a.forecast.date.localeCompare(b.forecast.date)||
+     a.forecast.league.localeCompare(b.forecast.league)||
+     a.forecast.home.localeCompare(b.forecast.home));
  const audit=doc?.historical_audit;
- return <div className="h-full overflow-y-auto space-y-4 px-4 pb-24 pt-5 text-stone-100">
-   <div className="flex items-start justify-between gap-3">
-     <div><div className="text-[10px] tracking-[.24em] text-[#00df65]">PROP EDGE · NEW ENGINE</div>
-       <h1 className="mt-1 text-2xl font-extrabold">SOCCER V1</h1>
-       <p className="text-xs text-gray-400">Five leagues · 1X2 · match goals</p></div>
-     <button aria-label="Refresh soccer projections" onClick={()=>void refresh()}
-       className="flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-[#333] bg-[#151515]">
-       <RefreshCw size={18} className={loading?'animate-spin':''}/>
+ return <div id="soccer-projections-screen" className="h-full space-y-4 overflow-y-auto px-4 pb-24 pt-4 text-stone-100">
+   <header className="flex items-center justify-between gap-3">
+     <div className="min-w-0"><div className="text-[10px] font-bold uppercase tracking-[.17em] text-[#79FF48]">SOCCER · MODEL PROJECTIONS</div>
+       <h1 className="mt-1 text-[23px] font-black tracking-tight">Upcoming matches</h1>
+       <p className="mt-1 text-xs text-gray-400">Model's real goal forecasts · 5 major leagues</p></div>
+     <button type="button" aria-label="Refresh soccer projections" onClick={()=>void refresh()}
+       className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-[#1b2427] text-[#79FF48]">
+       <RefreshCw size={19} className={loading?'animate-spin':''}/>
      </button>
+   </header>
+   <div className="rounded-2xl border border-[#79FF48]/25 bg-[#102017] p-4">
+     <div className="flex items-end justify-between gap-3">
+       <div><p className="text-xs font-bold text-gray-300">Available match forecasts</p>
+         <p className="mt-1 text-[32px] font-black leading-none tabular-nums text-[#79FF48]">{games.length}</p></div>
+       <div className="text-right"><p className="text-xs text-gray-300">Saved pregame</p>
+         <p className="mt-1 text-lg font-black tabular-nums">{games.filter(g=>g.origin==='FROZEN').length}</p></div>
+     </div>
+     <p className="mt-3 text-[11px] leading-relaxed text-gray-400">Projected home and away goals are the model's original numbers. No sportsbook target, artificial pick or postgame recreation.</p>
    </div>
-   <div className="flex items-start gap-2 rounded-xl border border-amber-500/30 bg-[#201d0e] p-3 text-[11px] text-amber-100">
-     <AlertTriangle size={16} className="mt-0.5 shrink-0"/>
-     <span>Research only. Not a betting card: no verified odds or player props. The historical comparison is reconstructed, not a first-seen pregame wagering backtest.</span>
+   {liveError&&<div role="status" className="rounded-xl border border-amber-400/20 bg-[#292315] p-3 text-[11px] text-amber-100">
+     Live soccer refresh unavailable ({liveError}). {saved.length?'Showing saved original pregame forecasts instead.':'No saved upcoming forecasts available.'}
+   </div>}
+   <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="group" aria-label="Select soccer league">
+     {(['ALL',...leagues] as (League|'ALL')[]).map(l=>
+       <button type="button" key={l} onClick={()=>setLeague(l)} aria-pressed={league===l}
+         className={'min-h-10 shrink-0 rounded-full border px-4 text-[12px] font-semibold '+(league===l?'border-[#79FF48] bg-[#79FF48] text-[#122018]':'border-white/10 bg-[#1d2629] text-gray-200')}>
+         {l==='ALL'?'All leagues':LEAGUES[l].name}
+       </button>)}
    </div>
-   {error&&<div role="alert" className="rounded-xl border border-red-600 p-3 text-sm text-red-300">{error}</div>}
-   {doc&&<>
-     <div className="grid grid-cols-3 gap-2">
-       <div className="rounded-xl bg-[#181818] p-3 text-center">
-         <div className="text-xl font-bold">{doc.forecast_count}</div><div className="text-[10px] text-gray-400">Fixture forecasts</div></div>
-       <div className="rounded-xl bg-[#181818] p-3 text-center">
-         <div className="text-xl font-bold">{audit?.overall.n}</div><div className="text-[10px] text-gray-400">Walk-forward games</div></div>
-       <div className="rounded-xl bg-[#181818] p-3 text-center">
-         <div className="text-xl font-bold">{audit?.overall.brier?.toFixed(3)??'–'}</div>
-         <div className="text-[10px] text-gray-400">3-way Brier</div></div>
+   <section aria-label="Soccer numerical match forecasts" className="space-y-3" data-testid="soccer-forecast-board">
+     <div className="flex items-center justify-between"><h2 className="font-black">Goal projections</h2>
+       <span className="text-[11px] text-gray-400">{games.length} matches</span></div>
+     {games.map(({forecast,origin})=><MatchCard key={key(forecast)} p={forecast} origin={origin}/>)}
+     {games.length===0&&<div className="rounded-2xl border border-white/10 bg-[#182024] p-4 text-sm text-gray-300">
+       {loading?'Loading additional source-confirmed games…':
+        'No verified upcoming match forecasts for this league and date range. The system will not invent them.'}
+     </div>}
+   </section>
+   <section data-testid="soccer-player-forecast-status" className="rounded-2xl border border-amber-400/20 bg-[#211d15] p-4">
+     <h2 className="text-[14px] font-black text-white">Player shots &amp; shots on target</h2>
+     <p className="mt-2 text-[12px] leading-relaxed text-gray-300">
+       The new player-minutes, shots and shots-on-target model is built, but its authorized player-stat provider is not yet verified on this frontend.
+       Real player forecasts cannot appear until that source and player identities are connected. No fabricated projections.
+     </p>
+     <span className="mt-2 inline-block text-[10px] font-bold text-amber-200">RESEARCH ONLY · NOT OFFICIAL PICKS</span>
+   </section>
+   <section data-testid="soccer-forward-scorecard" className="rounded-2xl border border-white/10 bg-[#182024] p-4">
+     <h2 className="text-sm font-black">Real pregame grading</h2>
+     {forward?<div className="mt-3 space-y-2 text-[12px] text-gray-300">
+       <p>{forward.originallyFrozen} frozen · {forward.graded} graded · {forward.ungraded} awaiting final results</p>
+       {forward.graded>0?<p>Actual goal MAE: {forward.modelGoalMAE?.toFixed(3)} · Within 1 goal: {forward.withinOneGoalRate==null?'–':pct(forward.withinOneGoalRate)} · Baseline MAE: {forward.baselineGoalMAE?.toFixed(3)}</p>
+        :<p className="text-amber-200">No verified finals graded yet. Accuracy is not established.</p>}
+     </div>:<p className="mt-2 text-xs text-gray-400">Forward scorecard API unavailable. Original forecast cards above are archived independently.</p>}
+   </section>
+   {audit&&<details className="rounded-2xl border border-white/10 bg-[#151b1e] p-4">
+     <summary className="cursor-pointer text-sm font-bold">Historical model research (not live performance)</summary>
+     <div data-testid="soccer-projection-accuracy" className="mt-3 space-y-2 text-xs text-gray-300">
+       <p>{audit.overall.n} retrospectively reconstructed matches. Goal MAE: {audit.overall.goalProjections?.meanAbsoluteError?.toFixed(3)??'–'}, baseline {audit.overall.goalProjections?.baselineMeanAbsoluteError?.toFixed(3)??'–'}.</p>
+       <p>Within 1 goal: {audit.overall.goalProjections?.withinOneActualGoalRate==null?'–':pct(audit.overall.goalProjections.withinOneActualGoalRate)}. Brier: {audit.overall.brier?.toFixed(3)??'–'} vs baseline {audit.overall.baselineBrier?.toFixed(3)??'–'}.</p>
+       <p className="text-amber-200">Backtest, not certified betting results.</p>
      </div>
-     <div className="space-y-1 rounded-xl border border-[#303030] bg-[#151515] p-3 text-xs text-gray-400">
-       <div className="font-semibold text-white">Backtest versus league baseline</div>
-       <div>Model Brier: {audit?.overall.brier?.toFixed(4)??'–'} · Baseline: {audit?.overall.baselineBrier?.toFixed(4)??'–'}</div>
-       <div>Improvement: {audit?.overall.brierAdvantage?.toFixed(4)??'–'} · Promotion threshold: {audit?.promotionGate.passed?'research threshold met; not live-proven':'not met'}</div>
-     </div>
-     <div data-testid="soccer-forward-scorecard" className="space-y-2 rounded-2xl border border-[#79FF48]/20 bg-[#142019] p-4">
-       <div className="flex items-start justify-between gap-3">
-         <div><h2 className="text-sm font-black text-white">Real pregame tracking</h2>
-           <p className="mt-1 text-[11px] text-gray-400">Original forecasts saved before the match day · No hindsight</p></div>
-         <span className="rounded-lg bg-[#79FF48]/10 px-2 py-1 text-[10px] font-bold text-[#79FF48]">FORWARD</span>
-       </div>
-       {forward?<><div className="grid grid-cols-3 gap-2 text-center">
-         <div className="rounded-xl bg-black/20 p-3"><strong className="text-lg">{forward.originallyFrozen}</strong><p className="text-[10px] text-gray-400">Frozen</p></div>
-         <div className="rounded-xl bg-black/20 p-3"><strong className="text-lg">{forward.graded}</strong><p className="text-[10px] text-gray-400">Graded</p></div>
-         <div className="rounded-xl bg-black/20 p-3"><strong className="text-lg">{forward.ungraded}</strong><p className="text-[10px] text-gray-400">Pending</p></div>
-       </div>
-       {forward.graded>0?<p className="text-[12px] text-gray-200">Model goal MAE: <strong>{forward.modelGoalMAE?.toFixed(3)}</strong> ·
-         Within ±1 goal: <strong>{forward.withinOneGoalRate==null?'–':pct(forward.withinOneGoalRate)}</strong> ·
-         Baseline MAE: {forward.baselineGoalMAE?.toFixed(3)}</p>
-       :<p className="text-[11px] text-amber-200">Waiting for actual full-time results. No invented accuracy percentage.</p>}</>
-       :<p className="text-[11px] text-amber-200">Forward journal is not available on this deployment. Historical research is shown below.</p>}
-     </div>
-     <div data-testid="soccer-projection-accuracy" className="space-y-2 rounded-2xl border border-[#304d3e] bg-[#13251d] p-4">
-       <h2 className="text-sm font-black">Actual goal projection accuracy</h2>
-       <p className="text-[11px] text-gray-400">Original numerical model forecasts versus final team goals — not automatic targets.</p>
-       <div className="grid grid-cols-2 gap-2">
-         <div className="rounded-xl bg-black/20 p-3"><div className="text-[10px] text-gray-400">Model goal MAE</div>
-           <strong className="text-2xl text-[#79FF48]">{audit?.overall.goalProjections?.meanAbsoluteError?.toFixed(3)??'–'}</strong></div>
-         <div className="rounded-xl bg-black/20 p-3"><div className="text-[10px] text-gray-400">League baseline MAE</div>
-           <strong className="text-2xl text-white">{audit?.overall.goalProjections?.baselineMeanAbsoluteError?.toFixed(3)??'–'}</strong></div>
-       </div>
-       <p className="text-[11px] text-gray-300">{audit?.overall.goalProjections?.teamScores??0} graded team outcomes · Within ±1 goal: {audit?.overall.goalProjections?.withinOneActualGoalRate==null?'–':pct(audit.overall.goalProjections.withinOneActualGoalRate)} · Exact rounded goals: {audit?.overall.goalProjections?.exactRoundedCountRate==null?'–':pct(audit.overall.goalProjections.exactRoundedCountRate)}</p>
-       <p className="text-[10px] text-amber-200">Retrospective walk-forward reconstruction, not yet an immutable first-seen live record.</p>
-     </div>
-     <div className="flex gap-2 overflow-x-auto pb-2">
-       {(['ALL',...leagues] as (League|'ALL')[]).map(l=>
-         <button key={l} onClick={()=>setLeague(l)}
-           className={'min-h-10 shrink-0 rounded-full border px-3 text-xs '+(league===l?'border-[#00d45a] bg-[#153723]':'border-[#343434] bg-[#191919]')}>
-           {l==='ALL'?'All leagues':LEAGUES[l].name}</button>)}
-     </div>
-     <p className="text-xs text-gray-400">{games.length} upcoming matches · source date {doc.asof_calendar_day_utc} UTC</p>
-     {games.map(p=><MatchCard key={[p.league,p.season,p.date,p.home,p.away].join('|')} p={p}/>)}
-     {!games.length&&<p className="rounded-xl border border-[#333] p-4 text-sm text-gray-400">No source-confirmed unplayed fixtures in this window. No predictions were fabricated.</p>}
-   </>}
-   {!doc&&!error&&<p className="text-sm text-gray-400">{loading?'Loading source match results and running historical checks…':'No verified soccer data yet.'}</p>}
+   </details>}
  </div>;
 }
