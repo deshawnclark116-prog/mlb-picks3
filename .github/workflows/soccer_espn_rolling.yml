@@ -6,6 +6,9 @@ on:
     paths:
       - .github/workflows/soccer_espn_rolling.yml
       - scripts/soccerEspnRolling.ts
+      - src/soccer/espnAutofeed.ts
+      - src/soccer/playerChallenger.ts
+      - tests/soccerEspnAutofeed.test.ts
   schedule:
     - cron: '29 11,19 * * *'
 permissions:
