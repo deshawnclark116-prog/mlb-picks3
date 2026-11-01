@@ -10,7 +10,33 @@ type Doc={schema:string;status:string;asof_calendar_day_utc:string;
  forecast_count:number;forecasts:Forecast[];
  guardrails:{official_bets:number;calibrated:boolean;verified_live_book_lines:number;player_prop_predictions:number}};
 type Card={id:string;forecast:Forecast;origin:'FROZEN'|'LIVE'};
-type Section='TOP'|'MATCHES';
+type Section='TOP'|'MATCHES'|'PLAYERS';
+type PlayerCard={
+ id:string;playerId:string;playerName:string;teamName:string;opponent:string;
+ fixtureDate:string;source:'AUTHORIZED_PLAYER_MATCH_LOG';
+ forecast:{
+  predictedShots:number;predictedShotsOnTarget:number;predictedMinutes:number;
+  shotsReachCount:number;sotReachCount:number;
+  pReachProjectedShots:number;pReachProjectedSot:number;
+  lineupState:'CONFIRMED_STARTER'|'CONFIRMED_BENCH'|'UNKNOWN';
+  status:'RESEARCH_ONLY_NO_CALIBRATED_PROBABILITIES_NO_OFFICIAL_PICKS';
+ };
+};
+type PlayerBoard={schema:'soccer-player-board-v1';status:string;
+ items:PlayerCard[];officialPicks:0;calibrated:false};
+function validPlayerBoard(x:unknown):x is PlayerBoard {
+ const d=x as PlayerBoard;
+ return !!d&&d.schema==='soccer-player-board-v1'&&Array.isArray(d.items)&&
+   d.officialPicks===0&&d.calibrated===false&&d.items.length<=1&&
+   d.items.every(p=>p.source==='AUTHORIZED_PLAYER_MATCH_LOG'&&
+     p.forecast?.status==='RESEARCH_ONLY_NO_CALIBRATED_PROBABILITIES_NO_OFFICIAL_PICKS'&&
+     [p.forecast.predictedMinutes,p.forecast.predictedShots,p.forecast.predictedShotsOnTarget,
+       p.forecast.pReachProjectedShots,p.forecast.pReachProjectedSot].every(n=>
+         typeof n==='number'&&Number.isFinite(n)&&n>=0)&&
+     p.forecast.pReachProjectedShots<=1&&p.forecast.pReachProjectedSot<=1&&
+     p.forecast.shotsReachCount===Math.max(1,Math.ceil(p.forecast.predictedShots))&&
+     p.forecast.sotReachCount===Math.max(1,Math.ceil(p.forecast.predictedShotsOnTarget)));
+}
 type Range='7'|'14'|'ALL';
 const leagues:League[]=['EPL','LaLiga','SerieA','Bundesliga','Ligue1'];
 const leagueNames:Record<League,string>={EPL:'Premier League',LaLiga:'La Liga',
@@ -86,6 +112,8 @@ export default function SoccerTodayScreen(){
  const [doc,setDoc]=useState<Doc|null>(null);
  const [liveError,setLiveError]=useState(false);
  const [loading,setLoading]=useState(false);
+ const [players,setPlayers]=useState<PlayerCard[]>([]);
+ const [playerFeedReady,setPlayerFeedReady]=useState(false);
  const [section,setSection]=useState<Section>('TOP');
  const [showFilters,setShowFilters]=useState(false);
  const [league,setLeague]=useState<League|'ALL'>('ALL');
@@ -98,6 +126,16 @@ export default function SoccerTodayScreen(){
  const today=asof.slice(0,10);
  async function refresh(){
   setLoading(true);setLiveError(false);
+  const playerLoad=(async()=>{
+    try{
+      const r=await fetch('/api/soccer-player-board',{cache:'no-store'});
+      if(!r.ok)throw Error('Player board offline');
+      const body:unknown=await r.json();
+      if(!validPlayerBoard(body))throw Error('Unverified player board');
+      setPlayerFeedReady(body.status==='RESEARCH_PLAYER_FORECASTS');
+      setPlayers(body.items);
+    }catch{setPlayers([]);setPlayerFeedReady(false);}
+  })();
   try{
    const r=await fetch('/api/soccer-research',{cache:'no-store'});
    if(!r.ok)throw Error('Live source unavailable');
@@ -106,6 +144,7 @@ export default function SoccerTodayScreen(){
    setDoc(data);
   }catch{setLiveError(true);}
   finally{setLoading(false);setAsof(new Date().toISOString());}
+  await playerLoad;
  }
  useEffect(()=>{void refresh();},[]);
  const saved=frozenSoccerBoard(asof);
@@ -138,26 +177,31 @@ export default function SoccerTodayScreen(){
       <RefreshCw size={19} className={loading?'animate-spin':''}/>
     </button>
   </div>
-  <div role="tablist" aria-label="Soccer views" className="mb-3 grid grid-cols-2 gap-1 rounded-[14px] bg-[#1a2528] p-1">
+  <div role="tablist" aria-label="Soccer views" className="mb-3 grid grid-cols-3 gap-1 rounded-[14px] bg-[#1a2528] p-1">
     <button type="button" role="tab" aria-selected={section==='TOP'} onClick={()=>{setSection('TOP');setExpanded(null);}}
       className={'min-h-11 rounded-[11px] text-[13px] font-bold '+(section==='TOP'?'bg-[#79FF48] text-[#142014]':'text-slate-300')}>
       Top projections
     </button>
+    <button type="button" role="tab" aria-selected={section==='PLAYERS'} onClick={()=>{setSection('PLAYERS');setExpanded(null);}}
+      className={'min-h-11 rounded-[11px] px-1 text-[12px] font-bold '+(section==='PLAYERS'?'bg-[#79FF48] text-[#142014]':'text-slate-300')}>
+      Player props
+    </button>
     <button type="button" role="tab" aria-selected={section==='MATCHES'} onClick={()=>{setSection('MATCHES');setExpanded(null);}}
-      className={'min-h-11 rounded-[11px] text-[13px] font-bold '+(section==='MATCHES'?'bg-[#79FF48] text-[#142014]':'text-slate-300')}>
+      className={'min-h-11 rounded-[11px] px-1 text-[12px] font-bold '+(section==='MATCHES'?'bg-[#79FF48] text-[#142014]':'text-slate-300')}>
       All matches
     </button>
   </div>
   <div className="mb-3 flex items-center justify-between gap-3">
    <p className="min-w-0 text-[11px] leading-relaxed text-slate-400">
-     {section==='TOP'?'Highest model-estimated chance for each match':'Browse every upcoming match'}
+     {section==='TOP'?'Highest model-estimated chance for each match':
+       section==='PLAYERS'?'Actual player forecasts, when verified data is connected':'Browse every upcoming match'}
    </p>
-   <button type="button" aria-expanded={showFilters} onClick={()=>setShowFilters(x=>!x)}
+   {section!=='PLAYERS'&&<button type="button" aria-expanded={showFilters} onClick={()=>setShowFilters(x=>!x)}
      className="flex min-h-10 shrink-0 items-center gap-1.5 rounded-xl border border-white/10 bg-[#1b2529] px-3 text-[11px] font-semibold text-white">
      <SlidersHorizontal size={14}/> Filters {showFilters?<ChevronUp size={14}/>:<ChevronDown size={14}/>}
-   </button>
+   </button>}
   </div>
-  {showFilters&&<div className="mb-4 space-y-3 rounded-[16px] border border-white/10 bg-[#172125] p-3">
+  {showFilters&&section!=='PLAYERS'&&<div className="mb-4 space-y-3 rounded-[16px] border border-white/10 bg-[#172125] p-3">
     <label className="block text-[11px] font-semibold text-slate-300">Find a team or league
       <div className="mt-2 flex items-center gap-2 rounded-lg bg-black/20 px-3">
         <Search size={16} className="text-slate-400"/>
@@ -203,23 +247,63 @@ export default function SoccerTodayScreen(){
     {top.length>topLimit&&<button type="button" onClick={()=>setTopLimit(n=>n+8)}
       className="min-h-11 w-full rounded-xl bg-[#23362c] text-[12px] font-bold text-[#79FF48]">Show more top projections ({top.length-topLimit} remaining)</button>}
   </section>}
+  {section==='PLAYERS'&&<section data-testid="soccer-player-props-board" className="space-y-2.5">
+    {players.filter(p=>p.fixtureDate>=today).sort((a,b)=>
+      Math.max(b.forecast.pReachProjectedShots,b.forecast.pReachProjectedSot)-
+      Math.max(a.forecast.pReachProjectedShots,a.forecast.pReachProjectedSot)).map(p=>
+      <article data-testid="soccer-player-prop-card" key={p.id}
+        className="rounded-[16px] border border-white/10 bg-[#192326] p-4">
+        <p className="text-[11px] text-slate-400">{p.teamName} vs {p.opponent} · {dateLabel(p.fixtureDate)}</p>
+        <h2 className="mt-2 text-[17px] font-black text-white">{p.playerName}</h2>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <div className="rounded-xl bg-[#112018] p-3">
+            <p className="text-[11px] text-slate-300">Projected shots</p>
+            <strong className="mt-1 block text-[24px] font-black tabular-nums text-[#79FF48]">{p.forecast.predictedShots.toFixed(1)}</strong>
+            <p className="mt-2 text-[11px] leading-relaxed text-slate-300">
+              {pct(p.forecast.pReachProjectedShots)} chance of {p.forecast.shotsReachCount}+ shots
+            </p>
+          </div>
+          <div className="rounded-xl bg-[#112018] p-3">
+            <p className="text-[11px] text-slate-300">Shots on target</p>
+            <strong className="mt-1 block text-[24px] font-black tabular-nums text-[#79FF48]">{p.forecast.predictedShotsOnTarget.toFixed(1)}</strong>
+            <p className="mt-2 text-[11px] leading-relaxed text-slate-300">
+              {pct(p.forecast.pReachProjectedSot)} chance of {p.forecast.sotReachCount}+ on target
+            </p>
+          </div>
+        </div>
+        <p className="mt-3 text-[11px] text-slate-400">
+          Projected playing time: {p.forecast.predictedMinutes.toFixed(0)} minutes ·
+          Starting lineup: {p.forecast.lineupState==='CONFIRMED_STARTER'?'confirmed starter':
+            p.forecast.lineupState==='CONFIRMED_BENCH'?'confirmed bench':'not confirmed'}
+        </p>
+        <p className="mt-2 text-[10px] text-amber-200">Uncalibrated research probability · Not a verified betting pick</p>
+      </article>)}
+    {(!playerFeedReady||players.filter(p=>p.fixtureDate>=today).length===0)&&
+      <div className="rounded-[16px] border border-white/10 bg-[#192326] px-4 py-6">
+        <p className="text-[16px] font-bold text-white">Player forecasts aren't connected yet</p>
+        <p className="mt-2 text-[12px] leading-relaxed text-slate-300">
+          Shots, shots on target, and minutes are supported by our model, but this app
+          does not have a verified player-stat feed and pregame player list available.
+          No player picks are being invented.
+        </p>
+      </div>}
+   </section>}
   {section==='MATCHES'&&<section data-testid="soccer-forecast-board" className="space-y-2.5">
     {orderedGames.slice(0,matchLimit).map(card=><GameCard key={card.id} card={card}
       expanded={expanded===card.id} onToggle={()=>setExpanded(x=>x===card.id?null:card.id)}/>)}
     {orderedGames.length>matchLimit&&<button type="button" onClick={()=>setMatchLimit(n=>n+12)}
       className="min-h-11 w-full rounded-xl bg-[#23362c] text-[12px] font-bold text-[#79FF48]">Show 12 more matches ({orderedGames.length-matchLimit} remaining)</button>}
   </section>}
-  {empty&&<div className="mt-3 rounded-xl border border-white/10 bg-[#1a2428] p-5">
+  {empty&&section!=='PLAYERS'&&<div className="mt-3 rounded-xl border border-white/10 bg-[#1a2428] p-5">
     <p className="text-[13px] font-semibold">{loading?'Loading matches…':'No available projections for these filters'}</p>
     <p className="mt-1 text-[12px] text-slate-400">Choose a longer date range or another league. The model will not invent missing forecasts.</p>
     <button type="button" onClick={()=>{setRange('ALL');setLeague('ALL');setSearch('');resetLimits();}}
       className="mt-3 min-h-10 rounded-lg bg-[#79FF48] px-4 text-xs font-bold text-[#0c1911]">Reset filters</button>
   </div>}
   {liveError&&saved.length===0&&<p role="status" className="mt-3 text-[11px] text-amber-200">Live data isn't available. No upcoming saved forecasts were found.</p>}
-  <p className="mt-4 text-[10px] leading-relaxed text-slate-500">
-    Ranked within five fixed events: either team to win, draw, both teams to score, or 3+ total goals.
-    These are uncalibrated model estimates—not proven hit rates, official picks, or evidence of betting value.
-    Kickoff times are not verified.
-  </p>
+  {section!=='PLAYERS'&&<p className="mt-4 text-[10px] leading-relaxed text-slate-500">
+    Ranked within five fixed match events. These are uncalibrated model estimates,
+    not proven hit rates, official picks, or evidence of betting value.
+  </p>}
  </div>;
 }
