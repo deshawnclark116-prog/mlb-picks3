@@ -7,7 +7,7 @@ const obj=(x:unknown):Dict|null=>x!==null&&typeof x==='object'&&!Array.isArray(x
 const arr=(x:unknown):unknown[]=>Array.isArray(x)?x:[];
 const playerId=(x:unknown):string|null=>{
  const s=typeof x==='number'?String(x):typeof x==='string'?x:'';
- return /^\\d{1,15}$/.test(s)?s:null;
+ return /^\d{1,15}$/.test(s)?s:null;
 };
 const text=(x:unknown):string=>typeof x==='string'?x:'';
 function rowAthletes(raw:unknown):Set<string>{
@@ -38,7 +38,7 @@ export function currentSoccerRoster(raw:unknown,expectedTeamId:string):Set<strin
  const ids=rowAthletes(doc.athletes);
  return ids.size>=14&&ids.size<=70?ids:null;
 }
-const unavailable=/\\b(out|ruled out|suspended|suspension|inactive|not available|will not play|doubtful)\\b/i;
+const unavailable=/\b(out|ruled out|suspended|suspension|inactive|not available|will not play|doubtful)\b/i;
 /** Returns null for missing or malformed injury coverage, not an empty report. */
 export function currentSoccerUnavailable(raw:unknown):Set<string>|null{
  const doc=obj(raw);if(!doc||!Array.isArray(doc.injuries))return null;
