@@ -13,9 +13,9 @@ test('a 3.5 total-base point estimate is 3, never P(OVER 1.5) 74%',()=>{
  const d=mlbModelDisplay(sample());assert.equal(d.headline,'3');
  assert.equal(d.probability,null);
  const html=renderToStaticMarkup(React.createElement(MlbModelPrediction,{pred:sample()}));
- assert.match(html,/3<\\/strong>/);
- assert.match(html,/P\\(exactly 3\\) unavailable/);
- assert.match(html,/P\\(published pick\\): 74.0%/);
+ assert.match(html,/3<\/strong>/);
+ assert.match(html,/P\(exactly 3\) unavailable/);
+ assert.match(html,/P\(published pick\): 74.0%/);
 });
 test('numeric 3.6 rounds up, while actual moneyline event preserves P(event)',()=>{
  assert.equal(mlbModelDisplay(sample({projected:3.6})).headline,'4');
