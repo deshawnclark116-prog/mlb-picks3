@@ -278,12 +278,12 @@ async function startServer() {
   app.get("/api/soccer-forward-scorecard", soccerForwardStatusHandler());
   const soccerResearchAllowlist=(process.env.SOCCER_RESEARCH_PLAYER_IDS||'')
     .split(',').map(s=>s.trim()).filter(Boolean);
-  const soccerResearchHandler=soccerPlayerResearchHandler({
+  const playerResearchForSoccer=soccerPlayerResearchHandler({
     key:process.env.STRIKERAPI_API_KEY,
     allowlist:soccerResearchAllowlist,
     maxProviderCallsPerDay:2
   });
-  app.get("/api/soccer-player-research",soccerResearchHandler);
+  app.get("/api/soccer-player-research",playerResearchForSoccer);
   let soccerPilotFixtures:ReturnType<typeof parseSoccerPlayerCohort>=[];
   try{
     soccerPilotFixtures=parseSoccerPlayerCohort(process.env.SOCCER_PLAYER_RESEARCH_COHORT);
@@ -292,7 +292,7 @@ async function startServer() {
     cohort:soccerPilotFixtures,
     providerConfigured:!!process.env.STRIKERAPI_API_KEY,
     allowlist:soccerResearchAllowlist,
-    researchHandler:soccerResearchHandler
+    researchHandler:playerResearchForSoccer
   }));
 
   // Read-only, independently verified upcoming fixtures for EVERY sport.
