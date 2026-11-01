@@ -5,6 +5,11 @@ on:
     paths:
       - src/soccer/**
       - server/soccerResearch.ts
+      - server/soccerForwardStatus.ts
+      - src/soccer/forwardLedger.ts
+      - scripts/soccerForwardLedger.ts
+      - tests/soccerForwardLedger.test.ts
+      - tests/soccerForwardStatus.test.ts
       - src/components/SoccerTodayScreen.tsx
       - src/App.tsx
       - server.ts
@@ -15,6 +20,11 @@ on:
     paths:
       - src/soccer/**
       - server/soccerResearch.ts
+      - server/soccerForwardStatus.ts
+      - src/soccer/forwardLedger.ts
+      - scripts/soccerForwardLedger.ts
+      - tests/soccerForwardLedger.test.ts
+      - tests/soccerForwardStatus.test.ts
       - src/components/SoccerTodayScreen.tsx
       - src/App.tsx
       - server.ts
@@ -43,7 +53,7 @@ jobs:
           npm run build
       - name: Guard leakage, separate research from betting, and preserve existing NFL logic
         run: |
-          node --import tsx --test tests/soccerModel.test.ts tests/soccerResearch.test.ts
+          node --import tsx --test tests/soccerModel.test.ts tests/soccerResearch.test.ts tests/soccerForwardLedger.test.ts tests/soccerForwardStatus.test.ts
           npm test
       - name: Real multi-season five-league data source audit and chronological 3-way Brier challenge
         run: |

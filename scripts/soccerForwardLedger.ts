@@ -47,7 +47,7 @@ async function main(){
    if(name!==o.id+'.json')throw Error('SOCCER_FORWARD_FILENAME_INTEGRITY');
    // Existing originals must be proven added in an earlier pregame commit.
    // Files just created on this invocation will be committed by the workflow.
-   if(!existsSync(join(gradesDir,name))&&o.captured_at_utc!==now)
+   if(o.captured_at_utc!==now)
       validateGitCreation(file,o.forecast.date);
    return o;
  });
