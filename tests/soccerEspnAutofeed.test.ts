@@ -45,8 +45,8 @@ test('future original forecast uses only previous completed match inputs, never 
  awayId:'350',away:'Liverpool',completed:false};
  const rows:EspnPlayerRow[]=Array.from({length:8},(_,i)=>({
   playerId:'101',playerName:'Player 101',teamId:'363',teamName:'Chelsea',
-  league:'eng.1',kickoffUtc:'2026-09-'+String(3+i*3).padStart(2,'0')+'T15:00:00.000Z',
-  match:{game_id:'old'+i,game_date:'2026-09-'+String(3+i*3).padStart(2,'0'),
+  league:'eng.1',kickoffUtc:'2026-10-'+String(3+i*3).padStart(2,'0')+'T15:00:00.000Z',
+  match:{game_id:'old'+i,game_date:'2026-10-'+String(3+i*3).padStart(2,'0'),
    team_id:'363',team:'Chelsea',minutes:85,starter:true,shots:3,shots_on_target:1,
    xg:null,position:'Midfielder'}
  }));

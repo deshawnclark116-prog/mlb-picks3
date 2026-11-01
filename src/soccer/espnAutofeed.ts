@@ -31,8 +31,8 @@ const obj=(v:unknown):Record<string,unknown>|null=>
  v!==null&&typeof v==='object'&&!Array.isArray(v)?v as Record<string,unknown>:null;
 const txt=(v:unknown)=>typeof v==='string'?v:'';
 const id=(v:unknown)=>txt(v).match(/^[a-zA-Z0-9_-]{1,50}$/)!==null;
-const date=(v:unknown)=>typeof v==='string'&&Number.isFinite(Date.parse(v))&&
- new Date(v).toISOString()===v;
+const date=(v:unknown)=>typeof v==='string'&&/^20\d\d-\d\d-\d\dT/.test(v)&&
+ /(?:Z|[+-]\d\d:\d\d)$/.test(v)&&Number.isFinite(Date.parse(v));
 const integer=(n:unknown)=>typeof n==='number'&&Number.isInteger(n);
 const key=(x:EspnFixture)=>x.league+':'+x.gameId;
 export function espnSourceSha(raw:string){return createHash('sha256').update(raw).digest('hex');}
@@ -57,7 +57,7 @@ export function parseEspnSoccerScoreboard(league:EspnLeague,raw:unknown):EspnFix
   if(canceled)continue;
   if(seen.has(String(e.id)))throw Error('ESPN_SOCCER_DUPLICATE_EVENT');
   seen.add(String(e.id));
-  games.push({league,gameId:String(e.id),kickoffUtc:String(e.date),
+  games.push({league,gameId:String(e.id),kickoffUtc:new Date(String(e.date)).toISOString(),
    homeId:String(ht.id),home:String(ht.displayName),
    awayId:String(at.id),away:String(at.displayName),
    completed:status?.completed===true});
