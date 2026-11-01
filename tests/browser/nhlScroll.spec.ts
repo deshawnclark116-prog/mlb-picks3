@@ -60,6 +60,8 @@ async function touchSwipe(page:any,scroll:any){
 }
 test('NHL current game projections scroll by real phone swipe through expanded cards',async({page})=>{
  const panel=await setup(page);
+ await expect(panel.getByRole('button',{name:'Best chances'})).toHaveAttribute('aria-pressed','true');
+ await panel.getByRole('button',{name:'All projections'}).click();
  await expect(panel.getByTestId('unified-sport-game').first()).toBeVisible();
  await panel.getByTestId('unified-sport-game').first().locator('button[aria-expanded]').click();
  await expect(panel.getByTestId('unified-sport-projection')).toHaveCount(32);
@@ -86,6 +88,7 @@ test('NHL current game projections scroll by real phone swipe through expanded c
 });
 test('NHL expanded projections can reach last card with keyboard without page scrolling',async({page})=>{
  const panel=await setup(page);
+ await panel.getByRole('button',{name:'All projections'}).click();
  await expect(panel.getByTestId('unified-sport-game').first()).toBeVisible();
  await panel.getByTestId('unified-sport-game').first().locator('button[aria-expanded]').click();
  const scroll=panel.locator('#nhl-predictions-scroll-area');
