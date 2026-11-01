@@ -157,7 +157,15 @@ function MatchCard({game,expanded,onToggle}:{
 }
 export default function SoccerTodayScreen(){
  const [doc,setDoc]=useState<MatchDoc|null>(null);
- const [players,setPlayers]=useState<GamePlayer[]>([]);
+ // Render genuine bundled first-seen player forecasts on the first frame,
+ // rather than flashing match-only cards until an optional API call settles.
+ const [players,setPlayers]=useState<GamePlayer[]>(()=>savedEspnPlayerBoard(
+  new Date().toISOString()).map(x=>({
+   id:x.id,gameId:x.gameId,league:x.league,playerId:x.playerId,
+   playerName:x.playerName,teamName:x.teamName,opponent:x.opponent,
+   fixtureDate:x.fixtureDate,kickoffUtc:x.kickoffUtc,
+   source:'ESPN_COMPLETED_MATCH_ROSTERS',forecast:x.forecast
+  })));
  const [loading,setLoading]=useState(false);
  const [range,setRange]=useState<Range>('48H');
  const [league,setLeague]=useState<League|'ALL'>('ALL');
