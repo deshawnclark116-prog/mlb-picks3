@@ -12,6 +12,7 @@ import { nbaSystemPicksHandler } from "./server/nbaSystemPicks.ts";
 import { soccerResearchHandler } from "./server/soccerResearch.ts";
 import {soccerForwardStatusHandler} from "./server/soccerForwardStatus.ts";
 import {soccerPlayerResearchHandler} from "./server/soccerPlayerResearch.ts";
+import {soccerPlayerBoardHandler,parseSoccerPlayerCohort} from "./server/soccerPlayerBoard.ts";
 import { upcomingFixturesHandler } from "./server/upcomingFixtures.ts";
 import path from "path";
 import { createServer as createViteServer } from "vite";
@@ -275,10 +276,23 @@ async function startServer() {
   // Existing PR #30 five-league source-first research only; no bookmaker or player prop claims.
   app.get("/api/soccer-research", soccerResearchHandler());
   app.get("/api/soccer-forward-scorecard", soccerForwardStatusHandler());
-  app.get("/api/soccer-player-research", soccerPlayerResearchHandler({
+  const soccerResearchAllowlist=(process.env.SOCCER_RESEARCH_PLAYER_IDS||'')
+    .split(',').map(s=>s.trim()).filter(Boolean);
+  const soccerResearchHandler=soccerPlayerResearchHandler({
     key:process.env.STRIKERAPI_API_KEY,
-    allowlist:(process.env.SOCCER_RESEARCH_PLAYER_IDS||'').split(',').map(s=>s.trim()).filter(Boolean),
+    allowlist:soccerResearchAllowlist,
     maxProviderCallsPerDay:2
+  });
+  app.get("/api/soccer-player-research",soccerResearchHandler);
+  let soccerPilotFixtures:ReturnType<typeof parseSoccerPlayerCohort>=[];
+  try{
+    soccerPilotFixtures=parseSoccerPlayerCohort(process.env.SOCCER_PLAYER_RESEARCH_COHORT);
+  }catch(err){console.error('Soccer player research cohort invalid; player board disabled',err);}
+  app.get("/api/soccer-player-board",soccerPlayerBoardHandler({
+    cohort:soccerPilotFixtures,
+    providerConfigured:!!process.env.STRIKERAPI_API_KEY,
+    allowlist:soccerResearchAllowlist,
+    researchHandler:soccerResearchHandler
   }));
 
   // Read-only, independently verified upcoming fixtures for EVERY sport.
