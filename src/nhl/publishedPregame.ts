@@ -9,7 +9,7 @@ type Snapshot={schema:'NHL_PUBLISHED_PREMATCH_SNAPSHOT_V1';source:string;
 export type VisibleNhlPublished={
  game_date:string;generated_at_utc:string;source:string;picks:NhlPrediction[];
 };
-const object=(v:unknown):Record<string,unknown>|null=>
+const obj=(v:unknown):Record<string,unknown>|null=>
  v!==null&&typeof v==='object'&&!Array.isArray(v)?v as Record<string,unknown>:null;
 const date=(v:unknown):v is string=>typeof v==='string'&&
  /^20\d\d-\d\d-\d\dT/.test(v)&&Number.isFinite(Date.parse(v))&&
