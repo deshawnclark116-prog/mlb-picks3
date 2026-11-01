@@ -22,11 +22,14 @@ test('compact soccer match center displays genuine originals with live API offli
  await expect(rows.first()).toContainText('Model goals');
  await expect(rows.first()).toContainText('Saved pregame');
  await expect(rows.first().getByText('Match probabilities')).toHaveCount(0);
- await rows.first().getByRole('button',{name:/Details/}).click();
+ await rows.first().getByRole('button',{name:/See chances/}).click();
  await expect(rows.first().getByTestId('soccer-match-details')).toBeVisible();
- await expect(rows.first()).toContainText('Home win');
- await expect(rows.first()).toContainText('Draw');
- await expect(rows.first()).toContainText('Away win');
+ const labels=await rows.first().getByTestId('soccer-named-outcomes').locator('span').allTextContents();
+ expect(labels.filter(x=>x.endsWith(' to win')).length).toBe(2);
+ expect(labels).toContain('Match ends in a draw');
+ await expect(rows.first().getByTestId('soccer-named-outcomes')).not.toContainText('Home win');
+ await expect(rows.first().getByTestId('soccer-named-outcomes')).not.toContainText('Away win');
+ await expect(rows.first().getByTestId('soccer-model-favorite')).toBeVisible();
  await rows.first().getByRole('button',{name:/Less/}).click();
  await expect(rows.first().getByTestId('soccer-match-details')).toHaveCount(0);
  await expect(panel.getByRole('status')).toContainText('Showing saved original pregame forecasts instead.');

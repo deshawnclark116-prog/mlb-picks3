@@ -3,6 +3,7 @@ import {RefreshCw,Search,ChevronDown,ChevronUp,CalendarDays,Activity,Users,Chart
 import type {Forecast,League} from '../soccer/model';
 import {SOCCER_SCHEMA,LEAGUES} from '../soccer/model';
 import {frozenSoccerBoard} from '../soccer/frozenBoardAssets';
+import {namedSoccerOutcomes,preferredSoccerOutcome} from '../soccer/matchLabels';
 
 type GoalAudit={teamScores:number;meanAbsoluteError:number|null;
  baselineMeanAbsoluteError:number|null;signedBias:number|null;
@@ -44,20 +45,23 @@ function valid(d:unknown):d is Doc{
    Number.isFinite(f.expectedAwayGoals)&&
    Math.abs(f.probabilities.home+f.probabilities.draw+f.probabilities.away-1)<.0003);
 }
-function ProbabilityBar({name,value}:{name:string;value:number}){
- return <div className="flex items-center gap-3 py-1">
-  <span className="w-20 shrink-0 text-[12px] text-slate-300">{name}</span>
-  <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-white/10">
-   <div className="h-full rounded-full bg-[#79FF48]" style={{width:(Math.max(0,Math.min(1,value))*100)+'%'}}/>
-  </div>
-  <strong className="w-14 shrink-0 text-right text-[12px] tabular-nums text-white">{pct(value)}</strong>
+function OutcomeBar({name,value,featured}:{name:string;value:number;featured:boolean}){
+ return <div className={'rounded-xl border p-3 '+(featured?'border-[#79FF48]/30 bg-[#1b3025]':'border-white/[.07] bg-white/[.025]')}>
+   <div className="flex min-w-0 items-start justify-between gap-2">
+     <span className={'min-w-0 break-words text-[13px] font-semibold leading-snug '+(featured?'text-white':'text-slate-200')}>{name}</span>
+     <strong className={'shrink-0 text-[16px] font-black tabular-nums '+(featured?'text-[#79FF48]':'text-white')}>{pct(value)}</strong>
+   </div>
+   <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+     <div className={'h-full rounded-full '+(featured?'bg-[#79FF48]':'bg-slate-500')} style={{width:(Math.max(0,Math.min(1,value))*100)+'%'}}/>
+   </div>
  </div>;
 }
 function MatchRow({card,expanded,onToggle}:{card:Card;expanded:boolean;onToggle:()=>void}){
  const p=card.forecast;
  const anchor='soccer-detail-'+card.id.replace(/[^a-zA-Z0-9]/g,'-');
- const best=p.probabilities.home>=p.probabilities.away&&p.probabilities.home>=p.probabilities.draw?'Home':
-  p.probabilities.away>=p.probabilities.home&&p.probabilities.away>=p.probabilities.draw?'Away':'Draw';
+ const outcomes=namedSoccerOutcomes(p);
+ const favorite=preferredSoccerOutcome(p);
+ const lead=outcomes.find(x=>x.key===favorite.kind);
  return <article data-testid="soccer-match-row" className={'overflow-hidden rounded-[20px] border bg-[#171f22] transition-colors '+
    (expanded?'border-[#79FF48]/35 shadow-[0_6px_24px_#0003]':'border-white/10')}>
    <button type="button" onClick={onToggle} aria-expanded={expanded} aria-controls={anchor}
@@ -80,24 +84,26 @@ function MatchRow({card,expanded,onToggle}:{card:Card;expanded:boolean;onToggle:
        </div>
      </div>
      <div className="mt-3 flex items-center justify-between gap-2 border-t border-white/[.07] pt-3">
-       <div className="flex min-w-0 items-center gap-2">
-         <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Model goals</span>
-         <span className="text-[10px] text-slate-500">·</span>
-         <span className="truncate text-[11px] text-slate-400">1X2 {best.toLowerCase()} most likely</span>
+       <div data-testid="soccer-model-favorite" className="min-w-0 flex-1">
+         <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Who does the model favor?</p>
+         <p className="mt-1 break-words text-[12px] font-bold leading-snug text-[#bafaac]">
+           {favorite.label}{favorite.probability!==null?<span className="text-slate-300"> · {pct(favorite.probability)} chance</span>:null}
+         </p>
        </div>
        <span className="flex shrink-0 items-center gap-1 text-[11px] font-bold text-[#79FF48]">
-         {expanded?'Less':'Details'} {expanded?<ChevronUp size={15}/>:<ChevronDown size={15}/>}
+         {expanded?'Less':'See chances'} {expanded?<ChevronUp size={15}/>:<ChevronDown size={15}/>}
        </span>
      </div>
    </button>
    {expanded&&<div id={anchor} data-testid="soccer-match-details" className="border-t border-white/10 bg-[#10191b] px-4 pb-4 pt-3">
-     <div className="mb-3 flex items-center justify-between gap-2">
-       <h3 className="text-[13px] font-bold text-white">Match probabilities</h3>
-       <span className="text-[10px] text-amber-200">Uncalibrated research</span>
+     <div className="mb-3">
+       <h3 className="text-[15px] font-extrabold text-white">Who is most likely to win?</h3>
+       <p className="mt-1 text-[11px] leading-relaxed text-slate-400">The model's chances for each result. These are estimates, not guarantees.</p>
      </div>
-     <ProbabilityBar name="Home win" value={p.probabilities.home}/>
-     <ProbabilityBar name="Draw" value={p.probabilities.draw}/>
-     <ProbabilityBar name="Away win" value={p.probabilities.away}/>
+     <div data-testid="soccer-named-outcomes" className="space-y-2">
+       {outcomes.map(outcome=><OutcomeBar key={outcome.key} name={outcome.label}
+         value={outcome.probability} featured={lead?.key===outcome.key}/>)}
+     </div>
      <div className="mt-3 grid grid-cols-2 gap-2">
        <div className="rounded-xl border border-white/[.07] bg-white/[.04] px-3 py-3">
          <p className="text-[10px] text-slate-400">Over 2.5 goals</p>
@@ -109,8 +115,8 @@ function MatchRow({card,expanded,onToggle}:{card:Card;expanded:boolean;onToggle:
        </div>
      </div>
      <p className="mt-3 text-[11px] leading-relaxed text-slate-400">
-       Numerical team-goal means, not tracked xG. Kickoff time unverified; no confirmed lineup or player availability.
-       These research percentages are not validated betting recommendations.
+       The goal numbers are projected averages, not a promised final score.
+       Starting lineups, injuries and kickoff times are not verified. These are uncalibrated research estimates, not betting recommendations.
      </p>
      <p className="mt-2 text-[10px] text-slate-500">Source: {card.origin==='FROZEN'?'original saved pregame forecast':'current research calculation'}</p>
    </div>}
