@@ -8,6 +8,7 @@ import {bestSoccerEvent} from '../soccer/topRanked';
 import {namedSoccerOutcomes} from '../soccer/matchLabels';
 import {usableEspnPlayerBoard} from '../soccer/espnPlayerBoard';
 import {soccerPlayerWindow} from '../soccer/playerDisplayWindow';
+import {wholeStatProjection} from '../lib/wholeStatProjection';
 import {groupSoccerGameProjections,type GameMatch,type GamePlayer,
  type SoccerGameGroup} from '../soccer/gameBoard';
 
@@ -61,18 +62,26 @@ function PlayerRow({p}:{p:GamePlayer}){
   </div>
   <div className="mt-2 grid grid-cols-2 gap-2">
    <div className="rounded-lg bg-[#11211a] p-2.5">
-    <p className="text-[10px] text-slate-300">Projected shots</p>
-    <p className="text-[20px] font-black tabular-nums text-[#79FF48]">{f.predictedShots.toFixed(1)}</p>
-    <p className="text-[11px] leading-snug text-slate-200">{pct(f.pReachProjectedShots)} for {f.shotsReachCount}+ shots</p>
+    <p className="text-[10px] text-slate-300">Predicted shots</p>
+    <p data-testid="soccer-whole-shots" className="text-[20px] font-black tabular-nums text-[#79FF48]">{wholeStatProjection(f.predictedShots)}</p>
+    <p className="text-[11px] leading-snug text-slate-200">{f.pExactRoundedShots!=null&&Number.isFinite(f.pExactRoundedShots)?pct(f.pExactRoundedShots):'Exact-count chance unavailable'}</p>
+    <p className="text-[10px] text-slate-400">Chance of exactly {wholeStatProjection(f.predictedShots)} shots</p>
    </div>
    <div className="rounded-lg bg-[#11211a] p-2.5">
-    <p className="text-[10px] text-slate-300">Shots on target</p>
-    <p className="text-[20px] font-black tabular-nums text-[#79FF48]">{f.predictedShotsOnTarget.toFixed(1)}</p>
-    <p className="text-[11px] leading-snug text-slate-200">{pct(f.pReachProjectedSot)} for {f.sotReachCount}+ on target</p>
+    <p className="text-[10px] text-slate-300">Predicted shots on target</p>
+    <p data-testid="soccer-whole-sot" className="text-[20px] font-black tabular-nums text-[#79FF48]">{wholeStatProjection(f.predictedShotsOnTarget)}</p>
+    <p className="text-[11px] leading-snug text-slate-200">{f.pExactRoundedSot!=null&&Number.isFinite(f.pExactRoundedSot)?pct(f.pExactRoundedSot):'Exact-count chance unavailable'}</p>
+    <p className="text-[10px] text-slate-400">Chance of exactly {wholeStatProjection(f.predictedShotsOnTarget)} on target</p>
    </div>
   </div>
+  <details className="mt-2 text-[10px] text-slate-500">
+   <summary className="min-h-8 cursor-pointer">Original model numbers</summary>
+   <p>Raw shot mean: {f.predictedShots.toFixed(2)} · Separate P({f.shotsReachCount}+ shots) {pct(f.pReachProjectedShots)}</p>
+   <p>Raw shots-on-target mean: {f.predictedShotsOnTarget.toFixed(2)} · Separate P({f.sotReachCount}+ on target) {pct(f.pReachProjectedSot)}</p>
+   <p>These at-least percentages do not mean exactly the displayed integer.</p>
+  </details>
   <p className="mt-2 text-[11px] text-slate-400">
-   Expected playing time: {f.predictedMinutes.toFixed(0)} minutes ·
+   Expected playing time: {wholeStatProjection(f.predictedMinutes)} minutes ·
    {p.currentEligibility==='STARTER_CONFIRMED'?' Confirmed to start':
     p.currentEligibility==='EARLY_ROSTER_ELIGIBLE'?
     ' Current squad checked · lineup unconfirmed':
