@@ -4,7 +4,7 @@
  */
 import type {EspnOriginal} from './espnAutofeed';
 export type EligibleEspnOriginal=EspnOriginal&{
- currentEligibility:'STARTER_CONFIRMED'|'EARLY_ROSTER_ELIGIBLE';
+ currentEligibility:'STARTER_CONFIRMED'|'EARLY_ROSTER_ELIGIBLE'|'EARLY_ROSTER_INJURY_UNVERIFIED';
 };
 type Document={schema:string;status:string;generatedAtUtc:string;officialPicks:number;
  liveEligibilityCheckedAtUtc?:string;items:EligibleEspnOriginal[]};
@@ -23,7 +23,7 @@ export function usableEspnPlayerBoard(raw:unknown,asofUtc:string):EligibleEspnOr
    return [];
  const ids=new Set<string>();const out:EligibleEspnOriginal[]=[];
  for(const x of d.items){
-  if(!x||!['STARTER_CONFIRMED','EARLY_ROSTER_ELIGIBLE'].includes(x.currentEligibility)||
+  if(!x||!['STARTER_CONFIRMED','EARLY_ROSTER_ELIGIBLE','EARLY_ROSTER_INJURY_UNVERIFIED'].includes(x.currentEligibility)||
     x.source!=='ESPN_COMPLETED_MATCH_ROSTERS'||
     x.status!=='EARLY_PREGAME_RESEARCH_UNCALIBRATED'||
     !validTime(x.kickoffUtc)||!validTime(x.capturedAtUtc)||
