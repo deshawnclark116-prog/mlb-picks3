@@ -30,3 +30,17 @@ Next: authorized provider credentials, sample verified player histories and
 live lineup fixtures, an injury/suspension source, immutable first-seen player
 forecasts, prospective holdout and independent model-vs-baseline testing.
 Provider terms must permit the intended deployment and usage.
+
+## Frontend player-props pilot
+The Soccer > Player props tab reads `/api/soccer-player-board`. No source
+connection produces an explicit empty state rather than fake projections.
+The guarded provider-backed cohort is configured on the server using
+`STRIKERAPI_API_KEY`, `SOCCER_RESEARCH_PLAYER_IDS`, and
+`SOCCER_PLAYER_RESEARCH_COHORT` (JSON containing named playerId, teamId,
+teamName, opponent, date, and optional gameId). Each source-backed forecast
+shows expected minutes, expected shots, expected shots on target, and the
+separate original-model probabilities of reaching ceil(each mean).
+This first pilot only evaluates one allowlisted player per refresh, prevents
+unknown identities, and is not a production or calibrated betting board.
+Configured labels require manual provider-ID verification. The underlying
+provider credit limit is process-local and does not persist after restarts.
