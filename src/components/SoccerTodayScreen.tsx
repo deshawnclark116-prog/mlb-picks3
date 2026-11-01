@@ -73,7 +73,9 @@ function PlayerRow({p}:{p:GamePlayer}){
   <p className="mt-2 text-[11px] text-slate-400">
    Expected playing time: {f.predictedMinutes.toFixed(0)} minutes ·
    {p.currentEligibility==='STARTER_CONFIRMED'?' Confirmed to start':
-    ' In current squad · starting lineup unconfirmed'}
+    p.currentEligibility==='EARLY_ROSTER_ELIGIBLE'?
+    ' Current squad checked · lineup unconfirmed':
+    ' Current squad checked · injury and lineup status unverified'}
   </p>
  </article>;
 }
