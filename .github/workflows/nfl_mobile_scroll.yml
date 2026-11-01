@@ -1,0 +1,32 @@
+name: NFL mobile vertical scroll regression
+on:
+  push:
+    branches: [main]
+    paths:
+      - src/components/NflTodayScreen.tsx
+      - src/App.tsx
+      - src/index.css
+      - tests/browser/nflScroll.spec.ts
+      - .github/workflows/nfl_mobile_scroll.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  mobile-scroll:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Typecheck and production build
+        run: |
+          npm run lint
+          npm run build
+      - name: Verify vertical swipe and full projections reachability at 360px
+        run: |
+          npx playwright install chromium
+          npx playwright test tests/browser/nflScroll.spec.ts --reporter=line
