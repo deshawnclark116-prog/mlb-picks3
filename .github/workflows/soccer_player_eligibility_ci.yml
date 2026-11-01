@@ -4,6 +4,10 @@ on:
     branches: [main]
     paths:
       - server/soccerPlayerEligibility.ts
+      - src/soccer/espnFixtureAssets.ts
+      - src/soccer/gameBoard.ts
+      - scripts/soccerEspnRolling.ts
+      - tests/soccerGameBoard.test.ts
       - scripts/soccerEligibilitySmoke.ts
       - server/soccerEspnBoard.ts
       - src/soccer/espnPlayerBoard.ts
