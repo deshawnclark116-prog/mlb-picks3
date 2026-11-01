@@ -9,6 +9,8 @@ on:
       - tests/browser/nhlBestChances.spec.ts
       - tests/browser/nhlScroll.spec.ts
       - tests/unifiedSportGameCards.test.ts
+      - tests/nhlRealGameGrouping.test.ts
+      - tests/browser/modelProjections.spec.ts
       - .github/workflows/nhl_best_chances.yml
   workflow_dispatch: {}
 permissions:
@@ -34,4 +36,4 @@ jobs:
       - name: Verify NHL phone screens and all-model market selection
         run: |
           npx playwright install chromium
-          npx playwright test tests/browser/nhlBestChances.spec.ts tests/browser/nhlScroll.spec.ts --reporter=line
+          npx playwright test tests/browser/nhlBestChances.spec.ts tests/browser/nhlScroll.spec.ts tests/browser/modelProjections.spec.ts --reporter=line
