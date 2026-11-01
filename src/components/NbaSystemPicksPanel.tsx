@@ -151,13 +151,11 @@ export default function NbaSystemPicksPanel({mode,search}:{
      </div>
      {top.length>0&&date==='TODAY'&&market==='ALL'&&!search.trim()&&
       <div className="rounded-xl border border-[#333] p-3 space-y-2">
-        <strong className="text-xs">TODAY'S HIGHEST-RANKED MODEL TARGETS</strong>
+        <strong className="text-xs">TODAY'S MODEL FORECASTS</strong>
         {top.slice(0,3).map(p=><div key={p.id}
           className="rounded-lg bg-[#232323] p-3 text-xs">
-          <strong>{p.player} · {p.model_target}</strong>
-          <p className="mt-1 text-gray-300">Model prediction {fmt(p.predicted_stat)} {UNIT[p.market]}
-            {' · '}P(plays) {pct(p.historical_p_play)}
-            {p.model_hit_probability!=null?' · P(hit) '+pct(p.model_hit_probability):' · P(hit) not validated'}</p>
+          <strong>{p.player} · {wholeStatProjection(p.predicted_stat)} {UNIT[p.market]}</strong>
+          <p className="mt-1 text-gray-300">P(exactly {wholeStatProjection(p.predicted_stat)}) unavailable · other targets have different probabilities.</p>
         </div>)}
       </div>}
      {visible.map(g=><section key={g.game_id} data-testid="nba-selected-game"
@@ -176,8 +174,8 @@ export default function NbaSystemPicksPanel({mode,search}:{
            </p>
            {g.picks.length?
              <p className="mt-2 text-xs text-gray-200">
-               TOP: {g.picks[0].player} · {g.picks[0].model_target}
-               {' · '}Projected {fmt(g.picks[0].predicted_stat)} {UNIT[g.picks[0].market]}
+               TOP: {g.picks[0].player} · {wholeStatProjection(g.picks[0].predicted_stat)} {UNIT[g.picks[0].market]}
+               {' · '}P(exactly this count) unavailable
              </p>:
              <p className="mt-2 text-xs text-amber-200">
                Original game forecast saved · No player target qualifies under
