@@ -162,7 +162,7 @@ export function addTrueNhlShotCounts(games:UnifiedGame[],source:NhlSogResearch|n
    named.push(p);
    // Verify the source CDF without turning a low-odds milestone into a public pick.
    // Original probabilities are still preserved for independent research grading.
-   selectNhlShotMilestoneResearch(p);
+   const milestone=selectNhlShotMilestoneResearch(p);
    const reach=nhlProjectionReachProbability(p);
    list.push({
       id:'NHL-V2-SOG-'+id,
@@ -170,6 +170,7 @@ export function addTrueNhlShotCounts(games:UnifiedGame[],source:NhlSogResearch|n
       target:'',
       modelProbability:null,
       projectionChance:reach,
+      nhlShotMilestone:milestone?{atLeast:milestone.milestone,probability:milestone.model_probability,calibrated:false}:null,
       prediction:p.mean,predictionKind:'mean',unit:'shots',
       source:'Locked NHL V2 SOG count distribution · '+p.forecast_horizon,
       detail:'Numerical median '+p.median+' shots · P10–P90 '+p.p10+'–'+p.p90+

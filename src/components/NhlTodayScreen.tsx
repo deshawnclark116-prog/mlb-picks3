@@ -59,8 +59,8 @@ export default function NhlTodayScreen({
   error,
   onRefresh,
 }: NhlTodayScreenProps) {
-  // Open on genuine numerical shot forecasts; binary point classifiers are opt-in.
-  const [marketFilter, setMarketFilter] = useState<MarketFilter>("shots_on_goal");
+  // Open on all available game and player models, not shots alone.
+  const [marketFilter, setMarketFilter] = useState<MarketFilter>("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [numericSog, setNumericSog] = useState<NhlSogResearch[]>([]);
   const [numericSogError, setNumericSogError] = useState<string|null>(null);
@@ -131,10 +131,10 @@ export default function NhlTodayScreen({
 
   // Do not mix stale points picks into an independent current SOG slate.
   const currentPredictions=predictions.filter(p=>countDates.includes(p.game_date));
-  const marketsPresent = Array.from(new Set([
-    ...currentPredictions.map((p) => p.market),
-    ...(numericSog.some(d=>d.projected_count>0) ? ['shots_on_goal'] : [])
-  ])).filter((m) => MARKET_LABELS[m]);
+  const marketsPresent = new Set([
+    ...currentPredictions.map((p)=>p.market),
+    ...(numericSog.some(d=>d.projected_count>0)?['shots_on_goal']:[])
+  ]);
 
   const sortedPredictions = [...currentPredictions].sort((a, b) => (b.prob_pct ?? 0) - (a.prob_pct ?? 0));
 
@@ -191,8 +191,8 @@ export default function NhlTodayScreen({
       <header id="nhl-screen-header" className="shrink-0 border-b border-white/10 bg-[#111719] px-4 py-3">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <h1 className="text-[19px] font-black tracking-tight text-white">NHL <span className="text-[#79FF48]">Shot Forecasts</span></h1>
-            <p className="mt-0.5 text-[11px] text-gray-400">{countDates.join(' · ')} · Original pregame numerical models</p>
+            <h1 className="text-[19px] font-black tracking-tight text-white">NHL <span className="text-[#79FF48]">Predictions</span></h1>
+            <p className="mt-0.5 text-[11px] text-gray-400">{countDates.join(' · ')} · Match outcomes and player models</p>
           </div>
           <button id="nhl-refresh-btn" type="button" onClick={handleManualRefresh}
             disabled={loading||isRefreshing} aria-label="Refresh NHL projections"
@@ -203,11 +203,12 @@ export default function NhlTodayScreen({
       </header>
       <div id="nhl-filter-controls-board" className="shrink-0 space-y-3 border-b border-white/10 bg-[#111719] px-4 py-3">
         <div className="flex gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="group" aria-label="NHL projection markets">
-          {(['shots_on_goal','points','ALL'] as MarketFilter[]).filter(m=>
-            m==='ALL'||m==='shots_on_goal'||marketsPresent.includes(m)).map(m=>
+          {(['ALL','moneyline','points','shots_on_goal','goalie_saves'] as MarketFilter[]).filter(m=>
+            m==='ALL'||m==='shots_on_goal'||marketsPresent.has(m)).map(m=>
             <button id={`nhl-btn-market-${m}`} key={m} type="button" onClick={()=>setMarketFilter(m)} aria-pressed={marketFilter===m}
               className={`min-h-10 shrink-0 rounded-xl px-4 text-[12px] font-bold ${marketFilter===m?'bg-[#79FF48] text-[#111b13]':'border border-white/10 bg-[#202a2c] text-gray-200'}`}>
-              {m==='shots_on_goal'?'Shots on goal':m==='points'?'Anytime points':'All models'}
+              {m==='ALL'?'All markets':m==='moneyline'?'Game winner':
+                m==='points'?'Anytime points':m==='shots_on_goal'?'Shots on goal':'Goalie saves'}
             </button>)}
         </div>
         <div className="relative">
@@ -262,7 +263,7 @@ export default function NhlTodayScreen({
               <button type="button" onClick={handleManualRefresh} className="mt-2 rounded border border-amber-600 px-3 py-1 font-semibold">Retry Shots Feed</button>
             </div>}
           {numericSog.some(d=>d.projected_count>0)&&<p role="status" className="mb-2 rounded-xl bg-[#172321] px-3 py-2 text-[11px] leading-relaxed text-gray-300">Showing {numericSog.reduce((n,d)=>n+d.projected_count,0)} original numerical shot forecasts. The chance to reach each forecast comes from the frozen model distribution and is <strong className="text-amber-200">not yet calibrated</strong>.</p>}
-          {marketFilter!=='shots_on_goal'&&<p role="status" className="mb-2 text-[11px] text-gray-400">Anytime points are binary event probabilities, not numerical goals or assists projections. No independent goals model is connected.</p>}
+          {marketFilter==='ALL'&&<p role="status" className="mb-2 text-[11px] text-gray-400">Showing game winners and anytime points when published, plus independent numerical shots. No separate goals/assists forecasts or eligible saves model is connected.</p>}
           <UnifiedSportGameCards sport="NHL" prefix="nhl-game-card-" games={unifiedGames}/>
           </div>
         )}
