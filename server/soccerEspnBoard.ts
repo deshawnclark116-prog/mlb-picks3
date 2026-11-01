@@ -9,9 +9,11 @@ import type {EspnOriginal} from '../src/soccer/espnAutofeed';
 import {currentSoccerRoster,currentSoccerUnavailable,
  confirmedSoccerStartingXI} from './soccerPlayerEligibility';
 
-type CurrentPlayer=EspnOriginal&{currentEligibility:'STARTER_CONFIRMED'|'EARLY_ROSTER_ELIGIBLE'};
+type CurrentPlayer=EspnOriginal&{
+ currentEligibility:'STARTER_CONFIRMED'|'EARLY_ROSTER_ELIGIBLE'|'EARLY_ROSTER_INJURY_UNVERIFIED';
+};
 type Board={schema:string;generatedAtUtc:string;officialPicks:number;items:EspnOriginal[]};
-type TeamEligibility={roster:Set<string>;unavailable:Set<string>}|null;
+type TeamEligibility={roster:Set<string>;unavailable:Set<string>;injuryFeedVerified:boolean}|null;
 const REQUEST_TIMEOUT_MS=4500;
 const MAX_CONCURRENCY=12;
 const BASE='https://site.api.espn.com/apis/site/v2/sports/soccer/';
@@ -62,7 +64,12 @@ export function soccerEspnPlayerBoardHandler(clock:()=>Date=()=>new Date()){
     ]);
     const roster=currentSoccerRoster(rosterRaw,t.teamId);
     const unavailable=currentSoccerUnavailable(injuryRaw);
-    eligible.set(t.key,roster&&unavailable?{roster,unavailable}:null);
+    // Soccer ESPN injuries frequently returns HTTP 200 + {}. Treat that as
+    // UNKNOWN coverage, never as an empty injury report or medical clearance.
+    eligible.set(t.key,roster?{
+     roster,unavailable:unavailable??new Set<string>(),
+     injuryFeedVerified:unavailable!==null
+    }:null);
    }catch{eligible.set(t.key,null);}
   });
   // Request actual game lineups only near kickoff. Do not convert a partial
@@ -91,6 +98,7 @@ export function soccerEspnPlayerBoardHandler(clock:()=>Date=()=>new Date()){
   });
   const items:CurrentPlayer[]=[];
   let noCurrentRoster=0,knownOut=0,notStarting=0,unconfirmedNearKickoff=0;
+  let injuryUnverifiedEarly=0;
   for(const p of upcoming){
    const team=eligible.get(p.league+'|'+p.teamId);
    if(!team||!team.roster.has(p.playerId)){noCurrentRoster++;continue;}
@@ -103,7 +111,9 @@ export function soccerEspnPlayerBoardHandler(clock:()=>Date=()=>new Date()){
    }else if(kickoff-now<=90*60000){
     unconfirmedNearKickoff++;
    }else{
-    items.push({...p,currentEligibility:'EARLY_ROSTER_ELIGIBLE'});
+    if(!team.injuryFeedVerified)injuryUnverifiedEarly++;
+    items.push({...p,currentEligibility:team.injuryFeedVerified?
+     'EARLY_ROSTER_ELIGIBLE':'EARLY_ROSTER_INJURY_UNVERIFIED'});
    }
   }
   return {...raw,generatedAtUtc:new Date(now).toISOString(),
@@ -113,7 +123,8 @@ export function soccerEspnPlayerBoardHandler(clock:()=>Date=()=>new Date()){
    liveEligibilityCheckedAtUtc:new Date(now).toISOString(),
    participationFilter:{rosterCheckedTeams:[...eligible.values()].filter(Boolean).length,
     attemptedTeams:teamKeys.size,confirmedLineupFixtures:[...confirmed.values()].filter(Boolean).length,
-    noCurrentRoster,knownOut,notStarting,unconfirmedNearKickoff},
+    noCurrentRoster,knownOut,notStarting,unconfirmedNearKickoff,
+    injuryUnverifiedEarly},
    items};
  }
  return async(_req:Request,res:Response)=>{
