@@ -119,11 +119,13 @@ test('original numeric SOG predictions, including players not offered by a sport
   const html=renderToStaticMarkup(React.createElement(UnifiedSportGameCards,{
     sport:'NHL',games:merged,prefix:'nhl-test-'
   }));
-  assert.equal((html.match(/data-testid="unified-sport-game"/g)||[]).length,2);
-  assert.match(html,/Top 10/);
+  // With no source-backed shot event probabilities and every binary
+  // classifier only 64%, the default 65% research shortlist must be empty.
+  // The original two-game, 20-row slate is still intact in merged.
+  assert.equal((html.match(/data-testid="unified-sport-game"/g)||[]).length,0);
+  assert.match(html,/Best chances/);
   assert.match(html,/All projections/);
-  assert.match(html,/20 model forecasts/);
-  assert.doesNotMatch(html,/1 model forecasts/);
+  assert.match(html,/No events meet the 65% modeled research threshold/);
 });
 
 test('same opponents on different dates or times must never be merged into a made-up game',()=>{

@@ -176,6 +176,7 @@ test("Minnesota-Columbus six-player poster shows frozen numerical shot projectio
  await page.route("**/api/nhl-predictions**",route=>route.fulfill({json:current}));
  await page.route("**/api/nhl-count-research**",route=>route.fulfill({json:source}));
  await page.locator("#tab-btn-nhl").click();
+ await page.getByRole("button",{name:"All projections"}).click();
  await expect(page.getByText(/Frozen V2 numerical shot forecasts \([^)]+: 6\)/)).toBeVisible();
  const game=page.getByTestId("unified-sport-game").filter({hasText:"CBJ"});
  await expect(game).toContainText("MIN vs CBJ");
@@ -214,6 +215,7 @@ test("frozen NHL numerical game remains visible with ZERO point-classifier picks
    }]
  }}));
  await page.locator("#tab-btn-nhl").click();
+ await page.getByRole("button",{name:"All projections"}).click();
  const games=page.getByTestId("unified-sport-game");
  await expect(games).toHaveCount(1);
  await expect(games.first()).toContainText("MIN vs CBJ");
