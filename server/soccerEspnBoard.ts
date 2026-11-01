@@ -30,7 +30,7 @@ async function batch<T>(items:T[],fn:(item:T)=>Promise<void>){
   while(index<items.length)await fn(items[index++]);
  }));
 }
-const validId=(s:string)=>/^\\d{1,15}$/.test(s);
+const validId=(s:string)=>/^\d{1,15}$/.test(s);
 const validLeague=(s:string)=>['eng.1','esp.1','ita.1','ger.1','fra.1'].includes(s);
 /** One in-flight refresh per process. Failed validation never falls back
  * to the unfiltered historical snapshot.
