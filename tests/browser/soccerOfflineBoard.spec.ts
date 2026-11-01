@@ -52,23 +52,18 @@ test('seven-day view reveals more fixtures and each fixture has optional match p
 test('source verified match outcome model shows all 5 probability events, plus player forecasts',async({page})=>{
  const screen=await openSoccer(page);
  await screen.getByRole('group',{name:'Soccer game schedule range'}).getByRole('button',{name:'All matches'}).click();
- const games=screen.getByTestId('soccer-game-card');
- const max=await games.count();
- let found=false;
- for(let i=0;i<max;i++){
-  const game=games.nth(i);
-  await game.getByRole('button',{name:/View all projections/}).click();
-  if(await game.getByTestId('soccer-game-outcomes').count()){
-   const outcomes=game.getByTestId('soccer-game-outcomes');
-   await expect(outcomes).toContainText('Match predictions');
-   await expect(outcomes).toContainText('Both teams to score');
-   await expect(outcomes).toContainText('3 or more total goals');
-   await expect(outcomes).toContainText('to win');
-   await expect(outcomes).toContainText('projected goals');
-   found=true;break;
-  }
- }
- expect(found).toBe(true);
+ await screen.getByRole('button',{name:/Filters/}).click();
+ await screen.getByRole('searchbox',{name:'Search soccer teams or players'}).fill('Crystal Palace FC');
+ const match=screen.getByTestId('soccer-game-card')
+  .filter({hasText:'Crystal Palace FC'}).first();
+ await expect(match).toBeVisible();
+ await match.getByRole('button',{name:/View all projections/}).click();
+ const outcomes=match.getByTestId('soccer-game-outcomes');
+ await expect(outcomes).toContainText('Match predictions');
+ await expect(outcomes).toContainText('Both teams to score');
+ await expect(outcomes).toContainText('3 or more total goals');
+ await expect(outcomes).toContainText('to win');
+ await expect(outcomes).toContainText('projected goals');
 });
 test('mobile games list is reachable after navigating through More',async({page})=>{
  await page.clock.install({time:new Date('2026-11-01T14:00:00.000Z')});
