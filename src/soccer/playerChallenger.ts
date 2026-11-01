@@ -125,6 +125,15 @@ export function playerShotForecast(
    pPlay*(pStart*minStart+(1-pStart)*minSub),0,100);
  const expectedShots=shotRate90*expectedMinutes/90;
  const expectedSot=expectedShots*sotFraction;
+ // Probability is a zero-inflated mixture of DNP / starter / substitute
+ // states, NOT a Poisson at the marginal (play-weighted) point estimate.
+ // The marginal mean remains the numerical stat projection.
+ const lambdaStarter=shotRate90*minStart/90;
+ const lambdaSub=shotRate90*minSub/90;
+ const shots3=pPlay*(pStart*pPoissonAtLeast(lambdaStarter,3)
+   +(1-pStart)*pPoissonAtLeast(lambdaSub,3));
+ const sot1=pPlay*(pStart*pPoissonAtLeast(lambdaStarter*sotFraction,1)
+   +(1-pStart)*pPoissonAtLeast(lambdaSub*sotFraction,1));
  const expectedXg:null=null; // XG_FEATURE_BLOCKED_POSTHOC_PROVIDER_REVALUE
  // Poisson thinning is only a research approximation: these p-values
  // are not calibrated against unseen first-seen outcomes.
@@ -135,8 +144,8 @@ export function playerShotForecast(
    historicalShotsPer90:num(attempts/(exposure/90)),
    historicalSotPer90:num(onTarget/(exposure/90)),
    startProbability:num(pStart),playProbability:num(pPlay),
-   pShotsAtLeast3:num(pPoissonAtLeast(expectedShots,3)),
-   pSotAtLeast1:num(pPoissonAtLeast(expectedSot,1)),
+   pShotsAtLeast3:num(shots3),
+   pSotAtLeast1:num(sot1),
    baselineShots:num(rows.slice(0,10).reduce((s,g)=>s+g.shots,0)/Math.min(rows.length,10)),
    baselineSot:num(rows.slice(0,10).reduce((s,g)=>s+g.shots_on_target,0)/Math.min(rows.length,10)),
    lineupState,availabilityState:opts.availability,
