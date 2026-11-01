@@ -33,7 +33,7 @@ const txt=(v:unknown)=>typeof v==='string'?v:'';
 const id=(v:unknown)=>txt(v).match(/^[a-zA-Z0-9_-]{1,50}$/)!==null;
 const date=(v:unknown)=>typeof v==='string'&&/^20\d\d-\d\d-\d\dT/.test(v)&&
  /(?:Z|[+-]\d\d:\d\d)$/.test(v)&&Number.isFinite(Date.parse(v));
-const integer=(n:unknown)=>typeof n==='number'&&Number.isInteger(n);
+const integer=(n:unknown):n is number=>typeof n==='number'&&Number.isInteger(n);
 const key=(x:EspnFixture)=>x.league+':'+x.gameId;
 export function espnSourceSha(raw:string){return createHash('sha256').update(raw).digest('hex');}
 export function parseEspnSoccerScoreboard(league:EspnLeague,raw:unknown):EspnFixture[]{
