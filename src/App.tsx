@@ -315,7 +315,7 @@ export default function App() {
         </header>
 
         {/* Official independent schedule stays accessible without crowding the page. */}
-        {!['STATUS','RECORD'].includes(activeTab)&&<UpcomingGamesStrip
+        {!['STATUS','RECORD','SOCCER'].includes(activeTab)&&<UpcomingGamesStrip
           sport={(activeTab==='TODAY'||activeTab==='GAMES'?'MLB':activeTab) as ScheduleSport}/>}
 
         <main id="active-screen-container" className="relative min-h-0 flex-1 overflow-hidden bg-[#0c1114]">

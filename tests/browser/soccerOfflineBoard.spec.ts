@@ -1,26 +1,55 @@
 import {test,expect} from '@playwright/test';
 
-test('soccer always renders genuine archived numeric match goals when its live API is offline',async({page})=>{
+test('compact soccer match center displays genuine originals with live API offline',async({page})=>{
+ await page.clock.install({time:new Date('2026-11-01T14:00:00.000Z')});
  await page.route('**/api/**',route=>{
    const u=route.request().url();
    if(u.includes('/api/predictions'))return route.fulfill({json:[]});
-   return route.fulfill({status:503,json:{error:'Source unreachable'}});
+   return route.fulfill({status:503,json:{error:'Offline'}});
  });
  await page.goto('/');
  await page.locator('#sport-chip-soccer').click();
  const panel=page.locator('#motion-screen-SOCCER');
- await expect(panel.getByTestId('soccer-forecast-board')).toBeVisible();
- const cards=panel.getByText('SAVED PREGAME MODEL',{exact:true});
- await expect(cards.first()).toBeVisible();
- const n=await cards.count();
- expect(n).toBeGreaterThanOrEqual(15);
- const first=panel.getByTestId('soccer-forecast-board').locator('article').first();
- await expect(first).toContainText('Projected home goals');
- await expect(first).toContainText('Projected away goals');
- await expect(first).toContainText('Home win');
- await expect(first).toContainText('Draw');
- await expect(first).toContainText('Away win');
- await expect(panel.getByRole('status')).toContainText('Showing saved original pregame forecasts instead');
- await expect(panel.getByTestId('soccer-player-forecast-status')).toContainText('No fabricated projections');
+ await expect(panel.getByRole('heading',{name:'Match center'})).toBeVisible();
+ await expect(panel.getByRole('tab',{name:'Matches'})).toHaveAttribute('aria-selected','true');
+ const board=panel.getByTestId('soccer-forecast-board');
+ await expect(board).toBeVisible();
+ const rows=board.getByTestId('soccer-match-row');
+ await expect(rows.first()).toBeVisible();
+ const count=await rows.count();
+ expect(count).toBeGreaterThan(0);
+ expect(count).toBeLessThanOrEqual(12);
+ await expect(rows.first()).toContainText('Model goals');
+ await expect(rows.first()).toContainText('Saved pregame');
+ await expect(rows.first().getByText('Match probabilities')).toHaveCount(0);
+ await rows.first().getByRole('button',{name:/Details/}).click();
+ await expect(rows.first().getByTestId('soccer-match-details')).toBeVisible();
+ await expect(rows.first()).toContainText('Home win');
+ await expect(rows.first()).toContainText('Draw');
+ await expect(rows.first()).toContainText('Away win');
+ await rows.first().getByRole('button',{name:/Less/}).click();
+ await expect(rows.first().getByTestId('soccer-match-details')).toHaveCount(0);
+ await expect(panel.getByRole('status')).toContainText('Showing saved original pregame forecasts instead.');
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
+});
+
+test('soccer search, league and date filters narrow genuine forecasts without false player data',async({page})=>{
+ await page.clock.install({time:new Date('2026-11-01T14:00:00.000Z')});
+ await page.route('**/api/**',route=>route.fulfill({status:503,json:{error:'offline'}}));
+ await page.goto('/');
+ await page.locator('#sport-chip-soccer').click();
+ const panel=page.locator('#motion-screen-SOCCER');
+ const board=panel.getByTestId('soccer-forecast-board');
+ await panel.getByRole('button',{name:'All',exact:true}).click();
+ await panel.getByRole('searchbox',{name:'Find soccer team or league'}).fill('Crystal Palace');
+ await expect(board.getByTestId('soccer-match-row').first()).toContainText('Crystal Palace');
+ const searchCount=await board.getByTestId('soccer-match-row').count();
+ expect(searchCount).toBeGreaterThan(0);
+ expect(searchCount).toBeLessThan(12);
+ await panel.getByRole('tab',{name:'Players'}).click();
+ await expect(panel.getByTestId('soccer-player-forecast-status')).toContainText('No fabricated projections');
+ await panel.getByRole('tab',{name:'Record'}).click();
+ await expect(panel.getByTestId('soccer-forward-scorecard')).toBeVisible();
+ await panel.getByRole('tab',{name:'Matches'}).click();
+ await expect(board.getByTestId('soccer-match-row').first()).toContainText('Crystal Palace');
 });
