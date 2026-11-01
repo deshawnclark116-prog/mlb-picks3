@@ -34,7 +34,7 @@ test('CFB means and medians remain available in details, only integer displayed'
  assert.match(mean,/90 yds/);
  assert.match(mean,/Original mean: 89.6 yds/);
  assert.match(mean,/Exact-count probability unavailable/);
- assert.doesNotMatch(mean,/P\\(exactly 90\\).*73.0%/);
+ assert.doesNotMatch(mean,/P\(exactly 90\).*73.0%/);
 });
 test('tennis numeric model rounds without borrowing the bookmaker target odds',()=>{
  const games=game([pick({
@@ -47,10 +47,10 @@ test('tennis numeric model rounds without borrowing the bookmaker target odds',(
  const html=renderToStaticMarkup(React.createElement(Poster,{
   sport:'TENNIS',game:games,picks:games.picks}));
  assert.match(html,/23 GAMES/);
- assert.match(html,/P\\(EXACTLY 23\\): —/);
+ assert.match(html,/P\(EXACTLY 23\): —/);
  assert.match(html,/Player A 2-0/);
- assert.match(html,/P\\(EVENT\\): 73.0%/);
- assert.doesNotMatch(html,/P\\(EXACTLY 23\\): 73.0%/);
+ assert.match(html,/P\(EVENT\): 73.0%/);
+ assert.doesNotMatch(html,/P\(EXACTLY 23\): 73.0%/);
 });
 test('NHL renders the correct view modes; other sports retain their controls',()=>{
  const groups=[game([pick({id:'1'})])];
@@ -86,8 +86,8 @@ test('NHL exact-count chance uses survival DIFFERENCE, never easier P(2+)',()=>{
  const html=renderToStaticMarkup(React.createElement(PredictionCard,{pick:raw,nhlShortlist:true}));
  assert.match(html,/4 shots/);assert.match(html,/31.0%/);
  assert.match(html,/Chance of exactly 4/);
- assert.match(html,/Alternative threshold: P\\(2\\+ shots\\) 76.0%/);
- assert.doesNotMatch(html,/4 shots.*76.0%<\\/strong>/);
+ assert.match(html,/Alternative threshold: P\(2\+ shots\) 76.0%/);
+ assert.doesNotMatch(html,/4 shots.*76.0%<\/strong>/);
 });
 test('absence of original integer CDF or low P(exact) cannot promote a false best chance',()=>{
  const low=pick({id:'low',target:'',modelProbability:null,
