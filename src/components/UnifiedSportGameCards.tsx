@@ -147,13 +147,15 @@ export function Poster({sport,game,picks,cardRef}:{
        <p style={{fontSize:12,color:'#9EACB1',margin:0}}>{p.team||sport} · {p.market.toUpperCase().replaceAll('_',' ')}</p>
        <strong style={{fontSize:21,display:'block',marginTop:10,overflowWrap:'anywhere'}}>{p.player.toUpperCase()}</strong>
        <p style={{fontSize:11,color:'#A5B1B9',letterSpacing:1.2,margin:'15px 0 2px'}}>{primaryLabel(p)}</p>
-       <p style={{fontSize:canNumeric(p)?31:20,color:'#79FF48',fontWeight:900,margin:'0 0 16px',overflowWrap:'anywhere'}}>{value(p).toUpperCase()}</p>
-       {p.projectionChance&&<div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:7,gap:8}}>
-         <span style={{fontSize:13,color:'#BBD5C3'}}>P({p.projectionChance.atLeast}+ SHOTS) · UNCALIBRATED</span>
-         <strong style={{fontSize:20,color:'#79FF48'}}>{pct(p.projectionChance.probability)}</strong>
-       </div>}
-       {p.target&&<><p style={{fontSize:14,fontWeight:700,color:'#DCE5E7',margin:0,overflowWrap:'anywhere'}}>TARGET: {p.target}</p>
-       <p style={{fontSize:14,color:'#AAB8C0',margin:'6px 0 0'}}>Model P(target): {pct(p.modelProbability)}</p></>}
+       <p style={{fontSize:canNumeric(p)?31:20,color:'#79FF48',fontWeight:900,margin:'0 0 12px',overflowWrap:'anywhere'}}>
+         {canNumeric(p)?value(p).toUpperCase():(p.target||'UNSPECIFIED EVENT').toUpperCase()}
+       </p>
+       <p style={{fontSize:14,color:'#BBD5C3'}}>
+         {canNumeric(p)?
+           'P(EXACTLY '+wholeStatProjection(p.prediction!)+'): '+pct(p.exactCountEvent?.probability??null):
+           'P(EVENT): '+pct(p.modelProbability)}
+       </p>
+
      </div>)}
    </section>
    <footer style={{position:'absolute',bottom:38,left:44,right:44,borderTop:'1px solid #334045',paddingTop:22}}>
