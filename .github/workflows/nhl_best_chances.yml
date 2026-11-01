@@ -1,0 +1,37 @@
+name: NHL best chances and all markets mobile acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - src/components/NhlTodayScreen.tsx
+      - src/components/UnifiedSportGameCards.tsx
+      - src/nhl/countResearch.ts
+      - tests/browser/nhlBestChances.spec.ts
+      - tests/browser/nhlScroll.spec.ts
+      - tests/unifiedSportGameCards.test.ts
+      - .github/workflows/nhl_best_chances.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: TypeScript and production build
+        run: |
+          npm run lint
+          npm run build
+      - name: Verify uncalibrated research and meaningful SOG event selection
+        run: |
+          node --import tsx --test tests/unifiedSportGameCards.test.ts tests/nhlCountResearch.test.ts tests/nhlRealGameGrouping.test.ts
+      - name: Verify NHL phone screens and all-model market selection
+        run: |
+          npx playwright install chromium
+          npx playwright test tests/browser/nhlBestChances.spec.ts tests/browser/nhlScroll.spec.ts --reporter=line
