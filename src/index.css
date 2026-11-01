@@ -24,10 +24,7 @@ html, body, #root {
   overflow-y: auto;
   overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
-}
-#nfl-scroll-area [aria-label="Outcome family"],
-#nfl-scroll-area [aria-label="Forecast horizon"] {
-  touch-action: pan-x pan-y;
+  /* Leave touch-action at auto: both vertical cards and horizontally scrolling
+   * NFL stat filters must respond to native mobile swipe gestures. */
 }
 
