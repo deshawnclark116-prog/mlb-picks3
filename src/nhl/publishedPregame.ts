@@ -14,9 +14,12 @@ const object=(v:unknown):Record<string,unknown>|null=>
 const date=(v:unknown):v is string=>typeof v==='string'&&
  /^20\d\d-\d\d-\d\dT/.test(v)&&Number.isFinite(Date.parse(v))&&
  /(?:Z|[+-]\d\d:\d\d)$/.test(v);
-const etDate=(iso:string)=>new Intl.DateTimeFormat('en-CA',{
- timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'
-}).format(new Date(iso));
+const etDate=(iso:string)=>{
+ const parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',
+  year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date(iso));
+ const value=(key:string)=>parts.find(p=>p.type===key)?.value;
+ return value('year')+'-'+value('month')+'-'+value('day');
+};
 const advance=(d:string)=>new Date(Date.parse(d+'T00:00:00Z')+
  86400000).toISOString().slice(0,10);
 export function readNhlPublishedPregame(raw:unknown,asofUtc:string):VisibleNhlPublished|null{

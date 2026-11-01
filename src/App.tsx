@@ -19,6 +19,7 @@ import UpcomingGamesStrip from "./components/UpcomingGamesStrip";
 import type {ScheduleSport} from "../server/upcomingFixtures.ts";
 import SportProjectionScreen from "./components/SportProjectionScreen";
 import { deduplicatePredictions, deduplicateCfbPredictions, deduplicateTennisPredictions, deduplicateNhlPredictions } from "./utils";
+import { readNhlPublishedPregame, type VisibleNhlPublished } from "./nhl/publishedPregame";
 import { Home, Trophy, Activity, Waves, Menu, X, ChevronRight, LayoutGrid, CalendarDays, BarChart3 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -153,14 +154,48 @@ export default function App() {
   // keyed on a real calendar game_date instead of season/week -- same
   // one-fetch-per-poll reasoning as NFL/CFB/tennis otherwise.
   const loadNhlData = async () => {
-    const doc: NhlPredictionsDoc | null = await fetchEndpoint(`/api/nhl-predictions?t=${Date.now()}`);
-    if (doc && Array.isArray(doc.picks)) {
-      setNhlPredictions(deduplicateNhlPredictions(doc.picks));
-      setNhlGameDate(doc.game_date ?? null);
-      setNhlError(null);
-    } else {
-      setNhlError("Unable to connect to Prop Edge NHL predictions server.");
-    }
+    // NHL shot-count history is in a separate static feed, but game winners
+    // and anytime points were previously LIVE-API-ONLY. Google AI Studio
+    // previews can serve static assets even when Express proxy is offline.
+    // Recover the immutable published pregame probability document instead
+    // of silently showing only shots or manufacturing new winners.
+    const liveRequest:Promise<NhlPredictionsDoc|null> =
+      fetchEndpoint(`/api/nhl-predictions?t=${Date.now()}`);
+    let best:VisibleNhlPublished|null=null;
+    const accept=(candidate:VisibleNhlPublished|null)=>{
+      if(!candidate)return;
+      // Prefer the latest original source generation. A newer source can
+      // remove a player: never favor the optimistic or larger-pick version.
+      if(!best||Date.parse(candidate.generated_at_utc)>Date.parse(best.generated_at_utc)||
+        (candidate.generated_at_utc===best.generated_at_utc&&
+          candidate.source==='LIVE_PUBLISHED_NHL_SOURCE')){
+        best=candidate;
+        setNhlPredictions(deduplicateNhlPredictions(candidate.picks));
+        setNhlGameDate(candidate.game_date);
+        setNhlError(null);
+      }
+    };
+    const getPublished=async(url:string,timeoutMs:number)=>{
+      const controller=new AbortController();
+      const timeout=setTimeout(()=>controller.abort(),timeoutMs);
+      try{
+        const r=await fetch(url,{cache:'no-store',signal:controller.signal});
+        if(!r.ok)return null;
+        const body:unknown=await r.json();
+        return readNhlPublishedPregame(body,new Date().toISOString());
+      }catch{return null;}
+      finally{clearTimeout(timeout);}
+    };
+    // Bundled first-seen source is fastest and works in static preview.
+    accept(await getPublished('/nhl-published-pregame.json?t='+Date.now(),5000));
+    // Refresh from the upstream published *model output*, not a bookmaker.
+    // CSP/CORS/network failures are harmless because the bundled copy is
+    // the fallback. Validate date + generated-before-puck-drop on every read.
+    accept(await getPublished(
+      'https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks2/main/docs/nhl_predictions.json?t='+Date.now(),8000));
+    const doc=await liveRequest;
+    accept(readNhlPublishedPregame(doc,new Date().toISOString()));
+    if(!best)setNhlError("No verified upcoming NHL player or game-winner forecasts from the published source.");
   };
 
   useEffect(() => {
