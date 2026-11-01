@@ -58,3 +58,62 @@ test('expired games or bad kickoff timestamps cannot sneak in through player dat
  assert.equal(groupSoccerGameProjections([],[{...p('1'),
   kickoffUtc:'not a time'}],at).length,0);
 });
+
+test('Juventus-Napoli joins under verified home team even if first player is Napoli',()=>{
+ const match:GameMatch={...f,id:'juv-goals',forecast:{...f.forecast,league:'SerieA',
+  date:'2026-11-01',home:'Juventus FC',away:'SSC Napoli'}};
+ const fixture={league:'ita.1',gameId:'401874949',kickoffUtc:'2026-11-01T19:45:00.000Z',
+  homeId:'111',home:'Juventus',awayId:'114',away:'Napoli',completed:false};
+ const awayFirst={...p('777','Napoli','Juventus','401874949'),
+  league:'ita.1',teamId:'114',fixtureDate:'2026-11-01',
+  kickoffUtc:fixture.kickoffUtc};
+ const groups=groupSoccerGameProjections([match],[awayFirst],
+  '2026-11-01T15:00:00.000Z',[fixture]);
+ assert.equal(groups.length,1);
+ assert.equal(groups[0].home,'Juventus');assert.equal(groups[0].away,'Napoli');
+ assert.equal(groups[0].players.length,1);
+ assert.equal(groups[0].match?.forecast.probabilities.home,.45);
+});
+test('Marseille-Toulouse joins exact goal forecast despite different provider names',()=>{
+ const m:GameMatch={...f,forecast:{...f.forecast,league:'Ligue1',date:'2026-11-01',
+  home:'Olympique de Marseille',away:'Toulouse FC'}};
+ const fixture={league:'fra.1',gameId:'401876417',kickoffUtc:'2026-11-01T19:45:00.000Z',
+  homeId:'176',home:'Marseille',awayId:'179',away:'Toulouse',completed:false};
+ const awayFirst={...p('200','Toulouse','Marseille','401876417'),
+  league:'fra.1',teamId:'179',fixtureDate:'2026-11-01',kickoffUtc:fixture.kickoffUtc};
+ const rows=groupSoccerGameProjections([m],[awayFirst],
+  '2026-11-01T15:00:00.000Z',[fixture]);
+ assert.equal(rows.length,1);
+ assert.equal(rows[0].home,'Marseille');assert.equal(rows[0].away,'Toulouse');
+ assert.equal(rows[0].match?.forecast.home,'Olympique de Marseille');
+});
+test('verified Athletic home identity removes reverse mirror and never inverts 1X2',()=>{
+ const fixture={league:'esp.1',gameId:'401882826',kickoffUtc:'2026-11-01T20:00:00.000Z',
+  homeId:'93',home:'Athletic Club',awayId:'89',away:'Real Sociedad',completed:false};
+ const match:GameMatch={...f,forecast:{...f.forecast,league:'LaLiga',date:'2026-11-01',
+  home:'Athletic Club',away:'Real Sociedad de Fútbol'}};
+ const p1={...p('120','Real Sociedad','Athletic Club','401882826'),
+  league:'esp.1',teamId:'89',fixtureDate:'2026-11-01',kickoffUtc:fixture.kickoffUtc};
+ const rows=groupSoccerGameProjections([match],[p1],
+  '2026-11-01T15:00:00.000Z',[fixture]);
+ assert.equal(rows.length,1);
+ assert.equal(rows[0].home,'Athletic Club');assert.equal(rows[0].away,'Real Sociedad');
+ assert.equal(rows[0].players.length,1);
+ assert.equal(rows[0].match?.forecast.probabilities.away,.30);
+ const inverted={...match,forecast:{...match.forecast,
+  home:'Real Sociedad de Fútbol',away:'Athletic Club'}};
+ const wrong=groupSoccerGameProjections([inverted],[p1],
+  '2026-11-01T15:00:00.000Z',[fixture]);
+ assert.equal(wrong.length,1,'no second mirror card');
+ assert.equal(wrong[0].match,null,'never attach the inverse win probabilities');
+});
+test('exclude phantom OpenFootball fixtures on days with verified ESPN schedule',()=>{
+ const fx={league:'esp.1',gameId:'401882826',kickoffUtc:'2026-11-01T20:00:00.000Z',
+  homeId:'93',home:'Athletic Club',awayId:'89',away:'Real Sociedad',completed:false};
+ const stale:GameMatch={...f,forecast:{...f.forecast,league:'LaLiga',
+  date:'2026-11-01',home:'Villarreal CF',away:'RCD Espanyol de Barcelona'}};
+ const rows=groupSoccerGameProjections([stale],[],
+  '2026-11-01T15:00:00.000Z',[fx]);
+ assert.equal(rows.length,1);assert.equal(rows[0].home,'Athletic Club');
+ assert.equal(rows[0].match,null);
+});
