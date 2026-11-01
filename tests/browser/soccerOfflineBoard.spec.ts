@@ -19,24 +19,15 @@ test('phone view starts with match cards, not separate top-pick and player feeds
  await expect(screen.getByRole('tab',{name:'Top projections'})).toHaveCount(0);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
 });
-test('one game expands all its real player projections and differentiates missing match model',async({page})=>{
+test('offline research archive cannot show players without fresh eligibility',async({page})=>{
  const screen=await openSoccer(page);
  const games=screen.getByTestId('soccer-game-card');
  await expect(games.first()).toBeVisible();
- const counts=await games.getByTestId('soccer-game-projection-count').allTextContents();
- const idx=counts.findIndex(x=>/\b[1-9]\d* players/.test(x));
- expect(idx,'At least one imminent game must contain real player forecasts').toBeGreaterThanOrEqual(0);
- const game=games.nth(idx);
- const count=Number(counts[idx].match(/(\d+) players/)?.[1]);
- await game.getByRole('button',{name:/View all projections/}).click();
- const details=game.getByTestId('soccer-game-details');
- await expect(details).toBeVisible();
- await expect(details.getByTestId('soccer-game-player')).toHaveCount(count);
- await expect(details.getByTestId('soccer-game-player').first()).toContainText('Projected shots');
- await expect(details.getByTestId('soccer-game-player').first()).toContainText('Shots on target');
- await expect(details.getByTestId('soccer-game-player').first()).toContainText('Expected playing time');
- await game.getByRole('button',{name:/Hide projections/}).click();
- await expect(details).toHaveCount(0);
+ await games.first().getByRole('button',{name:/View all projections/}).click();
+ const detail=games.first().getByTestId('soccer-game-details');
+ await expect(detail.getByTestId('soccer-game-player')).toHaveCount(0);
+ await expect(screen.getByTestId('soccer-player-eligibility-notice')).toBeVisible();
+ await expect(detail).toContainText('No eligible player-stat projections');
 });
 test('seven-day view reveals more fixtures and each fixture has optional match projections',async({page})=>{
  const screen=await openSoccer(page);
