@@ -76,45 +76,30 @@ test('the selected Soccer sport is visible after navigating from More',async({pa
  await expect(page.locator('#motion-screen-SOCCER').getByTestId('soccer-top-card').first()).toBeVisible();
 });
 
-test('player props tab is honest without a connected feed',async({page})=>{
+test('real frozen ESPN soccer player props remain visible when live API is offline',async({page})=>{
  const panel=await openSoccer(page);
  await panel.getByRole('tab',{name:'Player props'}).click();
  await expect(panel.getByTestId('soccer-player-props-board')).toBeVisible();
- await expect(panel.getByTestId('soccer-player-prop-card')).toHaveCount(0);
- await expect(panel.getByText("Player forecasts aren't connected yet")).toBeVisible();
- await expect(panel.getByText('No player picks are being invented.')).toBeVisible();
+ const cards=panel.getByTestId('soccer-player-prop-card');
+ await expect(cards).toHaveCount(20);
+ await expect(cards.first()).toContainText('Projected shots');
+ await expect(cards.first()).toContainText('Shots on target');
+ await expect(cards.first()).toContainText('Projected playing time');
+ await expect(cards.first()).toContainText('ESPN historical stats');
+ await expect(cards.first()).toContainText('not confirmed');
+ await expect(cards.first()).toContainText('Uncalibrated');
+ await expect(panel.getByText("Player forecasts aren't connected yet")).toHaveCount(0);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
+ await panel.getByRole('button',{name:/Show more player projections/}).click();
+ await expect(cards).toHaveCount(40);
 });
-test('source-backed player projections show the forecast and chance of reaching that same mean',async({page})=>{
- await page.clock.install({time:new Date('2026-11-01T14:00:00.000Z')});
- await page.route('**/api/**',route=>{
-   if(route.request().url().includes('/api/soccer-player-board'))
-     return route.fulfill({json:{
-      schema:'soccer-player-board-v1',status:'RESEARCH_PLAYER_FORECASTS',
-      officialPicks:0,calibrated:false,items:[{
-       id:'123|2026-11-05',playerId:'123',playerName:'Example Forward',teamName:'Test FC',
-       opponent:'Opponent FC',fixtureDate:'2026-11-05',source:'AUTHORIZED_PLAYER_MATCH_LOG',
-       forecast:{
-        playerId:'123',fixtureDate:'2026-11-05',
-        status:'RESEARCH_ONLY_NO_CALIBRATED_PROBABILITIES_NO_OFFICIAL_PICKS',
-        predictedMinutes:72.8,predictedShots:2.6,predictedShotsOnTarget:1.2,
-        shotsReachCount:3,sotReachCount:2,pReachProjectedShots:.427,
-        pReachProjectedSot:.29,lineupState:'UNKNOWN'
-       }
-      }]
-     }});
-   return route.fulfill({status:503,json:{error:'offline'}});
- });
+test('stale static ESPN snapshots do not fabricate a player for a future season',async({page})=>{
+ await page.clock.install({time:new Date('2027-02-01T16:00:00.000Z')});
+ await page.route('**/api/**',route=>route.fulfill({status:503,json:{error:'offline'}}));
  await page.goto('/');
  await page.locator('#sport-chip-soccer').click();
  const panel=page.locator('#motion-screen-SOCCER');
  await panel.getByRole('tab',{name:'Player props'}).click();
- const card=panel.getByTestId('soccer-player-prop-card');
- await expect(card).toContainText('Example Forward');
- await expect(card).toContainText('2.6');
- await expect(card).toContainText('42.7% chance of 3+ shots');
- await expect(card).toContainText('1.2');
- await expect(card).toContainText('29.0% chance of 2+ on target');
- await expect(card).toContainText('73 minutes');
- await expect(card).toContainText('Uncalibrated research probability');
+ await expect(panel.getByTestId('soccer-player-prop-card')).toHaveCount(0);
+ await expect(panel.getByText("Player forecasts aren't connected yet")).toBeVisible();
 });
