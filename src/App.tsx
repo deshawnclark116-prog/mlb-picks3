@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Prediction, Game, Health, RecordData, CfbPrediction, CfbPredictionsDoc, TennisPrediction, TennisPredictionsDoc, NhlPrediction, NhlPredictionsDoc } from "./types";
 import TodayScreen from "./components/TodayScreen";
 import GamesScreen from "./components/GamesScreen";
@@ -27,6 +27,13 @@ type TabType = "TODAY" | "GAMES" | "STATUS" | "RECORD" | "NFL" | "CFB" | "TENNIS
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabType>("TODAY");
   const [moreOpen, setMoreOpen] = useState(false);
+  const sportRailRef=useRef<HTMLElement|null>(null);
+  // After choosing Soccer from More, reveal the selected sport chip rather
+  // than leaving it hidden off the right edge of the mobile horizontal rail.
+  useEffect(()=>{
+    const chip=sportRailRef.current?.querySelector<HTMLButtonElement>('button[aria-pressed="true"]');
+    chip?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  },[activeTab]);
   const navigateTo = (tab:TabType) => {setMoreOpen(false);setActiveTab(tab);};
   const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [games, setGames] = useState<Game[]>([]);
@@ -305,7 +312,7 @@ export default function App() {
               <LayoutGrid size={17}/> <span>Explore</span>
             </button>
           </div>
-          <nav aria-label="Switch sport" className="flex gap-2 overflow-x-auto px-4 pb-3 pt-1 sm:px-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <nav ref={sportRailRef} aria-label="Switch sport" className="flex gap-2 overflow-x-auto px-4 pb-3 pt-1 sm:px-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {quickSports.map(({tab,label})=><button key={tab} type="button" id={'sport-chip-'+tab.toLowerCase()}
               onClick={()=>navigateTo(tab)} aria-pressed={activeTab===tab}
               className={`min-h-9 shrink-0 rounded-full border px-4 text-[12px] font-bold transition-colors ${activeTab===tab?'border-[#79FF48] bg-[#79FF48] text-[#111a12]':'border-white/10 bg-[#1e2629] text-gray-300 active:bg-[#303b3f]'}`}>
