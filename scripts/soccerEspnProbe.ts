@@ -36,4 +36,11 @@ console.log('SOCCER_ESPN_PROBE_SUMMARY',JSON.stringify({
   sampleStats:Array.isArray(z.athletes)&&z.athletes[0]?(z.athletes[0] as Record<string,unknown>).stats:null})),
  extraKeys:Object.keys(box||{})
 }));
-if(players.length===0)throw Error('ESPN soccer summary has no player boxscore; needs alternate source');
+const rosters=Array.isArray(summary.rosters)?summary.rosters as Record<string,unknown>[]:[];
+console.log('SOCCER_ESPN_ROSTERS',JSON.stringify({count:rosters.length,
+  keys:rosters[0]?Object.keys(rosters[0]):[],
+  firstTeam:rosters[0]?{team:rosters[0].team, playersLength:Array.isArray(rosters[0].roster)?rosters[0].roster.length:null,
+   athleteKeys:Array.isArray(rosters[0].roster)&&rosters[0].roster[0]?Object.keys(rosters[0].roster[0]):[],
+   samples:Array.isArray(rosters[0].roster)?rosters[0].roster.slice(0,3):[]}:
+   null}).slice(0,14000));
+if(players.length===0&&rosters.length===0)throw Error('ESPN soccer summary has no player roster or boxscore');
