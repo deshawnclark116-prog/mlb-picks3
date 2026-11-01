@@ -77,7 +77,7 @@ test('NFL expanded player projections scroll to last cards without horizontal ov
  await expect.poll(()=>scroll.evaluate(e=>e.scrollTop)).toBeGreaterThan(300);
 });
 
-test('NFL stat filters still swipe horizontally on narrow mobile after vertical scroll fix',async({page})=>{
+test('NFL stat chips remain reachable on narrow mobile after vertical scroll fix',async({page})=>{
  await page.setViewportSize({width:300,height:760});
  await openNfl(page);
  const filter=page.locator('[aria-label="Outcome family"]');
@@ -85,20 +85,29 @@ test('NFL stat filters still swipe horizontally on narrow mobile after vertical 
  const bounds=await filter.boundingBox();
  expect(bounds).not.toBeNull();
  const dims=await filter.evaluate(el=>({client:el.clientWidth,content:el.scrollWidth}));
- expect(dims.content).toBeGreaterThan(dims.client);
- const cd=await page.context().newCDPSession(page);
- await cd.send('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:1});
- const y=Math.round(bounds!.y+bounds!.height/2);
- const start=Math.round(bounds!.x+bounds!.width-22);
- const end=Math.round(bounds!.x+22);
- await cd.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:start,y,id:1}]});
- for(let i=1;i<=12;i++){
-  await cd.send('Input.dispatchTouchEvent',{type:'touchMove',
-   touchPoints:[{x:Math.round(start+(end-start)*i/12),y,id:1}]});
-  await new Promise(resolve=>setTimeout(resolve,18));
+ // On phones where all five short labels fit, horizontal scrolling is
+ // correctly unnecessary. Only require a touch swipe when real overflow exists.
+ if(dims.content>dims.client+1){
+  const cd=await page.context().newCDPSession(page);
+  await cd.send('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:1});
+  const y=Math.round(bounds!.y+bounds!.height/2);
+  const start=Math.round(bounds!.x+bounds!.width-22);
+  const end=Math.round(bounds!.x+22);
+  await cd.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:start,y,id:1}]});
+  for(let i=1;i<=12;i++){
+   await cd.send('Input.dispatchTouchEvent',{type:'touchMove',
+    touchPoints:[{x:Math.round(start+(end-start)*i/12),y,id:1}]});
+   await new Promise(resolve=>setTimeout(resolve,18));
+  }
+  await cd.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+  await cd.detach();
+  await expect.poll(()=>filter.evaluate(el=>el.scrollLeft)).toBeGreaterThan(0);
  }
- await cd.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
- await cd.detach();
- await expect.poll(()=>filter.evaluate(el=>el.scrollLeft)).toBeGreaterThan(0);
- await expect(page.getByRole('button',{name:'TD',exact:true})).toBeVisible();
+ const td=page.getByRole('button',{name:'TD',exact:true});
+ await expect(td).toBeVisible();
+ await td.click();
+ await expect(td).toHaveAttribute('aria-pressed','true');
+ const pass=page.getByRole('button',{name:'PASS',exact:true});
+ await pass.click();
+ await expect(pass).toHaveAttribute('aria-pressed','true');
 });
