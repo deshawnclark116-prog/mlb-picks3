@@ -6,6 +6,8 @@ on:
       - src/components/NhlTodayScreen.tsx
       - src/components/UnifiedSportGameCards.tsx
       - src/nhl/countResearch.ts
+      - src/lib/wholeStatProjection.ts
+      - tests/wholeStatProjection.test.ts
       - tests/browser/nhlBestChances.spec.ts
       - tests/browser/nhlScroll.spec.ts
       - tests/unifiedSportGameCards.test.ts
@@ -32,7 +34,7 @@ jobs:
           npm run build
       - name: Verify uncalibrated research and meaningful SOG event selection
         run: |
-          node --import tsx --test tests/unifiedSportGameCards.test.ts tests/nhlCountResearch.test.ts tests/nhlRealGameGrouping.test.ts
+          node --import tsx --test tests/wholeStatProjection.test.ts tests/unifiedSportGameCards.test.ts tests/nhlCountResearch.test.ts tests/nhlRealGameGrouping.test.ts
       - name: Verify NHL phone screens and all-model market selection
         run: |
           npx playwright install chromium
