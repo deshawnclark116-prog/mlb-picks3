@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - server/soccerPlayerEligibility.ts
+      - scripts/soccerEligibilitySmoke.ts
       - server/soccerEspnBoard.ts
       - src/soccer/espnPlayerBoard.ts
       - src/soccer/gameBoard.ts
@@ -28,3 +29,4 @@ jobs:
       - run: npx tsc --noEmit
       - run: node --import tsx --test tests/soccerPlayerEligibility.test.ts tests/soccerEspnPlayerBoard.test.ts tests/soccerGameBoard.test.ts
       - run: npm run build
+      - run: node --import tsx scripts/soccerEligibilitySmoke.ts
