@@ -6,13 +6,13 @@ const get=async(url:string)=>{
  const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),18000);
  try{
   const r=await fetch(url,{signal:controller.signal,headers:{Accept:'application/json','User-Agent':'PropEdge-Research-Contract-Check/1.0'}});
-  if(!r.ok)throw Error('ESPN HTTP '+r.status);
+  if(!r.ok)throw Error('ESPN HTTP '+r.status+' url='+url+' body='+(await r.text()).slice(0,250));
   return await r.json() as Record<string,unknown>;
  }finally{clearTimeout(timer);}
 };
 const yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10).replace(/-/g,'');
 const today=new Date().toISOString().slice(0,10).replace(/-/g,'');
-const data=await get(base+'scoreboard?dates='+yesterday+'-'+today+'&limit=100');
+const data=await get(base+'scoreboard?dates='+yesterday+'&limit=100');
 const events=Array.isArray(data.events)?data.events as Record<string,unknown>[]:[];
 console.log('SOCCER_ESPN_PROBE_SCOREBOARD',JSON.stringify({day:yesterday,events:events.length,
  keys:Object.keys(data),fixtureFields:events[0]?Object.keys(events[0]):[]}));
@@ -20,7 +20,7 @@ let event=events.find(e=>{const a=e.status as Record<string,unknown>|undefined;
  return (a?.type as Record<string,unknown>|undefined)?.completed===true});
 if(!event){
  const day=new Date(Date.now()-6*86400000).toISOString().slice(0,10).replace(/-/g,'');
- const old=await get(base+'scoreboard?dates='+day+'-'+today+'&limit=100');
+ const old=await get(base+'scoreboard?dates='+day+'&limit=100');
  const games=Array.isArray(old.events)?old.events as Record<string,unknown>[]:[];
  event=games.find(e=>((e.status as Record<string,unknown>|undefined)?.type as Record<string,unknown>|undefined)?.completed===true);
 }
