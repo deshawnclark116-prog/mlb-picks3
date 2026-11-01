@@ -22,9 +22,8 @@ test('phone view starts with match cards, not separate top-pick and player feeds
 test('one game expands all its real player projections and differentiates missing match model',async({page})=>{
  const screen=await openSoccer(page);
  const games=screen.getByTestId('soccer-game-card');
+ await expect(games.first()).toBeVisible();
  const counts=await games.getByTestId('soccer-game-projection-count').allTextContents();
- const titles=await games.allTextContents();
- console.log('SOCCER_GAME_BROWSER_COUNTS',JSON.stringify({counts,titles:titles.map(x=>x.slice(0,150))}));
  const idx=counts.findIndex(x=>/\b[1-9]\d* players/.test(x));
  expect(idx,'At least one imminent game must contain real player forecasts').toBeGreaterThanOrEqual(0);
  const game=games.nth(idx);
