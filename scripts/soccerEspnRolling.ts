@@ -9,6 +9,8 @@
  */
 import {existsSync,mkdirSync,readFileSync,writeFileSync,readdirSync} from 'node:fs';
 import {join} from 'node:path';
+import {gradeEspnPlayerOriginal,soccerEspnPlayerScorecard,
+ type EspnPlayerGrade} from '../src/soccer/espnPlayerGrade';
 import {ESPN_SOCCER_LEAGUES,parseEspnSoccerScoreboard,
  parseCompletedSoccerRoster,buildEspnEarlyPlayerForecasts,espnSourceSha,
  type EspnFixture,type EspnLeague,type EspnPlayerRow,type EspnOriginal} from '../src/soccer/espnAutofeed';
@@ -136,6 +138,28 @@ for(const file of readdirSync(originalDir).filter(x=>x.endsWith('.json'))){
   throw Error('SOCCER_ESPN_INVALID_ORIGINAL_FILE:'+file);
  originals.push(...data.items);
 }
+// Grade each immutable original only when its exact completed match and
+// source-verified player stat line exist. Unknown participation is explicit.
+const gradePath=join(root,'grades.json'),summaryPath=join(root,'scorecard.json');
+const graded:Record<string,EspnPlayerGrade>=existsSync(gradePath)?
+ JSON.parse(readFileSync(gradePath,'utf8')):{};
+let newGrades=0;
+for(const original of originals){
+ if(graded[original.id])continue;
+ const finished=previous.events[original.league+'|'+original.gameId];
+ if(!finished||!finished.fixture.completed)continue;
+ if(Date.parse(finished.fixture.kickoffUtc)!==Date.parse(original.kickoffUtc)||
+    Date.parse(finished.fixture.kickoffUtc)+3*3600000>now.getTime())
+   continue;
+ const g=gradeEspnPlayerOriginal(original,finished.fixture,finished.rows,
+    finished.sourceSha256,asof);
+ graded[original.id]=g;newGrades++;
+}
+if(newGrades||!existsSync(gradePath))
+ writeFileSync(gradePath,JSON.stringify(graded)+'\n');
+const score=soccerEspnPlayerScorecard(Object.values(graded),originals.length);
+writeFileSync(summaryPath,JSON.stringify({...score,asofUtc:asof})+'\n');
+console.log('SOCCER_ESPN_PLAYER_FORWARD_GRADE',JSON.stringify({newGrades,...score}));
 const live=originals.filter(o=>Date.parse(o.kickoffUtc)>now.getTime()&&
  Date.parse(o.capturedAtUtc)<=now.getTime());
 live.sort((a,b)=>a.kickoffUtc.localeCompare(b.kickoffUtc)||

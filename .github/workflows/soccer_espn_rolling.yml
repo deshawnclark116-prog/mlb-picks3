@@ -9,6 +9,8 @@ on:
       - src/soccer/espnAutofeed.ts
       - src/soccer/playerChallenger.ts
       - tests/soccerEspnAutofeed.test.ts
+      - src/soccer/espnPlayerGrade.ts
+      - tests/soccerEspnPlayerGrade.test.ts
   schedule:
     - cron: '29 11,19 * * *'
 permissions:
@@ -33,7 +35,7 @@ jobs:
       - name: Compile and verify pregame source parsing
         run: |
           npx tsc --noEmit
-          node --import tsx --test tests/soccerEspnAutofeed.test.ts tests/soccerPlayerChallenger.test.ts
+          node --import tsx --test tests/soccerEspnAutofeed.test.ts tests/soccerPlayerChallenger.test.ts tests/soccerEspnPlayerGrade.test.ts tests/soccerEspnPlayerBoard.test.ts
       - name: Update real ESPN match-history and freeze pregame player forecasts
         run: node --import tsx scripts/soccerEspnRolling.ts
       - name: Append history and first-seen originals without changing prior snapshots
