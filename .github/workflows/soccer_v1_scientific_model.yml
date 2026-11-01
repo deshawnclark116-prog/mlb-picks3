@@ -18,6 +18,9 @@ on:
       - server.ts
       - tests/soccerModel.test.ts
       - tests/soccerResearch.test.ts
+      - tests/soccerFrozenBoard.test.ts
+      - src/soccer/frozenBoardAssets.ts
+      - src/soccer/frozenBoard.ts
       - .github/workflows/soccer_v1_scientific_model.yml
   pull_request:
     paths:
@@ -36,6 +39,9 @@ on:
       - server.ts
       - tests/soccerModel.test.ts
       - tests/soccerResearch.test.ts
+      - tests/soccerFrozenBoard.test.ts
+      - src/soccer/frozenBoardAssets.ts
+      - src/soccer/frozenBoard.ts
       - .github/workflows/soccer_v1_scientific_model.yml
   workflow_dispatch: {}
 permissions:
@@ -59,7 +65,7 @@ jobs:
           npm run build
       - name: Guard leakage, separate research from betting, and preserve existing NFL logic
         run: |
-          node --import tsx --test tests/soccerModel.test.ts tests/soccerResearch.test.ts tests/soccerForwardLedger.test.ts tests/soccerForwardStatus.test.ts tests/soccerPlayerChallenger.test.ts tests/soccerPlayerResearch.test.ts
+          node --import tsx --test tests/soccerModel.test.ts tests/soccerResearch.test.ts tests/soccerForwardLedger.test.ts tests/soccerForwardStatus.test.ts tests/soccerPlayerChallenger.test.ts tests/soccerPlayerResearch.test.ts tests/soccerFrozenBoard.test.ts
           npm test
       - name: Real multi-season five-league data source audit and chronological 3-way Brier challenge
         run: |
