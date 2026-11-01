@@ -15,4 +15,19 @@ html, body, #root {
   overflow: hidden;
   background-color: #050505;
 }
+/* On mobile WebViews the NFL projections are a nested scroll region inside
+ * the fixed-size app frame. Keep scroll ownership in that region rather than
+ * allowing the surrounding page to capture vertical swipes. */
+#nfl-scroll-area {
+  min-height: 0;
+  height: 0; /* flex:1 controls the actual height; avoid content-based expansion */
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+#nfl-scroll-area [aria-label="Outcome family"],
+#nfl-scroll-area [aria-label="Forecast horizon"] {
+  touch-action: pan-x pan-y;
+}
 

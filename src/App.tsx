@@ -329,7 +329,7 @@ export default function App() {
           <AnimatePresence mode="wait">
             <motion.div id={`motion-screen-${activeTab}`} key={activeTab}
               initial={{opacity:0,x:12}} animate={{opacity:1,x:0}} exit={{opacity:0,x:-12}}
-              transition={{duration:0.14,ease:'easeOut'}} className="absolute inset-0 h-full w-full">
+              transition={{duration:0.14,ease:'easeOut'}} className="absolute inset-0 min-h-0 h-full w-full">
               {renderScreen()}
             </motion.div>
           </AnimatePresence>

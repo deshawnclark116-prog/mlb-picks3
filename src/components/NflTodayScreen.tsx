@@ -124,13 +124,13 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh,role=null
     requestAnimationFrame(()=>requestAnimationFrame(()=>document.getElementById(`pick-${pick.row.id}`)?.scrollIntoView({behavior:'smooth',block:'start'})));
   };
   const empty=mode==='SYSTEM PICKS'?'No model-derived 65%+ system picks are available for this game.':mode==='BETTABLE NOW'?"No current sportsbook market matches this game's system picks.":view?.artifact.empty_message || 'No valid New Engine forecast has been captured for this slate yet.';
-  return <div id="nfl-today-screen-wrapper" className="flex h-full min-w-0 flex-col overflow-hidden bg-[#0D0D0D] text-gray-200">
+  return <div id="nfl-today-screen-wrapper" className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden bg-[#0D0D0D] text-gray-200">
     <header className="flex shrink-0 items-center justify-between gap-3 border-b border-[#222] px-4 py-3">
       <div className="min-w-0"><h1 className="text-xl font-black tracking-tighter text-white">PROP <span className="text-[#00FF41]">EDGE</span></h1>
         <p className="mt-1 text-[10px] font-mono text-gray-400"> NFL · {view?.artifact.status.season || '—'} WEEK {view?.artifact.status.week || '—'} · DATA CHECKED {etTime(retrievedAt)}</p>
       </div><button aria-label="Refresh NFL forecasts" disabled={loading} onClick={()=>void refresh()} className={`${touch} flex min-w-11 items-center justify-center text-[#00FF41] disabled:opacity-40`}><RefreshCw size={17} className={loading?'animate-spin':''}/></button>
     </header>
-    <div className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden px-3 pb-28" id="nfl-scroll-area">
+    <div className="min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain px-3 pb-28 [-webkit-overflow-scrolling:touch]" id="nfl-scroll-area" role="region" aria-label="Scrollable NFL model projections" tabIndex={0}>
       <div className="mt-3 grid grid-cols-3 gap-1" aria-label="NFL board mode">{(['SYSTEM PICKS','BETTABLE NOW','MODEL BOARD'] as Mode[]).map(m=><button key={m} onClick={()=>setMode(m)} aria-pressed={mode===m} className={`${touch} !px-1 text-[10px] font-bold whitespace-nowrap ${mode===m?'!border-[#00FF41]/50 !bg-[#00FF41]/10 text-[#00FF41]':'text-gray-400'}`}>{m}</button>)}</div>
       <div className="mt-2 flex gap-2" aria-label="Forecast horizon">{HORIZONS.map(h=><button key={h} disabled={!view?.rows[h].length} aria-pressed={selected===h} onClick={()=>setHorizon(h)} className={`${touch} min-w-20 px-5 font-bold disabled:opacity-30 ${selected===h?'text-[#00FF41]':'text-gray-400'}`}>{h}</button>)}</div>
       <div className="mt-2 flex gap-1 overflow-x-auto" aria-label="Outcome family">{(['ALL','PASS','RUSH','REC','TD'] as Family[]).map(f=><button key={f} aria-pressed={family===f} onClick={()=>setFamily(f)} className={`${touch} shrink-0 ${family===f?'!border-[#00FF41]/40 text-[#00FF41]':'text-gray-400'}`}>{f}</button>)}</div>
