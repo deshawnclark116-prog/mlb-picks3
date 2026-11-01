@@ -7,6 +7,13 @@ on:
       - server/soccerResearch.ts
       - server/soccerPlayerResearch.ts
       - server/soccerPlayerBoard.ts
+      - src/soccer/espnAutofeed.ts
+      - src/soccer/espnPlayerBoard.ts
+      - src/soccer/espnBoardAssets.ts
+      - scripts/soccerEspnRolling.ts
+      - server/soccerEspnBoard.ts
+      - tests/soccerEspnAutofeed.test.ts
+      - tests/soccerEspnPlayerBoard.test.ts
       - tests/soccerPlayerBoard.test.ts
       - tests/soccerPlayerChallenger.test.ts
       - tests/soccerPlayerResearch.test.ts
@@ -35,6 +42,13 @@ on:
       - server/soccerResearch.ts
       - server/soccerPlayerResearch.ts
       - server/soccerPlayerBoard.ts
+      - src/soccer/espnAutofeed.ts
+      - src/soccer/espnPlayerBoard.ts
+      - src/soccer/espnBoardAssets.ts
+      - scripts/soccerEspnRolling.ts
+      - server/soccerEspnBoard.ts
+      - tests/soccerEspnAutofeed.test.ts
+      - tests/soccerEspnPlayerBoard.test.ts
       - tests/soccerPlayerBoard.test.ts
       - tests/soccerPlayerChallenger.test.ts
       - tests/soccerPlayerResearch.test.ts
@@ -79,7 +93,7 @@ jobs:
           npm run build
       - name: Guard leakage, separate research from betting, and preserve existing NFL logic
         run: |
-          node --import tsx --test tests/soccerModel.test.ts tests/soccerResearch.test.ts tests/soccerForwardLedger.test.ts tests/soccerForwardStatus.test.ts tests/soccerPlayerChallenger.test.ts tests/soccerPlayerResearch.test.ts tests/soccerFrozenBoard.test.ts tests/soccerMatchLabels.test.ts tests/soccerTopRanked.test.ts tests/soccerPlayerBoard.test.ts
+          node --import tsx --test tests/soccerModel.test.ts tests/soccerResearch.test.ts tests/soccerForwardLedger.test.ts tests/soccerForwardStatus.test.ts tests/soccerPlayerChallenger.test.ts tests/soccerPlayerResearch.test.ts tests/soccerFrozenBoard.test.ts tests/soccerMatchLabels.test.ts tests/soccerTopRanked.test.ts tests/soccerPlayerBoard.test.ts tests/soccerEspnAutofeed.test.ts tests/soccerEspnPlayerBoard.test.ts
           npm test
       - name: Real multi-season five-league data source audit and chronological 3-way Brier challenge
         run: |
