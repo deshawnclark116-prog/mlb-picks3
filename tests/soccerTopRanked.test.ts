@@ -7,7 +7,7 @@ function fixture(home:string,away:string,homeP:number,drawP:number,awayP:number,
   expectedHomeGoals:1.61,expectedAwayGoals:1.34,baselineHomeGoals:1.5,
   baselineAwayGoals:1.3,homeWeightedMatches:30,awayWeightedMatches:30,
   probabilities:{home:homeP,draw:drawP,away:awayP,btts,over25:over},
-  mostLikely:'home',source:'research',status:'RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET'};
+  mostLikely:'H',source:'research',status:'RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET'};
 }
 test('user screenshot: 59.1% both teams score wins over 56.6% 3+ and 43.9% home win',()=>{
  const f=fixture('Elche CF','Valencia CF',.439,.243,.318,.591,.566);
