@@ -48,7 +48,7 @@ test('tennis numeric model rounds without borrowing the bookmaker target odds',(
   sport:'TENNIS',game:games,picks:games.picks}));
  assert.match(html,/23 GAMES/);
  assert.match(html,/P\(EXACTLY 23\): —/);
- assert.match(html,/Player A 2-0/);
+ assert.match(html,/PLAYER A 2-0/);
  assert.match(html,/P\(EVENT\): 73.0%/);
  assert.doesNotMatch(html,/P\(EXACTLY 23\): 73.0%/);
 });
