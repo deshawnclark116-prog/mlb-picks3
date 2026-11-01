@@ -41,9 +41,14 @@ export function soccerPlayerResearchHandler(config:Config){
     if(!res.ok)throw Error('SOCCER_PROVIDER_HTTP_'+res.status);
     const text=await res.text();
     if(text.length<30||text.length>1_500_000)throw Error('SOCCER_PROVIDER_RESPONSE_SIZE');
-    const json=JSON.parse(text) as Record<string,unknown>;
-    if(json.error)throw Error('SOCCER_PROVIDER_ERROR_RESPONSE');
-    const result={json,sha:hash(text),captured:now.toISOString()};
+    const envelope=JSON.parse(text) as Record<string,unknown>;
+    if(envelope.error)throw Error('SOCCER_PROVIDER_ERROR_RESPONSE');
+    // REST uses {data:{...}}. MCP examples show unwrapped results, which
+    // must NOT be silently accepted by this REST adapter.
+    const json=envelope.data;
+    if(!json||typeof json!=='object'||Array.isArray(json))
+      throw Error('SOCCER_PROVIDER_REST_DATA_ENVELOPE_MISSING');
+    const result={json:json as Record<string,unknown>,sha:hash(text),captured:now.toISOString()};
     cache.set(k,{expires:now.getTime()+6*3600_000,result});
     return result;
    }finally{clearTimeout(timer);}

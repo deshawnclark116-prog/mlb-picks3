@@ -99,9 +99,10 @@ export function playerShotForecast(
  const exposure=weighted.reduce((s,x)=>s+x.w*x.g.minutes,0);
  const attempts=weighted.reduce((s,x)=>s+x.w*x.g.shots,0);
  const onTarget=weighted.reduce((s,x)=>s+x.w*x.g.shots_on_target,0);
- const xgRows=weighted.filter(x=>x.g.xg!==null);
- const xgExposure=xgRows.reduce((s,x)=>s+x.w*x.g.minutes,0);
- const xgTotal=xgRows.reduce((s,x)=>s+x.w*(x.g.xg??0),0);
+ // Provider xG is periodically recomputed using future seasons. It cannot
+ // be used as a leak-safe historical feature until we fit a point-in-time xG
+ // model from training-period-only shot locations. Preserve raw coverage for
+ // an independent audit, but do not use provider xG in forecasts.
  // Neutral Gamma-Beta shrinkage prevents 1 standout game dominating a
  // newly promoted player; fixed priors must beat honest blind baselines.
  const shotRate90=(attempts+2.4)/(exposure/90+1.5);
@@ -124,8 +125,7 @@ export function playerShotForecast(
    pPlay*(pStart*minStart+(1-pStart)*minSub),0,100);
  const expectedShots=shotRate90*expectedMinutes/90;
  const expectedSot=expectedShots*sotFraction;
- const expectedXg=xgExposure>100?
-   num((xgTotal+.12)/(xgExposure/90+.9)*expectedMinutes/90):null;
+ const expectedXg:null=null; // XG_FEATURE_BLOCKED_POSTHOC_PROVIDER_REVALUE
  // Poisson thinning is only a research approximation: these p-values
  // are not calibrated against unseen first-seen outcomes.
  return {playerId:history.player_id,fixtureDate,historyGames:rows.length,

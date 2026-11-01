@@ -2,7 +2,10 @@
 
 Existing five-league match-goals champion remains unchanged. We have added
 a player role and shooting challenger, which consumes real match-by-match
-minutes, starting roles, shots, SOT and xG from StrikerAPI when connected.
+minutes, starting roles, shots and SOT from StrikerAPI when connected.
+Provider xG is only inspected for source coverage: because its historical values
+are refitted using future seasons, that xG is BLOCKED from pregame predictors
+until a strictly as-of xG model is trained on earlier shot-location data.
 
 Credentials are required as server environment variables:
 - STRIKERAPI_API_KEY: secret; never commit to Git or paste in chat.

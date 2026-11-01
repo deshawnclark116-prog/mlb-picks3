@@ -16,7 +16,7 @@ function make(){
    game:{game_id:'5000',date:'2026-10-04',starts_at:'2026-10-04T16:00:00Z',status:'scheduled'},
    lineups:[{team_id:'382',starting_xi:[{player_id:'123'},
     ...Array.from({length:10},(_,i)=>({player_id:String(i+1000)}))]}]};
-  return {ok:true,status:200,text:async()=>JSON.stringify(obj)} as Response;
+  return {ok:true,status:200,text:async()=>JSON.stringify({data:obj})} as Response;
  };
  const res=()=>({statusCode:200,data:{} as any,
   setHeader(){return this;},status(n:number){this.statusCode=n;return this;},
