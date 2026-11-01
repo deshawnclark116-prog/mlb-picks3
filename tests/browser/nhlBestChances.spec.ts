@@ -65,11 +65,12 @@ test('NHL opens with strongest multi-market events, not raw 19% shots',async({pa
  await expect(picks).toHaveCount(3);
  await expect(game).toContainText('Pittsburgh Penguins ML');
  await expect(game).toContainText('Skater Higher');
- await expect(game).toContainText('2+ shots on goal');
- await expect(game.getByTestId('nhl-research-strong-shots')).toContainText('75.0%');
+ await expect(game).toContainText('3 shots');
+ await expect(game.getByTestId('whole-stat-exact-probability').last()).toContainText('40.0%');
+ await expect(game).toContainText('Chance of exactly 3');
  await expect(game).not.toContainText('Skater Weak');
  await expect(game).not.toContainText('19.0%');
- await expect(panel.getByTestId('nhl-research-shortlist-note')).toContainText('Uncalibrated research');
+ await expect(panel.getByTestId('nhl-research-shortlist-note')).toContainText('not calibrated hit rates');
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
 });
 test('All projections still preserves original low-probability research and full model detail',async({page})=>{
@@ -81,7 +82,7 @@ test('All projections still preserves original low-probability research and full
  await expect(game.getByTestId('unified-sport-projection')).toHaveCount(4);
  await expect(game).toContainText('Skater Weak');
  await expect(game).toContainText('19.0%');
- await expect(game.getByTestId('projection-reach-probability')).toContainText('19.0%');
+ await expect(game.getByText('Separate threshold event: P(4+ shots) 19.0%',{exact:false})).toHaveCount(1);
  await expect(panel.getByRole('button',{name:'All projections'})).toHaveAttribute('aria-pressed','true');
 });
 test('NHL filters show winner, point and shots markets without wrongly relabeling sources',async({page})=>{
@@ -106,6 +107,6 @@ test('NHL filters show winner, point and shots markets without wrongly relabelin
  if(await game.locator('button[aria-expanded]').getAttribute('aria-expanded')==='false')
    await game.locator('button[aria-expanded]').click();
  await expect(game.getByTestId('unified-sport-projection')).toHaveCount(1);
- await expect(game).toContainText('2+ shots on goal');
+ await expect(game).toContainText('3 shots');
  await expect(game).not.toContainText('Pittsburgh Penguins ML');
 });
