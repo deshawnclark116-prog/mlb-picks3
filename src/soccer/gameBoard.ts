@@ -141,6 +141,11 @@ export function groupSoccerGameProjections(
   if(candidates.length>1)throw Error('SOCCER_GAME_BOARD_AMBIGUOUS_MATCH');
   if(candidates.length===1){
    const [id,m]=candidates[0];game.match=m;unassigned.delete(id);
+   // Preserve canonical model naming only when no verified fixture exists.
+   // Source-verified ESPN home/away order must never be overwritten.
+   if(!verified.has(game.id)){
+    game.home=m.forecast.home;game.away=m.forecast.away;
+   }
   }
   game.players.sort((a,b)=>
    Math.max(b.forecast.pReachProjectedShots,b.forecast.pReachProjectedSot)-
