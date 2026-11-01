@@ -25,6 +25,7 @@ import {
 import { Prediction, PitchTensorData } from "../types";
 import { formatOdds, formatPercent, formatKellyStake, formatToEasternTime, getPredictionKey, getLatestGeneratedAt } from "../utils";
 import PitchTensorModal from "./PitchTensorModal";
+import {MlbModelPrediction} from './MlbModelPrediction';
 import { getPredictionTensor } from "../utils/pitchMatchupTensor";
 
 interface TodayScreenProps {
@@ -371,15 +372,7 @@ export default function TodayScreen({
                       </div>
                     </div>
 
-                    {/* Headline Hit Probability block */}
-                    <div className="bg-[#1A1A1A]/50 rounded-2xl p-4 border border-[#222] flex flex-col items-center justify-center text-center shadow-inner">
-                      <span className="text-[10px] font-semibold text-gray-500 uppercase tracking-widest font-mono mb-1">
-                        Hit Probability
-                      </span>
-                      <span className="text-4xl font-black font-mono text-[#00FF41] tracking-tight drop-shadow-[0_0_12px_rgba(0,255,65,0.2)]">
-                        {pred.prob_pct !== undefined && pred.prob_pct !== null ? `${pred.prob_pct.toFixed(1)}%` : "N/A"}
-                      </span>
-                    </div>
+                    <MlbModelPrediction pred={pred} />
 
                     {/* Pitch-Mix Matchup Tensor Indicator Widget */}
                     {(() => {
@@ -414,12 +407,6 @@ export default function TodayScreen({
                       
                       {/* Left specs: Proj/Stake/Actual */}
                       <div className="space-y-2">
-                        <div>
-                          <p className="text-[9px] text-[#555] uppercase font-mono font-bold leading-none mb-1">Projected</p>
-                          <p className="text-base font-mono font-bold text-white">
-                            {pred.projected !== undefined && pred.projected !== null ? pred.projected.toFixed(2) : "N/A"}
-                          </p>
-                        </div>
                         {pred.actual_value !== undefined && pred.actual_value !== null && (
                           <div>
                             <p className="text-[9px] text-[#555] uppercase font-mono font-bold leading-none mb-1">Actual</p>

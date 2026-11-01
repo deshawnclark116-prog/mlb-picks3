@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Game, Prediction } from "../types";
 import { formatLocalTime, formatOdds, formatPercent, formatKellyStake, formatToEasternTime, getPredictionKey, getLatestGeneratedAt } from "../utils";
 import { Calendar, RefreshCw, AlertTriangle, ChevronDown, ChevronUp, TrendingUp } from "lucide-react";
+import {MlbModelPrediction} from './MlbModelPrediction';
 
 // Dynamic mapping logic linking predictions to a given game based on team and opponent fields
 export function getPredictionsForGame(game: Game, allPredictions: Prediction[]): Prediction[] {
@@ -298,35 +299,7 @@ export default function GamesScreen({
                                       </div>
                                     </div>
 
-                                    {/* Prominent probability headline */}
-                                    <div className="bg-[#141414] rounded-xl p-2.5 border border-[#222] flex flex-col items-center justify-center text-center shadow-inner">
-                                      <span className="text-[8px] font-semibold text-gray-500 uppercase tracking-widest font-mono mb-0.5">
-                                        Hit Probability
-                                      </span>
-                                      <span className="text-2xl font-black font-mono text-[#00FF41] tracking-tight drop-shadow-[0_0_8px_rgba(0,255,65,0.15)]">
-                                        {pred.prob_pct !== undefined && pred.prob_pct !== null ? `${pred.prob_pct.toFixed(1)}%` : "N/A"}
-                                      </span>
-                                    </div>
-
-                                    {/* Prop spec stats line */}
-                                    <div className="grid grid-cols-3 gap-2 text-center bg-[#141414] p-2 rounded-xl border border-[#222] text-[9.5px] font-mono">
-                                      <div>
-                                        <p className="text-[#555] font-bold uppercase leading-none mb-1">Projected</p>
-                                        <p className="text-white font-bold text-xs">
-                                          {pred.projected !== undefined && pred.projected !== null ? pred.projected.toFixed(2) : "N/A"}
-                                        </p>
-                                      </div>
-                                      <div>
-                                        <p className="text-[#555] font-bold uppercase leading-none mb-1">Odds</p>
-                                        <p className="text-[#00FF41] font-bold text-xs">
-                                          {formatOdds(pred.odds)}
-                                        </p>
-                                      </div>
-                                      <div>
-                                        <p className="text-[#555] font-bold uppercase leading-none mb-1">Stake</p>
-                                        <p className="text-white font-bold text-xs">{formatKellyStake(pred.kelly_fraction)}</p>
-                                      </div>
-                                    </div>
+                                    <MlbModelPrediction pred={pred} />
                                   </div>
                                 );
                               })
