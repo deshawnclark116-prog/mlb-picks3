@@ -37,8 +37,8 @@ test('seven-day view reveals more fixtures and each fixture has optional match p
  const rows=screen.getByTestId('soccer-game-card');
  expect(await rows.count()).toBeGreaterThan(3);
  await screen.getByRole('button',{name:/Filters/}).click();
- await screen.getByRole('searchbox',{name:'Search soccer teams or players'}).fill('Chelsea');
- await expect(rows.first()).toContainText(/Chelsea/i);
+ await screen.getByRole('searchbox',{name:'Search soccer teams or players'}).fill('Newcastle United');
+ await expect(rows.first()).toContainText(/Newcastle United/i);
  await screen.getByRole('searchbox',{name:'Search soccer teams or players'}).fill('');
  await ranges.getByRole('button',{name:'All matches'}).click();
  await expect(rows.first()).toBeVisible();
@@ -48,9 +48,9 @@ test('source verified match outcome model shows all 5 probability events, plus p
  const screen=await openSoccer(page);
  await screen.getByRole('group',{name:'Soccer game schedule range'}).getByRole('button',{name:'All matches'}).click();
  await screen.getByRole('button',{name:/Filters/}).click();
- await screen.getByRole('searchbox',{name:'Search soccer teams or players'}).fill('Crystal Palace FC');
+ await screen.getByRole('searchbox',{name:'Search soccer teams or players'}).fill('Newcastle United');
  const match=screen.getByTestId('soccer-game-card')
-  .filter({hasText:'Crystal Palace FC'}).first();
+  .filter({hasText:'Newcastle United'}).first();
  await expect(match).toBeVisible();
  await match.getByRole('button',{name:/View all projections/}).click();
  const outcomes=match.getByTestId('soccer-game-outcomes');
