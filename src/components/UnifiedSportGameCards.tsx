@@ -269,13 +269,11 @@ export default function UnifiedSportGameCards({sport,games,prefix}:{
              </div>
              <p className="mt-2 text-[12px] font-medium text-gray-400">{sport==='NHL'?game.shown.length+(mode==='SYSTEM PICKS'?' stronger modeled events · '+game.picks.length+' total forecasts':' total forecasts'):game.shown.length+' '+mode+' · '+game.sourceLabel}</p>
              {mode!=='BETTABLE NOW'&&preview&&<p className="mt-2 break-words text-[11px] text-gray-300">
-               TOP: <span className="text-white">{preview.player}</span> ·
-               {canNumeric(preview)?<>
-                  {sport==='NHL'&&mode==='SYSTEM PICKS'&&preview.nhlShotMilestone?
-                    <>P({preview.nhlShotMilestone.atLeast}+ shots) {pct(preview.nhlShotMilestone.probability)} · MEAN {value(preview)}</>:
-                    <>MODEL {preview.predictionKind==='mean'?'MEAN':'MEDIAN'} {value(preview)}{preview.projectionChance?<> · P({preview.projectionChance.atLeast}+) {pct(preview.projectionChance.probability)}</>:null}{preview.target?<> · TARGET {preview.target} ({pct(preview.modelProbability)})</>:null}</>}
-                </>:<>MODEL P(TARGET) {pct(preview.modelProbability)} · TARGET {preview.target} · NO NUMERIC FORECAST</>}
-             </p>}
+     TOP: <span className="text-white">{preview.player}</span> ·
+     {canNumeric(preview)?<> {value(preview)} · P(exactly {wholeStatProjection(preview.prediction!)})
+      {' '}{pct(preview.exactCountEvent?.probability??null)}</>:
+      <> {preview.target} · {pct(preview.modelProbability)}</>}
+   </p>}
            </div>
            <ChevronDown size={16} className={`shrink-0 text-gray-500 ${opened?'rotate-180':''}`}/>
          </button>
