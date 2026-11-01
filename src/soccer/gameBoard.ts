@@ -7,6 +7,7 @@ export type GameMatch={id:string;forecast:Forecast;origin:'FROZEN'|'LIVE'};
 export type GamePlayer={
  id:string;playerId:string;playerName:string;teamName:string;opponent:string;
  fixtureDate:string;kickoffUtc?:string;gameId?:string;league?:string;
+ currentEligibility?:'STARTER_CONFIRMED'|'EARLY_ROSTER_ELIGIBLE'|'EARLY_ROSTER_INJURY_UNVERIFIED';
  source:'AUTHORIZED_PLAYER_MATCH_LOG'|'ESPN_COMPLETED_MATCH_ROSTERS';
  forecast:{
   predictedShots:number;predictedShotsOnTarget:number;predictedMinutes:number;

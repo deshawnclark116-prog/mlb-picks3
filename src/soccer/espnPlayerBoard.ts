@@ -3,20 +3,28 @@
  * from completed fixtures in the frontend, and never infer injury clearance.
  */
 import type {EspnOriginal} from './espnAutofeed';
+export type EligibleEspnOriginal=EspnOriginal&{
+ currentEligibility:'STARTER_CONFIRMED'|'EARLY_ROSTER_ELIGIBLE'|'EARLY_ROSTER_INJURY_UNVERIFIED';
+};
 type Document={schema:string;status:string;generatedAtUtc:string;officialPicks:number;
- items:EspnOriginal[]};
+ liveEligibilityCheckedAtUtc?:string;items:EligibleEspnOriginal[]};
 const validTime=(s:unknown):s is string=>typeof s==='string'&&
  Number.isFinite(Date.parse(s))&&/Z$/.test(s);
-export function usableEspnPlayerBoard(raw:unknown,asofUtc:string):EspnOriginal[]{
+export function usableEspnPlayerBoard(raw:unknown,asofUtc:string):EligibleEspnOriginal[]{
  const d=raw as Document;
  if(!validTime(asofUtc)||!d||d.schema!=='soccer-espn-rolling-player-board-v1'||
    d.officialPicks!==0||!Array.isArray(d.items)||!validTime(d.generatedAtUtc)||
    Date.parse(d.generatedAtUtc)>Date.parse(asofUtc)||
-   Date.parse(asofUtc)-Date.parse(d.generatedAtUtc)>72*3600000)
+   Date.parse(asofUtc)-Date.parse(d.generatedAtUtc)>72*3600000||
+   !validTime(d.liveEligibilityCheckedAtUtc)||
+   Date.parse(d.liveEligibilityCheckedAtUtc)>Date.parse(asofUtc)||
+   Date.parse(asofUtc)-Date.parse(d.liveEligibilityCheckedAtUtc)>15*60000)
+
    return [];
- const ids=new Set<string>();const out:EspnOriginal[]=[];
+ const ids=new Set<string>();const out:EligibleEspnOriginal[]=[];
  for(const x of d.items){
-  if(!x||x.source!=='ESPN_COMPLETED_MATCH_ROSTERS'||
+  if(!x||!['STARTER_CONFIRMED','EARLY_ROSTER_ELIGIBLE','EARLY_ROSTER_INJURY_UNVERIFIED'].includes(x.currentEligibility)||
+    x.source!=='ESPN_COMPLETED_MATCH_ROSTERS'||
     x.status!=='EARLY_PREGAME_RESEARCH_UNCALIBRATED'||
     !validTime(x.kickoffUtc)||!validTime(x.capturedAtUtc)||
     x.capturedAtUtc>asofUtc||

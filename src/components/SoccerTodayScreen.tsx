@@ -5,7 +5,6 @@ import {SOCCER_SCHEMA} from '../soccer/model';
 import {frozenSoccerBoard} from '../soccer/frozenBoardAssets';
 import {bestSoccerEvent} from '../soccer/topRanked';
 import {namedSoccerOutcomes} from '../soccer/matchLabels';
-import {savedEspnPlayerBoard} from '../soccer/espnBoardAssets';
 import {usableEspnPlayerBoard} from '../soccer/espnPlayerBoard';
 import {soccerPlayerWindow} from '../soccer/playerDisplayWindow';
 import {groupSoccerGameProjections,type GameMatch,type GamePlayer,
@@ -15,8 +14,6 @@ type MatchDoc={schema:string;status:string;asof_calendar_day_utc:string;
  forecast_count:number;forecasts:Forecast[];guardrails:{
   official_bets:number;calibrated:boolean;verified_live_book_lines:number;
   player_prop_predictions:number}};
-type PlayerBoard={schema:'soccer-player-board-v1';status:string;
- items:GamePlayer[];officialPicks:0;calibrated:false};
 type Range='48H'|'7D'|'ALL';
 const leagues:League[]=['EPL','LaLiga','SerieA','Bundesliga','Ligue1'];
 const leagueNames:Record<League,string>={EPL:'Premier League',LaLiga:'La Liga',
@@ -48,20 +45,6 @@ function validMatches(d:unknown):d is MatchDoc {
       Number.isFinite(v)&&v>=0&&v<=1)&&
    Math.abs(f.probabilities.home+f.probabilities.draw+f.probabilities.away-1)<.0003);
 }
-function validPaidPilot(d:unknown):d is PlayerBoard{
- const x=d as PlayerBoard;
- return !!x&&x.schema==='soccer-player-board-v1'&&
-  x.officialPicks===0&&x.calibrated===false&&
-  Array.isArray(x.items)&&x.items.length<=1&&
-  x.items.every(p=>p.source==='AUTHORIZED_PLAYER_MATCH_LOG'&&
-    p.forecast?.status==='RESEARCH_ONLY_NO_CALIBRATED_PROBABILITIES_NO_OFFICIAL_PICKS'&&
-    [p.forecast.predictedShots,p.forecast.predictedShotsOnTarget,p.forecast.predictedMinutes,
-     p.forecast.pReachProjectedShots,p.forecast.pReachProjectedSot].every(n=>
-       typeof n==='number'&&Number.isFinite(n)&&n>=0)&&
-    p.forecast.pReachProjectedShots<=1&&p.forecast.pReachProjectedSot<=1&&
-    p.forecast.shotsReachCount===Math.max(1,Math.ceil(p.forecast.predictedShots))&&
-    p.forecast.sotReachCount===Math.max(1,Math.ceil(p.forecast.predictedShotsOnTarget)));
-}
 function OutcomeRow({label,probability}:{label:string;probability:number}){
  return <div className="flex min-w-0 items-center justify-between gap-3 border-b border-white/[.06] py-2.5 last:border-b-0">
   <span className="min-w-0 break-words text-[12px] font-medium leading-snug text-slate-200">{label}</span>
@@ -89,8 +72,10 @@ function PlayerRow({p}:{p:GamePlayer}){
   </div>
   <p className="mt-2 text-[11px] text-slate-400">
    Expected playing time: {f.predictedMinutes.toFixed(0)} minutes ·
-   {f.lineupState==='CONFIRMED_STARTER'?' Starter confirmed':
-    f.lineupState==='CONFIRMED_BENCH'?' Bench confirmed':' Starting status unverified'}
+   {p.currentEligibility==='STARTER_CONFIRMED'?' Confirmed to start':
+    p.currentEligibility==='EARLY_ROSTER_ELIGIBLE'?
+    ' Current squad checked · lineup unconfirmed':
+    ' Current squad checked · injury and lineup status unverified'}
   </p>
  </article>;
 }
@@ -150,22 +135,16 @@ function MatchCard({game,expanded,onToggle}:{
     </p>}
     <p className="text-[10px] leading-relaxed text-slate-500">
       All probabilities are uncalibrated model research, not demonstrated hit rates or official picks.
-      Injuries and lineups may not be confirmed. No sportsbook line is required.
+      Early player projections reflect a checked current squad, not a confirmed starting XI. No sportsbook line is required.
     </p>
   </div>}
  </article>;
 }
 export default function SoccerTodayScreen(){
  const [doc,setDoc]=useState<MatchDoc|null>(null);
- // Render genuine bundled first-seen player forecasts on the first frame,
- // rather than flashing match-only cards until an optional API call settles.
- const [players,setPlayers]=useState<GamePlayer[]>(()=>savedEspnPlayerBoard(
-  new Date().toISOString()).map(x=>({
-   id:x.id,gameId:x.gameId,league:x.league,playerId:x.playerId,
-   playerName:x.playerName,teamName:x.teamName,opponent:x.opponent,
-   fixtureDate:x.fixtureDate,kickoffUtc:x.kickoffUtc,
-   source:'ESPN_COMPLETED_MATCH_ROSTERS',forecast:x.forecast
-  })));
+ // Do not render archived player names before current eligibility has been checked.
+ const [players,setPlayers]=useState<GamePlayer[]>([]);
+ const [playerVerificationUnavailable,setPlayerVerificationUnavailable]=useState(false);
  const [loading,setLoading]=useState(false);
  const [range,setRange]=useState<Range>('48H');
  const [league,setLeague]=useState<League|'ALL'>('ALL');
@@ -177,28 +156,25 @@ export default function SoccerTodayScreen(){
  const today=asof.slice(0,10);
  async function refresh(){
   setLoading(true);
+  // Saved first-seen forecasts are RESEARCH ARCHIVE, not current availability.
+  // Never fall back to raw archived player names when verification fails.
+  setPlayers([]);
   const playerTask=(async()=>{
-   let saved=savedEspnPlayerBoard(new Date().toISOString());
    try{
     const r=await fetch('/api/soccer-player-espn-board',{cache:'no-store'});
-    if(r.ok){const live=usableEspnPlayerBoard(await r.json(),new Date().toISOString());
-      if(live.length)saved=live;}
-   }catch{/* Keep authentic bundled original forecasts */}
-   if(saved.length){
-    setPlayers(saved.map(x=>({
+    if(!r.ok)throw Error('Live eligibility feed unavailable');
+    const verified=usableEspnPlayerBoard(await r.json(),new Date().toISOString());
+    setPlayers(verified.map(x=>({
      id:x.id,gameId:x.gameId,league:x.league,playerId:x.playerId,
      playerName:x.playerName,teamName:x.teamName,opponent:x.opponent,
      fixtureDate:x.fixtureDate,kickoffUtc:x.kickoffUtc,
+     currentEligibility:x.currentEligibility,
      source:'ESPN_COMPLETED_MATCH_ROSTERS',forecast:x.forecast
     })));
-    return;
+    setPlayerVerificationUnavailable(verified.length===0);
+   }catch{
+    setPlayers([]);setPlayerVerificationUnavailable(true);
    }
-   try{
-    const r=await fetch('/api/soccer-player-board',{cache:'no-store'});
-    const raw:unknown=await r.json();
-    if(!r.ok||!validPaidPilot(raw))throw Error('Unverified player pilot');
-    setPlayers(raw.items);
-   }catch{setPlayers([]);}
   })();
   try{
    const r=await fetch('/api/soccer-research',{cache:'no-store'});
@@ -278,6 +254,11 @@ export default function SoccerTodayScreen(){
     </button>)}
    </div>
   </div>}
+  {playerVerificationUnavailable&&<p data-testid="soccer-player-eligibility-notice"
+    className="mb-3 rounded-lg border border-white/10 bg-[#1a2528] p-3 text-[11px] text-slate-300">
+    Player statistics are hidden where current squad, injury or starting-lineup
+    eligibility cannot be verified. Match forecasts remain available.
+   </p>}
   <section data-testid="soccer-games-board" className="space-y-2.5">
    {filtered.slice(0,limit).map(g=><MatchCard key={g.id} game={g}
     expanded={expanded===g.id} onToggle={()=>setExpanded(x=>x===g.id?null:g.id)}/>)}
