@@ -361,7 +361,7 @@ export default function TodayScreen({
                           )}
                         </div>
                         <p className="text-xs text-gray-400">
-                          {pred.prop_type} • <span className="text-white font-semibold italic">{pred.pick}</span>
+                          {pred.prop_type}
                         </p>
                       </div>
                       

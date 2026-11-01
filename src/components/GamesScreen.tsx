@@ -289,7 +289,7 @@ export default function GamesScreen({
                                           {pred.player}
                                         </h4>
                                         <p className="text-[10px] text-gray-400 mt-0.5">
-                                          {pred.prop_type} • <span className="text-white font-semibold italic">{pred.pick}</span>
+                                          {pred.prop_type}
                                         </p>
                                       </div>
                                       <div className="text-right flex flex-col items-end gap-1.5 shrink-0">
