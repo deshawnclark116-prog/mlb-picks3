@@ -108,7 +108,9 @@ export default function TodayScreen({
     touchStartY.current = -1;
   };
 
-  const sortedPredictions = [...predictions].sort((a, b) => (b.prob_pct ?? 0) - (a.prob_pct ?? 0));
+  // Publisher order remains stable. Sorting the rounded exact-count forecast by
+  // P(an easier sportsbook target) falsely suggests an exact-count confidence rank.
+  const sortedPredictions = [...predictions];
 
   const filteredPredictions = sortedPredictions.filter(pred => {
     if (confidenceFilter !== "ALL" && pred.confidence !== confidenceFilter) {

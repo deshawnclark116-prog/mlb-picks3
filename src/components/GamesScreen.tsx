@@ -180,9 +180,8 @@ export default function GamesScreen({
                   );
                 }
 
-                // Get matched projections sorted by prob_pct descending
-                const gamePredictions = getPredictionsForGame(game, predictions)
-                  .sort((a, b) => (b.prob_pct ?? 0) - (a.prob_pct ?? 0));
+                // Keep original published order: P(pick) is not a ranking for P(exact rounded count).
+                const gamePredictions = getPredictionsForGame(game, predictions);
 
                 return (
                   <motion.div
