@@ -17,6 +17,10 @@ const historical=Array.from({length:80},(_,i)=>[
 
 async function setup(page:any){
  await page.clock.install({time:new Date('2026-11-01T14:00:00Z')});
+ // Isolate the scroll layout from independent, asynchronously refreshed
+ // published-model sources. Their own fallback behavior is separately tested.
+ await page.route('**/nhl-published-pregame.json*',route=>route.abort());
+ await page.route('https://raw.githubusercontent.com/**',route=>route.abort());
  await page.route('**/api/**',route=>{
   const url=route.request().url();
   if(url.includes('/api/nhl-predictions'))return route.fulfill({json:{
