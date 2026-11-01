@@ -103,3 +103,27 @@ test('stale static ESPN snapshots do not fabricate a player for a future season'
  await expect(panel.getByTestId('soccer-player-prop-card')).toHaveCount(0);
  await expect(panel.getByText("Player forecasts aren't connected yet")).toBeVisible();
 });
+
+test('soccer player props default to verified kickoffs within 48 hours, week is opt-in',async({page})=>{
+ const panel=await openSoccer(page);
+ await panel.getByRole('tab',{name:'Player props'}).click();
+ const range=panel.getByRole('group',{name:'Player props schedule range'});
+ await expect(range.getByRole('button',{name:'Next 48 hours'})).toHaveAttribute('aria-pressed','true');
+ const cards=panel.getByTestId('soccer-player-prop-card');
+ await expect(cards).toHaveCount(20);
+ const badge=panel.getByText(/\d+ games · \d+ players/);
+ const initial=await badge.textContent();
+ const near=Number(initial?.match(/(\d+) players/)?.[1]);
+ expect(near).toBeGreaterThan(0);
+ const dates=await cards.allTextContents();
+ expect(dates.every(x=>!x.includes('Nov 6')&&!x.includes('Nov 7'))).toBe(true);
+ await range.getByRole('button',{name:'7 days'}).click();
+ await expect(range.getByRole('button',{name:'7 days'})).toHaveAttribute('aria-pressed','true');
+ const extended=await badge.textContent();
+ const far=Number(extended?.match(/(\d+) players/)?.[1]);
+ expect(far).toBeGreaterThan(near);
+ await expect(cards.first()).toContainText('Nov');
+ await range.getByRole('button',{name:'Next 48 hours'}).click();
+ await expect(badge).toContainText(String(near)+' players');
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
+});
