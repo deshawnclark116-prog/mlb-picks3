@@ -140,8 +140,7 @@ function MatchCard({game,expanded,onToggle}:{
 }
 export default function SoccerTodayScreen(){
  const [doc,setDoc]=useState<MatchDoc|null>(null);
- // Render genuine bundled first-seen player forecasts on the first frame,
- // rather than flashing match-only cards until an optional API call settles.
+ // Do not render archived player names before current eligibility has been checked.
  const [players,setPlayers]=useState<GamePlayer[]>([]);
  const [playerVerificationUnavailable,setPlayerVerificationUnavailable]=useState(false);
  const [loading,setLoading]=useState(false);
