@@ -13,6 +13,7 @@ import { soccerResearchHandler } from "./server/soccerResearch.ts";
 import {soccerForwardStatusHandler} from "./server/soccerForwardStatus.ts";
 import {soccerPlayerResearchHandler} from "./server/soccerPlayerResearch.ts";
 import {soccerPlayerBoardHandler,parseSoccerPlayerCohort} from "./server/soccerPlayerBoard.ts";
+import {soccerEspnPlayerBoardHandler} from "./server/soccerEspnBoard.ts";
 import { upcomingFixturesHandler } from "./server/upcomingFixtures.ts";
 import path from "path";
 import { createServer as createViteServer } from "vite";
@@ -288,6 +289,7 @@ async function startServer() {
   try{
     soccerPilotFixtures=parseSoccerPlayerCohort(process.env.SOCCER_PLAYER_RESEARCH_COHORT);
   }catch(err){console.error('Soccer player research cohort invalid; player board disabled',err);}
+  app.get("/api/soccer-player-espn-board",soccerEspnPlayerBoardHandler());
   app.get("/api/soccer-player-board",soccerPlayerBoardHandler({
     cohort:soccerPilotFixtures,
     providerConfigured:!!process.env.STRIKERAPI_API_KEY,
