@@ -34,7 +34,7 @@ const aliases:Record<string,string>={
  'olympique de marseille':'marseille',
  'real sociedad de futbol':'real sociedad',
  'como 1907':'como',
- '1 fc koln':'union-not-koln',
+ '1 fc koln':'koln',
  'fc cologne':'koln','fc koln':'koln','1 fc koln fc':'koln',
  '1 fc union berlin':'union berlin',
  'rc strasbourg alsace':'strasbourg',
