@@ -1,0 +1,30 @@
+name: Soccer eligibility safety checks
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - server/soccerPlayerEligibility.ts
+      - server/soccerEspnBoard.ts
+      - src/soccer/espnPlayerBoard.ts
+      - src/soccer/gameBoard.ts
+      - src/components/SoccerTodayScreen.tsx
+      - tests/soccerPlayerEligibility.test.ts
+      - tests/soccerEspnPlayerBoard.test.ts
+      - .github/workflows/soccer_player_eligibility_ci.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: node --import tsx --test tests/soccerPlayerEligibility.test.ts tests/soccerEspnPlayerBoard.test.ts tests/soccerGameBoard.test.ts
+      - run: npm run build
