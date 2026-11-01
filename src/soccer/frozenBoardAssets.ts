@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import {selectFrozenSoccerCards} from './frozenBoard';
 // Bundled into the actual React app: works on static AI Studio hosting even
 // if the Node soccer /api endpoint is unreachable or source fetches time out.
