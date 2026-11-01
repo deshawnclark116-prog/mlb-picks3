@@ -1,0 +1,34 @@
+{
+  "schema": "soccer-forward-original-v1",
+  "id": "38ac737933d6fd4d3ac82ff30ddcf63a",
+  "captured_at_utc": "2026-11-01T00:03:21.126Z",
+  "capture_code_sha": "4f622eba26df6b4aa71f45eeefb14297c3e299ed",
+  "source_set_sha256": "ab57af47e25f6bd95f74ad89d3c28e78399886286741c85167226f8de274a2ef",
+  "fixture_source_sha256": "bb91f0ab3e8359df163bb9ec98549bfed85e200dd4c32f3bd606b5890d932dd2",
+  "source_receipts_count": 20,
+  "model_version": "soccer-v1-raw-goal-poisson-historical-walkforward-20261018",
+  "forecast": {
+    "league": "EPL",
+    "season": "2026-27",
+    "date": "2026-11-07",
+    "home": "Sunderland AFC",
+    "away": "Chelsea FC",
+    "expectedHomeGoals": 1.5496,
+    "expectedAwayGoals": 1.3534,
+    "baselineHomeGoals": 1.6218,
+    "baselineAwayGoals": 1.3441,
+    "probabilities": {
+      "home": 0.4206,
+      "draw": 0.2463,
+      "away": 0.3331,
+      "over25": 0.5547,
+      "btts": 0.5842
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 11.6166,
+    "awayWeightedMatches": 16.1059,
+    "source": "openfootball/football.json/2026-27/en.1.json",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  },
+  "eligibility": "FROZEN_ON_PRIOR_UTC_CALENDAR_DAY_NO_VERIFIED_KICKOFF"
+}

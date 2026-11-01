@@ -1,0 +1,34 @@
+{
+  "schema": "soccer-forward-original-v1",
+  "id": "43a21488b4979f52048aaf1a7c7358da",
+  "captured_at_utc": "2026-11-01T00:03:21.126Z",
+  "capture_code_sha": "4f622eba26df6b4aa71f45eeefb14297c3e299ed",
+  "source_set_sha256": "ab57af47e25f6bd95f74ad89d3c28e78399886286741c85167226f8de274a2ef",
+  "fixture_source_sha256": "4b1a9906e3f2b279a1f25497a38f2f58e21ec19ea726b882fa646da7c07bc0e0",
+  "source_receipts_count": 20,
+  "model_version": "soccer-v1-raw-goal-poisson-historical-walkforward-20261018",
+  "forecast": {
+    "league": "LaLiga",
+    "season": "2026-27",
+    "date": "2026-11-08",
+    "home": "Valencia CF",
+    "away": "Real Madrid CF",
+    "expectedHomeGoals": 1.4314,
+    "expectedAwayGoals": 1.4497,
+    "baselineHomeGoals": 1.6693,
+    "baselineAwayGoals": 1.2392,
+    "probabilities": {
+      "home": 0.3716,
+      "draw": 0.2487,
+      "away": 0.3798,
+      "over25": 0.5497,
+      "btts": 0.5825
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 16.8546,
+    "awayWeightedMatches": 17.7922,
+    "source": "openfootball/football.json/2026-27/es.1.json",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  },
+  "eligibility": "FROZEN_ON_PRIOR_UTC_CALENDAR_DAY_NO_VERIFIED_KICKOFF"
+}
