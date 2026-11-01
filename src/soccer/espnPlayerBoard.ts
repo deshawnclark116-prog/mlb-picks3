@@ -42,6 +42,12 @@ export function usableEspnPlayerBoard(raw:unknown,asofUtc:string):EligibleEspnOr
       x.forecast.pReachProjectedSot].every(v=>Number.isFinite(v)&&v>=0)||
     x.forecast.predictedMinutes>100||
     x.forecast.pReachProjectedShots>1||x.forecast.pReachProjectedSot>1||
+    (x.forecast.pExactRoundedShots!==undefined&&(
+      !Number.isFinite(x.forecast.pExactRoundedShots)||x.forecast.pExactRoundedShots<0||
+      x.forecast.pExactRoundedShots>1))||
+    (x.forecast.pExactRoundedSot!==undefined&&(
+      !Number.isFinite(x.forecast.pExactRoundedSot)||x.forecast.pExactRoundedSot<0||
+      x.forecast.pExactRoundedSot>1))||
     x.forecast.shotsReachCount!==Math.max(1,Math.ceil(x.forecast.predictedShots))||
     x.forecast.sotReachCount!==Math.max(1,Math.ceil(x.forecast.predictedShotsOnTarget)))
     continue;
