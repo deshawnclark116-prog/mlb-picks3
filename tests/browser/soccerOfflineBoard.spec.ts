@@ -19,7 +19,7 @@ test('compact soccer match center displays genuine originals with live API offli
  const count=await rows.count();
  expect(count).toBeGreaterThan(0);
  expect(count).toBeLessThanOrEqual(12);
- await expect(rows.first()).toContainText('Model goals');
+ await expect(rows.first()).toContainText('Projected goals');
  await expect(rows.first()).toContainText('Saved pregame');
  await expect(rows.first().getByText('Match probabilities')).toHaveCount(0);
  await rows.first().getByRole('button',{name:/See chances/}).click();
