@@ -1,0 +1,32 @@
+name: NHL mobile projections scrolling regression
+on:
+  push:
+    branches: [main]
+    paths:
+      - src/components/NhlTodayScreen.tsx
+      - src/components/SportProjectionScreen.tsx
+      - src/index.css
+      - tests/browser/nhlScroll.spec.ts
+      - .github/workflows/nhl_mobile_scroll.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  phone:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Typecheck and produce real app build
+        run: |
+          npm run lint
+          npm run build
+      - name: Test touch swipe, keyboard, research archive, and NHL filters at 360px
+        run: |
+          npx playwright install chromium
+          npx playwright test tests/browser/nhlScroll.spec.ts --reporter=line
