@@ -73,6 +73,7 @@ function MatchRow({card,expanded,onToggle}:{card:Card;expanded:boolean;onToggle:
          {card.origin==='FROZEN'?'Saved pregame':'Live research'}
        </span>
      </div>
+     <p className="mb-2 text-right text-[10px] font-semibold uppercase tracking-wide text-slate-400">Projected goals</p>
      <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-3">
        <span className="min-w-0 break-words text-[15px] font-bold leading-snug text-white">{p.home}</span>
        <div className="flex min-w-[48px] items-center justify-end">
@@ -106,7 +107,7 @@ function MatchRow({card,expanded,onToggle}:{card:Card;expanded:boolean;onToggle:
      </div>
      <div className="mt-3 grid grid-cols-2 gap-2">
        <div className="rounded-xl border border-white/[.07] bg-white/[.04] px-3 py-3">
-         <p className="text-[10px] text-slate-400">Over 2.5 goals</p>
+         <p className="text-[11px] text-slate-400">3 or more total goals</p>
          <p className="mt-1 text-[17px] font-extrabold text-slate-100">{pct(p.probabilities.over25)}</p>
        </div>
        <div className="rounded-xl border border-white/[.07] bg-white/[.04] px-3 py-3">
