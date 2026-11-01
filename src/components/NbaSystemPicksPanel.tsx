@@ -1,5 +1,6 @@
 import React,{useEffect,useMemo,useState} from 'react';
 import {ChevronDown,RefreshCw} from 'lucide-react';
+import {wholeStatProjection} from '../lib/wholeStatProjection';
 import {NBA_DECISION_SCHEMA,MARKETS_NAMED,type NbaSystemBoard,type NbaSystemTarget,type NbaMarket} from '../nba/decisionBoard.ts';
 import {nbaEasternGameDay,visibleNbaGameSlate} from '../nba/boardVisibility.ts';
 
@@ -19,9 +20,15 @@ export function NbaShortlistCard({pick}:{pick:NbaSystemTarget}){
    </div>
    <div data-testid="nba-selected-projection" className="rounded-xl border border-[#00FF41]/25 bg-[#0e2115] p-3">
      <p className="text-[10px] font-bold text-gray-300">MODEL PREDICTION · CONDITIONAL MEAN</p>
-     <p className="mt-1 text-3xl font-black text-[#00FF41]">{fmt(pick.predicted_stat)} {UNIT[pick.market]}</p>
+     <p data-testid="nba-whole-stat" className="mt-1 text-3xl font-black text-[#00FF41]">{wholeStatProjection(pick.predicted_stat)} {UNIT[pick.market]}</p>
+     <p className="mt-2 text-[11px] text-amber-200">P(exactly {wholeStatProjection(pick.predicted_stat)}): unavailable · alternative model target is a different event.</p>
      <p className="mt-1 text-[11px] text-gray-300">Historical P(plays) {pct(pick.historical_p_play)}
        {' · '}Modeled minutes if playing {fmt(pick.conditional_minutes)}</p>
+   </div>
+   <details className="border-t border-[#333] pt-2 text-xs text-gray-400">
+     <summary className="flex min-h-11 cursor-pointer items-center">VIEW MODEL EVIDENCE ▾</summary>
+     <p className="pb-2">Original mean {fmt(pick.predicted_stat)} {UNIT[pick.market]}, preserved unchanged.</p>
+     <p className="pb-2">Alternative model target: {pick.model_target} · P(target): {pick.model_hit_probability!=null?pct(pick.model_hit_probability):'unavailable'}. This is NOT P(exactly {wholeStatProjection(pick.predicted_stat)}).</p>
      <div className="mt-3 rounded-lg border border-[#2b7040] bg-[#0c2215] p-3"
           data-testid="nba-model-hit-probability">
        {pick.model_hit_probability!=null?
@@ -34,14 +41,12 @@ export function NbaShortlistCard({pick}:{pick:NbaSystemTarget}){
          <p className="text-[11px] text-amber-200">Model probability not yet validated for this target.
            No invented confidence percentage.</p>}
      </div>
-   </div>
    <div className="rounded-xl border border-[#333] bg-[#151515] p-3">
      <p className="text-[10px] font-bold text-gray-400">MODEL TARGET · NOT A VERIFIED BOOKMAKER LINE</p>
      <p data-testid="nba-selected-model-target" className="mt-1 text-xl font-bold text-white">{pick.model_target}</p>
      <p className="mt-1 text-xs text-gray-400">Projected {fmt(pick.model_gap)} {UNIT[pick.market]} above that milestone threshold</p>
    </div>
-   <details className="border-t border-[#333] pt-2 text-xs text-gray-400">
-     <summary className="flex min-h-11 cursor-pointer items-center">VIEW MODEL EVIDENCE ▾</summary>
+
      <p className="pb-2">Gap / historical played-player holdout MAE:
        {' '}{fmt(pick.gap_in_historical_mae_units)}. The MAE ratio is NOT a
        probability. When available above, the P(hit) comes from a separately
