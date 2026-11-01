@@ -76,3 +76,26 @@ test('NFL expanded player projections scroll to last cards without horizontal ov
  await page.keyboard.press('End');
  await expect.poll(()=>scroll.evaluate(e=>e.scrollTop)).toBeGreaterThan(300);
 });
+
+test('NFL stat filters still swipe horizontally on mobile after vertical scroll fix',async({page})=>{
+ await openNfl(page);
+ const filter=page.getByRole('group',{name:'Outcome family'});
+ // The stat chips can be wider than a 360px phone, but must remain usable.
+ const bounds=await filter.boundingBox();
+ expect(bounds).not.toBeNull();
+ const dims=await filter.evaluate(el=>({client:el.clientWidth,content:el.scrollWidth}));
+ expect(dims.content).toBeGreaterThan(dims.client);
+ const cd=await page.context().newCDPSession(page);
+ await cd.send('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:1});
+ const y=Math.round(bounds!.y+bounds!.height/2);
+ await cd.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:300,y,id:1}]});
+ for(let i=1;i<=12;i++){
+  await cd.send('Input.dispatchTouchEvent',{type:'touchMove',
+   touchPoints:[{x:300-Math.round(235*i/12),y,id:1}]});
+  await new Promise(resolve=>setTimeout(resolve,18));
+ }
+ await cd.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+ await cd.detach();
+ await expect.poll(()=>filter.evaluate(el=>el.scrollLeft)).toBeGreaterThan(0);
+ await expect(page.getByRole('button',{name:'TD',exact:true})).toBeVisible();
+});
