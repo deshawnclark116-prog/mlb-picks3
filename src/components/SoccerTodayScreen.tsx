@@ -7,6 +7,7 @@ import {rankSoccerProjections,bestSoccerEvent} from '../soccer/topRanked';
 import {namedSoccerOutcomes} from '../soccer/matchLabels';
 import {savedEspnPlayerBoard} from '../soccer/espnBoardAssets';
 import {usableEspnPlayerBoard} from '../soccer/espnPlayerBoard';
+import {soccerPlayerWindow,type SoccerPlayerWindow} from '../soccer/playerDisplayWindow';
 
 type Doc={schema:string;status:string;asof_calendar_day_utc:string;
  forecast_count:number;forecasts:Forecast[];
@@ -15,7 +16,8 @@ type Card={id:string;forecast:Forecast;origin:'FROZEN'|'LIVE'};
 type Section='TOP'|'MATCHES'|'PLAYERS';
 type PlayerCard={
  id:string;playerId:string;playerName:string;teamName:string;opponent:string;
- fixtureDate:string;source:'AUTHORIZED_PLAYER_MATCH_LOG'|'ESPN_COMPLETED_MATCH_ROSTERS';
+ fixtureDate:string;kickoffUtc?:string;
+ source:'AUTHORIZED_PLAYER_MATCH_LOG'|'ESPN_COMPLETED_MATCH_ROSTERS';
  forecast:{
   predictedShots:number;predictedShotsOnTarget:number;predictedMinutes:number;
   shotsReachCount:number;sotReachCount:number;
@@ -117,6 +119,7 @@ export default function SoccerTodayScreen(){
  const [players,setPlayers]=useState<PlayerCard[]>([]);
  const [playerFeedReady,setPlayerFeedReady]=useState(false);
  const [playerLimit,setPlayerLimit]=useState(20);
+ const [playerWindow,setPlayerWindow]=useState<SoccerPlayerWindow>('48H');
  const [section,setSection]=useState<Section>('TOP');
  const [showFilters,setShowFilters]=useState(false);
  const [league,setLeague]=useState<League|'ALL'>('ALL');
@@ -144,7 +147,8 @@ export default function SoccerTodayScreen(){
     if(early.length){
       setPlayers(early.map(x=>({id:x.id,playerId:x.playerId,
         playerName:x.playerName,teamName:x.teamName,opponent:x.opponent,
-        fixtureDate:x.fixtureDate,source:'ESPN_COMPLETED_MATCH_ROSTERS',
+        fixtureDate:x.fixtureDate,kickoffUtc:x.kickoffUtc,
+        source:'ESPN_COMPLETED_MATCH_ROSTERS',
         forecast:x.forecast})));
       setPlayerFeedReady(true);return;
     }
@@ -188,6 +192,12 @@ export default function SoccerTodayScreen(){
   a.forecast.league.localeCompare(b.forecast.league)||a.id.localeCompare(b.id));
  const resetLimits=()=>{setTopLimit(8);setMatchLimit(12);setExpanded(null);};
  const empty=filtered.length===0;
+ const visiblePlayers=soccerPlayerWindow(players,asof,playerWindow);
+ const playerCountGames=new Set(visiblePlayers.map(p=>
+  p.kickoffUtc??[p.fixtureDate,p.teamName,p.opponent].join('|'))).size;
+ const kickoffLabel=(utc:string)=>new Intl.DateTimeFormat(undefined,{
+  weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit',
+  timeZoneName:'short'}).format(new Date(utc));
  return <div id="soccer-projections-screen" className="h-full min-w-0 overflow-y-auto bg-[#0b1215] px-4 pb-24 pt-4 text-slate-100 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
   <div className="mb-4 flex items-center justify-between gap-2">
     <div>
@@ -216,7 +226,7 @@ export default function SoccerTodayScreen(){
   <div className="mb-3 flex items-center justify-between gap-3">
    <p className="min-w-0 text-[11px] leading-relaxed text-slate-400">
      {section==='TOP'?'Highest model-estimated chance for each match':
-       section==='PLAYERS'?'Actual player forecasts, when verified data is connected':'Browse every upcoming match'}
+       section==='PLAYERS'?'Nearest games first · original model projections':'Browse every upcoming match'}
    </p>
    {section!=='PLAYERS'&&<button type="button" aria-expanded={showFilters} onClick={()=>setShowFilters(x=>!x)}
      className="flex min-h-10 shrink-0 items-center gap-1.5 rounded-xl border border-white/10 bg-[#1b2529] px-3 text-[11px] font-semibold text-white">
@@ -270,14 +280,24 @@ export default function SoccerTodayScreen(){
       className="min-h-11 w-full rounded-xl bg-[#23362c] text-[12px] font-bold text-[#79FF48]">Show more top projections ({top.length-topLimit} remaining)</button>}
   </section>}
   {section==='PLAYERS'&&<section data-testid="soccer-player-props-board" className="space-y-2.5">
-    <p className="text-[11px] text-slate-400">Early player projections from verified completed-match shots and playing-time history. Lineups and injuries remain unverified.</p>
-    {players.filter(p=>p.fixtureDate>=today).sort((a,b)=>
-      Math.max(b.forecast.pReachProjectedShots,b.forecast.pReachProjectedSot)-
-      Math.max(a.forecast.pReachProjectedShots,a.forecast.pReachProjectedSot))
-      .slice(0,playerLimit).map(p=>
+    <div className="flex items-center justify-between gap-2">
+      <div role="group" aria-label="Player props schedule range"
+        className="flex gap-1 rounded-xl bg-[#1b2529] p-1">
+        {([['48H','Next 48 hours'],['7D','7 days']] as const).map(([window,label])=>
+          <button type="button" key={window} aria-pressed={playerWindow===window}
+            onClick={()=>{setPlayerWindow(window);setPlayerLimit(20);}}
+            className={'min-h-10 rounded-lg px-3 text-[11px] font-bold '+
+              (playerWindow===window?'bg-[#79FF48] text-[#102015]':'text-slate-300')}>
+            {label}
+          </button>)}
+      </div>
+      <span className="text-right text-[11px] tabular-nums text-slate-400">{playerCountGames} games · {visiblePlayers.length} players</span>
+    </div>
+    <p className="text-[11px] text-slate-400">Upcoming verified kickoff times, soonest first. Lineups and injuries are not confirmed.</p>
+    {visiblePlayers.slice(0,playerLimit).map(p=>
       <article data-testid="soccer-player-prop-card" key={p.id}
         className="rounded-[16px] border border-white/10 bg-[#192326] p-4">
-        <p className="text-[11px] text-slate-400">{p.teamName} vs {p.opponent} · {dateLabel(p.fixtureDate)}</p>
+        <p className="text-[11px] text-slate-400">{p.teamName} vs {p.opponent} · {p.kickoffUtc?kickoffLabel(p.kickoffUtc):dateLabel(p.fixtureDate)+' · time unverified'}</p>
         <h2 className="mt-2 text-[17px] font-black text-white">{p.playerName}</h2>
         <div className="mt-3 grid grid-cols-2 gap-2">
           <div className="rounded-xl bg-[#112018] p-3">
@@ -302,19 +322,17 @@ export default function SoccerTodayScreen(){
         </p>
         <p className="mt-2 text-[10px] text-amber-200">{p.source==='ESPN_COMPLETED_MATCH_ROSTERS'?'ESPN historical stats · Early pregame':'Authorized match history'} · Uncalibrated, not a verified betting pick</p>
       </article>)}
-    {players.filter(p=>p.fixtureDate>=today).length>playerLimit&&
+    {visiblePlayers.length>playerLimit&&
       <button type="button" onClick={()=>setPlayerLimit(n=>n+20)}
         className="min-h-11 w-full rounded-xl bg-[#23362c] text-[12px] font-bold text-[#79FF48]">
-        Show more player projections ({players.filter(p=>p.fixtureDate>=today).length-playerLimit} remaining)
+        Show more player projections ({visiblePlayers.length-playerLimit} remaining)
       </button>}
-    {(!playerFeedReady||players.filter(p=>p.fixtureDate>=today).length===0)&&
+    {visiblePlayers.length===0&&
       <div className="rounded-[16px] border border-white/10 bg-[#192326] px-4 py-6">
-        <p className="text-[16px] font-bold text-white">Player forecasts aren't connected yet</p>
+        <p className="text-[16px] font-bold text-white">{playerFeedReady?'No upcoming player forecasts in this range':"Player forecasts aren't connected yet"}</p>
         <p className="mt-2 text-[12px] leading-relaxed text-slate-300">
-          The free soccer data pipeline is collecting real player minutes,
-          shots and shots on target from completed games. Early forecasts will
-          appear when enough eligible historical games are available.
-          No player picks are being invented.
+          {playerFeedReady?'Try the 7 days filter to see the next eligible fixtures.':
+           'The soccer pipeline only displays forecasts backed by actual earlier match stats. No player picks are being invented.'}
         </p>
       </div>}
    </section>}
