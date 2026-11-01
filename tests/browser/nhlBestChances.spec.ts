@@ -95,14 +95,16 @@ test('NHL filters show winner, point and shots markets without wrongly relabelin
  await panel.getByRole('button',{name:'Anytime points'}).click();
  game=panel.getByTestId('unified-sport-game').first();
  await expect(game).toBeVisible();
- await game.locator('button[aria-expanded]').click();
+ if(await game.locator('button[aria-expanded]').getAttribute('aria-expanded')==='false')
+   await game.locator('button[aria-expanded]').click();
  await expect(game.getByTestId('unified-sport-projection')).toHaveCount(1);
  await expect(game).toContainText('Skater Higher');
  await expect(game).not.toContainText('Skater Weak');
  await panel.getByRole('button',{name:'Shots on goal'}).click();
  game=panel.getByTestId('unified-sport-game').first();
  await expect(game).toBeVisible();
- await game.locator('button[aria-expanded]').click();
+ if(await game.locator('button[aria-expanded]').getAttribute('aria-expanded')==='false')
+   await game.locator('button[aria-expanded]').click();
  await expect(game.getByTestId('unified-sport-projection')).toHaveCount(1);
  await expect(game).toContainText('2+ shots on goal');
  await expect(game).not.toContainText('Pittsburgh Penguins ML');

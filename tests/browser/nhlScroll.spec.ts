@@ -113,7 +113,7 @@ test('NHL research archive scrolls separately and switching back preserves curre
  await panel.getByRole('button',{name:'Current predictions'}).click();
  await expect(panel.locator('#nhl-predictions-scroll-area')).toBeVisible();
  await expect(panel.getByRole('button',{name:'Shots on goal'})).toBeVisible();
- await panel.getByRole('button',{name:'All models'}).click();
- await expect(panel.getByRole('button',{name:'All models'})).toHaveAttribute('aria-pressed','true');
+ await panel.getByRole('button',{name:'All markets'}).click();
+ await expect(panel.getByRole('button',{name:'All markets'})).toHaveAttribute('aria-pressed','true');
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
 });

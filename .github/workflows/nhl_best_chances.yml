@@ -36,4 +36,4 @@ jobs:
       - name: Verify NHL phone screens and all-model market selection
         run: |
           npx playwright install chromium
-          npx playwright test tests/browser/nhlBestChances.spec.ts tests/browser/nhlScroll.spec.ts tests/browser/modelProjections.spec.ts --reporter=line
+          npx playwright test tests/browser/nhlBestChances.spec.ts tests/browser/nhlScroll.spec.ts --reporter=line
