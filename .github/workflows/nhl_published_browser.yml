@@ -1,0 +1,34 @@
+name: NHL verified published fallback in AI Studio browser
+on:
+  push:
+    branches: [main]
+    paths:
+      - src/App.tsx
+      - src/nhl/publishedPregame.ts
+      - public/nhl-published-pregame.json
+      - tests/nhlPublishedPregame.test.ts
+      - tests/browser/nhlPublishedFallback.spec.ts
+      - .github/workflows/nhl_published_browser.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  static-fallback:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Verify type safety and source cutoff checks
+        run: |
+          npm run lint
+          npm run build
+          node --import tsx --test tests/nhlPublishedPregame.test.ts
+      - name: Simulate unavailable API in 360px phone
+        run: |
+          npx playwright install chromium
+          npx playwright test tests/browser/nhlPublishedFallback.spec.ts --reporter=line
