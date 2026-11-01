@@ -3,6 +3,7 @@ import {RefreshCw,Search,SlidersHorizontal,ChevronDown,ChevronUp} from 'lucide-r
 import type {Forecast,League} from '../soccer/model';
 import {SOCCER_SCHEMA} from '../soccer/model';
 import {frozenSoccerBoard} from '../soccer/frozenBoardAssets';
+import {verifiedSoccerFixtures} from '../soccer/espnFixtureAssets';
 import {bestSoccerEvent} from '../soccer/topRanked';
 import {namedSoccerOutcomes} from '../soccer/matchLabels';
 import {usableEspnPlayerBoard} from '../soccer/espnPlayerBoard';
@@ -166,6 +167,7 @@ export default function SoccerTodayScreen(){
     const verified=usableEspnPlayerBoard(await r.json(),new Date().toISOString());
     setPlayers(verified.map(x=>({
      id:x.id,gameId:x.gameId,league:x.league,playerId:x.playerId,
+     teamId:x.teamId,
      playerName:x.playerName,teamName:x.teamName,opponent:x.opponent,
      fixtureDate:x.fixtureDate,kickoffUtc:x.kickoffUtc,
      currentEligibility:x.currentEligibility,
@@ -200,7 +202,8 @@ export default function SoccerTodayScreen(){
  const dateMatches=[...matches.values()].filter(m=>
   m.forecast.date>=today&&(!maxDate||m.forecast.date<=maxDate));
  const eligiblePlayers=soccerPlayerWindow(players,asof,range==='48H'?'48H':'7D');
- const grouped=groupSoccerGameProjections(dateMatches,eligiblePlayers,asof);
+ const verifiedFixtures=verifiedSoccerFixtures(asof);
+ const grouped=groupSoccerGameProjections(dateMatches,eligiblePlayers,asof,verifiedFixtures);
  const q=search.trim().toLowerCase();
  const filtered=grouped.filter(g=>
   (league==='ALL'||g.league===league)&&
@@ -274,7 +277,7 @@ export default function SoccerTodayScreen(){
     className="mt-3 min-h-10 rounded-lg bg-[#79FF48] px-4 text-xs font-bold text-[#122016]">Show next 7 days</button>
   </div>}
   <p className="mt-4 text-[10px] leading-relaxed text-slate-500">
-   Each game includes every available match outcome, goal total and player projection.
+   Games use verified ESPN kickoff and home/away identities. Match forecasts join only when both teams and the date agree.
    Missing model coverage is labeled rather than guessed. Probabilities are uncalibrated research estimates, not official picks.
   </p>
  </div>;
