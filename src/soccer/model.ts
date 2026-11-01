@@ -12,6 +12,8 @@ export type Probability = {home:number;draw:number;away:number;over25:number;btt
 export type Forecast = {
   league:League;season:string;date:string;home:string;away:string;
   expectedHomeGoals:number;expectedAwayGoals:number;probabilities:Probability;
+  /** Simple pregame league-average goal benchmark frozen alongside model. */
+  baselineHomeGoals:number;baselineAwayGoals:number;
   mostLikely:Outcome;homeWeightedMatches:number;awayWeightedMatches:number;
   source:string;status:'RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET';
 };
@@ -121,6 +123,7 @@ export function forecastMatch(history:Match[],fixture:Match,asof:string):Forecas
   return {league:fixture.league,season:fixture.season,date:fixture.date,
           home:fixture.home,away:fixture.away,
           expectedHomeGoals:round(hRate),expectedAwayGoals:round(aRate),
+          baselineHomeGoals:round(meanH),baselineAwayGoals:round(meanA),
           probabilities:p,mostLikely:sorted[0][0],
           homeWeightedMatches:round(hAtt.sample+hDef.sample),
           awayWeightedMatches:round(aAtt.sample+aDef.sample),
