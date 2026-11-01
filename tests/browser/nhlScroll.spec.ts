@@ -2,10 +2,10 @@ import {test,expect} from '@playwright/test';
 
 const day='2026-11-01',kickoff='2026-11-01T22:00:00Z';
 const nhlPicks=Array.from({length:32},(_,i)=>({
- market:'shots_on_goal',prop_type:'shots_on_goal',player_id:'skater-'+i,
+ market:'points',prop_type:'points',player_id:'skater-'+i,
  player:'Skater '+String(i+1),team:i%2?'WSH':'PIT',
  opponent:i%2?'PIT':'WSH',season:2026,game_date:day,kickoff_utc:kickoff,
- pick:'OVER 2.5',line:2.5,model_prob:.65,prob_pct:65,confidence:'MEDIUM',
+ pick:'OVER 0.5',line:0.5,model_prob:.65,prob_pct:65,confidence:'MEDIUM',
  games_played:5
 }));
 const fields=['game_id','player_id','player','team','opponent','game_date','scheduled_start',
@@ -17,6 +17,8 @@ const historical=Array.from({length:80},(_,i)=>[
 
 async function setup(page:any){
  await page.clock.install({time:new Date('2026-11-01T14:00:00Z')});
+ // Mock event markets that are ACTUALLY accepted by the published NHL
+ // points/winner source contract. Shots come from a separate count feed.
  // Isolate the scroll layout from independent, asynchronously refreshed
  // published-model sources. Their own fallback behavior is separately tested.
  await page.route('**/nhl-published-pregame.json*',route=>route.abort());
