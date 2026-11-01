@@ -27,6 +27,10 @@ test('original pregame shot and SOT means derive from player minutes, with no of
  assert(p.predictedShotsOnTarget<p.predictedShots);
  assert(p.predictedMinutes>0&&p.predictedMinutes<100);
  assert(p.pShotsAtLeast3>0&&p.pShotsAtLeast3<1);
+ assert.equal(p.shotsReachCount,Math.ceil(p.predictedShots));
+ assert.equal(p.sotReachCount,Math.ceil(p.predictedShotsOnTarget));
+ assert(p.pReachProjectedShots>=0&&p.pReachProjectedShots<=1);
+ assert(p.pReachProjectedSot>=0&&p.pReachProjectedSot<=1);
  assert.equal(p.lineupState,'UNKNOWN');
  assert.equal(p.availabilityState,'UNKNOWN');
  assert.match(p.status,/RESEARCH_ONLY/);
@@ -62,4 +66,15 @@ test('historical shadow never borrows future observations to calculate a past pr
    game_date:'2026-10-18',shots:35,shots_on_target:30});
  const a=forwardPlayerShadow(future,'382').rows.filter(x=>x.date<'2026-10-18');
  assert.deepEqual(r.rows,a);
+});
+
+test('projection reach probabilities are tied to the model mean, not arbitrary easy targets',()=>{
+ const historical=log();
+ const p=playerShotForecast(historical,'2026-10-04',options);
+ assert(p);
+ assert(p.shotsReachCount>=1);
+ assert(p.sotReachCount>=1);
+ assert.equal(p.shotsReachCount,Math.ceil(p.predictedShots));
+ assert.equal(p.sotReachCount,Math.ceil(p.predictedShotsOnTarget));
+ assert.equal(p.sotReachCount===1,p.pReachProjectedSot===p.pSotAtLeast1);
 });

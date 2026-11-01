@@ -22,6 +22,10 @@ export type PlayerForecast={
  historicalShotsPer90:number;historicalSotPer90:number;
  startProbability:number;playProbability:number;
  pShotsAtLeast3:number;pSotAtLeast1:number;
+ /** Probability of reaching or exceeding the displayed numerical mean,
+  * at the next integer observation; NOT a sportsbook betting target. */
+ shotsReachCount:number;sotReachCount:number;
+ pReachProjectedShots:number;pReachProjectedSot:number;
  baselineShots:number;baselineSot:number;
  lineupState:'CONFIRMED_STARTER'|'CONFIRMED_BENCH'|'UNKNOWN';
  availabilityState:Availability;
@@ -134,6 +138,11 @@ export function playerShotForecast(
    +(1-pStart)*pPoissonAtLeast(lambdaSub,3));
  const sot1=pPlay*(pStart*pPoissonAtLeast(lambdaStarter*sotFraction,1)
    +(1-pStart)*pPoissonAtLeast(lambdaSub*sotFraction,1));
+ const shotsReachCount=Math.max(1,Math.ceil(expectedShots));
+ const sotReachCount=Math.max(1,Math.ceil(expectedSot));
+ const reach=(k:number,fraction:number)=>pPlay*(
+   pStart*pPoissonAtLeast(lambdaStarter*fraction,k)+
+   (1-pStart)*pPoissonAtLeast(lambdaSub*fraction,k));
  const expectedXg:null=null; // XG_FEATURE_BLOCKED_POSTHOC_PROVIDER_REVALUE
  // Poisson thinning is only a research approximation: these p-values
  // are not calibrated against unseen first-seen outcomes.
@@ -146,6 +155,9 @@ export function playerShotForecast(
    startProbability:num(pStart),playProbability:num(pPlay),
    pShotsAtLeast3:num(shots3),
    pSotAtLeast1:num(sot1),
+   shotsReachCount,sotReachCount,
+   pReachProjectedShots:num(reach(shotsReachCount,1)),
+   pReachProjectedSot:num(reach(sotReachCount,sotFraction)),
    baselineShots:num(rows.slice(0,10).reduce((s,g)=>s+g.shots,0)/Math.min(rows.length,10)),
    baselineSot:num(rows.slice(0,10).reduce((s,g)=>s+g.shots_on_target,0)/Math.min(rows.length,10)),
    lineupState,availabilityState:opts.availability,
