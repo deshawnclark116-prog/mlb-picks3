@@ -17,8 +17,8 @@ export function verifiedSoccerFixtures(atUtc:string):GameFixture[]{
  const byId=new Map<string,GameFixture>();
  const record=(f:unknown,seenAt:unknown)=>{
   const x=f as GameFixture;
-  if(!x||!leagues.has(x.league)||!/^\\d{1,15}$/.test(x.gameId)||
-   !/^\\d{1,15}$/.test(x.homeId)||!/^\\d{1,15}$/.test(x.awayId)||
+  if(!x||!leagues.has(x.league)||!/^\d{1,15}$/.test(x.gameId)||
+   !/^\d{1,15}$/.test(x.homeId)||!/^\d{1,15}$/.test(x.awayId)||
    x.homeId===x.awayId||typeof x.home!=='string'||!x.home.trim()||
    typeof x.away!=='string'||!x.away.trim()||
    !validIso(x.kickoffUtc)||!validIso(seenAt)||Date.parse(seenAt)>now||
