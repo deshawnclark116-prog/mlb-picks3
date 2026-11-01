@@ -79,7 +79,7 @@ test('NFL expanded player projections scroll to last cards without horizontal ov
 
 test('NFL stat filters still swipe horizontally on mobile after vertical scroll fix',async({page})=>{
  await openNfl(page);
- const filter=page.getByRole('group',{name:'Outcome family'});
+ const filter=page.locator('[aria-label="Outcome family"]');
  // The stat chips can be wider than a 360px phone, but must remain usable.
  const bounds=await filter.boundingBox();
  expect(bounds).not.toBeNull();
