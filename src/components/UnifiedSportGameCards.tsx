@@ -16,6 +16,8 @@ export interface UnifiedPick {
   detail?:string;
   /** Original source CDF P(actual integer stat >= ceil(numerical mean)). */
   projectionChance?:{atLeast:number;probability:number;calibrated:false}|null;
+  /** A distinct threshold event calculated from the original frozen SOG distribution. */
+  nhlShotMilestone?:{atLeast:number;probability:number;calibrated:false}|null;
 }
 export interface UnifiedGame {
   id:string;label:string;when?:string;subtitle?:string;
@@ -30,6 +32,32 @@ const stamp=(iso?:string)=>{
 const canNumeric=(p:UnifiedPick)=>p.prediction!=null&&Number.isFinite(p.prediction)&&p.prediction>=0;
 const value=(p:UnifiedPick)=>canNumeric(p)?fmt(p.prediction!)+(p.unit?' '+p.unit:''):pct(p.modelProbability);
 const primaryLabel=(p:UnifiedPick)=>canNumeric(p)?projectionLabel(p):'MODEL CHANCE OF TARGET · COUNT NOT FORECAST';
+/** Transparent research display threshold; not a calibrated live-pick approval.
+ * A low P(ceil(mean)) may coexist with a strong distinct 2+ event. */
+export const NHL_RESEARCH_SHORTLIST_MIN_PROB=.65;
+export function nhlResearchShortlist(picks:UnifiedPick[]):UnifiedPick[]{
+ const eligible=picks.filter(p=>{
+  if(p.market==='shots_on_goal'&&canNumeric(p)){
+   const e=p.nhlShotMilestone;
+   return !!e&&e.calibrated===false&&
+     e.atLeast>=2&&e.atLeast<=5&&e.probability>=NHL_RESEARCH_SHORTLIST_MIN_PROB&&
+     e.probability<=1&&Number.isFinite(e.probability);
+  }
+  return !!p.target&&['moneyline','points','goalie_saves','shots_on_goal'].includes(p.market)&&
+    p.modelProbability!=null&&Number.isFinite(p.modelProbability)&&
+    p.modelProbability>=NHL_RESEARCH_SHORTLIST_MIN_PROB&&p.modelProbability<=1;
+ });
+ const chance=(p:UnifiedPick)=>p.nhlShotMilestone?.probability??p.modelProbability??-1;
+ const ordered=eligible.sort((a,b)=>chance(b)-chance(a)||
+   a.player.localeCompare(b.player)||a.id.localeCompare(b.id));
+ const seen=new Set<string>(),out:UnifiedPick[]=[];
+ for(const p of ordered){
+  const key=[(p.team||'').toUpperCase(),p.player.toLowerCase().trim(),p.market].join('|');
+  if(seen.has(key))continue;
+  seen.add(key);out.push(p);
+ }
+ return out.slice(0,10);
+}
 const projectionLabel=(p:UnifiedPick)=>p.predictionKind==='mean'?'MODEL PROJECTION · MEAN':
   p.predictionKind==='median'?'MODEL PROJECTION · MEDIAN':'NUMERIC PLAYER-STAT PROJECTION';
 // Numeric shot-count research has no calibrated hit probability or book line.
@@ -42,7 +70,7 @@ const rank=(a:UnifiedPick,b:UnifiedPick)=>Number(canNumeric(b))-Number(canNumeri
        ? b.prediction!-a.prediction! : 0)
   ||a.player.localeCompare(b.player)||a.id.localeCompare(b.id);
 
-export function PredictionCard({pick}:{pick:UnifiedPick}){
+export function PredictionCard({pick,nhlShortlist=false}:{pick:UnifiedPick;nhlShortlist?:boolean}){
  return <article data-testid="unified-sport-projection" className="min-w-0 rounded-2xl border border-[#292929] bg-[#1C1C1C] p-4">
    <div className="flex min-w-0 items-start justify-between gap-2">
      <div className="min-w-0"><h3 className="break-words text-base font-bold capitalize text-white">{pick.player}</h3>
@@ -51,10 +79,18 @@ export function PredictionCard({pick}:{pick:UnifiedPick}){
      {pick.confidence&&<span className="rounded-md border border-[#333] px-2 py-1 text-[10px] font-bold text-gray-300">{pick.confidence}</span>}
    </div>
    <div data-testid="unified-predicted-stat" className="my-3 rounded-2xl border border-[#79FF48]/20 bg-[#12241b] p-4">
+     {nhlShortlist&&pick.nhlShotMilestone&&<div data-testid="nhl-research-strong-shots" className="mb-3 border-b border-[#79FF48]/20 pb-3">
+      <p className="text-[10px] font-bold text-gray-300">MODELED SHOT EVENT · RESEARCH ONLY</p>
+      <div className="mt-2 flex items-center justify-between gap-2">
+       <strong className="text-[16px] text-white">{pick.nhlShotMilestone.atLeast}+ shots on goal</strong>
+       <strong className="shrink-0 text-[24px] font-black text-[#79FF48]">{pct(pick.nhlShotMilestone.probability)}</strong>
+      </div>
+      <p className="mt-1 text-[10px] text-amber-200">Derived from original count model · Not forward-calibrated</p>
+     </div>}
      <p className="text-[10px] font-bold tracking-wide text-gray-300">{primaryLabel(pick)}</p>
      <p className="mt-1 break-words text-[30px] leading-tight font-black tabular-nums tracking-tight text-[#79FF48]">{value(pick)}</p>
      {!canNumeric(pick)&&<p className="mt-1 text-[10px] text-amber-200">No numerical player-stat forecast is published; this percentage describes the specified event only.</p>}
-     {canNumeric(pick)&&pick.projectionChance&&<div data-testid="projection-reach-probability" className="mt-3 flex items-center justify-between gap-3 border-t border-[#7AFF85]/20 pt-3">
+     {canNumeric(pick)&&pick.projectionChance&&!(nhlShortlist&&pick.nhlShotMilestone)&&<div data-testid="projection-reach-probability" className="mt-3 flex items-center justify-between gap-3 border-t border-[#7AFF85]/20 pt-3">
        <div><p className="text-[11px] font-semibold text-gray-200">Chance to reach projection</p>
          <p className="text-[10px] text-gray-400">Model P({pick.projectionChance.atLeast}+ shots) · Uncalibrated</p></div>
        <strong className="text-[22px] font-black tabular-nums text-[#79FF48]">{pct(pick.projectionChance.probability)}</strong>
@@ -189,19 +225,32 @@ export default function UnifiedSportGameCards({sport,games,prefix}:{
 }){
  const [expanded,setExpanded]=useState<string|null>(null);
  const [share,setShare]=useState<string|null>(null);
- const [mode,setMode]=useState<'SYSTEM PICKS'|'BETTABLE NOW'|'MODEL BOARD'>(sport==='NHL'?'MODEL BOARD':'SYSTEM PICKS');
+ const [mode,setMode]=useState<'SYSTEM PICKS'|'BETTABLE NOW'|'MODEL BOARD'>('SYSTEM PICKS');
  const matched=games.map(game=>{
    const picks=[...game.picks].sort(rank);
-   return {...game,shown:mode==='MODEL BOARD'?picks:mode==='BETTABLE NOW'?[]:picks.slice(0,10)};
+   return {...game,shown:mode==='MODEL BOARD'?picks:mode==='BETTABLE NOW'?[]:
+      sport==='NHL'?nhlResearchShortlist(picks):picks.slice(0,10)};
  });
+ const visible=mode==='SYSTEM PICKS'&&sport==='NHL'?
+   matched.filter(g=>g.shown.length>0):matched;
  return <div data-testid="unified-sport-board" className="space-y-3">
    <div aria-label={sport+' board mode'} className={`mt-2 grid gap-2 ${sport==='NHL'?'grid-cols-2':'grid-cols-3'}`}>
      {(sport==='NHL'?(['SYSTEM PICKS','MODEL BOARD'] as const):(['SYSTEM PICKS','BETTABLE NOW','MODEL BOARD'] as const)).map(m=>
        <button key={m} onClick={()=>{setMode(m);setExpanded(null);}} aria-pressed={mode===m}
-         className={`min-h-11 rounded-xl border px-2 text-[12px] font-bold whitespace-nowrap transition-colors ${mode===m?'border-[#79FF48]/80 bg-[#79FF48]/15 text-[#79FF48]':'border-white/10 bg-[#1d2629] text-gray-300'}`}>{sport==='NHL'?(m==='SYSTEM PICKS'?'Top 10':'All projections'):m}</button>)}
+         className={`min-h-11 rounded-xl border px-2 text-[12px] font-bold whitespace-nowrap transition-colors ${mode===m?'border-[#79FF48]/80 bg-[#79FF48]/15 text-[#79FF48]':'border-white/10 bg-[#1d2629] text-gray-300'}`}>{sport==='NHL'?(m==='SYSTEM PICKS'?'Best chances':'All projections'):m}</button>)}
    </div>
+   {sport==='NHL'&&mode==='SYSTEM PICKS'&&<p data-testid="nhl-research-shortlist-note" className="rounded-xl border border-white/10 bg-[#172321] p-3 text-[11px] leading-relaxed text-gray-300">
+      Strongest currently supported modeled events (at least 65% estimated probability, up to 10 per game).
+      Shot thresholds are separately derived from frozen distributions, not probabilities of reaching the displayed mean.
+      Uncalibrated research—not verified hit rates or official betting picks.
+      Select All projections for the complete original model slate.
+   </p>}
+   {sport==='NHL'&&mode==='SYSTEM PICKS'&&visible.length===0&&games.length>0&&
+     <p data-testid="nhl-no-shortlisted-events" className="rounded-xl border border-white/10 bg-[#192326] p-4 text-xs text-slate-300">
+       No events meet the 65% modeled research threshold. Select All projections to review every forecast.
+     </p>}
    {mode==='BETTABLE NOW'&&<p role="status" className="rounded-xl border border-[#333] p-3 text-xs text-amber-200">No independently verified live sportsbook executions in this feed. Model targets alone are not executable wagers.</p>}
-   {matched.map((game,i)=>{
+   {visible.map((game,i)=>{
      const opened=expanded===game.id;
      const preview=game.shown[0]||game.picks[0];
      return <section key={game.id} id={prefix+i} data-testid="unified-sport-game"
@@ -215,10 +264,14 @@ export default function UnifiedSportGameCards({sport,games,prefix}:{
                <h2 className="break-words text-base font-bold text-white">{game.label}</h2>
                <span className="text-[11px] text-gray-500">{stamp(game.when)}</span>
              </div>
-             <p className="mt-2 text-[12px] font-medium text-gray-400">{sport==='NHL'?game.shown.length+' model forecasts':game.shown.length+' '+mode+' · '+game.sourceLabel}</p>
+             <p className="mt-2 text-[12px] font-medium text-gray-400">{sport==='NHL'?game.shown.length+(mode==='SYSTEM PICKS'?' stronger modeled events · '+game.picks.length+' total forecasts':' total forecasts'):game.shown.length+' '+mode+' · '+game.sourceLabel}</p>
              {mode!=='BETTABLE NOW'&&preview&&<p className="mt-2 break-words text-[11px] text-gray-300">
                TOP: <span className="text-white">{preview.player}</span> ·
-               {canNumeric(preview)?<>MODEL {preview.predictionKind==='mean'?'MEAN':'MEDIAN'} {value(preview)}{preview.projectionChance?<> · P({preview.projectionChance.atLeast}+) {pct(preview.projectionChance.probability)}</>:null}{preview.target?<> · TARGET {preview.target} ({pct(preview.modelProbability)})</>:null}</>:<>ONLY MODEL P(TARGET) {pct(preview.modelProbability)} · TARGET {preview.target} · NO NUMERIC FORECAST</>}
+               {canNumeric(preview)?<>
+                  {sport==='NHL'&&mode==='SYSTEM PICKS'&&preview.nhlShotMilestone?
+                    <>P({preview.nhlShotMilestone.atLeast}+ shots) {pct(preview.nhlShotMilestone.probability)} · MEAN {value(preview)}</>:
+                    <>MODEL {preview.predictionKind==='mean'?'MEAN':'MEDIAN'} {value(preview)}{preview.projectionChance?<> · P({preview.projectionChance.atLeast}+) {pct(preview.projectionChance.probability)}</>:null}{preview.target?<> · TARGET {preview.target} ({pct(preview.modelProbability)})</>:null}</>}
+                </>:<>MODEL P(TARGET) {pct(preview.modelProbability)} · TARGET {preview.target} · NO NUMERIC FORECAST</>}
              </p>}
            </div>
            <ChevronDown size={16} className={`shrink-0 text-gray-500 ${opened?'rotate-180':''}`}/>
@@ -229,7 +282,7 @@ export default function UnifiedSportGameCards({sport,games,prefix}:{
        </div>
        {opened&&<div id={'unified-'+prefix+i} className="space-y-3 border-t border-[#292929] p-3">
          {mode==='BETTABLE NOW'?<p className="p-2 text-xs text-gray-400">No certified sportsbook lines for this game.</p>
-           :game.shown.length?game.shown.map(p=><PredictionCard key={p.id} pick={p}/>)
+           :game.shown.length?game.shown.map(p=><PredictionCard key={p.id} pick={p} nhlShortlist={sport==='NHL'&&mode==='SYSTEM PICKS'}/>)
            :<p className="p-2 text-xs text-gray-400">No model forecasts for the selected filters.</p>}
        </div>}
      </section>;
