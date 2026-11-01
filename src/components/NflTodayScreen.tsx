@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { ChevronDown, RefreshCw, Image } from 'lucide-react';
 import NflShareModal from './NflShareModal';
 import ExistingNflProjectionSlate from './ExistingNflProjectionSlate';
+import {wholeStatProjection} from '../lib/wholeStatProjection';
 import { usePhase1 } from '../nfl/usePhase1';
 import { useNflRoleResearch } from '../nfl/useNflRoleResearch';
 import { teamKey, statKey, type NflRoleResearch, type RoleStat } from '../nfl/roleResearch';
@@ -43,7 +44,8 @@ export function OutcomeCard({ row, view, roleStat }: { row: ForecastRow; view: P
     </div>}
     <div className="my-4" data-testid="model-projection">
       <div className="text-[11px] font-mono font-bold tracking-wide text-gray-400">{roleStat?'ORIGINAL FROZEN V2 MEDIAN · BEFORE ROLE CORRECTION':'MODEL PROJECTION · MEDIAN'}</div>
-      <div className={roleStat?'text-xl font-semibold text-gray-400':'text-3xl font-black text-[#00FF41]'}>{number(row.median)}{unit(row.outcome)}</div>
+      <div className={roleStat?'text-xl font-semibold text-gray-400':'text-3xl font-black text-[#00FF41]'}>{row.median==null?'—':wholeStatProjection(row.median)}{unit(row.outcome)}</div>
+      <p className="mt-1 text-[11px] text-amber-200">Chance of exactly this integer: unavailable. Alternative 65%+ targets are different events.</p>
     </div>
     <dl className="grid min-w-0 grid-cols-2 gap-x-3 gap-y-3">
       {cells.map(([label, value]) => <div key={label} className="min-w-0"><dt className="text-[11px] leading-4 text-gray-400">{label}</dt><dd className="mt-0.5 break-words text-sm font-semibold text-gray-100">{value}</dd></div>)}
@@ -62,14 +64,18 @@ export function SystemPickCard({pick,view,horizon,execution}:{pick:SystemPick;vi
     <p className="mt-1 text-[11px] uppercase tracking-wide text-gray-400">{OUTCOMES[row.outcome]}</p>
     <div className="mt-4 rounded-xl border border-[#00FF41]/25 bg-[#0E1D14] p-3" data-testid="primary-projection">
       <p className="text-[10px] font-bold tracking-wide text-gray-300">PREDICTED STAT · MODEL MEDIAN</p>
-      <p className="mt-1 text-3xl font-black text-[#00FF41]">{number(row.median)}{unit(row.outcome)}</p>
+      <p data-testid="nfl-whole-stat" className="mt-1 text-3xl font-black text-[#00FF41]">{row.median==null?'—':wholeStatProjection(row.median)}{unit(row.outcome)}</p>
+      <p className="mt-1 text-[11px] text-amber-200">Exact-count probability unavailable; no 65% target reused for this number.</p>
       <p className="mt-1 text-xs text-gray-300">Mean: {number(row.mean)}{unit(row.outcome)} · 10–90%: {number(row.p10)}–{number(row.p90)}{unit(row.outcome)}</p>
     </div>
+    <details className="mt-3 rounded-xl border border-[#303030] p-3" data-testid="nfl-alternative-model-target">
+      <summary className="min-h-9 cursor-pointer text-[11px] font-bold text-gray-400">ALTERNATIVE MODEL TARGET ▾</summary>
     <div className="mt-3 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-xl border border-[#303030] p-3">
       <div className="min-w-0"><p className="text-[10px] font-bold text-gray-400">MODEL TARGET · NOT A SPORTSBOOK BET</p>
         <p className="mt-1 text-lg font-bold leading-tight text-gray-100" data-testid="system-target">{targetText(pick)}</p></div>
       <div className="text-right"><p className="text-[10px] text-gray-400">MODEL HIT PROBABILITY</p><p className="mt-1 text-lg font-bold text-[#00FF41]">{percent(target.probability)}</p></div>
     </div>
+    </details>
     <dl className="grid grid-cols-2 gap-x-4 gap-y-3">{summary.map(([label,value])=><div key={label}><dt className="text-[11px] text-gray-500">{label}</dt><dd className="text-sm font-semibold text-gray-200">{value}</dd></div>)}</dl>
     {execution && <div data-testid="available-market" className="mt-4 rounded-xl border border-[#363636] bg-[#141414] p-3 text-sm text-gray-200">
       <p className="mb-2 text-[10px] font-mono text-gray-500">AVAILABLE MARKET</p>
