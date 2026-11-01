@@ -1,0 +1,44 @@
+name: NHL published pregame static fallback sync
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - scripts/syncNhlPublished.ts
+      - src/nhl/publishedPregame.ts
+      - .github/workflows/nhl_published_fallback.yml
+  schedule:
+    - cron: '11 9,11,13,15,17,19,21,23 * * *'
+permissions:
+  contents: write
+concurrency:
+  group: nhl-published-pregame-source-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Verify pregame source reader and snapshot
+        run: |
+          node --import tsx --test tests/nhlPublishedPregame.test.ts
+      - name: Fetch and preserve the upstream published NHL model data
+        run: node --import tsx scripts/syncNhlPublished.ts
+      - name: Commit only pregame source archives, never derived postgame picks
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add public/nhl-published-pregame.json docs/nhl_published_firstseen
+          if git diff --cached --quiet; then echo 'No new NHL published source'; exit 0; fi
+          git diff --cached --check
+          git commit -m 'NHL: archive verified pregame model publication [skip ci]'
+          git push origin HEAD:main
