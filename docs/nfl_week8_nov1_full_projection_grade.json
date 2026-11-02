@@ -1,6 +1,6 @@
 {
   "schema": "NFL_2026_WEEK08_NOV01_FIRSTSEEN_NUMERIC_EVENT_AUDIT_V1",
-  "generated_at_utc": "2026-11-02T14:10:41.506Z",
+  "generated_at_utc": "2026-11-02T14:12:21.753Z",
   "source_snapshot_url": "https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks2/c9661df759c36a017b3268345e338b7d676adfd6/docs/nfl_predictions_2026_w08.json",
   "source_commit": "c9661df759c36a017b3268345e338b7d676adfd6",
   "source_generated_at_utc": "2026-11-01T02:23:15+00:00",
@@ -12,14 +12,16 @@
     "touchdowns": "SEPARATE_BINARY_EVENT_CALIBRATION_WITH_BRIER",
     "sacks": "SEPARATE_BINARY_EVENT_CALIBRATION_WITH_BRIER",
     "unavailable": "UNVERIFIED_ROWS_STAY_IN_DENOMINATOR_AS_MISSING_NOT_ZERO",
+    "half_sack": "EXPLICIT_PUSH_EXCLUDED_FROM_BINARY_BRIER_NOT_AN_INCORRECT_PICK",
     "note": "NO_NUMERIC_YARDS_EVENT_HIT_RATE_CLAIM_WITHOUT_DEFINED_TOLERANCE"
   },
   "overall": {
     "total": 316,
-    "verified": 278,
+    "verified": 275,
     "unverified": 38,
+    "pushes": 3,
     "numeric": 151,
-    "events": 127,
+    "events": 124,
     "by_market": {
       "rushing_yards": {
         "total": 64,
@@ -45,17 +47,19 @@
         "total": 77,
         "verified": 73,
         "unverified": 4,
+        "pushes": 0,
         "observed_event_rate": 0.397,
         "average_predicted_event_prob": 0.356,
         "brier": 0.227
       },
       "sacks": {
         "total": 61,
-        "verified": 54,
+        "verified": 51,
         "unverified": 7,
-        "observed_event_rate": 0.37,
-        "average_predicted_event_prob": 0.358,
-        "brier": 0.235
+        "pushes": 3,
+        "observed_event_rate": 0.392,
+        "average_predicted_event_prob": 0.356,
+        "brier": 0.239
       }
     }
   },
@@ -70,10 +74,11 @@
       "original_forecast_count": 26,
       "grade": {
         "total": 26,
-        "verified": 25,
+        "verified": 24,
         "unverified": 1,
+        "pushes": 1,
         "numeric": 14,
-        "events": 11,
+        "events": 10,
         "by_market": {
           "rushing_yards": {
             "total": 6,
@@ -99,17 +104,19 @@
             "total": 6,
             "verified": 6,
             "unverified": 0,
+            "pushes": 0,
             "observed_event_rate": 0.5,
             "average_predicted_event_prob": 0.386,
             "brier": 0.213
           },
           "sacks": {
             "total": 5,
-            "verified": 5,
+            "verified": 4,
             "unverified": 0,
-            "observed_event_rate": 0.2,
-            "average_predicted_event_prob": 0.376,
-            "brier": 0.146
+            "pushes": 1,
+            "observed_event_rate": 0.25,
+            "average_predicted_event_prob": 0.369,
+            "brier": 0.142
           }
         }
       },
@@ -172,12 +179,12 @@
           "model_median": null,
           "model_event_probability": 0.5966,
           "model_direction": "UNDER 0.5",
-          "status": "VERIFIED",
+          "status": "PARTIAL_SACK_HALF_LINE_PUSH",
           "actual": 0.5,
           "signed_error": null,
           "absolute_error": null,
-          "event_happened": false,
-          "brier": 0.162732,
+          "event_happened": null,
+          "brier": null,
           "observed_player_name": "Mike Green"
         },
         {
@@ -700,6 +707,7 @@
         "total": 30,
         "verified": 26,
         "unverified": 4,
+        "pushes": 0,
         "numeric": 12,
         "events": 14,
         "by_market": {
@@ -727,6 +735,7 @@
             "total": 6,
             "verified": 6,
             "unverified": 0,
+            "pushes": 0,
             "observed_event_rate": 0.667,
             "average_predicted_event_prob": 0.389,
             "brier": 0.319
@@ -735,6 +744,7 @@
             "total": 9,
             "verified": 8,
             "unverified": 1,
+            "pushes": 0,
             "observed_event_rate": 0.375,
             "average_predicted_event_prob": 0.321,
             "brier": 0.196
@@ -1416,6 +1426,7 @@
         "total": 24,
         "verified": 23,
         "unverified": 1,
+        "pushes": 0,
         "numeric": 12,
         "events": 11,
         "by_market": {
@@ -1443,6 +1454,7 @@
             "total": 8,
             "verified": 8,
             "unverified": 0,
+            "pushes": 0,
             "observed_event_rate": 0.375,
             "average_predicted_event_prob": 0.364,
             "brier": 0.272
@@ -1451,6 +1463,7 @@
             "total": 3,
             "verified": 3,
             "unverified": 0,
+            "pushes": 0,
             "observed_event_rate": 0.667,
             "average_predicted_event_prob": 0.35,
             "brier": 0.376
@@ -2000,6 +2013,7 @@
         "total": 27,
         "verified": 25,
         "unverified": 2,
+        "pushes": 0,
         "numeric": 10,
         "events": 15,
         "by_market": {
@@ -2027,6 +2041,7 @@
             "total": 6,
             "verified": 6,
             "unverified": 0,
+            "pushes": 0,
             "observed_event_rate": 0.5,
             "average_predicted_event_prob": 0.401,
             "brier": 0.283
@@ -2035,6 +2050,7 @@
             "total": 9,
             "verified": 9,
             "unverified": 0,
+            "pushes": 0,
             "observed_event_rate": 0.333,
             "average_predicted_event_prob": 0.375,
             "brier": 0.254
@@ -2650,6 +2666,7 @@
         "total": 31,
         "verified": 20,
         "unverified": 11,
+        "pushes": 0,
         "numeric": 11,
         "events": 9,
         "by_market": {
@@ -2677,6 +2694,7 @@
             "total": 7,
             "verified": 5,
             "unverified": 2,
+            "pushes": 0,
             "observed_event_rate": 0.4,
             "average_predicted_event_prob": 0.319,
             "brier": 0.246
@@ -2685,6 +2703,7 @@
             "total": 5,
             "verified": 4,
             "unverified": 1,
+            "pushes": 0,
             "observed_event_rate": 0.25,
             "average_predicted_event_prob": 0.28,
             "brier": 0.197
@@ -3388,6 +3407,7 @@
         "total": 29,
         "verified": 25,
         "unverified": 4,
+        "pushes": 0,
         "numeric": 12,
         "events": 13,
         "by_market": {
@@ -3415,6 +3435,7 @@
             "total": 8,
             "verified": 8,
             "unverified": 0,
+            "pushes": 0,
             "observed_event_rate": 0.375,
             "average_predicted_event_prob": 0.35,
             "brier": 0.223
@@ -3423,6 +3444,7 @@
             "total": 5,
             "verified": 5,
             "unverified": 0,
+            "pushes": 0,
             "observed_event_rate": 0.6,
             "average_predicted_event_prob": 0.368,
             "brier": 0.283
@@ -4082,6 +4104,7 @@
         "total": 26,
         "verified": 20,
         "unverified": 6,
+        "pushes": 0,
         "numeric": 12,
         "events": 8,
         "by_market": {
@@ -4109,6 +4132,7 @@
             "total": 6,
             "verified": 6,
             "unverified": 0,
+            "pushes": 0,
             "observed_event_rate": 0.167,
             "average_predicted_event_prob": 0.345,
             "brier": 0.124
@@ -4117,6 +4141,7 @@
             "total": 6,
             "verified": 2,
             "unverified": 4,
+            "pushes": 0,
             "observed_event_rate": 0,
             "average_predicted_event_prob": 0.392,
             "brier": 0.154
@@ -4710,6 +4735,7 @@
         "total": 28,
         "verified": 26,
         "unverified": 2,
+        "pushes": 0,
         "numeric": 17,
         "events": 9,
         "by_market": {
@@ -4737,6 +4763,7 @@
             "total": 8,
             "verified": 8,
             "unverified": 0,
+            "pushes": 0,
             "observed_event_rate": 0.25,
             "average_predicted_event_prob": 0.341,
             "brier": 0.181
@@ -4745,6 +4772,7 @@
             "total": 2,
             "verified": 1,
             "unverified": 1,
+            "pushes": 0,
             "observed_event_rate": 0,
             "average_predicted_event_prob": 0.373,
             "brier": 0.139
@@ -5382,6 +5410,7 @@
         "total": 28,
         "verified": 26,
         "unverified": 2,
+        "pushes": 0,
         "numeric": 15,
         "events": 11,
         "by_market": {
@@ -5409,6 +5438,7 @@
             "total": 6,
             "verified": 5,
             "unverified": 1,
+            "pushes": 0,
             "observed_event_rate": 0.6,
             "average_predicted_event_prob": 0.388,
             "brier": 0.195
@@ -5417,6 +5447,7 @@
             "total": 6,
             "verified": 6,
             "unverified": 0,
+            "pushes": 0,
             "observed_event_rate": 0.167,
             "average_predicted_event_prob": 0.353,
             "brier": 0.161
@@ -6054,6 +6085,7 @@
         "total": 22,
         "verified": 20,
         "unverified": 2,
+        "pushes": 0,
         "numeric": 12,
         "events": 8,
         "by_market": {
@@ -6081,6 +6113,7 @@
             "total": 6,
             "verified": 5,
             "unverified": 1,
+            "pushes": 0,
             "observed_event_rate": 0.2,
             "average_predicted_event_prob": 0.325,
             "brier": 0.192
@@ -6089,6 +6122,7 @@
             "total": 3,
             "verified": 3,
             "unverified": 0,
+            "pushes": 0,
             "observed_event_rate": 0.333,
             "average_predicted_event_prob": 0.443,
             "brier": 0.252
@@ -6592,10 +6626,11 @@
       "original_forecast_count": 24,
       "grade": {
         "total": 24,
-        "verified": 22,
+        "verified": 20,
         "unverified": 2,
+        "pushes": 2,
         "numeric": 13,
-        "events": 9,
+        "events": 7,
         "by_market": {
           "rushing_yards": {
             "total": 5,
@@ -6621,17 +6656,19 @@
             "total": 5,
             "verified": 5,
             "unverified": 0,
+            "pushes": 0,
             "observed_event_rate": 0.2,
             "average_predicted_event_prob": 0.321,
             "brier": 0.196
           },
           "sacks": {
             "total": 4,
-            "verified": 4,
+            "verified": 2,
             "unverified": 0,
-            "observed_event_rate": 0.25,
-            "average_predicted_event_prob": 0.382,
-            "brier": 0.212
+            "pushes": 2,
+            "observed_event_rate": 0.5,
+            "average_predicted_event_prob": 0.364,
+            "brier": 0.264
           }
         }
       },
@@ -6694,12 +6731,12 @@
           "model_median": null,
           "model_event_probability": 0.6073,
           "model_direction": "UNDER 0.5",
-          "status": "VERIFIED",
+          "status": "PARTIAL_SACK_HALF_LINE_PUSH",
           "actual": 0.5,
           "signed_error": null,
           "absolute_error": null,
-          "event_happened": false,
-          "brier": 0.154213,
+          "event_happened": null,
+          "brier": null,
           "observed_player_name": "Christian Barmore"
         },
         {
@@ -6716,12 +6753,12 @@
           "model_median": null,
           "model_event_probability": 0.5931,
           "model_direction": "UNDER 0.5",
-          "status": "VERIFIED",
+          "status": "PARTIAL_SACK_HALF_LINE_PUSH",
           "actual": 0.5,
           "signed_error": null,
           "absolute_error": null,
-          "event_happened": false,
-          "brier": 0.165568,
+          "event_happened": null,
+          "brier": null,
           "observed_player_name": "Elijah Ponder"
         },
         {
@@ -7178,6 +7215,7 @@
         "total": 21,
         "verified": 20,
         "unverified": 1,
+        "pushes": 0,
         "numeric": 11,
         "events": 9,
         "by_market": {
@@ -7205,6 +7243,7 @@
             "total": 5,
             "verified": 5,
             "unverified": 0,
+            "pushes": 0,
             "observed_event_rate": 0.6,
             "average_predicted_event_prob": 0.326,
             "brier": 0.28
@@ -7213,6 +7252,7 @@
             "total": 4,
             "verified": 4,
             "unverified": 0,
+            "pushes": 0,
             "observed_event_rate": 1,
             "average_predicted_event_prob": 0.343,
             "brier": 0.434
