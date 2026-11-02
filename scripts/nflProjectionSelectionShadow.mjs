@@ -205,5 +205,5 @@ for(const g of output.games)report.push('### '+g.matchup,'',
  '| Player | Market | Projected | P(at least projected) | Actual | Numerical error |',
  '|:--|:--|--:|--:|--:|--:|',
  ...g.selected.diverse.map(x=>'| '+x.player+' ('+x.team+') | '+x.outcome+' | '+x.projection+' | '+(x.atLeast*100).toFixed(1)+'% | '+(x.actual===null?'Unverified':x.actual)+' | '+(x.absError===null?'—':x.absError)+' |'),'');
-writeFileSync('docs/NFL_WEEK8_FRONTEND_SELECTION_SHADOW_TEST.md',report.join('\n')+'\n');
+writeFileSync('docs/NFL_WEEK8_FRONTEND_SELECTION_SHADOW_TEST.md',report.join('\n').trimEnd()+'\n');
 console.log('NFL_W8_SELECTION_SHADOW',JSON.stringify({variants,games:output.games.map(g=>({game:g.matchup,n:g.diverse.n,verified:g.diverse.verified,byMarket:g.diverse.markets}))}).slice(0,15500));
