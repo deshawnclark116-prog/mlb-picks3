@@ -1,0 +1,317 @@
+matchup,player,team,market,model_prediction,model_median,model_event_probability,model_direction,actual,signed_error,absolute_error,event_happened,brier,status,source_generated_at_utc
+CIN vs TEN,Cedric Johnson,CIN,sacks,,,0.8188,UNDER 0.5,0,,,false,0.032833,VERIFIED,2026-11-01T02:23:15+00:00
+NYJ vs LV,Demario Davis,NYJ,sacks,,,0.8127,UNDER 0.5,0,,,false,0.035081,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Kris Jenkins,CIN,sacks,,,0.762,UNDER 0.5,0,,,false,0.056644,VERIFIED,2026-11-01T02:23:15+00:00
+BUF vs BAL,Roquan Smith,BAL,sacks,,,0.7569,UNDER 0.5,0,,,false,0.059098,VERIFIED,2026-11-01T02:23:15+00:00
+NYJ vs LV,Quay Walker,LV,sacks,,,0.7455,UNDER 0.5,0,,,false,0.06477,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Myles Murphy,CIN,sacks,,,0.7391,UNDER 0.5,0,,,false,0.068069,VERIFIED,2026-11-01T02:23:15+00:00
+TB vs ATL,Al-Quadin Muhammad,TB,sacks,,,0.7342,UNDER 0.5,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+DAL vs ARI,Josh Sweat,ARI,sacks,,,0.733,UNDER 0.5,1,,,true,0.537289,VERIFIED,2026-11-01T02:23:15+00:00
+NYJ vs LV,Will McDonald IV,NYJ,sacks,,,0.7245,UNDER 0.5,1,,,true,0.5249,VERIFIED,2026-11-01T02:23:15+00:00
+DET vs MIN,Kyle Van Noy,MIN,sacks,,,0.7239,UNDER 0.5,0,,,false,0.076231,VERIFIED,2026-11-01T02:23:15+00:00
+DET vs MIN,Derrick Barnes,DET,sacks,,,0.7238,UNDER 0.5,0,,,false,0.076286,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,Isaiah McGuire,CLE,sacks,,,0.6962,UNDER 0.5,0,,,false,0.092294,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,Nick Herbig,PIT,sacks,,,0.6953,UNDER 0.5,1,,,true,0.483442,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Jermaine Johnson II,TEN,sacks,,,0.6506,UNDER 0.5,0,,,false,0.12208,VERIFIED,2026-11-01T02:23:15+00:00
+TB vs ATL,David Walker,TB,sacks,,,0.6463,UNDER 0.5,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+DET vs MIN,Eric Wilson,MIN,sacks,,,0.6453,UNDER 0.5,1,,,true,0.416412,VERIFIED,2026-11-01T02:23:15+00:00
+DAL vs ARI,Quinnen Williams,DAL,sacks,,,0.6404,UNDER 0.5,2,,,true,0.410112,VERIFIED,2026-11-01T02:23:15+00:00
+TB vs ATL,Yaya Diaby,TB,sacks,,,0.6397,UNDER 0.5,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+DET vs MIN,Blake Cashman,MIN,sacks,,,0.6394,UNDER 0.5,0,,,false,0.130032,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Jeffery Simmons,TEN,sacks,,,0.6341,UNDER 0.5,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+DET vs MIN,Andrew Van Ginkel,MIN,sacks,,,0.6312,UNDER 0.5,2.5,,,true,0.398413,VERIFIED,2026-11-01T02:23:15+00:00
+DET vs MIN,Alim McNeill,DET,sacks,,,0.6297,UNDER 0.5,1,,,true,0.396522,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Jacob Martin,TEN,sacks,,,0.6291,UNDER 0.5,3,,,true,0.395767,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,DeForest Buckner,IND,sacks,,,0.6285,UNDER 0.5,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+JAX vs IND,Adetomiwa Adebawore,IND,sacks,,,0.6268,UNDER 0.5,0,,,false,0.139278,VERIFIED,2026-11-01T02:23:15+00:00
+NYJ vs LV,Malcolm Koonce,LV,sacks,,,0.6212,UNDER 0.5,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+TB vs ATL,Samson Ebukam,ATL,sacks,,,0.6181,UNDER 0.5,0,,,false,0.145848,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Boye Mafe,CIN,sacks,,,0.6154,UNDER 0.5,1,,,true,0.378717,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,Adin Huntington,CLE,sacks,,,0.6145,UNDER 0.5,1,,,true,0.37761,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Jonathan Allen,CIN,sacks,,,0.6128,UNDER 0.5,0,,,false,0.149924,VERIFIED,2026-11-01T02:23:15+00:00
+BUF vs BAL,Bradley Chubb,BUF,sacks,,,0.6052,UNDER 0.5,0,,,false,0.155867,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,Maliek Collins,CLE,sacks,,,0.6044,UNDER 0.5,0,,,false,0.156499,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Dexter Lawrence,CIN,sacks,,,0.6031,UNDER 0.5,1,,,true,0.36373,VERIFIED,2026-11-01T02:23:15+00:00
+TB vs ATL,Cameron Thomas,ATL,sacks,,,0.5979,UNDER 0.5,0,,,false,0.161684,VERIFIED,2026-11-01T02:23:15+00:00
+BUF vs BAL,Mike Green,BAL,sacks,,,0.5966,UNDER 0.5,0.5,,,false,0.162732,VERIFIED,2026-11-01T02:23:15+00:00
+NYJ vs LV,Kingsley Enagbare,NYJ,sacks,,,0.5958,UNDER 0.5,0,,,false,0.163378,VERIFIED,2026-11-01T02:23:15+00:00
+BUF vs BAL,Greg Rousseau,BUF,sacks,,,0.5888,OVER 0.5,1,,,true,0.169085,VERIFIED,2026-11-01T02:23:15+00:00
+DAL vs ARI,Darius Robinson,ARI,sacks,,,0.576,UNDER 0.5,0,,,false,0.179776,VERIFIED,2026-11-01T02:23:15+00:00
+BUF vs BAL,Trey Hendrickson,BAL,sacks,,,0.5725,UNDER 0.5,0,,,false,0.182756,VERIFIED,2026-11-01T02:23:15+00:00
+BUF vs BAL,James Cook,BUF,anytime_touchdowns,,,0.5715,Scores a TD (OVER 0.5),1,,,true,0.183612,VERIFIED,2026-11-01T02:23:15+00:00
+TB vs ATL,Za'Darius Smith,ATL,sacks,,,0.5642,UNDER 0.5,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+PIT vs CLE,T.J. Watt,PIT,sacks,,,0.5505,UNDER 0.5,2,,,true,0.30305,VERIFIED,2026-11-01T02:23:15+00:00
+DET vs MIN,DJ Wonnum,DET,sacks,,,0.548,UNDER 0.5,0,,,false,0.204304,VERIFIED,2026-11-01T02:23:15+00:00
+DET vs MIN,Aidan Hutchinson,DET,sacks,,,0.5463,OVER 0.5,0,,,false,0.298444,VERIFIED,2026-11-01T02:23:15+00:00
+DET vs MIN,Jahmyr Gibbs,DET,anytime_touchdowns,,,0.5425,Scores a TD (OVER 0.5),1,,,true,0.209306,VERIFIED,2026-11-01T02:23:15+00:00
+DET vs MIN,Dallas Turner,MIN,sacks,,,0.5387,OVER 0.5,0,,,false,0.290198,VERIFIED,2026-11-01T02:23:15+00:00
+DAL vs ARI,Javonte Williams,DAL,anytime_touchdowns,,,0.5343,Scores a TD (OVER 0.5),0,,,false,0.285476,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Chase Brown,CIN,anytime_touchdowns,,,0.5256,Scores a TD (OVER 0.5),0,,,false,0.276255,VERIFIED,2026-11-01T02:23:15+00:00
+DET vs MIN,Amon-Ra St. Brown,DET,anytime_touchdowns,,,0.5177,Scores a TD (OVER 0.5),0,,,false,0.268013,VERIFIED,2026-11-01T02:23:15+00:00
+TB vs ATL,Bucky Irving,TB,anytime_touchdowns,,,0.5094,Scores a TD (OVER 0.5),1,,,true,0.240688,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,Bhayshul Tuten,JAX,anytime_touchdowns,,,0.4998,Scores a TD (OVER 0.5),1,,,true,0.2502,VERIFIED,2026-11-01T02:23:15+00:00
+BUF vs BAL,Derrick Henry,BAL,anytime_touchdowns,,,0.4971,Scores a TD (OVER 0.5),1,,,true,0.252908,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Ja'Marr Chase,CIN,anytime_touchdowns,,,0.4635,Scores a TD (OVER 0.5),1,,,true,0.287832,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,Quinshon Judkins,CLE,anytime_touchdowns,,,0.4277,Scores a TD (OVER 0.5),0,,,false,0.182927,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,Jaylen Warren,PIT,anytime_touchdowns,,,0.4157,Scores a TD (OVER 0.5),1,,,true,0.341406,VERIFIED,2026-11-01T02:23:15+00:00
+TB vs ATL,Bijan Robinson,ATL,anytime_touchdowns,,,0.4114,Scores a TD (OVER 0.5),0,,,false,0.16925,VERIFIED,2026-11-01T02:23:15+00:00
+DAL vs ARI,CeeDee Lamb,DAL,anytime_touchdowns,,,0.4055,Scores a TD (OVER 0.5),0,,,false,0.16443,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,Parker Washington,JAX,anytime_touchdowns,,,0.3897,Scores a TD (OVER 0.5),0,,,false,0.151866,VERIFIED,2026-11-01T02:23:15+00:00
+DET vs MIN,Aaron Jones,MIN,anytime_touchdowns,,,0.3755,Scores a TD (OVER 0.5),0,,,false,0.141,VERIFIED,2026-11-01T02:23:15+00:00
+DAL vs ARI,George Pickens,DAL,anytime_touchdowns,,,0.3749,Scores a TD (OVER 0.5),0,,,false,0.14055,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Tony Pollard,TEN,anytime_touchdowns,,,0.3744,Scores a TD (OVER 0.5),1,,,true,0.391375,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Tee Higgins,CIN,anytime_touchdowns,,,0.3722,Scores a TD (OVER 0.5),1,,,true,0.394133,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,Jakobi Meyers,JAX,anytime_touchdowns,,,0.372,Scores a TD (OVER 0.5),0,,,false,0.138384,VERIFIED,2026-11-01T02:23:15+00:00
+DET vs MIN,Jameson Williams,DET,anytime_touchdowns,,,0.3669,Scores a TD (OVER 0.5),1,,,true,0.400816,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,Pat Freiermuth,PIT,anytime_touchdowns,,,0.3651,Scores a TD (OVER 0.5),1,,,true,0.403098,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,Jonathan Taylor,IND,anytime_touchdowns,,,0.3597,Scores a TD (OVER 0.5),0,,,false,0.129384,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,DK Metcalf,PIT,anytime_touchdowns,,,0.3564,Scores a TD (OVER 0.5),0,,,false,0.127021,VERIFIED,2026-11-01T02:23:15+00:00
+BUF vs BAL,Zay Flowers,BAL,anytime_touchdowns,,,0.3564,Scores a TD (OVER 0.5),0,,,false,0.127021,VERIFIED,2026-11-01T02:23:15+00:00
+DAL vs ARI,Trey McBride,ARI,anytime_touchdowns,,,0.353,Scores a TD (OVER 0.5),1,,,true,0.418609,VERIFIED,2026-11-01T02:23:15+00:00
+DET vs MIN,Sam LaPorta,DET,anytime_touchdowns,,,0.3491,Scores a TD (OVER 0.5),0,,,false,0.121871,VERIFIED,2026-11-01T02:23:15+00:00
+DAL vs ARI,Jeremiyah Love,ARI,anytime_touchdowns,,,0.3491,Scores a TD (OVER 0.5),0,,,false,0.121871,VERIFIED,2026-11-01T02:23:15+00:00
+NYJ vs LV,Ashton Jeanty,LV,anytime_touchdowns,,,0.345,Scores a TD (OVER 0.5),0,,,false,0.119025,VERIFIED,2026-11-01T02:23:15+00:00
+NYJ vs LV,Brock Bowers,LV,anytime_touchdowns,,,0.3343,Scores a TD (OVER 0.5),1,,,true,0.443156,VERIFIED,2026-11-01T02:23:15+00:00
+TB vs ATL,Drake London,ATL,anytime_touchdowns,,,0.3289,Scores a TD (OVER 0.5),0,,,false,0.108175,VERIFIED,2026-11-01T02:23:15+00:00
+NYJ vs LV,Tre Tucker,LV,anytime_touchdowns,,,0.3287,Scores a TD (OVER 0.5),0,,,false,0.108044,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,Germie Bernard,PIT,anytime_touchdowns,,,0.3259,Scores a TD (OVER 0.5),0,,,false,0.106211,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,Rico Dowdle,PIT,anytime_touchdowns,,,0.3256,Scores a TD (OVER 0.5),1,,,true,0.454815,VERIFIED,2026-11-01T02:23:15+00:00
+BUF vs BAL,Khalil Shakir,BUF,anytime_touchdowns,,,0.3191,Scores a TD (OVER 0.5),0,,,false,0.101825,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,Harold Fannin Jr.,CLE,anytime_touchdowns,,,0.3146,Scores a TD (OVER 0.5),0,,,false,0.098973,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Wan'Dale Robinson,TEN,anytime_touchdowns,,,0.3076,Scores a TD (OVER 0.5),1,,,true,0.479418,VERIFIED,2026-11-01T02:23:15+00:00
+DAL vs ARI,Michael Wilson,ARI,anytime_touchdowns,,,0.3075,Scores a TD (OVER 0.5),1,,,true,0.479556,VERIFIED,2026-11-01T02:23:15+00:00
+NYJ vs LV,Braelon Allen,NYJ,anytime_touchdowns,,,0.3066,Scores a TD (OVER 0.5),1,,,true,0.480804,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,Brenton Strange,JAX,anytime_touchdowns,,,0.3022,Scores a TD (OVER 0.5),0,,,false,0.091325,VERIFIED,2026-11-01T02:23:15+00:00
+NYJ vs LV,Breece Hall,NYJ,anytime_touchdowns,,,0.3017,Scores a TD (OVER 0.5),,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+DAL vs ARI,Tyler Allgeier,ARI,anytime_touchdowns,,,0.3011,Scores a TD (OVER 0.5),1,,,true,0.488461,VERIFIED,2026-11-01T02:23:15+00:00
+TB vs ATL,Kyle Pitts,ATL,anytime_touchdowns,,,0.3006,Scores a TD (OVER 0.5),0,,,false,0.09036,VERIFIED,2026-11-01T02:23:15+00:00
+BUF vs BAL,Keon Coleman,BUF,anytime_touchdowns,,,0.2977,Scores a TD (OVER 0.5),0,,,false,0.088625,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Samaje Perine,CIN,anytime_touchdowns,,,0.2919,Scores a TD (OVER 0.5),0,,,false,0.085206,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,Tyler Warren,IND,anytime_touchdowns,,,0.2907,Scores a TD (OVER 0.5),0,,,false,0.084506,VERIFIED,2026-11-01T02:23:15+00:00
+DAL vs ARI,Bam Knight,ARI,anytime_touchdowns,,,0.2839,Scores a TD (OVER 0.5),0,,,false,0.080599,VERIFIED,2026-11-01T02:23:15+00:00
+NYJ vs LV,Garrett Wilson,NYJ,anytime_touchdowns,,,0.2784,Scores a TD (OVER 0.5),0,,,false,0.077507,VERIFIED,2026-11-01T02:23:15+00:00
+NYJ vs LV,Omar Cooper Jr.,NYJ,anytime_touchdowns,,,0.278,Scores a TD (OVER 0.5),,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+BUF vs BAL,Dalton Kincaid,BUF,anytime_touchdowns,,,0.2747,Scores a TD (OVER 0.5),1,,,true,0.52606,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,Denzel Boston,CLE,anytime_touchdowns,,,0.2674,Scores a TD (OVER 0.5),0,,,false,0.071503,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,Chris Rodriguez Jr.,JAX,anytime_touchdowns,,,0.2634,Scores a TD (OVER 0.5),1,,,true,0.54258,VERIFIED,2026-11-01T02:23:15+00:00
+TB vs ATL,Chris Godwin Jr.,TB,anytime_touchdowns,,,0.2608,Scores a TD (OVER 0.5),0,,,false,0.068017,VERIFIED,2026-11-01T02:23:15+00:00
+TB vs ATL,Kenny Gainwell,TB,anytime_touchdowns,,,0.2562,Scores a TD (OVER 0.5),0,,,false,0.065638,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,Keenan Allen,IND,anytime_touchdowns,,,0.2517,Scores a TD (OVER 0.5),0,,,false,0.063353,VERIFIED,2026-11-01T02:23:15+00:00
+DET vs MIN,Justin Jefferson,MIN,anytime_touchdowns,,,0.2517,Scores a TD (OVER 0.5),1,,,true,0.559953,VERIFIED,2026-11-01T02:23:15+00:00
+BUF vs BAL,James Cook,BUF,rushing_yards,78.9,78.9,,Projected 79 yards,80,1.1,1.1,,,VERIFIED,2026-11-01T02:23:15+00:00
+BUF vs BAL,Derrick Henry,BAL,rushing_yards,73.8,73.8,,Projected 74 yards,53,-20.8,20.8,,,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Tony Pollard,TEN,rushing_yards,58.9,58.9,,Projected 59 yards,117,58.1,58.1,,,VERIFIED,2026-11-01T02:23:15+00:00
+DAL vs ARI,Javonte Williams,DAL,rushing_yards,75.7,75.7,,Projected 76 yards,56,-19.7,19.7,,,VERIFIED,2026-11-01T02:23:15+00:00
+DAL vs ARI,Jeremiyah Love,ARI,rushing_yards,56.9,56.9,,Projected 57 yards,23,-33.9,33.9,,,VERIFIED,2026-11-01T02:23:15+00:00
+DET vs MIN,Jahmyr Gibbs,DET,rushing_yards,72,72,,Projected 72 yards,153,81,81,,,VERIFIED,2026-11-01T02:23:15+00:00
+DET vs MIN,Aaron Jones,MIN,rushing_yards,49.9,49.9,,Projected 50 yards,22,-27.9,27.9,,,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,Bhayshul Tuten,JAX,rushing_yards,68.8,68.8,,Projected 69 yards,104,35.2,35.2,,,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,Jonathan Taylor,IND,rushing_yards,60.2,60.2,,Projected 60 yards,23,-37.2,37.2,,,VERIFIED,2026-11-01T02:23:15+00:00
+NYJ vs LV,Breece Hall,NYJ,rushing_yards,58.5,58.5,,Projected 58 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+NYJ vs LV,Braelon Allen,NYJ,rushing_yards,69,69,,Projected 69 yards,147,78,78,,,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,Jaylen Warren,PIT,rushing_yards,64.3,64.3,,Projected 64 yards,143,78.7,78.7,,,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,Quinshon Judkins,CLE,rushing_yards,51.8,51.8,,Projected 52 yards,25,-26.8,26.8,,,VERIFIED,2026-11-01T02:23:15+00:00
+TB vs ATL,Bucky Irving,TB,rushing_yards,76.3,76.3,,Projected 76 yards,170,93.7,93.7,,,VERIFIED,2026-11-01T02:23:15+00:00
+TB vs ATL,Bijan Robinson,ATL,rushing_yards,67.4,67.4,,Projected 67 yards,76,8.6,8.6,,,VERIFIED,2026-11-01T02:23:15+00:00
+DAL vs ARI,Tyler Allgeier,ARI,rushing_yards,25.8,25.8,,Projected 26 yards,147,121.2,121.2,,,VERIFIED,2026-11-01T02:23:15+00:00
+DAL vs ARI,Evan Hull,ARI,rushing_yards,8.1,7,,Projected 7 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+DAL vs ARI,Bam Knight,ARI,rushing_yards,29.1,29.1,,Projected 29 yards,8,-21.1,21.1,,,VERIFIED,2026-11-01T02:23:15+00:00
+TB vs ATL,Khalil Herbert,ATL,rushing_yards,7.3,7.3,,Projected 7 yards,12,4.7,4.7,,,VERIFIED,2026-11-01T02:23:15+00:00
+BUF vs BAL,Rasheen Ali,BAL,rushing_yards,6.3,6.3,,Projected 6 yards,5,-1.3,1.3,,,VERIFIED,2026-11-01T02:23:15+00:00
+BUF vs BAL,Justice Hill,BAL,rushing_yards,5.1,5.1,,Projected 5 yards,15,9.9,9.9,,,VERIFIED,2026-11-01T02:23:15+00:00
+BUF vs BAL,Ray Davis,BUF,rushing_yards,7.8,7.8,,Projected 8 yards,30,22.2,22.2,,,VERIFIED,2026-11-01T02:23:15+00:00
+BUF vs BAL,Ty Johnson,BUF,rushing_yards,6.6,6.6,,Projected 7 yards,4,-2.6,2.6,,,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Tahj Brooks,CIN,rushing_yards,2.9,2.9,,Projected 3 yards,0,-2.9,2.9,,,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Chase Brown,CIN,rushing_yards,58.1,58.1,,Projected 58 yards,55,-3.1,3.1,,,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Samaje Perine,CIN,rushing_yards,28.3,28.3,,Projected 28 yards,10,-18.3,18.3,,,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,Audric Estime,CLE,rushing_yards,38.3,38.3,,Projected 38 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+PIT vs CLE,Jaleel McLaughlin,CLE,rushing_yards,10.4,10.4,,Projected 10 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+PIT vs CLE,Dylan Sampson,CLE,rushing_yards,8,8,,Projected 8 yards,7,-1,1,,,VERIFIED,2026-11-01T02:23:15+00:00
+DAL vs ARI,Tyler Goodson,DAL,rushing_yards,18.6,18.6,,Projected 19 yards,14,-4.6,4.6,,,VERIFIED,2026-11-01T02:23:15+00:00
+DET vs MIN,Sione Vaki,DET,rushing_yards,1.6,1.6,,Projected 2 yards,65,63.4,63.4,,,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,DJ Giddens,IND,rushing_yards,9.6,9.6,,Projected 10 yards,43,33.4,33.4,,,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,Seth McGowan,IND,rushing_yards,17.5,17.5,,Projected 18 yards,29,11.5,11.5,,,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,Ameer Abdullah,JAX,rushing_yards,5,5,,Projected 5 yards,13,8,8,,,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,LeQuint Allen Jr.,JAX,rushing_yards,4.1,4.1,,Projected 4 yards,0,-4.1,4.1,,,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,Chris Rodriguez Jr.,JAX,rushing_yards,26.6,26.6,,Projected 27 yards,41,14.4,14.4,,,VERIFIED,2026-11-01T02:23:15+00:00
+NYJ vs LV,Ashton Jeanty,LV,rushing_yards,48,48,,Projected 48 yards,9,-39,39,,,VERIFIED,2026-11-01T02:23:15+00:00
+NYJ vs LV,Dylan Laube,LV,rushing_yards,6.6,6.6,,Projected 7 yards,0,-6.6,6.6,,,VERIFIED,2026-11-01T02:23:15+00:00
+NYJ vs LV,Mike Washington Jr.,LV,rushing_yards,25.5,25.5,,Projected 26 yards,83,57.5,57.5,,,VERIFIED,2026-11-01T02:23:15+00:00
+DET vs MIN,DeeJay Dallas,MIN,rushing_yards,3.6,3.6,,Projected 4 yards,4,0.4,0.4,,,VERIFIED,2026-11-01T02:23:15+00:00
+NYJ vs LV,Isaiah Davis,NYJ,rushing_yards,8.7,8.7,,Projected 9 yards,15,6.3,6.3,,,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,Rico Dowdle,PIT,rushing_yards,31.6,31.6,,Projected 32 yards,56,24.4,24.4,,,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,Travis Homer,PIT,rushing_yards,1.8,1.8,,Projected 2 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+TB vs ATL,Kenny Gainwell,TB,rushing_yards,17.9,17.9,,Projected 18 yards,140,122.1,122.1,,,VERIFIED,2026-11-01T02:23:15+00:00
+TB vs ATL,Sean Tucker,TB,rushing_yards,15,15,,Projected 15 yards,0,-15,15,,,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Michael Carter,TEN,rushing_yards,16.9,16.9,,Projected 17 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+CIN vs TEN,Julius Chestnut,TEN,rushing_yards,3.6,3.6,,Projected 4 yards,0,-3.6,3.6,,,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Kalel Mullings,TEN,rushing_yards,1.5,1.5,,Projected 2 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+BUF vs BAL,Khalil Shakir,BUF,receiving_yards,41.7,41.7,,Projected 42 yards,64,22.3,22.3,,,VERIFIED,2026-11-01T02:23:15+00:00
+BUF vs BAL,Keon Coleman,BUF,receiving_yards,34.4,34.4,,Projected 34 yards,4,-30.4,30.4,,,VERIFIED,2026-11-01T02:23:15+00:00
+BUF vs BAL,Zay Flowers,BAL,receiving_yards,77.2,77.2,,Projected 77 yards,0,-77.2,77.2,,,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Tee Higgins,CIN,receiving_yards,66.9,66.9,,Projected 67 yards,155,88.1,88.1,,,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Ja'Marr Chase,CIN,receiving_yards,57.5,57.5,,Projected 57 yards,141,83.5,83.5,,,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Wan'Dale Robinson,TEN,receiving_yards,37.1,37.1,,Projected 37 yards,57,19.9,19.9,,,VERIFIED,2026-11-01T02:23:15+00:00
+DAL vs ARI,CeeDee Lamb,DAL,receiving_yards,79.2,79.2,,Projected 79 yards,58,-21.2,21.2,,,VERIFIED,2026-11-01T02:23:15+00:00
+DAL vs ARI,George Pickens,DAL,receiving_yards,67.1,67.1,,Projected 67 yards,48,-19.1,19.1,,,VERIFIED,2026-11-01T02:23:15+00:00
+DAL vs ARI,Ryan Flournoy,DAL,receiving_yards,38.2,38.2,,Projected 38 yards,38,-0.2,0.2,,,VERIFIED,2026-11-01T02:23:15+00:00
+DAL vs ARI,Kendrick Bourne,ARI,receiving_yards,33.3,33.3,,Projected 33 yards,29,-4.3,4.3,,,VERIFIED,2026-11-01T02:23:15+00:00
+DAL vs ARI,Michael Wilson,ARI,receiving_yards,50.9,50.9,,Projected 51 yards,111,60.1,60.1,,,VERIFIED,2026-11-01T02:23:15+00:00
+DET vs MIN,Amon-Ra St. Brown,DET,receiving_yards,77.7,77.7,,Projected 78 yards,46,-31.7,31.7,,,VERIFIED,2026-11-01T02:23:15+00:00
+DET vs MIN,Jameson Williams,DET,receiving_yards,55.9,55.9,,Projected 56 yards,70,14.1,14.1,,,VERIFIED,2026-11-01T02:23:15+00:00
+DET vs MIN,Justin Jefferson,MIN,receiving_yards,57.9,57.9,,Projected 58 yards,33,-24.9,24.9,,,VERIFIED,2026-11-01T02:23:15+00:00
+DET vs MIN,Jordan Addison,MIN,receiving_yards,39.1,39.1,,Projected 39 yards,66,26.9,26.9,,,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,Jakobi Meyers,JAX,receiving_yards,46.3,46.3,,Projected 46 yards,24,-22.3,22.3,,,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,Parker Washington,JAX,receiving_yards,56.7,56.7,,Projected 57 yards,16,-40.7,40.7,,,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,Keenan Allen,IND,receiving_yards,38.9,38.9,,Projected 39 yards,67,28.1,28.1,,,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,Laquon Treadwell,IND,receiving_yards,24.8,24.8,,Projected 25 yards,18,-6.8,6.8,,,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,Josh Downs,IND,receiving_yards,31.3,31.3,,Projected 31 yards,23,-8.3,8.3,,,VERIFIED,2026-11-01T02:23:15+00:00
+NYJ vs LV,Garrett Wilson,NYJ,receiving_yards,51.7,51.7,,Projected 52 yards,83,31.3,31.3,,,VERIFIED,2026-11-01T02:23:15+00:00
+NYJ vs LV,Adonai Mitchell,NYJ,receiving_yards,30.6,30.6,,Projected 31 yards,142,111.4,111.4,,,VERIFIED,2026-11-01T02:23:15+00:00
+NYJ vs LV,Tre Tucker,LV,receiving_yards,48.4,48.4,,Projected 48 yards,0,-48.4,48.4,,,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,DK Metcalf,PIT,receiving_yards,49.2,49.2,,Projected 49 yards,4,-45.2,45.2,,,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,Germie Bernard,PIT,receiving_yards,44,44,,Projected 44 yards,30,-14,14,,,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,Jerry Jeudy,CLE,receiving_yards,28.7,28.7,,Projected 29 yards,0,-28.7,28.7,,,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,Denzel Boston,CLE,receiving_yards,39.9,39.9,,Projected 40 yards,37,-2.9,2.9,,,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,KC Concepcion,CLE,receiving_yards,38.8,38.8,,Projected 39 yards,37,-1.8,1.8,,,VERIFIED,2026-11-01T02:23:15+00:00
+TB vs ATL,Chris Godwin Jr.,TB,receiving_yards,39.4,39.4,,Projected 39 yards,0,-39.4,39.4,,,VERIFIED,2026-11-01T02:23:15+00:00
+TB vs ATL,Drake London,ATL,receiving_yards,71.6,71.6,,Projected 72 yards,8,-63.6,63.6,,,VERIFIED,2026-11-01T02:23:15+00:00
+DAL vs ARI,Devin Duvernay,ARI,receiving_yards,3,3,,Projected 3 yards,14,11,11,,,VERIFIED,2026-11-01T02:23:15+00:00
+TB vs ATL,Chris Blair,ATL,receiving_yards,0,0,,Projected 0 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+TB vs ATL,Zachariah Branch,ATL,receiving_yards,10,10,,Projected 10 yards,0,-10,10,,,VERIFIED,2026-11-01T02:23:15+00:00
+TB vs ATL,Jahan Dotson,ATL,receiving_yards,19.9,19.9,,Projected 20 yards,95,75.1,75.1,,,VERIFIED,2026-11-01T02:23:15+00:00
+TB vs ATL,Olamide Zaccheaus,ATL,receiving_yards,5.8,5.8,,Projected 6 yards,4,-1.8,1.8,,,VERIFIED,2026-11-01T02:23:15+00:00
+BUF vs BAL,Rashod Bateman,BAL,receiving_yards,27.2,27.2,,Projected 27 yards,22,-5.2,5.2,,,VERIFIED,2026-11-01T02:23:15+00:00
+BUF vs BAL,Ja'Kobi Lane,BAL,receiving_yards,29.1,29.1,,Projected 29 yards,13,-16.1,16.1,,,VERIFIED,2026-11-01T02:23:15+00:00
+BUF vs BAL,Devontez Walker,BAL,receiving_yards,9.8,9.8,,Projected 10 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+BUF vs BAL,LaJohntay Wester,BAL,receiving_yards,3.2,3.2,,Projected 3 yards,0,-3.2,3.2,,,VERIFIED,2026-11-01T02:23:15+00:00
+BUF vs BAL,Greg Dortch,BUF,receiving_yards,1.9,1.9,,Projected 2 yards,0,-1.9,1.9,,,VERIFIED,2026-11-01T02:23:15+00:00
+BUF vs BAL,DJ Moore,BUF,receiving_yards,35,35,,Projected 35 yards,82,47,47,,,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Dohnte Meyers,CIN,receiving_yards,19.6,19.6,,Projected 20 yards,34,14.4,14.4,,,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Mitchell Tinsley,CIN,receiving_yards,15.7,15.7,,Projected 16 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+PIT vs CLE,Isaiah Bond,CLE,receiving_yards,19.4,19.4,,Projected 19 yards,0,-19.4,19.4,,,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,Malachi Corley,CLE,receiving_yards,1.1,1.1,,Projected 1 yards,0,-1.1,1.1,,,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,Tylan Wallace,CLE,receiving_yards,0,0,,Projected 0 yards,3,3,3,,,VERIFIED,2026-11-01T02:23:15+00:00
+DAL vs ARI,Jonathan Mingo,DAL,receiving_yards,2.1,2.1,,Projected 2 yards,0,-2.1,2.1,,,VERIFIED,2026-11-01T02:23:15+00:00
+DET vs MIN,Isaac TeSlaa,DET,receiving_yards,17.9,17.9,,Projected 18 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+JAX vs IND,Deion Burks,IND,receiving_yards,8.8,8.8,,Projected 9 yards,2,-6.8,6.8,,,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,Ashton Dulin,IND,receiving_yards,12.5,12.5,,Projected 13 yards,0,-12.5,12.5,,,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,Nick Westbrook-Ikhine,IND,receiving_yards,0,0,,Projected 0 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+JAX vs IND,Josh Cameron,JAX,receiving_yards,10.9,10.9,,Projected 11 yards,0,-10.9,10.9,,,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,Travis Hunter,JAX,receiving_yards,36.2,27,,Projected 27 yards,0,-36.2,36.2,,,VERIFIED,2026-11-01T02:23:15+00:00
+JAX vs IND,Brian Thomas Jr.,JAX,receiving_yards,22.7,22.7,,Projected 23 yards,12,-10.7,10.7,,,VERIFIED,2026-11-01T02:23:15+00:00
+NYJ vs LV,Jack Bech,LV,receiving_yards,16.2,16.2,,Projected 16 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+NYJ vs LV,Malik Benson,LV,receiving_yards,3.4,3.4,,Projected 3 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+NYJ vs LV,Jalen Nailor,LV,receiving_yards,17.5,17.5,,Projected 18 yards,38,20.5,20.5,,,VERIFIED,2026-11-01T02:23:15+00:00
+NYJ vs LV,Deven Thompkins,LV,receiving_yards,4.3,4.3,,Projected 4 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+NYJ vs LV,Dont'e Thornton Jr.,LV,receiving_yards,7.1,7.1,,Projected 7 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+NYJ vs LV,Cody White,LV,receiving_yards,12.9,12.9,,Projected 13 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+NYJ vs LV,Dareke Young,LV,receiving_yards,1.5,1.5,,Projected 1 yards,0,-1.5,1.5,,,VERIFIED,2026-11-01T02:23:15+00:00
+DET vs MIN,Tai Felton,MIN,receiving_yards,11.1,11.1,,Projected 11 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+DET vs MIN,Jauan Jennings,MIN,receiving_yards,21.6,21.6,,Projected 22 yards,11,-10.6,10.6,,,VERIFIED,2026-11-01T02:23:15+00:00
+DET vs MIN,Myles Price,MIN,receiving_yards,2.3,2.3,,Projected 2 yards,0,-2.3,2.3,,,VERIFIED,2026-11-01T02:23:15+00:00
+NYJ vs LV,Omar Cooper Jr.,NYJ,receiving_yards,43.7,43.7,,Projected 44 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+NYJ vs LV,Sterling Shepard,NYJ,receiving_yards,5.5,5.5,,Projected 5 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+NYJ vs LV,Isaiah Williams,NYJ,receiving_yards,14.3,14.3,,Projected 14 yards,18,3.7,3.7,,,VERIFIED,2026-11-01T02:23:15+00:00
+PIT vs CLE,Ben Skowronek,PIT,receiving_yards,9,9,,Projected 9 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+TB vs ATL,Ted Hurst III,TB,receiving_yards,27.6,27.6,,Projected 28 yards,0,-27.6,27.6,,,VERIFIED,2026-11-01T02:23:15+00:00
+TB vs ATL,Kameron Johnson,TB,receiving_yards,4.1,4.1,,Projected 4 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+TB vs ATL,Tez Johnson,TB,receiving_yards,20.4,20.4,,Projected 20 yards,0,-20.4,20.4,,,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Elic Ayomanor,TEN,receiving_yards,25.3,25.3,,Projected 25 yards,34,8.7,8.7,,,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Chimere Dike,TEN,receiving_yards,5.9,5.9,,Projected 6 yards,71,65.1,65.1,,,VERIFIED,2026-11-01T02:23:15+00:00
+CIN vs TEN,Calvin Ridley,TEN,receiving_yards,13.2,13.2,,Projected 13 yards,10,-3.2,3.2,,,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Omar Speights,LA,sacks,,,0.7899,UNDER 0.5,0,,,false,0.044142,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Troy Dye,LAC,sacks,,,0.696,UNDER 0.5,0,,,false,0.092416,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Byron Young,LA,sacks,,,0.6167,UNDER 0.5,0,,,false,0.146919,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Khalil Mack,LAC,sacks,,,0.61,UNDER 0.5,0,,,false,0.1521,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Tuli Tuipulotu,LAC,sacks,,,0.5935,UNDER 0.5,1,,,true,0.352242,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Akheem Mesidor,LAC,sacks,,,0.5762,UNDER 0.5,0,,,false,0.179606,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Kyren Williams,LA,anytime_touchdowns,,,0.514,Scores a TD (OVER 0.5),1,,,true,0.236196,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Puka Nacua,LA,anytime_touchdowns,,,0.4797,Scores a TD (OVER 0.5),1,,,true,0.270712,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Blake Corum,LA,anytime_touchdowns,,,0.4243,Scores a TD (OVER 0.5),1,,,true,0.33143,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Colby Parkinson,LA,anytime_touchdowns,,,0.2835,Scores a TD (OVER 0.5),,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+LA vs LAC,Tyler Higbee,LA,anytime_touchdowns,,,0.2635,Scores a TD (OVER 0.5),0,,,false,0.069432,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Omarion Hampton,LAC,anytime_touchdowns,,,0.2605,Scores a TD (OVER 0.5),0,,,false,0.06786,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Kyren Williams,LA,rushing_yards,64.2,64.2,,Projected 64 yards,56,-8.2,8.2,,,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Blake Corum,LA,rushing_yards,50.5,50.5,,Projected 51 yards,73,22.5,22.5,,,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Omarion Hampton,LAC,rushing_yards,40,40,,Projected 40 yards,20,-20,20,,,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Keaton Mitchell,LAC,rushing_yards,23.6,23.6,,Projected 24 yards,6,-17.6,17.6,,,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Kimani Vidal,LAC,rushing_yards,18.9,18.9,,Projected 19 yards,23,4.1,4.1,,,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Puka Nacua,LA,receiving_yards,83.8,83.8,,Projected 84 yards,80,-3.8,3.8,,,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Tre Harris,LAC,receiving_yards,26.8,26.8,,Projected 27 yards,31,4.2,4.2,,,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Tutu Atwell,LA,receiving_yards,11.7,11.7,,Projected 12 yards,52,40.3,40.3,,,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Alex Bachman,LA,receiving_yards,2.9,2.9,,Projected 3 yards,0,-2.9,2.9,,,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Konata Mumpfield,LA,receiving_yards,16.4,16.4,,Projected 16 yards,0,-16.4,16.4,,,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Jordan Whittington,LA,receiving_yards,4.8,4.8,,Projected 5 yards,0,-4.8,4.8,,,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Derius Davis,LAC,receiving_yards,2.4,2.4,,Projected 2 yards,0,-2.4,2.4,,,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Quentin Johnston,LAC,receiving_yards,30.7,30.7,,Projected 31 yards,37,6.3,6.3,,,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,KeAndre Lambert-Smith,LAC,receiving_yards,13.1,13.1,,Projected 13 yards,0,-13.1,13.1,,,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Ladd McConkey,LAC,receiving_yards,32.2,32.2,,Projected 32 yards,86,53.8,53.8,,,VERIFIED,2026-11-01T02:23:15+00:00
+LA vs LAC,Theo Wease Jr.,LAC,receiving_yards,24,24,,Projected 24 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+MIA vs NE,Zach Sieler,MIA,sacks,,,0.6403,UNDER 0.5,0,,,false,0.129384,VERIFIED,2026-11-01T02:23:15+00:00
+MIA vs NE,Chop Robinson,MIA,sacks,,,0.6311,UNDER 0.5,2,,,true,0.398287,VERIFIED,2026-11-01T02:23:15+00:00
+MIA vs NE,Christian Barmore,NE,sacks,,,0.6073,UNDER 0.5,0.5,,,false,0.154213,VERIFIED,2026-11-01T02:23:15+00:00
+MIA vs NE,Elijah Ponder,NE,sacks,,,0.5931,UNDER 0.5,0.5,,,false,0.165568,VERIFIED,2026-11-01T02:23:15+00:00
+DEN vs KC,Nik Bonitto,DEN,sacks,,,0.591,UNDER 0.5,0,,,false,0.167281,VERIFIED,2026-11-01T02:23:15+00:00
+DEN vs KC,Malcolm Roach,DEN,sacks,,,0.5787,UNDER 0.5,1,,,true,0.334894,VERIFIED,2026-11-01T02:23:15+00:00
+DEN vs KC,Zach Allen,DEN,sacks,,,0.5025,OVER 0.5,0,,,false,0.252506,VERIFIED,2026-11-01T02:23:15+00:00
+MIA vs NE,Rhamondre Stevenson,NE,anytime_touchdowns,,,0.4523,Scores a TD (OVER 0.5),0,,,false,0.204575,VERIFIED,2026-11-01T02:23:15+00:00
+DEN vs KC,Kenneth Walker III,KC,anytime_touchdowns,,,0.4098,Scores a TD (OVER 0.5),0,,,false,0.167936,VERIFIED,2026-11-01T02:23:15+00:00
+DEN vs KC,J.K. Dobbins,DEN,anytime_touchdowns,,,0.3531,Scores a TD (OVER 0.5),0,,,false,0.12468,VERIFIED,2026-11-01T02:23:15+00:00
+MIA vs NE,Ollie Gordon II,MIA,anytime_touchdowns,,,0.3156,Scores a TD (OVER 0.5),0,,,false,0.099603,VERIFIED,2026-11-01T02:23:15+00:00
+DEN vs KC,Xavier Worthy,KC,anytime_touchdowns,,,0.3093,Scores a TD (OVER 0.5),0,,,false,0.095666,VERIFIED,2026-11-01T02:23:15+00:00
+DEN vs KC,Rashee Rice,KC,anytime_touchdowns,,,0.2925,Scores a TD (OVER 0.5),1,,,true,0.500556,VERIFIED,2026-11-01T02:23:15+00:00
+MIA vs NE,Caleb Douglas,MIA,anytime_touchdowns,,,0.2827,Scores a TD (OVER 0.5),0,,,false,0.079919,VERIFIED,2026-11-01T02:23:15+00:00
+MIA vs NE,DeMario Douglas,NE,anytime_touchdowns,,,0.2794,Scores a TD (OVER 0.5),1,,,true,0.519264,VERIFIED,2026-11-01T02:23:15+00:00
+MIA vs NE,Eli Raridon,NE,anytime_touchdowns,,,0.2727,Scores a TD (OVER 0.5),0,,,false,0.074365,VERIFIED,2026-11-01T02:23:15+00:00
+DEN vs KC,Travis Kelce,KC,anytime_touchdowns,,,0.2627,Scores a TD (OVER 0.5),0,,,false,0.069011,VERIFIED,2026-11-01T02:23:15+00:00
+DEN vs KC,Isiah Pacheco,KC,anytime_touchdowns,,,0.2577,Scores a TD (OVER 0.5),,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+DEN vs KC,J.K. Dobbins,DEN,rushing_yards,39.4,39.4,,Projected 39 yards,13,-26.4,26.4,,,VERIFIED,2026-11-01T02:23:15+00:00
+DEN vs KC,Kenneth Walker III,KC,rushing_yards,76.7,76.7,,Projected 77 yards,69,-7.7,7.7,,,VERIFIED,2026-11-01T02:23:15+00:00
+MIA vs NE,Ollie Gordon II,MIA,rushing_yards,49.3,49.3,,Projected 49 yards,69,19.7,19.7,,,VERIFIED,2026-11-01T02:23:15+00:00
+DEN vs KC,Emmett Johnson,KC,rushing_yards,9.7,9.7,,Projected 10 yards,15,5.3,5.3,,,VERIFIED,2026-11-01T02:23:15+00:00
+MIA vs NE,Kaytron Allen,MIA,rushing_yards,13.7,13,,Projected 13 yards,0,-13.7,13.7,,,VERIFIED,2026-11-01T02:23:15+00:00
+MIA vs NE,Jaylen Wright,MIA,rushing_yards,10.7,10.7,,Projected 11 yards,5,-5.7,5.7,,,VERIFIED,2026-11-01T02:23:15+00:00
+MIA vs NE,Corey Kiner,NE,rushing_yards,15.1,15.1,,Projected 15 yards,38,22.9,22.9,,,VERIFIED,2026-11-01T02:23:15+00:00
+MIA vs NE,Rhamondre Stevenson,NE,rushing_yards,46.9,46.9,,Projected 47 yards,82,35.1,35.1,,,VERIFIED,2026-11-01T02:23:15+00:00
+DEN vs KC,Jaylen Waddle,DEN,receiving_yards,41.5,41.5,,Projected 42 yards,39,-2.5,2.5,,,VERIFIED,2026-11-01T02:23:15+00:00
+DEN vs KC,Rashee Rice,KC,receiving_yards,58.9,58.9,,Projected 59 yards,53,-5.9,5.9,,,VERIFIED,2026-11-01T02:23:15+00:00
+DEN vs KC,Xavier Worthy,KC,receiving_yards,33.4,33.4,,Projected 33 yards,13,-20.4,20.4,,,VERIFIED,2026-11-01T02:23:15+00:00
+MIA vs NE,Malik Washington,MIA,receiving_yards,34.1,34.1,,Projected 34 yards,40,5.9,5.9,,,VERIFIED,2026-11-01T02:23:15+00:00
+MIA vs NE,DeMario Douglas,NE,receiving_yards,34.4,34.4,,Projected 34 yards,76,41.6,41.6,,,VERIFIED,2026-11-01T02:23:15+00:00
+DEN vs KC,Troy Franklin,DEN,receiving_yards,17.9,17.9,,Projected 18 yards,3,-14.9,14.9,,,VERIFIED,2026-11-01T02:23:15+00:00
+DEN vs KC,Lil'Jordan Humphrey,DEN,receiving_yards,3.3,3.3,,Projected 3 yards,10,6.7,6.7,,,VERIFIED,2026-11-01T02:23:15+00:00
+DEN vs KC,Marvin Mims Jr.,DEN,receiving_yards,13.9,13.9,,Projected 14 yards,10,-3.9,3.9,,,VERIFIED,2026-11-01T02:23:15+00:00
+DEN vs KC,Courtland Sutton,DEN,receiving_yards,30.9,30.9,,Projected 31 yards,53,22.1,22.1,,,VERIFIED,2026-11-01T02:23:15+00:00
+DEN vs KC,Cyrus Allen,KC,receiving_yards,10.9,10.9,,Projected 11 yards,20,9.1,9.1,,,VERIFIED,2026-11-01T02:23:15+00:00
+DEN vs KC,Jalen Royals,KC,receiving_yards,4.1,4.1,,Projected 4 yards,4,-0.1,0.1,,,VERIFIED,2026-11-01T02:23:15+00:00
+DEN vs KC,Justin Watson,KC,receiving_yards,2.1,2.1,,Projected 2 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+MIA vs NE,Chris Bell,MIA,receiving_yards,19.6,19.6,,Projected 20 yards,31,11.4,11.4,,,VERIFIED,2026-11-01T02:23:15+00:00
+MIA vs NE,Kevin Coleman Jr.,MIA,receiving_yards,19.5,19.5,,Projected 19 yards,46,26.5,26.5,,,VERIFIED,2026-11-01T02:23:15+00:00
+MIA vs NE,Caleb Douglas,MIA,receiving_yards,44.4,44.4,,Projected 44 yards,43,-1.4,1.4,,,VERIFIED,2026-11-01T02:23:15+00:00
+MIA vs NE,Jalen Tolbert,MIA,receiving_yards,9.6,9.6,,Projected 10 yards,8,-1.6,1.6,,,VERIFIED,2026-11-01T02:23:15+00:00
+MIA vs NE,Jared Wayne,MIA,receiving_yards,20.6,20,,Projected 20 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+MIA vs NE,Efton Chism III,NE,receiving_yards,13.7,13.7,,Projected 14 yards,37,23.3,23.3,,,VERIFIED,2026-11-01T02:23:15+00:00
+MIA vs NE,Ryan Miller,NE,receiving_yards,17.5,14,,Projected 14 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+MIA vs NE,Kyle Williams,NE,receiving_yards,14.1,14.1,,Projected 14 yards,43,28.9,28.9,,,VERIFIED,2026-11-01T02:23:15+00:00
+WAS vs PHI,Nolan Smith,PHI,sacks,,,0.7077,UNDER 0.5,1,,,true,0.500839,VERIFIED,2026-11-01T02:23:15+00:00
+WAS vs PHI,Jalen Carter,PHI,sacks,,,0.7059,UNDER 0.5,1,,,true,0.498295,VERIFIED,2026-11-01T02:23:15+00:00
+WAS vs PHI,Odafe Oweh,WAS,sacks,,,0.6154,UNDER 0.5,1,,,true,0.378717,VERIFIED,2026-11-01T02:23:15+00:00
+WAS vs PHI,K'Lavon Chaisson,WAS,sacks,,,0.5984,UNDER 0.5,1,,,true,0.358083,VERIFIED,2026-11-01T02:23:15+00:00
+WAS vs PHI,Rachaad White,WAS,anytime_touchdowns,,,0.4263,Scores a TD (OVER 0.5),1,,,true,0.329132,VERIFIED,2026-11-01T02:23:15+00:00
+WAS vs PHI,Stefon Diggs,WAS,anytime_touchdowns,,,0.3588,Scores a TD (OVER 0.5),1,,,true,0.411137,VERIFIED,2026-11-01T02:23:15+00:00
+WAS vs PHI,Treylon Burks,WAS,anytime_touchdowns,,,0.2971,Scores a TD (OVER 0.5),0,,,false,0.088268,VERIFIED,2026-11-01T02:23:15+00:00
+WAS vs PHI,Saquon Barkley,PHI,anytime_touchdowns,,,0.2889,Scores a TD (OVER 0.5),1,,,true,0.505663,VERIFIED,2026-11-01T02:23:15+00:00
+WAS vs PHI,Antonio Williams,WAS,anytime_touchdowns,,,0.2576,Scores a TD (OVER 0.5),0,,,false,0.066358,VERIFIED,2026-11-01T02:23:15+00:00
+WAS vs PHI,Saquon Barkley,PHI,rushing_yards,42.3,42.3,,Projected 42 yards,30,-12.3,12.3,,,VERIFIED,2026-11-01T02:23:15+00:00
+WAS vs PHI,Austin Ekeler,WAS,rushing_yards,9.8,9.8,,Projected 10 yards,36,26.2,26.2,,,VERIFIED,2026-11-01T02:23:15+00:00
+WAS vs PHI,Rachaad White,WAS,rushing_yards,31.4,31.4,,Projected 31 yards,55,23.6,23.6,,,VERIFIED,2026-11-01T02:23:15+00:00
+WAS vs PHI,Stefon Diggs,WAS,receiving_yards,48.8,48.8,,Projected 49 yards,38,-10.8,10.8,,,VERIFIED,2026-11-01T02:23:15+00:00
+WAS vs PHI,Antonio Williams,WAS,receiving_yards,30.5,30.5,,Projected 30 yards,54,23.5,23.5,,,VERIFIED,2026-11-01T02:23:15+00:00
+WAS vs PHI,Makai Lemon,PHI,receiving_yards,31.1,31.1,,Projected 31 yards,57,25.9,25.9,,,VERIFIED,2026-11-01T02:23:15+00:00
+WAS vs PHI,Darius Cooper,PHI,receiving_yards,18.1,18.1,,Projected 18 yards,19,0.9,0.9,,,VERIFIED,2026-11-01T02:23:15+00:00
+WAS vs PHI,Elijah Moore,PHI,receiving_yards,8.7,8.7,,Projected 9 yards,,,,,,UNVERIFIED_NOT_IN_ESPN_BOXSCORE,2026-11-01T02:23:15+00:00
+WAS vs PHI,Dyami Brown,WAS,receiving_yards,14,14,,Projected 14 yards,0,-14,14,,,VERIFIED,2026-11-01T02:23:15+00:00
+WAS vs PHI,Treylon Burks,WAS,receiving_yards,24.9,24.9,,Projected 25 yards,81,56.1,56.1,,,VERIFIED,2026-11-01T02:23:15+00:00
+WAS vs PHI,Van Jefferson,WAS,receiving_yards,24.9,20,,Projected 20 yards,0,-24.9,24.9,,,VERIFIED,2026-11-01T02:23:15+00:00
+WAS vs PHI,Luke McCaffrey,WAS,receiving_yards,2.8,2.8,,Projected 3 yards,0,-2.8,2.8,,,VERIFIED,2026-11-01T02:23:15+00:00
