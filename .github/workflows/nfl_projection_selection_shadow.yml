@@ -1,0 +1,34 @@
+name: NFL research only projection selection ablation - archived 2026 Week8
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - scripts/nflProjectionSelectionShadow.mjs
+      - .github/workflows/nfl_projection_selection_shadow.yml
+permissions:
+  contents: write
+concurrency:
+  group: nfl-projection-selection-ablation
+  cancel-in-progress: false
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Run frozen pregame, independent final stat, no-promotion selection experiment
+        run: node scripts/nflProjectionSelectionShadow.mjs
+      - name: Save research output without affecting the app's live selector
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/nfl_week8_projection_selection_shadow_ablation.json docs/NFL_WEEK8_FRONTEND_SELECTION_SHADOW_TEST.md
+          git diff --cached --check
+          git commit -m 'NFL selection research: archive prespecified no-promotion ablation [skip ci]'
+          git push origin HEAD:main
