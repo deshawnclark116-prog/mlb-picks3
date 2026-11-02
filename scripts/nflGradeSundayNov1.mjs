@@ -130,7 +130,7 @@ for(const p of received){
     const event=actual>=1;row.event_happened=event;
     const prob=p.market==='sacks'?p.prob_over:p.model_prob;
     if(typeof prob==='number'&&Number.isFinite(prob)&&prob>=0&&prob<=1)
-     row.brier=+(prob-Number(event))**2;
+     row.brier=+((prob-Number(event))**2).toFixed(6);
    }
   }else row.status='UNVERIFIED_MISSING_MARKET_STAT';
  }
