@@ -1,0 +1,34 @@
+name: NFL Week 8 honest first-seen 316 projection grade
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - scripts/nflGradeSundayNov1.mjs
+      - .github/workflows/nfl_grade_nov1.yml
+permissions:
+  contents: write
+concurrency:
+  group: nfl-grade-nov1
+  cancel-in-progress: false
+jobs:
+  grade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Grade every pregame model mean against verified ESPN player final stat
+        run: node scripts/nflGradeSundayNov1.mjs
+      - name: Commit audit, preserving all unresolved players explicitly
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/nfl_week8_nov1_full_projection_grade.json docs/nfl_week8_nov1_full_projection_grade.csv
+          git diff --cached --check
+          git commit -m 'NFL: grade 316 immutable pregame Nov1 projections and missing participation [skip ci]'
+          git push origin HEAD:main
