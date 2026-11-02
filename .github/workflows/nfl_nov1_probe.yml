@@ -1,0 +1,20 @@
+name: NFL 2026 Nov 1 actual player boxscore schema audit
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - scripts/nflNov1EspnProbe.mjs
+      - .github/workflows/nfl_nov1_probe.yml
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/nflNov1EspnProbe.mjs
