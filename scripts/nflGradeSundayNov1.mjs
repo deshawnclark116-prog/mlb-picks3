@@ -38,9 +38,10 @@ const scoreboard=await input(SCOREBOARD);
 const games=scoreboard.events||[];
 if(games.length!==12||games.some(x=>!x.status?.type?.completed))
  throw Error('SCOREBOARD_DOES_NOT_HAVE_ALL_12_COMPLETE_NOV1_GAMES');
+const canonTeam=ab=>ab==='LAR'?'LA':ab==='WSH'?'WAS':ab;
 const teams=games.map(g=>({
  id:g.id,kickoff:g.date,
- clubs:g.competitions[0].competitors.map(c=>({team:c.team.abbreviation==='LAR'?'LA':c.team.abbreviation,
+ clubs:g.competitions[0].competitors.map(c=>({team:canonTeam(c.team.abbreviation),
   full:c.team.displayName,score:Number(c.score),homeAway:c.homeAway}))
 }));
 const validTeams=new Set(teams.flatMap(g=>g.clubs.map(c=>c.team)));
@@ -50,7 +51,6 @@ const clean=s=>String(s||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'')
  .toLowerCase().replace(/[’']/g,'').replace(/[^a-z0-9]+/g,'')
  .replace(/(jr|sr|ii|iii|iv|v)$/,'');
 const num=s=>/^[-+]?\d+(?:\.\d+)?$/.test(String(s))?Number(s):null;
-const canonTeam=ab=>ab==='LAR'?'LA':ab;
 const allGameStats=new Map();
 async function getGame(g){
  const data=await input(SUMMARY+g.id);
