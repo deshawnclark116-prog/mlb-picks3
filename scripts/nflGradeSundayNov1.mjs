@@ -122,7 +122,14 @@ for(const p of received){
    actual=td.every(x=>x!==null)?Number(td.some(x=>x>0)):null;
   }
   if(actual!==null){
-   row.actual=actual;row.status='VERIFIED';
+   row.actual=actual;
+   // A defender credited 0.5 sack is neither a clean over nor under
+   // of a 0.5 line. Count a documented push, not an invented loss.
+   if(p.market==='sacks'&&actual===0.5){
+     row.status='PARTIAL_SACK_HALF_LINE_PUSH';
+     rows.push(row);continue;
+   }
+   row.status='VERIFIED';
    if(p.market.endsWith('_yards')){
     row.signed_error=+(actual-p.projected_mean).toFixed(3);
     row.absolute_error=+Math.abs(actual-p.projected_mean).toFixed(3);
@@ -141,6 +148,7 @@ const round=n=>Number(n.toFixed(3));
 const metric=(arr)=>{const numeric=arr.filter(x=>x.status==='VERIFIED'&&x.market.endsWith('_yards'));
  const prob=arr.filter(x=>x.status==='VERIFIED'&&!x.market.endsWith('_yards'));
  const grouped={};
+ const pushes=arr.filter(x=>x.status==='PARTIAL_SACK_HALF_LINE_PUSH').length;
  for(const market of ['rushing_yards','receiving_yards','anytime_touchdowns','sacks']){
   const all=arr.filter(x=>x.market===market), ver=all.filter(x=>x.status==='VERIFIED');
   if(market.endsWith('_yards')){
@@ -150,13 +158,16 @@ const metric=(arr)=>{const numeric=arr.filter(x=>x.status==='VERIFIED'&&x.market
     within10:ver.length?round(ver.filter(x=>x.absolute_error<=10).length/ver.length):null,
     within20:ver.length?round(ver.filter(x=>x.absolute_error<=20).length/ver.length):null,
     exact_rounded:ver.length?round(ver.filter(x=>Math.round(x.model_prediction)===x.actual).length/ver.length):null};
-  }else grouped[market]={total:all.length,verified:ver.length,unverified:all.length-ver.length,
+  }else grouped[market]={total:all.length,verified:ver.length,
+   unverified:all.filter(x=>x.status.startsWith('UNVERIFIED')).length,
+   pushes:all.filter(x=>x.status==='PARTIAL_SACK_HALF_LINE_PUSH').length,
    observed_event_rate:ver.length?round(ver.filter(x=>x.event_happened).length/ver.length):null,
    average_predicted_event_prob:ver.length?round(ver.reduce((a,x)=>a+(market==='sacks'?(1-x.model_event_probability):x.model_event_probability),0)/ver.length):null,
    brier:ver.length?round(ver.reduce((a,x)=>a+x.brier,0)/ver.length):null};
  }
  return {total:arr.length,verified:arr.filter(x=>x.status==='VERIFIED').length,
-   unverified:arr.filter(x=>x.status!=='VERIFIED').length,
+   unverified:arr.filter(x=>x.status.startsWith('UNVERIFIED')).length,
+   pushes,
    numeric: numeric.length,events:prob.length,by_market:grouped};
 };
 const byGame=teams.map(g=>{
@@ -178,6 +189,7 @@ const output={schema:'NFL_2026_WEEK08_NOV01_FIRSTSEEN_NUMERIC_EVENT_AUDIT_V1',
    touchdowns:'SEPARATE_BINARY_EVENT_CALIBRATION_WITH_BRIER',
    sacks:'SEPARATE_BINARY_EVENT_CALIBRATION_WITH_BRIER',
    unavailable:'UNVERIFIED_ROWS_STAY_IN_DENOMINATOR_AS_MISSING_NOT_ZERO',
+   half_sack:'EXPLICIT_PUSH_EXCLUDED_FROM_BINARY_BRIER_NOT_AN_INCORRECT_PICK',
    note:'NO_NUMERIC_YARDS_EVENT_HIT_RATE_CLAIM_WITHOUT_DEFINED_TOLERANCE'},
  overall:metric(rows),games:byGame};
 mkdirSync('docs',{recursive:true});
