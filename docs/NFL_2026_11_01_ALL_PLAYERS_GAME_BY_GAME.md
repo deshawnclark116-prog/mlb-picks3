@@ -30,9 +30,11 @@
 ---
 ## Complete player-by-player game breakdown
 
-Every entry below is included, not just the best picks. Original forecast order is preserved within each market. All games are initially expandable for easier browsing on a phone.
+Every entry below is included, not just the best picks. Original forecast order is preserved within each market. Use the linked game names in the table above to jump directly to a matchup.
 
-### 1. BAL @ BUF — final 10–36
+### BAL BUF
+
+**BAL @ BUF final score: 10–36.**
 
 **26 original projections · 24 verified · 1 unverified · 1 pushes.** Rushing MAE 9.7 yards; receiving MAE 25.4 yards.
 
@@ -84,7 +86,9 @@ Every entry below is included, not just the best picks. Original forecast order 
 
 ---
 
-### 2. TEN @ CIN — final 36–43
+### TEN CIN
+
+**TEN @ CIN final score: 36–43.**
 
 **30 original projections · 26 verified · 4 unverified · 0 pushes.** Rushing MAE 17.2 yards; receiving MAE 40.4 yards.
 
@@ -140,7 +144,9 @@ Every entry below is included, not just the best picks. Original forecast order 
 
 ---
 
-### 3. ARI @ DAL — final 33–30
+### ARI DAL
+
+**ARI @ DAL final score: 33–30.**
 
 **24 original projections · 23 verified · 1 unverified · 0 pushes.** Rushing MAE 40.1 yards; receiving MAE 16.9 yards.
 
@@ -190,7 +196,9 @@ Every entry below is included, not just the best picks. Original forecast order 
 
 ---
 
-### 4. MIN @ DET — final 15–19
+### MIN DET
+
+**MIN @ DET final score: 15–19.**
 
 **27 original projections · 25 verified · 2 unverified · 0 pushes.** Rushing MAE 43.2 yards; receiving MAE 18.4 yards.
 
@@ -243,7 +251,9 @@ Every entry below is included, not just the best picks. Original forecast order 
 
 ---
 
-### 5. LV @ NYJ — final 38–33
+### LV NYJ
+
+**LV @ NYJ final score: 38–33.**
 
 **31 original projections · 20 verified · 11 unverified · 0 pushes.** Rushing MAE 37.5 yards; receiving MAE 36.1 yards.
 
@@ -300,7 +310,9 @@ Every entry below is included, not just the best picks. Original forecast order 
 
 ---
 
-### 6. CLE @ PIT — final 6–27
+### CLE PIT
+
+**CLE @ PIT final score: 6–27.**
 
 **29 original projections · 25 verified · 4 unverified · 0 pushes.** Rushing MAE 32.7 yards; receiving MAE 14.5 yards.
 
@@ -355,7 +367,9 @@ Every entry below is included, not just the best picks. Original forecast order 
 
 ---
 
-### 7. ATL @ TB — final 0–16
+### ATL TB
+
+**ATL @ TB final score: 0–16.**
 
 **26 original projections · 20 verified · 6 unverified · 0 pushes.** Rushing MAE 48.8 yards; receiving MAE 34 yards.
 
@@ -407,7 +421,9 @@ Every entry below is included, not just the best picks. Original forecast order 
 
 ---
 
-### 8. IND @ JAX — final 7–42
+### IND JAX
+
+**IND @ JAX final score: 7–42.**
 
 **28 original projections · 26 verified · 2 unverified · 0 pushes.** Rushing MAE 20.5 yards; receiving MAE 18.3 yards.
 
@@ -461,7 +477,9 @@ Every entry below is included, not just the best picks. Original forecast order 
 
 ---
 
-### 9. LAC @ LA — final 9–24
+### LAC LA
+
+**LAC @ LA final score: 9–24.**
 
 **28 original projections · 26 verified · 2 unverified · 0 pushes.** Rushing MAE 14.5 yards; receiving MAE 14.8 yards.
 
@@ -515,7 +533,9 @@ Every entry below is included, not just the best picks. Original forecast order 
 
 ---
 
-### 10. KC @ DEN — final 24–28
+### KC DEN
+
+**KC @ DEN final score: 24–28.**
 
 **22 original projections · 20 verified · 2 unverified · 0 pushes.** Rushing MAE 13.1 yards; receiving MAE 9.5 yards.
 
@@ -563,7 +583,9 @@ Every entry below is included, not just the best picks. Original forecast order 
 
 ---
 
-### 11. NE @ MIA — final 24–19
+### NE MIA
+
+**NE @ MIA final score: 24–19.**
 
 **24 original projections · 20 verified · 2 unverified · 2 pushes.** Rushing MAE 19.4 yards; receiving MAE 17.6 yards.
 
@@ -613,7 +635,9 @@ Every entry below is included, not just the best picks. Original forecast order 
 
 ---
 
-### 12. PHI @ WAS — final 10–27
+### PHI WAS
+
+**PHI @ WAS final score: 10–27.**
 
 **21 original projections · 20 verified · 1 unverified · 0 pushes.** Rushing MAE 20.7 yards; receiving MAE 19.9 yards.
 
