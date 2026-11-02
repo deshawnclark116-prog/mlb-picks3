@@ -1,0 +1,97 @@
+{
+  "schema": "NBA_V2_FIRST_OBSERVED_OUTCOME_DISTRIBUTION_PICKS_V1",
+  "frozen_at_utc": "2026-11-02T23:14:43.984Z",
+  "probability_source_artifact_sha256": "dab845c79beb72372f6b912ac790bbd57772a23a377c1bf4e6291c54b2d5e394",
+  "prior_historical_team_source_sha256": "31482b854495242f85453e298efdd6c746337ce9e963d826996463cd0ad42322",
+  "live_espn_injury_source_sha256": "3d5a4d2f1abd0fea535b8c5ba915143df001db2820a0db40b43cda75c94c0431",
+  "probability_research_2026_27_not_yet_certified": true,
+  "sportsbook_lines_used": 0,
+  "official_bets": 0,
+  "first_observed_before_tip": true,
+  "games": [
+    {
+      "game_id": "401909936",
+      "tipoff_utc": "2026-11-06T02:00:00+00:00",
+      "home": "Phoenix Suns",
+      "away": "Orlando Magic",
+      "player_predictions": [
+        {
+          "forecast_id": "a94fa6eff7762511833d7d1e45cc2e4341b28ef1b10c0f7d5ee91e4764a3cf3e",
+          "game_id": "401909936",
+          "home": "Phoenix Suns",
+          "away": "Orlando Magic",
+          "player_id": "3136193",
+          "team_id": "21",
+          "player": "Devin Booker",
+          "market": "points",
+          "milestone": 15,
+          "predicted_stat": 23.8358,
+          "historical_p_play": 0.85,
+          "model_hit_probability": 0.663121,
+          "source_numeric_original_at_utc": "2026-11-02T23:13:04.032741+00:00",
+          "frozen_probability_at_utc": "2026-11-02T23:14:43.984Z",
+          "tipoff_utc": "2026-11-06T02:00:00+00:00",
+          "probability_historical_holdout_validated": true,
+          "current_season_calibration_verified": false,
+          "official_pick": false,
+          "bookmaker_line": null,
+          "bookmaker_odds": null
+        }
+      ]
+    },
+    {
+      "game_id": "401909937",
+      "tipoff_utc": "2026-11-06T03:00:00+00:00",
+      "home": "Golden State Warriors",
+      "away": "Miami Heat",
+      "player_predictions": [
+        {
+          "forecast_id": "e5c5c8f78553f35d95a347b12cd2c7e25af3c465c2bc80c70c51a0aa9af64726",
+          "game_id": "401909937",
+          "home": "Golden State Warriors",
+          "away": "Miami Heat",
+          "player_id": "3032977",
+          "team_id": "14",
+          "player": "Giannis Antetokounmpo",
+          "market": "rebounds",
+          "milestone": 6,
+          "predicted_stat": 9.5835,
+          "historical_p_play": 0.88235,
+          "model_hit_probability": 0.663447,
+          "source_numeric_original_at_utc": "2026-11-02T23:13:04.032741+00:00",
+          "frozen_probability_at_utc": "2026-11-02T23:14:43.984Z",
+          "tipoff_utc": "2026-11-06T03:00:00+00:00",
+          "probability_historical_holdout_validated": true,
+          "current_season_calibration_verified": false,
+          "official_pick": false,
+          "bookmaker_line": null,
+          "bookmaker_odds": null
+        },
+        {
+          "forecast_id": "5e1a4eebe62a78fe1dc25a1559bdb357449c55bf73c45fa28b7e84fba712e36d",
+          "game_id": "401909937",
+          "home": "Golden State Warriors",
+          "away": "Miami Heat",
+          "player_id": "4066261",
+          "team_id": "14",
+          "player": "Bam Adebayo",
+          "market": "rebounds",
+          "milestone": 6,
+          "predicted_stat": 7.6508,
+          "historical_p_play": 0.95,
+          "model_hit_probability": 0.650105,
+          "source_numeric_original_at_utc": "2026-11-02T23:13:04.032741+00:00",
+          "frozen_probability_at_utc": "2026-11-02T23:14:43.984Z",
+          "tipoff_utc": "2026-11-06T03:00:00+00:00",
+          "probability_historical_holdout_validated": true,
+          "current_season_calibration_verified": false,
+          "official_pick": false,
+          "bookmaker_line": null,
+          "bookmaker_odds": null
+        }
+      ]
+    }
+  ],
+  "game_count": 2,
+  "selected_predictions": 3
+}
