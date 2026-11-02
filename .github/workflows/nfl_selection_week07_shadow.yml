@@ -1,0 +1,33 @@
+name: NFL Week7 earlier frozen pregame selector stress test
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - scripts/nflProjectionSelectionWeek07.mjs
+      - .github/workflows/nfl_selection_week07_shadow.yml
+permissions:
+  contents: write
+concurrency:
+  group: nfl-week07-mix-test
+  cancel-in-progress: false
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/nflProjectionSelectionWeek07.mjs
+      - name: Save historical selection audit without changing production
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/nfl_week7_projection_selection_shadow_ablation.json docs/NFL_WEEK7_FRONTEND_SELECTION_SHADOW_TEST.md
+          git diff --cached --check
+          git commit -m 'NFL week7 retrospective mixed-market accuracy test [skip ci]'
+          git push origin HEAD:main
