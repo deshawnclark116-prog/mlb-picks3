@@ -1,0 +1,34 @@
+name: NFL firstseen V2 top10 eligibility graded against 12 real game final boxscores
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - scripts/gradeNflReconstructedFrontend.mjs
+      - docs/nfl_week8_nov1_frontend_reconstructed_120.json
+      - .github/workflows/nfl_grade_frontend_120.yml
+permissions:
+  contents: write
+concurrency:
+  group: nfl-week8-120-graded
+  cancel-in-progress: false
+jobs:
+  grade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node scripts/gradeNflReconstructedFrontend.mjs
+      - name: Commit all graded original picks including unresolved player statuses
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/nfl_week8_nov1_frontend_reconstructed_120_graded.json
+          git diff --cached --check
+          git commit -m 'NFL V2: grade pregame ten-per-game frontend candidates against finals [skip ci]'
+          git push origin HEAD:main
