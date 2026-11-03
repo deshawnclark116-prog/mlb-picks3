@@ -15,6 +15,18 @@ export interface NhlSogCount {
  probability_not_an_official_bet?:true;
  research_only:true;not_an_official_betting_prediction:true;
 }
+/** Optional late-lineup fields added by the server overlay; absent means no lineup information was available. */
+export function lineupNote(p:{lineup_label?:string;mean_early?:number}):string{
+ const e=typeof p.mean_early==='number'?' (early forecast '+p.mean_early.toFixed(2)+')':'';
+ switch(p.lineup_label){
+  case 'CONFIRMED_OUT':return ' LINEUP: ruled out, not expected to play'+e+'.';
+  case 'NOT_IN_POSTED_LINEUP':return ' LINEUP: not in the posted lineup'+e+'.';
+  case 'CONFIRMED_IN':return ' LINEUP: confirmed in the lineup, number adjusted'+e+'.';
+  case 'DOUBTFUL':return ' LINEUP: listed doubtful, number reduced'+e+'.';
+  case 'QUESTIONABLE':return ' LINEUP: listed questionable, number not changed.';
+  default:return '';
+ }
+}
 export interface NhlSogResearch {
  schema:'NHL_APP_VERIFIED_SOG_COUNT_RESEARCH_V1';game_date:string;
  research_only:true;not_an_official_betting_board:true;
@@ -180,7 +192,7 @@ export function addTrueNhlShotCounts(games:UnifiedGame[],source:NhlSogResearch|n
       nhlShotMilestone:milestone?{atLeast:milestone.milestone,probability:milestone.model_probability,calibrated:false}:null,
       prediction:p.mean,predictionKind:'mean',unit:'shots',
       source:'Locked NHL V2 SOG count distribution · '+p.forecast_horizon,
-      detail:'Numerical median '+p.median+' shots · P10–P90 '+p.p10+'–'+p.p90+
+      detail:'Numerical median '+p.median+' shots · P10–P90 '+p.p10+'–'+p.p90+lineupNote(p as any)+
        '. Chance to meet the mean uses P(actual shots >= ceil(mean)), reconstructed from the frozen count model. These probabilities were not originally published before puck drop and are not yet forward-calibrated or sportsbook prices.'
    });
  }
