@@ -12,6 +12,7 @@ type Forecast={
  mean:number;median:number;p10:number;p25:number;p75:number;p90:number;
  p_active:number;exp_opp:number;role_share:number;unc_reasons:string[];
  reported_status:string;
+ lineup_label?:string;mean_early?:number;p_active_early?:number;
  model_target:{milestone:number;probability:number;method:string}|null;
 };
 type Game={game_id:string;away:string;home:string;tipoff_utc:string;
@@ -59,6 +60,7 @@ function V3Card({row}:{row:Forecast}){
    <div><p className="text-sm font-bold text-white">{row.player}</p>
     <p className="text-[11px] text-gray-400">{NAME[row.market]}</p></div>
    <span className="text-[10px] border border-[#487b54] rounded-lg p-2 font-bold text-[#00FF41]">V3 MODEL TARGET</span>
+   {row.lineup_label==='CONFIRMED_IN'&&<span data-testid="nba-v3-lineup-confirmed" className="text-[10px] border border-[#487b54] rounded-lg p-2 font-bold text-white">LINEUP CONFIRMED</span>}
   </div>
   <p data-testid="nba-v3-selected-target" className="text-base font-bold">
    {t.milestone}+ {NAME[row.market]}
@@ -73,7 +75,7 @@ function V3Card({row}:{row:Forecast}){
   </div>
   <p className="text-[11px] text-gray-300">
    10th–90th percentile: {fmt(row.p10)}–{fmt(row.p90)} {UNIT[row.market]}
-   {' · '}Simulated P(plays) {pct(row.p_active)}
+   {' · '}{row.lineup_label==='CONFIRMED_IN'?'Confirmed to play (early P(plays) '+pct(row.p_active_early??row.p_active)+', early projection '+fmt(row.mean_early??row.mean)+')':'Simulated P(plays) '+pct(row.p_active)}
    {' · '}Modeled share of team minutes {pct(row.role_share)}</p>
   <details className="text-[11px] text-gray-400 border-t border-[#343434] pt-2">
    <summary className="min-h-9 cursor-pointer font-bold">MODEL EVIDENCE</summary>

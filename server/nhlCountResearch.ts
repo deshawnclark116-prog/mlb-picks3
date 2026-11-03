@@ -5,6 +5,7 @@
  */
 import type {Request,Response} from 'express';
 import {validateNhl} from './projectionFeeds.ts';
+import {overlayNhl} from './lineupOverlay.ts';
 
 export const NHL_COUNT_SOURCE =
  'https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks2/main/docs/nhl_v2_shadow.json';
@@ -158,7 +159,8 @@ export function nhlCountResearchHandler(fetcher:typeof fetch=fetch,clock=Date.no
    try{
      const result=await loadNhlCountResearch(date,fetcher,clock());
      res.setHeader('X-NHL-Forecast-Classification','FROZEN_SOG_RESEARCH_ONLY');
-     return res.json(result);
+     // Late lineup overlay only when the app's real fetch is used (tests inject their own fetcher).
+     return res.json(fetcher===fetch?await overlayNhl(result):result);
    }catch(e){
      return res.status(503).json({
        error:'Verified historical NHL V2 shot count unavailable',

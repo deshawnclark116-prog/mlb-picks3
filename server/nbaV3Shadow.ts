@@ -4,6 +4,7 @@
 import {existsSync,readdirSync,readFileSync} from 'node:fs';
 import path from 'node:path';
 import type {Request,Response} from 'express';
+import {overlayNba} from './lineupOverlay.ts';
 export const NBA_V3_READONLY_SCHEMA='NBA_V3_FULL_GAME_DISTRIBUTION_READ_ONLY_V1';
 const ROOT=path.resolve(process.cwd(),'docs','nba_v3_phase1_corrected_shadow');
 const VERSION='nba-v3-phase1-opportunity-role-mc-shotratefix-20261026';
@@ -101,11 +102,12 @@ export function loadNbaV3Shadow(now=new Date(),root=ROOT){
  };
 }
 export function nbaV3ShadowHandler(){
- return (_req:Request,res:Response)=>{
+ return async (_req:Request,res:Response)=>{
   try {
    const result=loadNbaV3Shadow();
    res.setHeader('Cache-Control','no-store, max-age=0');
-   res.json(result);
+   // Late lineup overlay: fail-open, keeps the early forecast beside the adjusted one.
+   res.json(await overlayNba(result));
   }catch(err){
    res.setHeader('Cache-Control','no-store, max-age=0');
    res.status(503).json({error:'NBA_V3_FIRSTSEEN_DISTRIBUTION_SOURCE_NOT_VERIFIED',
