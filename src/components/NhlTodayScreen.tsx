@@ -262,8 +262,11 @@ export default function NhlTodayScreen({
               <p>Shots on Goal source unavailable for one or more dates: {numericSogError}</p>
               <button type="button" onClick={handleManualRefresh} className="mt-2 rounded border border-amber-600 px-3 py-1 font-semibold">Retry Shots Feed</button>
             </div>}
-          {numericSog.some(d=>d.projected_count>0)&&<p role="status" className="mb-2 rounded-xl bg-[#172321] px-3 py-2 text-[11px] leading-relaxed text-gray-300">Showing {numericSog.reduce((n,d)=>n+d.projected_count,0)} original numerical shot forecasts. The chance to reach each forecast comes from the frozen model distribution and is <strong className="text-amber-200">not yet calibrated</strong>.</p>}
-          {marketFilter==='ALL'&&<p role="status" className="mb-2 text-[11px] text-gray-400">Showing game winners and anytime points when published, plus independent numerical shots. No separate goals/assists forecasts or eligible saves model is connected.</p>}
+          <details data-testid="nhl-about-numbers" className="mb-2 rounded-xl bg-[#172321] px-3 py-1 text-[13px] leading-relaxed text-gray-300">
+            <summary className="min-h-10 cursor-pointer py-2 font-semibold text-gray-200">About these numbers <span className="font-normal text-amber-200">· research estimates, not yet calibrated</span></summary>
+            {numericSog.some(d=>d.projected_count>0)&&<p role="status" className="pb-2">Showing {numericSog.reduce((n,d)=>n+d.projected_count,0)} original numerical shot forecasts. The chance to reach each forecast comes from the frozen model distribution and is <strong className="text-amber-200">not yet calibrated</strong>.</p>}
+            {marketFilter==='ALL'&&<p role="status" className="pb-2 text-gray-400">Showing game winners and anytime points when published, plus independent numerical shots. No separate goals/assists forecasts or eligible saves model is connected.</p>}
+          </details>
           <UnifiedSportGameCards sport="NHL" prefix="nhl-game-card-" games={unifiedGames}/>
           </div>
         )}

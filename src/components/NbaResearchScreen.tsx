@@ -61,11 +61,12 @@ export default function NbaResearchScreen() {
       <h1 className="text-xl font-black tracking-wide">NBA Predictions</h1>
       <p className="text-xs text-gray-400">2026–27 NBA V3 · Full-game simulated model predictions</p>
     </div>
-    <section className="rounded-2xl border border-amber-700/60 bg-amber-950/20 p-3 space-y-1 text-xs text-amber-200">
-      <strong className="block">NBA V3 IS THE PRIMARY DISPLAYED MODEL · RESEARCH PROBABILITIES</strong>
-      <p>SYSTEM PICKS now displays V3 basketball simulation targets and model-derived P(hit). MODEL BOARD shows every saved V3 player/stat distribution. V2 forecasts remain frozen separately for original result grading.</p>
-      <p>A sportsbook line is NOT needed for V3 model chances. They are not yet verified as calibrated on current-season results; official wagering status requires separately verified evidence.</p>
-    </section>
+    <details className="rounded-2xl border border-amber-700/60 bg-amber-950/20 px-3 text-[13px] leading-relaxed text-amber-200">
+      <summary className="min-h-10 cursor-pointer py-2 font-semibold">NBA V3 is the primary model <span className="font-normal">· research probabilities, not yet verified</span></summary>
+      <strong className="block pb-1 text-xs">NBA V3 IS THE PRIMARY DISPLAYED MODEL · RESEARCH PROBABILITIES</strong>
+      <p className="pb-2">SYSTEM PICKS now displays V3 basketball simulation targets and model-derived P(hit). MODEL BOARD shows every saved V3 player/stat distribution. V2 forecasts remain frozen separately for original result grading.</p>
+      <p className="pb-2">A sportsbook line is NOT needed for V3 model chances. They are not yet verified as calibrated on current-season results; official wagering status requires separately verified evidence.</p>
+    </details>
     <div className="grid grid-cols-4 gap-1" role="group" aria-label="NBA betting model view">
       {(['PICKS','BOARD','BETTABLE','V2'] as const).map(m=><button key={m}
         type="button" aria-pressed={mode===m} onClick={()=>setMode(m)}

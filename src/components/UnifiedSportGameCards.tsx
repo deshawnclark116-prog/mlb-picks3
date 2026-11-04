@@ -32,7 +32,8 @@ const stamp=(iso?:string)=>{
   return new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(iso))+' ET';
 };
 const canNumeric=(p:UnifiedPick)=>p.prediction!=null&&Number.isFinite(p.prediction)&&p.prediction>=0;
-const value=(p:UnifiedPick)=>canNumeric(p)?String(wholeStatProjection(p.prediction!))+(p.unit?' '+p.unit:''):pct(p.modelProbability);
+const unitFor=(n:number,u?:string)=>!u?'':' '+(n===1&&u==='shots'?'shot':u);
+const value=(p:UnifiedPick)=>canNumeric(p)?String(wholeStatProjection(p.prediction!))+unitFor(wholeStatProjection(p.prediction!),p.unit):pct(p.modelProbability);
 const primaryLabel=(p:UnifiedPick)=>canNumeric(p)?'MODEL PREDICTION · WHOLE NUMBER':'MODEL EVENT PROBABILITY · NO NUMERIC FORECAST';
 /** NHL research display filters: exact counts are different events from
  * "at least" milestones, and cannot borrow a 65%-threshold probability. */
@@ -86,31 +87,29 @@ export function PredictionCard({pick,nhlShortlist=false}:{pick:UnifiedPick;nhlSh
   actualEvent.count===wholeStatProjection(pick.prediction!)&&
   actualEvent.probability!=null&&Number.isFinite(actualEvent.probability)&&
   actualEvent.probability>=0&&actualEvent.probability<=1;
- return <article data-testid="unified-sport-projection" className="min-w-0 rounded-2xl border border-[#292929] bg-[#1C1C1C] p-4">
-  <div className="flex min-w-0 items-start justify-between gap-2">
-   <div className="min-w-0"><h3 className="break-words text-base font-bold capitalize text-white">{pick.player}</h3>
-    <p className="mt-1 text-[11px] text-gray-400">{pick.team?pick.team+' · ':''}{pick.market.replaceAll('_',' ').toUpperCase()}</p>
+ return <article data-testid="unified-sport-projection" className="min-w-0 rounded-xl border border-[#292929] bg-[#1C1C1C] px-3.5 py-3">
+  <div data-testid="unified-predicted-stat" className="flex min-w-0 items-center justify-between gap-3">
+   <div className="min-w-0">
+    <h3 className="break-words text-[16px] font-semibold capitalize leading-snug text-white">{pick.player}</h3>
+    <p className="mt-0.5 text-[12px] text-gray-300">{pick.team?pick.team+' · ':''}{pick.market.replaceAll('_',' ').toUpperCase()}</p>
+    {pick.confidence&&<span className="mt-1 inline-block rounded-md border border-[#333] px-2 py-0.5 text-[11px] font-bold text-gray-300">{pick.confidence}</span>}
    </div>
-   {pick.confidence&&<span className="rounded-md border border-[#333] px-2 py-1 text-[10px] font-bold text-gray-300">{pick.confidence}</span>}
-  </div>
-  <div data-testid="unified-predicted-stat" className="my-3 rounded-2xl border border-[#79FF48]/20 bg-[#12241b] p-4">
-   <p className="text-[10px] font-bold tracking-wide text-gray-300">{primaryLabel(pick)}</p>
-   <div className="mt-2 flex items-baseline justify-between gap-2">
-    <strong data-testid="whole-stat-prediction" className="min-w-0 break-words text-[28px] font-black tabular-nums leading-tight text-[#79FF48]">
+   <div className="shrink-0 text-right">
+    <strong data-testid="whole-stat-prediction" className="block break-words text-[26px] font-black tabular-nums leading-none text-[#79FF48]">
       {numeric?value(pick):pick.target||'Event forecast'}
     </strong>
-    <strong data-testid="whole-stat-exact-probability" className="shrink-0 text-[22px] font-black tabular-nums text-[#79FF48]">
+    <strong data-testid="whole-stat-exact-probability" className="mt-1.5 block text-[15px] font-bold tabular-nums text-gray-100">
       {numeric?(validExact?pct(actualEvent!.probability):'—'):pct(pick.modelProbability)}
     </strong>
    </div>
-   <p className="mt-2 text-[11px] text-gray-300">
-    {numeric?(validExact?'Chance of exactly '+actualEvent!.count+' · uncalibrated model estimate':
-      'Exact-count probability unavailable · not inferred from an easier threshold'):
-      'Probability of the displayed event · no invented numerical player stat'}
-   </p>
   </div>
-  <details className="mt-3 border-t border-[#303030] pt-2 text-[11px] text-gray-400">
-   <summary className="flex min-h-11 cursor-pointer items-center font-bold">VIEW MODEL DETAILS ▾</summary>
+  <p className="mt-2 text-[12px] leading-snug text-gray-300">
+   {numeric?(validExact?'Chance of exactly '+actualEvent!.count+' · uncalibrated model estimate':
+     'Exact-count probability unavailable · not inferred from an easier threshold'):
+     'Probability of the displayed event · no invented numerical player stat'}
+  </p>
+ <details className="mt-1 border-t border-[#303030] pt-1 text-[12px] text-gray-300">
+   <summary className="flex min-h-10 cursor-pointer items-center justify-between gap-2 text-[12px] font-semibold text-gray-300"><span className="text-[10px] font-normal tracking-wide text-gray-500">{primaryLabel(pick)}</span><span className="shrink-0">Details ▾</span></summary>
    {numeric&&<p className="pb-1">Original {pick.predictionKind==='mean'?'mean':'median'}: {fmt(pick.prediction!)} {pick.unit} · rounded with the .6 rule, unchanged in the underlying model.</p>}
    {pick.source&&<p className="pb-1">Source: {pick.source}</p>}
    {pick.detail&&<p className="pb-1">{pick.detail}</p>}
@@ -248,12 +247,15 @@ export default function UnifiedSportGameCards({sport,games,prefix}:{
        <button key={m} onClick={()=>{setMode(m);setExpanded(null);}} aria-pressed={mode===m}
          className={`min-h-11 rounded-xl border px-2 text-[12px] font-bold whitespace-nowrap transition-colors ${mode===m?'border-[#79FF48]/80 bg-[#79FF48]/15 text-[#79FF48]':'border-white/10 bg-[#1d2629] text-gray-300'}`}>{sport==='NHL'?(m==='SYSTEM PICKS'?'Best chances':'All projections'):m}</button>)}
    </div>
-   {sport==='NHL'&&mode==='SYSTEM PICKS'&&<p data-testid="nhl-research-shortlist-note" className="rounded-xl border border-white/10 bg-[#172321] p-3 text-[11px] leading-relaxed text-gray-300">
+   {sport==='NHL'&&mode==='SYSTEM PICKS'&&<details data-testid="nhl-research-shortlist-note" className="rounded-xl border border-white/10 bg-[#172321] px-3 text-[13px] leading-relaxed text-gray-300">
+     <summary className="min-h-10 cursor-pointer py-2 font-semibold text-gray-200">How these picks are chosen</summary>
+     <p className="pb-2">
       One whole-number forecast and its exact-count probability, when supported.
       NHL shots need source-backed P(exact count) ≥ 25% for the research shortlist.
       Separate binary events require ≥ 65%. These are not calibrated hit rates.
       Select All projections for the complete original slate.
-   </p>}
+     </p>
+   </details>}
    {sport==='NHL'&&mode==='SYSTEM PICKS'&&visible.length===0&&games.length>0&&
      <p data-testid="nhl-no-shortlisted-events" className="rounded-xl border border-white/10 bg-[#192326] p-4 text-xs text-slate-300">
        No events meet the research display filters. Select All projections to review every forecast.
