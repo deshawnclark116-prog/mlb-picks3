@@ -94,6 +94,7 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
  const [loading,setLoading]=useState(true);
  const [expanded,setExpanded]=useState<string|null>(null);
  const [day,setDay]=useState('AUTO');
+ const [showFilters,setShowFilters]=useState(false);
  const [market,setMarket]=useState<'ALL'|Market>('ALL');
  const refresh=useCallback(async()=>{
   setLoading(true);
@@ -130,25 +131,19 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
  const number=all.reduce((n,g)=>n+v3QualifiedResearchTargets(g).filter(r=>
   market==='ALL'||r.market===market).length,0);
  return <section className="space-y-3" data-testid="nba-v3-primary-board">
-  <div className="rounded-xl border border-[#00FF41]/30 bg-[#0e2115] p-3 text-xs space-y-1">
-   <div className="flex justify-between gap-2 items-center">
-    <strong className="text-[#00FF41]">{mode==='PICKS'?'NBA V3 · SYSTEM PICKS':'NBA V3 · FULL MODEL BOARD'}</strong>
+  <div className="flex items-center justify-between gap-2">
+   <strong className="text-[13px] text-[#00FF41]">{mode==='PICKS'?'System picks':'Full model board'}</strong>
+   <div className="flex items-center gap-2">
+    <button type="button" onClick={()=>setShowFilters(v=>!v)} aria-expanded={showFilters}
+      className={'min-h-10 rounded-lg border px-3 text-[13px] font-semibold '+(showFilters?'border-[#00FF41] text-[#00FF41]':'border-[#444] text-gray-300')}>Filter</button>
     <button type="button" onClick={()=>void refresh()} disabled={loading}
       aria-label="Refresh NBA V3 forecasts" className="min-h-10 min-w-10 flex items-center justify-center border border-[#444] rounded-lg">
      <RefreshCw size={16}/></button>
    </div>
-   <p>Basketball-specific role, team-minute allocation, shot opportunities and full-game probability distributions.</p>
-   <p className="text-amber-200 font-bold">MODEL-ESTIMATED P(HIT) · NOT YET PROSPECTIVELY CALIBRATED OR A BOOKMAKER BET.</p>
-   <p className="text-gray-400">This is V3, not recycled V2 projections. All original V2 predictions stay in the archive for paired grading.</p>
   </div>
   {loading&&!doc&&<p className="text-xs text-gray-400">Loading frozen original NBA V3 pregame simulations…</p>}
   {error&&<p role="alert" className="border border-red-700 p-3 rounded-lg text-xs text-red-200">
     NBA V3 source unavailable: {error}. No V2 substitution or invented picks.</p>}
-  {doc&&<div className="text-xs text-gray-400">
-   {day==='AUTO'?'Next available: '+nextSlate+' · ':''}{all.length} matching V3 game forecasts · {mode==='PICKS'?number+' model research targets':
-       all.reduce((n,g)=>n+g.rows.length,0)+' numerical projections'}
-   {' · '}{doc.original_games_audited} original games audited
-  </div>}
   {doc&&doc.status!=='AVAILABLE_RESEARCH_ONLY'&&<p data-testid="nba-v3-no-source"
     className="border border-amber-800/70 p-3 rounded-lg text-xs text-amber-200">
    {doc.status==='NO_FIRSTSEEN_V3_SHADOW_YET'?
@@ -164,13 +159,13 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
        {d==='AUTO'?'Next slate':d==='TODAY'?"Today's games":d==='ALL'?'All upcoming':d.slice(5)}
       </button>)}
     </div>
-    <div className="grid grid-cols-5 gap-1" aria-label="NBA V3 market filter">
+    {showFilters&&<div className="grid grid-cols-5 gap-1" aria-label="NBA V3 market filter">
     {(['ALL',...MARKETS] as const).map(m=><button type="button" key={m}
       onClick={()=>setMarket(m)} aria-pressed={market===m}
       className={'min-h-10 rounded-md border px-1 text-[10px] font-bold '+
         (market===m?'border-[#00FF41] text-[#00FF41]':'border-[#333] text-gray-400')}>
       {m==='ALL'?'ALL':UNIT[m]}</button>)}
-    </div>
+    </div>}
     {!all.length&&<p className="text-xs text-gray-400">No first-seen V3 forecasts on the selected date.
       Select another date or All upcoming. No old-model picks are substituted.</p>}
     {all.map(g=>{
@@ -197,6 +192,15 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
           </div>
           <ChevronDown className={'text-gray-400 '+(open?'rotate-180':'')} size={18}/>
         </button>
+        {shown.length>0&&<div data-testid="nba-v3-tiles" className="grid grid-cols-2 gap-2 px-3 pb-3">
+          {shown.slice(0,4).map(r=><div key={r.player_id+r.market} data-testid="nba-v3-tile" className="min-w-0 rounded-xl border border-white/10 bg-[#12181b] p-3">
+            <p className="truncate text-[11px] text-gray-400">{NAME[r.market]}</p>
+            <p className="mt-0.5 break-words text-[15px] font-bold leading-snug text-white">{r.player}</p>
+            <p className="mt-2 text-[26px] font-black leading-none tabular-nums text-[#79FF48]">{fmt(r.mean)} <span className="text-[14px] font-bold">{UNIT[r.market]}</span></p>
+            {r.model_target&&<p className="mt-1.5 text-[13px] font-bold tabular-nums text-gray-100">{r.model_target.milestone}+ · {pct(r.model_target.probability)}</p>}
+            <p className="mt-0.5 text-[11px] text-gray-400">{r.model_target?'Target and chance':'Projection'} · P(plays) {pct(r.p_active)}</p>
+          </div>)}
+        </div>}
         {open&&<div className="p-3 border-t border-[#333] space-y-2">
          {mode==='PICKS'?shown.map(r=><V3Card key={g.game_id+'|'+r.team_id+'|'+r.player_id+'|'+r.market} row={r}/>):
           shown.map(r=><div key={g.game_id+'|'+r.team_id+'|'+r.player_id+'|'+r.market}
@@ -216,5 +220,16 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
       </article>;
     })}
   </>}
+  <details data-testid="nba-v3-about" className="rounded-xl border border-[#00FF41]/30 bg-[#0e2115] px-3 text-[13px] leading-relaxed text-gray-300">
+   <summary className="min-h-10 cursor-pointer py-2 font-semibold text-gray-200">About these numbers <span className="font-normal text-amber-200">· research estimates, not yet calibrated</span></summary>
+   <p className="pb-2">Basketball-specific role, team-minute allocation, shot opportunities and full-game probability distributions.</p>
+   <p className="text-amber-200 font-bold">MODEL-ESTIMATED P(HIT) · NOT YET PROSPECTIVELY CALIBRATED OR A BOOKMAKER BET.</p>
+   <p className="text-gray-400">This is V3, not recycled V2 projections. All original V2 predictions stay in the archive for paired grading.</p>
+  {doc&&<div className="pb-2 text-xs text-gray-400">
+   {day==='AUTO'?'Next available: '+nextSlate+' · ':''}{all.length} matching V3 game forecasts · {mode==='PICKS'?number+' model research targets':
+       all.reduce((n,g)=>n+g.rows.length,0)+' numerical projections'}
+   {' · '}{doc.original_games_audited} original games audited
+  </div>}
+  </details>
  </section>;
 }

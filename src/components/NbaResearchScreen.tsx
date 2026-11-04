@@ -29,6 +29,7 @@ export default function NbaResearchScreen() {
   const [loading, setLoading] = useState(true);
   const [day, setDay] = useState('ALL');
   const [search, setSearch] = useState('');
+  const [showSearch,setShowSearch]=useState(false);
   const [mode, setMode] = useState<'PICKS'|'BOARD'|'BETTABLE'|'V2'|'ROLLING'|'TEAMS'|'PLAYERS'>('PICKS');
 
   useEffect(() => {
@@ -56,17 +57,11 @@ export default function NbaResearchScreen() {
     (!search || (f.home + ' ' + f.away).toLowerCase().includes(search.toLowerCase()))
   ).sort((a,b) => a.tipoff_utc.localeCompare(b.tipoff_utc)), [doc, day, search]);
 
-  return <main className="h-full overflow-y-auto bg-[#0D0D0D] p-4 pb-28 space-y-4 text-stone-100" data-testid="nba-research-screen">
-    <div className="space-y-1">
-      <h1 className="text-xl font-black tracking-wide">NBA Predictions</h1>
-      <p className="text-xs text-gray-400">2026–27 NBA V3 · Full-game simulated model predictions</p>
+  return <main className="h-full overflow-y-auto bg-[#0D0D0D] px-4 pb-28 pt-3 space-y-3 text-stone-100" data-testid="nba-research-screen">
+    <div className="flex items-center justify-between gap-3">
+      <h1 className="min-w-0 truncate text-[16px] font-bold">NBA <span className="font-normal text-gray-300">· 2026–27 V3</span></h1>
+      <button type="button" onClick={()=>setShowSearch(v=>!v)} aria-expanded={showSearch} className={`min-h-10 shrink-0 rounded-xl border px-3 text-[13px] font-semibold bg-[#202a2c] ${showSearch?'border-[#79FF48]/60 text-[#79FF48]':'border-white/10 text-gray-300'}`}>Search</button>
     </div>
-    <details className="rounded-2xl border border-amber-700/60 bg-amber-950/20 px-3 text-[13px] leading-relaxed text-amber-200">
-      <summary className="min-h-10 cursor-pointer py-2 font-semibold">NBA V3 is the primary model <span className="font-normal">· research probabilities, not yet verified</span></summary>
-      <strong className="block pb-1 text-xs">NBA V3 IS THE PRIMARY DISPLAYED MODEL · RESEARCH PROBABILITIES</strong>
-      <p className="pb-2">SYSTEM PICKS now displays V3 basketball simulation targets and model-derived P(hit). MODEL BOARD shows every saved V3 player/stat distribution. V2 forecasts remain frozen separately for original result grading.</p>
-      <p className="pb-2">A sportsbook line is NOT needed for V3 model chances. They are not yet verified as calibrated on current-season results; official wagering status requires separately verified evidence.</p>
-    </details>
     <div className="grid grid-cols-4 gap-1" role="group" aria-label="NBA betting model view">
       {(['PICKS','BOARD','BETTABLE','V2'] as const).map(m=><button key={m}
         type="button" aria-pressed={mode===m} onClick={()=>setMode(m)}
@@ -76,9 +71,9 @@ export default function NbaResearchScreen() {
         {m==='PICKS'?'SYSTEM PICKS':m==='BOARD'?'MODEL BOARD':m==='BETTABLE'?'BETTABLE NOW':'V2 ARCHIVE'}
       </button>)}
     </div>
-    <input aria-label="Find NBA team or player" placeholder="Search NBA picks, players or games"
+    {showSearch&&<input aria-label="Find NBA team or player" placeholder="Search NBA picks, players or games"
       value={search} onChange={e=>setSearch(e.target.value)}
-      className="w-full rounded-xl border border-[#333] bg-[#191919] px-4 py-3 text-sm text-stone-100" />
+      className="w-full rounded-xl border border-[#333] bg-[#191919] px-4 py-3 text-sm text-stone-100" />}
     {(mode==='PICKS'||mode==='BOARD')&&
       <NbaV3ResearchPanel key={mode} mode={mode} search={search}/>}
     {mode==='BETTABLE'&&<section data-testid="nba-v3-bettable-gate"
@@ -90,6 +85,12 @@ export default function NbaResearchScreen() {
     </section>}
     {mode==='V2'&&<NbaSystemPicksPanel mode="SYSTEM PICKS" search={search}/>}
     {mode==='ROLLING'&&<NbaRollingPlayerPanel search={search}/>}
+    <details className="rounded-2xl border border-amber-700/60 bg-amber-950/20 px-3 text-[13px] leading-relaxed text-amber-200">
+      <summary className="min-h-10 cursor-pointer py-2 font-semibold">NBA V3 is the primary model <span className="font-normal">· research probabilities, not yet verified</span></summary>
+      <strong className="block pb-1 text-xs">NBA V3 IS THE PRIMARY DISPLAYED MODEL · RESEARCH PROBABILITIES</strong>
+      <p className="pb-2">SYSTEM PICKS now displays V3 basketball simulation targets and model-derived P(hit). MODEL BOARD shows every saved V3 player/stat distribution. V2 forecasts remain frozen separately for original result grading.</p>
+      <p className="pb-2">A sportsbook line is NOT needed for V3 model chances. They are not yet verified as calibrated on current-season results; official wagering status requires separately verified evidence.</p>
+    </details>
     <details className="rounded-xl border border-[#303030] bg-[#171717] p-3 text-xs"
       open={mode==='TEAMS'||mode==='PLAYERS'}>
       <summary className="min-h-10 cursor-pointer font-bold text-gray-300">

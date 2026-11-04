@@ -100,6 +100,7 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh,role=null
   const [share,setShare]=useState<{view:Phase1View;gameId:string;horizon:Horizon}|null>(null);
   const [mode,setMode]=useState<Mode>('SYSTEM PICKS'),[horizon,setHorizon]=useState<Horizon>('T90');
   const [family,setFamily]=useState<Family>('ALL'),[search,setSearch]=useState(''),[outcome,setOutcome]=useState('');
+  const [showFilters,setShowFilters]=useState(false);
   const [expanded,setExpanded]=useState<string|null>(null),[limit,setLimit]=useState(40),[clock,setClock]=useState(Date.now);
   useEffect(()=>{const timer=setInterval(()=>setClock(Date.now()),30000);return()=>clearInterval(timer);},[]);
   const selected=view && !view.rows[horizon].length?view.defaultHorizon:horizon;
@@ -134,18 +135,21 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh,role=null
   };
   const empty=mode==='SYSTEM PICKS'?'No model-derived 65%+ system picks are available for this game.':mode==='BETTABLE NOW'?"No current sportsbook market matches this game's system picks.":view?.artifact.empty_message || 'No valid New Engine forecast has been captured for this slate yet.';
   return <div id="nfl-today-screen-wrapper" className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden bg-[#0D0D0D] text-gray-200">
-    <header className="flex shrink-0 items-center justify-between gap-3 border-b border-[#222] px-4 py-3">
-      <div className="min-w-0"><h1 className="text-xl font-black tracking-tighter text-white">PROP <span className="text-[#00FF41]">EDGE</span></h1>
-        <p className="mt-1 text-[10px] font-mono text-gray-400"> NFL · {view?.artifact.status.season || '—'} WEEK {view?.artifact.status.week || '—'} · DATA CHECKED {etTime(retrievedAt)}</p>
-      </div><button aria-label="Refresh NFL forecasts" disabled={loading} onClick={()=>void refresh()} className={`${touch} flex min-w-11 items-center justify-center text-[#00FF41] disabled:opacity-40`}><RefreshCw size={17} className={loading?'animate-spin':''}/></button>
+    <header className="flex shrink-0 items-center justify-between gap-3 border-b border-[#222] px-4 py-2">
+      <h1 className="min-w-0 truncate text-[16px] font-bold text-white">NFL <span className="font-normal text-gray-300">· Week {view?.artifact.status.week || '—'}</span></h1>
+      <div className="flex shrink-0 items-center gap-2">
+        <button type="button" onClick={()=>setShowFilters(v=>!v)} aria-expanded={showFilters} className={`min-h-10 rounded-xl border px-3 text-[13px] font-semibold bg-[#202a2c] ${showFilters?'border-[#79FF48]/60 text-[#79FF48]':'border-white/10 text-gray-300'}`}>Filter</button>
+        <button aria-label="Refresh NFL forecasts" disabled={loading} onClick={()=>void refresh()} className={`${touch} flex min-w-11 items-center justify-center text-[#00FF41] disabled:opacity-40`}><RefreshCw size={17} className={loading?'animate-spin':''}/></button>
+      </div>
     </header>
     <div className="min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain px-3 pb-28 [-webkit-overflow-scrolling:touch]" id="nfl-scroll-area" role="region" aria-label="Scrollable NFL model projections" tabIndex={0}>
       <div className="mt-3 grid grid-cols-3 gap-1" aria-label="NFL board mode">{(['SYSTEM PICKS','BETTABLE NOW','MODEL BOARD'] as Mode[]).map(m=><button key={m} onClick={()=>setMode(m)} aria-pressed={mode===m} className={`${touch} !px-1 text-[10px] font-bold whitespace-nowrap ${mode===m?'!border-[#00FF41]/50 !bg-[#00FF41]/10 text-[#00FF41]':'text-gray-400'}`}>{m}</button>)}</div>
+      {showFilters&&<div data-testid="nfl-filter-panel" className="mt-2 rounded-xl border border-[#252525] bg-[#111719] p-2">
       <div className="mt-2 flex gap-2" aria-label="Forecast horizon">{HORIZONS.map(h=><button key={h} disabled={!view?.rows[h].length} aria-pressed={selected===h} onClick={()=>setHorizon(h)} className={`${touch} min-w-20 px-5 font-bold disabled:opacity-30 ${selected===h?'text-[#00FF41]':'text-gray-400'}`}>{h}</button>)}</div>
       <div className="mt-2 flex gap-1 overflow-x-auto" aria-label="Outcome family">{(['ALL','PASS','RUSH','REC','TD'] as Family[]).map(f=><button key={f} aria-pressed={family===f} onClick={()=>setFamily(f)} className={`${touch} shrink-0 ${family===f?'!border-[#00FF41]/40 text-[#00FF41]':'text-gray-400'}`}>{f}</button>)}</div>
       <div className="mt-2 flex min-w-0 gap-2"><input type="search" aria-label="Search player or team" placeholder="Search player or team" value={search} onChange={e=>setSearch(e.target.value)} className={`${touch} min-w-0 w-full text-gray-200`}/>
         {mode==='MODEL BOARD' && <select aria-label="Filter NFL outcome" value={outcome} onChange={e=>setOutcome(e.target.value)} className={`${touch} min-w-0 w-1/2 text-gray-300`}><option value="">All outcomes</option>{Object.entries(OUTCOMES).map(([k,v])=><option key={k} value={k}>{v}</option>)}</select>}</div>
-      <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] text-gray-400"><span className="rounded-md bg-[#222] px-2 py-1">SHADOW RESEARCH</span><span className="rounded-md bg-[#222] px-2 py-1">NO VERIFIED SPORTSBOOK INPUTS</span></div>
+      </div>}
       {view && roleLoading && !role && <p role="status" className="mt-2 text-xs text-gray-400">Checking updated quarterback roles…</p>}
       {view && roleError && <p role="status" data-testid="nfl-role-feed-unavailable" className="mt-2 rounded-xl border border-amber-900 p-3 text-xs text-amber-300">Updated QB role assessment unavailable. Original frozen predictions remain research-only and have not been certified for betting.</p>}
       {visibleConflicts.length>0 && <section data-testid="nfl-starter-role-corrections" aria-label="NFL role-adjusted predictions" className="mt-3 rounded-xl border border-amber-800/70 bg-[#231B13] p-3">
@@ -198,6 +202,7 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh,role=null
           </section>;
         })}</div>
       </>}
+      <div className="mt-4 flex flex-wrap items-center gap-2 text-[10px] text-gray-400"><span className="rounded-md bg-[#222] px-2 py-1">SHADOW RESEARCH</span><span className="rounded-md bg-[#222] px-2 py-1">NO VERIFIED SPORTSBOOK INPUTS</span></div>
       {view && <div data-testid="nfl-coverage" className={`mt-3 rounded-xl border p-3 text-xs ${(coverage?.missed || 0)>0 || !view.artifact.status.readiness_ready?'border-amber-800/60 bg-amber-950/20 text-amber-100':'border-[#2C4230] bg-[#102018] text-gray-200'}`}>
         <p className="font-bold">FORECAST COVERAGE · {selected}</p>
         <p className="mt-1">{coverage?.captured ?? 0} games captured{coverage?.planned!=null?` · ${coverage.planned} pending`:''}{coverage?.missed!=null&&coverage.missed>0?` · ${coverage.missed} missed cutoff(s)`:''}{coverage?.failed!=null&&coverage.failed>0?` · ${coverage.failed} failed`:''}</p>

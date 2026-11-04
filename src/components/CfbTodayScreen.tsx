@@ -115,6 +115,7 @@ export default function CfbTodayScreen({
   const [marketFilter, setMarketFilter] = useState<MarketFilter>("ALL");
   const [confidenceFilter, setConfidenceFilter] = useState<"ALL" | "HIGH" | "MEDIUM" | "LOW">("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [showFilters, setShowFilters] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullY, setPullY] = useState(0);
   const [expandedGameKey, setExpandedGameKey] = useState<string | null>(null);
@@ -223,42 +224,19 @@ export default function CfbTodayScreen({
       </motion.div>
 
       {/* Header */}
-      <header id="cfb-screen-header" className="pt-8 px-6 pb-4 bg-[#0A0A0A] border-b border-[#1A1A1A] flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-black tracking-tighter text-white uppercase font-sans">
-            PROP <span className="text-[#00FF41]">EDGE</span>
-          </h1>
-          <p className="text-[9px] text-gray-500 uppercase tracking-widest mt-0.5 font-mono">
-            CFB Predictions{season ? ` • ${season} Week ${week ?? "-"}` : ""}
-          </p>
-          {getLatestGeneratedAt(predictions) && (
-            <p className="text-[8px] text-[#00FF41]/80 font-mono mt-1 uppercase tracking-wider">
-              Updated: {new Date(getLatestGeneratedAt(predictions)!).toLocaleString("en-US", {
-                month: "short", day: "numeric", hour: "numeric", minute: "2-digit", hour12: true, timeZone: "America/New_York",
-              })} ET
-            </p>
-          )}
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2 px-3 py-1 bg-[#141414] rounded-full border border-[#222]">
-            <div className="w-1.5 h-1.5 rounded-full bg-[#00FF41] shadow-[0_0_8px_#00FF41] animate-pulse"></div>
-            <span className="text-[9px] font-bold text-gray-300 uppercase tracking-wider font-mono">LIVE</span>
-          </div>
-          <button
-            id="cfb-refresh-btn"
-            onClick={handleManualRefresh}
-            disabled={loading || isRefreshing}
-            className="p-1.5 rounded-lg bg-[#141414] hover:bg-[#1A1A1A] border border-[#222] text-gray-400 hover:text-[#00FF41] cursor-pointer transition-colors"
-            title="Refresh feed"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading || isRefreshing ? "animate-spin text-[#00FF41]" : ""}`} />
+      <header id="cfb-screen-header" className="flex items-center justify-between gap-3 border-b border-[#1A1A1A] bg-[#0A0A0A] px-4 py-2">
+        <h1 className="min-w-0 truncate text-[16px] font-bold text-white">CFB <span className="font-normal text-gray-300">· {season ? `${season} Week ${week ?? "-"}` : "Predictions"}</span></h1>
+        <div className="flex shrink-0 items-center gap-2">
+          <button type="button" onClick={()=>setShowFilters(v=>!v)} aria-expanded={showFilters} className={`min-h-10 rounded-xl border px-3 text-[13px] font-semibold bg-[#202a2c] ${showFilters?'border-[#79FF48]/60 text-[#79FF48]':'border-white/10 text-gray-300'}`}>Filter</button>
+          <button id="cfb-refresh-btn" onClick={handleManualRefresh} disabled={loading || isRefreshing} aria-label="Refresh feed"
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#222] bg-[#141414] text-gray-400 hover:text-[#00FF41]" title="Refresh feed">
+            <RefreshCw className={`w-4 h-4 ${(loading || isRefreshing) ? "animate-spin text-[#00FF41]" : ""}`} />
           </button>
         </div>
       </header>
 
       {/* Filters */}
-      <div id="cfb-filter-controls-board" className="px-6 py-4 bg-[#0D0D0D] border-b border-[#1A1A1A] flex flex-col gap-4">
+      {showFilters&&<div id="cfb-filter-controls-board" className="px-4 py-4 bg-[#0D0D0D] border-b border-[#1A1A1A] flex flex-col gap-4">
         <div>
           <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest block mb-2 font-mono">Market</span>
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar scrollbar-none">
@@ -318,7 +296,7 @@ export default function CfbTodayScreen({
             className="w-full text-xs bg-[#141414] text-gray-200 pl-8 pr-4 py-2 rounded-xl border border-[#222] focus:border-[#00FF41]/40 focus:outline-none placeholder-gray-700 font-sans transition-all"
           />
         </div>
-      </div>
+      </div>}
 
       {/* Scroll area */}
       <div
