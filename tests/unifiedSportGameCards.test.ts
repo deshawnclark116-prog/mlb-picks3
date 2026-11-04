@@ -99,3 +99,10 @@ test('absence of original integer CDF or low P(exact) cannot promote a false bes
  const weak=pick({id:'weak',market:'moneyline',target:'PIT ML',modelProbability:.64});
  assert.deepEqual(nhlResearchShortlist([low,unknown,weak]),[]);
 });
+
+test('a 0-shot prediction is never featured, however likely "exactly 0" is',()=>{
+ const zero=pick({id:'zero',player:'Depth Defenseman',target:'',modelProbability:null,prediction:0.2,predictionKind:'mean',unit:'shots',
+  exactCountEvent:wholeStatEvent(0.2,{1:.18,2:.02,3:.002,4:.0001,5:.00001})});
+ assert.equal(zero.exactCountEvent!.count,0);
+ assert.deepEqual(nhlResearchShortlist([zero]),[]);
+});
