@@ -16,7 +16,8 @@ type Forecast={
  model_target:{milestone:number;probability:number;method:string}|null;
 };
 type Game={game_id:string;away:string;home:string;tipoff_utc:string;
- forecast_at_utc:string;rows_count:number;rows:Forecast[]};
+ forecast_at_utc:string;rows_count:number;rows:Forecast[];
+ forecast_kind?:string;first_seen_forecast_at_utc?:string};
 type Shadow={schema:string;status:string;upcoming_games:number;
  original_games_audited:number;research_only:true;official_bets:0;games:Game[];
  prospective_model_probability_calibration_verified:false;
@@ -187,7 +188,9 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
              TOP: {selected[0].player} · {selected[0].model_target!.milestone}+
              {' '}{NAME[selected[0].market]} · {pct(selected[0].model_target!.probability)}
            </p>}
-           <p className="mt-1 text-[10px] text-gray-500">V3 first observed {et(g.forecast_at_utc)}
+           <p className="mt-1 text-[10px] text-gray-500">{g.forecast_kind==='LATEST_RUN'
+             ?<>Latest run {et(g.forecast_at_utc)}{' · '}first forecast {et(g.first_seen_forecast_at_utc||g.forecast_at_utc)}</>
+             :<>V3 first observed {et(g.forecast_at_utc)}</>}
              {' · '}No verified bookmaker line</p>
           </div>
           <ChevronDown className={'text-gray-400 '+(open?'rotate-180':'')} size={18}/>

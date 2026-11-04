@@ -5,6 +5,7 @@ import {existsSync,readdirSync,readFileSync} from 'node:fs';
 import path from 'node:path';
 import type {Request,Response} from 'express';
 import {overlayNba} from './lineupOverlay.ts';
+import {overlayLatestRun} from './nbaV3Latest.ts';
 export const NBA_V3_READONLY_SCHEMA='NBA_V3_FULL_GAME_DISTRIBUTION_READ_ONLY_V1';
 const ROOT=path.resolve(process.cwd(),'docs','nba_v3_phase1_corrected_shadow');
 const VERSION='nba-v3-phase1-opportunity-role-mc-shotratefix-20261026';
@@ -28,13 +29,7 @@ type ShadowGame={
  team_opportunity_diagnostics:Record<string,unknown>;
 };
 const finite=(x:unknown)=>typeof x==='number'&&Number.isFinite(x);
-export function loadNbaV3Shadow(now=new Date(),root=ROOT){
- if(!Number.isFinite(now.getTime()))throw Error('NBA_V3_INVALID_REQUEST_CLOCK');
- const docs=existsSync(root)?readdirSync(root).filter(x=>/^20\d\d-\d\d-\d\dT\d{6}Z\.json$/.test(x)).sort():[];
- const seen=new Set<string>(),out:ShadowGame[]=[];
- let verified=0;
- for(const name of docs){
-  const d=JSON.parse(readFileSync(path.join(root,name),'utf8'));
+export function validateShadowHeader(d:any){
   if(d.schema!=='NBA_V3_2026_27_FIRSTSEEN_FULL_DISTRIBUTION_SHADOW_V1'||
      d.model_version!==VERSION||
      !sha(d.upstream_fixtures_source_sha256)||
@@ -47,7 +42,8 @@ export function loadNbaV3Shadow(now=new Date(),root=ROOT){
      d.no_lookahead_or_retrospective_backfill!==true||
      d.games_forecast!==d.games.length)
       throw Error('NBA_V3_SHADOW_UNTRUSTED_PUBLICATION');
-  for(const g of d.games as ShadowGame[]){
+}
+export function validateShadowGame(g:ShadowGame,seen:Set<string>){
     const tip=Date.parse(g.tipoff_utc);
     if(seen.has(g.game_id)||
        !sha(g.seed_source_sha256)||
@@ -55,7 +51,7 @@ export function loadNbaV3Shadow(now=new Date(),root=ROOT){
        Date.parse(g.forecast_at_utc)>tip-15*60000||
        g.rows_count!==g.rows.length)
       throw Error('NBA_V3_DUPLICATE_OR_AFTER_TIP_FORECAST');
-    seen.add(g.game_id);verified++;
+    seen.add(g.game_id);
     const ids=new Set<string>();
     for(const r of g.rows){
       const key=r.team_id+'|'+r.player_id+'|'+r.market;
@@ -81,6 +77,18 @@ export function loadNbaV3Shadow(now=new Date(),root=ROOT){
       }
       ids.add(key);
     }
+}
+export function loadNbaV3Shadow(now=new Date(),root=ROOT){
+ if(!Number.isFinite(now.getTime()))throw Error('NBA_V3_INVALID_REQUEST_CLOCK');
+ const docs=existsSync(root)?readdirSync(root).filter(x=>/^20\d\d-\d\d-\d\dT\d{6}Z\.json$/.test(x)).sort():[];
+ const seen=new Set<string>(),out:ShadowGame[]=[];
+ let verified=0;
+ for(const name of docs){
+  const d=JSON.parse(readFileSync(path.join(root,name),'utf8'));
+  validateShadowHeader(d);
+  for(const g of d.games as ShadowGame[]){
+    validateShadowGame(g,seen);verified++;
+    const tip=Date.parse(g.tipoff_utc);
     // Keep scheduled and currently underway games, not long-finished rows.
     if(tip>now.getTime()-4*3600000 && tip<now.getTime()+8*86400000)
       out.push(g);
@@ -107,7 +115,7 @@ export function nbaV3ShadowHandler(){
    const result=loadNbaV3Shadow();
    res.setHeader('Cache-Control','no-store, max-age=0');
    // Late lineup overlay: fail-open, keeps the early forecast beside the adjusted one.
-   res.json(await overlayNba(result));
+   res.json(await overlayNba(await overlayLatestRun(result)));
   }catch(err){
    res.setHeader('Cache-Control','no-store, max-age=0');
    res.status(503).json({error:'NBA_V3_FIRSTSEEN_DISTRIBUTION_SOURCE_NOT_VERIFIED',
