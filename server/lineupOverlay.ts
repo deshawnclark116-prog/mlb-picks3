@@ -217,9 +217,9 @@ const within=(iso:unknown,now:number,hoursBefore:number,hoursAfter:number)=>{
 };
 
 /** NBA games whose tip is within 6h (or started within 3h). Key = V3 game_id (= ESPN event id). */
-export async function loadNbaStatus(games:{game_id:string;tipoff_utc:string}[],f:Fetcher=fetch,now=Date.now()){
+export async function loadNbaStatus(games:{game_id:string;tipoff_utc:string}[],f:Fetcher=fetch,now=Date.now(),hoursBefore=30){
  const out=new Map<string,GameStatus>();
- await Promise.all(games.filter(g=>within(g.tipoff_utc,now,6,3)).map(async g=>{
+ await Promise.all(games.filter(g=>within(g.tipoff_utc,now,hoursBefore,3)).map(async g=>{
   const s=await getJson(f,`${ESPN}basketball/nba/summary?event=${encodeURIComponent(g.game_id)}`);
   if(!s)return;
   const players=new Map<string,LineupStatus>(),teamKey=(t:any)=>String(t?.id??'');
@@ -231,7 +231,7 @@ export async function loadNbaStatus(games:{game_id:string;tipoff_utc:string}[],f
 }
 
 /** NHL: key = NHL game id (same id the ledger uses). ESPN supplies injuries; the league feed supplies scratches + posted roster. */
-export async function loadNhlStatus(date:string,games:{game_id:string;team:string;opponent:string;scheduled_start:string}[],f:Fetcher=fetch,now=Date.now()){
+export async function loadNhlStatus(date:string,games:{game_id:string;team:string;opponent:string;scheduled_start:string}[],f:Fetcher=fetch,now=Date.now(),hoursBefore=30){
  const out=new Map<string,GameStatus>();
  const byId=new Map<string,{teams:Set<string>;start:string}>();
  for(const g of games){
@@ -244,7 +244,7 @@ export async function loadNhlStatus(date:string,games:{game_id:string;team:strin
   const ab=(e.competitions?.[0]?.competitors??[]).map((c:any)=>{const a=String(c?.team?.abbreviation);return ESPN_NHL_ALIAS[a]??a;});
   if(ab.length===2)espnByPair.set([...ab].sort().join('|'),String(e.id));
  }
- await Promise.all([...byId.entries()].filter(([,v])=>within(v.start,now,6,3)).map(async([gid,v])=>{
+ await Promise.all([...byId.entries()].filter(([,v])=>within(v.start,now,hoursBefore,3)).map(async([gid,v])=>{
   const players=new Map<string,LineupStatus>(),sources:string[]=[];
   const [land,rail]=await Promise.all([
    getJson(f,`${NHL_API}/gamecenter/${gid}/landing`),getJson(f,`${NHL_API}/gamecenter/${gid}/right-rail`)]);
@@ -265,6 +265,45 @@ export async function loadNhlStatus(date:string,games:{game_id:string;team:strin
  return out;
 }
 
+
+/* ------------------- published overlay (fetched by a scheduled GitHub job) -------------------
+ * The app host may be unable to reach ESPN / the NHL API, but it can read GitHub. A scheduled job writes
+ * docs/lineup_overlay/<sport>.json; the app reads it first and also tries its own live fetch. OUT wins. */
+export const PUBLISHED_SCHEMA='LATE_LINEUP_PUBLISHED_V1';
+export const PUBLISHED_URL=(sport:'nba'|'nhl')=>'https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks3/main/docs/lineup_overlay/'+sport+'.json';
+export const PUBLISHED_MAX_AGE_MS=3*3600_000;
+export function serializeStatus(m:Map<string,GameStatus>){
+ const games:Record<string,{lineupPosted:boolean;sources:string[];players:Record<string,LineupStatus>}>={};
+ for(const [id,g] of m)games[id]={lineupPosted:g.lineupPosted,sources:g.sources,players:Object.fromEntries(g.players)};
+ return games;
+}
+export function parsePublished(doc:any,now=Date.now()):Map<string,GameStatus>|null{
+ if(!doc||doc.schema!==PUBLISHED_SCHEMA||typeof doc.games!=='object'||doc.games===null)return null;
+ const at=Date.parse(doc.generated_at);
+ if(!Number.isFinite(at)||now-at>PUBLISHED_MAX_AGE_MS||at-now>600_000)return null;   // stale or from the future: ignore, never trust blindly
+ const out=new Map<string,GameStatus>();
+ for(const [id,g] of Object.entries<any>(doc.games)){
+  const players=new Map<string,LineupStatus>();
+  for(const [k,v] of Object.entries<any>(g?.players??{}))if(['OUT','DOUBTFUL','QUESTIONABLE','IN'].includes(v))players.set(k,v);
+  out.set(String(id),{lineupPosted:g?.lineupPosted===true,players,sources:(Array.isArray(g?.sources)?g.sources:[]).concat(['published_overlay'])});
+ }
+ return out;
+}
+export function mergeStatusMaps(a:Map<string,GameStatus>|null,b:Map<string,GameStatus>|null){
+ const out=new Map<string,GameStatus>();
+ for(const m of [a,b])for(const [id,g] of m??[]){
+  const cur=out.get(id);
+  if(!cur){out.set(id,{lineupPosted:g.lineupPosted,players:new Map(g.players),sources:[...g.sources]});continue;}
+  for(const [k,v] of g.players)setStatus(cur.players,k,v);
+  cur.lineupPosted=cur.lineupPosted||g.lineupPosted;
+  cur.sources=[...new Set([...cur.sources,...g.sources])];
+ }
+ return out;
+}
+async function loadPublished(sport:'nba'|'nhl',f:Fetcher,now:number){
+ try{return parsePublished(await getJson(f,PUBLISHED_URL(sport)+'?t='+now,6000),now);}catch{return null;}
+}
+
 async function cached(key:string,now:number,make:()=>Promise<Map<string,GameStatus>>){
  const prior=cache.get(key);
  if(prior&&now-prior.at<TTL_MS)return prior.value;
@@ -275,14 +314,16 @@ async function cached(key:string,now:number,make:()=>Promise<Map<string,GameStat
 export async function overlayNba(result:any,f:Fetcher=fetch,now=Date.now()){
  try{
   const ids=(result.games??[]).map((g:any)=>g.game_id).join(',');
-  const st=await cached('nba|'+ids,now,()=>loadNbaStatus(result.games??[],f,now));
-  return applyNbaOverlay(result,st);
+  const live=await cached('nba|'+ids,now,()=>loadNbaStatus(result.games??[],f,now));
+  const pub=await cached('pub|nba',now,async()=>(await loadPublished('nba',f,now))??new Map());
+  return applyNbaOverlay(result,mergeStatusMaps(pub,live));
  }catch{return {...result,lineup_overlay:{schema:LINEUP_OVERLAY_SCHEMA,unavailable:true,early_forecast_preserved:true}};}
 }
 export async function overlayNhl(result:any,f:Fetcher=fetch,now=Date.now()){
  try{
-  const st=await cached('nhl|'+result.game_date+'|'+(result.projections?.length??0),now,()=>loadNhlStatus(result.game_date,result.projections??[],f,now));
-  return applyNhlOverlay(result,st);
+  const live=await cached('nhl|'+result.game_date+'|'+(result.projections?.length??0),now,()=>loadNhlStatus(result.game_date,result.projections??[],f,now));
+  const pub=await cached('pub|nhl',now,async()=>(await loadPublished('nhl',f,now))??new Map());
+  return applyNhlOverlay(result,mergeStatusMaps(pub,live));
  }catch{return {...result,lineup_overlay:{schema:LINEUP_OVERLAY_SCHEMA,unavailable:true,early_forecast_preserved:true}};}
 }
 export type {Request,Response};

@@ -1,0 +1,27 @@
+{
+ "schema": "LATE_LINEUP_PUBLISHED_V1",
+ "sport": "nhl",
+ "generated_at": "2026-11-04T23:29:03.580Z",
+ "note": "Injury/scratch/starter statuses only. Never a forecast; applied by server/lineupOverlay.ts.",
+ "games": {
+  "2026020247": {
+   "lineupPosted": false,
+   "sources": [
+    "nhl_official",
+    "espn_injuries"
+   ],
+   "players": {
+    "BUF|konstahelenius": "OUT",
+    "BUF|justindanforth": "OUT",
+    "BUF|alexlyon": "OUT",
+    "BUF|mattgrzelcyk": "OUT",
+    "BUF|jackrathbone": "OUT",
+    "OTT|tylerkleven": "OUT",
+    "OTT|andreburakovsky": "OUT",
+    "OTT|warrenfoegele": "OUT",
+    "OTT|linusullmark": "OUT",
+    "OTT|williameklund": "OUT"
+   }
+  }
+ }
+}

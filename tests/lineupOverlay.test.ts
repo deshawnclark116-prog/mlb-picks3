@@ -97,3 +97,23 @@ test('fail-open: a dead network returns the early forecast untouched',async()=>{
  const n=await overlayNba(nbaRes,dead,Date.now());
  assert.equal(n.games[0].rows[0].mean,5);
 });
+
+import {parsePublished,mergeStatusMaps,serializeStatus,PUBLISHED_SCHEMA,applyNbaOverlay as _apply} from '../server/lineupOverlay.ts';
+test('published overlay: fresh file is read, stale or future-dated file is ignored',()=>{
+ const now=Date.parse('2026-11-04T23:00:00Z');
+ const doc=(at:string)=>({schema:PUBLISHED_SCHEMA,generated_at:at,games:{g:{lineupPosted:false,sources:['espn_injuries'],players:{'1|jaysontatum':'OUT','1|bogus':'WHATEVER'}}}});
+ const ok=parsePublished(doc('2026-11-04T22:55:00Z'),now)!;
+ assert.equal(ok.get('g')!.players.get('1|jaysontatum'),'OUT');
+ assert.equal(ok.get('g')!.players.has('1|bogus'),false);          // unknown wording is dropped, never trusted
+ assert.equal(parsePublished(doc('2026-11-04T10:00:00Z'),now),null); // older than 3h
+ assert.equal(parsePublished(doc('2026-11-05T09:00:00Z'),now),null); // from the future
+ assert.equal(parsePublished({schema:'x',games:{}},now),null);
+});
+test('published + live merge: OUT from either source wins, nothing is lost',()=>{
+ const a=new Map([['g',{lineupPosted:false,players:new Map([['t|a','OUT' as const]]),sources:['published_overlay']}]]);
+ const b=new Map([['g',{lineupPosted:true,players:new Map([['t|a','IN' as const],['t|b','IN' as const]]),sources:['espn_starters']}]]);
+ const m=mergeStatusMaps(a,b).get('g')!;
+ assert.equal(m.players.get('t|a'),'OUT');assert.equal(m.players.get('t|b'),'IN');assert.equal(m.lineupPosted,true);
+ assert.equal(serializeStatus(mergeStatusMaps(a,null)).g.players['t|a'],'OUT');
+ assert.equal(mergeStatusMaps(null,null).size,0);
+});
