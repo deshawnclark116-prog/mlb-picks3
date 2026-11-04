@@ -38,11 +38,15 @@ const primaryLabel=(p:UnifiedPick)=>canNumeric(p)?'MODEL PREDICTION · WHOLE NUM
  * "at least" milestones, and cannot borrow a 65%-threshold probability. */
 export const NHL_RESEARCH_SHORTLIST_MIN_PROB=.65;
 export const NHL_EXACT_COUNT_DISPLAY_MIN=.25;
+export const NHL_EXACT_COUNT_MIN_SHOTS=1;
 export function nhlResearchShortlist(picks:UnifiedPick[]):UnifiedPick[]{
  const eligible=picks.filter(p=>{
   if(p.market==='shots_on_goal'&&canNumeric(p)){
    const e=p.exactCountEvent;
+   // A "0 shots" prediction is the most likely whole number for any fringe player, so it always wins
+   // an exact-count probability ranking and floods the headline. It is not a useful event to feature.
    return e?.semantics==='EXACT_INTEGER_COUNT'&&
+    e.count>=NHL_EXACT_COUNT_MIN_SHOTS&&
     e.count===wholeStatProjection(p.prediction!)&&
     e.probability!=null&&Number.isFinite(e.probability)&&
     e.probability>=NHL_EXACT_COUNT_DISPLAY_MIN&&e.probability<=1;
