@@ -146,12 +146,9 @@ export default function SportProjectionScreen({ sport, legacy }: { sport: Sport;
   const nhl = sport === "nhl" && doc?.schema === "nhl-v2-sog-nfl-style-shadow-v1" ? doc : null;
 
   return <div className="flex h-full min-h-0 min-w-0 w-full flex-col overflow-hidden bg-[#0D0D0D]">
-    <div className="shrink-0 px-4 pt-3 pb-2 border-b border-[#222] bg-[#111]">
-      <div className="text-sm font-bold text-stone-100">{sport.toUpperCase()} PREDICTIONS</div>
-      <div className="flex gap-2 mt-2">
-        <button type="button" onClick={() => setMode("CURRENT")} aria-pressed={mode==="CURRENT"} className={`flex-1 py-2 rounded-lg text-xs font-bold ${mode==="CURRENT" ? "bg-[#00FF41] text-black" : "bg-[#262626] text-gray-300"}`}>Current predictions</button>
-        <button type="button" onClick={() => setMode("RESEARCH")} aria-pressed={mode==="RESEARCH"} className={`flex-1 py-2 rounded-lg text-xs font-bold ${mode==="RESEARCH" ? "bg-[#00FF41] text-black" : "bg-[#262626] text-gray-300"}`}>Research archive</button>
-      </div>
+    <div className="shrink-0 flex items-center justify-end gap-2 border-b border-[#222] bg-[#111] px-4 py-2" aria-label={sport.toUpperCase()+" view"}>
+      <button type="button" onClick={() => setMode("CURRENT")} aria-pressed={mode==="CURRENT"} className={`min-h-9 rounded-full px-4 text-[12px] font-semibold ${mode==="CURRENT" ? "bg-[#79FF48] text-black" : "bg-[#262626] text-gray-300"}`}>Current predictions</button>
+      <button type="button" onClick={() => setMode("RESEARCH")} aria-pressed={mode==="RESEARCH"} className={`min-h-9 rounded-full px-4 text-[12px] font-semibold ${mode==="RESEARCH" ? "bg-[#79FF48] text-black" : "bg-[#262626] text-gray-300"}`}>Research archive</button>
     </div>
     {mode === "CURRENT" ? <div className="min-h-0 min-w-0 flex-1 overflow-hidden">{legacy}</div> :
       <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain p-4 pb-28 space-y-3 [-webkit-overflow-scrolling:touch]">

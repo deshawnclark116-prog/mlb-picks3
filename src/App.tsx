@@ -15,7 +15,6 @@ import TennisTodayScreen from "./components/TennisTodayScreen";
 import NhlTodayScreen from "./components/NhlTodayScreen";
 import NbaResearchScreen from "./components/NbaResearchScreen";
 import SoccerTodayScreen from "./components/SoccerTodayScreen";
-import UpcomingGamesStrip from "./components/UpcomingGamesStrip";
 import type {ScheduleSport} from "../server/upcomingFixtures.ts";
 import SportProjectionScreen from "./components/SportProjectionScreen";
 import { deduplicatePredictions, deduplicateCfbPredictions, deduplicateTennisPredictions, deduplicateNhlPredictions } from "./utils";
@@ -355,10 +354,6 @@ export default function App() {
             </button>)}
           </nav>
         </header>
-
-        {/* Official independent schedule stays accessible without crowding the page. */}
-        {!['STATUS','RECORD','SOCCER'].includes(activeTab)&&<UpcomingGamesStrip
-          sport={(activeTab==='TODAY'||activeTab==='GAMES'?'MLB':activeTab) as ScheduleSport}/>}
 
         <main id="active-screen-container" className="relative min-h-0 flex-1 overflow-hidden bg-[#0c1114]">
           <AnimatePresence mode="wait">

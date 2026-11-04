@@ -282,17 +282,8 @@ export default function UnifiedSportGameCards({sport,games,prefix}:{
    <div aria-label={sport+' board mode'} className={`mt-2 grid gap-2 ${sport==='NHL'?'grid-cols-2':'grid-cols-3'}`}>
      {(sport==='NHL'?(['SYSTEM PICKS','MODEL BOARD'] as const):(['SYSTEM PICKS','BETTABLE NOW','MODEL BOARD'] as const)).map(m=>
        <button key={m} onClick={()=>{setMode(m);setExpanded(null);}} aria-pressed={mode===m}
-         className={`min-h-11 rounded-xl border px-2 text-[12px] font-bold whitespace-nowrap transition-colors ${mode===m?'border-[#79FF48]/80 bg-[#79FF48]/15 text-[#79FF48]':'border-white/10 bg-[#1d2629] text-gray-300'}`}>{sport==='NHL'?(m==='SYSTEM PICKS'?'Best chances':'All projections'):m}</button>)}
+         className={`min-h-9 rounded-xl border px-2 text-[12px] font-bold whitespace-nowrap transition-colors ${mode===m?'border-[#79FF48]/80 bg-[#79FF48]/15 text-[#79FF48]':'border-white/10 bg-[#1d2629] text-gray-300'}`}>{sport==='NHL'?(m==='SYSTEM PICKS'?'Best chances':'All projections'):m}</button>)}
    </div>
-   {sport==='NHL'&&mode==='SYSTEM PICKS'&&<details data-testid="nhl-research-shortlist-note" className="rounded-xl border border-white/10 bg-[#172321] px-3 text-[13px] leading-relaxed text-gray-300">
-     <summary className="min-h-10 cursor-pointer py-2 font-semibold text-gray-200">How these picks are chosen</summary>
-     <p className="pb-2">
-      One whole-number forecast and its exact-count probability, when supported.
-      NHL shots need source-backed P(exact count) ≥ 25% for the research shortlist.
-      Separate binary events require ≥ 65%. These are not calibrated hit rates.
-      Select All projections for the complete original slate.
-     </p>
-   </details>}
    {sport==='NHL'&&mode==='SYSTEM PICKS'&&visible.length===0&&games.length>0&&
      <p data-testid="nhl-no-shortlisted-events" className="rounded-xl border border-white/10 bg-[#192326] p-4 text-xs text-slate-300">
        No events meet the research display filters. Select All projections to review every forecast.
@@ -300,7 +291,7 @@ export default function UnifiedSportGameCards({sport,games,prefix}:{
    {mode==='BETTABLE NOW'&&<p role="status" className="rounded-xl border border-[#333] p-3 text-xs text-amber-200">No independently verified live sportsbook executions in this feed. Model targets alone are not executable wagers.</p>}
    {visible.map((game,i)=>{
      const opened=expanded===game.id;
-     const FEATURED=6;
+     const FEATURED=4;
      const featured=game.shown.slice(0,FEATURED),rest=game.shown.slice(FEATURED);
      const summary=sport==='NHL'?game.shown.length+(mode==='SYSTEM PICKS'?' stronger modeled events · '+game.picks.length+' total forecasts':' total forecasts'):game.shown.length+' '+mode+' · '+game.sourceLabel;
      return <section key={game.id} id={prefix+i} data-testid="unified-sport-game"
@@ -327,6 +318,15 @@ export default function UnifiedSportGameCards({sport,games,prefix}:{
        </button>}
      </section>;
    })}
+   {sport==='NHL'&&mode==='SYSTEM PICKS'&&<details data-testid="nhl-research-shortlist-note" className="rounded-xl border border-white/10 bg-[#172321] px-3 text-[13px] leading-relaxed text-gray-300">
+     <summary className="min-h-10 cursor-pointer py-2 font-semibold text-gray-200">How these picks are chosen</summary>
+     <p className="pb-2">
+      One whole-number forecast and its exact-count probability, when supported.
+      NHL shots need source-backed P(exact count) ≥ 25% for the research shortlist.
+      Separate binary events require ≥ 65%. These are not calibrated hit rates.
+      Select All projections for the complete original slate.
+     </p>
+   </details>}
    {share&&games.find(g=>g.id===share)&&<GameShareModal
      sport={sport} game={games.find(g=>g.id===share)!} onClose={()=>setShare(null)}/>}
  </div>;

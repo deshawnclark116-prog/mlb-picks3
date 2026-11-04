@@ -61,6 +61,7 @@ export default function NhlTodayScreen({
 }: NhlTodayScreenProps) {
   // Open on all available game and player models, not shots alone.
   const [marketFilter, setMarketFilter] = useState<MarketFilter>("ALL");
+  const [showFilters, setShowFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [numericSog, setNumericSog] = useState<NhlSogResearch[]>([]);
   const [numericSogError, setNumericSogError] = useState<string|null>(null);
@@ -188,20 +189,19 @@ export default function NhlTodayScreen({
       className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden bg-[#0D0D0D] text-gray-200"
     >
       {/* Compact sport heading. Global shell provides brand and cross-sport navigation. */}
-      <header id="nhl-screen-header" className="shrink-0 border-b border-white/10 bg-[#111719] px-4 py-3">
+      <header id="nhl-screen-header" className="shrink-0 border-b border-white/10 bg-[#111719] px-4 py-2">
         <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <h1 className="text-[19px] font-black tracking-tight text-white">NHL <span className="text-[#79FF48]">Predictions</span></h1>
-            <p className="mt-0.5 text-[11px] text-gray-400">{countDates.join(' · ')} · Match outcomes and player models</p>
-          </div>
+          <h1 className="min-w-0 truncate text-[16px] font-bold text-white">NHL <span className="font-normal text-gray-300">· {countDates.join(' · ')}</span></h1>
+          <button type="button" onClick={()=>setShowFilters(v=>!v)} aria-expanded={showFilters}
+            className={`ml-auto min-h-10 shrink-0 rounded-xl border px-3 text-[13px] font-semibold ${showFilters?'border-[#79FF48]/60 text-[#79FF48]':'border-white/10 text-gray-300'} bg-[#202a2c]`}>Filter</button>
           <button id="nhl-refresh-btn" type="button" onClick={handleManualRefresh}
             disabled={loading||isRefreshing} aria-label="Refresh NHL projections"
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-[#202a2c] text-[#79FF48] disabled:opacity-50">
-            <RefreshCw size={18} className={loading||isRefreshing?'animate-spin':''}/>
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-[#202a2c] text-[#79FF48] disabled:opacity-50">
+            <RefreshCw size={17} className={loading||isRefreshing?'animate-spin':''}/>
           </button>
         </div>
       </header>
-      <div id="nhl-filter-controls-board" className="shrink-0 space-y-3 border-b border-white/10 bg-[#111719] px-4 py-3">
+      {showFilters&&<div id="nhl-filter-controls-board" className="shrink-0 space-y-3 border-b border-white/10 bg-[#111719] px-4 py-3">
         <div className="flex gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="group" aria-label="NHL projection markets">
           {(['ALL','moneyline','points','shots_on_goal','goalie_saves'] as MarketFilter[]).filter(m=>
             m==='ALL'||m==='shots_on_goal'||marketsPresent.has(m)).map(m=>
@@ -217,8 +217,7 @@ export default function NhlTodayScreen({
             onChange={e=>setSearchQuery(e.target.value)} placeholder="Find a player or team"
             className="min-h-11 w-full rounded-xl border border-white/10 bg-[#20282b] pl-10 pr-3 text-[13px] text-white outline-none focus:border-[#79FF48]/60"/>
         </div>
-      </div>
-
+      </div>}
       {/* Scroll area */}
       <div
         id="nhl-predictions-scroll-area"
@@ -262,12 +261,12 @@ export default function NhlTodayScreen({
               <p>Shots on Goal source unavailable for one or more dates: {numericSogError}</p>
               <button type="button" onClick={handleManualRefresh} className="mt-2 rounded border border-amber-600 px-3 py-1 font-semibold">Retry Shots Feed</button>
             </div>}
+          <UnifiedSportGameCards sport="NHL" prefix="nhl-game-card-" games={unifiedGames}/>
           <details data-testid="nhl-about-numbers" className="mb-2 rounded-xl bg-[#172321] px-3 py-1 text-[13px] leading-relaxed text-gray-300">
             <summary className="min-h-10 cursor-pointer py-2 font-semibold text-gray-200">About these numbers <span className="font-normal text-amber-200">· research estimates, not yet calibrated</span></summary>
             {numericSog.some(d=>d.projected_count>0)&&<p role="status" className="pb-2">Showing {numericSog.reduce((n,d)=>n+d.projected_count,0)} original numerical shot forecasts. The chance to reach each forecast comes from the frozen model distribution and is <strong className="text-amber-200">not yet calibrated</strong>.</p>}
             {marketFilter==='ALL'&&<p role="status" className="pb-2 text-gray-400">Showing game winners and anytime points when published, plus independent numerical shots. No separate goals/assists forecasts or eligible saves model is connected.</p>}
           </details>
-          <UnifiedSportGameCards sport="NHL" prefix="nhl-game-card-" games={unifiedGames}/>
           </div>
         )}
       </div>

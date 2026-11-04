@@ -126,11 +126,10 @@ test('upcoming fixture control is present and collapsed by default, independent 
   assert.match(html,/upcoming-games-nhl/);
   assert.match(html,/Checking/);
 });
-test('main frontend routes mount upcoming source for every sport and two MLB surfaces',()=>{
+test('upcoming-games strip is no longer mounted above every sport (removed at the owner\'s request); server source remains',()=>{
   const app=readFileSync('src/App.tsx','utf8');
   const server=readFileSync('server.ts','utf8');
-  assert.match(app,/UpcomingGamesStrip/);
-  assert.match(app,/activeTab==='TODAY'\|\|activeTab==='GAMES'\?'MLB'/);
+  assert.doesNotMatch(app,/<UpcomingGamesStrip/);
   for(const sport of ['NFL','CFB','TENNIS','NHL','NBA','SOCCER'])
     assert(app.includes('"'+sport+'"'));
   assert.match(server,/\/api\/upcoming-fixtures\/:sport/);
