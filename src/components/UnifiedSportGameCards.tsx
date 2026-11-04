@@ -121,6 +121,43 @@ export function PredictionCard({pick,nhlShortlist=false}:{pick:UnifiedPick;nhlSh
  </article>;
 }
 
+/** Compact tile for the game grid: the whole-number projection and its exact-count chance, readable at a glance. */
+export function PredictionTile({pick}:{pick:UnifiedPick}){
+ const numeric=canNumeric(pick);
+ const actualEvent=numeric?pick.exactCountEvent??wholeStatEvent(pick.prediction!):null;
+ const validExact=actualEvent&&actualEvent.semantics==='EXACT_INTEGER_COUNT'&&
+  actualEvent.count===wholeStatProjection(pick.prediction!)&&
+  actualEvent.probability!=null&&Number.isFinite(actualEvent.probability)&&
+  actualEvent.probability>=0&&actualEvent.probability<=1;
+ return <article data-testid="unified-sport-projection" className="min-w-0 rounded-xl border border-white/10 bg-[#12181b] p-3">
+  <p className="truncate text-[11px] text-gray-400">{pick.team?pick.team+' · ':''}{pick.market.replaceAll('_',' ').toUpperCase()}</p>
+  <h3 className="mt-0.5 break-words text-[15px] font-bold capitalize leading-snug text-white">{pick.player}</h3>
+  <div data-testid="unified-predicted-stat" className="mt-2">
+   <strong data-testid="whole-stat-prediction" className="block break-words text-[28px] font-black tabular-nums leading-none text-[#79FF48]">
+     {numeric?value(pick):pick.target||'Event forecast'}
+   </strong>
+   <strong data-testid="whole-stat-exact-probability" className="mt-1.5 block text-[14px] font-bold tabular-nums text-gray-100">
+     {numeric?(validExact?pct(actualEvent!.probability):'—'):pct(pick.modelProbability)}
+   </strong>
+  </div>
+  <p className="mt-1 text-[12px] leading-snug text-gray-300">
+   {numeric?(validExact?'Chance of exactly '+actualEvent!.count:'Exact-count probability unavailable'):'Chance this event happens'}
+  </p>
+  <details className="mt-1 border-t border-white/10 pt-1 text-[12px] text-gray-300">
+   <summary className="flex min-h-9 cursor-pointer items-center text-[12px] font-semibold text-gray-300">Details ▾</summary>
+   <p className="pb-1 text-[10px] tracking-wide text-gray-500">{primaryLabel(pick)}</p>
+   <p className="pb-1">{numeric?(validExact?'Uncalibrated model estimate of the exact count.':'Not inferred from an easier threshold.'):'Probability of the displayed event · no invented numerical player stat.'}</p>
+   {numeric&&<p className="pb-1">Original {pick.predictionKind==='mean'?'mean':'median'}: {fmt(pick.prediction!)} {pick.unit} · rounded with the .6 rule, unchanged in the underlying model.</p>}
+   {pick.source&&<p className="pb-1">Source: {pick.source}</p>}
+   {pick.detail&&<p className="pb-1">{pick.detail}</p>}
+   {pick.projectionChance&&<p className="pb-1">Separate threshold event: P({pick.projectionChance.atLeast}+ shots) {pct(pick.projectionChance.probability)}. NOT the exact-count probability.</p>}
+   {pick.nhlShotMilestone&&<p className="pb-1">Alternative threshold: P({pick.nhlShotMilestone.atLeast}+ shots) {pct(pick.nhlShotMilestone.probability)}. NOT the exact-count probability.</p>}
+   {!numeric&&<p className="pb-1">Original model event: {pick.target}. Its probability refers to this event only.</p>}
+   <p className="pb-2">Research estimates are not verified future hit rates or sportsbook wagers.</p>
+  </details>
+ </article>;
+}
+
 export function Poster({sport,game,picks,cardRef}:{
  sport:SportId;game:UnifiedGame;picks:UnifiedPick[];cardRef?:React.Ref<HTMLDivElement>;
 }){
@@ -263,37 +300,31 @@ export default function UnifiedSportGameCards({sport,games,prefix}:{
    {mode==='BETTABLE NOW'&&<p role="status" className="rounded-xl border border-[#333] p-3 text-xs text-amber-200">No independently verified live sportsbook executions in this feed. Model targets alone are not executable wagers.</p>}
    {visible.map((game,i)=>{
      const opened=expanded===game.id;
-     const preview=game.shown[0]||game.picks[0];
+     const FEATURED=6;
+     const featured=game.shown.slice(0,FEATURED),rest=game.shown.slice(FEATURED);
+     const summary=sport==='NHL'?game.shown.length+(mode==='SYSTEM PICKS'?' stronger modeled events · '+game.picks.length+' total forecasts':' total forecasts'):game.shown.length+' '+mode+' · '+game.sourceLabel;
      return <section key={game.id} id={prefix+i} data-testid="unified-sport-game"
-       className="min-w-0 overflow-hidden rounded-2xl border border-[#292929] bg-[#141414]">
-       <div className="flex items-center gap-1 pr-3">
-         <button type="button" aria-expanded={opened} aria-controls={'unified-'+prefix+i}
-           onClick={()=>setExpanded(old=>old===game.id?null:game.id)}
-           className="flex min-h-20 min-w-0 flex-1 items-center gap-3 p-4 text-left">
-           <div className="min-w-0 flex-1">
-             <div className="flex flex-wrap items-baseline justify-between gap-1">
-               <h2 className="break-words text-base font-bold text-white">{game.label}</h2>
-               <span className="text-[11px] text-gray-500">{stamp(game.when)}</span>
-             </div>
-             <p className="mt-2 text-[12px] font-medium text-gray-400">{sport==='NHL'?game.shown.length+(mode==='SYSTEM PICKS'?' stronger modeled events · '+game.picks.length+' total forecasts':' total forecasts'):game.shown.length+' '+mode+' · '+game.sourceLabel}</p>
-             {mode!=='BETTABLE NOW'&&preview&&<p className="mt-2 break-words text-[11px] text-gray-300">
-     TOP: <span className="text-white">{preview.player}</span> ·
-     {canNumeric(preview)?<> {value(preview)} · P(exactly {wholeStatProjection(preview.prediction!)})
-      {' '}{pct(preview.exactCountEvent?.probability??null)}</>:
-      <> {preview.target} · {pct(preview.modelProbability)}</>}
-   </p>}
-           </div>
-           <ChevronDown size={16} className={`shrink-0 text-gray-500 ${opened?'rotate-180':''}`}/>
-         </button>
+       className="min-w-0 overflow-hidden rounded-2xl border border-[#2a3a2f] bg-gradient-to-br from-[#171316] via-[#101418] to-[#0e1a1d]">
+       <div className="flex items-start justify-between gap-3 p-4 pb-2">
+         <div className="min-w-0">
+           <h2 className="break-words text-[19px] font-black leading-tight text-white">{game.label}</h2>
+           <p className="mt-0.5 text-[12px] text-gray-300">{stamp(game.when)}</p>
+         </div>
          <button type="button" aria-label={'Create share card for '+game.label}
            disabled={mode==='BETTABLE NOW'||game.picks.length===0} onClick={()=>setShare(game.id)}
-           className="flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-[#333] bg-[#1B211E] text-gray-300 disabled:opacity-40"><Image size={18}/></button>
+           className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-xl border border-[#333] bg-[#1B211E] text-gray-300 disabled:opacity-40"><Image size={18}/></button>
        </div>
-       {opened&&<div id={'unified-'+prefix+i} className="space-y-3 border-t border-[#292929] p-3">
-         {mode==='BETTABLE NOW'?<p className="p-2 text-xs text-gray-400">No certified sportsbook lines for this game.</p>
-           :game.shown.length?game.shown.map(p=><PredictionCard key={p.id} pick={p} nhlShortlist={sport==='NHL'&&mode==='SYSTEM PICKS'}/>)
-           :<p className="p-2 text-xs text-gray-400">No model forecasts for the selected filters.</p>}
-       </div>}
+       <p className="px-4 pb-3 text-[12px] text-gray-400">{summary}</p>
+       {mode==='BETTABLE NOW'?<p className="p-4 pt-0 text-xs text-gray-400">No certified sportsbook lines for this game.</p>
+         :featured.length?<div className="grid grid-cols-2 gap-2 px-3 pb-3">{featured.map(p=><PredictionTile key={p.id} pick={p}/>)}</div>
+         :<p className="p-4 pt-0 text-xs text-gray-400">No model forecasts for the selected filters.</p>}
+       {opened&&rest.length>0&&<div id={'unified-'+prefix+i} className="grid grid-cols-2 gap-2 px-3 pb-3">{rest.map(p=><PredictionTile key={p.id} pick={p}/>)}</div>}
+       {mode!=='BETTABLE NOW'&&game.shown.length>0&&<button type="button" aria-expanded={opened} aria-controls={'unified-'+prefix+i}
+         onClick={()=>setExpanded(old=>old===game.id?null:game.id)}
+         className="flex min-h-12 w-full items-center justify-center gap-2 border-t border-white/10 text-[13px] font-semibold text-gray-200">
+         {rest.length?(opened?'Show fewer':'Show all '+game.shown.length+' projections'):'Game details'}
+         <ChevronDown size={16} className={`text-gray-400 ${opened?'rotate-180':''}`}/>
+       </button>}
      </section>;
    })}
    {share&&games.find(g=>g.id===share)&&<GameShareModal
