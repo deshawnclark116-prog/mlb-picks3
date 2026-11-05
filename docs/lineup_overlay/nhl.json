@@ -1,7 +1,7 @@
 {
  "schema": "LATE_LINEUP_PUBLISHED_V1",
  "sport": "nhl",
- "generated_at": "2026-11-04T23:29:03.580Z",
+ "generated_at": "2026-11-05T00:17:18.766Z",
  "note": "Injury/scratch/starter statuses only. Never a forecast; applied by server/lineupOverlay.ts.",
  "games": {
   "2026020247": {
@@ -11,6 +11,8 @@
     "espn_injuries"
    ],
    "players": {
+    "BUF|conortimmins": "OUT",
+    "BUF|jirikulich": "OUT",
     "BUF|konstahelenius": "OUT",
     "BUF|justindanforth": "OUT",
     "BUF|alexlyon": "OUT",

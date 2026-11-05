@@ -1,25 +1,37 @@
 {
  "schema": "LATE_LINEUP_PUBLISHED_V1",
  "sport": "nba",
- "generated_at": "2026-11-04T23:29:03.580Z",
+ "generated_at": "2026-11-05T00:17:18.766Z",
  "note": "Injury/scratch/starter statuses only. Never a forecast; applied by server/lineupOverlay.ts.",
  "games": {
   "401909922": {
-   "lineupPosted": false,
+   "lineupPosted": true,
    "sources": [
-    "espn_injuries"
+    "espn_injuries",
+    "espn_starters"
    ],
    "players": {
     "8|isaiahjoe": "OUT",
     "8|jalenduren": "OUT",
     "20|dominickbarlow": "OUT",
-    "20|arielhukporti": "OUT"
+    "20|arielhukporti": "OUT",
+    "20|lebronjames": "IN",
+    "20|joelembiid": "IN",
+    "20|jaylenbrown": "IN",
+    "20|tyresemaxey": "IN",
+    "20|vjedgecombe": "IN",
+    "8|duncanrobinson": "IN",
+    "8|johncollins": "IN",
+    "8|paulreed": "IN",
+    "8|cadecunningham": "IN",
+    "8|ausarthompson": "IN"
    }
   },
   "401909923": {
-   "lineupPosted": false,
+   "lineupPosted": true,
    "sources": [
-    "espn_injuries"
+    "espn_injuries",
+    "espn_starters"
    ],
    "players": {
     "27|reecebeekman": "OUT",
@@ -29,7 +41,17 @@
     "1|jalenjohnson": "OUT",
     "1|jocklandale": "OUT",
     "1|mouhamedgueye": "OUT",
-    "1|henriveesaar": "OUT"
+    "1|henriveesaar": "OUT",
+    "1|onyekaokongwu": "IN",
+    "1|nickeilalexanderwalker": "IN",
+    "1|luguentzdort": "IN",
+    "1|dysondaniels": "IN",
+    "1|kingstonflemings": "IN",
+    "27|anthonydavis": "IN",
+    "27|ajdybantsa": "IN",
+    "27|kyshawngeorge": "IN",
+    "27|alexsarr": "IN",
+    "27|traeyoung": "IN"
    }
   },
   "401909924": {
@@ -38,8 +60,8 @@
     "espn_injuries"
    ],
    "players": {
-    "2|jaysontatum": "OUT",
     "2|devincarter": "OUT",
+    "2|jaysontatum": "OUT",
     "15|kamjones": "QUESTIONABLE"
    }
   },
@@ -51,8 +73,7 @@
    "players": {
     "17|egordemin": "OUT",
     "17|tylerbilodeau": "OUT",
-    "30|grantwilliams": "OUT",
-    "30|cobywhite": "QUESTIONABLE"
+    "30|grantwilliams": "OUT"
    }
   },
   "401909926": {
