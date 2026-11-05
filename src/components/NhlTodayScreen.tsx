@@ -78,31 +78,32 @@ export default function NhlTodayScreen({
       // missing day's source must not hide other genuine, frozen forecasts.
       const dates=countDatesKey.split('|');
       const results=await Promise.allSettled(dates.map(async date=>{
-        // Works in both static AI Studio preview and the Node app.
-        // Require the *exact* requested date and original source SHA.
+        // Freshest source first: the Node route reads the newest frozen forecasts
+        // and applies the late lineup overlay (out players removed, confirmed
+        // starters). The static compact file is rebuilt only every few hours, so it
+        // is the fallback for the static AI Studio preview and for an offline API.
+        // Either way the exact requested date and original source SHA are required.
         try{
+          const response=await fetch('/api/nhl-count-research?date='+encodeURIComponent(date),{
+            cache:'no-store',signal:ctl.signal
+          });
+          if(!response.ok){
+            const info=await response.json().catch(()=>null);
+            throw Error(date+': NHL shots '+response.status+
+              (info?.details?': '+String(info.details):''));
+          }
+          const doc=await response.json();
+          if(doc?.schema!==NHL_COUNT_SCHEMA||doc?.game_date!==date||
+             doc?.research_only!==true||doc?.not_an_official_betting_board!==true)
+            throw Error(date+': Unverified NHL numerical shot-count source');
+          return doc as NhlSogResearch;
+        }catch(apiUnavailable){
+          if(ctl.signal.aborted)throw apiUnavailable;
           const compact=await fetch('/nhl-daily-shot-counts.json?t='+Date.now(),{
             cache:'no-store',signal:ctl.signal});
-          if(!compact.ok)throw Error('NHL compact source HTTP '+compact.status);
+          if(!compact.ok)throw apiUnavailable;
           return dailyShotResearchForDate(await compact.json(),date);
-        }catch(compactUnavailable){
-          if(ctl.signal.aborted)throw compactUnavailable;
         }
-        // Keep existing independently date-partitioned Express route as
-        // fallback, including its authenticated original archive fallback.
-        const response=await fetch('/api/nhl-count-research?date='+encodeURIComponent(date),{
-          cache:'no-store',signal:ctl.signal
-        });
-        if(!response.ok){
-          const info=await response.json().catch(()=>null);
-          throw Error(date+': NHL shots '+response.status+
-            (info?.details?': '+String(info.details):''));
-        }
-        const doc=await response.json();
-        if(doc?.schema!==NHL_COUNT_SCHEMA||doc?.game_date!==date||
-           doc?.research_only!==true||doc?.not_an_official_betting_board!==true)
-          throw Error(date+': Unverified NHL numerical shot-count source');
-        return doc as NhlSogResearch;
       }));
       if(ctl.signal.aborted)return;
       setNumericSog(results.filter((r):r is PromiseFulfilledResult<NhlSogResearch>=>
