@@ -270,7 +270,8 @@ export async function loadNhlStatus(date:string,games:{game_id:string;team:strin
  * The app host may be unable to reach ESPN / the NHL API, but it can read GitHub. A scheduled job writes
  * docs/lineup_overlay/<sport>.json; the app reads it first and also tries its own live fetch. OUT wins. */
 export const PUBLISHED_SCHEMA='LATE_LINEUP_PUBLISHED_V1';
-export const PUBLISHED_URL=(sport:'nba'|'nhl')=>'https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks3/main/docs/lineup_overlay/'+sport+'.json';
+// Public repo on purpose: this frontend repo is private, so its raw files return 404 to the app host.
+export const PUBLISHED_URL=(sport:'nba'|'nhl')=>'https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks2/main/docs/lineup_overlay/'+sport+'.json';
 export const PUBLISHED_MAX_AGE_MS=3*3600_000;
 export function serializeStatus(m:Map<string,GameStatus>){
  const games:Record<string,{lineupPosted:boolean;sources:string[];players:Record<string,LineupStatus>}>={};
