@@ -11,6 +11,7 @@ import datetime as dt
 import hashlib
 import json
 from pathlib import Path
+from zoneinfo import ZoneInfo
 from nba.nba_v1_team_model import UTC, datetime_utc, extract_events, get_scoreboard
 
 SCHEMA="NBA_2026_27_ROLLING_FUTURE_ESPN_FIXTURES_V1"
@@ -21,11 +22,14 @@ def capture(now:dt.datetime, days:int=3, fetch=get_scoreboard):
     if now.tzinfo is None:raise ValueError("NBA_SOURCE_NAIVE_CAPTURE_TIME")
     now=now.astimezone(UTC)
     if not 1<=days<=7:raise ValueError("NBA_SOURCE_UNSAFE_DATE_RANGE")
-    if not SEASON_START<=now.date()<=SEASON_END:
+    # Game days are US Eastern days (ESPN's scoreboard dates). Using the UTC date dropped each evening's remaining games
+    # after 8 PM Eastern. The capture time and every receipt stay real UTC; only which scoreboard days are fetched changes.
+    today=now.astimezone(ZoneInfo("America/New_York")).date()
+    if not SEASON_START<=today<=SEASON_END:
         raise ValueError("NBA_SOURCE_OUTSIDE_2026_27_REGULAR_SEASON")
     events={};receipts=[]
     for n in range(days):
-        d=now.date()+dt.timedelta(days=n)
+        d=today+dt.timedelta(days=n)
         if d>SEASON_END:break
         date,blob=fetch(d)
         if date!=d.isoformat():raise ValueError("NBA_SOURCE_WRONG_SCOREBOARD_DATE")
