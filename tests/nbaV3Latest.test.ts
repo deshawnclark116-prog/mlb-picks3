@@ -1,5 +1,8 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
+import {mkdtempSync,writeFileSync,rmSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import path from 'node:path';
 import {mergeLatestRun,overlayLatestRun} from '../server/nbaV3Latest.ts';
 
 const VERSION='nba-v3-phase1-opportunity-role-mc-shotratefix-20261026';
@@ -48,8 +51,15 @@ test('games the app does not already show are never added, and a missing file ch
  assert.equal(mergeLatestRun(base(),header([other],'2026-11-04T21:30:05Z'),NOW).games.length,1);
  assert.equal(mergeLatestRun(base(),null,NOW).latest_run.reason,'NO_LATEST_FILE');
 });
-test('fail-open when the network is dead',async()=>{
- const dead=(async()=>{throw new Error('down');}) as unknown as typeof fetch;
- const out=await overlayLatestRun(base(),dead,Date.now()+1_000_000);
- assert.equal(out.games[0].rows[0].mean,5);
+test('fail-open: a missing or unreadable latest file leaves the original untouched',()=>{
+ const missing=overlayLatestRun(base(),'/nonexistent/latest.json',Date.now());
+ assert.equal(missing.games[0].rows[0].mean,5);assert.equal(missing.latest_run.reason,'NO_LATEST_FILE');
+ const dir=mkdtempSync(path.join(tmpdir(),'v3latest-'));
+ try{
+  const f=path.join(dir,'latest.json');writeFileSync(f,'{not json');
+  assert.equal(overlayLatestRun(base(),f,Date.now()).latest_run.reason,'LATEST_FILE_UNREADABLE');
+  writeFileSync(f,JSON.stringify(header([game('2026-11-04T21:30:00Z',9)],'2026-11-04T21:30:05Z')));
+  const ok=overlayLatestRun(base(),f,NOW);
+  assert.equal(ok.latest_run.applied,1);assert.equal(ok.games[0].rows[0].mean,9);
+ }finally{rmSync(dir,{recursive:true,force:true});}
 });

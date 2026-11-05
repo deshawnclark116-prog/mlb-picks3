@@ -2,9 +2,12 @@
  *  four-day-old forecast when it is newer, valid and trustworthy. The original first-seen forecast is never deleted: it stays in
  *  docs/nba_v3_phase1_corrected_shadow (the graded record) and is reported as `first_seen_forecast_at_utc` on the merged game.
  *  Fail-open: anything missing, stale, malformed or failing the same validation as the original leaves the original forecast. */
+import {existsSync,readFileSync} from 'node:fs';
+import path from 'node:path';
 import {validateShadowHeader,validateShadowGame} from './nbaV3Shadow.ts';
 
-export const LATEST_URL='https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks3/main/docs/nba_v3_latest/latest.json';
+// Read from the app's own checkout (like the original V3 files): this repo is private, so a web fetch of a raw file would 404.
+export const LATEST_FILE=path.resolve(process.cwd(),'docs','nba_v3_latest','latest.json');
 export const LATEST_MAX_AGE_MS=10*3600_000;
 const MIN_PREGAME_MS=15*60_000;
 
@@ -31,16 +34,9 @@ export function mergeLatestRun(result:any,doc:any,now=Date.now()){
  return {...result,games,latest_run:{applied:replacements.size,generated_at_utc:doc.generated_at_utc,reason:replacements.size?'OK':'NO_NEWER_VALID_GAMES'}};
 }
 
-let cache:{at:number;promise:Promise<any>}|null=null;
-export async function overlayLatestRun(result:any,f:typeof fetch=fetch,now=Date.now()){
+export function overlayLatestRun(result:any,file=LATEST_FILE,now=Date.now()){
  try{
-  if(!cache||now-cache.at>120_000){
-   const promise=(async()=>{
-    const r=await f(LATEST_URL+'?t='+now,{headers:{Accept:'application/json'},signal:AbortSignal.timeout(15000)});
-    return r.ok?await r.json():null;
-   })();
-   cache={at:now,promise};promise.catch(()=>{cache=null;});
-  }
-  return mergeLatestRun(result,await cache.promise,now);
- }catch{return {...result,latest_run:{applied:0,reason:'LATEST_FETCH_FAILED'}};}
+  if(!existsSync(file))return {...result,latest_run:{applied:0,reason:'NO_LATEST_FILE'}};
+  return mergeLatestRun(result,JSON.parse(readFileSync(file,'utf8')),now);
+ }catch{return {...result,latest_run:{applied:0,reason:'LATEST_FILE_UNREADABLE'}};}
 }

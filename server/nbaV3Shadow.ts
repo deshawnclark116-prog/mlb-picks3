@@ -115,7 +115,7 @@ export function nbaV3ShadowHandler(){
    const result=loadNbaV3Shadow();
    res.setHeader('Cache-Control','no-store, max-age=0');
    // Late lineup overlay: fail-open, keeps the early forecast beside the adjusted one.
-   res.json(await overlayNba(await overlayLatestRun(result)));
+   res.json(await overlayNba(overlayLatestRun(result)));
   }catch(err){
    res.setHeader('Cache-Control','no-store, max-age=0');
    res.status(503).json({error:'NBA_V3_FIRSTSEEN_DISTRIBUTION_SOURCE_NOT_VERIFIED',
