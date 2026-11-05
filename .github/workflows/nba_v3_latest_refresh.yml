@@ -13,6 +13,10 @@ on:
         description: "Re-simulate even if injuries are unchanged"
         required: false
         default: "false"
+      window_hours:
+        description: "Look-ahead window in hours (games tipping within this many hours are refreshed)"
+        required: false
+        default: "9"
 permissions:
   contents: write
 concurrency:
@@ -47,8 +51,9 @@ jobs:
           T=os.environ["RUNNER_TEMP"]
           fx=json.load(open(T+"/fixtures.json")); inj=json.load(open(T+"/injuries.json"))
           now=dt.datetime.now(dt.timezone.utc)
+          WIN=float(os.environ.get("WINDOW") or 9)
           def tip(g): return dt.datetime.fromisoformat(g["tipoff_utc"].replace("Z","+00:00"))
-          soon=[g["game_id"] for g in fx.get("games",[]) if 0 < (tip(g)-now).total_seconds() <= 9*3600 and (tip(g)-now).total_seconds() >= 20*60]
+          soon=[g["game_id"] for g in fx.get("games",[]) if 0 < (tip(g)-now).total_seconds() <= WIN*3600 and (tip(g)-now).total_seconds() >= 20*60]
           outs=sorted((str(e["team_id"]),str(e["player_id"])) for e in inj.get("injuries",[]) if e.get("source_reported_status")=="OUT")
           h=hashlib.sha256(json.dumps([outs,sorted(soon)]).encode()).hexdigest()[:16]
           state={}
@@ -60,10 +65,11 @@ jobs:
           force=os.environ.get("FORCE","false")=="true"
           run = bool(soon) and (force or state.get("hash")!=h or age>3*3600)
           open(os.environ["GITHUB_OUTPUT"],"a").write(f"run={'true' if run else 'false'}\nhash={h}\ngames={len(soon)}\n")
-          print("games tipping in 20min-9h:",len(soon),"| hash",h,"| previous",state.get("hash"),"| age s",int(age) if age<9e9 else None,"| run:",run)
+          print("games tipping in 20min-%gh:"%WIN,len(soon),"| hash",h,"| previous",state.get("hash"),"| age s",int(age) if age<9e9 else None,"| run:",run)
           PY
         env:
           FORCE: ${{ github.event.inputs.force }}
+          WINDOW: ${{ github.event.inputs.window_hours }}
       - name: Re-simulate (same model, same checks, empty first-seen archive)
         if: steps.src.outputs.run == 'true'
         run: |
