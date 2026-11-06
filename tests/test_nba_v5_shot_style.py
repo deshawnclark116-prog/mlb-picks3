@@ -3,8 +3,24 @@ import unittest
 import numpy as np
 
 from nba.nba_v5_shot_style import ShotStyleState, family, MAX_STYLE_MULT
-from nba.nba_v5_sim import League, simulate_game
-from tests.test_nba_v5 import team, league
+from nba.nba_v5_sim import League, TeamInput, SEG, build_profile, simulate_game
+
+
+def league():
+    L=League()
+    L.per_min={"fga":.4,"fgm":.18,"tpa":.14,"tpm":.05,"fta":.13,
+               "ftm":.1,"ast":.1,"oreb":.03,"dreb":.11,"stl":.03,
+               "blk":.02,"tov":.07,"pf":.08,"pts":.45}
+    return L
+
+
+def team(n=10):
+    h={"min":30,"fga":12,"fgm":5,"tpa":4,"tpm":2,"fta":4,"ftm":3,
+       "ast":3,"oreb":1,"dreb":4,"stl":1,"blk":.5,"tov":2,"pf":2,"pts":15,"start":True}
+    prof=[build_profile([h]*12,league()) for _ in range(n)]
+    pres=np.tile([.8 if i<5 else .25 for i in range(n)],(SEG,1)).T
+    return TeamInput(ids=[f"p{i}" for i in range(n)],prof=prof,presence=pres,
+          p_play=np.ones(n),starter=np.array([i<5 for i in range(n)]),defence={})
 
 
 def pbp(n=200):
