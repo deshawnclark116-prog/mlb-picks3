@@ -308,6 +308,7 @@ class TeamInput:
     pair_baselines: dict | None = None         # (stat -> (N,)) on-court composition centering
     assist_receiver_log_effect: np.ndarray | None = None  # (N,N) directed passer->scorer observed assist preference; shadow
     matchup_presence: np.ndarray | None = None  # (N,24) prior opponent shot-mix conditioned rotation, research only
+    rebound_zone_log_effect: dict | None = None  # {oreb,dreb} each (N,5) miss-origin-conditioned rebound attribution; shadow
     style_probs: np.ndarray | None = None     # (N,5zones,5styles) historical shot execution frequencies
     style_mult: np.ndarray | None = None      # (N,5zones,5styles) mean-neutral shot-accuracy multipliers
     low_history_evidence: dict | None = None  # player_id -> past-only, unpromoted cold-start coverage
@@ -325,7 +326,7 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
          "luck": True, "assists": True, "putbacks": True, "defence": True, "schedule": True, "officials": True,
          "late_game": True, "returns": True, "minute_limits": True, "zones": True,
          "team_rotation": True, "timeouts": True, "defenders": True, "timing": True, "joint_availability": True,
-         "lineup_pairs": False, "shot_style": False, "game_flow": False, "assist_network": False, "matchup_rotation": False} # unpromoted research switches
+         "lineup_pairs": False, "shot_style": False, "game_flow": False, "assist_network": False, "matchup_rotation": False, "rebound_zones": False} # unpromoted research switches
     ctx = ctx or {}
     if features:
         F.update(features)
@@ -554,10 +555,22 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
         orb = reb_chance & (rng.random(S) < p_or)
         drb = reb_chance & ~orb
         ow = pair_cache[o].get("oreb", rate[o]["oreb"][Oi]) + 1e-6
+        if F["rebound_zones"] and use_z and to_.rebound_zone_log_effect is not None:
+            # A missed field-goal's *observed* court zone changes relative
+            # offensive rebounder weights; FT misses are zone-less.
+            rz=to_.rebound_zone_log_effect.get("oreb")
+            if rz is not None:
+                delta=np.exp(np.clip(rz[Oi,zone[:,None]],-0.23,0.23))
+                ow=ow*np.where(miss[:,None],delta,1.0)
         oi = Oi[ar, pick(ow)]
         o_cred = orb & (rng.random(S) < L.credit_or)
         st[o]["reb"][ar[o_cred], oi[o_cred]] += 1
         dw = pair_cache[d].get("dreb", rate[d]["dreb"][Di]) + 1e-6
+        if F["rebound_zones"] and use_z and tdef.rebound_zone_log_effect is not None:
+            rz=tdef.rebound_zone_log_effect.get("dreb")
+            if rz is not None:
+                delta=np.exp(np.clip(rz[Di,zone[:,None]],-0.23,0.23))
+                dw=dw*np.where(miss[:,None],delta,1.0)
         dj = Di[ar, pick(dw)]
         d_cred = drb & (rng.random(S) < L.credit_dr)
         st[d]["reb"][ar[d_cred], dj[d_cred]] += 1

@@ -11,7 +11,8 @@
     "game_flow": false,
     "low_history_rotation": false,
     "assist_network": false,
-    "matchup_rotation": false
+    "matchup_rotation": false,
+    "rebound_zones": false
   },
   "evidence": {
     "joint_availability": "predicts how many regulars are out better than independent draws, 5.2 standard errors on 1,720 team-games",
@@ -24,6 +25,7 @@
     "game_flow": "OFF — 1,351 real PBP games produced learned 2-minute possession cadence but 68-game same-seed paired V5 model test showed no reliable Brier gain; steals/blocks trends worse. No promotion or rescue tuning.",
     "low_history_rotation": "OFF — 27,243 historical starter/bench court patterns, 54 newly included low-history player-games and 68-game paired experiment improved minutes MAE by 0.1307 and points/assists Brier by 0.002062/0.002534, positive cluster CIs. Historical actual roster was known; requires genuinely frozen pretip forward comparison before promotion.",
     "assist_network": "OFF: verified historical named passer-to-scorer made-basket assist events; model is a research challenger only, NOT passing/potential-assist tracking. Requires fixed-threshold paired game-cluster validation.",
-    "matchup_rotation": "OFF: free prior-opponent 3PA style and verified past coach rotation profiles built, 1,171 game/25,141 player-rotation coverage. Paired 68-game test failed promotion gate (minutes MAE -0.00628, points Brier +0.000074, CIs cross zero); do not rescue tune."
+    "matchup_rotation": "OFF: free prior-opponent 3PA style and verified past coach rotation profiles built, 1,171 game/25,141 player-rotation coverage. Paired 68-game test failed promotion gate (minutes MAE -0.00628, points Brier +0.000074, CIs cross zero); do not rescue tune.",
+    "rebound_zones": "OFF: 96,491 strictly matched real named rebound outcomes by shot-origin zone from 1,283 verified games, 30 teams. 68-game paired rebounds Brier +0.000099, 95% CI [-0.000266,+0.000490], not reliable; no promotion/tuning on used holdout."
   }
 }

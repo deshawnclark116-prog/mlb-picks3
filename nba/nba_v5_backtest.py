@@ -27,6 +27,7 @@ from nba import nba_v5_learn as learnm
 from nba.nba_v5_lineup_pairs import LineupPairState
 from nba.nba_v5_assist_network import AssistNetworkState
 from nba.nba_v5_matchup_rotation import OpponentRotationState, opponent_three_share
+from nba.nba_v5_rebound_zones import ReboundZoneState
 from nba.nba_v5_shot_style import ShotStyleState
 from nba.nba_v5_game_flow import GameFlowState
 from nba.nba_v5_cold_start import LowHistoryRotations
@@ -79,6 +80,7 @@ class Replay:
         self.lineup_pairs = LineupPairState()                # strict valid play-by-play, earlier dates only
         self.assist_network = AssistNetworkState()           # named passer/scorer only from strict valid court games
         self.matchup_rotation = OpponentRotationState()       # coaching vs opponent prior shot mix; shadow only
+        self.rebound_zones = ReboundZoneState()               # confirmed miss-to-named-rebound events by zone
         self.shot_style = ShotStyleState()                    # observed ESPN shot descriptions, earlier dates only
         self.flow = GameFlowState()                           # previous ESPN PBP possession proxy cadence only
         self.cold_start = LowHistoryRotations()               # past-only starter/bench shape priors
@@ -130,6 +132,7 @@ class Replay:
             valid_pbp=self.lineup_pairs.add_game(pb)
             if valid_pbp:
                 self.assist_network.add_valid_game(pb)
+                self.rebound_zones.add_valid_game(pb)
             self.shot_style.add_game(pb)
             self.flow.add_game(pb)
             shooter, against = ctxm.game_zone_tallies(pb)
@@ -299,6 +302,7 @@ def team_input(rp: Replay, g, side, d, L: League, lg_tot, avail_ids, cold_start=
     rho_t = rho_for_relative_stint((0.6 * s_st + 0.4 * b_st) / (0.6 * lg_s + 0.4 * lg_b))
     pair_eff, pair_base, pair_audit = rp.lineup_pairs.for_roster(tid, ids)
     assist_effect,assist_audit=rp.assist_network.for_roster(tid,ids,rp.lineup_pairs)
+    reb_effect,reb_audit=rp.rebound_zones.for_roster(tid,ids)
     matchup_share=opponent_three_share(rp.team_games[other],d)
     matchup_presence,matchup_audit=rp.matchup_rotation.for_roster(
         tid,ids,matchup_share,np.array(pres))
@@ -311,6 +315,7 @@ def team_input(rp: Replay, g, side, d, L: League, lg_tot, avail_ids, cold_start=
                      team_id=tid, dfreq=dfreq, dpct=dpct, rho=rho_t,
                      pair_effects=pair_eff, pair_baselines=pair_base,
                      assist_receiver_log_effect=assist_effect,
+                     rebound_zone_log_effect=reb_effect,
                      matchup_presence=matchup_presence,
                      style_probs=style_probs, style_mult=style_mult,
                      low_history_evidence=low_history_audit)
@@ -354,8 +359,12 @@ def run(args):
         if args.config or args.features=="ablate":
             raise ValueError("--flow-trial incompatible with --config and ablation")
         configs["game_flow"]={"game_flow":True}
-    if sum(bool(getattr(args,n,False)) for n in ("lineup_trial","role_trial","style_trial","flow_trial","cold_start_trial","assist_network_trial","matchup_rotation_trial"))>1:
+    if sum(bool(getattr(args,n,False)) for n in ("lineup_trial","role_trial","style_trial","flow_trial","cold_start_trial","assist_network_trial","matchup_rotation_trial","rebound_zone_trial"))>1:
         raise ValueError("One experimental arm at a time")
+    if getattr(args, "rebound_zone_trial", False):
+        if args.config or args.features=="ablate":
+            raise ValueError("--rebound-zone-trial incompatible with --config and ablation")
+        configs["rebound_zones"]={"rebound_zones":True}
     if getattr(args, "matchup_rotation_trial", False):
         if args.config or args.features=="ablate":
             raise ValueError("--matchup-rotation-trial incompatible with --config and ablation")
@@ -462,6 +471,8 @@ def run(args):
         print("GAME_FLOW_PBP_AUDIT",json.dumps(rp.flow.audit()),flush=True)
     if getattr(args, "style_trial", False):
         print("SHOT_STYLE_PBP_COVERAGE",json.dumps(rp.shot_style.audit()),flush=True)
+    if getattr(args, "rebound_zone_trial", False):
+        print("SHOT_ZONE_REBOUND_PBP_AUDIT",json.dumps(rp.rebound_zones.audit()),flush=True)
     if getattr(args, "matchup_rotation_trial", False):
         print("OPPONENT_ROTATION_PBP_AUDIT",json.dumps(rp.matchup_rotation.audit()),flush=True)
     if getattr(args, "assist_network_trial", False):
@@ -609,14 +620,22 @@ def main():
     ap.add_argument("--cold-start-trial", action="store_true", help="unpromoted 1-4 prior game player/rotation prior experiment")
     ap.add_argument("--assist-network-trial", action="store_true", help="paired unpromoted passer-to-scorer assist experiment")
     ap.add_argument("--matchup-rotation-trial", action="store_true", help="paired unpromoted opponent historical 3PA-style-conditioned rotation test")
+    ap.add_argument("--rebound-zone-trial", action="store_true", help="paired unpromoted miss-location to rebounder selection from validated play-by-play")
     a = ap.parse_args()
     results, rows, v4_preds, chosen = run(a)
     if a.dump:
-        Path(a.dump).write_text(json.dumps(results if a.role_trial or a.lineup_trial or a.style_trial or a.flow_trial or a.cold_start_trial or a.assist_network_trial or a.matchup_rotation_trial else next(iter(results.values()))))
+        Path(a.dump).write_text(json.dumps(results if a.role_trial or a.lineup_trial or a.style_trial or a.flow_trial or a.cold_start_trial or a.assist_network_trial or a.matchup_rotation_trial or a.rebound_zone_trial else next(iter(results.values()))))
     report = {c: score(r, rows, v4_preds) for c, r in results.items() if r}
     if a.cold_start_trial:
         from nba.nba_v5_cold_start import evaluate_cold_start
         report["paired_low_history_trial"]=evaluate_cold_start(results["full"],results["cold_start_candidate"],v4_preds)
+    if a.rebound_zone_trial:
+        from nba.nba_v5_role_trial_score import evaluate
+        paired=evaluate(results["full"],results["rebound_zones"],v4_preds)
+        paired["experiment"]="NBA_V5_CONFIRMED_MISS_ZONE_REBOUNDER_V1"
+        paired["candidate"]="verified miss-location conditional offensive/defensive named rebounder selection among five on court"
+        paired["observational_limitation"]="observes matched named rebounds, not contested rebound chances or player spatial positioning; retrospective known roster"
+        report["paired_rebound_zone_trial"]=paired
     if a.matchup_rotation_trial:
         from nba.nba_v5_role_trial_score import evaluate
         paired=evaluate(results["full"],results["matchup_rotation"],v4_preds)
