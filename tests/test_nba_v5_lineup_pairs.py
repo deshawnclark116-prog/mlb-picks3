@@ -44,6 +44,16 @@ class PbpValidationTests(unittest.TestCase):
         self.assertGreater(r["pair"][("1","p0","p1")][1] / 28,
                            r["pair"][("1","p0","p5")][1] / 20)
 
+    def test_misassigned_event_team_is_repaired_only_by_verified_on_court_player(self):
+        g = pbp_fixture()
+        g["events"][0][3] = "2"  # ESPN mislabeled the home shooter as away
+        got = replay_game(g)
+        self.assertTrue(got["valid"], got["reason"])
+        self.assertEqual(got["team_label_corrections"], 1)
+        state = LineupPairState()
+        self.assertTrue(state.add_game(g))
+        self.assertEqual(state.corrected_events, 1)
+
     def test_invalid_substitution_excludes_all_opportunity_evidence(self):
         g = pbp_fixture()
         g["events"].insert(1,[1,690,"SUB","1","p9","NOT_ON","0"])
