@@ -62,6 +62,24 @@ class SimTests(unittest.TestCase):
         a, b = self.run_sim(team(), team()), self.run_sim(team(), team())
         self.assertTrue(np.array_equal(a["home"]["pts"], b["home"]["pts"]))
 
+    def test_lineup_pair_option_is_off_by_default_and_keeps_connected_game_totals(self):
+        h, a = team(), team()
+        n = len(h.ids)
+        mat = np.zeros((n,n))
+        mat[0,1:] = 0.13
+        mat[1,0] = -0.13
+        h.pair_effects = {k: mat if k == "fga" else np.zeros((n,n))
+                          for k in ("fga","ast","oreb","dreb")}
+        h.pair_baselines = {k: np.zeros(n) for k in h.pair_effects}
+        baseline = self.run_sim(h,a)
+        off = self.run_sim(h,a,features={"lineup_pairs":False})
+        on = self.run_sim(h,a,features={"lineup_pairs":True})
+        np.testing.assert_array_equal(baseline["home"]["fga"],off["home"]["fga"])
+        self.assertFalse(np.array_equal(on["home"]["fga"],baseline["home"]["fga"]))
+        for side, i in (("home",0),("away",1)):
+            np.testing.assert_allclose(on[side]["pts"].sum(axis=1),on["score"][:,i])
+            self.assertTrue(np.all(on[side]["tpm"] <= on[side]["fgm"]))
+
     def test_a_player_who_is_out_never_plays_and_teammates_take_the_minutes(self):
         base = self.run_sim(team(), team())
         pp = [1.0] * 10
