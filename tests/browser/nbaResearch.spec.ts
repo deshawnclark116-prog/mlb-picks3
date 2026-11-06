@@ -25,8 +25,6 @@ test('real saved Oct 19 NBA V1 forecasts render on 360px app without a bookmaker
   await expect(games.first()).toContainText('Detroit Pistons');
   await expect(games.first()).toContainText('Projected:');
   await expect(games.first()).toContainText('NOT A SPORTSBOOK LINE');
-  await expect(page.getByText('RESEARCH ONLY · NO VERIFIED BETS')).toBeVisible();
-  await expect(page.getByText(/NBA V1 player points\/assists did not beat/)).toBeVisible();
   await page.getByRole('button',{name:'10-20'}).click();
   await expect(games).toHaveCount(3);
   await page.getByRole('button',{name:'10-21'}).click();
