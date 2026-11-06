@@ -55,3 +55,16 @@ Forward results. Every original forecast is frozen before tip-off (`docs/nba_v5_
 | Joint availability (teammates sit together) | better prediction of how many regulars are out: +0.031 log-likelihood per team-game, 5.2 standard errors, 1,720 team-games |
 
 Only the last is on in the published forecast. The other four are in the code and switchable (`docs/nba_v5_latest/features.json`).
+
+## Third round: the four play-by-play pieces on 300 held-out games (6,245 player-games)
+Each piece switched off in turn, paired bootstrap by game. Positive means removing it made things worse.
+
+| Piece | Clear gain | Clear harm | Now |
+|---|---|---|---|
+| Team-by-team rotation | assist Brier +0.0013, made-three Brier +0.0014 | none | **on** |
+| Timeouts | assist Brier +0.0011, made-three Brier +0.0015 | none | **on** |
+| Individual defenders' on-court effect | assist Brier +0.0012 | none | **on** |
+| Shot timing (transition / late clock) | none | none | off |
+
+The gains are small and measured on four stats with several pieces, so some of this could be luck; every piece stays switchable and the nightly grading of
+live forecasts is the real check.
