@@ -26,6 +26,6 @@
     "low_history_rotation": "OFF — 27,243 historical starter/bench court patterns, 54 newly included low-history player-games and 68-game paired experiment improved minutes MAE by 0.1307 and points/assists Brier by 0.002062/0.002534, positive cluster CIs. Historical actual roster was known; requires genuinely frozen pretip forward comparison before promotion.",
     "assist_network": "OFF: verified historical named passer-to-scorer made-basket assist events; model is a research challenger only, NOT passing/potential-assist tracking. Requires fixed-threshold paired game-cluster validation.",
     "matchup_rotation": "OFF: free prior-opponent 3PA style and verified past coach rotation profiles built, 1,171 game/25,141 player-rotation coverage. Paired 68-game test failed promotion gate (minutes MAE -0.00628, points Brier +0.000074, CIs cross zero); do not rescue tune.",
-    "rebound_zones": "OFF: as-of matched actual missed-shot coordinates to named offensive/defensive rebounders using only court-verified ESPN historical PBP. Test against original champion's own events; this is not player tracking, box outs or true rebound-chance modeling."
+    "rebound_zones": "OFF: 96,491 strictly matched real named rebound outcomes by shot-origin zone from 1,283 verified games, 30 teams. 68-game paired rebounds Brier +0.000099, 95% CI [-0.000266,+0.000490], not reliable; no promotion/tuning on used holdout."
   }
 }
