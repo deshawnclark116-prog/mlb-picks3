@@ -72,8 +72,16 @@ class GameFlowState:
         # 40 game-equivalents of uniform prior. This shrinks away noise
         # in low-volume 2-minute segments and avoids overfitting timing.
         mu=(self.sum_share+SHRINK_GAME_EQUIV/SEGMENTS)/(self.games+SHRINK_GAME_EQUIV)
-        raw=np.clip(mu*SEGMENTS,1-LIMIT,1+LIMIT)
-        return raw/np.mean(raw)
+        raw=mu*SEGMENTS
+        dev=raw-1.0
+        high=float(dev.max())
+        low=float(dev.min())
+        t=1.0
+        if high>0:t=min(t,LIMIT/high)
+        if low<0:t=min(t,LIMIT/(-low))
+        # convex shrinkage toward 1 both preserves exact 24-segment mean
+        # and guarantees EACH component stays within the safety bounds.
+        return 1.0+t*dev
 
     def audit(self):
         pattern=self.pattern()
