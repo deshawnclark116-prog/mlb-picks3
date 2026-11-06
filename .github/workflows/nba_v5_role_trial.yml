@@ -1,0 +1,60 @@
+name: NBA V5 paired role adaptation research (no auto-promotion)
+on:
+  pull_request:
+    paths:
+      - "nba/nba_v5_role_trial.py"
+      - "nba/nba_v5_role_trial_score.py"
+      - "nba/nba_v5_backtest.py"
+      - "nba/nba_v5_grade_health.py"
+      - "tests/test_nba_v5_role_trial.py"
+      - ".github/workflows/nba_v5_role_trial.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  role-trial:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install "numpy>=2.1,<2.5" "scipy>=1.14,<1.18"
+      - name: Original V5 and role-trial regression contracts
+        run: python -m unittest discover -s tests -p "test_nba_v5*.py" -v
+      - name: Frozen original archive and grade coverage
+        run: |
+          python -m nba.nba_v5_grade_health \
+            --archive docs/nba_v5_archive \
+            --grades docs/nba_v5_grades \
+            --out /tmp/nba_v5_grade_health.json
+      - name: Identical-roster identical-seed V5 champion vs role-adaptive challenger
+        run: |
+          python -u -m nba.nba_v5_backtest \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz \
+            --pbp nba/data/nba_v5_pbp_2026_27.jsonl.gz \
+            --test-from 2026-03-01 \
+            --sample 70 --sims 500 --role-trial \
+            --out /tmp/nba_v5_role_paired.json
+      - name: Expose paired metrics, never promote automatically
+        run: |
+          python - <<'PY'
+          import json
+          x=json.load(open("/tmp/nba_v5_role_paired.json"))
+          c=x["paired_role_trial"]
+          assert c["model_promotion_allowed"] is False
+          print("CANDIDATE SIGNAL FLAGS:",c["player_metric_adaptations"])
+          for k,v in c["metrics"].items():
+              if "brier_fixed_champion_target" in k or k.startswith("minutes|"):
+                  print(k,v)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-v5-paired-role-trial-and-grade-health
+          path: |
+            /tmp/nba_v5_role_paired.json
+            /tmp/nba_v5_grade_health.json
+          retention-days: 30
