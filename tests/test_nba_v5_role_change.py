@@ -91,5 +91,31 @@ class ProbabilityTests(unittest.TestCase):
         self.assertEqual(minute_variance_fraction(y, np.full(80, 30.0)), 0.0)
 
 
+
+class RankingTests(unittest.TestCase):
+    def test_v5_featured_rank_matches_all_scenarios_probability(self):
+        from nba.nba_v5_rank import rank_for_screen
+
+        def row(player, p_play, p_conditional):
+            c = ([0.0] * 19) + [1.0 - p_conditional] + ([1.0] * 10)
+            return {
+                "player": player, "market": "points", "mean": 20.0,
+                "reported_status": "UNKNOWN", "p_active": p_play,
+                "model_version": "nba-v5-blend-possession-simulation-20261106",
+                "mean_basis": "CONDITIONAL_ON_PLAYING",
+                "cdf_lattice": {"step": 1, "cdf": c},
+            }
+
+        available = row("Available", 0.96, 0.75)
+        risky = row("Risky", 0.76, 0.9)
+        rows = [risky, available]
+        rank_for_screen(rows)
+        self.assertEqual(available["frontend_rank"], 1)  # 0.72 vs 0.684
+        self.assertEqual(risky["frontend_rank"], 2)
+        self.assertAlmostEqual(available["reach_probability"], .75)
+        self.assertAlmostEqual(risky["reach_probability"], .9)
+        self.assertAlmostEqual(available["frontend_ranking_probability"], .72)
+
+
 if __name__ == "__main__":
     unittest.main()
