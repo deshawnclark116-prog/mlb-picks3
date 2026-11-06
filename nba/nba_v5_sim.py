@@ -308,6 +308,7 @@ class TeamInput:
     pair_baselines: dict | None = None         # (stat -> (N,)) on-court composition centering
     style_probs: np.ndarray | None = None     # (N,5zones,5styles) historical shot execution frequencies
     style_mult: np.ndarray | None = None      # (N,5zones,5styles) mean-neutral shot-accuracy multipliers
+    low_history_evidence: dict | None = None  # player_id -> past-only, unpromoted cold-start coverage
 
 
 def _beta(rng, p, n, shape):
