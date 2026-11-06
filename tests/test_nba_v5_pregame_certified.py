@@ -113,6 +113,22 @@ class CertifiedLineupContract(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "minutes restriction"):
             read(d)
 
+    def test_announced_restriction_before_lineup_is_valid_soft_input(self):
+        d = evidence()
+        source = d["games"][0]["teams"][0]
+        source["lineup_state"] = "PROJECTED"
+        source["inactive"] = []
+        records, _ = read(d)
+        team = SimpleNamespace(ids=list(map(str, range(1, 8))),
+                               starter=np.array([False] * 7),
+                               p_play=np.full(7, .4), minutes_cap=None)
+        result = apply_confirmed(team, records[("400", "1")])
+        self.assertTrue(result["applied"])
+        self.assertEqual(result["confirmed_starters"], 0)
+        self.assertFalse(team.starter.any())
+        self.assertAlmostEqual(team.p_play[0], .4)
+        self.assertEqual(team.minutes_cap[0], 24.0)
+
     def test_projected_cannot_claim_inactive(self):
         d = evidence()
         d["games"][0]["teams"][0]["lineup_state"] = "PROJECTED"
