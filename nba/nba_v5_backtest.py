@@ -23,7 +23,8 @@ import numpy as np
 
 from nba import nba_v4_backtest as v4
 from nba import nba_v5_context as ctxm
-from nba.nba_v5_sim import (SEG, League, RotationTables, TeamInput, build_profile, league_from, presence_from_events,
+from nba import nba_v5_learn as learnm
+from nba.nba_v5_sim import (rho_for_relative_stint, SEG, League, RotationTables, TeamInput, build_profile, league_from, presence_from_events,
                             simulate_game, MARKETS)
 
 MKT4 = {"points": "pts", "rebounds": "reb", "assists": "ast", "three_pointers_made": "tpm"}
@@ -56,6 +57,7 @@ class Replay:
         self.pres = collections.defaultdict(list)         # player -> [(date, np.array share per stretch)]
         self.team_games = collections.defaultdict(list)   # team -> [dict of own and opponent totals]
         self.tables = RotationTables()
+        self.learn = learnm.LearnState()
         self.lines_all = []
         self.team_rows = []
         self.v4 = v4.State()
@@ -116,6 +118,7 @@ class Replay:
                 self.zone_def[tid_].append((d, arr))
             pres, fouls_seg, margin_seg, team_of = presence_from_events(pb)
             self.tables.add_game(pb, pres, fouls_seg, margin_seg, team_of)
+            self.learn.add(pb, learnm.game_learning(pb), pres, team_of)
             for pid, arr in pres.items():
                 if arr.sum() > 0:
                     self.pres[pid].append((d, arr / 120.0))
@@ -227,9 +230,15 @@ def team_input(rp: Replay, g, side, d, L: League, lg_tot, avail_ids):
         zf, zp, zn = np.array([z[0] for z in zs]), np.array([z[1] for z in zs]), np.array([z[2] for z in zs])
         asr = np.array([z[3] for z in zs])
     dzf, dzp = zone_defence(rp, tid, d, LZ)
+    de = [rp.learn.defender_effects(pid, tid) for pid in ids]
+    dfreq, dpct = np.array([x[0] for x in de]), np.array([x[1] for x in de])
+    s_st, b_st = rp.learn.stint_minutes(tid)
+    lg_s, lg_b = rp.learn.stint_minutes("__league__")
+    rho_t = rho_for_relative_stint((0.6 * s_st + 0.4 * b_st) / (0.6 * lg_s + 0.4 * lg_b))
     return TeamInput(ids=ids, prof=prof, presence=np.array(pres), p_play=np.array(pplay), starter=st,
                      defence=defence_ratios(rp, tid, d, lg_tot), return_mult=rmult, eff=(eff, eff), start_mult=smult,
-                     zf=zf, zp=zp, zn=zn, assisted=asr, dz_freq=dzf, dz_pct=dzp)
+                     zf=zf, zp=zp, zn=zn, assisted=asr, dz_freq=dzf, dz_pct=dzp,
+                     team_id=tid, dfreq=dfreq, dpct=dpct, rho=rho_t)
 
 
 def pace_for(rp: Replay, g, d):
@@ -262,9 +271,11 @@ def run(args):
     chosen = set(cand[: args.sample])
     print("games", len(games), "scoring", len(chosen), "of", len(cand), flush=True)
     configs = {"full": {}}
-    if args.features == "ablate":
+    if args.config:
+        configs = {"full": {}} if args.config == "full" else {args.config: {args.config.replace("without_", ""): False}}
+    elif args.features == "ablate":
         for name in ("rotation", "foul_trouble", "blowout", "overtime", "param_uncertainty", "luck", "assists", "putbacks", "defence",
-                     "schedule", "officials", "late_game", "returns", "zones", "minute_limits"):
+                     "schedule", "officials", "late_game", "returns", "zones", "minute_limits", "team_rotation", "timeouts", "defenders", "timing"):
             configs["without_" + name] = {name: False}
     rp = Replay()
     early = [pbp[g["game_id"]] for g in games if v4.day_of(g) < test_from and g["game_id"] in pbp]
@@ -280,7 +291,11 @@ def run(args):
         if todo:
             L = league_from(rp.lines_all, rp.team_rows)
             lg_tot = league_totals(rp)
-            tables = {"blow": rp.tables.blow_mult(), "foul": rp.tables.foul_mult()}
+            tables = {"blow": rp.tables.blow_mult(), "foul": rp.tables.foul_mult(),
+                      "blow_team": {t_: rp.tables.blow_mult_team(t_) for g_ in todo for t_ in (g_["home"]["id"], g_["away"]["id"])},
+                      "foul_team": {t_: rp.tables.foul_mult_team(t_) for g_ in todo for t_ in (g_["home"]["id"], g_["away"]["id"])},
+                      "timing": rp.learn.timing_tables()}
+            tables["to_rate"], tables["post_to"] = rp.learn.timeout_tables()
             L.zmod = league_zone_stats(rp)["zmod"]
             for k_, v_ in le.items():
                 setattr(L, k_, v_)
@@ -444,12 +459,13 @@ def main():
     ap.add_argument("--sims", type=int, default=1500)
     ap.add_argument("--features", default="all")
     ap.add_argument("--dump", default="")
+    ap.add_argument("--config", default="", help="run one configuration only: full, or without_<feature>")
     a = ap.parse_args()
     results, rows, v4_preds, chosen = run(a)
     if a.dump:
-        Path(a.dump).write_text(json.dumps(results["full"]))
+        Path(a.dump).write_text(json.dumps(next(iter(results.values()))))
     report = {c: score(r, rows, v4_preds) for c, r in results.items() if r}
-    if "full" in results and results["full"]:
+    if "full" in results and results["full"] and not a.config:
         ct, fitted = calibration_test(results["full"])
         report["calibration_test_later_games"] = ct
         report["calibration_fitted_all"] = fitted

@@ -63,8 +63,10 @@ def league_feed():
                     link = l["href"].split("/id/")[1].split("/")[0]
                     break
             pid = link or pid
+            dd = i.get("details") or {}
             out[(str(t.get("id")), pid)] = {"status": norm_status(i.get("status")), "raw": i.get("status"), "published": i.get("date"),
-                                             "name": a.get("displayName")}
+                                             "name": a.get("displayName"), "type": dd.get("type"), "location": dd.get("location"),
+                                             "detail": dd.get("detail"), "side": dd.get("side"), "return_date": dd.get("returnDate")}
     return out, d.get("timestamp")
 
 
@@ -75,8 +77,10 @@ def game_feed(event_id):
         tid = str((t.get("team") or {}).get("id"))
         for i in t.get("injuries", []) or []:
             a = i.get("athlete") or {}
+            dd = i.get("details") or {}
             out[(tid, str(a.get("id")))] = {"status": norm_status(i.get("status")), "raw": i.get("status"), "published": i.get("date"),
-                                             "name": a.get("displayName")}
+                                             "name": a.get("displayName"), "type": dd.get("type"), "location": dd.get("location"),
+                                             "detail": dd.get("detail"), "side": dd.get("side"), "return_date": dd.get("returnDate")}
     return out
 
 
@@ -141,11 +145,14 @@ def build_receipts(v3, known, ledger_path: Path, now=None):
                     checks["stale"].append({"player": rec["name"], "status": rec["status"], "age_hours": round(age, 1)})
                 key = hashlib.sha256(f"{g['game_id']}|{k[1]}|{src}|{rec['status']}|{rec['published']}".encode()).hexdigest()[:24]
                 entries.append({"player_id": k[1], "team_id": k[0], "player": rec["name"], "source": src, "status": rec["status"],
-                                "published_at": rec["published"], "first_seen_by_us": None, "key": key})
+                                "published_at": rec["published"], "first_seen_by_us": None, "key": key, "body_part": rec.get("type"),
+                                "location": rec.get("location"), "detail": rec.get("detail"), "side": rec.get("side"),
+                                "return_date": rec.get("return_date")})
                 if key not in seen_keys:
                     seen_keys.add(key)
                     new_events.append({"key": key, "game_id": g["game_id"], "player_id": k[1], "source": src, "status": rec["status"],
-                                       "published_at": rec["published"], "first_seen_by_us": now.isoformat()})
+                                       "published_at": rec["published"], "first_seen_by_us": now.isoformat(), "body_part": rec.get("type"),
+                                       "location": rec.get("location"), "detail": rec.get("detail"), "return_date": rec.get("return_date")})
         names = {}
         for r in g["rows"]:
             names.setdefault(r["player"], set()).add(r["player_id"])
