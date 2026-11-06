@@ -123,6 +123,8 @@ def grade_doc(doc, ledger_reports, kind):
             rows_out.append({"player": r["player"], "player_id": r["player_id"], "market": r["market"], "projection": r["mean"],
                              "p10": r["p10"], "p90": r["p90"], "p_active": r["p_active"], "p_start": r.get("p_start"), "frontend_rank": r.get("frontend_rank"),
                              "whole_projection": r.get("whole_projection"), "reach_probability": r.get("reach_probability"),
+                             "reach_probabilities": r.get("reach_probabilities"),
+                             "role_change": r.get("role_change"), "uncertainty_audit": r.get("uncertainty_audit"),
                              "actual": None if line is None else line[STAT_KEY[r["market"]]], "played": line is not None,
                              "minutes_forecast": r.get("minutes_mean"), "minutes_actual": None if line is None else line["min"],
                              "causes": causes_for(r, line, final)})
@@ -143,6 +145,8 @@ def summarize(records):
     cover = collections.defaultdict(lambda: [0, 0])
     errs = collections.defaultdict(list)
     shown = collections.defaultdict(list)
+    overall = collections.defaultdict(list)  # counts DNP as a missed positive stat threshold
+    role_errors = collections.defaultdict(list)
     rel = collections.defaultdict(collections.Counter)
     by_status = collections.defaultdict(collections.Counter)
     by_body = collections.defaultdict(collections.Counter)
@@ -158,12 +162,25 @@ def summarize(records):
         for r in rec["rows"]:
             for c in r["causes"]:
                 cause_counts[c] += 1
+            # Unlike the legacy P(reach | plays) grade, this grades every
+            # model threshold across DNP and played outcomes, separately.
+            reach = r.get("reach_probabilities") or {}
+            if reach.get("whole_projection", 0) >= 1 and reach.get("probability_including_dnp") is not None:
+                hit = float(bool(r["played"]) and r["actual"] >= reach["whole_projection"])
+                q = (reach["probability_including_dnp"], hit)
+                overall["all_original_projections"].append(q)
+                overall["stat_" + r["market"]].append(q)
+                overall["role_change_" + (r.get("role_change") or {}).get("status", "UNKNOWN")].append(q)
+                if (r.get("frontend_rank") or 99) <= 4:
+                    overall["frontend_top4"].append(q)
             if not r["played"]:
                 continue
             k = r["market"]
             cover[k][1] += 1
             cover[k][0] += 1 if r["p10"] <= r["actual"] <= r["p90"] else 0
-            errs[k].append(abs(r["actual"] - r["projection"]))
+            error = abs(r["actual"] - r["projection"])
+            errs[k].append(error)
+            role_errors[(k, (r.get("role_change") or {}).get("status", "UNKNOWN"))].append(error)
             if r.get("whole_projection") is not None and r.get("reach_probability") is not None:
                 hit = 1.0 if r["actual"] >= r["whole_projection"] else 0.0
                 shown["all_ranked"].append((r["reach_probability"], hit))
@@ -180,6 +197,13 @@ def summarize(records):
                                             "actual_reach_rate": round(float(np.mean([x[1] for x in v])), 3),
                                             "brier": round(float(np.mean([(x[0] - x[1]) ** 2 for x in v])), 4)} for b, v in shown.items() if v},
             "mean_abs_error": {k: round(float(np.mean(v)), 3) for k, v in errs.items()},
+            "mean_abs_error_by_role_change": {f"{stat}|{status}": {"n": len(v), "mae": round(float(np.mean(v)), 3)}
+                                              for (stat, status), v in role_errors.items()},
+            "stated_unconditional_chance_vs_actual": {b: {"n": len(v),
+                  "mean_stated": round(float(np.mean([x[0] for x in v])), 3),
+                  "actual_reach_rate": round(float(np.mean([x[1] for x in v])), 3),
+                  "brier": round(float(np.mean([(x[0] - x[1]) ** 2 for x in v])), 4)}
+                  for b, v in overall.items() if v},
             "source_reliability": {f"{s}|{st}": dict(c) for (s, st), c in rel.items()},
             "play_by_status": {k: dict(v) for k, v in by_status.items()},
             "play_by_status_body": {k: dict(v) for k, v in by_body.items()},
