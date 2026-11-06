@@ -145,10 +145,10 @@ def apply_confirmed(team, record):
     ids = list(map(str, team.ids))
     if not set(record["starters"]).issubset(ids):
         raise ValueError("confirmed starters absent from simulator roster")
-    if len(ids) - len(record["inactive"]) < 5:
+    # ESPN/V3 may have ALREADY excluded a certified inactive from its
+    # sim roster. This is legitimate; do not recreate or simulate them.
+    if len(set(ids) - set(record["inactive"])) < 5:
         raise ValueError("fewer than five non-inactive roster players")
-    if not set(record["inactive"]).issubset(ids):
-        raise ValueError("inactive player absent from simulator roster")
     starter = np.array([pid in record["starters"] for pid in ids], bool)
     if int(starter.sum()) != 5:
         raise ValueError("incomplete certified starters")
