@@ -113,11 +113,13 @@ jobs:
           PY
           git config user.name "nba-v3-latest[bot]"
           git config user.email "nba-v3-latest[bot]@users.noreply.github.com"
-          git add docs/nba_v3_latest
-          git add docs/nba_v4_latest nba/data/nba_v4_games_2026_27.jsonl 2>/dev/null || true
+          git add -A docs/nba_v3_latest
+          git add -A docs/nba_v4_latest nba/data || true
+          git status --short | head -10
+          git restore --worktree -- . 2>/dev/null || true   # drop any other stray change so the rebase can run
           git diff --cached --quiet && { echo "nothing to commit"; exit 0; }
           git commit -m "NBA V3 latest run + V4 shadow $(date -u +%Y-%m-%dT%H:%MZ) [skip ci]"
-          for i in 1 2 3; do git pull --rebase origin main && git push origin HEAD:main && exit 0; sleep 5; done
+          for i in 1 2 3; do git pull --rebase --autostash origin main && git push origin HEAD:main && exit 0; sleep 5; done
           echo "push failed"; exit 1
         env:
           H: ${{ steps.src.outputs.hash }}
