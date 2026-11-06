@@ -8,6 +8,10 @@ on:
       - "nba/nba_v5_postmortem.py"
       - "nba/nba_v5_change_audit.py"
       - "src/components/NbaV3ResearchPanel.tsx"
+      - "src/components/NbaResearchScreen.tsx"
+      - "server/lineupOverlay.ts"
+      - "tests/lineupOverlay.test.ts"
+      - "tests/browser/nbaV3Primary.spec.ts"
       - "tests/test_nba_v5_role_change.py"
       - ".github/workflows/nba_v5_quality.yml"
   workflow_dispatch: {}
@@ -50,4 +54,4 @@ jobs:
         run: |
           npm run lint
           npm run build
-          node --import tsx --test tests/nbaV3ShadowApi.test.ts tests/nbaDecisionBoard.test.ts
+          node --import tsx --test tests/nbaV3ShadowApi.test.ts tests/nbaDecisionBoard.test.ts tests/lineupOverlay.test.ts
