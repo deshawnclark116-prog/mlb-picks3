@@ -24,6 +24,7 @@ import numpy as np
 from nba import nba_v4_backtest as v4
 from nba import nba_v5_context as ctxm
 from nba import nba_v5_learn as learnm
+from nba.nba_v5_lineup_pairs import LineupPairState
 from nba.nba_v5_sim import (rho_for_relative_stint, SEG, League, RotationTables, TeamInput, build_profile, league_from, presence_from_events,
                             simulate_game, MARKETS)
 
@@ -70,6 +71,7 @@ class Replay:
         self.zone_def = collections.defaultdict(list)      # defending team -> [(date, 2x5 tallies)]
         self.zone_league = np.zeros((3, 5))
         self.tdates = collections.defaultdict(list)        # team -> dates played
+        self.lineup_pairs = LineupPairState()                # strict valid play-by-play, earlier dates only
 
     def add(self, g, pb):
         d = v4.day_of(g)
@@ -110,6 +112,8 @@ class Replay:
             self.hist[p["id"]].append(ln)
             self.lines_all.append(ln)
         if pb:
+            # Accumulate only after date scoring; no live/future leakage.
+            self.lineup_pairs.add_game(pb)
             shooter, against = ctxm.game_zone_tallies(pb)
             for pid, arr in shooter.items():
                 self.zone_hist[pid].append((d, arr))
@@ -235,10 +239,12 @@ def team_input(rp: Replay, g, side, d, L: League, lg_tot, avail_ids):
     s_st, b_st = rp.learn.stint_minutes(tid)
     lg_s, lg_b = rp.learn.stint_minutes("__league__")
     rho_t = rho_for_relative_stint((0.6 * s_st + 0.4 * b_st) / (0.6 * lg_s + 0.4 * lg_b))
+    pair_eff, pair_base, pair_audit = rp.lineup_pairs.for_roster(tid, ids)
     return TeamInput(ids=ids, prof=prof, presence=np.array(pres), p_play=np.array(pplay), starter=st,
                      defence=defence_ratios(rp, tid, d, lg_tot), return_mult=rmult, eff=(eff, eff), start_mult=smult,
                      zf=zf, zp=zp, zn=zn, assisted=asr, dz_freq=dzf, dz_pct=dzp,
-                     team_id=tid, dfreq=dfreq, dpct=dpct, rho=rho_t)
+                     team_id=tid, dfreq=dfreq, dpct=dpct, rho=rho_t,
+                     pair_effects=pair_eff, pair_baselines=pair_base)
 
 
 def pace_for(rp: Replay, g, d):
@@ -271,6 +277,12 @@ def run(args):
     chosen = set(cand[: args.sample])
     print("games", len(games), "scoring", len(chosen), "of", len(cand), flush=True)
     configs = {"full": {}}
+    if getattr(args, "lineup_trial", False) and getattr(args, "role_trial", False):
+        raise ValueError("One experimental arm at a time")
+    if getattr(args, "lineup_trial", False):
+        if args.config or args.features == "ablate":
+            raise ValueError("--lineup-trial is incompatible with --config and --features ablate")
+        configs["lineup_pairs"] = {"lineup_pairs": True}
     if getattr(args, "role_trial", False):
         if args.config or args.features == "ablate":
             raise ValueError("--role-trial is incompatible with --config and --features ablate")
@@ -474,14 +486,25 @@ def main():
     ap.add_argument("--dump", default="")
     ap.add_argument("--config", default="", help="run one configuration only: full, or without_<feature>")
     ap.add_argument("--role-trial", action="store_true", help="paired shadow test of fixed role adjustment; never promoted")
+    ap.add_argument("--lineup-trial", action="store_true", help="paired shadow test of lineup-conditioned opportunities; never promoted")
     a = ap.parse_args()
     results, rows, v4_preds, chosen = run(a)
     if a.dump:
-        Path(a.dump).write_text(json.dumps(results if a.role_trial else next(iter(results.values()))))
+        Path(a.dump).write_text(json.dumps(results if a.role_trial or a.lineup_trial else next(iter(results.values()))))
     report = {c: score(r, rows, v4_preds) for c, r in results.items() if r}
     if a.role_trial:
         from nba.nba_v5_role_trial_score import evaluate
         report["paired_role_trial"] = evaluate(results["full"], results["role_adaptive"], v4_preds)
+    if a.lineup_trial:
+        from nba.nba_v5_role_trial_score import evaluate
+        paired = evaluate(results["full"], results["lineup_pairs"], v4_preds)
+        paired["experiment"] = "NBA_V5_LINEUP_PAIR_SHADOW_V1"
+        paired["candidate"] = "lineup-conditioned relative FGA/AST/OREB/DREB weights, 240-minute shrinkage"
+        paired["observational_limitation"] = (
+            "Substitution-reconstructed on/off rates confound coaching, rotations, opponents and game state; "
+            "scoring uses the same retrospective available roster in both arms.")
+        paired["qualifying_play_by_play_games"] = sum(1 for _ in ())
+        report["paired_lineup_trial"] = paired
     if "full" in results and results["full"] and not a.config:
         ct, fitted = calibration_test(results["full"])
         report["calibration_test_later_games"] = ct
