@@ -1,6 +1,4 @@
-| 25 | Learn from every miss | Built, forward outcomes pending | `nba_v5_postmortem.py` grades original/last pretip numerical projections, reasons for misses, range coverage, role-change cohort errors and DNP-inclusive event probabilities. The repository's saved summary showed zero finished graded games on the November 5 check; continue forward grading. |
-
-Status words: **Built** (in the model and tested), **Partly** (some of it, said below), **No data** (needs data we do not have; not faked),
+| 26 | Choose what the app shows | Built, forward-evaluation pending | Displayed projection is the actual rounded numerical mean, ranked on its probability including DNP when available. Featured picks, model board and original archive remain separate. Every original numerical projection is available for grading, not just tiles. |
 **Not yet** (possible with our data, not built). Item 27 (sportsbook) is excluded on your instruction.
 Code: `nba/nba_v5_sim.py` (the game), `nba_v5_context.py` (learned context), `nba_v5_backtest.py` (tests), `nba_v5_forecast.py`,
 `nba_v5_info.py` (information receipts), `nba_v5_postmortem.py` (grading). Tests: `tests/test_nba_v5.py`.
@@ -55,3 +53,12 @@ Branch/PR: `feature/nba-v5-role-change-and-probability-audit-20261105` (#79).
 - Replaced the sportsbook-oriented tab with model-evidence context; forecasting and historical grading remain the focus.
 
 Research and promotion gates still unmet: a detector beating a primitive older-window baseline does not mean it beats V5; original V5 forecasts need sufficient forward grading; action-level/off-ball/play-type/guard-assignment observations require verified extra data. Do not mark these gaps done and do not inject sportsbook data into forecasting.
+
+
+## November 6: whole-model role-change falsification and grade coverage
+
+An actual paired NBA V5 backtest on 68 scored games (1,391 player-games) compared the existing champion (V5 simulation and its current V4 blend) with a fixed, bounded role-adaptive challenger at the champion's ORIGINAL rounded probability thresholds. Every tested Brier change (points, rebounds, assists, threes) and the average minutes change had a game-cluster 95% interval overlapping zero; points and threes moved slightly in the wrong direction. **No model feature was promoted**. This is stronger evidence than the previous comparison to a simplistic older-window baseline.
+
+New read-only audit `nba_v5_grade_health.py` reports first/last frozen forecast counts, pretip timestamp violations, games not yet tipped, and games past tip but pending a final-result grade. As of the November 6, 04:48 UTC audit: 11 first archives (9 future, 2 past tip) and 2 last archives (both past tip), all timestamp valid and still awaiting grading. Past tip does not necessarily mean the game was final at that moment.
+
+Research limitations: the historical backtest uses actual participating rosters as both arms' common conditional roster; it does not certify live injury correctness or prospective probabilities. Need matched live pregame archives, completed-game outcomes, and more signal-rich lineup/action-level data to improve responsibly.

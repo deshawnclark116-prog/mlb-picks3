@@ -271,6 +271,10 @@ def run(args):
     chosen = set(cand[: args.sample])
     print("games", len(games), "scoring", len(chosen), "of", len(cand), flush=True)
     configs = {"full": {}}
+    if getattr(args, "role_trial", False):
+        if args.config or args.features == "ablate":
+            raise ValueError("--role-trial is incompatible with --config and --features ablate")
+        configs["role_adaptive"] = {}  # same switches, same Monte Carlo seed
     if args.config:
         configs = {"full": {}} if args.config == "full" else {args.config: {args.config.replace("without_", ""): False}}
     elif args.features == "ablate":
@@ -306,14 +310,23 @@ def run(args):
                 pace = pace_for(rp, g, d)
                 pace = pace - le["team_or_pg"] if pace else pace
                 actual = {p["id"]: p for p in g["players"]}
+                adapted = None
+                if getattr(args, "role_trial", False):
+                    from nba.nba_v5_role_trial import adapt_team
+                    ah, hf = adapt_team(th, rp.hist, d)
+                    aa, af = adapt_team(ta, rp.hist, d)
+                    adapted = (ah, aa, {e["player_id"]: e["modified"] for e in hf + af})
                 for cname, feats in configs.items():
                     cx = {"ft_mult": rp.refs.crew_mult(g.get("officials") or []), "late_ft": late_tab}
-                    sim = simulate_game(th, ta, L, tables, S=args.sims, pace=pace, seed=int(g["game_id"]) % 100003, features=feats, ctx=cx)
-                    for side, ti in (("home", th), ("away", ta)):
+                    sh, sa = (adapted[0], adapted[1]) if cname == "role_adaptive" else (th, ta)
+                    sim = simulate_game(sh, sa, L, tables, S=args.sims, pace=pace, seed=int(g["game_id"]) % 100003, features=feats, ctx=cx)
+                    for side, ti in (("home", sh), ("away", sa)):
                         for j, pid in enumerate(ti.ids):
                             p = actual[pid]
                             rec = {"date": str(d), "game": g["game_id"], "player": pid, "name": p["name"], "min_actual": p["min"],
                                    "min_sim": float(sim[side]["min"][:, j].mean())}
+                            if cname == "role_adaptive":
+                                rec["role_trial_flags"] = (adapted[2].get(pid, []) if adapted else [])
                             for mname, key in (("points", "pts"), ("rebounds", "reb"), ("assists", "ast"), ("three_pointers_made", "tpm"),
                                                ("steals", "stl"), ("blocks", "blk"), ("turnovers", "tov")):
                                 samp = sim[side][key][:, j]
@@ -460,11 +473,15 @@ def main():
     ap.add_argument("--features", default="all")
     ap.add_argument("--dump", default="")
     ap.add_argument("--config", default="", help="run one configuration only: full, or without_<feature>")
+    ap.add_argument("--role-trial", action="store_true", help="paired shadow test of fixed role adjustment; never promoted")
     a = ap.parse_args()
     results, rows, v4_preds, chosen = run(a)
     if a.dump:
-        Path(a.dump).write_text(json.dumps(next(iter(results.values()))))
+        Path(a.dump).write_text(json.dumps(results if a.role_trial else next(iter(results.values()))))
     report = {c: score(r, rows, v4_preds) for c, r in results.items() if r}
+    if a.role_trial:
+        from nba.nba_v5_role_trial_score import evaluate
+        report["paired_role_trial"] = evaluate(results["full"], results["role_adaptive"], v4_preds)
     if "full" in results and results["full"] and not a.config:
         ct, fitted = calibration_test(results["full"])
         report["calibration_test_later_games"] = ct

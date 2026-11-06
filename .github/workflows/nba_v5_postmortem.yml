@@ -30,6 +30,10 @@ jobs:
           set -euo pipefail
           test -d docs/nba_v5_archive || { echo "nothing archived yet"; exit 0; }
           PYTHONPATH=. python -u -m nba.nba_v5_postmortem --archive docs/nba_v5_archive --grades docs/nba_v5_grades --ledger docs/nba_v5_info/ledger.jsonl
+      - name: Audit immutable forecast coverage and pending results
+        run: |
+          PYTHONPATH=. python -u -m nba.nba_v5_grade_health \
+            --archive docs/nba_v5_archive --grades docs/nba_v5_grades
       - name: Publish grades
         run: |
           set -euo pipefail
