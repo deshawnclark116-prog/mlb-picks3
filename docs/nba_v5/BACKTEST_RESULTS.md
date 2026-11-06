@@ -119,3 +119,8 @@ Full source-integrity and paired results: [LINEUP_PAIR_RESEARCH.md](LINEUP_PAIR_
 ## November 6: shot-execution-style hypothesis failed, OFF
 
 The player/zone shot-family experiment from 240,495 parsed ESPN shot events did not yield a significant improvement in points, assists, rebounds or threes. On 68 identical held-out historical games and 1,391 player-games, points Brier improvement was +0.000595 (95% game-cluster interval [-0.000158,+0.001361]), but blocks Brier worsened by 0.003782 (interval of error improvement [-0.006866,-0.001090]). This branch was **not promoted and must not be rescue-tuned** on this reused sample. See [SHOT_STYLE_RESEARCH.md](SHOT_STYLE_RESEARCH.md).
+
+
+## November 6 — game-flow possession cadence not promoted
+
+From 1,351 prior ESPN PBP games, V5 learned a bounded, normalized 24-segment possession timing shape. Paired 68-game historical replay compared same roster/seed and original whole-number thresholds; points Brier reduction +0.000047 (95% game-cluster [-0.000811,+0.000877]), assists +0.000280 ([-0.000852,+0.001389]), steals -0.001199 and blocks -0.002376. No reliable gain. **game_flow=false** remains. [Complete research](GAME_FLOW_RESEARCH.md).
