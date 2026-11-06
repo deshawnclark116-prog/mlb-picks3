@@ -104,3 +104,13 @@ Score comparison is made at **the incumbent model's own whole-number target** an
 Candidate adjustments across 68 games: minutes 216 player appearances, FGA/36 86, AST/36 78, 3PA/36 64 (multiple signals may coincide). Minutes improvements were practically negligible. Every CI includes zero, and the key points/threes Brier differences are negative. **Reject promotion**; retain prior V5/V4 weights, distributions, and simulator untouched. Do not perform rescue tuning against this used evaluation data. A future role-change model needs genuinely new evidence or a predeclared holdout with substantially different structure.
 
 **Limit:** both simulations share the retrospective actual player roster, just like earlier V5 research. This isolates the incremental skill/role hypothesis but is not an honest test of knowing who would participate before tipoff. The fixed rounded event and clustered intervals prevent artificially easy threshold substitutions and pseudo-independent teammate samples.
+
+## November 6: five-man lineup interactions — research-only
+
+Full source-integrity and paired results: [LINEUP_PAIR_RESEARCH.md](LINEUP_PAIR_RESEARCH.md).
+
+- 1,283 of 1,351 ESPN play-by-play games (94.97%) were reconstructable with strict five-on-court validation after correcting 12,405 event-team annotations from unambiguous on-court athlete IDs. The remaining 68 failed games were excluded.
+- A bounded, shrinkage-based ON/OFF teammate-opportunity model for shooter, assister, offensive rebounder and defensive rebounder selection ran as a **disabled-by-default feature flag** against the unchanged V5/V4 champion.
+- Fixed-target, clustered 68-game retrospective testing (1,391 player-games) showed a **0.001545 point-Brier reduction**, 95% interval [+0.000720,+0.002410]. Rebounds and assists did not improve; threes were inconclusive.
+- A second test identified a deterministic-replay bug in unordered player-roster set iteration; this was fixed by stable sorting and verified across distinct Python hash seeds before freezing the above results.
+- **No promotion**: this is an exploratory reused retrospective sample, not independent prospective proof. No sportsbook inputs. Production `lineup_pairs=false`.

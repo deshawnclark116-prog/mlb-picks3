@@ -304,6 +304,8 @@ class TeamInput:
     dpct: np.ndarray | None = None             # (N, 5) ... and on how accurately
     rho: float | None = None                   # stint persistence from the team's real stint lengths
     avail_corr: np.ndarray | None = None       # (N, N) correlation of absences (players who tend to sit together)
+    pair_effects: dict | None = None           # (stat -> (N,N) teammate-conditioned opportunity, shadow)
+    pair_baselines: dict | None = None         # (stat -> (N,)) on-court composition centering
 
 
 def _beta(rng, p, n, shape):
@@ -317,7 +319,8 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
     F = {"rotation": True, "foul_trouble": True, "blowout": True, "overtime": True, "param_uncertainty": True,
          "luck": True, "assists": True, "putbacks": True, "defence": True, "schedule": True, "officials": True,
          "late_game": True, "returns": True, "minute_limits": True, "zones": True,
-         "team_rotation": True, "timeouts": True, "defenders": True, "timing": True, "joint_availability": True}
+         "team_rotation": True, "timeouts": True, "defenders": True, "timing": True, "joint_availability": True,
+         "lineup_pairs": False} # NOT active in production: requires paired OOS improvement
     ctx = ctx or {}
     if features:
         F.update(features)
@@ -368,6 +371,7 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
     had_to = [np.zeros(S, bool), np.zeros(S, bool)]
     margin_snap = [np.zeros(S), np.zeros(S)]
     live = [np.zeros(S, bool), np.zeros(S, bool)]            # this team's next possession starts off a steal or defensive rebound
+    pair_cache = [{}, {}]                                     # recompute only when two-minute lineups change
     ar = np.arange(S)
     rate_mult = lambda d, k: d.get(k, 1.0) if F["defence"] else 1.0
 
@@ -375,6 +379,23 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
         c = np.cumsum(weights, axis=1)
         r = rng.random(S)[:, None] * c[:, -1:]
         return np.minimum((c > r).argmax(axis=1), weights.shape[1] - 1)
+
+    def pair_conditioned(i, lineup_ids, metric, basic):
+        """Change ONLY relative selection among the five valid on-court players.
+
+        Historical co-court vs apart opportunity effects are centered on each
+        player's expected teammate overlap, then clipped per simulation row.
+        All the shared game events/minutes still obey the existing invariants.
+        """
+        t = teams[i]
+        if not F["lineup_pairs"] or not t.pair_effects:
+            return basic
+        mat = t.pair_effects.get(metric)
+        if mat is None:
+            return basic
+        raw = mat[lineup_ids[:, :, None], lineup_ids[:, None, :]].sum(axis=2)
+        base = t.pair_baselines[metric][lineup_ids] if t.pair_baselines else 0.0
+        return basic * np.exp(np.clip(raw - base, -0.22, 0.22))
 
     def lineup(i, seg, mask, minutes_len, quarter_half):
         t = teams[i]
@@ -419,7 +440,7 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
         """One trip down the floor for team o against team d, for sims where mask is True."""
         to_, tdef = teams[o], teams[d]
         dfn = to_.defence if False else tdef.defence
-        u = usage[o][Oi]
+        u = pair_cache[o].get("fga", usage[o][Oi])
         fi_loc = pick(u)
         fi = Oi[ar, fi_loc]
         rf, rt, rto = rate[o]["fga"][fi], rate[o]["fta"][fi], rate[o]["tov"][fi]
@@ -495,7 +516,7 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
             else:
                 pa = np.where(is3, L.assisted3, L.assisted2)
             asst = make & (rng.random(S) < pa)
-            aw = rate[o]["ast"][Oi] + 1e-6
+            aw = pair_cache[o].get("ast", rate[o]["ast"][Oi]) + 1e-6
             aw = np.where(Oi == fi[:, None], 0.0, aw)
             ai = Oi[ar, pick(aw + 1e-9)]
             st[o]["ast"][ar[asst], ai[asst]] += 1
@@ -510,11 +531,11 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
         p_or = np.clip(L.reb_or * rate_mult(dfn, "or_") * np.where(last_miss & ~miss, 0.5, 1.0), 0.03, 0.7)
         orb = reb_chance & (rng.random(S) < p_or)
         drb = reb_chance & ~orb
-        ow = rate[o]["oreb"][Oi] + 1e-6
+        ow = pair_cache[o].get("oreb", rate[o]["oreb"][Oi]) + 1e-6
         oi = Oi[ar, pick(ow)]
         o_cred = orb & (rng.random(S) < L.credit_or)
         st[o]["reb"][ar[o_cred], oi[o_cred]] += 1
-        dw = rate[d]["dreb"][Di] + 1e-6
+        dw = pair_cache[d].get("dreb", rate[d]["dreb"][Di]) + 1e-6
         dj = Di[ar, pick(dw)]
         d_cred = drb & (rng.random(S) < L.credit_dr)
         st[d]["reb"][ar[d_cred], dj[d_cred]] += 1
@@ -538,6 +559,18 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
                 had_to[i] = (seg >= 1) & (rng.random(S) < to_rate[min(3, seg // 6)][bucket])
                 margin_snap[i] = m_now
         L5 = [lineup(i, seg, act, minutes_len, seg // 12) for i in range(2)]
+        # Relative weights depend only on each two-minute lineup, never on
+        # individual possession outcomes. Reusing them avoids redundant
+        # N*N matrix lookups without changing the simulation random draws.
+        if F["lineup_pairs"]:
+            for i in range(2):
+                li = L5[i]
+                pair_cache[i] = {
+                    "fga": pair_conditioned(i, li, "fga", usage[i][li]),
+                    "ast": pair_conditioned(i, li, "ast", rate[i]["ast"][li]),
+                    "oreb": pair_conditioned(i, li, "oreb", rate[i]["oreb"][li]),
+                    "dreb": pair_conditioned(i, li, "dreb", rate[i]["dreb"][li]),
+                }
         if seg == 0 and first5[0] is None:
             for i in range(2):
                 m0 = np.zeros((S, N[i]), bool)
