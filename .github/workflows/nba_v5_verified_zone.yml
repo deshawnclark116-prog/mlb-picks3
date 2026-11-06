@@ -1,0 +1,50 @@
+name: NBA V5 verified defensive zone source research
+on:
+  pull_request:
+    paths:
+      - "nba/nba_v5_verified_zone.py"
+      - "nba/nba_v5_backtest.py"
+      - "nba/nba_v5_forecast.py"
+      - "tests/test_nba_v5_verified_zone.py"
+      - ".github/workflows/nba_v5_verified_zone.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  verified-opponent-zone:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -q "numpy>=2.1,<2.5" "scipy>=1.14,<1.18" "pdfplumber>=0.11,<0.13"
+      - name: Preserve V5 box and on-court source contracts
+        run: python -m unittest discover -s tests -p "test_nba_v5*.py" -v
+      - name: Paired historical V5 champion versus source-corrected defense
+        run: |
+          python -u -m nba.nba_v5_backtest \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz \
+            --pbp nba/data/nba_v5_pbp_2026_27.jsonl.gz \
+            --test-from 2026-03-01 --sample 70 --sims 500 \
+            --verified-zone-trial --out /tmp/nba_v5_verified_zone.json
+      - name: Print source corrections and champion fixed-event metrics
+        run: |
+          python - <<'PY'
+          import json
+          x=json.load(open('/tmp/nba_v5_verified_zone.json'))
+          q=x['paired_verified_zone_trial']
+          assert not q['model_promotion_allowed']
+          print('ZONE_DEFENSE_SOURCE_EXPERIMENT',q['experiment'])
+          for k,v in q['metrics'].items():
+              if 'brier_fixed_champion_target' in k or k.startswith('minutes|'):
+                  print('VERIFIED_ZONE_PAIRED',k,v)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-v5-verified-zone-defensive-attribution
+          path: /tmp/nba_v5_verified_zone.json
+          retention-days: 30
