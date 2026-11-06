@@ -6,7 +6,8 @@
     "timeouts": true,
     "defenders": true,
     "timing": false,
-    "lineup_pairs": false
+    "lineup_pairs": false,
+    "shot_style": false
   },
   "evidence": {
     "joint_availability": "predicts how many regulars are out better than independent draws, 5.2 standard errors on 1,720 team-games",
@@ -14,6 +15,7 @@
     "timeouts": "same test: better assist and made-three probabilities (clear), no clear harm elsewhere",
     "defenders": "same test: better assist probabilities (clear), no clear harm elsewhere",
     "timing": "same test: no clear effect on any stat, so it stays off",
-    "lineup_pairs": "OFF: 94.97% valid historical PBP lineups and reproducible seeded replay. Exploratory 68-game paired test reduced points Brier by 0.001545, 95% game-cluster CI [0.000720, 0.002410], but no untouched prospective confirmation; other stats inconclusive. Do not promote."
+    "lineup_pairs": "OFF: 94.97% valid historical PBP lineups and reproducible seeded replay. Exploratory 68-game paired test reduced points Brier by 0.001545, 95% game-cluster CI [0.000720, 0.002410], but no untouched prospective confirmation; other stats inconclusive. Do not promote.",
+    "shot_style": "OFF: newly implemented ESPN shot-execution-style mixture; shot-style is not Synergy play type. Needs paired historical test and later untouched prospective validation."
   }
 }
