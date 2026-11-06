@@ -7,7 +7,8 @@
     "defenders": true,
     "timing": false,
     "lineup_pairs": false,
-    "shot_style": false
+    "shot_style": false,
+    "game_flow": false
   },
   "evidence": {
     "joint_availability": "predicts how many regulars are out better than independent draws, 5.2 standard errors on 1,720 team-games",
@@ -16,6 +17,7 @@
     "defenders": "same test: better assist probabilities (clear), no clear harm elsewhere",
     "timing": "same test: no clear effect on any stat, so it stays off",
     "lineup_pairs": "OFF: 94.97% valid historical PBP lineups and reproducible seeded replay. Exploratory 68-game paired test reduced points Brier by 0.001545, 95% game-cluster CI [0.000720, 0.002410], but no untouched prospective confirmation; other stats inconclusive. Do not promote.",
-    "shot_style": "OFF — 240,495 ESPN shot events/638 players parsed, paired 68-game trial failed: no significant core-stat benefit; blocks Brier worsened by 0.003782 (95% game-cluster interval -0.006866 to -0.001090). Frozen failed branch, no rescue tuning."
+    "shot_style": "OFF — 240,495 ESPN shot events/638 players parsed, paired 68-game trial failed: no significant core-stat benefit; blocks Brier worsened by 0.003782 (95% game-cluster interval -0.006866 to -0.001090). Frozen failed branch, no rescue tuning.",
+    "game_flow": "OFF — learned prior-only 2-minute possession cadence from game PBP; paired V5 champion evaluation and prospective validation required before activation."
   }
 }
