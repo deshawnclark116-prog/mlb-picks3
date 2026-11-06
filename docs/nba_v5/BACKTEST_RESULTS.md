@@ -124,3 +124,8 @@ The player/zone shot-family experiment from 240,495 parsed ESPN shot events did 
 ## November 6 — game-flow possession cadence not promoted
 
 From 1,351 prior ESPN PBP games, V5 learned a bounded, normalized 24-segment possession timing shape. Paired 68-game historical replay compared same roster/seed and original whole-number thresholds; points Brier reduction +0.000047 (95% game-cluster [-0.000811,+0.000877]), assists +0.000280 ([-0.000852,+0.001389]), steals -0.001199 and blocks -0.002376. No reliable gain. **game_flow=false** remains. [Complete research](GAME_FLOW_RESEARCH.md).
+
+
+## November 6 — Low-history NBA players and rotation pooling (promising, unpromoted)
+
+Legacy V5 excludes players with fewer than 5 prior boxes. An optional, earlier-games-only starter/bench PBP rotation pool (27,243 player-game patterns) plus heavily shrunk NBA rate prior added 54 player-games to 68 scored games. For the 1,391 shared original players, points Brier error reduced 0.002062 (game-cluster 95% [+0.000191,+0.004184]), assists Brier 0.002534 ([+0.000802,+0.004619]) and minutes MAE 0.130738 ([+0.050210,+0.247076]). Own added player points MAE=4.942; rebounds=1.648, not comparative proof. **low_history_rotation=false** pending genuine pretip forward evaluation with DNPs. See [LOW_HISTORY_RESEARCH.md](LOW_HISTORY_RESEARCH.md).
