@@ -58,6 +58,7 @@ def replay_game(pb: dict) -> dict:
     valid_player_events = 0
     total_player_events = 0
     n_subs = 0
+    event_team_label_corrections = 0
 
     def accrue(to):
         nonlocal tprev
@@ -98,8 +99,18 @@ def replay_game(pb: dict) -> dict:
                     continue  # team rebound or event missing a named player
                 total_player_events += 1
                 if tid not in on or a not in on[tid]:
-                    bad = "PLAYER_NOT_ON_COURT"
-                    break
+                    # ESPN sometimes stamps a missed-shot event with the
+                    # DEFENDING team's ID. Repair only if the named athlete
+                    # appears on EXACTLY ONE independently reconstructed
+                    # team's five-man court at the event timestamp.
+                    # No inferred bench player, roster lookup, or future game
+                    # information is allowed to repair the court itself.
+                    matches = [t for t in teamids if a in on[t]]
+                    if len(matches) != 1:
+                        bad = "PLAYER_NOT_ON_COURT"
+                        break
+                    tid = matches[0]
+                    event_team_label_corrections += 1
                 valid_player_events += 1
                 metric = "fga" if kind in ("S2", "S3") else (
                     "oreb" if kind == "OR" else "dreb" if kind == "DR" else None
@@ -141,7 +152,8 @@ def replay_game(pb: dict) -> dict:
         return {"valid": False, "reason": bad or "LOW_EVENT_OR_SUB_COVERAGE",
                 "first_failure": detail,
                 "player": {}, "pair": {},
-                "named_events_seen": valid_player_events, "substitutions": n_subs}
+                "named_events_seen": valid_player_events, "substitutions": n_subs,
+            "team_label_corrections": event_team_label_corrections}
     accrue(GAME_SECONDS)
     for tid in teamids:
         total_minutes = sum(v[0] for (t, p), v in player.items() if t == tid)
@@ -150,7 +162,8 @@ def replay_game(pb: dict) -> dict:
     return {"valid": True, "reason": "VALID_SUBSTITUTION_TRACE",
             "player": dict(player), "pair": dict(pair),
             "named_events_seen": valid_player_events,
-            "substitutions": n_subs}
+            "substitutions": n_subs,
+            "team_label_corrections": event_team_label_corrections}
 
 
 class LineupPairState:
@@ -163,6 +176,7 @@ class LineupPairState:
         self.rejected_games = defaultdict(int)
         self.games_by_team = defaultdict(int)
         self.last_rejection = None
+        self.corrected_events = 0
 
     def add_game(self, pb: dict) -> bool:
         r = replay_game(pb)
@@ -177,6 +191,7 @@ class LineupPairState:
             for i, val in enumerate(vals):
                 self.pairs[k][i] += val
         self.accepted_games += 1
+        self.corrected_events += int(r.get("team_label_corrections", 0))
         self.games_by_team[str(pb["home"])] += 1
         self.games_by_team[str(pb["away"])] += 1
         return True
