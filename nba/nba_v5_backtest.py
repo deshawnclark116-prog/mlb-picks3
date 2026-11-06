@@ -26,6 +26,7 @@ from nba import nba_v5_context as ctxm
 from nba import nba_v5_learn as learnm
 from nba.nba_v5_lineup_pairs import LineupPairState
 from nba.nba_v5_shot_style import ShotStyleState
+from nba.nba_v5_game_flow import GameFlowState
 from nba.nba_v5_sim import (rho_for_relative_stint, SEG, League, RotationTables, TeamInput, build_profile, league_from, presence_from_events,
                             simulate_game, MARKETS)
 
@@ -74,6 +75,7 @@ class Replay:
         self.tdates = collections.defaultdict(list)        # team -> dates played
         self.lineup_pairs = LineupPairState()                # strict valid play-by-play, earlier dates only
         self.shot_style = ShotStyleState()                    # observed ESPN shot descriptions, earlier dates only
+        self.flow = GameFlowState()                           # previous ESPN PBP possession proxy cadence only
 
     def add(self, g, pb):
         d = v4.day_of(g)
@@ -117,6 +119,7 @@ class Replay:
             # Accumulate only after date scoring; no live/future leakage.
             self.lineup_pairs.add_game(pb)
             self.shot_style.add_game(pb)
+            self.flow.add_game(pb)
             shooter, against = ctxm.game_zone_tallies(pb)
             for pid, arr in shooter.items():
                 self.zone_hist[pid].append((d, arr))
@@ -294,7 +297,11 @@ def run(args):
     chosen = set(cand[: args.sample])
     print("games", len(games), "scoring", len(chosen), "of", len(cand), flush=True)
     configs = {"full": {}}
-    if sum(bool(getattr(args,n,False)) for n in ("lineup_trial","role_trial","style_trial"))>1:
+    if getattr(args,"flow_trial",False):
+        if args.config or args.features=="ablate":
+            raise ValueError("--flow-trial incompatible with --config and ablation")
+        configs["game_flow"]={"game_flow":True}
+    if sum(bool(getattr(args,n,False)) for n in ("lineup_trial","role_trial","style_trial","flow_trial"))>1:
         raise ValueError("One experimental arm at a time")
     if getattr(args, "style_trial", False):
         if args.config or args.features=="ablate":
@@ -333,6 +340,7 @@ def run(args):
                       "foul_team": {t_: rp.tables.foul_mult_team(t_) for g_ in todo for t_ in (g_["home"]["id"], g_["away"]["id"])},
                       "timing": rp.learn.timing_tables()}
             tables["to_rate"], tables["post_to"] = rp.learn.timeout_tables()
+            tables["possession_shape"] = rp.flow.pattern()
             L.zmod = league_zone_stats(rp)["zmod"]
             for k_, v_ in le.items():
                 setattr(L, k_, v_)
@@ -374,6 +382,8 @@ def run(args):
                     print("simulated games", n_done, flush=True)
         for g in by_day[d]:
             rp.add(g, pbp.get(g["game_id"]))
+    if getattr(args, "flow_trial", False):
+        print("GAME_FLOW_PBP_AUDIT",json.dumps(rp.flow.audit()),flush=True)
     if getattr(args, "style_trial", False):
         print("SHOT_STYLE_PBP_COVERAGE",json.dumps(rp.shot_style.audit()),flush=True)
     if getattr(args, "lineup_trial", False):
@@ -515,14 +525,22 @@ def main():
     ap.add_argument("--role-trial", action="store_true", help="paired shadow test of fixed role adjustment; never promoted")
     ap.add_argument("--lineup-trial", action="store_true", help="paired shadow test of lineup-conditioned opportunities; never promoted")
     ap.add_argument("--style-trial", action="store_true", help="paired shadow test of ESPN labeled shot execution, not Synergy plays")
+    ap.add_argument("--flow-trial", action="store_true", help="paired shadow test of historically learned 2-minute possession distribution")
     a = ap.parse_args()
     results, rows, v4_preds, chosen = run(a)
     if a.dump:
-        Path(a.dump).write_text(json.dumps(results if a.role_trial or a.lineup_trial or a.style_trial else next(iter(results.values()))))
+        Path(a.dump).write_text(json.dumps(results if a.role_trial or a.lineup_trial or a.style_trial or a.flow_trial else next(iter(results.values()))))
     report = {c: score(r, rows, v4_preds) for c, r in results.items() if r}
     if a.role_trial:
         from nba.nba_v5_role_trial_score import evaluate
         report["paired_role_trial"] = evaluate(results["full"], results["role_adaptive"], v4_preds)
+    if a.flow_trial:
+        from nba.nba_v5_role_trial_score import evaluate
+        paired=evaluate(results["full"],results["game_flow"],v4_preds)
+        paired["experiment"]="NBA_V5_TWO_MINUTE_PBP_CADENCE_V1"
+        paired["candidate"]="Past ESPN PBP season-level possession proxy by two-minute segment; 40-game prior, 20% cap"
+        paired["observational_limitation"]="PBP possession proxies, not actual possession boundary or shot clock data"
+        report["paired_flow_trial"]=paired
     if a.style_trial:
         from nba.nba_v5_role_trial_score import evaluate
         paired=evaluate(results["full"],results["shot_style"],v4_preds)

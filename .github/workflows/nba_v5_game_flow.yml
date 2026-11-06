@@ -1,0 +1,51 @@
+name: NBA V5 historical quarter and possession cadence research
+on:
+  pull_request:
+    paths:
+      - "nba/nba_v5_game_flow.py"
+      - "nba/nba_v5_sim.py"
+      - "nba/nba_v5_backtest.py"
+      - "nba/nba_v5_forecast.py"
+      - "tests/test_nba_v5_game_flow.py"
+      - ".github/workflows/nba_v5_game_flow.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  game-flow-shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -q "numpy>=2.1,<2.5" "scipy>=1.14,<1.18" "pdfplumber>=0.11,<0.13"
+      - name: All NBA V5 simulation and source audit regressions
+        run: python -m unittest discover -s tests -p "test_nba_v5*.py" -v
+      - name: Paired champion versus game-flow challenger
+        run: |
+          python -u -m nba.nba_v5_backtest \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz \
+            --pbp nba/data/nba_v5_pbp_2026_27.jsonl.gz \
+            --test-from 2026-03-01 --sample 70 --sims 500 \
+            --flow-trial --out /tmp/nba_v5_flow_trial.json
+      - name: Report original event score with game-level error uncertainty
+        run: |
+          python - <<'PY'
+          import json
+          result=json.load(open('/tmp/nba_v5_flow_trial.json'))
+          paired=result['paired_flow_trial']
+          assert paired['model_promotion_allowed'] is False
+          print('FLOW_TRIAL:',paired['experiment'])
+          for k,v in paired['metrics'].items():
+              if 'brier_fixed_champion_target' in k or k.startswith('minutes|'):
+                  print('PAIRED_FLOW',k,v)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-v5-game-flow-unpromoted-challenger
+          path: /tmp/nba_v5_flow_trial.json
+          retention-days: 30

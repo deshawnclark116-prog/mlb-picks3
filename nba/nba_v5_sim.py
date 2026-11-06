@@ -322,7 +322,7 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
          "luck": True, "assists": True, "putbacks": True, "defence": True, "schedule": True, "officials": True,
          "late_game": True, "returns": True, "minute_limits": True, "zones": True,
          "team_rotation": True, "timeouts": True, "defenders": True, "timing": True, "joint_availability": True,
-         "lineup_pairs": False, "shot_style": False} # not promoted: require paired OOS improvement
+         "lineup_pairs": False, "shot_style": False, "game_flow": False} # unpromoted research switches
     ctx = ctx or {}
     if features:
         F.update(features)
@@ -618,8 +618,15 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
                 np.add.at(fouls[i], (ar[:, None], L5[i]), inc)
                 np.add.at(st[i]["pf"], (ar[:, None], L5[i]), inc)
 
+    cadence=np.ones(SEG,float)
+    if F["game_flow"] and tables.get("possession_shape") is not None:
+        cadence=np.asarray(tables["possession_shape"],float)
+        if (cadence.shape!=(SEG,) or not np.isfinite(cadence).all()
+            or float(cadence.min())<0.8 or float(cadence.max())>1.2
+            or abs(float(cadence.mean())-1)>1e-6):
+            raise ValueError("NBA_V5_INVALID_PAST_ONLY_POSSESSION_CADENCE")
     for seg in range(SEG):
-        run_segment(seg, base_n, 2.0)
+        run_segment(seg, base_n*cadence[seg], 2.0)
     if F["overtime"]:
         ot = 0
         while ot < 4:

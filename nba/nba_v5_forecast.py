@@ -206,6 +206,7 @@ def main() -> int:
     L.zmod = b5.league_zone_stats(rp)["zmod"]
     tables["timing"] = rp.learn.timing_tables()
     tables["to_rate"], tables["post_to"] = rp.learn.timeout_tables()
+    tables["possession_shape"] = rp.flow.pattern() # unpromoted, game_flow feature disabled by default
     late_tab = ctxm.late_game_ft_table([pbp[g["game_id"]] for g in games if g["game_id"] in pbp])
     le = ctxm.league_events([pbp[g["game_id"]] for g in games if g["game_id"] in pbp])
     for k_, v_ in le.items():
