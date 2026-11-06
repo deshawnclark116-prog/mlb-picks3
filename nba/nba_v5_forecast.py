@@ -110,7 +110,7 @@ def pseudo_game(g3):
     return {"home": {"id": g3["home_id"]}, "away": {"id": g3["away_id"]}, "players": players, "officials": g3.get("officials") or []}
 
 
-def team_sensitivity(th, ta, L, tables, ctx, base_means, S, pace, seed, side, top_k=3):
+def team_sensitivity(th, ta, L, tables, ctx, base_means, S, pace, seed, side, top_k=3, features=None):
     """Re-simulate with each of the team's top-usage players out; report who moves and by how much."""
     out = {}
     team = th if side == "home" else ta
@@ -121,7 +121,7 @@ def team_sensitivity(th, ta, L, tables, ctx, base_means, S, pace, seed, side, to
         pp[k] = 0.0
         alt = type(team)(**{**team.__dict__, "p_play": pp})
         h, a = (alt, ta) if side == "home" else (th, alt)
-        sim = simulate_game(h, a, L, tables, S=max(800, S // 3), pace=pace, seed=seed + 17 + int(k), ctx=ctx)
+        sim = simulate_game(h, a, L, tables, S=max(800, S // 3), pace=pace, seed=seed + 17 + int(k), ctx=ctx, features=features)
         for j, pid in enumerate(team.ids):
             if j == k:
                 continue
@@ -149,6 +149,7 @@ def main() -> int:
     ap.add_argument("--calibration", default="")
     ap.add_argument("--receipt", default="", help="information receipt (nba_v5_info) with each player's reported status, body part and return date")
     ap.add_argument("--grades", default="", help="docs/nba_v5_grades/summary.json: learned chance of playing by reported status")
+    ap.add_argument("--features", default="", help="docs/nba_v5_latest/features.json: which simulation pieces are switched on (only those that tested as helpful)")
     ap.add_argument("--v4", default="", help="V4 forecast file for the same games; averaged with the V5 simulation for points, rebounds, assists, threes")
     ap.add_argument("--archive", default="", help="directory for frozen forecasts: first/<game>.json.gz (never rewritten) and last/<game>.json.gz (replaced until 15 min before tip, kept only within 4 hours of tip)")
     a = ap.parse_args()
@@ -170,6 +171,7 @@ def main() -> int:
     calib = json.loads(Path(a.calibration).read_text()) if a.calibration and Path(a.calibration).exists() else {}
     v3 = json.loads(Path(a.v3).read_text())
     play_table = avm.PlayTable.from_grades(a.grades) if a.grades else avm.PlayTable()
+    switches = json.loads(Path(a.features).read_text())["features"] if a.features and Path(a.features).exists() else {}
     receipts = json.loads(Path(a.receipt).read_text()) if a.receipt and Path(a.receipt).exists() else {}
     v4doc = json.loads(Path(a.v4).read_text()) if a.v4 and Path(a.v4).exists() else None
     v4rows = {(g["game_id"], r["player_id"], r["market"]): r for g in (v4doc or {"games": []})["games"] for r in g["rows"] if r.get("cdf_lattice")}
@@ -194,7 +196,14 @@ def main() -> int:
         pa = {}
         for p in pg["players"]:
             info = rep_by.get(p["id"])
-            pa[p["id"]] = play_table.p_play(info["status"], info["body"]) if info else play_table.p_play("UNLISTED")
+            if info:
+                pa[p["id"]] = play_table.p_play(info["status"], info["body"])
+            else:                                          # not on any injury report: his own recent habit of playing, capped by the learned rate
+                recent = [m for (dd, m) in rp.v4.team_rosters.get(p["team"], []) if dd < d][-20:]
+                first = next((i for i, m in enumerate(recent) if p["id"] in m), None)     # games before he joined the team do not count
+                span = recent[first:] if first is not None else []
+                part = (sum(1 for m in span if p["id"] in m) + 3 * 0.96) / (len(span) + 3) if span else 0.96
+                pa[p["id"]] = min(play_table.p_play("UNLISTED"), part)
         th.p_play = np.array([pa[i] for i in th.ids])
         ta.p_play = np.array([pa[i] for i in ta.ids])
         for ti_, tid_ in ((th, g3["home_id"]), (ta, g3["away_id"])):                 # teammates who tend to sit together
@@ -208,7 +217,7 @@ def main() -> int:
         tables_g = dict(tables)
         tables_g["blow_team"] = {t_: rp.tables.blow_mult_team(t_) for t_ in (g3["home_id"], g3["away_id"])}
         tables_g["foul_team"] = {t_: rp.tables.foul_mult_team(t_) for t_ in (g3["home_id"], g3["away_id"])}
-        sim = simulate_game(th, ta, L, tables_g, S=a.sims, pace=pace, seed=seed, ctx=ctx)
+        sim = simulate_game(th, ta, L, tables_g, S=a.sims, pace=pace, seed=seed, ctx=ctx, features=switches)
         rows_by = {(r["player_id"], r["market"]): r for r in g3["rows"]}
         new_rows, base_means = [], {}
         side_data = {"home": (th, sim["home"], sim["avail"][0], sim["first5"][0], sim["close5"][0]),
@@ -223,7 +232,7 @@ def main() -> int:
                     base_means[(pid, m)] = float(sd[key][played, j].mean())
         sens = {}
         for side in ("home", "away"):
-            sens.update(team_sensitivity(th, ta, L, tables_g, ctx, base_means, a.sims, pace, seed, side))
+            sens.update(team_sensitivity(th, ta, L, tables_g, ctx, base_means, a.sims, pace, seed, side, features=switches))
         for side, (ti, sd, av, f5, c5) in side_data.items():
             for j, pid in enumerate(ti.ids):
                 played = av[:, j] & (sd["min"][:, j] > 0)
@@ -272,7 +281,7 @@ def main() -> int:
         g5 = dict(g3)
         g5.update({"rows": new_rows, "rows_count": len(new_rows), "model_version": VERSION, "forecast_kind": "V5_SHADOW",
                    "forecast_at_utc": now.isoformat(), "asof_utc": now.isoformat(), "model_simulations": a.sims,
-                   "pace_used": pace, "official_foul_multiplier": ctx["ft_mult"]})
+                   "pace_used": pace, "official_foul_multiplier": ctx["ft_mult"], "simulation_pieces_on": switches or "defaults"})
         out_games.append(g5)
         print("simulated", g3["away"], "at", g3["home"], "rows", len(new_rows), flush=True)
     doc = {k: v for k, v in v3.items() if k not in ("games", "skipped")}
