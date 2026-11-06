@@ -26,13 +26,12 @@ import numpy as np
 from nba import nba_v4_backtest as v4
 from nba import nba_v5_backtest as b5
 from nba import nba_v5_context as ctxm
+from nba.nba_v5_rank import MARKET_ORDER, MEANINGFUL_MIN, rank_for_screen, reach_prob
 from nba.nba_v5_sim import League, league_from, simulate_game, MARKETS
 
 VERSION = "nba-v5-blend-possession-simulation-20261106"
 CORE = ("points", "rebounds", "assists", "three_pointers_made")
-MARKET_ORDER = ("points", "rebounds", "assists", "three_pointers_made", "steals", "blocks", "turnovers")
 CDF_MAX = {"points": 90, "rebounds": 45, "assists": 35, "three_pointers_made": 17, "steals": 12, "blocks": 12, "turnovers": 15}
-MEANINGFUL_MIN = {"points": 6, "rebounds": 3, "assists": 2, "three_pointers_made": 1, "steals": 1, "blocks": 1, "turnovers": 2}
 SENS_MIN_SHARE = 0.08                    # a projection "depends on" a teammate if it moves by 8% or more
 
 
@@ -76,29 +75,6 @@ def blend_rows(r5: dict, r4: dict) -> dict:
                 "cdf_lattice": {"step": 1, "cdf": cdf},
                 "blend": {"v5_simulation_mean": round(m5, 4), "v4_model_mean": round(m4, 4), "weights": [0.5, 0.5]}})
     return out
-
-
-def reach_prob(lat, k):
-    c = lat
-    return 1.0 if k <= 0 else (0.0 if k - 1 >= len(c) else 1.0 - c[k - 1])
-
-
-def rank_for_screen(rows):
-    """Same rule as the app: players who are likely to play, projection large enough to matter, ranked by the chance
-    of reaching the rounded projection (highest first), ties by chance of playing, then name."""
-    picks = []
-    for r in rows:
-        if r.get("mean_basis") != "CONDITIONAL_ON_PLAYING" or r["reported_status"] == "OUT" or not r["p_active"] >= 0.75:
-            continue
-        w = v4.whole(r["mean"])
-        if w < MEANINGFUL_MIN[r["market"]]:
-            continue
-        picks.append((reach_prob(r["cdf_lattice"]["cdf"], w), r["p_active"], r["player"], r["market"], w, r))
-    picks.sort(key=lambda x: (-x[0], -x[1], x[2], x[3]))
-    for i, (p_, pa_, nm, mk, w, r) in enumerate(picks, 1):
-        r["frontend_rank"] = i
-        r["whole_projection"] = w
-        r["reach_probability"] = round(p_, 4)
 
 
 def sha(path: Path) -> str:
