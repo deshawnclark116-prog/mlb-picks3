@@ -306,6 +306,8 @@ class TeamInput:
     avail_corr: np.ndarray | None = None       # (N, N) correlation of absences (players who tend to sit together)
     pair_effects: dict | None = None           # (stat -> (N,N) teammate-conditioned opportunity, shadow)
     pair_baselines: dict | None = None         # (stat -> (N,)) on-court composition centering
+    style_probs: np.ndarray | None = None     # (N,5zones,5styles) historical shot execution frequencies
+    style_mult: np.ndarray | None = None      # (N,5zones,5styles) mean-neutral shot-accuracy multipliers
 
 
 def _beta(rng, p, n, shape):
@@ -320,11 +322,12 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
          "luck": True, "assists": True, "putbacks": True, "defence": True, "schedule": True, "officials": True,
          "late_game": True, "returns": True, "minute_limits": True, "zones": True,
          "team_rotation": True, "timeouts": True, "defenders": True, "timing": True, "joint_availability": True,
-         "lineup_pairs": False} # NOT active in production: requires paired OOS improvement
+         "lineup_pairs": False, "shot_style": False} # not promoted: require paired OOS improvement
     ctx = ctx or {}
     if features:
         F.update(features)
     rng = np.random.default_rng(seed)
+    style_rng = np.random.default_rng(seed + 739193) # independent; preserves common main random stream in paired arms
     teams = [home, away]
     N = [len(t.ids) for t in teams]
     pace = pace or L.poss
@@ -495,6 +498,14 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
             zone = None
             is3 = is_shot & (rng.random(S) < sh3[o][fi])
             pm = np.where(is3, par[o]["p3"][ar, fi] * rate_mult(dfn, "p3"), par[o]["p2"][ar, fi] * rate_mult(dfn, "p2"))
+        # Shot EXECUTION style != an invented Synergy play type. Historical
+        # classifications are from observed ESPN shot descriptions; keep
+        # zone-average shooting stable via mean-neutral multipliers.
+        if use_z and F["shot_style"] and to_.style_probs is not None and to_.style_mult is not None:
+            probs = to_.style_probs[fi, zone, :]
+            chosen = np.minimum((np.cumsum(probs,axis=1) >
+                                style_rng.random(S)[:,None]).argmax(axis=1), probs.shape[1]-1)
+            pm = pm * to_.style_mult[fi,zone,chosen]
         eff = (to_.eff[1], to_.eff[0]) if F["schedule"] else (1.0, 1.0)
         if F["timing"] and timing is not None:                          # transition (early), normal and late-clock shots
             sh_t, rt_t = timing
