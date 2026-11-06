@@ -1,0 +1,61 @@
+name: NBA V5 validated lineup pair research
+on:
+  pull_request:
+    paths:
+      - "nba/nba_v5_lineup_pairs.py"
+      - "nba/nba_v5_lineup_audit.py"
+      - "nba/nba_v5_sim.py"
+      - "nba/nba_v5_backtest.py"
+      - "tests/test_nba_v5_lineup_pairs.py"
+      - ".github/workflows/nba_v5_lineup_pairs.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  lineup-pair-shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install "numpy>=2.1,<2.5" "scipy>=1.14,<1.18"
+      - name: Existing V5 and strict lineup-reconstruction contracts
+        run: python -m unittest discover -s tests -p "test_nba_v5*.py" -v
+      - name: Verify how much historical play-by-play actually reconstructs
+        run: |
+          python -u -m nba.nba_v5_lineup_audit \
+            --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz \
+            --pbp nba/data/nba_v5_pbp_2026_27.jsonl.gz \
+            --out /tmp/lineup_coverage.json
+      - name: Paired original V5 vs lineup-conditioned challenger
+        run: |
+          python -u -m nba.nba_v5_backtest \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz \
+            --pbp nba/data/nba_v5_pbp_2026_27.jsonl.gz \
+            --test-from 2026-03-01 --sample 70 --sims 500 \
+            --lineup-trial --out /tmp/nba_v5_lineup_pairs.json
+      - name: Retain falsifiable game-cluster comparisons, no automated promotion
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open('/tmp/nba_v5_lineup_pairs.json'))
+          c=json.load(open('/tmp/lineup_coverage.json'))
+          trial=r['paired_lineup_trial']
+          assert trial['model_promotion_allowed'] is False
+          print('PBP_ACCEPTANCE:',c['accepted'],'/',c['total_pbp_games'])
+          print('PBP_REJECTIONS:',c['rejected'])
+          for k,v in trial['metrics'].items():
+              if 'brier_fixed_champion_target' in k or 'minutes|simulation' in k:
+                  print('PAIRED:',k,v)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-v5-lineup-pair-shadow-evaluation
+          path: |
+            /tmp/lineup_coverage.json
+            /tmp/nba_v5_lineup_pairs.json
+          retention-days: 30
