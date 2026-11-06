@@ -165,7 +165,8 @@ export function adjustNbaRow(row:any,status:LineupStatus|undefined){
    cdf_lattice:{step:1,cdf:row.cdf_lattice.cdf.map(()=>1)},model_target:null,reported_status:'OUT'});
  }
  if(status==='IN'){
-  const c=conditionOnPlaying(row);
+  // V4 rows are already conditional on playing; conditioning them again would distort them.
+  const c=row.mean_basis==='CONDITIONAL_ON_PLAYING'?row.cdf_lattice.cdf:conditionOnPlaying(row);
   if(!c)return lab('NO_NEW_INFO');
   const s=cdfStats(c);
   let target=null;

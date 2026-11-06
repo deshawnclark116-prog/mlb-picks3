@@ -117,3 +117,12 @@ test('published + live merge: OUT from either source wins, nothing is lost',()=>
  assert.equal(serializeStatus(mergeStatusMaps(a,null)).g.players['t|a'],'OUT');
  assert.equal(mergeStatusMaps(null,null).size,0);
 });
+
+test('a confirmed-in player on a V4 row is not conditioned a second time',()=>{
+ const c=[.02,.08,.2,.4,.6,.8,.93,1];                       // already conditional on playing
+ const row=nbaRow({p_active:.9,mean_basis:'CONDITIONAL_ON_PLAYING',cdf_lattice:{step:1,cdf:c},model_target:null});
+ const r=adjustNbaRow(row,'IN');
+ assert.equal(r.lineup_label,'CONFIRMED_IN');
+ assert.deepEqual(r.cdf_lattice.cdf,c);
+ assert.equal(r.p_active,1);
+});

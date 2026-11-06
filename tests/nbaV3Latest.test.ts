@@ -63,3 +63,18 @@ test('fail-open: a missing or unreadable latest file leaves the original untouch
   assert.equal(ok.latest_run.applied,1);assert.equal(ok.games[0].rows[0].mean,9);
  }finally{rmSync(dir,{recursive:true,force:true});}
 });
+
+test('a V4 shadow run layers on top of a V3 latest run and still points at the first forecast',()=>{
+ const v3=mergeLatestRun(base(),header([game('2026-11-04T20:00:00Z',7)],'2026-11-04T20:00:05Z'),NOW);
+ const g4:any=game('2026-11-04T21:30:00Z',9);g4.rows.forEach((r:any)=>{r.model_version='nba-v4-minutes-rate-teammates-out-20261106';r.mean_basis='CONDITIONAL_ON_PLAYING';});
+ const doc4:any=header([g4],'2026-11-04T21:30:05Z');doc4.model_version='nba-v4-minutes-rate-teammates-out-20261106';
+ const out=mergeLatestRun(v3,doc4,NOW,'V4_LATEST');
+ assert.equal(out.latest_run.applied,1);
+ assert.equal(out.games[0].forecast_kind,'V4_LATEST');
+ assert.equal(out.games[0].rows[0].mean,9);
+ assert.equal(out.games[0].first_seen_forecast_at_utc,'2026-11-01T01:06:14Z');   // not the V3 latest-run time
+});
+test('an unknown model version is still rejected',()=>{
+ const g:any=game('2026-11-04T21:30:00Z',9);g.rows.forEach((r:any)=>{r.model_version='something-else';});
+ assert.equal(mergeLatestRun(base(),header([g],'2026-11-04T21:30:05Z'),NOW,'V4_LATEST').games[0].rows[0].mean,5);
+});
