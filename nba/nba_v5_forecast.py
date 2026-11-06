@@ -16,6 +16,7 @@ Usage: python -m nba.nba_v5_forecast --games g.jsonl[.gz] --pbp p.jsonl --v3 lat
 from __future__ import annotations
 import argparse
 import datetime as dt
+import gzip
 import hashlib
 import json
 from pathlib import Path
@@ -27,11 +28,54 @@ from nba import nba_v5_backtest as b5
 from nba import nba_v5_context as ctxm
 from nba.nba_v5_sim import League, league_from, simulate_game, MARKETS
 
-VERSION = "nba-v5-possession-simulation-20261106"
+VERSION = "nba-v5-blend-possession-simulation-20261106"
+CORE = ("points", "rebounds", "assists", "three_pointers_made")
 MARKET_ORDER = ("points", "rebounds", "assists", "three_pointers_made", "steals", "blocks", "turnovers")
 CDF_MAX = {"points": 90, "rebounds": 45, "assists": 35, "three_pointers_made": 17, "steals": 12, "blocks": 12, "turnovers": 15}
 MEANINGFUL_MIN = {"points": 6, "rebounds": 3, "assists": 2, "three_pointers_made": 1, "steals": 1, "blocks": 1, "turnovers": 2}
 SENS_MIN_SHARE = 0.08                    # a projection "depends on" a teammate if it moves by 8% or more
+
+
+def trim_lattice(r):
+    """Drop the run of trailing 1.0 values: beyond the lattice the chance of reaching a number is 0, which readers already assume."""
+    lat = r.get("cdf_lattice")
+    if not lat:
+        return
+    c = lat["cdf"]
+    n = len(c)
+    while n > 2 and c[n - 2] >= 0.9999:
+        n -= 1
+    lat["cdf"] = c[:n]
+
+
+def cdf_quantile(cdf, q):
+    for i, v in enumerate(cdf):
+        if v >= q:
+            return float(i)
+    return float(len(cdf) - 1)
+
+
+def blend_rows(r5: dict, r4: dict) -> dict:
+    """Equal-weight mixture of the V5 simulation and the V4 model for one player and stat.
+
+    Tested on 150 held-out games (3,000+ player-games): the mixture had a smaller average miss than either model for
+    every stat and better probabilities than both for points and made threes (nba_v5_backtest.py). The mixture's chance of
+    reaching a number is the average of the two models' chances; its projection is the average of the two projections."""
+    c5, c4 = np.array(r5["cdf_lattice"]["cdf"]), np.array(r4["cdf_lattice"]["cdf"])
+    if len(c5) != len(c4):
+        return r5
+    mix = np.clip(0.5 * (c5 + c4), 0.0, 1.0)
+    mix[-1] = 1.0
+    m5, m4 = float(r5["mean"]), float(r4["mean"])
+    mean = 0.5 * (m5 + m4)
+    sd = float(np.sqrt(0.5 * (r5["sd"] ** 2 + r4["sd"] ** 2) + 0.25 * (m5 - m4) ** 2))
+    out = dict(r5)
+    cdf = [round(float(x), 4) for x in mix]
+    out.update({"mean": round(mean, 4), "median": cdf_quantile(cdf, 0.5), "p10": cdf_quantile(cdf, 0.10), "p25": cdf_quantile(cdf, 0.25),
+                "p75": cdf_quantile(cdf, 0.75), "p90": cdf_quantile(cdf, 0.90), "sd": round(sd, 4), "unc": round(sd, 4),
+                "cdf_lattice": {"step": 1, "cdf": cdf},
+                "blend": {"v5_simulation_mean": round(m5, 4), "v4_model_mean": round(m4, 4), "weights": [0.5, 0.5]}})
+    return out
 
 
 def reach_prob(lat, k):
@@ -65,7 +109,7 @@ def empirical_lattice(samples: np.ndarray, top: int):
     ks = np.arange(0, top + 1)
     c = np.array([(samples <= k).mean() for k in ks])
     c[-1] = 1.0
-    return [round(float(x), 6) for x in c]
+    return [round(float(x), 4) for x in c]
 
 
 def quant(samples, q):
@@ -125,7 +169,8 @@ def main() -> int:
     ap.add_argument("--out", required=True)
     ap.add_argument("--sims", type=int, default=3000)
     ap.add_argument("--calibration", default="")
-    ap.add_argument("--archive", default="", help="directory for frozen forecasts: first/<game>.json (never rewritten) and last/<game>.json (replaced until 15 min before tip)")
+    ap.add_argument("--v4", default="", help="V4 forecast file for the same games; averaged with the V5 simulation for points, rebounds, assists, threes")
+    ap.add_argument("--archive", default="", help="directory for frozen forecasts: first/<game>.json.gz (never rewritten) and last/<game>.json.gz (replaced until 15 min before tip, kept only within 4 hours of tip)")
     a = ap.parse_args()
     games = v4.load(a.games)
     pbp = b5.load_pbp(a.pbp)
@@ -142,6 +187,8 @@ def main() -> int:
         setattr(L, k_, v_)
     calib = json.loads(Path(a.calibration).read_text()) if a.calibration and Path(a.calibration).exists() else {}
     v3 = json.loads(Path(a.v3).read_text())
+    v4doc = json.loads(Path(a.v4).read_text()) if a.v4 and Path(a.v4).exists() else None
+    v4rows = {(g["game_id"], r["player_id"], r["market"]): r for g in (v4doc or {"games": []})["games"] for r in g["rows"] if r.get("cdf_lattice")}
     now = dt.datetime.now(dt.timezone.utc)
     out_games, skipped = [], []
     for g3 in v3["games"]:
@@ -208,7 +255,15 @@ def main() -> int:
         for r in new_rows:
             for dep in r.get("depends_on", []):
                 dep["if_out_name"] = name_of.get(dep["if_out"], dep["if_out"])
+        for i_, r in enumerate(new_rows):
+            r4 = v4rows.get((g3["game_id"], r["player_id"], r["market"]))
+            if r4 is not None and r["market"] in CORE and r.get("mean_basis") == "CONDITIONAL_ON_PLAYING" and r4.get("mean_basis") == "CONDITIONAL_ON_PLAYING":
+                new_rows[i_] = blend_rows(r, r4)
+            elif r.get("mean_basis") == "CONDITIONAL_ON_PLAYING":
+                r["blend"] = None
         rank_for_screen(new_rows)
+        for r in new_rows:
+            trim_lattice(r)
         for r in g3["rows"]:
             if r["reported_status"] == "OUT":
                 new_rows.append(r)
@@ -222,7 +277,8 @@ def main() -> int:
     doc.update({"games": out_games, "games_forecast": len(out_games), "skipped": skipped, "model_version": VERSION,
                 "generated_at_utc": now.isoformat(), "model_promoted": False, "v5_training_games": len(games),
                 "v5_history_through": games[-1]["date"], "v3_source_sha256": sha(Path(a.v3)),
-                "note": "NBA V5 shadow: whole-game possession simulation. Conditional on playing; availability layer is V3's. "
+                "note": "NBA V5: equal-weight blend of the whole-game possession simulation and the V4 model for points, rebounds, assists and threes; "
+                        "the simulation alone for steals, blocks and turnovers. Conditional on playing; availability layer is V3's. "
                         "Research only, not validated for 2026-27, no sportsbook input."})
     Path(a.out).write_text(json.dumps(doc, separators=(",", ":")))
     if a.archive:
@@ -233,11 +289,14 @@ def main() -> int:
             one = {k: v for k, v in doc.items() if k not in ("games",)}
             one.update({"games": [g5], "games_forecast": 1})
             for kind in ("first", "last"):
-                path = Path(a.archive) / kind / (g5["game_id"] + ".json")
+                if kind == "last" and tip - now > dt.timedelta(hours=4):
+                    continue                                       # the last pre-tip version only matters close to the game
+                path = Path(a.archive) / kind / (g5["game_id"] + ".json.gz")
                 if kind == "first" and path.exists():
                     continue
                 path.parent.mkdir(parents=True, exist_ok=True)
-                path.write_text(json.dumps(one, separators=(",", ":")))
+                with gzip.open(path, "wt", compresslevel=9) as fh:
+                    fh.write(json.dumps(one, separators=(",", ":")))
     print("games", len(out_games), "skipped", skipped)
     return 0
 

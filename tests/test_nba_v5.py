@@ -129,3 +129,24 @@ class ContextTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class BlendTests(unittest.TestCase):
+    def test_blend_is_an_equal_mixture(self):
+        from nba.nba_v5_forecast import blend_rows
+        c5 = [0.1, 0.4, 0.8, 1.0]
+        c4 = [0.2, 0.6, 0.9, 1.0]
+        r5 = {"mean": 2.0, "sd": 1.0, "cdf_lattice": {"step": 1, "cdf": c5}, "market": "assists"}
+        r4 = {"mean": 3.0, "sd": 1.2, "cdf_lattice": {"step": 1, "cdf": c4}}
+        b = blend_rows(r5, r4)
+        self.assertAlmostEqual(b["mean"], 2.5)
+        self.assertEqual(b["cdf_lattice"]["cdf"], [0.15, 0.5, 0.85, 1.0])
+        self.assertEqual(b["blend"]["weights"], [0.5, 0.5])
+        self.assertGreater(b["sd"], 1.0)                                  # spread includes the disagreement between the models
+        self.assertTrue(all(y >= x for x, y in zip(b["cdf_lattice"]["cdf"], b["cdf_lattice"]["cdf"][1:])))
+
+    def test_blend_is_skipped_when_the_lattices_do_not_match(self):
+        from nba.nba_v5_forecast import blend_rows
+        r5 = {"mean": 2.0, "sd": 1.0, "cdf_lattice": {"step": 1, "cdf": [0.5, 1.0]}}
+        r4 = {"mean": 3.0, "sd": 1.0, "cdf_lattice": {"step": 1, "cdf": [0.5, 0.8, 1.0]}}
+        self.assertIs(blend_rows(r5, r4), r5)

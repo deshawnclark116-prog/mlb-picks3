@@ -118,7 +118,7 @@ def grade_doc(doc, ledger_reports, kind):
                 continue
             line = final["players"].get(r["player_id"])
             rows_out.append({"player": r["player"], "player_id": r["player_id"], "market": r["market"], "projection": r["mean"],
-                             "p10": r["p10"], "p90": r["p90"], "p_active": r["p_active"], "frontend_rank": r.get("frontend_rank"),
+                             "p10": r["p10"], "p90": r["p90"], "p_active": r["p_active"], "p_start": r.get("p_start"), "frontend_rank": r.get("frontend_rank"),
                              "whole_projection": r.get("whole_projection"), "reach_probability": r.get("reach_probability"),
                              "actual": None if line is None else line[STAT_KEY[r["market"]]], "played": line is not None,
                              "minutes_forecast": r.get("minutes_mean"), "minutes_actual": None if line is None else line["min"],
@@ -153,6 +153,11 @@ def summarize(records):
             if r.get("whole_projection") is not None and r.get("reach_probability") is not None:
                 hit = 1.0 if r["actual"] >= r["whole_projection"] else 0.0
                 shown["all_ranked"].append((r["reach_probability"], hit))
+                role = "likely_starter" if (r.get("p_start") or 0) >= 0.5 else "bench"
+                shown["role_" + role].append((r["reach_probability"], hit))
+                big = "minutes_28_plus" if (r.get("minutes_forecast") or 0) >= 28 else "minutes_under_28"
+                shown["opportunity_" + big].append((r["reach_probability"], hit))
+                shown["stat_" + r["market"]].append((r["reach_probability"], hit))
                 if (r.get("frontend_rank") or 99) <= 4:
                     shown["frontend_top4"].append((r["reach_probability"], hit))
     return {"games_graded": len(records), "cause_counts": dict(cause_counts.most_common()),
@@ -183,11 +188,13 @@ def main() -> int:
     gdir.mkdir(parents=True, exist_ok=True)
     new = 0
     for kind in ("first", "last"):
-        for fp in sorted((Path(a.archive) / kind).glob("*.json")):
-            target = gdir / kind / fp.name
+        for fp in sorted((Path(a.archive) / kind).glob("*.json*")):
+            target = gdir / kind / (fp.name[:-3] if fp.name.endswith(".gz") else fp.name)
             if target.exists():
                 continue                                            # a graded game is never re-graded or rewritten
-            recs = grade_doc(json.loads(fp.read_text()), reports, kind)
+            import gzip
+            raw = gzip.open(fp, "rt").read() if fp.name.endswith(".gz") else fp.read_text()
+            recs = grade_doc(json.loads(raw), reports, kind)
             if recs:
                 target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_text(json.dumps(recs[0], separators=(",", ":")))

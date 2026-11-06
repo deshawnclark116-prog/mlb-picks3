@@ -1,0 +1,4 @@
+{
+ "show": true,
+ "reason": "On 150 held-out games the V4+V5 blend had the smallest average miss on points, rebounds, assists and threes and the best probabilities on identical events (docs/nba_v5/BACKTEST_RESULTS.md). Set show to false to put V4 back."
+}
