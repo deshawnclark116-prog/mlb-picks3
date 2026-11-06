@@ -130,6 +130,11 @@ def replay_game(pb: dict) -> dict:
             "team": locals().get("tid"),
             "acting_player": locals().get("a"),
             "second_player": locals().get("b"),
+            "home_team_id": teamids[0], "away_team_id": teamids[1],
+            "actor_in_home": locals().get("a") in on[teamids[0]],
+            "actor_in_away": locals().get("a") in on[teamids[1]],
+            "valid_events_before_rejection": valid_player_events,
+            "substitutions_before_rejection": n_subs,
             "court_home": list(on[teamids[0]]),
             "court_away": list(on[teamids[1]]),
         }
