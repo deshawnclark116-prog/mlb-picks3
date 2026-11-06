@@ -1,0 +1,70 @@
+name: NBA V5 named assist network shadow research
+on:
+  pull_request:
+    paths:
+      - "nba/nba_v5_assist_network.py"
+      - "nba/nba_v5_sim.py"
+      - "nba/nba_v5_backtest.py"
+      - "tests/test_nba_v5_assist_network.py"
+      - ".github/workflows/nba_v5_assist_network.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  named-assists:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Dependencies
+        run: python -m pip install -q "numpy>=2.1,<2.5" "scipy>=1.14,<1.18"
+      - name: Entire NBA V5 regression suite and observed assist constraints
+        run: python -m unittest discover -s tests -p "test_nba_v5*.py" -v
+      - name: Real verified passer-scorer links by player and game
+        run: |
+          python - <<'PY'
+          import json
+          from nba.nba_v5_backtest import load_pbp
+          from nba.nba_v5_lineup_pairs import LineupPairState
+          from nba.nba_v5_assist_network import AssistNetworkState
+          files=["nba/data/nba_v5_pbp_2025_26.jsonl.gz","nba/data/nba_v5_pbp_2026_27.jsonl.gz"]
+          g=load_pbp(files)
+          pairs=LineupPairState()
+          assists=AssistNetworkState()
+          for p in g.values():
+              if pairs.add_game(p):
+                  assists.add_valid_game(p)
+          a=assists.audit()
+          print("NBA_PAST_NAMED_ASSISTS",json.dumps(a,sort_keys=True))
+          assert a["valid_historical_games"]>1000
+          assert a["named_assisted_makes"]>60000
+          assert a["teams"]==30
+          PY
+      - name: Fixed champion probability target paired retrospective experiment
+        run: |
+          PYTHONHASHSEED=1 python -u -m nba.nba_v5_backtest \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz \
+            --pbp nba/data/nba_v5_pbp_2026_27.jsonl.gz \
+            --test-from 2026-03-01 --sample 70 --sims 500 \
+            --assist-network-trial --out /tmp/nba_assist_network.json
+      - name: Print complete metrics, keep model disabled
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open("/tmp/nba_assist_network.json"))
+          p=r["paired_assist_network_trial"]
+          assert p["model_promotion_allowed"] is False
+          for key,val in p["metrics"].items():
+              if "brier_fixed_champion_target" in key or "minutes|simulation|mae" in key:
+                  print("ASSIST_NETWORK_PAIRED",key,json.dumps(val,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-v5-assisted-basket-network-shadow
+          path: /tmp/nba_assist_network.json
+          retention-days: 30

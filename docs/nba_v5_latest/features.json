@@ -9,7 +9,8 @@
     "lineup_pairs": false,
     "shot_style": false,
     "game_flow": false,
-    "low_history_rotation": false
+    "low_history_rotation": false,
+    "assist_network": false
   },
   "evidence": {
     "joint_availability": "predicts how many regulars are out better than independent draws, 5.2 standard errors on 1,720 team-games",
@@ -20,6 +21,7 @@
     "lineup_pairs": "OFF: 94.97% valid historical PBP lineups and reproducible seeded replay. Exploratory 68-game paired test reduced points Brier by 0.001545, 95% game-cluster CI [0.000720, 0.002410], but no untouched prospective confirmation; other stats inconclusive. Do not promote.",
     "shot_style": "OFF — 240,495 ESPN shot events/638 players parsed, paired 68-game trial failed: no significant core-stat benefit; blocks Brier worsened by 0.003782 (95% game-cluster interval -0.006866 to -0.001090). Frozen failed branch, no rescue tuning.",
     "game_flow": "OFF — 1,351 real PBP games produced learned 2-minute possession cadence but 68-game same-seed paired V5 model test showed no reliable Brier gain; steals/blocks trends worse. No promotion or rescue tuning.",
-    "low_history_rotation": "OFF — 27,243 historical starter/bench court patterns, 54 newly included low-history player-games and 68-game paired experiment improved minutes MAE by 0.1307 and points/assists Brier by 0.002062/0.002534, positive cluster CIs. Historical actual roster was known; requires genuinely frozen pretip forward comparison before promotion."
+    "low_history_rotation": "OFF — 27,243 historical starter/bench court patterns, 54 newly included low-history player-games and 68-game paired experiment improved minutes MAE by 0.1307 and points/assists Brier by 0.002062/0.002534, positive cluster CIs. Historical actual roster was known; requires genuinely frozen pretip forward comparison before promotion.",
+    "assist_network": "OFF: verified historical named passer-to-scorer made-basket assist events; model is a research challenger only, NOT passing/potential-assist tracking. Requires fixed-threshold paired game-cluster validation."
   }
 }
