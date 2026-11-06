@@ -1,0 +1,37 @@
+name: NBA V5 authorized tracking/play-type data source contract
+on:
+  pull_request:
+    paths:
+      - "nba/nba_v5_external_source.py"
+      - "nba/nba_v5_forecast.py"
+      - "tests/test_nba_v5_external_source.py"
+      - ".github/workflows/nba_v5_external_source.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  licensed-data-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install existing V5 dependencies
+        run: python -m pip install -q "numpy>=2.1,<2.5" "scipy>=1.14,<1.18" "pdfplumber>=0.11,<0.13"
+      - name: Run complete NBA V5 contracts
+        run: python -m unittest discover -s tests -p "test_nba_v5*.py" -v
+      - name: Contract checks — data is not implied available or promoted
+        run: |
+          python - <<'PY'
+          from nba.nba_v5_external_source import DATASETS
+          import json
+          assert "NBA_PLAYER_TRACKING_AGGREGATES_V1" in DATASETS
+          assert "NBA_PLAYER_PLAY_TYPES_V1" in DATASETS
+          flags=json.load(open("docs/nba_v5_latest/features.json"))["features"]
+          assert not flags["lineup_pairs"]
+          assert not flags["shot_style"]
+          assert not flags.get("game_flow",False)
+          print("NO_ADVANCED_DATA_INVENTED_AND_MODEL_UNCHANGED")
+          PY
