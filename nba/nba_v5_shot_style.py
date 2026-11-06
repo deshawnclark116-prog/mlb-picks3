@@ -116,7 +116,16 @@ class ShotStyleState:
             raw=np.clip(player_accuracy/zone_accuracy,1/MAX_STYLE_MULT,MAX_STYLE_MULT)
             # Enforce E[style multiplier | chosen shot zone] = 1 to stop
             # double-counting the existing V5 player-zone shooting model.
-            multipliers[z]=raw/max(float(np.dot(probs[z],raw)),1e-9)
+            centered=raw/max(float(np.dot(probs[z],raw)),1e-9)
+            delta=centered-1.0
+            t=1.0
+            high=float(delta.max())
+            low=float(delta.min())
+            if high>0:
+                t=min(t,(MAX_STYLE_MULT-1.0)/high)
+            if low<0:
+                t=min(t,(1.0-1.0/MAX_STYLE_MULT)/(-low))
+            multipliers[z]=1.0+t*delta
         return probs,multipliers,{"valid":True,"shots":int(source[:,:,0].sum()),
                                   "zones_with_10plus_shots":int(np.sum(source[:,:,0].sum(axis=1)>=10))}
 
