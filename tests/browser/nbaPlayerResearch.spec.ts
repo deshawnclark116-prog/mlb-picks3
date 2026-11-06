@@ -14,7 +14,10 @@ async function launch(page:any, playerDoc:unknown=players){
   await page.setViewportSize({width:360,height:760});
   await page.goto('/');
   await page.locator('#tab-btn-nba').click();
-  await page.getByRole('button',{name:'V2 player stats'}).click();
+  // Historical V2 player research now lives behind the explicit archive,
+  // while the current NBA projection system remains the default view.
+  await page.getByText('OPENING-WEEK ORIGINAL RESEARCH ARCHIVE · NOT THE BETTING BOARD').click();
+  await page.getByRole('button',{name:'All opening player stats'}).click();
 }
 
 test('real forward-saved 225 NBA players and 900 stats render without invented bookmaker side',async({page})=>{
@@ -46,7 +49,8 @@ test('NBA V2 selector preserves day filters and never hides source-incomplete pl
   await page.getByRole('button',{name:'10-21'}).click();
   await expect(root.getByTestId('nba-player-matchup')).toHaveCount(11);
   await page.getByRole('button',{name:'All games'}).click();
-  const input=page.getByRole('textbox',{name:'Find NBA team'});
+  await page.getByRole('button',{name:'Search',exact:true}).click();
+  const input=page.getByRole('textbox',{name:'Find NBA team or player'});
   await input.fill('Jayson Tatum');
   await expect(root.getByTestId('nba-player-matchup')).toHaveCount(1);
   await root.getByTestId('nba-player-matchup').first().locator('summary').click();
