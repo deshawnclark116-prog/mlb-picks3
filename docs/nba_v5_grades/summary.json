@@ -1,20 +1,376 @@
 {
  "first": {
-  "games_graded": 0,
-  "cause_counts": {},
-  "stated_80_percent_range_coverage": {},
-  "stated_chance_vs_actual": {},
-  "mean_abs_error": {},
-  "source_reliability": {},
+  "games_graded": 2,
+  "cause_counts": {
+   "shot_volume_off": 161,
+   "minutes_off_by_6_plus": 154,
+   "outside_stated_80_percent_range": 44,
+   "did_not_play_as_flagged": 21,
+   "role_wrong_starter_vs_bench": 14,
+   "foul_trouble": 14,
+   "blowout_cut_minutes": 14,
+   "shooting_unusually_good": 10,
+   "shooting_unusually_bad": 8
+  },
+  "stated_80_percent_range_coverage": {
+   "points": {
+    "n": 46,
+    "covered": 0.652
+   },
+   "rebounds": {
+    "n": 46,
+    "covered": 0.87
+   },
+   "assists": {
+    "n": 46,
+    "covered": 0.891
+   },
+   "three_pointers_made": {
+    "n": 46,
+    "covered": 0.935
+   },
+   "steals": {
+    "n": 46,
+    "covered": 0.891
+   },
+   "blocks": {
+    "n": 46,
+    "covered": 0.935
+   },
+   "turnovers": {
+    "n": 46,
+    "covered": 0.87
+   }
+  },
+  "stated_chance_vs_actual": {
+   "all_ranked": {
+    "n": 139,
+    "mean_stated": 0.555,
+    "actual_reach_rate": 0.504,
+    "brier": 0.2493
+   },
+   "role_bench": {
+    "n": 58,
+    "mean_stated": 0.545,
+    "actual_reach_rate": 0.397,
+    "brier": 0.2537
+   },
+   "opportunity_minutes_under_28": {
+    "n": 53,
+    "mean_stated": 0.537,
+    "actual_reach_rate": 0.472,
+    "brier": 0.2487
+   },
+   "stat_points": {
+    "n": 26,
+    "mean_stated": 0.488,
+    "actual_reach_rate": 0.385,
+    "brier": 0.2515
+   },
+   "stat_rebounds": {
+    "n": 23,
+    "mean_stated": 0.529,
+    "actual_reach_rate": 0.565,
+    "brier": 0.2372
+   },
+   "stat_three_pointers_made": {
+    "n": 22,
+    "mean_stated": 0.609,
+    "actual_reach_rate": 0.545,
+    "brier": 0.247
+   },
+   "stat_steals": {
+    "n": 22,
+    "mean_stated": 0.606,
+    "actual_reach_rate": 0.5,
+    "brier": 0.2635
+   },
+   "stat_blocks": {
+    "n": 10,
+    "mean_stated": 0.55,
+    "actual_reach_rate": 0.5,
+    "brier": 0.2645
+   },
+   "opportunity_minutes_28_plus": {
+    "n": 86,
+    "mean_stated": 0.566,
+    "actual_reach_rate": 0.523,
+    "brier": 0.2496
+   },
+   "stat_assists": {
+    "n": 22,
+    "mean_stated": 0.566,
+    "actual_reach_rate": 0.455,
+    "brier": 0.2642
+   },
+   "stat_turnovers": {
+    "n": 14,
+    "mean_stated": 0.545,
+    "actual_reach_rate": 0.643,
+    "brier": 0.212
+   },
+   "role_likely_starter": {
+    "n": 81,
+    "mean_stated": 0.563,
+    "actual_reach_rate": 0.58,
+    "brier": 0.2461
+   },
+   "frontend_top4": {
+    "n": 8,
+    "mean_stated": 0.707,
+    "actual_reach_rate": 0.5,
+    "brier": 0.3192
+   }
+  },
+  "mean_abs_error": {
+   "points": 5.452,
+   "rebounds": 2.141,
+   "assists": 1.833,
+   "three_pointers_made": 1.095,
+   "steals": 0.927,
+   "blocks": 0.545,
+   "turnovers": 1.04
+  },
+  "mean_abs_error_by_role_change": {
+   "points|UNKNOWN": {
+    "n": 46,
+    "mae": 5.452
+   },
+   "rebounds|UNKNOWN": {
+    "n": 46,
+    "mae": 2.141
+   },
+   "assists|UNKNOWN": {
+    "n": 46,
+    "mae": 1.833
+   },
+   "three_pointers_made|UNKNOWN": {
+    "n": 46,
+    "mae": 1.095
+   },
+   "steals|UNKNOWN": {
+    "n": 46,
+    "mae": 0.927
+   },
+   "blocks|UNKNOWN": {
+    "n": 46,
+    "mae": 0.545
+   },
+   "turnovers|UNKNOWN": {
+    "n": 46,
+    "mae": 1.04
+   }
+  },
+  "stated_unconditional_chance_vs_actual": {},
+  "source_reliability": {
+   "none|UNLISTED": {
+    "played": 46,
+    "did_not_play": 3
+   },
+   "league_feed|OUT": {
+    "did_not_play": 7
+   },
+   "game_feed|OUT": {
+    "did_not_play": 7
+   }
+  },
+  "play_by_status": {
+   "UNLISTED": {
+    "played": 1,
+    "did_not_play": 1
+   },
+   "OUT": {
+    "did_not_play": 2
+   }
+  },
+  "play_by_status_body": {},
   "note": "Patterns across many games change the model. One surprising result never does."
  },
  "last": {
-  "games_graded": 0,
-  "cause_counts": {},
-  "stated_80_percent_range_coverage": {},
-  "stated_chance_vs_actual": {},
-  "mean_abs_error": {},
-  "source_reliability": {},
+  "games_graded": 2,
+  "cause_counts": {
+   "shot_volume_off": 161,
+   "minutes_off_by_6_plus": 154,
+   "outside_stated_80_percent_range": 41,
+   "did_not_play_as_flagged": 21,
+   "role_wrong_starter_vs_bench": 14,
+   "foul_trouble": 14,
+   "blowout_cut_minutes": 14,
+   "shooting_unusually_good": 10,
+   "shooting_unusually_bad": 9
+  },
+  "stated_80_percent_range_coverage": {
+   "points": {
+    "n": 46,
+    "covered": 0.674
+   },
+   "rebounds": {
+    "n": 46,
+    "covered": 0.891
+   },
+   "assists": {
+    "n": 46,
+    "covered": 0.891
+   },
+   "three_pointers_made": {
+    "n": 46,
+    "covered": 0.935
+   },
+   "steals": {
+    "n": 46,
+    "covered": 0.891
+   },
+   "blocks": {
+    "n": 46,
+    "covered": 0.935
+   },
+   "turnovers": {
+    "n": 46,
+    "covered": 0.891
+   }
+  },
+  "stated_chance_vs_actual": {
+   "all_ranked": {
+    "n": 139,
+    "mean_stated": 0.553,
+    "actual_reach_rate": 0.511,
+    "brier": 0.2488
+   },
+   "role_bench": {
+    "n": 59,
+    "mean_stated": 0.54,
+    "actual_reach_rate": 0.407,
+    "brier": 0.2522
+   },
+   "opportunity_minutes_28_plus": {
+    "n": 86,
+    "mean_stated": 0.563,
+    "actual_reach_rate": 0.523,
+    "brier": 0.2489
+   },
+   "stat_points": {
+    "n": 26,
+    "mean_stated": 0.484,
+    "actual_reach_rate": 0.385,
+    "brier": 0.2485
+   },
+   "stat_rebounds": {
+    "n": 23,
+    "mean_stated": 0.527,
+    "actual_reach_rate": 0.565,
+    "brier": 0.236
+   },
+   "stat_assists": {
+    "n": 23,
+    "mean_stated": 0.56,
+    "actual_reach_rate": 0.478,
+    "brier": 0.2661
+   },
+   "stat_three_pointers_made": {
+    "n": 22,
+    "mean_stated": 0.608,
+    "actual_reach_rate": 0.545,
+    "brier": 0.2458
+   },
+   "stat_steals": {
+    "n": 22,
+    "mean_stated": 0.603,
+    "actual_reach_rate": 0.5,
+    "brier": 0.2635
+   },
+   "stat_turnovers": {
+    "n": 13,
+    "mean_stated": 0.547,
+    "actual_reach_rate": 0.692,
+    "brier": 0.2118
+   },
+   "opportunity_minutes_under_28": {
+    "n": 53,
+    "mean_stated": 0.536,
+    "actual_reach_rate": 0.491,
+    "brier": 0.2486
+   },
+   "stat_blocks": {
+    "n": 10,
+    "mean_stated": 0.554,
+    "actual_reach_rate": 0.5,
+    "brier": 0.2611
+   },
+   "role_likely_starter": {
+    "n": 80,
+    "mean_stated": 0.563,
+    "actual_reach_rate": 0.588,
+    "brier": 0.2463
+   },
+   "frontend_top4": {
+    "n": 8,
+    "mean_stated": 0.707,
+    "actual_reach_rate": 0.5,
+    "brier": 0.322
+   }
+  },
+  "mean_abs_error": {
+   "points": 5.458,
+   "rebounds": 2.136,
+   "assists": 1.832,
+   "three_pointers_made": 1.091,
+   "steals": 0.921,
+   "blocks": 0.543,
+   "turnovers": 1.042
+  },
+  "mean_abs_error_by_role_change": {
+   "points|UNKNOWN": {
+    "n": 46,
+    "mae": 5.458
+   },
+   "rebounds|UNKNOWN": {
+    "n": 46,
+    "mae": 2.136
+   },
+   "assists|UNKNOWN": {
+    "n": 46,
+    "mae": 1.832
+   },
+   "three_pointers_made|UNKNOWN": {
+    "n": 46,
+    "mae": 1.091
+   },
+   "steals|UNKNOWN": {
+    "n": 46,
+    "mae": 0.921
+   },
+   "blocks|UNKNOWN": {
+    "n": 46,
+    "mae": 0.543
+   },
+   "turnovers|UNKNOWN": {
+    "n": 46,
+    "mae": 1.042
+   }
+  },
+  "stated_unconditional_chance_vs_actual": {},
+  "source_reliability": {
+   "none|UNLISTED": {
+    "played": 46,
+    "did_not_play": 3
+   },
+   "league_feed|OUT": {
+    "did_not_play": 7
+   },
+   "game_feed|OUT": {
+    "did_not_play": 7
+   }
+  },
+  "play_by_status": {
+   "UNLISTED": {
+    "played": 1,
+    "did_not_play": 1
+   },
+   "OUT": {
+    "did_not_play": 2
+   }
+  },
+  "play_by_status_body": {},
   "note": "Patterns across many games change the model. One surprising result never does."
  }
 }
