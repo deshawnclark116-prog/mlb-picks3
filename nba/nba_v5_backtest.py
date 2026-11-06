@@ -27,6 +27,7 @@ from nba import nba_v5_learn as learnm
 from nba.nba_v5_lineup_pairs import LineupPairState
 from nba.nba_v5_shot_style import ShotStyleState
 from nba.nba_v5_game_flow import GameFlowState
+from nba.nba_v5_verified_zone import verified_defence_zone_tallies
 from nba.nba_v5_sim import (rho_for_relative_stint, SEG, League, RotationTables, TeamInput, build_profile, league_from, presence_from_events,
                             simulate_game, MARKETS)
 
@@ -71,6 +72,8 @@ class Replay:
         self.pdates = collections.defaultdict(list)        # player -> dates played
         self.zone_hist = collections.defaultdict(list)     # player -> [(date, 3x5 tallies)]
         self.zone_def = collections.defaultdict(list)      # defending team -> [(date, 2x5 tallies)]
+        self.zone_def_verified = collections.defaultdict(list)
+        self.zone_verified_audit = collections.Counter()
         self.zone_league = np.zeros((3, 5))
         self.tdates = collections.defaultdict(list)        # team -> dates played
         self.lineup_pairs = LineupPairState()                # strict valid play-by-play, earlier dates only
@@ -121,6 +124,11 @@ class Replay:
             self.shot_style.add_game(pb)
             self.flow.add_game(pb)
             shooter, against = ctxm.game_zone_tallies(pb)
+            corrected_against, audit = verified_defence_zone_tallies(pb)
+            self.zone_verified_audit["valid" if audit["verified"] else "invalid"]+=1
+            self.zone_verified_audit["shots_repaired"]+=audit["shot_event_team_corrections"]
+            for tid_, arr in corrected_against.items():
+                self.zone_def_verified[tid_].append((d, arr))
             for pid, arr in shooter.items():
                 self.zone_hist[pid].append((d, arr))
                 self.zone_league += arr
@@ -189,8 +197,9 @@ def zone_profile(rp: Replay, pid, d, LZ, half_life=40.0):
     return freq, pct, att + 30.0, float(assisted)
 
 
-def zone_defence(rp: Replay, team, d, LZ):
-    hist = [a for dd, a in rp.zone_def[team] if dd < d][-30:]
+def zone_defence(rp: Replay, team, d, LZ, verified=False):
+    source=rp.zone_def_verified if verified else rp.zone_def
+    hist = [a for dd, a in source[team] if dd < d][-30:]
     n = len(hist)
     if n < 3:
         return None, None
@@ -211,7 +220,7 @@ def roster_player_ids(players, side):
     return sorted({str(p["id"]) for p in players if p["side"] == side})
 
 
-def team_input(rp: Replay, g, side, d, L: League, lg_tot, avail_ids):
+def team_input(rp: Replay, g, side, d, L: League, lg_tot, avail_ids, verified_zone=False):
     tid = g[side]["id"]
     other = g["away" if side == "home" else "home"]["id"]
     ids, prof, pres, pplay, start = [], [], [], [], []
@@ -249,7 +258,7 @@ def team_input(rp: Replay, g, side, d, L: League, lg_tot, avail_ids):
     if all(z is not None for z in zs):
         zf, zp, zn = np.array([z[0] for z in zs]), np.array([z[1] for z in zs]), np.array([z[2] for z in zs])
         asr = np.array([z[3] for z in zs])
-    dzf, dzp = zone_defence(rp, tid, d, LZ)
+    dzf, dzp = zone_defence(rp, tid, d, LZ, verified=verified_zone)
     de = [rp.learn.defender_effects(pid, tid) for pid in ids]
     dfreq, dpct = np.array([x[0] for x in de]), np.array([x[1] for x in de])
     s_st, b_st = rp.learn.stint_minutes(tid)
@@ -297,11 +306,15 @@ def run(args):
     chosen = set(cand[: args.sample])
     print("games", len(games), "scoring", len(chosen), "of", len(cand), flush=True)
     configs = {"full": {}}
+    if getattr(args,"verified_zone_trial",False):
+        if args.config or args.features=="ablate":
+            raise ValueError("--verified-zone-trial incompatible with ablation or config")
+        configs["verified_zone"]={}
     if getattr(args,"flow_trial",False):
         if args.config or args.features=="ablate":
             raise ValueError("--flow-trial incompatible with --config and ablation")
         configs["game_flow"]={"game_flow":True}
-    if sum(bool(getattr(args,n,False)) for n in ("lineup_trial","role_trial","style_trial","flow_trial"))>1:
+    if sum(bool(getattr(args,n,False)) for n in ("lineup_trial","role_trial","style_trial","flow_trial","verified_zone_trial"))>1:
         raise ValueError("One experimental arm at a time")
     if getattr(args, "style_trial", False):
         if args.config or args.features=="ablate":
@@ -348,6 +361,11 @@ def run(args):
                 th, ta = team_input(rp, g, "home", d, L, lg_tot, None), team_input(rp, g, "away", d, L, lg_tot, None)
                 if not th or not ta:
                     continue
+                verified_teams=None
+                if getattr(args,"verified_zone_trial",False):
+                    vh=team_input(rp,g,"home",d,L,lg_tot,None,verified_zone=True)
+                    va=team_input(rp,g,"away",d,L,lg_tot,None,verified_zone=True)
+                    verified_teams=(vh,va) if vh and va else None
                 pace = pace_for(rp, g, d)
                 pace = pace - le["team_or_pg"] if pace else pace
                 actual = {p["id"]: p for p in g["players"]}
@@ -360,6 +378,9 @@ def run(args):
                 for cname, feats in configs.items():
                     cx = {"ft_mult": rp.refs.crew_mult(g.get("officials") or []), "late_ft": late_tab}
                     sh, sa = (adapted[0], adapted[1]) if cname == "role_adaptive" else (th, ta)
+                    if cname=="verified_zone":
+                        if verified_teams is None:continue
+                        sh,sa=verified_teams
                     sim = simulate_game(sh, sa, L, tables, S=args.sims, pace=pace, seed=int(g["game_id"]) % 100003, features=feats, ctx=cx)
                     for side, ti in (("home", sh), ("away", sa)):
                         for j, pid in enumerate(ti.ids):
@@ -382,6 +403,8 @@ def run(args):
                     print("simulated games", n_done, flush=True)
         for g in by_day[d]:
             rp.add(g, pbp.get(g["game_id"]))
+    if getattr(args, "verified_zone_trial", False):
+        print("VERIFIED_OPPONENT_DEFENCE_ZONE_AUDIT",json.dumps(dict(rp.zone_verified_audit)),flush=True)
     if getattr(args, "flow_trial", False):
         print("GAME_FLOW_PBP_AUDIT",json.dumps(rp.flow.audit()),flush=True)
     if getattr(args, "style_trial", False):
@@ -526,11 +549,19 @@ def main():
     ap.add_argument("--lineup-trial", action="store_true", help="paired shadow test of lineup-conditioned opportunities; never promoted")
     ap.add_argument("--style-trial", action="store_true", help="paired shadow test of ESPN labeled shot execution, not Synergy plays")
     ap.add_argument("--flow-trial", action="store_true", help="paired shadow test of historically learned 2-minute possession distribution")
+    ap.add_argument("--verified-zone-trial", action="store_true", help="source-verified defense event attribution candidate")
     a = ap.parse_args()
     results, rows, v4_preds, chosen = run(a)
     if a.dump:
-        Path(a.dump).write_text(json.dumps(results if a.role_trial or a.lineup_trial or a.style_trial or a.flow_trial else next(iter(results.values()))))
+        Path(a.dump).write_text(json.dumps(results if a.role_trial or a.lineup_trial or a.style_trial or a.flow_trial or a.verified_zone_trial else next(iter(results.values()))))
     report = {c: score(r, rows, v4_preds) for c, r in results.items() if r}
+    if a.verified_zone_trial:
+        from nba.nba_v5_role_trial_score import evaluate
+        paired=evaluate(results["full"],results["verified_zone"],v4_preds)
+        paired["experiment"]="NBA_V5_VERIFIED_OPPONENT_ZONE_V1"
+        paired["candidate"]="Defensive team inferred only from independently verified named shooters and correct five-man game lineup"
+        paired["observational_limitation"]="68 games are a reused retrospective roster sample, not untouched real pregame forecast calibration"
+        report["paired_verified_zone_trial"]=paired
     if a.role_trial:
         from nba.nba_v5_role_trial_score import evaluate
         report["paired_role_trial"] = evaluate(results["full"], results["role_adaptive"], v4_preds)
