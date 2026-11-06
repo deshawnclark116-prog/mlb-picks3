@@ -165,6 +165,13 @@ jobs:
               except (OSError,KeyError,ValueError):
                   return False
           candidates=[str(g["game_id"]) for g in games if eligible(g)]
+          # Keep the experimental V3 slate to exactly new, strictly paired
+          # champion first-seen games; never backfill unrelated older games.
+          subset=json.loads(fresh.read_text()) if candidates else {"games":[]}
+          subset["games"]=[g for g in subset.get("games",[])
+                           if str(g["game_id"]) in candidates]
+          with open(Path(os.environ["RUNNER_TEMP"])/"v5_lineup_games.json","w") as fh:
+              json.dump(subset,fh)
           with open(os.environ["GITHUB_OUTPUT"],"a") as out:
               out.write("run="+("true" if candidates else "false")+"\n")
           print("CHALLENGER_FROZEN_FIRST_REQUIRED",candidates)
@@ -186,7 +193,7 @@ jobs:
           PYTHONPATH=. python -u -m nba.nba_v5_forecast \
             --games nba/data/nba_v4_games_2025_26.jsonl.gz --games nba/data/nba_v4_games_2026_27.jsonl \
             --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz --pbp "$RUNNER_TEMP/pbp_2026.jsonl" \
-            --v3 "$RUNNER_TEMP/latest-new.json" --v4 docs/nba_v4_latest/latest.json \
+            --v3 "$RUNNER_TEMP/v5_lineup_games.json" --v4 docs/nba_v4_latest/latest.json \
             --out docs/nba_v5_lineup_latest/latest.json --sims 3000 \
             --receipt docs/nba_v5_latest/information_receipt.json \
             --grades docs/nba_v5_grades/summary.json \
