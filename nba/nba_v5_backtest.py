@@ -195,11 +195,21 @@ def zone_defence(rp: Replay, team, d, LZ):
     return 1.0 + k * (freq / np.maximum(LZ["freq"], 1e-6) - 1.0), 1.0 + k * (pct / np.maximum(LZ["pct"], 1e-6) - 1.0)
 
 
+def roster_player_ids(players, side):
+    """Fixed iteration order is mandatory for seeded Monte Carlo reproducibility.
+
+    A Python set's order changes across processes (PYTHONHASHSEED), silently
+    changing which player receives each simulator random draw, including in
+    the UNCHANGED champion. Neither opponent nor roster selection changes.
+    """
+    return sorted({str(p["id"]) for p in players if p["side"] == side})
+
+
 def team_input(rp: Replay, g, side, d, L: League, lg_tot, avail_ids):
     tid = g[side]["id"]
     other = g["away" if side == "home" else "home"]["id"]
     ids, prof, pres, pplay, start = [], [], [], [], []
-    tonight = {p["id"] for p in g["players"] if p["side"] == side}
+    tonight = roster_player_ids(g["players"], side)
     for pid in tonight:
         h = [x for x in rp.hist[pid] if x["date"] < d]
         if len(h) < MIN_GAMES:
