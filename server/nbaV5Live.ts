@@ -49,7 +49,10 @@ export function readDirectV5Forecast(now=Date.now(),file=V5_CURRENT_FILE){
       validateShadowGame(g,seen);
       if(!isV5(g.model_version)||!String(g.forecast_kind||'').startsWith('V5'))
         throw Error('NBA_V5_GAME_WRONG_MODEL');
-      if(g.rows.some((r:any)=>!isV5(r.model_version)))
+      // Confirmed-OUT rows can be carried forward solely to explain
+      // exclusion. Every actual eligible projection must come from V5.
+      if(g.rows.some((r:any)=>r.mean_basis==='CONDITIONAL_ON_PLAYING' &&
+          r.reported_status!=='OUT' && !isV5(r.model_version)))
         throw Error('NBA_V5_ROW_WRONG_MODEL');
     }
     // Games enter the board from the actual V5 result, never from a V3
