@@ -306,6 +306,7 @@ class TeamInput:
     avail_corr: np.ndarray | None = None       # (N, N) correlation of absences (players who tend to sit together)
     pair_effects: dict | None = None           # (stat -> (N,N) teammate-conditioned opportunity, shadow)
     pair_baselines: dict | None = None         # (stat -> (N,)) on-court composition centering
+    assist_receiver_log_effect: np.ndarray | None = None  # (N,N) directed passer->scorer observed assist preference; shadow
     style_probs: np.ndarray | None = None     # (N,5zones,5styles) historical shot execution frequencies
     style_mult: np.ndarray | None = None      # (N,5zones,5styles) mean-neutral shot-accuracy multipliers
     low_history_evidence: dict | None = None  # player_id -> past-only, unpromoted cold-start coverage
@@ -323,7 +324,7 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
          "luck": True, "assists": True, "putbacks": True, "defence": True, "schedule": True, "officials": True,
          "late_game": True, "returns": True, "minute_limits": True, "zones": True,
          "team_rotation": True, "timeouts": True, "defenders": True, "timing": True, "joint_availability": True,
-         "lineup_pairs": False, "shot_style": False, "game_flow": False} # unpromoted research switches
+         "lineup_pairs": False, "shot_style": False, "game_flow": False, "assist_network": False} # unpromoted research switches
     ctx = ctx or {}
     if features:
         F.update(features)
@@ -530,6 +531,12 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
             asst = make & (rng.random(S) < pa)
             aw = pair_cache[o].get("ast", rate[o]["ast"][Oi]) + 1e-6
             aw = np.where(Oi == fi[:, None], 0.0, aw)
+            if F["assist_network"] and to_.assist_receiver_log_effect is not None:
+                # First matrix axis is PASSeR; second is SCORER. Apply only
+                # to the on-court candidate passer set for an observed make.
+                # The underlying basket and P(assisted) do not change.
+                delta=to_.assist_receiver_log_effect[Oi,fi[:,None]]
+                aw=aw*np.exp(np.clip(delta,-0.26,0.26))
             ai = Oi[ar, pick(aw + 1e-9)]
             st[o]["ast"][ar[asst], ai[asst]] += 1
         miss = is_shot & ~make
