@@ -48,7 +48,7 @@ class OpponentRotationState:
 
     def add_finished_game(self, game, presence, opponent_rates):
         """Only after the game was scored (Replay.add), and only strict PBP."""
-        if not opponent_rates:
+        if not opponent_rates or all(v is None for v in opponent_rates.values()):
             self.unavailable_opponent_profile+=1
             return
         teams=(str(game["home"]["id"]),str(game["away"]["id"]))
