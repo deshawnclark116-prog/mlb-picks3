@@ -98,7 +98,7 @@ def load(path, now, slate):
                 raise ValueError("starter also listed inactive")
             if state == "CONFIRMED" and len(starters) != 5:
                 raise ValueError("confirmed lineup requires exactly five starters")
-            if state != "CONFIRMED" and (inactive or team.get("minute_limits")):
+            if state != "CONFIRMED" and inactive:
                 raise ValueError("uncertified source cannot issue hard roster instructions")
             for pid in starters:
                 if state == "CONFIRMED" and roster[pid].get("reported_status") == "OUT":
@@ -139,32 +139,35 @@ def apply_confirmed(team, record):
     minutes_cap is the existing model's soft rotation-weight adjustment, NOT
     a guaranteed on-court hard cap. Do not promise exact restricted minutes.
     """
-    if record is None or record["lineup_state"] != "CONFIRMED":
-        return {"applied": False, "reason": "NOT_CONFIRMED"}
+    if record is None or (record["lineup_state"] != "CONFIRMED" and not record["minute_limits"]):
+        return {"applied": False, "reason": "NO_CERTIFIED_CHANGE"}
     import numpy as np
     ids = list(map(str, team.ids))
-    if not set(record["starters"]).issubset(ids):
+    confirmed = record["lineup_state"] == "CONFIRMED"
+    if confirmed and not set(record["starters"]).issubset(ids):
         raise ValueError("confirmed starters absent from simulator roster")
     # ESPN/V3 may have ALREADY excluded a certified inactive from its
     # sim roster. This is legitimate; do not recreate or simulate them.
     if len(set(ids) - set(record["inactive"])) < 5:
         raise ValueError("fewer than five non-inactive roster players")
     starter = np.array([pid in record["starters"] for pid in ids], bool)
-    if int(starter.sum()) != 5:
+    if confirmed and int(starter.sum()) != 5:
         raise ValueError("incomplete certified starters")
     p = np.array(team.p_play, dtype=float).copy()
-    p[starter] = 0.999
-    p[[pid in record["inactive"] for pid in ids]] = 0.0
+    if confirmed:
+        p[starter] = 0.999
+        p[[pid in record["inactive"] for pid in ids]] = 0.0
     caps = (np.array(team.minutes_cap, float).copy() if team.minutes_cap is not None
             else np.full(len(ids), 48.0))
     for i, pid in enumerate(ids):
         if pid in record["minute_limits"]:
             caps[i] = min(caps[i], record["minute_limits"][pid])
-    team.starter = starter
-    team.p_play = p
+    if confirmed:
+        team.starter = starter
+        team.p_play = p
     if record["minute_limits"]:
         team.minutes_cap = caps
-    return {"applied": True, "confirmed_starters": len(record["starters"]),
+    return {"applied": True, "confirmed_starters": len(record["starters"]) if confirmed else 0,
             "explicit_inactive": len(record["inactive"]),
             "announced_minute_limits": len(record["minute_limits"]),
             "limits_are_soft_rotation_weights": bool(record["minute_limits"])}
