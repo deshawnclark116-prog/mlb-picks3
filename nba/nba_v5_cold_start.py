@@ -93,3 +93,40 @@ class LowHistoryRotations:
                 "invalid_rotations":self.rejected,
                 "group_player_game_samples":{str(k):n for k,n in self.counts.items()},
                 "model_effect":"SHADOW_ONLY_NOT_PROMOTED"}
+
+
+
+def evaluate_cold_start(champion, candidate, v4_preds):
+    """Grade unchanged veterans as paired full-model effect; new rows separately.
+
+    Strictly evaluate the identical original-target events for players in
+    BOTH versions, and separately report *all* added cold-start player rows.
+    Never silently cherry-pick the new cohort or pretend an unavailable V4
+    prediction is a comparable baseline. Both arms use the retrospectively
+    known actual roster, so this is an exploratory training-sample study.
+    """
+    from nba.nba_v5_role_trial_score import evaluate, MARKETS
+    original={(str(r["game"]),str(r["player"])):r for r in champion}
+    updated={(str(r["game"]),str(r["player"])):r for r in candidate}
+    if not original.keys()<=updated.keys():
+        raise ValueError("Cold-start candidate removed a champion player")
+    common=[r for r in candidate if (str(r["game"]),str(r["player"])) in original]
+    report=evaluate(champion,common,v4_preds)
+    newer=[r for r in candidate if (str(r["game"]),str(r["player"])) not in original]
+    error={}
+    for market in MARKETS:
+        if not newer:
+            break
+        a=[abs(float(r[market]["mean"])-float(r[market]["actual"])) for r in newer]
+        error[market]={"n":len(a),"mean_absolute_error":round(float(np.mean(a)),5)}
+    report.update({
+        "experiment":"NBA_V5_LOW_HISTORY_ROTATION_V1",
+        "candidate":"Earlier-appearances-only heavily shrunk player skill; learned starter/bench rotation priors",
+        "observational_limitation":"Both historical arms know retrospectively which athletes played; V3 roster and minutes are unverified ahead of tip",
+        "original_modeled_player_game_count":len(champion),
+        "candidate_modeled_player_game_count":len(candidate),
+        "genuinely_new_player_game_count":len(newer),
+        "added_player_grade":error,
+        "model_promotion_allowed":False
+    })
+    return report
