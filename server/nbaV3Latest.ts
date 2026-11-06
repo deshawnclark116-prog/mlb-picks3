@@ -8,10 +8,11 @@ import {validateShadowHeader,validateShadowGame} from './nbaV3Shadow.ts';
 
 // Read from the app's own checkout (like the original V3 files): this repo is private, so a web fetch of a raw file would 404.
 export const LATEST_FILE=path.resolve(process.cwd(),'docs','nba_v3_latest','latest.json');
+export const V4_LATEST_FILE=path.resolve(process.cwd(),'docs','nba_v4_latest','latest.json');
 export const LATEST_MAX_AGE_MS=10*3600_000;
 const MIN_PREGAME_MS=15*60_000;
 
-export function mergeLatestRun(result:any,doc:any,now=Date.now()){
+export function mergeLatestRun(result:any,doc:any,now=Date.now(),kind='LATEST_RUN'){
  const none=(reason:string)=>({...result,latest_run:{applied:0,reason}});
  if(!doc||typeof doc!=='object')return none('NO_LATEST_FILE');
  try{validateShadowHeader(doc);}catch{return none('LATEST_HEADER_REJECTED');}
@@ -27,16 +28,23 @@ export function mergeLatestRun(result:any,doc:any,now=Date.now()){
   if(g.tipoff_utc!==orig.tipoff_utc)continue;                  // same game, same tip-off
   if(!(at>Date.parse(orig.forecast_at_utc)))continue;          // must be newer than the original
   if(at>tip-MIN_PREGAME_MS||at>now+600_000)continue;           // never a post-tip or future-dated forecast
-  replacements.set(String(g.game_id),{...g,forecast_kind:'LATEST_RUN',first_seen_forecast_at_utc:orig.forecast_at_utc,
+  replacements.set(String(g.game_id),{...g,forecast_kind:kind,first_seen_forecast_at_utc:orig.first_seen_forecast_at_utc??orig.forecast_at_utc,
     first_seen_forecast_preserved_in_archive:true});
  }
  const games=(result.games??[]).map((g:any)=>replacements.get(String(g.game_id))??g);
  return {...result,games,latest_run:{applied:replacements.size,generated_at_utc:doc.generated_at_utc,reason:replacements.size?'OK':'NO_NEWER_VALID_GAMES'}};
 }
 
-export function overlayLatestRun(result:any,file=LATEST_FILE,now=Date.now()){
+export function overlayLatestRun(result:any,file=LATEST_FILE,now=Date.now(),kind='LATEST_RUN'){
  try{
   if(!existsSync(file))return {...result,latest_run:{applied:0,reason:'NO_LATEST_FILE'}};
-  return mergeLatestRun(result,JSON.parse(readFileSync(file,'utf8')),now);
+  return mergeLatestRun(result,JSON.parse(readFileSync(file,'utf8')),now,kind);
  }catch{return {...result,latest_run:{applied:0,reason:'LATEST_FILE_UNREADABLE'}};}
+}
+
+/** V3 latest run first, then the V4 shadow run on top of it for any game where V4 is newer and passes the same checks. */
+export function overlayNewestRuns(result:any,now=Date.now()){
+ const v3=overlayLatestRun(result,LATEST_FILE,now,'LATEST_RUN');
+ const v4=overlayLatestRun(v3,V4_LATEST_FILE,now,'V4_LATEST');
+ return {...v4,latest_run:v3.latest_run,v4_latest_run:v4.latest_run};
 }

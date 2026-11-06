@@ -5,7 +5,7 @@ import {existsSync,readdirSync,readFileSync} from 'node:fs';
 import path from 'node:path';
 import type {Request,Response} from 'express';
 import {overlayNba} from './lineupOverlay.ts';
-import {overlayLatestRun} from './nbaV3Latest.ts';
+import {overlayNewestRuns} from './nbaV3Latest.ts';
 export const NBA_V3_READONLY_SCHEMA='NBA_V3_FULL_GAME_DISTRIBUTION_READ_ONLY_V1';
 const ROOT=path.resolve(process.cwd(),'docs','nba_v3_phase1_corrected_shadow');
 const VERSION='nba-v3-phase1-opportunity-role-mc-shotratefix-20261026';
@@ -29,9 +29,11 @@ type ShadowGame={
  team_opportunity_diagnostics:Record<string,unknown>;
 };
 const finite=(x:unknown)=>typeof x==='number'&&Number.isFinite(x);
+/** V3 or the V4 shadow (same file format, same checks). */
+const okVersion=(v:unknown)=>v===VERSION||(typeof v==='string'&&/^nba-v4-[a-z0-9-]+$/.test(v));
 export function validateShadowHeader(d:any){
   if(d.schema!=='NBA_V3_2026_27_FIRSTSEEN_FULL_DISTRIBUTION_SHADOW_V1'||
-     d.model_version!==VERSION||
+     !okVersion(d.model_version)||
      !sha(d.upstream_fixtures_source_sha256)||
      !sha(d.prior_game_id_sha256)||
      d.roster_sources_verified_all_30!==true||
@@ -56,7 +58,7 @@ export function validateShadowGame(g:ShadowGame,seen:Set<string>){
     for(const r of g.rows){
       const key=r.team_id+'|'+r.player_id+'|'+r.market;
       if(ids.has(key)||r.game_id!==g.game_id||
-         r.model_version!==VERSION||
+         !okVersion(r.model_version)||
          !['points','rebounds','assists','three_pointers_made'].includes(r.market)||
          r.calibrated_for_2026_27!==false||r.research_only!==true||
          r.not_an_official_bet!==true||
@@ -115,7 +117,7 @@ export function nbaV3ShadowHandler(){
    const result=loadNbaV3Shadow();
    res.setHeader('Cache-Control','no-store, max-age=0');
    // Late lineup overlay: fail-open, keeps the early forecast beside the adjusted one.
-   res.json(await overlayNba(overlayLatestRun(result)));
+   res.json(await overlayNba(overlayNewestRuns(result)));
   }catch(err){
    res.setHeader('Cache-Control','no-store, max-age=0');
    res.status(503).json({error:'NBA_V3_FIRSTSEEN_DISTRIBUTION_SOURCE_NOT_VERIFIED',
