@@ -1,67 +1,68 @@
-| 26 | Choose what the app shows | Built, forward-evaluation pending | Displayed projection is the actual rounded numerical mean, ranked on its probability including DNP when available. Featured picks, model board and original archive remain separate. Every original numerical projection is available for grading, not just tiles. |
-**Not yet** (possible with our data, not built). Item 27 (sportsbook) is excluded on your instruction.
-Code: `nba/nba_v5_sim.py` (the game), `nba_v5_context.py` (learned context), `nba_v5_backtest.py` (tests), `nba_v5_forecast.py`,
-`nba_v5_info.py` (information receipts), `nba_v5_postmortem.py` (grading). Tests: `tests/test_nba_v5.py`.
+# NBA V5 — 26-point basketball intelligence implementation ledger
 
-| # | Item | Status | What exists, and what is missing |
-|---|------|--------|----------------------------------|
-| 1 | Information available | Partly | Two independent ESPN injury feeds fetched, timestamped, cross-checked (stale, conflicting, one-feed-only, duplicate or unknown players); every distinct report is logged once with the time we first saw it (`docs/nba_v5_info/ledger.jsonl`); original forecasts frozen in `docs/nba_v5_archive/first`; source reliability counted after games. Missing: postponement handling, trade/waiver/G League feeds beyond the roster source, update-speed per source. |
-| 2 | Availability beyond in/out | Built, learning |  Each simulated game draws who plays (chance of playing), so a questionable player has separate "plays" and "sits" games with a different rotation in each; chance of starting and of being on the floor to close; minutes range; first-games-back effect learned; minutes-restriction input supported; rest and back-to-back effects. **Added:** the chance of playing is now learned from graded results by reported status and body part (`nba_v5_availability.py`; ESPN keeps no dated injury history, so it starts from cautious priors and moves as games are graded; return dates and injury type are logged), and unlisted players use their own recent participation. Teammates who tend to sit together are drawn jointly (Gaussian copula from 60 games of co-absence): it predicts the number of regulars out better than independent draws (5.2 standard errors on 1,720 team-games). Still missing: early-exit risk, warm-up news, a data source for announced minutes restrictions, and body-part effects until enough games are graded. |
-| 3 | Real rotation | Built (on) | Floor time per player per two-minute stretch learned from real substitutions; starter/bench staggering; stint continuity; foul-trouble and blowout floor-time tables learned; overtime; each team's minutes always total 240. **Added:** team-by-team blowout and foul-trouble tables and each team's real stint length (a coach proxy), and timeouts (how often a team calls one after conceding a run, and how starters' floor time changes right after). Both are on in the published forecast: on 300 held-out games each showed a clear gain in assist and made-three probabilities and no clear harm. Missing: matchup-based substitutions and explicit lineup types. |
-| 4 | What each player does | Partly | Role comes from usage, assist, rebound, steal, block rates and shot-spot mix. Missing: named archetypes and play types (no play-type data). |
-| 5 | Opportunity before results | Partly | Shot attempts by type and spot, free-throw attempts, rebound chances (from misses), assisted share. **Added from play-by-play:** shot timing (transition, normal, late clock, split by whether the possession began off a steal or defensive rebound), switched off (no clear gain). **No licensed data:** touches, possession time, dribbles, passes, drives, screens, potential assists, contested rebounds, deflections come only from the NBA's tracking feeds, which block automated access; they need a licensed provider. |
-| 6 | Teammate interactions | Partly (validated PBP, shadow model) | Historical five-man lineups are reconstructed from ESPN named starters and substitutions, with 1,283/1,351 games passing fail-closed attribution checks after correcting 12,405 unambiguous event-team labels. Learned teammate on/off FGA, assist and rebound opportunity effects can alter V5's relative event allocation, **OFF by default** until independent chronological validation. Pair effects are observational and may reflect coaching/opponent confounding. Still missing true spacing/play-type tracking and validated causal synergy. |
-| 7 | Opponent's defence | Partly | How much each team concedes and how accurately opponents shoot from each spot, turnovers forced, free-throw rate, offensive rebounds, blocks, pace. **Added:** each defender's on-court effect on how often and how well opponents shoot from each spot (rim protection, paint, perimeter; a missing defender changes it), measured against his own team's average. On: clear gain in assist probabilities on 300 held-out games, no clear harm. **No licensed data:** who guards whom, schemes (switch, drop, trap, zone), closeouts. |
-| 8 | Action-level offence | No licensed data | Needs play-type data (isolation, pick-and-roll, post-up, cuts, handoffs), which exists only in licensed tracking feeds. Shot styles (pull-up, driving, step-back…) are stored but not used. |
-| 9 | Scoring from components | Partly | Two-point, three-point and free-throw attempts, shot-spot mix, assisted share by spot, accuracy by spot with per-game uncertainty. Points are the sum of simulated makes. Missing: shot clock, defender distance, fatigue effects. |
-| 10 | Rebounds from chances | Partly | Every rebound comes from a simulated miss; offensive vs defensive from learned rates incl. team rebounds; rebounder chosen by rebound rates. Missing: positioning/box-out, location of misses. |
-| 11 | Assists | Partly | Assists attach to simulated made baskets by spot; assister chosen by assist rates; receiver finishing is the shooter's own accuracy. Missing: pass types, potential assists. |
-| 12 | Threes, steals, blocks, turnovers | Built (separate) | Threes from spot-level shooting; steals attach to turnovers; blocks to misses; turnovers by usage. Each stat has its own distribution from the same game. Missing: pass-lane/pressure detail. |
-| 13 | The game as it unfolds | Partly | Pace draw, score state, rotation reacting to the gap, fouls and fouling out, late-game fouling (learned), overtime. **Added:** timeouts (above). Missing: end-of-quarter possessions, bonus. |
-| 14 | Schedule and physical context | Built | Rest, back-to-backs, three in four, travel distance, time-zone change, altitude; effects measured from earlier games with shrinkage and kept only if testing supports them. |
-| 15 | Coaching tendencies | Built (on) | Team-by-team rotation and foul-trouble tables, stint lengths and timeout habits (see item 3). Missing: matchup choices. |
-| 16 | Officials | Built | Each crew's foul/free-throw lean versus the league (shrunk) scales free-throw trips. |
-| 17 | How players change | Partly | Recency weighting and shrinkage; first-games-back effect. Missing: formal change detection. |
-| 18 | Small samples | Partly | Rates and percentages shrunk toward the league; accuracy sampled per game from its own uncertainty. Missing: pooling across similar players. |
-| 19 | Relationships between outcomes | Built | One shared game: pace, shooting luck, rotation and minutes link teammates and opponents; points, assists and rebounds come from the same events. |
-| 20 | Internally consistent game | Built | Tested: player points sum to team score; 240 regulation minutes; threes inside makes; assists need makes; rebounds need misses; OUT players never play. |
-| 21 | Kinds of uncertainty | Partly | Randomness, who plays, minutes/rotation, per-game accuracy uncertainty, shooting luck, stale/conflicting reports are separate and recorded; each projection lists which teammate's absence moves it most. Missing: a variance split report. |
-| 22 | Honest probabilities | Built | Full distribution; chance of reaching the exact rounded projection; per-stat checks; a correction fitted on earlier games and tested on later ones; screen picks graded separately. Missing: checks by role and opportunity level. |
-| 23 | Test against alternatives | Built | `nba_v5_backtest.py`: recent average, V4, a V4+V5 blend; chronological; same players. |
-| 24 | Prove each feature helps | Built | Every piece has an on/off switch (`--features ablate`). |
-| 25 | Learn from every miss | Built | `nba_v5_postmortem.py` (nightly workflow): did he play, minutes, role, shot volume, shooting, fouls, blowout, overtime, range coverage; cause counts across games. |
-| 26 | Choose what the app shows | Built | Ranked by the chance of reaching the rounded projection; dependency flags; original and updated forecasts kept separately; screen picks identifiable and graded. |
-| 27 | Sportsbook | Excluded | Per your instruction. |
+**Reviewed November 6, 2026, following merged PRs #79–#86.**
+This is the **actual repository implementation**, not a list of requested features.
+V5 generates independent numerical player projections. Sportsbook logic
+(#27) is intentionally deferred.
 
-## Switches (docs/nba_v5_latest/features.json)
-A piece is on in the published forecast only if testing showed a clear gain and no clear harm. On: joint availability, team-by-team rotation,
-timeouts, individual defenders' on-court effect. Off (no clear effect): shot timing. Flip any in the switch file.
+**Status definitions:** **LIVE** = code currently used in forecasts; **BUILT,
+SHADOW** = implemented but disabled pending prospective validation; **PARTIAL**
+= some required elements work, others are missing; **BLOCKED DATA** = an
+additional verified/authorized source is necessary; **RESEARCH INVALIDATED**
+= tested challenger failed to improve the champion. A working test is not
+proof of calibrated real-world probabilities.
 
-## What needs a licensed data provider
-Touches, time of possession, drives, passes, screens, potential assists, contested rebounds, who guards whom, play types, contest quality.
-These are produced by the NBA's tracking system and are served from stats.nba.com / cdn.nba.com, which refuse automated clients from this
-environment. This system does not work around that. With a licensed provider (an API key or a data export), the inputs slot into the same simulation.
+The currently promoted forecasting formula remains the possession-level V5
+simulation, with 50/50 V4/V5 **marginal distribution** blends for points,
+rebounds, assists and threes and standalone V5 for steals, blocks and
+turnovers. **No experimental role, lineup or shot-style weights are promoted.**
 
-## November 6, 2026 projection-only development increment
+| # | Original blueprint capability | Verified state | Specific remaining work or validation |
+|---|---|---|---|
+| 1 | Data sources, timestamps, roster changes | **PARTIAL**. ESPN prior games, saved source receipts, current team roster, plus independently timestamped **official NBA injury PDF** integrated in PR #83. Scheduler responds to both official and ESPN status changes in PR #86. | Full transactions/G League rosters, postponements/changed tipoffs, source publication latency/uptime and third-party lineup verification; source permissions |
+| 2 | Availability, start, close, restrictions and early exits | **PARTIAL**. Conditional-playing and DNP scenarios, learned playing likelihood, correlated team absences, return-from-injury adjustments, initial/closing lineup probabilities, official fresh OUT and AVAILABLE support | Official dressed/inactive certification, pregame announced minute limits, warmup news, early exit/in-game injury survival modeling; forward calibration |
+| 3 | Shared 240-minute rotations | **LIVE**. Two-minute segment lineups, starters, bench, foul trouble, blowouts, overtime, team stint/timeout effects | Matchup-specific rotation strategy, lineup-type labels, cross-game coaching change-points |
+| 4 | Offensive and defensive player roles | **PARTIAL**. Rate, usage, assisted share, shooting zone and board opportunities; no invented archetypes | Role/skill archetype-conditioned priors for sparse players, observed on-ball/off-ball responsibilities, verified new-team role transitions |
+| 5 | Opportunity before outcomes | **PARTIAL**. Shot mix, FT attempts, minutes, rebound events, pass-to-made-shot assists and timing (experimental/off) | Touches, possessions held, dribbles, drives, screens, potential assists, rebound chances and contested events require another measured source |
+| 6 | Teammate on/off and lineups | **BUILT, SHADOW**. Verified five-man PBP: 1,283/1,351 games with 13,786 pair entries; future-only lineup opponent challenger archives now run independently | Untouched forward game comparisons, coaching/opponent confounding controls, true spacing/matchup-based effects. `lineup_pairs=false` |
+| 7 | Opponent defense | **PARTIAL/LIVE**. Opponent by-zone rates, TO/FT/ORB, individual defenders' historic on-court zone effects | Actual guard assignments, coverage schemes, distance, switches, traps, rotating help and physical matchups |
+| 8 | Offensive possession/play types | **BLOCKED DATA**. ESPN shot descriptions are **not** Synergy isolation/P&R/spot-up/cut/handoff possessions | Authorized game-level action/possession data and coverage/ID mapping for Synergy or equivalent |
+| 9 | Points from detailed shot/free-throw events | **PARTIAL/LIVE**. Shared simulated FGA/2PA/3PA/FTA, makes, accuracy by zone, 2/3/FT score arithmetic | Shot clock, creation/contest, true fatigue/defender distance. ESPN shot-style experiment in #84 **failed the gate** and stays off |
+| 10 | Rebounds from missed shots, positioning | **PARTIAL/LIVE**. Shared misses, OREB/DREB, team rebounds and rebounding players | Rebound chance positioning, box-outs, shot-location-dependent rebound distribution |
+| 11 | Assists from passes and actual baskets | **PARTIAL/LIVE**. Assists only on made baskets and passer chosen from eligible floor players | Potential assists and full pass-type/recipient networks; teammate finishing-quality context |
+| 12 | Threes, steals, blocks, turnovers | **LIVE**. Separate event components and count distributions from one game | Player-level scheme/pressure, passing lanes and location-aware block events |
+| 13 | Live game-flow mechanisms | **PARTIAL/LIVE**. Possessions, pace, score differential, late fouling, timeouts, foulouts, overtime | End-of-quarter playbook, bonus/penalty transitions, timeout/lineup strategic counters |
+| 14 | Rest and travel environment | **LIVE**. Back-to-backs, three in four, distance, time zones, altitude with shrinkage | Validate unusual venue/neutral-site edge cases and season-specific physical fatigue |
+| 15 | Coaching and strategy | **PARTIAL/LIVE**. Team rotation/stint and foul timeout tendencies | Coach identity changes, opposing archetypes, matchup-specific substitution instructions |
+| 16 | Officiating | **LIVE**. Shrunk foul/free throw crew effect | More sample before crew-specific high-leverage modifications |
+| 17 | Player skill/role change detector | **BUILT, RESEARCH INVALIDATED FOR PROMOTION**. Past-only disjoint-window skill opportunity signals; 68-game equal-seed whole-model trial did not beat V5 reliably | New independent role signal or different prior measured data; no rescue tuning on the spent sample |
+| 18 | Small-sample Bayesian intelligence | **PARTIAL**. League-shrunk opportunity and accuracy rates, parameter uncertainty | Hierarchical position/archetype priors, honest rookie estimates and prospective low-minute cohort calibration |
+| 19 | Cross-player and cross-stat correlations | **PARTIAL/LIVE**. V5 shared-game pace, minutes and event relationships | Important: blending V4/V5 marginal CDFs does **not** make the blended marginal outputs a fully coherent joint model; must validate joint dependence separately |
+| 20 | Exactly consistent entire-game engine | **LIVE for V5 simulation**. Verified score = summed player points, five players per segment, threes within made baskets, assists only on makes, correct team minutes | Preserve coherence when adding future blend/copula and tactical events; no unsupported claims about joint V4+V5 blend |
+| 21 | Decomposed uncertainty | **PARTIAL/DIAGNOSTIC**. V5 conditional distributions, P(plays), minutes-association and Monte Carlo standard errors | Quantified causal/parameter/tactical vs minutes vs opponent effect, interval coverage calibration and model misspecification |
+| 22 | Probabilities at actual rounded model projection | **LIVE but not prospectively calibrated**. CDF at exact own x.6 rounded number, both conditional and DNP-inclusive; lineup overlay recomputes after confirmed updates | Real future calibration by market/role/status/minutes; no lower sportsbook target masquerading as projection |
+| 23 | Rigorous benchmark selection | **BUILT/HISTORICAL**. Chronological V4, recent-average, V5/blend; original vs challenger same games and seeds, predeclared feature controls | Sufficient **genuine pretip** prospective games; avoid repeated reused holdout tuning |
+| 24 | Ablation and feature promotion gates | **BUILT/LIVE**. Paired Brier/MAE and game cluster CIs; negative results frozen; separate shadow flags | Predeclare distinct future seasons or first-seen windows and correction for multiple feature screening |
+| 25 | Game-by-game postmortems and feedback | **LIVE, early sample**. Immutable first/last archives, per player/stat outcomes, error causes, DNP-aware event scoring; nightly scheduled grading; new hidden lineup challenger and all-player forward comparator in #85 | More final games, authoritative availability outcomes, interval reliability and prospective sufficient sample; initial 2 graded games cannot calibrate the season |
+| 26 | Smart frontend without hiding projections | **PARTIAL/LIVE**. Own numerical projection and hit chance, four featured tiles plus expandable full game list; V5/V4/V3 attribution, warnings, DNP source, research extras separated | Prospective feature-selection quality and accuracy by market/role; better explanation without duplicating displayed statistical targets |
+| 27 | Sportsbook line/odds work | **DEFERRED** by user | Deliberately not in V5 model feature development |
 
-Branch/PR: `feature/nba-v5-role-change-and-probability-audit-20261105` (#79).
+## Source evidence
 
-- Added past-only role/opportunity change diagnostics and a chronological, next-game holdout audit. **No role change affects the simulated rates or displayed means yet**; shadow until it beats the existing V5 baseline.
-- Added descriptive minute-variance diagnostics and Monte Carlo sampling precision. These do **not** resolve all uncertainty sources.
-- Added a probability for reaching the own whole-number projection **including DNP**, separate from the chance **if playing**. The live lineup overlay recalculates after IN, OUT or DOUBTFUL. This is not forward calibration.
-- Added postmortem groups for DNP-inclusive projections, including all original rows (not only featured frontend tiles), plus role-change cohort error analysis.
-- Replaced the sportsbook-oriented tab with model-evidence context; forecasting and historical grading remain the focus.
+- [Data-source audit, access, rights and acquisition](SOURCE_COVERAGE_AND_ACQUISITION.md): NBA official injury PDFs **integrated**; ESPN history and PBP **integrated**; pbpstats, licensed tracking, SportsDataIO, Sportradar and Synergy *not yet integrated/licensed*.
+- [V5 lineup interactions and verified PBP](LINEUP_PAIR_RESEARCH.md): 94.97% reconstructable play-by-play; historical point-Brier improvement +0.001545, but no independent prospective acceptance.
+- [V5 shot-style experiment](SHOT_STYLE_RESEARCH.md): 240,495 observed shot descriptions; no reliable core gain, significant blocks deterioration; **off**.
+- [Frozen first-seen challenger acceptance](FORWARD_LINEUP_CHALLENGER.md): no backfill, no cherry-picking, DNP-aware probabilities, exact original champion threshold.
+- [Numerical model backtests and negative role trial](BACKTEST_RESULTS.md): V4+V5 historical champion rationale, preserved role-feature failure.
 
-Research and promotion gates still unmet: a detector beating a primitive older-window baseline does not mean it beats V5; original V5 forecasts need sufficient forward grading; action-level/off-ball/play-type/guard-assignment observations require verified extra data. Do not mark these gaps done and do not inject sportsbook data into forecasting.
+## Next independently verifiable acceptance gates
 
+1. **Availability correctness:** audit league-report and ESPN status conflicts, source freshness, reported active/inactive outcomes and minute forecast errors by starter, bench, return-from-injury and DNP cohorts.
+2. **Forward calibration:** grade every original game/player/stat event at the exact forecast number, not model targets. Examine Brier/log loss, 80% interval coverage, minutes MAE and misses by context. Small early samples are diagnostics, not a win certificate.
+3. **Lineup challenger:** collect truly frozen V5 champion and alternative before the same tipoff with at most a 30-minute capture gap and identical simulator settings, then compare at the champion's event. **No auto promotion**.
+4. **Observed action data:** verify developer-key/contract access and timestamps before any P&R, isolation, drives, potential assists, closest defender or screen feature. Blank data ≠ zero events.
+5. **Model promotion:** require a practical forward gain, game-cluster CI, broad-market nonharm, and no damage to top-confidence buckets; keep all failed branches in research registry.
 
-## November 6: whole-model role-change falsification and grade coverage
-
-An actual paired NBA V5 backtest on 68 scored games (1,391 player-games) compared the existing champion (V5 simulation and its current V4 blend) with a fixed, bounded role-adaptive challenger at the champion's ORIGINAL rounded probability thresholds. Every tested Brier change (points, rebounds, assists, threes) and the average minutes change had a game-cluster 95% interval overlapping zero; points and threes moved slightly in the wrong direction. **No model feature was promoted**. This is stronger evidence than the previous comparison to a simplistic older-window baseline.
-
-New read-only audit `nba_v5_grade_health.py` reports first/last frozen forecast counts, pretip timestamp violations, games not yet tipped, and games past tip but pending a final-result grade. As of the November 6, 04:48 UTC audit: 11 first archives (9 future, 2 past tip) and 2 last archives (both past tip), all timestamp valid and still awaiting grading. Past tip does not necessarily mean the game was final at that moment.
-
-Research limitations: the historical backtest uses actual participating rosters as both arms' common conditional roster; it does not certify live injury correctness or prospective probabilities. Need matched live pregame archives, completed-game outcomes, and more signal-rich lineup/action-level data to improve responsibly.
-
-## November 6: lineup interaction research
-See [LINEUP_PAIR_RESEARCH.md](LINEUP_PAIR_RESEARCH.md). The current V5/V4 forecasting champion is unchanged. Initial paired 68-game trial showed a modest points-Brier improvement, but no independent untouched future confirmation, and other stat gains were inconclusive. This is a research component, not a production promotion.
+The assistant must not represent inaccessible licensed data, failed features,
+historic hindsight rosters or projections from a future game as work that V5
+has completed.
