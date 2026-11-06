@@ -4,19 +4,25 @@ const tomorrow=(()=>{
  const d=new Date(Date.now()+2*86400000);
  return d.toISOString();
 })();
+// Authentic integer CDFs: 26.7 points means P(27+) = 67.5%, not the
+// previous fixture's unrelated 20-point milestone probability.
+const pointCdf=Array.from({length:45},(_,k)=>k<24?0:k<28?.325:1);
+const assistCdf=Array.from({length:24},(_,k)=>k<6?0:k<8?.4:1);
 const game={
  game_id:'401999987',home:'Dallas Mavericks',away:'Philadelphia 76ers',
  tipoff_utc:tomorrow,forecast_at_utc:new Date(Date.now()-3600000).toISOString(),
  rows_count:3,
  rows:[
   {game_id:'401999987',team_id:'20',player_id:'5252',player:'V3 Source Athlete',
-   market:'points',mean:26.7,median:26,p10:12,p25:21,p75:32,p90:39,
+   market:'points',mean:26.7,median:28,p10:24,p25:24,p75:28,p90:28,
+   cdf_lattice:{step:1,cdf:pointCdf},
    p_active:.93,exp_opp:31,role_share:.15,
    reported_status:'UNKNOWN_NOT_ACTIVE_CERTIFIED',
    unc_reasons:['GAME_DAY_ACTIVE_NOT_CERTIFIED'],
    model_target:{milestone:20,probability:.788,method:'pregame_full_game_mc_cdf'}},
   {game_id:'401999987',team_id:'20',player_id:'5252',player:'V3 Source Athlete',
-   market:'assists',mean:7.2,median:7,p10:3,p25:5,p75:9,p90:13,
+   market:'assists',mean:7.2,median:8,p10:6,p25:6,p75:8,p90:8,
+   cdf_lattice:{step:1,cdf:assistCdf},
    p_active:.93,exp_opp:31,role_share:.15,
    reported_status:'UNKNOWN_NOT_ACTIVE_CERTIFIED',
    unc_reasons:['GAME_DAY_ACTIVE_NOT_CERTIFIED'],
@@ -65,8 +71,8 @@ test('NBA opens V3 SYSTEM PICKS, not V2 or optional shadow view',async({page})=>
  await expect(g).toHaveCount(1);
  await g.locator('button[aria-expanded]').click();
  await expect(g.getByTestId('nba-v3-system-pick')).toHaveCount(2);
- await expect(g.getByTestId('nba-v3-system-pick').first()).toContainText('26.7 PTS');
- await expect(g.getByTestId('nba-v3-system-pick').first()).toContainText('78.8%');
+ await expect(g.getByTestId('nba-v3-system-pick').first()).toContainText('27 PTS');
+ await expect(g.getByTestId('nba-v3-system-pick').first()).toContainText('67.5%');
  await expect(g.getByTestId('nba-v3-system-pick').filter({hasText:'Reported Out'})).toHaveCount(0);
  await expect(g.getByTestId('nba-v3-system-pick').last()).toContainText('ASSISTS');
  await expect(page.getByText(/NOT YET PROSPECTIVELY CALIBRATED/)).toBeVisible();
