@@ -3,7 +3,7 @@ import { parseNbaResearch, type NbaResearchDocument } from '../nba/research';
 import NbaPlayerResearchPanel from './NbaPlayerResearchPanel';
 import NbaRollingPlayerPanel from './NbaRollingPlayerPanel';
 import NbaSystemPicksPanel from './NbaSystemPicksPanel';
-import NbaV3ResearchPanel from './NbaV3ResearchPanel';
+import NbaV5LivePanel from './NbaV5LivePanel';
 
 const pct = (v: number) => (v * 100).toFixed(1) + '%';
 const gameDayEastern = (iso: string) => {
@@ -76,7 +76,7 @@ export default function NbaResearchScreen() {
       value={search} onChange={e=>setSearch(e.target.value)}
       className="w-full rounded-xl border border-[#333] bg-[#191919] px-4 py-3 text-sm text-stone-100" />}
     {(mode==='PICKS'||mode==='BOARD')&&
-      <NbaV3ResearchPanel key={mode} mode={mode} search={search}/>}
+      <NbaV5LivePanel key={mode} mode={mode} search={search}/>}
     {mode==='EVIDENCE'&&<section data-testid="nba-v5-evidence" className="rounded-xl border border-[#465650] bg-[#102018] p-4 text-sm text-gray-100">
       <strong>NBA MODEL · FORECAST VALIDATION STATUS</strong>
       <p className="mt-2 text-xs">All numerical projections come from the NBA forecasting system, independently
