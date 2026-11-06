@@ -1,0 +1,52 @@
+name: NBA V5 low-history and rookie rotation research
+on:
+  pull_request:
+    paths:
+      - "nba/nba_v5_cold_start.py"
+      - "nba/nba_v5_backtest.py"
+      - "nba/nba_v5_forecast.py"
+      - "nba/nba_v5_sim.py"
+      - "tests/test_nba_v5_cold_start.py"
+      - ".github/workflows/nba_v5_cold_start.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  early-career-shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -q "numpy>=2.1,<2.5" "scipy>=1.14,<1.18" "pdfplumber>=0.11,<0.13"
+      - name: Preserve original V5 sim and rookie/bench source tests
+        run: python -m unittest discover -s tests -p "test_nba_v5*.py" -v
+      - name: Full same-roster paired original vs low-history candidate
+        run: |
+          python -u -m nba.nba_v5_backtest \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz \
+            --pbp nba/data/nba_v5_pbp_2026_27.jsonl.gz \
+            --test-from 2026-03-01 --sample 70 --sims 500 \
+            --cold-start-trial --out /tmp/nba_v5_cold_start.json
+      - name: Grade both displaced veterans and all newly included rookies
+        run: |
+          python - <<'PY'
+          import json
+          a=json.load(open('/tmp/nba_v5_cold_start.json'))['paired_low_history_trial']
+          assert a['model_promotion_allowed'] is False
+          assert a['candidate_modeled_player_game_count']>=a['original_modeled_player_game_count']
+          print('COLD_START_EXTRA_PLAYER_GAMES',a['genuinely_new_player_game_count'])
+          print('COLD_START_NEW_PLAYER_ERRORS',a['added_player_grade'])
+          for k,v in a['metrics'].items():
+              if 'brier_fixed_champion_target' in k or k.startswith('minutes|'):
+                  print('COLD_START_PAIRED',k,v)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-v5-unpromoted-low-history-rotation-trial
+          path: /tmp/nba_v5_cold_start.json
+          retention-days: 30
