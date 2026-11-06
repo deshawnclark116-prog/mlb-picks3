@@ -91,5 +91,31 @@ class PbpValidationTests(unittest.TestCase):
         self.assertEqual(float(different["fga"].sum()),0)
 
 
+
+class RosterOrderingTests(unittest.TestCase):
+    def test_seeded_forecast_roster_is_stable_across_python_hash_seeds(self):
+        import os
+        import subprocess
+        import sys
+        from nba.nba_v5_backtest import roster_player_ids
+        players = [{"id":x,"side":"home"} for x in ("10","2","35","201","6","17")]
+        players += [{"id":"999","side":"away"}]
+        want = ["10","17","2","201","35","6"]
+        self.assertEqual(roster_player_ids(players, "home"), want)
+        self.assertEqual(roster_player_ids(players[::-1], "home"), want)
+        src = (
+            "from nba.nba_v5_backtest import roster_player_ids;"
+            "print(roster_player_ids([{'id':x,'side':'home'} for x in "
+            "('10','2','35','201','6','17')], 'home'))"
+        )
+        out = [
+            subprocess.check_output([sys.executable,"-c",src],
+                env={**os.environ,"PYTHONHASHSEED":seed}, text=True).strip()
+            for seed in ("1","87")
+        ]
+        self.assertEqual(out[0],out[1])
+        self.assertIn("'201'",out[0])
+
+
 if __name__ == "__main__":
     unittest.main()
