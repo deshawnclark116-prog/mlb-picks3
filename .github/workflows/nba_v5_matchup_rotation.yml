@@ -1,0 +1,68 @@
+name: NBA V5 opponent style and coaching rotation shadow
+on:
+  pull_request:
+    paths:
+      - "nba/nba_v5_matchup_rotation.py"
+      - "nba/nba_v5_backtest.py"
+      - "nba/nba_v5_sim.py"
+      - "tests/test_nba_v5_matchup_rotation.py"
+      - ".github/workflows/nba_v5_matchup_rotation.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  coaching-matchup-rotation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Dependencies
+        run: python -m pip install -q "numpy>=2.1,<2.5" "scipy>=1.14,<1.18"
+      - name: Original V5 and all new before-date source contracts
+        run: python -m unittest discover -s tests -p "test_nba_v5*.py" -v
+      - name: Test source coverage of real opponent-style rotation history
+        run: |
+          python - <<'PY'
+          import json
+          from nba.nba_v5_backtest import Replay,load_pbp
+          from nba import nba_v4_backtest as b4
+          pb=load_pbp(["nba/data/nba_v5_pbp_2025_26.jsonl.gz",
+                       "nba/data/nba_v5_pbp_2026_27.jsonl.gz"])
+          gs=b4.load(["nba/data/nba_v4_games_2025_26.jsonl.gz",
+                      "nba/data/nba_v4_games_2026_27.jsonl"])
+          rp=Replay()
+          for g in gs:
+              rp.add(g,pb.get(g["game_id"]))
+          audit=rp.matchup_rotation.audit()
+          print("MATCHUP_ROTATION_SOURCE_AUDIT",json.dumps(audit,sort_keys=True))
+          assert audit["historical_matchups_with_usable_opponent_profile"]>800
+          assert audit["observed_player_rotations_with_opponent_profile"]>10000
+          PY
+      - name: Paired champion-vs-challenger on frozen original numerical events
+        run: |
+          PYTHONHASHSEED=1 python -u -m nba.nba_v5_backtest \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz \
+            --pbp nba/data/nba_v5_pbp_2026_27.jsonl.gz \
+            --test-from 2026-03-01 --sample 70 --sims 500 \
+            --matchup-rotation-trial --out /tmp/nba_matchup_rotation.json
+      - name: Preserve paired Brier and MAE, never auto-promote
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open('/tmp/nba_matchup_rotation.json'))
+          p=r["paired_matchup_rotation_trial"]
+          assert p["model_promotion_allowed"] is False
+          for name,v in p["metrics"].items():
+              if name.endswith("brier_fixed_champion_target") or name=="minutes|simulation|mae":
+                  print("MATCHUP_ROTATION_PAIRED",name,json.dumps(v,sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-v5-opponent-coaching-shadow
+          path: /tmp/nba_matchup_rotation.json
+          retention-days: 30

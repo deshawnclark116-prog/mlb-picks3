@@ -307,6 +307,7 @@ class TeamInput:
     pair_effects: dict | None = None           # (stat -> (N,N) teammate-conditioned opportunity, shadow)
     pair_baselines: dict | None = None         # (stat -> (N,)) on-court composition centering
     assist_receiver_log_effect: np.ndarray | None = None  # (N,N) directed passer->scorer observed assist preference; shadow
+    matchup_presence: np.ndarray | None = None  # (N,24) prior opponent shot-mix conditioned rotation, research only
     style_probs: np.ndarray | None = None     # (N,5zones,5styles) historical shot execution frequencies
     style_mult: np.ndarray | None = None      # (N,5zones,5styles) mean-neutral shot-accuracy multipliers
     low_history_evidence: dict | None = None  # player_id -> past-only, unpromoted cold-start coverage
@@ -324,7 +325,7 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
          "luck": True, "assists": True, "putbacks": True, "defence": True, "schedule": True, "officials": True,
          "late_game": True, "returns": True, "minute_limits": True, "zones": True,
          "team_rotation": True, "timeouts": True, "defenders": True, "timing": True, "joint_availability": True,
-         "lineup_pairs": False, "shot_style": False, "game_flow": False, "assist_network": False} # unpromoted research switches
+         "lineup_pairs": False, "shot_style": False, "game_flow": False, "assist_network": False, "matchup_rotation": False} # unpromoted research switches
     ctx = ctx or {}
     if features:
         F.update(features)
@@ -404,12 +405,14 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
 
     def lineup(i, seg, mask, minutes_len, quarter_half):
         t = teams[i]
-        W = np.tile(t.presence[:, seg], (S, 1)) if F["rotation"] else np.tile(np.full(N[i], 0.5), (S, 1))
+        expected_presence=(t.matchup_presence if F["matchup_rotation"] and t.matchup_presence is not None
+                           else t.presence)
+        W = np.tile(expected_presence[:, seg], (S, 1)) if F["rotation"] else np.tile(np.full(N[i], 0.5), (S, 1))
         W = W * avail[i]
         if F["returns"] and t.return_mult is not None:
             W = W * t.return_mult[None, :]
         if F["minute_limits"] and t.minutes_cap is not None:
-            exp_min = np.maximum(t.presence.sum(axis=1) * 2.0, 1e-6)
+            exp_min = np.maximum(expected_presence.sum(axis=1) * 2.0, 1e-6)
             W = W * np.minimum(1.0, t.minutes_cap / exp_min)[None, :]
         if F["schedule"] and t.start_mult != 1.0:
             W = np.where(t.starter[None, :], W * t.start_mult, W)
