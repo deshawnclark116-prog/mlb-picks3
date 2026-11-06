@@ -32,6 +32,7 @@ from nba.nba_v5_rank import MARKET_ORDER, MEANINGFUL_MIN, rank_for_screen, reach
 from nba.nba_v5_role_change import detect_role_change
 from nba.nba_v5_archetypes import player_archetype
 from nba.nba_v5_external_source import read_source
+from nba.nba_v5_pregame_certified import load as load_pregame, apply_confirmed
 from nba.nba_v5_uncertainty import forecast_uncertainty, reach_with_dnp
 from nba.nba_v5_sim import League, league_from, simulate_game, MARKETS
 
@@ -194,6 +195,7 @@ def main() -> int:
     ap.add_argument("--features", default="", help="docs/nba_v5_latest/features.json: which simulation pieces are switched on (only those that tested as helpful)")
     ap.add_argument("--v4", default="", help="V4 forecast file for the same games; averaged with the V5 simulation for points, rebounds, assists, threes")
     ap.add_argument("--licensed-data", action="append", default=[], help="Optional authorized tracking/play-type historical JSON; diagnostic only until paired validation")
+    ap.add_argument("--pregame-evidence", default="", help="Optional as-of confirmed lineup/inactive/minutes source export; projected lineups never override the model")
     ap.add_argument("--archive", default="", help="directory for frozen forecasts: first/<game>.json.gz (never rewritten) and last/<game>.json.gz (replaced until 15 min before tip, kept only within 4 hours of tip)")
     a = ap.parse_args()
     games = v4.load(a.games)
@@ -220,6 +222,8 @@ def main() -> int:
     v4doc = json.loads(Path(a.v4).read_text()) if a.v4 and Path(a.v4).exists() else None
     v4rows = {(g["game_id"], r["player_id"], r["market"]): r for g in (v4doc or {"games": []})["games"] for r in g["rows"] if r.get("cdf_lattice")}
     now = dt.datetime.now(dt.timezone.utc)
+    pregame, pregame_audit = (load_pregame(a.pregame_evidence, now, v3.get("games", []))
+                                if a.pregame_evidence else ({}, {"source_status": "NOT_CONNECTED", "confirmed_teams": 0}))
     current_roster={(str(r["team_id"]),str(r["player_id"]))
                     for g in v3.get("games",[]) for r in g.get("rows",[])}
     licensed_profiles=[]
@@ -240,9 +244,23 @@ def main() -> int:
         d = (tip - dt.timedelta(hours=5)).date()
         evidence = (receipts.get(str(g3["game_id"])) or {}).get("reports", [])
         rep_by = choose_availability_reports(evidence, now)
+        certified_by_team = {str(tid): pregame.get((str(g3["game_id"]), str(tid)))
+                             for tid in (g3["home_id"], g3["away_id"])}
+        confirmed_starters = {str(pid) for rec in certified_by_team.values()
+                              if rec and rec["lineup_state"] == "CONFIRMED"
+                              for pid in rec["starters"]}
+        certified_inactive = {str(pid) for rec in certified_by_team.values()
+                              if rec and rec["lineup_state"] == "CONFIRMED"
+                              for pid in rec["inactive"]}
+        official_out_now = {pid for pid, info in rep_by.items()
+                            if info["fresh_official"] and info["status"] == "OUT"}
+        official_available_now = {pid for pid, info in rep_by.items()
+                                  if info["fresh_official"] and info["raw_status"] == "AVAILABLE"}
+        if confirmed_starters & official_out_now or certified_inactive & official_available_now:
+            raise ValueError("NBA_V5_CERTIFIED_LINEUP_CONFLICTS_WITH_OFFICIAL_INJURY_REPORT")
         officially_available={pid for pid,info in rep_by.items()
                               if info["fresh_official"] and info["raw_status"]=="AVAILABLE"}
-        pg = pseudo_game(g3, officially_available=officially_available)
+        pg = pseudo_game(g3, officially_available=officially_available | confirmed_starters)
         try_cold=bool(switches.get("low_history_rotation",False))
         th, ta = (b5.team_input(rp, pg, "home", d, L, lg_tot, None, cold_start=try_cold),
                   b5.team_input(rp, pg, "away", d, L, lg_tot, None, cold_start=try_cold))
@@ -278,6 +296,12 @@ def main() -> int:
                 pa[p["id"]] = min(play_table.p_play("UNLISTED"), part)
         th.p_play = np.array([pa[i] for i in th.ids])
         ta.p_play = np.array([pa[i] for i in ta.ids])
+        pregame_team_effect = {}
+        for team_input, team_id in ((th, g3["home_id"]), (ta, g3["away_id"])):
+            record = certified_by_team[str(team_id)]
+            pregame_team_effect[str(team_id)] = apply_confirmed(team_input, record)
+            for pos, pid in enumerate(team_input.ids):
+                pa[pid] = float(team_input.p_play[pos])
         for ti_, tid_ in ((th, g3["home_id"]), (ta, g3["away_id"])):                 # teammates who tend to sit together
             ids_h, A = avm.absence_matrix(rp.v4.team_rosters.get(tid_, []), d)
             if A is not None:
@@ -373,8 +397,14 @@ def main() -> int:
                         float(r["p_active"]), target)
             trim_lattice(r)
         for r in g3["rows"]:
-            if (r["reported_status"] == "OUT" and str(r["player_id"]) not in officially_available) or str(r["player_id"]) in official_out:
+            if ((r["reported_status"] == "OUT" and str(r["player_id"]) not in officially_available)
+                    or str(r["player_id"]) in official_out or str(r["player_id"]) in certified_inactive):
                 out_row=dict(r)
+                if str(r["player_id"]) in certified_inactive:
+                    out_row["reported_status"] = "OUT"
+                    out_row["p_active"] = 0.0
+                    out_row["mean_basis"] = "EXCLUDED_CONFIRMED_INACTIVE"
+                    out_row["availability_source"] = "CERTIFIED_PREGAME_INACTIVE"
                 if str(r["player_id"]) in official_out:
                     out_row["reported_status"]="OUT"
                     out_row["p_active"]=0.0
@@ -393,6 +423,8 @@ def main() -> int:
                    "official_injury_matches": sum(1 for v in rep_by.values() if v["fresh_official"]),
                    "official_report_out_count": len(official_out),
                    "official_report_available_count": len(officially_available),
+                   "certified_pregame_team_effect": pregame_team_effect,
+                   "certified_pregame_source_captured_at_utc": pregame_audit.get("captured_at_utc"),
                    "role_change_model_effect": "SHADOW_ONLY_NO_PROJECTION_ADJUSTMENT",
                    "uncertainty_model_effect": "DIAGNOSTIC_ONLY; MINUTES_AND_DNP_VARIANCE_CONSERVED"})
         out_games.append(g5)
@@ -402,9 +434,10 @@ def main() -> int:
                 "generated_at_utc": now.isoformat(), "model_promoted": False, "v5_training_games": len(games),
                 "v5_history_through": games[-1]["date"], "v3_source_sha256": sha(Path(a.v3)),
                 "authorized_source_quality": source_audits,
+                "certified_pregame_source_audit": pregame_audit,
                 "authorized_source_model_effect":"DIAGNOSTIC_ONLY_NOT_PROMOTED",
                 "note": "NBA V5: equal-weight blend of the whole-game possession simulation and the V4 model for points, rebounds, assists and threes; "
-                        "the simulation alone for steals, blocks and turnovers. Conditional on playing; availability layer is V3's. "
+                        "the simulation alone for steals, blocks and turnovers. Conditional on playing; V3 availability can be updated by verified NBA PDF and optional certified lineup evidence. "
                         "Research only, not validated for 2026-27, no sportsbook input."})
     Path(a.out).write_text(json.dumps(doc, separators=(",", ":")))
     if a.archive:
