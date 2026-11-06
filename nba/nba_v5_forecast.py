@@ -26,6 +26,8 @@ import numpy as np
 from nba import nba_v4_backtest as v4
 from nba import nba_v5_backtest as b5
 from nba import nba_v5_context as ctxm
+from nba import nba_v5_availability as avm
+from nba import nba_v5_learn as learnm
 from nba.nba_v5_rank import MARKET_ORDER, MEANINGFUL_MIN, rank_for_screen, reach_prob
 from nba.nba_v5_sim import League, league_from, simulate_game, MARKETS
 
@@ -145,6 +147,8 @@ def main() -> int:
     ap.add_argument("--out", required=True)
     ap.add_argument("--sims", type=int, default=3000)
     ap.add_argument("--calibration", default="")
+    ap.add_argument("--receipt", default="", help="information receipt (nba_v5_info) with each player's reported status, body part and return date")
+    ap.add_argument("--grades", default="", help="docs/nba_v5_grades/summary.json: learned chance of playing by reported status")
     ap.add_argument("--v4", default="", help="V4 forecast file for the same games; averaged with the V5 simulation for points, rebounds, assists, threes")
     ap.add_argument("--archive", default="", help="directory for frozen forecasts: first/<game>.json.gz (never rewritten) and last/<game>.json.gz (replaced until 15 min before tip, kept only within 4 hours of tip)")
     a = ap.parse_args()
@@ -157,12 +161,16 @@ def main() -> int:
     lg_tot = b5.league_totals(rp)
     tables = {"blow": rp.tables.blow_mult(), "foul": rp.tables.foul_mult()}
     L.zmod = b5.league_zone_stats(rp)["zmod"]
+    tables["timing"] = rp.learn.timing_tables()
+    tables["to_rate"], tables["post_to"] = rp.learn.timeout_tables()
     late_tab = ctxm.late_game_ft_table([pbp[g["game_id"]] for g in games if g["game_id"] in pbp])
     le = ctxm.league_events([pbp[g["game_id"]] for g in games if g["game_id"] in pbp])
     for k_, v_ in le.items():
         setattr(L, k_, v_)
     calib = json.loads(Path(a.calibration).read_text()) if a.calibration and Path(a.calibration).exists() else {}
     v3 = json.loads(Path(a.v3).read_text())
+    play_table = avm.PlayTable.from_grades(a.grades) if a.grades else avm.PlayTable()
+    receipts = json.loads(Path(a.receipt).read_text()) if a.receipt and Path(a.receipt).exists() else {}
     v4doc = json.loads(Path(a.v4).read_text()) if a.v4 and Path(a.v4).exists() else None
     v4rows = {(g["game_id"], r["player_id"], r["market"]): r for g in (v4doc or {"games": []})["games"] for r in g["rows"] if r.get("cdf_lattice")}
     now = dt.datetime.now(dt.timezone.utc)
@@ -177,14 +185,30 @@ def main() -> int:
         if not th or not ta:
             skipped.append(g3["game_id"])
             continue
-        pa = {p["id"]: float(p["p_active"]) for p in pg["players"]}
+        # chance each player plays: learned from graded results by reported status (and body part), not a fixed guess
+        rep_by = {}
+        for e in (receipts.get(g3["game_id"]) or {}).get("reports", []):
+            cur = rep_by.get(e["player_id"])
+            if cur is None or avm.norm_status(e["status"]) == "OUT" or cur["status"] != "OUT" and e["status"] != "PROBABLE":
+                rep_by[e["player_id"]] = {"status": avm.norm_status(e["status"]), "body": e.get("location") or e.get("body_part")}
+        pa = {}
+        for p in pg["players"]:
+            info = rep_by.get(p["id"])
+            pa[p["id"]] = play_table.p_play(info["status"], info["body"]) if info else play_table.p_play("UNLISTED")
         th.p_play = np.array([pa[i] for i in th.ids])
         ta.p_play = np.array([pa[i] for i in ta.ids])
+        for ti_, tid_ in ((th, g3["home_id"]), (ta, g3["away_id"])):                 # teammates who tend to sit together
+            ids_h, A = avm.absence_matrix(rp.v4.team_rosters.get(tid_, []), d)
+            if A is not None:
+                ti_.avail_corr = avm.full_corr_for(ti_.ids, ids_h, avm.correlation_from_absences(A))
         pace = b5.pace_for(rp, pg, d)
         pace = pace - le["team_or_pg"] if pace else pace
         ctx = {"ft_mult": rp.refs.crew_mult(pg["officials"]), "late_ft": late_tab}
         seed = int(g3["game_id"]) % 100003
-        sim = simulate_game(th, ta, L, tables, S=a.sims, pace=pace, seed=seed, ctx=ctx)
+        tables_g = dict(tables)
+        tables_g["blow_team"] = {t_: rp.tables.blow_mult_team(t_) for t_ in (g3["home_id"], g3["away_id"])}
+        tables_g["foul_team"] = {t_: rp.tables.foul_mult_team(t_) for t_ in (g3["home_id"], g3["away_id"])}
+        sim = simulate_game(th, ta, L, tables_g, S=a.sims, pace=pace, seed=seed, ctx=ctx)
         rows_by = {(r["player_id"], r["market"]): r for r in g3["rows"]}
         new_rows, base_means = [], {}
         side_data = {"home": (th, sim["home"], sim["avail"][0], sim["first5"][0], sim["close5"][0]),
@@ -199,7 +223,7 @@ def main() -> int:
                     base_means[(pid, m)] = float(sd[key][played, j].mean())
         sens = {}
         for side in ("home", "away"):
-            sens.update(team_sensitivity(th, ta, L, tables, ctx, base_means, a.sims, pace, seed, side))
+            sens.update(team_sensitivity(th, ta, L, tables_g, ctx, base_means, a.sims, pace, seed, side))
         for side, (ti, sd, av, f5, c5) in side_data.items():
             for j, pid in enumerate(ti.ids):
                 played = av[:, j] & (sd["min"][:, j] > 0)
@@ -216,6 +240,8 @@ def main() -> int:
                         continue
                     lat = empirical_lattice(samp, CDF_MAX[m])
                     nr = dict(tmpl)
+                    nr["p_active_v3"] = tmpl["p_active"]
+                    nr["p_active"] = round(float(pa.get(pid, tmpl["p_active"])), 4)
                     nr.update({"market": m, "mean": round(float(samp.mean()), 4), "median": quant(samp, 0.5), "p10": quant(samp, 0.10),
                                "p25": quant(samp, 0.25), "p75": quant(samp, 0.75), "p90": quant(samp, 0.90),
                                "sd": round(float(samp.std()), 4), "unc": round(float(samp.std()), 4), "model_target": None,

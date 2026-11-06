@@ -102,40 +102,70 @@ def margin_bucket(m):
 
 
 class RotationTables:
-    """Learned from earlier games only: how starters' floor time reacts to the score gap and to foul trouble,
-    and how long overtime lasts for starters."""
+    """Learned from earlier games only: how starters' floor time reacts to the score gap and to foul trouble, league-wide and
+    for each team separately (a coach proxy; a team with little evidence is pulled toward the league)."""
 
     def __init__(self):
         self.blow_sum = np.zeros((4, 2))      # margin bucket x (Q3, Q4) : starter presence sum
         self.blow_n = np.zeros((4, 2))
         self.foul_sum = np.zeros((6, 2))      # fouls at segment start (0..5+) x (first half, second half)
         self.foul_n = np.zeros((6, 2))
+        self.t_blow_sum = collections.defaultdict(lambda: np.zeros((4, 2)))
+        self.t_blow_n = collections.defaultdict(lambda: np.zeros((4, 2)))
+        self.t_foul_sum = collections.defaultdict(lambda: np.zeros((6, 2)))
+        self.t_foul_n = collections.defaultdict(lambda: np.zeros((6, 2)))
         self.add_count = 0
 
     def add_game(self, game, pres, fouls_seg, margin_seg, team_of):
         starters = {p for ids in game["starters"].values() for p in ids}
         for p, arr in pres.items():
-            base_first = arr[:6].sum() + arr[12:18].sum()
+            t = team_of.get(p)
             for s in range(SEG):
                 share = arr[s] / SEG_SEC
                 half = 0 if s < 12 else 1
                 f = int(min(5, fouls_seg[p][s]))
                 self.foul_sum[f, half] += share
                 self.foul_n[f, half] += 1
+                if t is not None:
+                    self.t_foul_sum[t][f, half] += share
+                    self.t_foul_n[t][f, half] += 1
                 if p in starters and s >= 12:
-                    self.blow_sum[margin_bucket(margin_seg[s]), 0 if s < 18 else 1] += share
-                    self.blow_n[margin_bucket(margin_seg[s]), 0 if s < 18 else 1] += 1
+                    mb = margin_bucket(margin_seg[s])
+                    g = 0 if s < 18 else 1
+                    self.blow_sum[mb, g] += share
+                    self.blow_n[mb, g] += 1
+                    if t is not None:
+                        self.t_blow_sum[t][mb, g] += share
+                        self.t_blow_n[t][mb, g] += 1
         self.add_count += 1
 
+    @staticmethod
+    def _ratio(sums, ns):
+        m = sums / np.maximum(ns, 1)
+        return np.clip(m / np.maximum(m[0], 1e-3), 0.05, 1.2)
+
     def blow_mult(self):
-        m = self.blow_sum / np.maximum(self.blow_n, 1)
-        base = np.maximum(m[0], 1e-3)
-        return np.clip(m / base, 0.05, 1.2)
+        return self._ratio(self.blow_sum, self.blow_n)
 
     def foul_mult(self):
-        m = self.foul_sum / np.maximum(self.foul_n, 1)
-        base = np.maximum(m[0], 1e-3)
-        return np.clip(m / base, 0.05, 1.2)
+        return self._ratio(self.foul_sum, self.foul_n)
+
+    def blow_mult_team(self, team, k=60.0):
+        """The team's own blowout response, blended with the league's by how much evidence the team has."""
+        lg = self.blow_mult()
+        if team not in self.t_blow_n:
+            return lg
+        tm = self._ratio(self.t_blow_sum[team], self.t_blow_n[team])
+        w = self.t_blow_n[team] / (self.t_blow_n[team] + k)
+        return np.clip(lg + w * (tm - lg), 0.05, 1.2)
+
+    def foul_mult_team(self, team, k=60.0):
+        lg = self.foul_mult()
+        if team not in self.t_foul_n:
+            return lg
+        tm = self._ratio(self.t_foul_sum[team], self.t_foul_n[team])
+        w = self.t_foul_n[team] / (self.t_foul_n[team] + k)
+        return np.clip(lg + w * (tm - lg), 0.05, 1.2)
 
 
 # ------------------------------------------------------------------ player and team profiles
@@ -207,6 +237,49 @@ def build_profile(hist, L: League, half_life=30.0, prior_min=60.0):
     }
 
 
+# ------------------------------------------------------------------ how long players stay in
+_RHO_TABLE = {}
+
+
+def _stint_for_rho(rho, S=500, seed=3):
+    """Mean stint (minutes) of a generic ten-man rotation when lineup draws persist with this correlation."""
+    rng = np.random.default_rng(seed)
+    pres = np.array([0.8] * 5 + [0.25] * 5)
+    pres = np.minimum(1.0, pres * 5.0 / pres.sum())
+    gum = rng.gumbel(size=(S, 10))
+    prev = None
+    stints, run = [], np.zeros((S, 10))
+    for seg in range(SEG):
+        gum = rho * gum + math.sqrt(1 - rho ** 2) * rng.gumbel(size=(S, 10))
+        sc = np.log(pres + 1e-9)[None, :] + 0.8 * gum
+        if seg in (0, 12):
+            sc[:, :5] += 10.0
+        idx = np.argpartition(-sc, 4, axis=1)[:, :5]
+        on = np.zeros((S, 10), bool)
+        np.put_along_axis(on, idx, True, axis=1)
+        if prev is not None:
+            ended = prev & ~on
+            stints.append(run[ended])
+            run = np.where(on, np.where(prev, run + 1, 1), 0)
+        else:
+            run = on.astype(float)
+        prev = on
+    allst = np.concatenate([x for x in stints if len(x)] or [np.array([1.0])])
+    return float(allst.mean() * 2.0)
+
+
+def rho_for_relative_stint(ratio, base_rho=0.6):
+    """Persistence that makes a team's players stay in `ratio` times as long as the league's typical rotation does."""
+    if not _RHO_TABLE:
+        grid = [0.0, 0.2, 0.4, 0.55, 0.65, 0.75, 0.85, 0.92]
+        _RHO_TABLE["rho"] = np.array(grid)
+        _RHO_TABLE["stint"] = np.array([_stint_for_rho(r) for r in grid])
+    base = float(np.interp(base_rho, _RHO_TABLE["rho"], _RHO_TABLE["stint"]))
+    target = base * float(np.clip(ratio, 0.7, 1.4))
+    order = np.argsort(_RHO_TABLE["stint"])
+    return float(np.clip(np.interp(target, _RHO_TABLE["stint"][order], _RHO_TABLE["rho"][order]), 0.0, 0.93))
+
+
 # ------------------------------------------------------------------ the simulation
 @dataclass
 class TeamInput:
@@ -226,6 +299,11 @@ class TeamInput:
     assisted: np.ndarray | None = None         # (N,) share of his makes that are assisted
     dz_freq: np.ndarray | None = None          # (5,) how much more or less this team (defending) concedes from each spot
     dz_pct: np.ndarray | None = None           # (5,) how much more or less accurate opponents are from each spot against it
+    team_id: str = ""                          # for the team's own rotation tables
+    dfreq: np.ndarray | None = None            # (N, 5) each player's on-court effect on how often opponents shoot from each spot
+    dpct: np.ndarray | None = None             # (N, 5) ... and on how accurately
+    rho: float | None = None                   # stint persistence from the team's real stint lengths
+    avail_corr: np.ndarray | None = None       # (N, N) correlation of absences (players who tend to sit together)
 
 
 def _beta(rng, p, n, shape):
@@ -238,7 +316,8 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
     """Returns {side: {stat: array (S, N)}}. `features` toggles pieces for ablation tests."""
     F = {"rotation": True, "foul_trouble": True, "blowout": True, "overtime": True, "param_uncertainty": True,
          "luck": True, "assists": True, "putbacks": True, "defence": True, "schedule": True, "officials": True,
-         "late_game": True, "returns": True, "minute_limits": True, "zones": True}
+         "late_game": True, "returns": True, "minute_limits": True, "zones": True,
+         "team_rotation": True, "timeouts": True, "defenders": True, "timing": True, "joint_availability": True}
     ctx = ctx or {}
     if features:
         F.update(features)
@@ -249,7 +328,14 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
     env = np.clip(np.exp(rng.normal(-0.5 * env_sd ** 2, env_sd, S)), 0.8, 1.25)
     base_n = pace * env / SEG                                        # possessions per team per two minutes
     luck = [np.exp(rng.normal(0, 1, (S, 2)) * np.array(luck_sd)) if F["luck"] else np.ones((S, 2)) for _ in teams]
-    avail = [rng.random((S, N[i])) < teams[i].p_play[None, :] for i in range(2)]
+    avail = []
+    for i in range(2):
+        t_ = teams[i]
+        if F["joint_availability"] and t_.avail_corr is not None and np.any((t_.p_play > 0) & (t_.p_play < 1)):
+            from nba.nba_v5_availability import copula_availability
+            avail.append(copula_availability(rng, t_.p_play, t_.avail_corr, S))
+        else:
+            avail.append(rng.random((S, N[i])) < t_.p_play[None, :])
     par = []
     for i, t in enumerate(teams):
         p2 = np.array([x["p2"] for x in t.prof]); n2 = np.array([x["n2"] for x in t.prof])
@@ -275,7 +361,13 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
     fouls = [np.zeros((S, N[i])) for i in range(2)]
     score = np.zeros((S, 2))
     gum = [rng.gumbel(size=(S, N[i])) for i in range(2)]
-    blow, foulm = tables["blow"], tables["foul"]
+    blow_lg, foul_lg = tables["blow"], tables["foul"]
+    to_rate, post_to = tables.get("to_rate"), tables.get("post_to", 1.0)
+    timing = tables.get("timing")
+    post_flag = [np.zeros(S, bool), np.zeros(S, bool)]       # a timeout was called in the stretch just before this one
+    had_to = [np.zeros(S, bool), np.zeros(S, bool)]
+    margin_snap = [np.zeros(S), np.zeros(S)]
+    live = [np.zeros(S, bool), np.zeros(S, bool)]            # this team's next possession starts off a steal or defensive rebound
     ar = np.arange(S)
     rate_mult = lambda d, k: d.get(k, 1.0) if F["defence"] else 1.0
 
@@ -296,6 +388,11 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
         if F["schedule"] and t.start_mult != 1.0:
             W = np.where(t.starter[None, :], W * t.start_mult, W)
         half = 0 if seg < 12 else 1
+        foulm = tables.get("foul_team", {}).get(t.team_id, foul_lg) if F["team_rotation"] else foul_lg
+        blow = tables.get("blow_team", {}).get(t.team_id, blow_lg) if F["team_rotation"] else blow_lg
+        rho_i = t.rho if (F["team_rotation"] and t.rho) else rho
+        if F["timeouts"] and post_to != 1.0:
+            W = np.where(t.starter[None, :] & post_flag[i][:, None], W * post_to, W)
         if F["foul_trouble"]:
             fb = np.minimum(fouls[i], 5).astype(int)
             W = W * foulm[fb, half]
@@ -310,7 +407,7 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
         for _ in range(6):                                           # scale so about five are on the floor
             tot = W.sum(axis=1, keepdims=True)
             W = np.minimum(1.0, W * 5.0 / np.maximum(tot, 1e-9))
-        gum[i] = rho * gum[i] + math.sqrt(1 - rho ** 2) * rng.gumbel(size=(S, N[i]))
+        gum[i] = rho_i * gum[i] + math.sqrt(1 - rho_i ** 2) * rng.gumbel(size=(S, N[i]))
         score_ = np.log(W + 1e-9) + gum[i] * 0.8
         if seg in (0, 12):
             score_ = score_ + np.where(t.starter[None, :] & avail[i], 10.0, 0.0)
@@ -341,8 +438,10 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
         is_shot = mask & ~is_to & ~is_ft
         # turnovers, with a steal credited to a real defender
         st[o]["tov"][ar[is_to], fi[is_to]] += 1
+        stl_any = np.zeros(S, bool)
         if is_to.any():
             stl = is_to & (rng.random(S) < L.stl_per_tov)
+            stl_any = stl
             dw = rate[d]["stl"][Di] + 1e-6
             di = Di[ar, pick(dw)]
             st[d]["stl"][ar[stl], di[stl]] += 1
@@ -362,15 +461,26 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
             dzf = tdef.dz_freq if (F["defence"] and tdef.dz_freq is not None) else np.ones(5)
             dzp = tdef.dz_pct if (F["defence"] and tdef.dz_pct is not None) else np.ones(5)
             zprob = to_.zf[fi] * dzf[None, :]
+            use_def = F["defenders"] and tdef.dfreq is not None
+            if use_def:                                              # who is on the floor defending: rim protection, paint, perimeter
+                zprob = zprob * tdef.dfreq[Di].mean(axis=1)
             zprob = zprob / zprob.sum(axis=1, keepdims=True)
             zone = np.minimum((np.cumsum(zprob, axis=1) > rng.random(S)[:, None]).argmax(axis=1), 4)
             is3 = is_shot & (zone >= 3)
             pm = par[o]["pz"][ar, fi, zone] * dzp[zone]
+            if use_def:
+                pm = pm * tdef.dpct[Di].mean(axis=1)[ar, zone]
         else:
             zone = None
             is3 = is_shot & (rng.random(S) < sh3[o][fi])
             pm = np.where(is3, par[o]["p3"][ar, fi] * rate_mult(dfn, "p3"), par[o]["p2"][ar, fi] * rate_mult(dfn, "p2"))
         eff = (to_.eff[1], to_.eff[0]) if F["schedule"] else (1.0, 1.0)
+        if F["timing"] and timing is not None:                          # transition (early), normal and late-clock shots
+            sh_t, rt_t = timing
+            lv = live[o].astype(int)
+            cdfc = np.cumsum(sh_t[lv], axis=1)
+            cls = np.minimum((cdfc > rng.random(S)[:, None]).argmax(axis=1), 2)
+            pm = pm * rt_t[lv, cls]
         pm = np.clip(pm * np.where(is3, luck[o][:, 1] * eff[0], luck[o][:, 0] * eff[1]), 0.03, 0.92)
         make = is_shot & (rng.random(S) < pm)
         pts = np.where(is3, 3, 2)
@@ -408,6 +518,7 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
         dj = Di[ar, pick(dw)]
         d_cred = drb & (rng.random(S) < L.credit_dr)
         st[d]["reb"][ar[d_cred], dj[d_cred]] += 1
+        live[d] = np.where(mask, stl_any | drb, live[d])
         return orb, oi
 
     cur_seg = [0]
@@ -418,6 +529,14 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
     def run_segment(seg, n_per, minutes_len, active=None):
         act = np.ones(S, bool) if active is None else active
         cur_seg[0] = seg
+        if F["timeouts"] and to_rate is not None and active is None:
+            for i in range(2):
+                post_flag[i] = had_to[i]                                    # a timeout in the stretch just before this one
+                m_now = score[:, i] - score[:, 1 - i]
+                delta = m_now - margin_snap[i]
+                bucket = np.where(delta <= -6, 0, np.where(delta < 0, 1, 2))
+                had_to[i] = (seg >= 1) & (rng.random(S) < to_rate[min(3, seg // 6)][bucket])
+                margin_snap[i] = m_now
         L5 = [lineup(i, seg, act, minutes_len, seg // 12) for i in range(2)]
         if seg == 0 and first5[0] is None:
             for i in range(2):
@@ -447,6 +566,7 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
                     for _rep in range(2):                              # put-backs after offensive rebounds
                         if not orb.any():
                             break
+                        live[o] = np.where(orb, True, live[o])
                         orb, _ = possession(o, d, L5[o], L5[d], orb)
             for i in (0, 1):                                          # personal fouls accumulate on the floor
                 lam = rate[i]["pf"][L5[i]] * (minutes_len / np.maximum(n_s, 1))[:, None]

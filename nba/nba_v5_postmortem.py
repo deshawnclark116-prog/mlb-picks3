@@ -128,8 +128,11 @@ def grade_doc(doc, ledger_reports, kind):
                              "causes": causes_for(r, line, final)})
         rel = []
         for pid in {r["player_id"] for r in g["rows"]}:
-            for e in ledger_reports.get((g["game_id"], pid), []):
-                rel.append({"source": e["source"], "status": e["status"], "played": pid in final["players"]})
+            reps = ledger_reports.get((g["game_id"], pid), [])
+            for e in reps:
+                rel.append({"source": e["source"], "status": e["status"], "played": pid in final["players"], "body_part": e.get("location") or e.get("body_part")})
+            if not reps and any(r["player_id"] == pid and r.get("reported_status") != "OUT" and (r.get("p_active") or 0) >= 0.2 for r in g["rows"]):
+                rel.append({"source": "none", "status": "UNLISTED", "played": pid in final["players"], "body_part": None})
         out.append({"game_id": g["game_id"], "kind": kind, "away": g["away"], "home": g["home"], "overtime": final["overtime"],
                     "final_margin": final["margin"], "forecast_at_utc": g.get("forecast_at_utc"), "rows": rows_out, "source_checks": rel})
     return out
@@ -141,9 +144,17 @@ def summarize(records):
     errs = collections.defaultdict(list)
     shown = collections.defaultdict(list)
     rel = collections.defaultdict(collections.Counter)
+    by_status = collections.defaultdict(collections.Counter)
+    by_body = collections.defaultdict(collections.Counter)
     for rec in records:
+        seen_status = {}
         for x in rec["source_checks"]:
             rel[(x["source"], x["status"])]["played" if x["played"] else "did_not_play"] += 1
+            seen_status[(x["status"], x.get("body_part"))] = x["played"]
+        for (st_, body), pl in seen_status.items():        # one count per player-game and status (two feeds report the same fact)
+            by_status[st_]["played" if pl else "did_not_play"] += 1
+            if body:
+                by_body[f"{st_}|{body}"]["played" if pl else "did_not_play"] += 1
         for r in rec["rows"]:
             for c in r["causes"]:
                 cause_counts[c] += 1
@@ -170,6 +181,8 @@ def summarize(records):
                                             "brier": round(float(np.mean([(x[0] - x[1]) ** 2 for x in v])), 4)} for b, v in shown.items() if v},
             "mean_abs_error": {k: round(float(np.mean(v)), 3) for k, v in errs.items()},
             "source_reliability": {f"{s}|{st}": dict(c) for (s, st), c in rel.items()},
+            "play_by_status": {k: dict(v) for k, v in by_status.items()},
+            "play_by_status_body": {k: dict(v) for k, v in by_body.items()},
             "note": "Patterns across many games change the model. One surprising result never does."}
 
 
