@@ -1,0 +1,31 @@
+name: NBA V5 lineup PBP data integrity fast audit
+on:
+  pull_request:
+    paths:
+      - "nba/nba_v5_lineup_pairs.py"
+      - "nba/nba_v5_lineup_audit.py"
+      - ".github/workflows/nba_v5_lineup_coverage.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  substitution-coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install "numpy>=2.1,<2.5"
+      - name: Report first invalid PBP player with expected five on floor
+        run: |
+          python -u -m nba.nba_v5_lineup_audit \
+            --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz \
+            --pbp nba/data/nba_v5_pbp_2026_27.jsonl.gz \
+            --out /tmp/nba_v5_lineup_coverage.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-v5-lineup-coverage-diagnostics
+          path: /tmp/nba_v5_lineup_coverage.json
+          retention-days: 30
