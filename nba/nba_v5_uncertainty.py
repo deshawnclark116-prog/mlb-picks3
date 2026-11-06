@@ -31,6 +31,42 @@ def minute_variance_fraction(outcomes, minutes) -> float:
     return float(np.clip(between / variance, 0.0, 1.0))
 
 
+def minute_variance_components(outcomes, minutes) -> dict:
+    """Exact ANOVA on simulated *active-game* minutes bins, not causal effects.
+
+    The four occupied quantile bins are also used by the legacy R² measure.
+    Variance of conditional means plus expected within-bin variance equals
+    the total simulated variance, including with unequal bins.
+    """
+    y,m=np.asarray(outcomes,float),np.asarray(minutes,float)
+    if len(y)==0 or len(y)!=len(m) or not np.isfinite(y).all() or not np.isfinite(m).all():
+        raise ValueError("Uncertainty decomposition requires finite aligned events")
+    var=float(np.var(y))
+    if len(y)<30 or var<=1e-12:
+        return {"active_conditional_variance":round(var,6),
+                "minutes_between_bin_variance":0.0,
+                "minutes_within_bin_variance":round(var,6),
+                "bin_counts":[int(len(y))],"diagnostic_valid":False}
+    cuts=np.unique(np.quantile(m,[.25,.50,.75]))
+    labels=np.searchsorted(cuts,m,side="right")
+    mean=float(np.mean(y))
+    between,within,counts=0.0,0.0,[]
+    for k in range(int(labels.max())+1):
+        select=y[labels==k]
+        if not len(select):
+            continue
+        w=len(select)/len(y)
+        between+=w*(float(np.mean(select))-mean)**2
+        within+=w*float(np.var(select))
+        counts.append(int(len(select)))
+    if abs((between+within)-var)>1e-8*max(1.0,var):
+        raise AssertionError("ANOVA variance conservation failed")
+    return {"active_conditional_variance":round(var,6),
+            "minutes_between_bin_variance":round(between,6),
+            "minutes_within_bin_variance":round(within,6),
+            "bin_counts":counts,"diagnostic_valid":len(counts)>=2}
+
+
 def forecast_uncertainty(outcomes, minutes, p_active: float) -> dict:
     """Partial variance diagnostics and simulation precision for one player/stat.
 
@@ -44,9 +80,29 @@ def forecast_uncertainty(outcomes, minutes, p_active: float) -> dict:
         raise ValueError("Nonempty aligned outcomes and minutes required")
     sd = float(np.std(x))
     n = len(x)
-    share = minute_variance_fraction(x, m)
+    components=minute_variance_components(x,m)
+    share=minute_variance_fraction(x,m)
+    p=float(np.clip(p_active,0,1))
+    mu=float(x.mean())
+    availability_var=p*(1-p)*mu*mu
+    active_var=p*float(np.var(x))
+    unconditional_var=availability_var+active_var
+    minutes_between=p*components["minutes_between_bin_variance"]
+    minutes_within=p*components["minutes_within_bin_variance"]
     return {
-        "version": "nba-v5-uncertainty-audit-v1",
+        "version": "nba-v5-uncertainty-audit-v2",
+        "unconditional_zero_if_DNP_mixture": {
+            "expected_stat": round(p*mu,4),
+            "variance_total": round(unconditional_var,5),
+            "variance_availability": round(availability_var,5),
+            "variance_conditional_playing": round(active_var,5),
+            "variance_minutes_bin_between": round(minutes_between,5),
+            "variance_minutes_bin_within": round(minutes_within,5),
+            "scope": "V5_SIM_UNCONDITIONAL_MOMENTS_NO_CAUSAL_DECOMPOSITION",
+            "unresolved_inside_within": ["usage","shot_quality","opponent_tactics",
+                                          "parameter_uncertainty","lineup","luck"]
+        },
+        "conditional_minutes_anova": components,
         "simulated_games_player_active": int(n),
         "simulation_sd": round(sd, 3),
         "simulation_mean_mc_se": round(sd / math.sqrt(n), 3),
