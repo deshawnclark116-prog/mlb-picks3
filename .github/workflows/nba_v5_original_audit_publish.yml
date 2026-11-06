@@ -1,0 +1,51 @@
+name: NBA V5 publish independent all-original calibration audit
+# Decoupled from original result grading: an audit error NEVER blocks the
+# capture of final box scores or immutable standard per-game grade files.
+on:
+  workflow_run:
+    workflows:
+      - "NBA V5 grade every forecast against the real result"
+    types: [completed]
+  schedule:
+    - cron: "10 1,7,13,19 * * *"
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: nba-v5-all-original-audit
+  cancel-in-progress: false
+jobs:
+  audit:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build all-row first-seen audit from frozen source and final boxes
+        run: |
+          set -euo pipefail
+          test -d docs/nba_v5_archive/first || { echo "No frozen original games yet"; exit 0; }
+          python -m nba.nba_v5_original_audit \
+            --archive-first docs/nba_v5_archive/first \
+            --grades-first docs/nba_v5_grades/first \
+            --out docs/nba_v5_grades/original_all_rows_audit.json
+      - name: Persist audit report without editing immutable grade files
+        run: |
+          set -euo pipefail
+          test -s docs/nba_v5_grades/original_all_rows_audit.json || exit 0
+          git config user.name "nba-v5-original-audit[bot]"
+          git config user.email "nba-v5-original-audit[bot]@users.noreply.github.com"
+          git add docs/nba_v5_grades/original_all_rows_audit.json
+          git diff --cached --quiet && { echo "Audit unchanged"; exit 0; }
+          git commit -m "NBA V5 original all-player calibration audit [skip ci]"
+          for i in 1 2 3; do
+            git pull --rebase --autostash origin main &&
+              git push origin HEAD:main && exit 0
+            sleep 5
+          done
+          echo "Unable to publish original calibration audit"; exit 1

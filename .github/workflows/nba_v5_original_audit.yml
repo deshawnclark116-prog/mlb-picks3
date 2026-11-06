@@ -1,0 +1,40 @@
+name: NBA V5 immutable all-forecast calibration
+on:
+  pull_request:
+    paths:
+      - "nba/nba_v5_original_audit.py"
+      - "tests/test_nba_v5_original_audit.py"
+      - ".github/workflows/nba_v5_original_audit_publish.yml"
+      - ".github/workflows/nba_v5_original_audit.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  original-forecast-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Unit tests for every frozen original row including DNP
+        run: python -m unittest discover -s tests -p "test_nba_v5_original_audit.py" -v
+      - name: Reconstruct actual archived original rows without changing grades
+        run: |
+          set -euo pipefail
+          python -m nba.nba_v5_original_audit \
+            --archive-first docs/nba_v5_archive/first \
+            --grades-first docs/nba_v5_grades/first \
+            --out /tmp/nba_v5_all_original_audit.json
+          python - <<'PY'
+          import json
+          a=json.load(open("/tmp/nba_v5_all_original_audit.json"))
+          s=a["summary"]
+          assert s["graded_games"] >= 2, "Expected saved final-grade examples"
+          assert s["original_rows"] > 0
+          assert len(a["games"]) == s["graded_games"]
+          assert sum(len(g["rows"]) for g in a["games"]) == s["original_rows"]
+          print("ALL_ORIGINAL_ROW_ARCHIVE_REPLAY",s["graded_games"],s["original_rows"],
+                s["gradable_rows"],s["ungradable_rows"])
+          PY
