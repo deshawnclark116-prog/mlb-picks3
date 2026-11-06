@@ -57,7 +57,7 @@ def health(archive: Path, grades: Path, now: dt.datetime) -> dict:
             "future_tipoff": len(future),
             "graded": len(graded),
             "past_tip_pending_grade": len(unknown),
-            "tipoff_range_utc": [samples[0][0], samples[-1][0]] if samples else None,
+            "tipoff_range_utc": [min(t for t, _ in samples), max(t for t, _ in samples)] if samples else None,
         }
         overdue[kind] = sorted(unknown, key=lambda x:x["tipoff_utc"])[:15]
     return {
