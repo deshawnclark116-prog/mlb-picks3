@@ -124,7 +124,8 @@ def grade_doc(doc, ledger_reports, kind):
                              "p10": r["p10"], "p90": r["p90"], "p_active": r["p_active"], "p_start": r.get("p_start"), "frontend_rank": r.get("frontend_rank"),
                              "whole_projection": r.get("whole_projection"), "reach_probability": r.get("reach_probability"),
                              "reach_probabilities": r.get("reach_probabilities"),
-                             "role_change": r.get("role_change"), "uncertainty_audit": r.get("uncertainty_audit"),
+                             "role_change": r.get("role_change"), "archetype": r.get("archetype"),
+                             "uncertainty_audit": r.get("uncertainty_audit"),
                              "actual": None if line is None else line[STAT_KEY[r["market"]]], "played": line is not None,
                              "minutes_forecast": r.get("minutes_mean"), "minutes_actual": None if line is None else line["min"],
                              "causes": causes_for(r, line, final)})
@@ -147,6 +148,7 @@ def summarize(records):
     shown = collections.defaultdict(list)
     overall = collections.defaultdict(list)  # counts DNP as a missed positive stat threshold
     role_errors = collections.defaultdict(list)
+    archetype_errors = collections.defaultdict(list)
     rel = collections.defaultdict(collections.Counter)
     by_status = collections.defaultdict(collections.Counter)
     by_body = collections.defaultdict(collections.Counter)
@@ -170,6 +172,13 @@ def summarize(records):
                 q = (reach["probability_including_dnp"], hit)
                 overall["all_original_projections"].append(q)
                 overall["stat_" + r["market"]].append(q)
+                role=(r.get("archetype") or {}).get("role_class","UNCLASSIFIED")
+                overall["archetype_"+role].append(q)
+                bucket="28_PLUS" if (r.get("minutes_forecast") or 0)>=28 else "UNDER_28"
+                overall["opportunity_minutes_"+bucket].append(q)
+                p=float(r.get("p_active") or 0)
+                participation="LOW" if p<.50 else "MEDIUM" if p<.85 else "HIGH"
+                overall["participation_band_"+participation].append(q)
                 overall["role_change_" + (r.get("role_change") or {}).get("status", "UNKNOWN")].append(q)
                 if (r.get("frontend_rank") or 99) <= 4:
                     overall["frontend_top4"].append(q)
@@ -181,6 +190,7 @@ def summarize(records):
             error = abs(r["actual"] - r["projection"])
             errs[k].append(error)
             role_errors[(k, (r.get("role_change") or {}).get("status", "UNKNOWN"))].append(error)
+            archetype_errors[(k, (r.get("archetype") or {}).get("role_class","UNCLASSIFIED"))].append(error)
             if r.get("whole_projection") is not None and r.get("reach_probability") is not None:
                 hit = 1.0 if r["actual"] >= r["whole_projection"] else 0.0
                 shown["all_ranked"].append((r["reach_probability"], hit))
@@ -199,6 +209,8 @@ def summarize(records):
             "mean_abs_error": {k: round(float(np.mean(v)), 3) for k, v in errs.items()},
             "mean_abs_error_by_role_change": {f"{stat}|{status}": {"n": len(v), "mae": round(float(np.mean(v)), 3)}
                                               for (stat, status), v in role_errors.items()},
+            "mean_abs_error_by_archetype": {f"{stat}|{role}": {"n":len(v),"mae":round(float(np.mean(v)),3)}
+                                            for (stat,role),v in archetype_errors.items()},
             "stated_unconditional_chance_vs_actual": {b: {"n": len(v),
                   "mean_stated": round(float(np.mean([x[0] for x in v])), 3),
                   "actual_reach_rate": round(float(np.mean([x[1] for x in v])), 3),

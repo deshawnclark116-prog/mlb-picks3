@@ -30,6 +30,7 @@ from nba import nba_v5_availability as avm
 from nba import nba_v5_learn as learnm
 from nba.nba_v5_rank import MARKET_ORDER, MEANINGFUL_MIN, rank_for_screen, reach_prob, whole
 from nba.nba_v5_role_change import detect_role_change
+from nba.nba_v5_archetypes import player_archetype
 from nba.nba_v5_uncertainty import forecast_uncertainty, reach_with_dnp
 from nba.nba_v5_sim import League, league_from, simulate_game, MARKETS
 
@@ -234,6 +235,8 @@ def main() -> int:
         # No shadow signal changes the published simulation until it passes OOS tests.
         role_audit = {pid: detect_role_change(rp.hist.get(pid, []), d)
                       for ti in (th, ta) for pid in ti.ids}
+        archetypes = {pid: player_archetype(rp.hist.get(pid, []), d)
+                      for ti in (th, ta) for pid in ti.ids}
         # chance each player plays: learned from graded results by reported status (and body part), not a fixed guess
         official_out={pid for pid,info in rep_by.items()
                       if info["fresh_official"] and info["status"]=="OUT"}
@@ -316,6 +319,7 @@ def main() -> int:
                                "minutes_p10": quant(mins, 0.10), "minutes_p90": quant(mins, 0.90),
                                "fga_mean": round(float(sd["fga"][played, j].mean()), 2), "fta_mean": round(float(sd["fta"][played, j].mean()), 2),
                                "depends_on": sens.get((pid, m), [])[:3],
+                               "archetype": archetypes[pid],
                                "role_change": {"status": role_audit[pid]["status"],
                                                "candidate_metrics": role_audit[pid].get("candidate_metrics", []),
                                                "shadow_only": True},
@@ -357,11 +361,13 @@ def main() -> int:
                    "forecast_at_utc": now.isoformat(), "asof_utc": now.isoformat(), "model_simulations": a.sims,
                    "pace_used": pace, "official_foul_multiplier": ctx["ft_mult"], "simulation_pieces_on": switches or "defaults",
                    "role_change_audit": role_audit,
+                   "archetype_role_audit": archetypes,
+                   "archetype_model_effect": "DIAGNOSTIC_ONLY_NOT_PROMOTED",
                    "official_injury_matches": sum(1 for v in rep_by.values() if v["fresh_official"]),
                    "official_report_out_count": len(official_out),
                    "official_report_available_count": len(officially_available),
                    "role_change_model_effect": "SHADOW_ONLY_NO_PROJECTION_ADJUSTMENT",
-                   "uncertainty_model_effect": "DIAGNOSTIC_ONLY"})
+                   "uncertainty_model_effect": "DIAGNOSTIC_ONLY; MINUTES_AND_DNP_VARIANCE_CONSERVED"})
         out_games.append(g5)
         print("simulated", g3["away"], "at", g3["home"], "rows", len(new_rows), flush=True)
     doc = {k: v for k, v in v3.items() if k not in ("games", "skipped")}
