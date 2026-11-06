@@ -328,11 +328,15 @@ def run(args):
     chosen = set(cand[: args.sample])
     print("games", len(games), "scoring", len(chosen), "of", len(cand), flush=True)
     configs = {"full": {}}
+    if getattr(args,"cold_start_trial",False):
+        if args.config or args.features=="ablate":
+            raise ValueError("--cold-start-trial incompatible with --config and ablation")
+        configs["cold_start_candidate"]={}
     if getattr(args,"flow_trial",False):
         if args.config or args.features=="ablate":
             raise ValueError("--flow-trial incompatible with --config and ablation")
         configs["game_flow"]={"game_flow":True}
-    if sum(bool(getattr(args,n,False)) for n in ("lineup_trial","role_trial","style_trial","flow_trial"))>1:
+    if sum(bool(getattr(args,n,False)) for n in ("lineup_trial","role_trial","style_trial","flow_trial","cold_start_trial"))>1:
         raise ValueError("One experimental arm at a time")
     if getattr(args, "style_trial", False):
         if args.config or args.features=="ablate":
@@ -382,6 +386,12 @@ def run(args):
                 pace = pace_for(rp, g, d)
                 pace = pace - le["team_or_pg"] if pace else pace
                 actual = {p["id"]: p for p in g["players"]}
+                cold_teams = None
+                if getattr(args,"cold_start_trial",False):
+                    ch=team_input(rp,g,"home",d,L,lg_tot,None,cold_start=True)
+                    ca=team_input(rp,g,"away",d,L,lg_tot,None,cold_start=True)
+                    if ch and ca:
+                        cold_teams=(ch,ca)
                 adapted = None
                 if getattr(args, "role_trial", False):
                     from nba.nba_v5_role_trial import adapt_team
@@ -390,7 +400,12 @@ def run(args):
                     adapted = (ah, aa, {e["player_id"]: e["modified"] for e in hf + af})
                 for cname, feats in configs.items():
                     cx = {"ft_mult": rp.refs.crew_mult(g.get("officials") or []), "late_ft": late_tab}
-                    sh, sa = (adapted[0], adapted[1]) if cname == "role_adaptive" else (th, ta)
+                    if cname=="cold_start_candidate":
+                        if cold_teams is None:
+                            continue
+                        sh,sa=cold_teams
+                    else:
+                        sh, sa = (adapted[0], adapted[1]) if cname == "role_adaptive" else (th, ta)
                     sim = simulate_game(sh, sa, L, tables, S=args.sims, pace=pace, seed=int(g["game_id"]) % 100003, features=feats, ctx=cx)
                     for side, ti in (("home", sh), ("away", sa)):
                         for j, pid in enumerate(ti.ids):
@@ -399,6 +414,8 @@ def run(args):
                                    "min_sim": float(sim[side]["min"][:, j].mean())}
                             if cname == "role_adaptive":
                                 rec["role_trial_flags"] = (adapted[2].get(pid, []) if adapted else [])
+                            if cname=="cold_start_candidate":
+                                rec["low_history_evidence"]=(ti.low_history_evidence or {}).get(pid)
                             for mname, key in (("points", "pts"), ("rebounds", "reb"), ("assists", "ast"), ("three_pointers_made", "tpm"),
                                                ("steals", "stl"), ("blocks", "blk"), ("turnovers", "tov")):
                                 samp = sim[side][key][:, j]
@@ -413,6 +430,8 @@ def run(args):
                     print("simulated games", n_done, flush=True)
         for g in by_day[d]:
             rp.add(g, pbp.get(g["game_id"]))
+    if getattr(args, "cold_start_trial",False):
+        print("LOW_HISTORY_ROTATION_POOL",json.dumps(rp.cold_start.audit()),flush=True)
     if getattr(args, "flow_trial", False):
         print("GAME_FLOW_PBP_AUDIT",json.dumps(rp.flow.audit()),flush=True)
     if getattr(args, "style_trial", False):
@@ -557,11 +576,15 @@ def main():
     ap.add_argument("--lineup-trial", action="store_true", help="paired shadow test of lineup-conditioned opportunities; never promoted")
     ap.add_argument("--style-trial", action="store_true", help="paired shadow test of ESPN labeled shot execution, not Synergy plays")
     ap.add_argument("--flow-trial", action="store_true", help="paired shadow test of historically learned 2-minute possession distribution")
+    ap.add_argument("--cold-start-trial", action="store_true", help="unpromoted 1-4 prior game player/rotation prior experiment")
     a = ap.parse_args()
     results, rows, v4_preds, chosen = run(a)
     if a.dump:
-        Path(a.dump).write_text(json.dumps(results if a.role_trial or a.lineup_trial or a.style_trial or a.flow_trial else next(iter(results.values()))))
+        Path(a.dump).write_text(json.dumps(results if a.role_trial or a.lineup_trial or a.style_trial or a.flow_trial or a.cold_start_trial else next(iter(results.values()))))
     report = {c: score(r, rows, v4_preds) for c, r in results.items() if r}
+    if a.cold_start_trial:
+        from nba.nba_v5_cold_start import evaluate_cold_start
+        report["paired_low_history_trial"]=evaluate_cold_start(results["full"],results["cold_start_candidate"],v4_preds)
     if a.role_trial:
         from nba.nba_v5_role_trial_score import evaluate
         report["paired_role_trial"] = evaluate(results["full"], results["role_adaptive"], v4_preds)
