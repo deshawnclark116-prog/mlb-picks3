@@ -1,0 +1,39 @@
+name: NBA V5 projection readiness gate
+on:
+  pull_request:
+    paths:
+      - "nba/nba_v5_readiness.py"
+      - "tests/test_nba_v5_readiness.py"
+      - ".github/workflows/nba_v5_readiness.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Readiness source contract
+        run: |
+          python -m py_compile nba/nba_v5_readiness.py
+          python -m unittest discover -s tests -p "test_nba_v5_readiness.py" -v
+      - name: Inspect current published V5 slate (diagnostic only)
+        run: |
+          if [ -s docs/nba_v5_latest/latest.json ]; then
+            python -m nba.nba_v5_readiness \
+              --forecast docs/nba_v5_latest/latest.json \
+              --out /tmp/nba_v5_readiness.json || true
+            python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("/tmp/nba_v5_readiness.json")
+          if p.exists():
+              d=json.loads(p.read_text())
+              print("V5_LATEST_READINESS",d["all_games_ready"],d["errors"])
+              print("Upstream forecast could be old or have no live games; not a unit test")
+          PY
+          fi
