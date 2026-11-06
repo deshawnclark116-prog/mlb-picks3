@@ -75,6 +75,9 @@ class ShotStyleTests(unittest.TestCase):
         effects[:,:,4]=0.85
         h.style_probs=probs
         h.style_mult=effects
+        h.zf=np.tile(np.array([.30,.20,.10,.15,.25]),(n,1))
+        h.zp=np.tile(np.array([.68,.52,.43,.36,.36]),(n,1))
+        h.zn=np.full((n,5),40.0)
         L=league()
         tables={"blow":np.ones((4,2)),"foul":np.ones((6,2))}
         original=simulate_game(h,a,L,tables,S=300,pace=98.0,seed=7)
