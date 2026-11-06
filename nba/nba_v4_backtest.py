@@ -45,8 +45,10 @@ def day_of(g) -> dt.date:
 
 def load(paths):
     games = {}
+    import gzip
     for p in paths:
-        for line in Path(p).read_text().splitlines():
+        text = gzip.open(p, "rt").read() if str(p).endswith(".gz") else Path(p).read_text()
+        for line in text.splitlines():
             if line.strip():
                 g = json.loads(line)
                 games[g["game_id"]] = g

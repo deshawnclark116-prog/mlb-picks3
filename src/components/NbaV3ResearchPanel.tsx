@@ -227,7 +227,9 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
              TOP: {picks[0].row.player} · {picks[0].whole}
              {' '}{NAME[picks[0].row.market]} · {pctOrDash(picks[0].prob)}
            </p>}
-           <p className="mt-1 text-[10px] text-gray-500">{g.forecast_kind==='LATEST_RUN'
+           <p className="mt-1 text-[10px] text-gray-500">{g.forecast_kind==='V4_LATEST'
+             ?<>Model V4 · updated {et(g.forecast_at_utc)}{' · '}first forecast {et(g.first_seen_forecast_at_utc||g.forecast_at_utc)}</>
+             :g.forecast_kind==='LATEST_RUN'
              ?<>Latest run {et(g.forecast_at_utc)}{' · '}first forecast {et(g.first_seen_forecast_at_utc||g.forecast_at_utc)}</>
              :<>V3 first observed {et(g.forecast_at_utc)}</>}
              {' · '}No verified bookmaker line</p>
