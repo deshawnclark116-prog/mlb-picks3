@@ -126,3 +126,23 @@ test('a confirmed-in player on a V4 row is not conditioned a second time',()=>{
  assert.deepEqual(r.cdf_lattice.cdf,c);
  assert.equal(r.p_active,1);
 });
+
+test('NBA V5: lineup updates recompute all-scenarios probability without changing its target',()=>{
+ const c=[.05,.15,.35,.60,.80,.92,.98,1];
+ const row=nbaRow({mean:3.15,p_active:.7,mean_basis:'CONDITIONAL_ON_PLAYING',
+   cdf_lattice:{step:1,cdf:c},model_target:null,
+   reach_probabilities:{whole_projection:3,probability_if_playing:.65,
+     probability_including_dnp:.455,p_active:.7,forward_calibrated:false}});
+ const confirmed=adjustNbaRow(row,'IN');
+ assert.equal(confirmed.reach_probabilities.whole_projection,3);
+ assert.equal(confirmed.reach_probabilities.probability_if_playing,.65);
+ assert.equal(confirmed.reach_probabilities.probability_including_dnp,.65);
+ assert.equal(confirmed.reach_probabilities_early.probability_including_dnp,.455);
+ const doubtful=adjustNbaRow(row,'DOUBTFUL');
+ assert.equal(doubtful.reach_probabilities.whole_projection,3);
+ assert.equal(doubtful.reach_probabilities.probability_including_dnp,
+   Number((.65*doubtful.p_active).toFixed(4)));
+ const out=adjustNbaRow(row,'OUT');
+ assert.equal(out.reach_probabilities,null);
+ assert.equal(out.p_active,0);
+});

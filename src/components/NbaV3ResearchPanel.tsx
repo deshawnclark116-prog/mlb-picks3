@@ -16,6 +16,10 @@ type Forecast={
  lineup_label?:string;mean_early?:number;p_active_early?:number;
  p_start?:number|null;p_close?:number|null;minutes_mean?:number;minutes_p10?:number;minutes_p90?:number;
  depends_on?:{if_out:string;if_out_name?:string;projection_if_out:number;change:number}[];
+ role_change?:{status:string;candidate_metrics?:string[];shadow_only:boolean};
+ reach_probabilities?:{whole_projection:number;probability_if_playing:number;
+  probability_including_dnp:number;p_active:number;forward_calibrated:boolean};
+ uncertainty_audit?:{minutes_association_r2:number;simulation_mean_mc_se:number;diagnostic_scope:string};
  model_target:{milestone:number;probability:number;method:string}|null;
  cdf_lattice?:{step:number;cdf:number[]};
 };
@@ -64,6 +68,12 @@ export function v3QualifiedResearchTargets(g:Game):Forecast[]{
  * P(X >= k) = 1 - cdf[k-1]. No lower target is substituted. */
 const MEANINGFUL_MIN:Record<Market,number>={points:6,rebounds:3,assists:2,three_pointers_made:1,steals:1,blocks:1,turnovers:2};
 export type ProjectionItem={row:Forecast;whole:number;prob:number|null};
+/** V5 reports all-scenarios probability (including DNP); V3/V4 keep their
+ * existing conditional probabilities. Never change the projected threshold. */
+export function displayedChance(it:ProjectionItem):number|null{
+ const p=it.row.reach_probabilities;
+ return p&&p.whole_projection===it.whole? p.probability_including_dnp:it.prob;
+}
 const pctOrDash=(v:number|null)=>v===null?'n/a':pct(v);
 export function chanceAtLeast(row:Forecast,k:number):number|null{
  const l=row.cdf_lattice;
@@ -91,7 +101,7 @@ export function v3ProjectionPicks(g:Game):ProjectionItem[]{
   if(seen.has(key))throw Error('NBA_V3_DUPLICATE_PLAYER_MARKET_OUTCOME');
   seen.add(key);out.push(it);
  }
- return out.sort((a,b)=>(b.prob??0)-(a.prob??0)||b.row.p_active-a.row.p_active||
+ return out.sort((a,b)=>(displayedChance(b)??0)-(displayedChance(a)??0)||b.row.p_active-a.row.p_active||
   a.row.player.localeCompare(b.row.player)||MARKETS.indexOf(a.row.market)-MARKETS.indexOf(b.row.market));
 }
 /** The featured tiles: the best pick from each stat first (highest chance first), then the second best from each stat, and so on,
@@ -99,7 +109,7 @@ export function v3ProjectionPicks(g:Game):ProjectionItem[]{
 export function diversifiedPicks(picks:ProjectionItem[]):ProjectionItem[]{
  const seen=new Map<Market,number>();
  const keyed=picks.map(p=>{const n=seen.get(p.row.market)??0;seen.set(p.row.market,n+1);return {p,n};});
- return keyed.sort((a,b)=>a.n-b.n||(b.p.prob??0)-(a.p.prob??0)||b.p.row.p_active-a.p.row.p_active||
+ return keyed.sort((a,b)=>a.n-b.n||(displayedChance(b.p)??0)-(displayedChance(a.p)??0)||b.p.row.p_active-a.p.row.p_active||
   a.p.row.player.localeCompare(b.p.row.player)||MARKETS.indexOf(a.p.row.market)-MARKETS.indexOf(b.p.row.market)).map(x=>x.p);
 }
 function V3Card({item}:{item:ProjectionItem}){
@@ -118,8 +128,9 @@ function V3Card({item}:{item:ProjectionItem}){
    <div><p className="text-[10px] text-gray-400">MODEL PROJECTION</p>
     <p className="text-xl font-bold text-white">{item.whole} {UNIT[row.market]}</p>
     <p className="text-[10px] text-gray-400">Model average {fmt(row.mean)} · Median {fmt(row.median)}</p></div>
-   <div><p className="text-[10px] text-gray-400">CHANCE OF {item.whole}+</p>
-    <p data-testid="nba-v3-hit-probability" className="text-xl font-bold text-[#00FF41]">{pctOrDash(item.prob)}</p>
+   <div><p className="text-[10px] text-gray-400">CHANCE OF {item.whole}+{row.reach_probabilities?" (incl. DNP)":""}</p>
+    <p data-testid="nba-v3-hit-probability" className="text-xl font-bold text-[#00FF41]">{pctOrDash(displayedChance(item))}</p>
+    {row.reach_probabilities&&<p className="text-[10px] text-gray-300">If playing: {pct(row.reach_probabilities.probability_if_playing)}</p>}
     <p className="text-[10px] text-amber-200">Not yet forward-calibrated</p></div>
   </div>
   <p className="text-[11px] text-gray-300">
@@ -131,12 +142,16 @@ function V3Card({item}:{item:ProjectionItem}){
    {row.minutes_mean!=null?'Minutes '+fmt(row.minutes_p10??row.minutes_mean)+'–'+fmt(row.minutes_p90??row.minutes_mean)+' (average '+fmt(row.minutes_mean)+')':''}</p>}
   {row.depends_on&&row.depends_on.length>0&&<div data-testid="nba-v3-depends-list" className="text-[11px] text-amber-200">
    {row.depends_on.map(d=><p key={d.if_out}>If {d.if_out_name||'a teammate'} sits: {fmt(d.projection_if_out)} {UNIT[row.market]} ({d.change>0?'+':''}{fmt(d.change)})</p>)}</div>}
+  {row.role_change?.status==="ROLE_CHANGE_CANDIDATE"&&<p className="text-[11px] text-sky-200">
+   Pregame role-change evidence: {row.role_change.candidate_metrics?.join(", ")} · research only, not yet predictive-validated</p>}
+  {row.uncertainty_audit&&<p className="text-[11px] text-gray-400">
+   Minutes-associated simulation variance: {pct(row.uncertainty_audit.minutes_association_r2)} · descriptive, not causal</p>}
   <details className="text-[11px] text-gray-400 border-t border-[#343434] pt-2">
    <summary className="min-h-9 cursor-pointer font-bold">MODEL EVIDENCE</summary>
-   <p className="mt-1">Pregame NBA V3 shared-minute and opportunity simulation.
+   <p className="mt-1">Pregame NBA shared-minute and opportunity simulation (V3, V4 or V5 as labeled).
     Historical role evidence only. Source status: {row.reported_status}.
     {row.unc_reasons.length?' Uncertainty: '+row.unc_reasons.join(', '):''}
-    {' '}This percentage is model-generated from the simulation, not a verified bookmaker line or certified betting probability.</p>
+    {' '}This percentage is model-generated, not a verified bookmaker line or certified betting probability.</p>
   </details>
  </article>;
 }
@@ -240,7 +255,7 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
              {' · '}{picks.length} projections{' · '}{every.length} stat projections</p>
            {picks[0]&&<p className="mt-1 text-[11px] text-gray-200">
              TOP: {picks[0].row.player} · {picks[0].whole}
-             {' '}{NAME[picks[0].row.market]} · {pctOrDash(picks[0].prob)}
+             {' '}{NAME[picks[0].row.market]} · {pctOrDash(displayedChance(picks[0]))}
            </p>}
            <p className="mt-1 text-[10px] text-gray-500">{g.forecast_kind==='V5_LATEST'
              ?<>Model V5 · updated {et(g.forecast_at_utc)}{' · '}first forecast {et(g.first_seen_forecast_at_utc||g.forecast_at_utc)}</>
@@ -258,7 +273,7 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
             <p className="truncate text-[11px] text-gray-400">{NAME[r.market]}</p>
             <p className="mt-0.5 break-words text-[15px] font-bold leading-snug text-white">{r.player}</p>
             <p className="mt-2 text-[26px] font-black leading-none tabular-nums text-[#79FF48]">{whole} <span className="text-[14px] font-bold">{UNIT[r.market]}</span></p>
-            <p className={'mt-1.5 text-[13px] font-bold tabular-nums '+((prob??0)>=.65?'text-[#79FF48]':'text-gray-100')}>{pctOrDash(prob)} to reach {whole}+</p>
+            <p className={'mt-1.5 text-[13px] font-bold tabular-nums '+((displayedChance({row:r,whole,prob})??0)>=.65?'text-[#79FF48]':'text-gray-100')}>{pctOrDash(displayedChance({row:r,whole,prob}))} to reach {whole}+{r.reach_probabilities?' incl. DNP':''}</p>
             <p className="mt-0.5 text-[11px] text-gray-400">Model average {fmt(r.mean)} · P(plays) {pct(r.p_active)}</p>
             {r.depends_on&&r.depends_on.length>0&&<p data-testid="nba-v3-depends" className="mt-0.5 text-[11px] text-amber-200">Depends on {r.depends_on[0].if_out_name||'a teammate'} playing</p>}
           </div>)}
@@ -268,9 +283,9 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
           shown.map(({row:r,whole,prob})=><div key={g.game_id+'|'+r.team_id+'|'+r.player_id+'|'+r.market}
              data-testid="nba-v3-stat-projection" className="rounded-lg border border-[#383838] p-3 space-y-1 text-xs">
             <strong>{r.player} · {NAME[r.market]}</strong>
-            <p>Projection {whole} {UNIT[r.market]} · {pctOrDash(prob)} to reach {whole}+ · Mean {fmt(r.mean)} · Median {fmt(r.median)}
+            <p>Projection {whole} {UNIT[r.market]} · {pctOrDash(displayedChance({row:r,whole,prob}))} to reach {whole}+{r.reach_probabilities?' incl. DNP':''} · Mean {fmt(r.mean)} · Median {fmt(r.median)}
              {' · '}P10–P90 {fmt(r.p10)}–{fmt(r.p90)}</p>
-            <p>P(plays) {pct(r.p_active)} · percentage not yet checked against real results</p>
+            <p>P(plays) {pct(r.p_active)}{r.reach_probabilities?' · Chance if playing '+pct(r.reach_probabilities.probability_if_playing):''} · not yet forward-calibrated</p>
             <p className="text-gray-400">{r.unc_reasons.join(', ')}</p>
           </div>)}
          {!shown.length&&<p className="text-xs text-amber-200">
@@ -280,16 +295,18 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
       </article>;
     })}
   </>}
-  <details data-testid="nba-v3-about" className="rounded-xl border border-[#00FF41]/30 bg-[#0e2115] px-3 text-[13px] leading-relaxed text-gray-300">
-   <summary className="min-h-10 cursor-pointer py-2 font-semibold text-gray-200">About these numbers <span className="font-normal text-amber-200">· research estimates, not yet calibrated</span></summary>
-   <p className="pb-2">Basketball-specific role, team-minute allocation, shot opportunities and full-game probability distributions.</p>
-   <p className="text-amber-200 font-bold">MODEL-ESTIMATED P(HIT) · NOT YET PROSPECTIVELY CALIBRATED OR A BOOKMAKER BET.</p>
-   <p className="text-gray-400">This is V3, not recycled V2 projections. All original V2 predictions stay in the archive for paired grading.</p>
-  {doc&&<div className="pb-2 text-xs text-gray-400">
-   {day==='AUTO'?'Next available: '+nextSlate+' · ':''}{all.length} matching V3 game forecasts · {mode==='PICKS'?number+' model projections':
+  {doc&&<div data-testid="nba-projection-slate-summary" className="pb-2 text-xs text-gray-400">
+   {day==='AUTO'?'Next available: '+nextSlate+' · ':''}{all.length} matching NBA game forecasts · {mode==='PICKS'?number+' model projections':
        all.reduce((n,g)=>n+g.rows.length,0)+' numerical projections'}
    {' · '}{doc.original_games_audited} original games audited
   </div>}
+  <p className="text-[11px] text-amber-200 font-bold">MODEL-ESTIMATED PROJECTION CHANCES · NOT YET PROSPECTIVELY CALIBRATED.</p>
+  <details data-testid="nba-v3-about" className="rounded-xl border border-[#00FF41]/30 bg-[#0e2115] px-3 text-[13px] leading-relaxed text-gray-300">
+   <summary className="min-h-10 cursor-pointer py-2 font-semibold text-gray-200">About these numbers <span className="font-normal text-amber-200">· research estimates, not yet calibrated</span></summary>
+   <p className="pb-2">Basketball-specific roles, team-minute allocation, opportunity modeling and game distributions; any detected role changes remain research-only.</p>
+
+   <p className="text-gray-400">Each game identifies the actual model version (V5, V4 or V3). Original V2 predictions remain in the separate grading archive.</p>
+
   </details>
  </section>;
 }

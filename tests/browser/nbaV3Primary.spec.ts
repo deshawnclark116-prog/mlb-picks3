@@ -4,19 +4,25 @@ const tomorrow=(()=>{
  const d=new Date(Date.now()+2*86400000);
  return d.toISOString();
 })();
+// Authentic integer CDFs: 26.7 points means P(27+) = 67.5%, not the
+// previous fixture's unrelated 20-point milestone probability.
+const pointCdf=Array.from({length:45},(_,k)=>k<24?0:k<28?.325:1);
+const assistCdf=Array.from({length:24},(_,k)=>k<6?0:k<8?.4:1);
 const game={
  game_id:'401999987',home:'Dallas Mavericks',away:'Philadelphia 76ers',
  tipoff_utc:tomorrow,forecast_at_utc:new Date(Date.now()-3600000).toISOString(),
  rows_count:3,
  rows:[
   {game_id:'401999987',team_id:'20',player_id:'5252',player:'V3 Source Athlete',
-   market:'points',mean:26.7,median:26,p10:12,p25:21,p75:32,p90:39,
+   market:'points',mean:26.7,median:28,p10:24,p25:24,p75:28,p90:28,
+   cdf_lattice:{step:1,cdf:pointCdf},
    p_active:.93,exp_opp:31,role_share:.15,
    reported_status:'UNKNOWN_NOT_ACTIVE_CERTIFIED',
    unc_reasons:['GAME_DAY_ACTIVE_NOT_CERTIFIED'],
    model_target:{milestone:20,probability:.788,method:'pregame_full_game_mc_cdf'}},
   {game_id:'401999987',team_id:'20',player_id:'5252',player:'V3 Source Athlete',
-   market:'assists',mean:7.2,median:7,p10:3,p25:5,p75:9,p90:13,
+   market:'assists',mean:7.2,median:8,p10:6,p25:6,p75:8,p90:8,
+   cdf_lattice:{step:1,cdf:assistCdf},
    p_active:.93,exp_opp:31,role_share:.15,
    reported_status:'UNKNOWN_NOT_ACTIVE_CERTIFIED',
    unc_reasons:['GAME_DAY_ACTIVE_NOT_CERTIFIED'],
@@ -52,7 +58,7 @@ test('NBA opens V3 SYSTEM PICKS, not V2 or optional shadow view',async({page})=>
  await expect(page.getByRole('button',{name:'SYSTEM PICKS',exact:true}))
     .toHaveAttribute('aria-pressed','true');
  await expect(page.getByTestId('nba-v3-primary-board')).toBeVisible();
- await expect(page.getByText(/NBA V3 · SYSTEM PICKS/)).toBeVisible();
+ await expect(page.getByRole('heading',{name:/NBA.*2026–27 model projections/})).toBeVisible();
  await expect(page.getByTestId('nba-betting-style-decision-board')).toHaveCount(0);
  // Sunday night default must show the NEXT independently captured V3 slate
  // when no game has a first-observed forecast on the current Eastern date.
@@ -65,8 +71,8 @@ test('NBA opens V3 SYSTEM PICKS, not V2 or optional shadow view',async({page})=>
  await expect(g).toHaveCount(1);
  await g.locator('button[aria-expanded]').click();
  await expect(g.getByTestId('nba-v3-system-pick')).toHaveCount(2);
- await expect(g.getByTestId('nba-v3-system-pick').first()).toContainText('26.7 PTS');
- await expect(g.getByTestId('nba-v3-system-pick').first()).toContainText('78.8%');
+ await expect(g.getByTestId('nba-v3-system-pick').first()).toContainText('27 PTS');
+ await expect(g.getByTestId('nba-v3-system-pick').first()).toContainText('67.5%');
  await expect(g.getByTestId('nba-v3-system-pick').filter({hasText:'Reported Out'})).toHaveCount(0);
  await expect(g.getByTestId('nba-v3-system-pick').last()).toContainText('ASSISTS');
  await expect(page.getByText(/NOT YET PROSPECTIVELY CALIBRATED/)).toBeVisible();
@@ -90,8 +96,8 @@ test('when V3 originals are missing frontend does not silently substitute V2 pic
  await expect(page.getByTestId('nba-v3-no-source')).toContainText(
   'old V2 predictions will NOT be mislabeled as V3');
  await expect(page.getByTestId('nba-betting-style-decision-board')).toHaveCount(0);
- await page.getByRole('button',{name:'BETTABLE NOW',exact:true}).click();
- await expect(page.getByTestId('nba-v3-bettable-gate'))
-   .toContainText('NO VERIFIED EXECUTABLE BETS');
+ await page.getByRole('button',{name:'MODEL EVIDENCE',exact:true}).click();
+ await expect(page.getByTestId('nba-v5-evidence'))
+   .toContainText('FORECAST VALIDATION STATUS');
  await expect(page.getByRole('button',{name:'V2 ARCHIVE'})).toBeVisible();
 });

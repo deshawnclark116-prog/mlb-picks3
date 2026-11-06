@@ -1,4 +1,4 @@
-# NBA V5: your 27-point blueprint, item by item
+| 25 | Learn from every miss | Built, forward outcomes pending | `nba_v5_postmortem.py` grades original/last pretip numerical projections, reasons for misses, range coverage, role-change cohort errors and DNP-inclusive event probabilities. The repository's saved summary showed zero finished graded games on the November 5 check; continue forward grading. |
 
 Status words: **Built** (in the model and tested), **Partly** (some of it, said below), **No data** (needs data we do not have; not faked),
 **Not yet** (possible with our data, not built). Item 27 (sportsbook) is excluded on your instruction.
@@ -43,3 +43,15 @@ timeouts, individual defenders' on-court effect. Off (no clear effect): shot tim
 Touches, time of possession, drives, passes, screens, potential assists, contested rebounds, who guards whom, play types, contest quality.
 These are produced by the NBA's tracking system and are served from stats.nba.com / cdn.nba.com, which refuse automated clients from this
 environment. This system does not work around that. With a licensed provider (an API key or a data export), the inputs slot into the same simulation.
+
+## November 6, 2026 projection-only development increment
+
+Branch/PR: `feature/nba-v5-role-change-and-probability-audit-20261105` (#79).
+
+- Added past-only role/opportunity change diagnostics and a chronological, next-game holdout audit. **No role change affects the simulated rates or displayed means yet**; shadow until it beats the existing V5 baseline.
+- Added descriptive minute-variance diagnostics and Monte Carlo sampling precision. These do **not** resolve all uncertainty sources.
+- Added a probability for reaching the own whole-number projection **including DNP**, separate from the chance **if playing**. The live lineup overlay recalculates after IN, OUT or DOUBTFUL. This is not forward calibration.
+- Added postmortem groups for DNP-inclusive projections, including all original rows (not only featured frontend tiles), plus role-change cohort error analysis.
+- Replaced the sportsbook-oriented tab with model-evidence context; forecasting and historical grading remain the focus.
+
+Research and promotion gates still unmet: a detector beating a primitive older-window baseline does not mean it beats V5; original V5 forecasts need sufficient forward grading; action-level/off-ball/play-type/guard-assignment observations require verified extra data. Do not mark these gaps done and do not inject sportsbook data into forecasting.

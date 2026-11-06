@@ -20,8 +20,9 @@ const tipLabel = (iso: string) =>
   });
 
 /**
- * NBA V3 is the DEFAULT UI. Legacy V2 firstseen archives remain available
- * for paired grading and audits, never silently substituted for unavailable V3.
+ * The current NBA projection UI selects the newest integrity-verified V5,
+ * V4 or V3 pregame forecast per game. Legacy V2 firstseen archives remain
+ * separate for paired grading, never silently substituted.
  */
 export default function NbaResearchScreen() {
   const [doc, setDoc] = useState<NbaResearchDocument | null>(null);
@@ -30,7 +31,7 @@ export default function NbaResearchScreen() {
   const [day, setDay] = useState('ALL');
   const [search, setSearch] = useState('');
   const [showSearch,setShowSearch]=useState(false);
-  const [mode, setMode] = useState<'PICKS'|'BOARD'|'BETTABLE'|'V2'|'ROLLING'|'TEAMS'|'PLAYERS'>('PICKS');
+  const [mode, setMode] = useState<'PICKS'|'BOARD'|'EVIDENCE'|'V2'|'ROLLING'|'TEAMS'|'PLAYERS'>('PICKS');
 
   useEffect(() => {
     let mounted = true;
@@ -59,16 +60,16 @@ export default function NbaResearchScreen() {
 
   return <main className="h-full overflow-y-auto bg-[#0D0D0D] px-4 pb-28 pt-3 space-y-3 text-stone-100" data-testid="nba-research-screen">
     <div className="flex items-center justify-between gap-3">
-      <h1 className="min-w-0 truncate text-[16px] font-bold">NBA <span className="font-normal text-gray-300">· 2026–27 V3</span></h1>
+      <h1 className="min-w-0 truncate text-[16px] font-bold">NBA <span className="font-normal text-gray-300">· 2026–27 model projections</span></h1>
       <button type="button" onClick={()=>setShowSearch(v=>!v)} aria-expanded={showSearch} className={`min-h-10 shrink-0 rounded-xl border px-3 text-[13px] font-semibold bg-[#202a2c] ${showSearch?'border-[#79FF48]/60 text-[#79FF48]':'border-white/10 text-gray-300'}`}>Search</button>
     </div>
-    <div className="grid grid-cols-4 gap-1" role="group" aria-label="NBA betting model view">
-      {(['PICKS','BOARD','BETTABLE','V2'] as const).map(m=><button key={m}
+    <div className="grid grid-cols-4 gap-1" role="group" aria-label="NBA projection model view">
+      {(['PICKS','BOARD','EVIDENCE','V2'] as const).map(m=><button key={m}
         type="button" aria-pressed={mode===m} onClick={()=>setMode(m)}
         className={'min-h-11 rounded-lg border px-1 text-[10px] font-bold '+
           (mode===m?'border-[#00FF41] bg-[#00FF41]/10 text-[#00FF41]':
                        'border-[#333] bg-[#242424] text-gray-300')}>
-        {m==='PICKS'?'SYSTEM PICKS':m==='BOARD'?'MODEL BOARD':m==='BETTABLE'?'BETTABLE NOW':'V2 ARCHIVE'}
+        {m==='PICKS'?'SYSTEM PICKS':m==='BOARD'?'MODEL BOARD':m==='EVIDENCE'?'MODEL EVIDENCE':'V2 ARCHIVE'}
       </button>)}
     </div>
     {showSearch&&<input aria-label="Find NBA team or player" placeholder="Search NBA picks, players or games"
@@ -76,20 +77,24 @@ export default function NbaResearchScreen() {
       className="w-full rounded-xl border border-[#333] bg-[#191919] px-4 py-3 text-sm text-stone-100" />}
     {(mode==='PICKS'||mode==='BOARD')&&
       <NbaV3ResearchPanel key={mode} mode={mode} search={search}/>}
-    {mode==='BETTABLE'&&<section data-testid="nba-v3-bettable-gate"
-      className="rounded-xl border border-amber-700 bg-amber-950/20 p-4 text-sm text-amber-100">
-      <strong>NBA V3 · NO VERIFIED EXECUTABLE BETS YET</strong>
-      <p className="mt-2 text-xs">V3 generates model targets and estimated chances without sportsbook data.
-        But it has not earned prospective probability calibration or independent game-day lineup certification.
-        No model target is being mislabeled as an executable sportsbook wager.</p>
+    {mode==='EVIDENCE'&&<section data-testid="nba-v5-evidence" className="rounded-xl border border-[#465650] bg-[#102018] p-4 text-sm text-gray-100">
+      <strong>NBA MODEL · FORECAST VALIDATION STATUS</strong>
+      <p className="mt-2 text-xs">All numerical projections come from the NBA forecasting system, independently
+       of sportsbook prices. V5 includes a linked game simulation and a V4 blend for markets where historical
+       testing favored it. Per-game model version is shown on each matchup.</p>
+      <p className="mt-2 text-xs">Projection probabilities are model estimates, not yet certified by
+       current-season forward calibration. Original forecasts are retained for result-by-result grading;
+       new role-change signals are research-only until they improve chronological holdout performance.</p>
     </section>}
     {mode==='V2'&&<NbaSystemPicksPanel mode="SYSTEM PICKS" search={search}/>}
     {mode==='ROLLING'&&<NbaRollingPlayerPanel search={search}/>}
     <details className="rounded-2xl border border-amber-700/60 bg-amber-950/20 px-3 text-[13px] leading-relaxed text-amber-200">
-      <summary className="min-h-10 cursor-pointer py-2 font-semibold">NBA V3 is the primary model <span className="font-normal">· research probabilities, not yet verified</span></summary>
-      <strong className="block pb-1 text-xs">NBA V3 IS THE PRIMARY DISPLAYED MODEL · RESEARCH PROBABILITIES</strong>
-      <p className="pb-2">SYSTEM PICKS now displays V3 basketball simulation targets and model-derived P(hit). MODEL BOARD shows every saved V3 player/stat distribution. V2 forecasts remain frozen separately for original result grading.</p>
-      <p className="pb-2">A sportsbook line is NOT needed for V3 model chances. They are not yet verified as calibrated on current-season results; official wagering status requires separately verified evidence.</p>
+      <summary className="min-h-10 cursor-pointer py-2 font-semibold">How the NBA projection system works <span className="font-normal">· version and uncertainty</span></summary>
+      <strong className="block pb-1 text-xs">EACH GAME IDENTIFIES WHICH MODEL PRODUCED ITS PROJECTIONS</strong>
+      <p className="pb-2">The system may show an integrity-checked newer V5 or V4 forecast over the earlier V3.
+       It preserves the original pregame forecast separately. No V2 archive numbers are silently substituted.</p>
+      <p className="pb-2">V5 separates P(reach if playing) from P(reach including DNP), and grades the model's own rounded projection.
+       These estimates require independent forward calibration and do not rely on sportsbook lines.</p>
     </details>
     <details className="rounded-xl border border-[#303030] bg-[#171717] p-3 text-xs"
       open={mode==='TEAMS'||mode==='PLAYERS'}>

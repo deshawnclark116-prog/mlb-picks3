@@ -1,0 +1,57 @@
+name: NBA V5 role-change and probability contract
+on:
+  pull_request:
+    paths:
+      - "nba/nba_v5_role_change.py"
+      - "nba/nba_v5_uncertainty.py"
+      - "nba/nba_v5_forecast.py"
+      - "nba/nba_v5_postmortem.py"
+      - "nba/nba_v5_change_audit.py"
+      - "src/components/NbaV3ResearchPanel.tsx"
+      - "src/components/NbaResearchScreen.tsx"
+      - "server/lineupOverlay.ts"
+      - "tests/lineupOverlay.test.ts"
+      - "tests/browser/nbaV3Primary.spec.ts"
+      - "tests/test_nba_v5_role_change.py"
+      - ".github/workflows/nba_v5_quality.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Python dependencies
+        run: python -m pip install "numpy>=2.1,<2.5" "scipy>=1.14,<1.18"
+      - name: NBA V5 unchanged simulator contracts plus new regression tests
+        run: python -m unittest discover -s tests -p "test_nba_v5*.py" -v
+      - name: Historical pregame role-change shadow audit
+        run: |
+          python -m nba.nba_v5_change_audit \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --from-date 2026-10-20 \
+            --out /tmp/nba_v5_role_change_audit.json
+          test -s /tmp/nba_v5_role_change_audit.json
+          python - <<'PY'
+          import json
+          r = json.load(open("/tmp/nba_v5_role_change_audit.json"))
+          assert not r["promotion_allowed"]
+          assert r["results"], "No historical evaluation examples"
+          print("Evaluated groups:", len(r["results"]))
+          PY
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - name: Typecheck, build and preserved NBA frontend tests
+        run: |
+          npm run lint
+          npm run build
+          node --import tsx --test tests/nbaV3ShadowApi.test.ts tests/nbaDecisionBoard.test.ts tests/lineupOverlay.test.ts

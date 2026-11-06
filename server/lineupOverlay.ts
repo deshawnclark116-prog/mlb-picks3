@@ -157,12 +157,31 @@ function cdfStats(cdf:number[]){
  mean+=cdf.length*(1-prev);
  return {mean,median:q(.5),p10:q(.1),p25:q(.25),p75:q(.75),p90:q(.9)};
 }
+/** A new status changes P(plays), so the V5 all-scenarios percentage must be
+ * recomputed from the unchanged conditional distribution. The first forecast
+ * remains in the frozen archive; the overlay never writes it back. */
+function adjustedV5Reach(row:any,pa:number,cdf:number[],mean:number){
+ const original=row.reach_probabilities;
+ if(!original)return {};
+ const floor=Math.floor(mean);
+ const target=floor+(mean-floor>=.6-1e-10?1:0);
+ if(target<1)return {reach_probabilities:null};
+ const conditional=target-1<cdf.length?1-cdf[target-1]:0;
+ return {reach_probabilities:{
+  ...original,whole_projection:target,
+  probability_if_playing:Number(conditional.toFixed(4)),
+  probability_including_dnp:Number((pa*conditional).toFixed(4)),
+  p_active:pa,forward_calibrated:false
+ }};
+}
 export function adjustNbaRow(row:any,status:LineupStatus|undefined){
- const base={...row,mean_early:row.mean,p_active_early:row.p_active,model_target_early:row.model_target};
+ const base={...row,mean_early:row.mean,p_active_early:row.p_active,model_target_early:row.model_target,
+  ...(row.reach_probabilities?{reach_probabilities_early:row.reach_probabilities}:{})};
  const lab=(l:LineupLabel,extra:Record<string,unknown>={})=>({...base,...extra,lineup_label:l,lineup_status:status??'UNKNOWN'});
  if(status==='OUT'){
   return lab('CONFIRMED_OUT',{mean:0,median:0,p10:0,p25:0,p75:0,p90:0,p_active:0,
-   cdf_lattice:{step:1,cdf:row.cdf_lattice.cdf.map(()=>1)},model_target:null,reported_status:'OUT'});
+   cdf_lattice:{step:1,cdf:row.cdf_lattice.cdf.map(()=>1)},model_target:null,reported_status:'OUT',
+   ...adjustedV5Reach(row,0,row.cdf_lattice.cdf,0)});
  }
  if(status==='IN'){
   // V4 rows are already conditional on playing; conditioning them again would distort them.
@@ -176,11 +195,13 @@ export function adjustNbaRow(row:any,status:LineupStatus|undefined){
    // keep the pick only if it still clears the original 65% bar once the player is confirmed
    if(Number.isFinite(p)&&p>=0.65)target={...row.model_target,probability:p,method:row.model_target.method+'+lineup_confirmed'};
   }
-  return lab('CONFIRMED_IN',{...s,p_active:1,cdf_lattice:{step:1,cdf:c},model_target:target});
+  return lab('CONFIRMED_IN',{...s,p_active:1,cdf_lattice:{step:1,cdf:c},model_target:target,
+   ...adjustedV5Reach(row,1,c,s.mean)});
  }
  if(status==='DOUBTFUL'){
   const pa=Math.min(row.p_active,NBA_RULE.doubtfulKeep);
-  return lab('DOUBTFUL',{p_active:pa,model_target:null});     // never headline a doubtful player
+  return lab('DOUBTFUL',{p_active:pa,model_target:null,
+   ...adjustedV5Reach(row,pa,row.cdf_lattice.cdf,row.mean)}); // never headline a doubtful player
  }
  return lab(status==='QUESTIONABLE'?'QUESTIONABLE':'NO_NEW_INFO');
 }

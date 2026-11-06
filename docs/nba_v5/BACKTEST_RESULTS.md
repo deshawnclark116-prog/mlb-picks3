@@ -68,3 +68,21 @@ Each piece switched off in turn, paired bootstrap by game. Positive means removi
 
 The gains are small and measured on four stats with several pieces, so some of this could be luck; every piece stays switchable and the nightly grading of
 live forecasts is the real check.
+
+
+## November 6, 2026: new role-change detector — SHADOW ONLY
+
+Source: `python -m nba.nba_v5_change_audit --games nba/data/nba_v4_games_2025_26.jsonl.gz --games nba/data/nba_v4_games_2026_27.jsonl --from-date 2026-10-20`, run by the NBA V5 quality workflow. All observations used to detect a change precede the test game date. The table concerns flagged player-stat instances on their next observed game.
+
+| Flagged opportunity | Next games | Older-window baseline MAE | Recent shrunken estimate MAE | Improvement |
+|---|---:|---:|---:|---:|
+| Minutes | 390 | 8.1069 | 6.6417 | +1.4652 |
+| Field-goal attempts per 36 | 178 | 4.5236 | 3.5829 | +0.9406 |
+| Assists per 36 | 150 | 2.1091 | 1.8985 | +0.2106 |
+| Three attempts per 36 | 124 | 3.0007 | 2.7137 | +0.2871 |
+| Rebounds per 36 | 107 | 2.6876 | 2.7168 | -0.0293 |
+| Turnovers per 36 | 79 | 1.9098 | 2.0026 | -0.0928 |
+
+**Research boundary:** This is one-game-ahead error against a simple older-window baseline, **not** an incremental comparison against the existing V5 simulation, V4/V5 blend, or a separately tuned recent-average champion. Metrics are correlated within the same players/games; no paired bootstrap confidence intervals were calculated here. The event rate of a detector flag is also selected on its input history. Consequently **none of these changes is yet promoted into the live V5 forecasting model**. Rebounds and turnovers were negative on the flagged cohorts even under the weak baseline comparison.
+
+Before promotion, run a strictly chronological paired V5 baseline-vs-role-adaptive simulation with identical games, ex-ante availability, and equal simulation budgets, and require a meaningful, replicated improvement in numerical error and event probability calibration without damage to other markets. Preserve untouched seasons for final confirmation.

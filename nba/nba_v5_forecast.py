@@ -28,7 +28,9 @@ from nba import nba_v5_backtest as b5
 from nba import nba_v5_context as ctxm
 from nba import nba_v5_availability as avm
 from nba import nba_v5_learn as learnm
-from nba.nba_v5_rank import MARKET_ORDER, MEANINGFUL_MIN, rank_for_screen, reach_prob
+from nba.nba_v5_rank import MARKET_ORDER, MEANINGFUL_MIN, rank_for_screen, reach_prob, whole
+from nba.nba_v5_role_change import detect_role_change
+from nba.nba_v5_uncertainty import forecast_uncertainty, reach_with_dnp
 from nba.nba_v5_sim import League, league_from, simulate_game, MARKETS
 
 VERSION = "nba-v5-blend-possession-simulation-20261106"
@@ -187,6 +189,10 @@ def main() -> int:
         if not th or not ta:
             skipped.append(g3["game_id"])
             continue
+        # Only histories strictly earlier than tipoff feed the role-change audit.
+        # No shadow signal changes the published simulation until it passes OOS tests.
+        role_audit = {pid: detect_role_change(rp.hist.get(pid, []), d)
+                      for ti in (th, ta) for pid in ti.ids}
         # chance each player plays: learned from graded results by reported status (and body part), not a fixed guess
         rep_by = {}
         for e in (receipts.get(g3["game_id"]) or {}).get("reports", []):
@@ -257,9 +263,14 @@ def main() -> int:
                                "cdf_lattice": {"step": 1, "cdf": lat}, "model_version": VERSION,
                                "mean_basis": "CONDITIONAL_ON_PLAYING", "p_start": round(p_start, 3),
                                "p_close": None if p_close is None else round(p_close, 3),
-                               "minutes_mean": round(float(mins.mean()), 2), "minutes_p10": quant(mins, 0.10), "minutes_p90": quant(mins, 0.90),
+                               "minutes_mean": round(float(mins.mean()), 2), "role_share": round(float(mins.mean()) / 240.0, 6),
+                               "minutes_p10": quant(mins, 0.10), "minutes_p90": quant(mins, 0.90),
                                "fga_mean": round(float(sd["fga"][played, j].mean()), 2), "fta_mean": round(float(sd["fta"][played, j].mean()), 2),
                                "depends_on": sens.get((pid, m), [])[:3],
+                               "role_change": {"status": role_audit[pid]["status"],
+                                               "candidate_metrics": role_audit[pid].get("candidate_metrics", []),
+                                               "shadow_only": True},
+                               "uncertainty_audit": forecast_uncertainty(samp, mins, float(pa.get(pid, 1.0))),
                                "calibration": calib.get(m)})
                     new_rows.append(nr)
         name_of = {r["player_id"]: r["player"] for r in g3["rows"]}
@@ -274,6 +285,14 @@ def main() -> int:
                 r["blend"] = None
         rank_for_screen(new_rows)
         for r in new_rows:
+            # Preserve conditional chance, and separately report the chance
+            # including DNP. Never substitute a lower threshold.
+            if r.get("mean_basis") == "CONDITIONAL_ON_PLAYING":
+                target = whole(float(r["mean"]))
+                if target >= 1:
+                    r["reach_probabilities"] = reach_with_dnp(
+                        reach_prob(r["cdf_lattice"]["cdf"], target),
+                        float(r["p_active"]), target)
             trim_lattice(r)
         for r in g3["rows"]:
             if r["reported_status"] == "OUT":
@@ -281,7 +300,10 @@ def main() -> int:
         g5 = dict(g3)
         g5.update({"rows": new_rows, "rows_count": len(new_rows), "model_version": VERSION, "forecast_kind": "V5_SHADOW",
                    "forecast_at_utc": now.isoformat(), "asof_utc": now.isoformat(), "model_simulations": a.sims,
-                   "pace_used": pace, "official_foul_multiplier": ctx["ft_mult"], "simulation_pieces_on": switches or "defaults"})
+                   "pace_used": pace, "official_foul_multiplier": ctx["ft_mult"], "simulation_pieces_on": switches or "defaults",
+                   "role_change_audit": role_audit,
+                   "role_change_model_effect": "SHADOW_ONLY_NO_PROJECTION_ADJUSTMENT",
+                   "uncertainty_model_effect": "DIAGNOSTIC_ONLY"})
         out_games.append(g5)
         print("simulated", g3["away"], "at", g3["home"], "rows", len(new_rows), flush=True)
     doc = {k: v for k, v in v3.items() if k not in ("games", "skipped")}
