@@ -114,7 +114,8 @@ def pseudo_game(g3, officially_available=None):
             continue
         seen.add(key)
         side = "home" if r["team_id"] == g3["home_id"] else "away"
-        players.append({"id": r["player_id"], "team": r["team_id"], "side": side, "name": r["player"], "p_active": r["p_active"]})
+        players.append({"id": r["player_id"], "team": r["team_id"], "side": side, "name": r["player"], "p_active": r["p_active"],
+                        "prior_minutes_estimate":r.get("conditional_minutes_mean")})
     return {"home": {"id": g3["home_id"]}, "away": {"id": g3["away_id"]}, "players": players, "officials": g3.get("officials") or []}
 
 
@@ -242,7 +243,9 @@ def main() -> int:
         officially_available={pid for pid,info in rep_by.items()
                               if info["fresh_official"] and info["raw_status"]=="AVAILABLE"}
         pg = pseudo_game(g3, officially_available=officially_available)
-        th, ta = b5.team_input(rp, pg, "home", d, L, lg_tot, None), b5.team_input(rp, pg, "away", d, L, lg_tot, None)
+        try_cold=bool(switches.get("low_history_rotation",False))
+        th, ta = (b5.team_input(rp, pg, "home", d, L, lg_tot, None, cold_start=try_cold),
+                  b5.team_input(rp, pg, "away", d, L, lg_tot, None, cold_start=try_cold))
         if not th or not ta:
             skipped.append(g3["game_id"])
             continue
@@ -335,6 +338,7 @@ def main() -> int:
                                "fga_mean": round(float(sd["fga"][played, j].mean()), 2), "fta_mean": round(float(sd["fta"][played, j].mean()), 2),
                                "depends_on": sens.get((pid, m), [])[:3],
                                "archetype": archetypes[pid],
+                               "low_history_evidence":(ti.low_history_evidence or {}).get(pid),
                                "authorized_data_field_coverage": {
                                    schema:{"fields_present":len(values[(str(ti.team_id),str(pid))]["features"]),
                                            "sample_games":values[(str(ti.team_id),str(pid))]["sample_games"]}
@@ -384,6 +388,8 @@ def main() -> int:
                    "role_change_audit": role_audit,
                    "archetype_role_audit": archetypes,
                    "archetype_model_effect": "DIAGNOSTIC_ONLY_NOT_PROMOTED",
+                   "low_history_model_effect": "EXPERIMENTAL_UNPROMOTED" if try_cold else "OFF",
+                   "players_with_cold_start_prior": sum(len(t.low_history_evidence or {}) for t in (th,ta)),
                    "official_injury_matches": sum(1 for v in rep_by.values() if v["fresh_official"]),
                    "official_report_out_count": len(official_out),
                    "official_report_available_count": len(officially_available),
