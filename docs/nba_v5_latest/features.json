@@ -24,6 +24,6 @@
     "game_flow": "OFF — 1,351 real PBP games produced learned 2-minute possession cadence but 68-game same-seed paired V5 model test showed no reliable Brier gain; steals/blocks trends worse. No promotion or rescue tuning.",
     "low_history_rotation": "OFF — 27,243 historical starter/bench court patterns, 54 newly included low-history player-games and 68-game paired experiment improved minutes MAE by 0.1307 and points/assists Brier by 0.002062/0.002534, positive cluster CIs. Historical actual roster was known; requires genuinely frozen pretip forward comparison before promotion.",
     "assist_network": "OFF: verified historical named passer-to-scorer made-basket assist events; model is a research challenger only, NOT passing/potential-assist tracking. Requires fixed-threshold paired game-cluster validation.",
-    "matchup_rotation": "OFF: past NBA opponent 3PA share paired with strictly validated 24-segment actual substitution histories to learn player rotation response. Only an observational research hypothesis; needs paired champion test and untouched forward validation."
+    "matchup_rotation": "OFF: free prior-opponent 3PA style and verified past coach rotation profiles built, 1,171 game/25,141 player-rotation coverage. Paired 68-game test failed promotion gate (minutes MAE -0.00628, points Brier +0.000074, CIs cross zero); do not rescue tune."
   }
 }
