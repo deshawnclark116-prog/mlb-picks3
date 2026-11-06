@@ -7,6 +7,30 @@
 - [NBA.com Stats FAQ](https://www.nba.com/stats/help/faq): NBA states its Stats tables are not available for download for academic or personal use. Do not assume free viewing implies permitted automated bulk ingestion.
 - Existing ESPN game summaries and historical play-by-play remain the V5 model's current source.
 
+## Another confirmed free historical-data route: SportsDataverse hoopR
+
+The [hoopR NBA loader](https://hoopr.sportsdataverse.org/reference/load_nba_pbp.html)
+reads publicly published NBA seasons back to 2002 without requiring a paid
+tracking subscription. As documented by the
+[hoopR project](https://hoopr.sportsdataverse.org/articles/getting-started-hoopR.html),
+the bulk releases include ESPN play-by-play, shot coordinates, schedules,
+box scores, rosters and crosswalks. The 2025-26 season example has 642,472
+play rows across 1,325 games.
+
+**Important:** These bulk play-by-play rows originate from ESPN. They can
+extend training history and reduce repeated API requests after appropriate
+reuse checks, but they are *not an independent observation of ESPN game events*.
+Do not cite agreement between our ESPN PBP and hoopR ESPN-derived rows as
+independent validation. Use genuinely separately sourced official NBA/pbpstats
+data for such cross-checks. Public release access also does not establish
+commercial redistribution or an NBA optical-tracking license.
+
+Potential chronology-safe future acquisition path: use the published
+`load_nba_pbp(seasons = 2025:2026)` release assets, retain raw release
+version/checksum and capture timestamp, join on audited ESPN game/player ids,
+drop target-date or later games from each training window, and run identical
+champion/challenger tests before any longer-history prior changes the model.
+
 ## Implemented now
 
 `nba/nba_v5_pbp_crosscheck.py` ingests an *independently obtained, permission-compliant* JSONL export of pbpstats game aggregates and checks game/team identities and scored points against the existing ESPN event stream. All missing, mismatched and matched games are explicitly counted. No disagreement is silently corrected, and no third-party source is used as a model feature until independently validated.
