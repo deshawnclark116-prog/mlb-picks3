@@ -42,3 +42,16 @@ adjustment was applied backwards in an early run.
 ## Not proven yet
 Forward results. Every original forecast is frozen before tip-off (`docs/nba_v5_archive/first`) and graded nightly
 (`nba_v5_postmortem.py`). Until enough games are graded, treat all percentages as estimates, not proven betting probabilities.
+
+## Second round: pieces added from play-by-play and availability
+110 held-out games, 2,299 player-games, each piece switched off in turn (paired, bootstrap by game):
+
+| Piece | Result |
+|---|---|
+| Individual defenders' on-court effect | no clear effect on any stat |
+| Shot timing (transition / late clock) | no clear effect; rebounds slightly worse |
+| Team-by-team rotation (coach proxy) | no clear effect |
+| Timeouts | no clear effect |
+| Joint availability (teammates sit together) | better prediction of how many regulars are out: +0.031 log-likelihood per team-game, 5.2 standard errors, 1,720 team-games |
+
+Only the last is on in the published forecast. The other four are in the code and switchable (`docs/nba_v5_latest/features.json`).

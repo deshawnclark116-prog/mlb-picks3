@@ -1,0 +1,17 @@
+{
+ "_note": "Switches for the NBA V5 simulation. A piece is on only if testing showed it helps; edit and commit to change. Evidence: docs/nba_v5/BACKTEST_RESULTS.md",
+ "features": {
+  "joint_availability": true,
+  "team_rotation": false,
+  "timeouts": false,
+  "defenders": false,
+  "timing": false
+ },
+ "evidence": {
+  "joint_availability": "predicts how many regulars are out better than independent draws, 5.2 standard errors on 1,720 team-games",
+  "team_rotation": "no clear effect on 2,299 player-games",
+  "timeouts": "no clear effect on 2,299 player-games",
+  "defenders": "no clear effect on 2,299 player-games",
+  "timing": "no clear effect; slightly worse rebounds on 2,299 player-games"
+ }
+}
