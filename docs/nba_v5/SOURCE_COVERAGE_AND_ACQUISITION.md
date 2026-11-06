@@ -1,6 +1,22 @@
 # NBA V5 data-source acquisition and reliability register
 Updated: November 6, 2026. Scope: **independent player and game forecasts**, no sportsbook inputs.
 
+## November 6: core free tracking feed discovered and wired for research
+
+The previously missing player-tracking *historical* source now has a
+direct acquisition path through [SportsDataverse NBA Stats LeagueDash parquet](https://hoopr.sportsdataverse.org/reference/load_nba_stats_leaguedash.html).
+Its published [CC BY 4.0 repository license](https://github.com/sportsdataverse/hoopR-nba-stats-data/blob/main/LICENSE.md)
+covers the released data/code/documentation with attribution, subject to review
+of underlying NBA rights for the intended use. The repository now includes
+`nba_v5_hoopr_tracking.py`, an exact current-roster join, a true player
+opportunity consumer `nba_v5_tracking_opportunities.py`, and a
+scheduled source acquisition step in the V5 forecast refresh.
+**Acquisition is wired but unverified at runtime due to GitHub Actions job
+failures.** `tracking_opportunity_role=false` keeps the champion unchanged
+until genuine future paired validation. Completed-season aggregated data
+does not provide the current game's defensive assignment or play calls.
+See [FREE_TRACKING_REAL_SOURCE.md](FREE_TRACKING_REAL_SOURCE.md).
+
 ## Source tiers, evidence, rights and action
 
 | Need | Candidate | What is actually accessible / documented | Current integration | Next requirement |
