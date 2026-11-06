@@ -140,5 +140,5 @@ class ReboundZoneState:
                 "missed_shots_with_known_zone":self.missed_shots_with_zone,
                 "linked_named_rebounds":self.linked_named_rebounds,
                 "excluded_ambiguous_or_delayed_rebounds":self.mismatched_events,
-                "covered_teams":len({tid for tid,_, in self.team_total}),
+                "covered_teams":len({tid for tid,side in self.team_total}),
                 "source":"PAST_ESPN_MISSED_SHOT_COORDS_PLUS_NAMED_REBOUND"}
