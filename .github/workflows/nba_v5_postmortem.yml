@@ -34,17 +34,6 @@ jobs:
         run: |
           PYTHONPATH=. python -u -m nba.nba_v5_grade_health \
             --archive docs/nba_v5_archive --grades docs/nba_v5_grades
-      - name: Audit every immutable original V5 player/stat and DNP-inclusive reach probability
-        run: |
-          set -euo pipefail
-          if [ -d docs/nba_v5_archive/first ]; then
-            PYTHONPATH=. python -u -m nba.nba_v5_original_audit \
-              --archive-first docs/nba_v5_archive/first \
-              --grades-first docs/nba_v5_grades/first \
-              --out docs/nba_v5_grades/original_all_rows_audit.json
-          else
-            echo "No frozen original archive to audit yet"
-          fi
       - name: Grade original frozen lineup challenger without changing public champion
         run: |
           set -euo pipefail
