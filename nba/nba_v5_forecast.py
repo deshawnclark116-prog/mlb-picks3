@@ -195,15 +195,43 @@ def main() -> int:
                       for ti in (th, ta) for pid in ti.ids}
         # chance each player plays: learned from graded results by reported status (and body part), not a fixed guess
         rep_by = {}
-        for e in (receipts.get(g3["game_id"]) or {}).get("reports", []):
-            cur = rep_by.get(e["player_id"])
-            if cur is None or avm.norm_status(e["status"]) == "OUT" or cur["status"] != "OUT" and e["status"] != "PROBABLE":
-                rep_by[e["player_id"]] = {"status": avm.norm_status(e["status"]), "body": e.get("location") or e.get("body_part")}
+        evidence = (receipts.get(str(g3["game_id"])) or {}).get("reports", [])
+        for e in evidence:
+            pid = str(e.get("player_id") or "")
+            if not pid:
+                continue
+            src=e.get("source")
+            stamp=avm.norm_status(e.get("status"))
+            published=dt.datetime.fromisoformat(str(e["published_at"]).replace("Z","+00:00")) if e.get("published_at") else None
+            if published is not None and published>now:
+                continue
+            # Official statuses are primary for the same pregame observation
+            # window, but an older PDF cannot override a newly reported ESPN
+            # status indefinitely. Absence from the PDF never implies active.
+            is_official=src=="official_nba_injury_report"
+            age=(now-published).total_seconds()/3600 if published else 1e6
+            fresh_official=is_official and 0<=age<=2.0
+            score=(2 if fresh_official else 1 if not is_official else 0, published or dt.datetime.min.replace(tzinfo=dt.timezone.utc))
+            cur=rep_by.get(pid)
+            if cur is None or score>cur["precedence"]:
+                rep_by[pid]={"status":stamp,"raw_status":e.get("status"),
+                             "body":e.get("location") or e.get("body_part"),
+                             "source":src,"published_at":e.get("published_at"),
+                             "precedence":score,"fresh_official":fresh_official}
+        official_out={pid for pid,info in rep_by.items()
+                      if info["fresh_official"] and info["status"]=="OUT"}
         pa = {}
         for p in pg["players"]:
             info = rep_by.get(p["id"])
             if info:
-                pa[p["id"]] = play_table.p_play(info["status"], info["body"])
+                # An official OUT designation for this precise game is an
+                # observed pretip fact, not a low-probability coin flip.
+                if info["fresh_official"] and info["status"]=="OUT":
+                    pa[p["id"]] = 0.0
+                elif info["fresh_official"] and info["raw_status"]=="AVAILABLE":
+                    pa[p["id"]] = 0.995   # available is not a guarantee of actual minutes
+                else:
+                    pa[p["id"]] = play_table.p_play(info["status"], info["body"])
             else:                                          # not on any injury report: his own recent habit of playing, capped by the learned rate
                 recent = [m for (dd, m) in rp.v4.team_rosters.get(p["team"], []) if dd < d][-20:]
                 first = next((i for i, m in enumerate(recent) if p["id"] in m), None)     # games before he joined the team do not count
@@ -257,6 +285,10 @@ def main() -> int:
                     nr = dict(tmpl)
                     nr["p_active_v3"] = tmpl["p_active"]
                     nr["p_active"] = round(float(pa.get(pid, tmpl["p_active"])), 4)
+                    if pid in rep_by and rep_by[pid]["fresh_official"]:
+                        nr["reported_status"] = rep_by[pid]["raw_status"]
+                        nr["availability_source"] = "OFFICIAL_NBA_PDF"
+                        nr["availability_published_at_utc"] = rep_by[pid]["published_at"]
                     nr.update({"market": m, "mean": round(float(samp.mean()), 4), "median": quant(samp, 0.5), "p10": quant(samp, 0.10),
                                "p25": quant(samp, 0.25), "p75": quant(samp, 0.75), "p90": quant(samp, 0.90),
                                "sd": round(float(samp.std()), 4), "unc": round(float(samp.std()), 4), "model_target": None,
@@ -295,13 +327,21 @@ def main() -> int:
                         float(r["p_active"]), target)
             trim_lattice(r)
         for r in g3["rows"]:
-            if r["reported_status"] == "OUT":
-                new_rows.append(r)
+            if r["reported_status"] == "OUT" or str(r["player_id"]) in official_out:
+                out_row=dict(r)
+                if str(r["player_id"]) in official_out:
+                    out_row["reported_status"]="OUT"
+                    out_row["p_active"]=0.0
+                    out_row["availability_source"]="OFFICIAL_NBA_PDF"
+                    out_row["availability_published_at_utc"]=rep_by[str(r["player_id"])]["published_at"]
+                new_rows.append(out_row)
         g5 = dict(g3)
         g5.update({"rows": new_rows, "rows_count": len(new_rows), "model_version": VERSION, "forecast_kind": "V5_SHADOW",
                    "forecast_at_utc": now.isoformat(), "asof_utc": now.isoformat(), "model_simulations": a.sims,
                    "pace_used": pace, "official_foul_multiplier": ctx["ft_mult"], "simulation_pieces_on": switches or "defaults",
                    "role_change_audit": role_audit,
+                   "official_injury_matches": sum(1 for v in rep_by.values() if v["fresh_official"]),
+                   "official_report_out_count": len(official_out),
                    "role_change_model_effect": "SHADOW_ONLY_NO_PROJECTION_ADJUSTMENT",
                    "uncertainty_model_effect": "DIAGNOSTIC_ONLY"})
         out_games.append(g5)
