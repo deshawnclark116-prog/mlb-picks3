@@ -371,6 +371,7 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
     had_to = [np.zeros(S, bool), np.zeros(S, bool)]
     margin_snap = [np.zeros(S), np.zeros(S)]
     live = [np.zeros(S, bool), np.zeros(S, bool)]            # this team's next possession starts off a steal or defensive rebound
+    pair_cache = [{}, {}]                                     # recompute only when two-minute lineups change
     ar = np.arange(S)
     rate_mult = lambda d, k: d.get(k, 1.0) if F["defence"] else 1.0
 
@@ -439,7 +440,7 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
         """One trip down the floor for team o against team d, for sims where mask is True."""
         to_, tdef = teams[o], teams[d]
         dfn = to_.defence if False else tdef.defence
-        u = pair_conditioned(o, Oi, "fga", usage[o][Oi])
+        u = pair_cache[o].get("fga", usage[o][Oi])
         fi_loc = pick(u)
         fi = Oi[ar, fi_loc]
         rf, rt, rto = rate[o]["fga"][fi], rate[o]["fta"][fi], rate[o]["tov"][fi]
@@ -515,7 +516,7 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
             else:
                 pa = np.where(is3, L.assisted3, L.assisted2)
             asst = make & (rng.random(S) < pa)
-            aw = pair_conditioned(o, Oi, "ast", rate[o]["ast"][Oi]) + 1e-6
+            aw = pair_cache[o].get("ast", rate[o]["ast"][Oi]) + 1e-6
             aw = np.where(Oi == fi[:, None], 0.0, aw)
             ai = Oi[ar, pick(aw + 1e-9)]
             st[o]["ast"][ar[asst], ai[asst]] += 1
@@ -530,11 +531,11 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
         p_or = np.clip(L.reb_or * rate_mult(dfn, "or_") * np.where(last_miss & ~miss, 0.5, 1.0), 0.03, 0.7)
         orb = reb_chance & (rng.random(S) < p_or)
         drb = reb_chance & ~orb
-        ow = pair_conditioned(o, Oi, "oreb", rate[o]["oreb"][Oi]) + 1e-6
+        ow = pair_cache[o].get("oreb", rate[o]["oreb"][Oi]) + 1e-6
         oi = Oi[ar, pick(ow)]
         o_cred = orb & (rng.random(S) < L.credit_or)
         st[o]["reb"][ar[o_cred], oi[o_cred]] += 1
-        dw = pair_conditioned(d, Di, "dreb", rate[d]["dreb"][Di]) + 1e-6
+        dw = pair_cache[d].get("dreb", rate[d]["dreb"][Di]) + 1e-6
         dj = Di[ar, pick(dw)]
         d_cred = drb & (rng.random(S) < L.credit_dr)
         st[d]["reb"][ar[d_cred], dj[d_cred]] += 1
@@ -558,6 +559,18 @@ def simulate_game(home: TeamInput, away: TeamInput, L: League, tables: dict, S=2
                 had_to[i] = (seg >= 1) & (rng.random(S) < to_rate[min(3, seg // 6)][bucket])
                 margin_snap[i] = m_now
         L5 = [lineup(i, seg, act, minutes_len, seg // 12) for i in range(2)]
+        # Relative weights depend only on each two-minute lineup, never on
+        # individual possession outcomes. Reusing them avoids redundant
+        # N*N matrix lookups without changing the simulation random draws.
+        if F["lineup_pairs"]:
+            for i in range(2):
+                li = L5[i]
+                pair_cache[i] = {
+                    "fga": pair_conditioned(i, li, "fga", usage[i][li]),
+                    "ast": pair_conditioned(i, li, "ast", rate[i]["ast"][li]),
+                    "oreb": pair_conditioned(i, li, "oreb", rate[i]["oreb"][li]),
+                    "dreb": pair_conditioned(i, li, "dreb", rate[i]["dreb"][li]),
+                }
         if seg == 0 and first5[0] is None:
             for i in range(2):
                 m0 = np.zeros((S, N[i]), bool)
