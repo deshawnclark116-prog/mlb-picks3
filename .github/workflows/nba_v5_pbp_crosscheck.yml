@@ -1,0 +1,20 @@
+name: NBA V5 independent PBP crosscheck contract
+on:
+  pull_request:
+    paths:
+      - "nba/nba_v5_pbp_crosscheck.py"
+      - "tests/test_nba_v5_pbp_crosscheck.py"
+      - ".github/workflows/nba_v5_pbp_crosscheck.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  crosscheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Independent source QA regressions
+        run: python -m unittest discover -s tests -p "test_nba_v5_pbp_crosscheck.py" -v
