@@ -86,3 +86,21 @@ Source: `python -m nba.nba_v5_change_audit --games nba/data/nba_v4_games_2025_26
 **Research boundary:** This is one-game-ahead error against a simple older-window baseline, **not** an incremental comparison against the existing V5 simulation, V4/V5 blend, or a separately tuned recent-average champion. Metrics are correlated within the same players/games; no paired bootstrap confidence intervals were calculated here. The event rate of a detector flag is also selected on its input history. Consequently **none of these changes is yet promoted into the live V5 forecasting model**. Rebounds and turnovers were negative on the flagged cohorts even under the weak baseline comparison.
 
 Before promotion, run a strictly chronological paired V5 baseline-vs-role-adaptive simulation with identical games, ex-ante availability, and equal simulation budgets, and require a meaningful, replicated improvement in numerical error and event probability calibration without damage to other markets. Preserve untouched seasons for final confirmation.
+
+## November 6: actual champion-vs-role trial (no promotion)
+
+Source: `nba_v5_role_trial.py`, `nba_v5_role_trial_score.py`, and the automatic `nba_v5_role_trial.yml` CI job on PR #81. Precommitted candidate: detector-flagged minutes, FGA/36, AST/36, and 3PA/36 nudged 35% toward the shrinkage estimate, bounded ±20% relative to V5's existing rate. Same game roster, same simulator seed and simulation count (500 per game) for both arms. Chosen 70 games after March 1, 2026; 68 met both models' data requirements, yielding 1,391 player-games.
+
+Score comparison is made at **the incumbent model's own whole-number target** and uses Brier error for P(reaching that exact number), with 800-replication game-cluster bootstrap confidence intervals. Positive reduction means the challenger was better.
+
+| Metric | n player-events | Champion | Role trial | Error reduction | 95% game-cluster interval |
+|---|---:|---:|---:|---:|---|
+| Minutes MAE | 1391 | 5.372679 | 5.356728 | +0.015951 | [-0.016042, +0.044470] |
+| Points Brier (V4+V5 blend) | 1185 | 0.250178 | 0.250313 | -0.000135 | [-0.000954, +0.000622] |
+| Rebounds Brier (blend) | 1102 | 0.249056 | 0.248570 | +0.000486 | [-0.000484, +0.001374] |
+| Assists Brier (blend) | 962 | 0.243965 | 0.243154 | +0.000811 | [-0.000109, +0.001729] |
+| Made threes Brier (blend) | 1071 | 0.235404 | 0.235425 | -0.000020 | [-0.001064, +0.000991] |
+
+Candidate adjustments across 68 games: minutes 216 player appearances, FGA/36 86, AST/36 78, 3PA/36 64 (multiple signals may coincide). Minutes improvements were practically negligible. Every CI includes zero, and the key points/threes Brier differences are negative. **Reject promotion**; retain prior V5/V4 weights, distributions, and simulator untouched. Do not perform rescue tuning against this used evaluation data. A future role-change model needs genuinely new evidence or a predeclared holdout with substantially different structure.
+
+**Limit:** both simulations share the retrospective actual player roster, just like earlier V5 research. This isolates the incremental skill/role hypothesis but is not an honest test of knowing who would participate before tipoff. The fixed rounded event and clustered intervals prevent artificially easy threshold substitutions and pseudo-independent teammate samples.
