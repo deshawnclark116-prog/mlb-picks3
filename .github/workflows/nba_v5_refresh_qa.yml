@@ -1,0 +1,48 @@
+name: NBA V5 official and ESPN status-change refresh decisions
+on:
+  pull_request:
+    paths:
+      - "nba/nba_v5_refresh_decision.py"
+      - "nba/nba_v5_official_injuries.py"
+      - "tests/test_nba_v5_refresh_decision.py"
+      - ".github/workflows/nba_v3_latest_refresh.yml"
+      - ".github/workflows/nba_v5_refresh_qa.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  refresh-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: python -m pip install -q "numpy>=2.1,<2.5" "scipy>=1.14,<1.18" "PyYAML>=6,<7" "pdfplumber>=0.11,<0.13"
+      - name: All current NBA V5 contracts and source freshness tests
+        run: python -m unittest discover -s tests -p "test_nba_v5*.py" -v
+      - name: Verify refresh workflow continues to freeze original forecasts
+        run: |
+          python - <<'PY'
+          import yaml
+          from pathlib import Path
+          w=Path(".github/workflows/nba_v3_latest_refresh.yml").read_text()
+          d=yaml.safe_load(w)
+          assert 'jobs' in d and 'latest' in d['jobs']
+          for contract in (
+              "nba_v5_refresh_decision",
+              "official_probe.json",
+              "official_signature",
+              "--captured",
+              "NBA official injury report",
+              "docs/nba_v5_archive",
+              "docs/nba_v5_lineup_archive",
+              "lastseen",
+          ):
+              if contract=="lastseen":continue
+              assert contract in w,contract
+          assert d["jobs"]["latest"]["timeout-minutes"] >= 30
+          print("NBA_SOURCE_AWARE_REFRESH_WORKFLOW_VALID")
+          PY

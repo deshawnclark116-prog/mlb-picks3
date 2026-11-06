@@ -49,27 +49,18 @@ jobs:
           set -euo pipefail
           PYTHONPATH=. python -u nba/nba_rolling_future_fixtures.py --days 2 --out "$RUNNER_TEMP/fixtures.json"
           PYTHONPATH=. python -u nba/nba_live_injury_source.py --out "$RUNNER_TEMP/injuries.json" || echo '{}' > "$RUNNER_TEMP/injuries.json"
-          python - <<'PY'
-          import json,os,hashlib,datetime as dt
-          T=os.environ["RUNNER_TEMP"]
-          fx=json.load(open(T+"/fixtures.json")); inj=json.load(open(T+"/injuries.json"))
-          now=dt.datetime.now(dt.timezone.utc)
-          WIN=float(os.environ.get("WINDOW") or 9)
-          def tip(g): return dt.datetime.fromisoformat(g["tipoff_utc"].replace("Z","+00:00"))
-          soon=[g["game_id"] for g in fx.get("games",[]) if 0 < (tip(g)-now).total_seconds() <= WIN*3600 and (tip(g)-now).total_seconds() >= 20*60]
-          outs=sorted((str(e["team_id"]),str(e["player_id"])) for e in inj.get("injuries",[]) if e.get("source_reported_status")=="OUT")
-          h=hashlib.sha256(json.dumps([outs,sorted(soon)]).encode()).hexdigest()[:16]
-          state={}
-          try: state=json.load(open("docs/nba_v3_latest/state.json"))
-          except Exception: pass
-          age=9e9
-          try: age=(now-dt.datetime.fromisoformat(state["generated_at_utc"].replace("Z","+00:00"))).total_seconds()
-          except Exception: pass
-          force=os.environ.get("FORCE","false")=="true"
-          run = bool(soon) and (force or state.get("hash")!=h or age>3*3600)
-          open(os.environ["GITHUB_OUTPUT"],"a").write(f"run={'true' if run else 'false'}\nhash={h}\ngames={len(soon)}\n")
-          print("games tipping in 20min-%gh:"%WIN,len(soon),"| hash",h,"| previous",state.get("hash"),"| age s",int(age) if age<9e9 else None,"| run:",run)
-          PY
+          # Poll the NBA's own status PDF on each near-game scheduler tick,
+          # BEFORE deciding whether new predictions are necessary. Failure
+          # carries forward prior official-status digest, never assumes active.
+          python -m pip install -q 'pdfplumber>=0.11,<0.13'
+          PYTHONPATH=. python -u -m nba.nba_v5_official_injuries \
+            --out "$RUNNER_TEMP/official_probe.json" || echo '{}' > "$RUNNER_TEMP/official_probe.json"
+          PYTHONPATH=. python -u -m nba.nba_v5_refresh_decision \
+            --fixtures "$RUNNER_TEMP/fixtures.json" \
+            --espn "$RUNNER_TEMP/injuries.json" \
+            --official "$RUNNER_TEMP/official_probe.json" \
+            --state docs/nba_v3_latest/state.json \
+            --force "${FORCE:-false}" --window-hours "${WINDOW:-9}"
         env:
           FORCE: ${{ github.event.inputs.force }}
           WINDOW: ${{ github.event.inputs.window_hours }}
@@ -115,8 +106,8 @@ jobs:
         run: |
           set -euo pipefail
           rm -f docs/nba_v5_latest/official_report.json docs/nba_v5_latest/official_matches.json
-          python -m pip install -q 'pdfplumber>=0.11,<0.13'
           PYTHONPATH=. python -u -m nba.nba_v5_official_injuries \
+            --captured "$RUNNER_TEMP/official_probe.json" \
             --v3 "$RUNNER_TEMP/latest-new.json" \
             --out docs/nba_v5_latest/official_report.json \
             --matches-out docs/nba_v5_latest/official_matches.json
@@ -209,7 +200,10 @@ jobs:
           python - <<'PY'
           import json,os
           d=json.load(open("docs/nba_v3_latest/latest.json"))
-          json.dump({"hash":os.environ["H"],"generated_at_utc":d["generated_at_utc"],"games":[g["game_id"] for g in d["games"]]},open("docs/nba_v3_latest/state.json","w"),indent=1)
+          json.dump({"hash":os.environ["H"],"official_signature":os.environ["OFF_SIG"],
+                     "generated_at_utc":d["generated_at_utc"],
+                     "games":[g["game_id"] for g in d["games"]]},
+                    open("docs/nba_v3_latest/state.json","w"),indent=1)
           PY
           git config user.name "nba-v3-latest[bot]"
           git config user.email "nba-v3-latest[bot]@users.noreply.github.com"
@@ -225,3 +219,4 @@ jobs:
           echo "push failed"; exit 1
         env:
           H: ${{ steps.src.outputs.hash }}
+          OFF_SIG: ${{ steps.src.outputs.official_signature }}
