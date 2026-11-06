@@ -411,10 +411,24 @@ def main() -> int:
                     out_row["availability_source"]="OFFICIAL_NBA_PDF"
                     out_row["availability_published_at_utc"]=rep_by[str(r["player_id"])]["published_at"]
                 new_rows.append(out_row)
+        # Direct game outcomes from the same connected V5 simulated draws.
+        _score = sim["score"]
+        _ties = _score[:, 0] == _score[:, 1]
+        game_outcome = {
+            "home_win_probability": round(float(np.mean(_score[:, 0] > _score[:, 1]) + 0.5 * np.mean(_ties)), 4),
+            "away_win_probability": round(float(np.mean(_score[:, 1] > _score[:, 0]) + 0.5 * np.mean(_ties)), 4),
+            "home_score_mean": round(float(np.mean(_score[:, 0])), 2),
+            "away_score_mean": round(float(np.mean(_score[:, 1])), 2),
+            "total_score_mean": round(float(np.mean(_score.sum(axis=1))), 2),
+            "source": "V5_CONNECTED_POSSESSION_SIMULATION_NOT_BOOKMAKER",
+            "unresolved_ties_split_equally": bool(_ties.any()),
+            "forward_calibrated": False,
+        }
         g5 = dict(g3)
         g5.update({"rows": new_rows, "rows_count": len(new_rows), "model_version": VERSION, "forecast_kind": "V5_SHADOW",
                    "forecast_at_utc": now.isoformat(), "asof_utc": now.isoformat(), "model_simulations": a.sims,
                    "pace_used": pace, "official_foul_multiplier": ctx["ft_mult"], "simulation_pieces_on": switches or "defaults",
+                   "model_outcome_projection": game_outcome,
                    "role_change_audit": role_audit,
                    "archetype_role_audit": archetypes,
                    "archetype_model_effect": "DIAGNOSTIC_ONLY_NOT_PROMOTED",
