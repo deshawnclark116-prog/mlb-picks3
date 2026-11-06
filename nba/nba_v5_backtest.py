@@ -353,6 +353,10 @@ def run(args):
                     print("simulated games", n_done, flush=True)
         for g in by_day[d]:
             rp.add(g, pbp.get(g["game_id"]))
+    if getattr(args, "lineup_trial", False):
+        print("LINEUP_PBP_VALIDATION", json.dumps({"accepted_games": rp.lineup_pairs.accepted_games,
+            "rejected": dict(rp.lineup_pairs.rejected_games),
+            "team_games": len(rp.lineup_pairs.games_by_team)}), flush=True)
     return results, rows, v4_preds, chosen
 
 
@@ -503,7 +507,6 @@ def main():
         paired["observational_limitation"] = (
             "Substitution-reconstructed on/off rates confound coaching, rotations, opponents and game state; "
             "scoring uses the same retrospective available roster in both arms.")
-        paired["qualifying_play_by_play_games"] = sum(1 for _ in ())
         report["paired_lineup_trial"] = paired
     if "full" in results and results["full"] and not a.config:
         ct, fitted = calibration_test(results["full"])
