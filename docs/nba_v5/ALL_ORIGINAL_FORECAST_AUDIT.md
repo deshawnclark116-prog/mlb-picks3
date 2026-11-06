@@ -41,8 +41,10 @@ receiving a fabricated estimate. Missing finished-game rows, changed player
 IDs, mismatched projections, duplicate records or changed capture timestamps
 fail closed. Original archives and previously issued grades are not modified.
 
-The nightly `nba_v5_postmortem.yml` adds a separately auditable
-`docs/nba_v5_grades/original_all_rows_audit.json`. The result contains
+An independent `nba_v5_original_audit_publish.yml` workflow runs after
+successful final grading (and on its own schedule), writing
+`docs/nba_v5_grades/original_all_rows_audit.json`. Audit failures never block
+capture of the existing immutable original result grades. The result contains
 each original forecast and final outcome, plus all summary cohorts. Unfinished
 games stay pending rather than being imputed.
 
