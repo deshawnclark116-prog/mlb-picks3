@@ -14,6 +14,6 @@
     "timeouts": "same test: better assist and made-three probabilities (clear), no clear harm elsewhere",
     "defenders": "same test: better assist probabilities (clear), no clear harm elsewhere",
     "timing": "same test: no clear effect on any stat, so it stays off",
-    "lineup_pairs": "OFF — five-man PBP verified in 1,283/1,351 games; first exploratory 68-game sample needs deterministic rerun plus untouched prospective pregame validation before any promotion."
+    "lineup_pairs": "OFF: 94.97% valid historical PBP lineups and reproducible seeded replay. Exploratory 68-game paired test reduced points Brier by 0.001545, 95% game-cluster CI [0.000720, 0.002410], but no untouched prospective confirmation; other stats inconclusive. Do not promote."
   }
 }
