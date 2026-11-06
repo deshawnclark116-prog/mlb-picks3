@@ -96,12 +96,16 @@ def quant(samples, q):
     return float(np.quantile(samples, q, method="lower"))
 
 
-def pseudo_game(g3):
+def pseudo_game(g3, officially_available=None):
     """A game-shaped record for tonight built from the V3 roster: everyone not OUT with a real chance of playing."""
     players = []
     seen = set()
+    officially_available=officially_available or set()
     for r in g3["rows"]:
-        if r["reported_status"] == "OUT" or r["p_active"] < 0.2:
+        # A fresh game-specific official AVAILABLE report may overturn stale
+        # older ESPN OUT/low-p_active evidence. It does not invent a roster
+        # member: this player must already be in the preserved V3 player rows.
+        if (r["reported_status"] == "OUT" or r["p_active"] < 0.2) and str(r["player_id"]) not in officially_available:
             continue
         key = (r["player_id"], r["team_id"])
         if key in seen:
@@ -217,7 +221,11 @@ def main() -> int:
         if tip <= now:
             continue
         d = (tip - dt.timedelta(hours=5)).date()
-        pg = pseudo_game(g3)
+        evidence = (receipts.get(str(g3["game_id"])) or {}).get("reports", [])
+        rep_by = choose_availability_reports(evidence, now)
+        officially_available={pid for pid,info in rep_by.items()
+                              if info["fresh_official"] and info["raw_status"]=="AVAILABLE"}
+        pg = pseudo_game(g3, officially_available=officially_available)
         th, ta = b5.team_input(rp, pg, "home", d, L, lg_tot, None), b5.team_input(rp, pg, "away", d, L, lg_tot, None)
         if not th or not ta:
             skipped.append(g3["game_id"])
@@ -227,8 +235,6 @@ def main() -> int:
         role_audit = {pid: detect_role_change(rp.hist.get(pid, []), d)
                       for ti in (th, ta) for pid in ti.ids}
         # chance each player plays: learned from graded results by reported status (and body part), not a fixed guess
-        evidence = (receipts.get(str(g3["game_id"])) or {}).get("reports", [])
-        rep_by = choose_availability_reports(evidence, now)
         official_out={pid for pid,info in rep_by.items()
                       if info["fresh_official"] and info["status"]=="OUT"}
         pa = {}
@@ -338,7 +344,7 @@ def main() -> int:
                         float(r["p_active"]), target)
             trim_lattice(r)
         for r in g3["rows"]:
-            if r["reported_status"] == "OUT" or str(r["player_id"]) in official_out:
+            if (r["reported_status"] == "OUT" and str(r["player_id"]) not in officially_available) or str(r["player_id"]) in official_out:
                 out_row=dict(r)
                 if str(r["player_id"]) in official_out:
                     out_row["reported_status"]="OUT"
@@ -353,6 +359,7 @@ def main() -> int:
                    "role_change_audit": role_audit,
                    "official_injury_matches": sum(1 for v in rep_by.values() if v["fresh_official"]),
                    "official_report_out_count": len(official_out),
+                   "official_report_available_count": len(officially_available),
                    "role_change_model_effect": "SHADOW_ONLY_NO_PROJECTION_ADJUSTMENT",
                    "uncertainty_model_effect": "DIAGNOSTIC_ONLY"})
         out_games.append(g5)
