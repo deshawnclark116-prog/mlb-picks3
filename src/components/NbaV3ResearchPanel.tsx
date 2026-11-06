@@ -295,16 +295,17 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
       </article>;
     })}
   </>}
-  <details data-testid="nba-v3-about" className="rounded-xl border border-[#00FF41]/30 bg-[#0e2115] px-3 text-[13px] leading-relaxed text-gray-300">
-   <summary className="min-h-10 cursor-pointer py-2 font-semibold text-gray-200">About these numbers <span className="font-normal text-amber-200">· research estimates, not yet calibrated</span></summary>
-   <p className="pb-2">Basketball-specific role, team-minute allocation, shot opportunities and full-game probability distributions.</p>
-   <p className="text-amber-200 font-bold">MODEL-ESTIMATED P(HIT) · NOT YET PROSPECTIVELY CALIBRATED OR A BOOKMAKER BET.</p>
-   <p className="text-gray-400">This is V3, not recycled V2 projections. All original V2 predictions stay in the archive for paired grading.</p>
-  {doc&&<div className="pb-2 text-xs text-gray-400">
-   {day==='AUTO'?'Next available: '+nextSlate+' · ':''}{all.length} matching V3 game forecasts · {mode==='PICKS'?number+' model projections':
+  {doc&&<div data-testid="nba-projection-slate-summary" className="pb-2 text-xs text-gray-400">
+   {day==='AUTO'?'Next available: '+nextSlate+' · ':''}{all.length} matching NBA game forecasts · {mode==='PICKS'?number+' model projections':
        all.reduce((n,g)=>n+g.rows.length,0)+' numerical projections'}
    {' · '}{doc.original_games_audited} original games audited
   </div>}
+  <details data-testid="nba-v3-about" className="rounded-xl border border-[#00FF41]/30 bg-[#0e2115] px-3 text-[13px] leading-relaxed text-gray-300">
+   <summary className="min-h-10 cursor-pointer py-2 font-semibold text-gray-200">About these numbers <span className="font-normal text-amber-200">· research estimates, not yet calibrated</span></summary>
+   <p className="pb-2">Basketball-specific roles, team-minute allocation, opportunity modeling and game distributions; any detected role changes remain research-only.</p>
+   <p className="text-amber-200 font-bold">MODEL-ESTIMATED P(HIT) · NOT YET PROSPECTIVELY CALIBRATED OR A BOOKMAKER BET.</p>
+   <p className="text-gray-400">Each game identifies the actual model version (V5, V4 or V3). Original V2 predictions remain in the separate grading archive.</p>
+
   </details>
  </section>;
 }
