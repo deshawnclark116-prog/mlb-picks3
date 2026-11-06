@@ -27,8 +27,10 @@ An explicit announced minutes ceiling is accepted *only when independently
 sourced with a URL*. It is currently applied as the existing V5
 `minutes_cap` **soft rotation-weight adjustment**. It is **not** a
 guaranteed hard cap: do not advertise exact remaining minutes as certified.
-Unreported minutes limits are never inferred. PROJECTED/NOT_POSTED lineup
-information is diagnostics-only and never overrides model roster/rotation.
+Unreported minutes limits are never inferred. An independently sourced,
+explicitly announced restriction may adjust minutes weights even before
+starters are confirmed, without treating the projected five as actual.
+PROJECTED/NOT_POSTED starter guesses never override model starter assignments.
 
 ## Validated JSON schema, example ONLY (not a real report)
 
