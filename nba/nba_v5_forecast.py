@@ -242,7 +242,9 @@ def main() -> int:
         officially_available={pid for pid,info in rep_by.items()
                               if info["fresh_official"] and info["raw_status"]=="AVAILABLE"}
         pg = pseudo_game(g3, officially_available=officially_available)
-        th, ta = b5.team_input(rp, pg, "home", d, L, lg_tot, None), b5.team_input(rp, pg, "away", d, L, lg_tot, None)
+        verified_zone=bool(switches.get("verified_zone",False))
+        th, ta = (b5.team_input(rp, pg, "home", d, L, lg_tot, None,verified_zone=verified_zone),
+                  b5.team_input(rp, pg, "away", d, L, lg_tot, None,verified_zone=verified_zone))
         if not th or not ta:
             skipped.append(g3["game_id"])
             continue
@@ -384,6 +386,7 @@ def main() -> int:
                    "role_change_audit": role_audit,
                    "archetype_role_audit": archetypes,
                    "archetype_model_effect": "DIAGNOSTIC_ONLY_NOT_PROMOTED",
+                   "verified_zone_model_effect":"UNPROMOTED" if verified_zone else "OFF",
                    "official_injury_matches": sum(1 for v in rep_by.values() if v["fresh_official"]),
                    "official_report_out_count": len(official_out),
                    "official_report_available_count": len(officially_available),
