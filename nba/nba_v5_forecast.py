@@ -32,6 +32,7 @@ from nba.nba_v5_rank import MARKET_ORDER, MEANINGFUL_MIN, rank_for_screen, reach
 from nba.nba_v5_role_change import detect_role_change
 from nba.nba_v5_archetypes import player_archetype
 from nba.nba_v5_external_source import read_source
+from nba.nba_v5_tracking_opportunities import audit_and_apply as apply_tracking_opportunities
 from nba.nba_v5_pregame_certified import load as load_pregame, apply_confirmed
 from nba.nba_v5_uncertainty import forecast_uncertainty, reach_with_dnp
 from nba.nba_v5_sim import League, league_from, simulate_game, MARKETS
@@ -236,6 +237,10 @@ def main() -> int:
         data_schemas.add(quality["dataset_schema"])
         licensed_profiles.append((quality["dataset_schema"],vals))
         source_audits.append(quality)
+    tracking_profiles = next((values for schema,values in licensed_profiles
+                              if schema == "NBA_PLAYER_TRACKING_AGGREGATES_V1"), {})
+    if switches.get("tracking_opportunity_role") and not tracking_profiles:
+        raise ValueError("NBA_V5_TRACKING_ROLE_SWITCH_REQUIRES_OBSERVED_SOURCE")
     out_games, skipped = [], []
     for g3 in v3["games"]:
         tip = dt.datetime.fromisoformat(g3["tipoff_utc"])
@@ -302,6 +307,17 @@ def main() -> int:
             pregame_team_effect[str(team_id)] = apply_confirmed(team_input, record)
             for pos, pid in enumerate(team_input.ids):
                 pa[pid] = float(team_input.p_play[pos])
+        # Real prior-season player tracking modifies relative opportunities
+        # ONLY when a separately validated research switch is enabled.
+        # The default champion is exactly unchanged. No inferred tracking.
+        tracking_role_audit = {"source_status": "NOT_CONNECTED"}
+        if tracking_profiles:
+            th, audit_home = apply_tracking_opportunities(
+                th, tracking_profiles, activate=bool(switches.get("tracking_opportunity_role", False)))
+            ta, audit_away = apply_tracking_opportunities(
+                ta, tracking_profiles, activate=bool(switches.get("tracking_opportunity_role", False)))
+            tracking_role_audit = {"home": audit_home, "away": audit_away,
+                                    "source_status": "OBSERVED_PREVIOUS_SEASON"}
         for ti_, tid_ in ((th, g3["home_id"]), (ta, g3["away_id"])):                 # teammates who tend to sit together
             ids_h, A = avm.absence_matrix(rp.v4.team_rosters.get(tid_, []), d)
             if A is not None:
@@ -368,7 +384,8 @@ def main() -> int:
                                            "sample_games":values[(str(ti.team_id),str(pid))]["sample_games"]}
                                    for schema,values in licensed_profiles
                                    if (str(ti.team_id),str(pid)) in values},
-                               "external_tracking_model_effect":"SOURCE_QA_ONLY_NOT_PROMOTED",
+                               "external_tracking_model_effect":("RESEARCH_SWITCH_TRACKED_OPPORTUNITIES_NOT_FORWARD_VALIDATED"
+                                                                 if switches.get("tracking_opportunity_role") else "SOURCE_QA_ONLY_NOT_PROMOTED"),
                                "role_change": {"status": role_audit[pid]["status"],
                                                "candidate_metrics": role_audit[pid].get("candidate_metrics", []),
                                                "shadow_only": True},
@@ -417,6 +434,7 @@ def main() -> int:
                    "pace_used": pace, "official_foul_multiplier": ctx["ft_mult"], "simulation_pieces_on": switches or "defaults",
                    "role_change_audit": role_audit,
                    "archetype_role_audit": archetypes,
+                    "tracking_role_audit": tracking_role_audit,
                    "archetype_model_effect": "DIAGNOSTIC_ONLY_NOT_PROMOTED",
                    "low_history_model_effect": "EXPERIMENTAL_UNPROMOTED" if try_cold else "OFF",
                    "players_with_cold_start_prior": sum(len(t.low_history_evidence or {}) for t in (th,ta)),
