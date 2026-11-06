@@ -129,6 +129,15 @@ jobs:
             --receipt docs/nba_v5_latest/information_receipt.json --grades docs/nba_v5_grades/summary.json \
             --features docs/nba_v5_latest/features.json \
             --archive docs/nba_v5_archive
+      - name: Audit V5 latest simulation probabilities, stale data and confirmed absences
+        if: steps.src.outputs.run == 'true'
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          test -s docs/nba_v5_latest/latest.json
+          PYTHONPATH=. python -m nba.nba_v5_readiness \
+            --forecast docs/nba_v5_latest/latest.json \
+            --out docs/nba_v5_latest/readiness.json --strict
       - name: Determine which new games have a frozen champion but no frozen lineup challenger
         if: steps.src.outputs.run == 'true'
         id: challenge
