@@ -52,7 +52,7 @@ test('NBA opens V3 SYSTEM PICKS, not V2 or optional shadow view',async({page})=>
  await expect(page.getByRole('button',{name:'SYSTEM PICKS',exact:true}))
     .toHaveAttribute('aria-pressed','true');
  await expect(page.getByTestId('nba-v3-primary-board')).toBeVisible();
- await expect(page.getByText(/NBA V3 · SYSTEM PICKS/)).toBeVisible();
+ await expect(page.getByRole('heading',{name:/NBA.*2026–27 model projections/})).toBeVisible();
  await expect(page.getByTestId('nba-betting-style-decision-board')).toHaveCount(0);
  // Sunday night default must show the NEXT independently captured V3 slate
  // when no game has a first-observed forecast on the current Eastern date.
@@ -90,8 +90,8 @@ test('when V3 originals are missing frontend does not silently substitute V2 pic
  await expect(page.getByTestId('nba-v3-no-source')).toContainText(
   'old V2 predictions will NOT be mislabeled as V3');
  await expect(page.getByTestId('nba-betting-style-decision-board')).toHaveCount(0);
- await page.getByRole('button',{name:'BETTABLE NOW',exact:true}).click();
- await expect(page.getByTestId('nba-v3-bettable-gate'))
-   .toContainText('NO VERIFIED EXECUTABLE BETS');
+ await page.getByRole('button',{name:'MODEL EVIDENCE',exact:true}).click();
+ await expect(page.getByTestId('nba-v5-evidence'))
+   .toContainText('FORECAST VALIDATION STATUS');
  await expect(page.getByRole('button',{name:'V2 ARCHIVE'})).toBeVisible();
 });
