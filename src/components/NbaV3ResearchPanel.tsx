@@ -1,5 +1,6 @@
 import React,{useCallback,useEffect,useMemo,useState} from 'react';
 import {RefreshCw,ChevronDown} from 'lucide-react';
+import {wholeStatProjection} from '../lib/wholeStatProjection';
 
 type Market='points'|'rebounds'|'assists'|'three_pointers_made';
 const MARKETS:Market[]=['points','rebounds','assists','three_pointers_made'];
@@ -14,6 +15,7 @@ type Forecast={
  reported_status:string;
  lineup_label?:string;mean_early?:number;p_active_early?:number;
  model_target:{milestone:number;probability:number;method:string}|null;
+ cdf_lattice?:{step:number;cdf:number[]};
 };
 type Game={game_id:string;away:string;home:string;tipoff_utc:string;
  forecast_at_utc:string;rows_count:number;rows:Forecast[];
@@ -54,24 +56,60 @@ export function v3QualifiedResearchTargets(g:Game):Forecast[]{
    b.p_active-a.p_active||
    a.player.localeCompare(b.player)||MARKETS.indexOf(a.market)-MARKETS.indexOf(b.market));
 }
-function V3Card({row}:{row:Forecast}){
- const t=row.model_target!;
+/** The model's own projection as the pick: the projection is rounded with the app's
+ * rule (x.6 and up rounds up) and its percentage is the chance of reaching AT LEAST
+ * that number, taken from the same full-game simulation. cdf[i] = P(X < i+1), so
+ * P(X >= k) = 1 - cdf[k-1]. No lower target is substituted. */
+const MEANINGFUL_MIN:Record<Market,number>={points:6,rebounds:3,assists:2,three_pointers_made:1};
+export type ProjectionItem={row:Forecast;whole:number;prob:number|null};
+const pctOrDash=(v:number|null)=>v===null?'n/a':pct(v);
+export function chanceAtLeast(row:Forecast,k:number):number|null{
+ const l=row.cdf_lattice;
+ if(!l||l.step!==1||!Array.isArray(l.cdf)||!l.cdf.length||!Number.isInteger(k)||k<0)return null;
+ if(k===0)return 1;
+ if(k-1>=l.cdf.length)return 0;
+ const below=l.cdf[k-1];
+ return Number.isFinite(below)&&below>=0&&below<=1?1-below:null;
+}
+export function projectionItem(row:Forecast):ProjectionItem|null{
+ if(!Number.isFinite(row.mean)||row.mean<0)return null;
+ const whole=wholeStatProjection(row.mean);
+ return {row,whole,prob:chanceAtLeast(row,whole)};
+}
+export function v3ProjectionPicks(g:Game):ProjectionItem[]{
+ const seen=new Set<string>();
+ const out:ProjectionItem[]=[];
+ for(const r of g.rows){
+  if(r.reported_status==='OUT'||!(r.p_active>=.75))continue;
+  const it=projectionItem(r);
+  if(!it||it.prob===null)continue;
+  // A projection of "0 threes" or "1 point" is not a meaningful pick; same floor as the model's lattice.
+  if(it.whole<MEANINGFUL_MIN[r.market])continue;
+  const key=[g.game_id,r.team_id,r.player_id,r.market].join('|');
+  if(seen.has(key))throw Error('NBA_V3_DUPLICATE_PLAYER_MARKET_OUTCOME');
+  seen.add(key);out.push(it);
+ }
+ return out.sort((a,b)=>(b.prob??0)-(a.prob??0)||b.row.p_active-a.row.p_active||
+  a.row.player.localeCompare(b.row.player)||MARKETS.indexOf(a.row.market)-MARKETS.indexOf(b.row.market));
+}
+function V3Card({item}:{item:ProjectionItem}){
+ const row=item.row;
  return <article data-testid="nba-v3-system-pick" className="rounded-xl border border-[#374239] bg-[#101912] p-3 space-y-2">
   <div className="flex items-start justify-between gap-2">
    <div><p className="text-sm font-bold text-white">{row.player}</p>
     <p className="text-[11px] text-gray-400">{NAME[row.market]}</p></div>
-   <span className="text-[10px] border border-[#487b54] rounded-lg p-2 font-bold text-[#00FF41]">V3 MODEL TARGET</span>
+   <span className="text-[10px] border border-[#487b54] rounded-lg p-2 font-bold text-[#00FF41]">MODEL PROJECTION</span>
    {row.lineup_label==='CONFIRMED_IN'&&<span data-testid="nba-v3-lineup-confirmed" className="text-[10px] border border-[#487b54] rounded-lg p-2 font-bold text-white">LINEUP CONFIRMED</span>}
   </div>
   <p data-testid="nba-v3-selected-target" className="text-base font-bold">
-   {t.milestone}+ {NAME[row.market]}
+   {item.whole} {NAME[row.market]}
   </p>
   <div className="grid grid-cols-2 gap-2 rounded-lg border border-[#32533d] bg-[#102418] p-3">
    <div><p className="text-[10px] text-gray-400">MODEL PROJECTION</p>
-    <p className="text-xl font-bold text-white">{fmt(row.mean)} {UNIT[row.market]}</p>
-    <p className="text-[10px] text-gray-400">Median {fmt(row.median)}</p></div>
-   <div><p className="text-[10px] text-gray-400">ESTIMATED P(HIT)</p>
-    <p data-testid="nba-v3-hit-probability" className="text-xl font-bold text-[#00FF41]">{pct(t.probability)}</p>
+    <p className="text-xl font-bold text-white">{item.whole} {UNIT[row.market]}</p>
+    <p className="text-[10px] text-gray-400">Model average {fmt(row.mean)} · Median {fmt(row.median)}</p></div>
+   <div><p className="text-[10px] text-gray-400">CHANCE OF {item.whole}+</p>
+    <p data-testid="nba-v3-hit-probability" className="text-xl font-bold text-[#00FF41]">{pctOrDash(item.prob)}</p>
     <p className="text-[10px] text-amber-200">Not yet forward-calibrated</p></div>
   </div>
   <p className="text-[11px] text-gray-300">
@@ -83,7 +121,7 @@ function V3Card({row}:{row:Forecast}){
    <p className="mt-1">Pregame NBA V3 shared-minute and opportunity simulation.
     Historical role evidence only. Source status: {row.reported_status}.
     {row.unc_reasons.length?' Uncertainty: '+row.unc_reasons.join(', '):''}
-    {' '}This threshold is model-generated, not a verified bookmaker line or certified betting probability.</p>
+    {' '}This percentage is model-generated from the simulation, not a verified bookmaker line or certified betting probability.</p>
   </details>
  </article>;
 }
@@ -129,8 +167,8 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
   (!search||(g.home+' '+g.away+' '+g.rows.map(r=>r.player).join(' ')).toLowerCase()
     .includes(search.toLowerCase()))
  )||[],[doc,day,today,nextSlate,search]);
- const number=all.reduce((n,g)=>n+v3QualifiedResearchTargets(g).filter(r=>
-  market==='ALL'||r.market===market).length,0);
+ const number=all.reduce((n,g)=>n+v3ProjectionPicks(g).filter(p=>
+  market==='ALL'||p.row.market===market).length,0);
  return <section className="space-y-3" data-testid="nba-v3-primary-board">
   <div className="flex items-center justify-between gap-2">
    <strong className="text-[13px] text-[#00FF41]">{mode==='PICKS'?'System picks':'Full model board'}</strong>
@@ -170,10 +208,11 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
     {!all.length&&<p className="text-xs text-gray-400">No first-seen V3 forecasts on the selected date.
       Select another date or All upcoming. No old-model picks are substituted.</p>}
     {all.map(g=>{
-      const selected=v3QualifiedResearchTargets(g).filter(r=>
-        market==='ALL'||r.market===market);
+      const picks=v3ProjectionPicks(g).filter(p=>
+        market==='ALL'||p.row.market===market);
       const every=g.rows.filter(r=>market==='ALL'||r.market===market);
-      const shown=mode==='PICKS'?selected:every;
+      const shown:ProjectionItem[]=mode==='PICKS'?picks:
+        every.map(projectionItem).filter((x):x is ProjectionItem=>x!==null);
       const open=expanded===g.game_id;
       return <article key={g.game_id} data-testid="nba-v3-game"
         className="rounded-xl border border-[#333] bg-[#191919] overflow-hidden">
@@ -183,10 +222,10 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
           <div>
            <strong className="text-sm text-white">{g.away} at {g.home}</strong>
            <p className="mt-1 text-[11px] text-gray-400">{et(g.tipoff_utc)}
-             {' · '}{selected.length} model targets{' · '}{every.length} stat projections</p>
-           {selected[0]&&<p className="mt-1 text-[11px] text-gray-200">
-             TOP: {selected[0].player} · {selected[0].model_target!.milestone}+
-             {' '}{NAME[selected[0].market]} · {pct(selected[0].model_target!.probability)}
+             {' · '}{picks.length} projections{' · '}{every.length} stat projections</p>
+           {picks[0]&&<p className="mt-1 text-[11px] text-gray-200">
+             TOP: {picks[0].row.player} · {picks[0].whole}
+             {' '}{NAME[picks[0].row.market]} · {pctOrDash(picks[0].prob)}
            </p>}
            <p className="mt-1 text-[10px] text-gray-500">{g.forecast_kind==='LATEST_RUN'
              ?<>Latest run {et(g.forecast_at_utc)}{' · '}first forecast {et(g.first_seen_forecast_at_utc||g.forecast_at_utc)}</>
@@ -196,29 +235,27 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
           <ChevronDown className={'text-gray-400 '+(open?'rotate-180':'')} size={18}/>
         </button>
         {shown.length>0&&<div data-testid="nba-v3-tiles" className="grid grid-cols-2 gap-2 px-3 pb-3">
-          {shown.slice(0,4).map(r=><div key={r.player_id+r.market} data-testid="nba-v3-tile" className="min-w-0 rounded-xl border border-white/10 bg-[#12181b] p-3">
+          {shown.slice(0,4).map(({row:r,whole,prob})=><div key={r.player_id+r.market} data-testid="nba-v3-tile" className="min-w-0 rounded-xl border border-white/10 bg-[#12181b] p-3">
             <p className="truncate text-[11px] text-gray-400">{NAME[r.market]}</p>
             <p className="mt-0.5 break-words text-[15px] font-bold leading-snug text-white">{r.player}</p>
-            <p className="mt-2 text-[26px] font-black leading-none tabular-nums text-[#79FF48]">{fmt(r.mean)} <span className="text-[14px] font-bold">{UNIT[r.market]}</span></p>
-            {r.model_target&&<p className="mt-1.5 text-[13px] font-bold tabular-nums text-gray-100">{r.model_target.milestone}+ · {pct(r.model_target.probability)}</p>}
-            <p className="mt-0.5 text-[11px] text-gray-400">{r.model_target?'Target and chance':'Projection'} · P(plays) {pct(r.p_active)}</p>
+            <p className="mt-2 text-[26px] font-black leading-none tabular-nums text-[#79FF48]">{whole} <span className="text-[14px] font-bold">{UNIT[r.market]}</span></p>
+            <p className={'mt-1.5 text-[13px] font-bold tabular-nums '+((prob??0)>=.65?'text-[#79FF48]':'text-gray-100')}>{pctOrDash(prob)} to reach {whole}+</p>
+            <p className="mt-0.5 text-[11px] text-gray-400">Model average {fmt(r.mean)} · P(plays) {pct(r.p_active)}</p>
           </div>)}
         </div>}
         {open&&<div className="p-3 border-t border-[#333] space-y-2">
-         {mode==='PICKS'?shown.map(r=><V3Card key={g.game_id+'|'+r.team_id+'|'+r.player_id+'|'+r.market} row={r}/>):
-          shown.map(r=><div key={g.game_id+'|'+r.team_id+'|'+r.player_id+'|'+r.market}
+         {mode==='PICKS'?shown.map(it=><V3Card key={g.game_id+'|'+it.row.team_id+'|'+it.row.player_id+'|'+it.row.market} item={it}/>):
+          shown.map(({row:r,whole,prob})=><div key={g.game_id+'|'+r.team_id+'|'+r.player_id+'|'+r.market}
              data-testid="nba-v3-stat-projection" className="rounded-lg border border-[#383838] p-3 space-y-1 text-xs">
             <strong>{r.player} · {NAME[r.market]}</strong>
-            <p>Mean {fmt(r.mean)} {UNIT[r.market]} · Median {fmt(r.median)}
+            <p>Projection {whole} {UNIT[r.market]} · {pctOrDash(prob)} to reach {whole}+ · Mean {fmt(r.mean)} · Median {fmt(r.median)}
              {' · '}P10–P90 {fmt(r.p10)}–{fmt(r.p90)}</p>
-            <p>P(plays) {pct(r.p_active)}
-              {r.model_target?' · Model target '+r.model_target.milestone+'+ · P(hit) '+
-               pct(r.model_target.probability)+' (unvalidated)':' · No 65%+ V3 milestone'}</p>
+            <p>P(plays) {pct(r.p_active)} · percentage not yet checked against real results</p>
             <p className="text-gray-400">{r.unc_reasons.join(', ')}</p>
           </div>)}
          {!shown.length&&<p className="text-xs text-amber-200">
-           This game's frozen V3 player outcomes have no model target passing the
-           participation and 65% simulation gates for this market. No forced selection.</p>}
+           This game has no projection that passes the participation check for this market.
+           Nothing is forced.</p>}
         </div>}
       </article>;
     })}
@@ -229,7 +266,7 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
    <p className="text-amber-200 font-bold">MODEL-ESTIMATED P(HIT) · NOT YET PROSPECTIVELY CALIBRATED OR A BOOKMAKER BET.</p>
    <p className="text-gray-400">This is V3, not recycled V2 projections. All original V2 predictions stay in the archive for paired grading.</p>
   {doc&&<div className="pb-2 text-xs text-gray-400">
-   {day==='AUTO'?'Next available: '+nextSlate+' · ':''}{all.length} matching V3 game forecasts · {mode==='PICKS'?number+' model research targets':
+   {day==='AUTO'?'Next available: '+nextSlate+' · ':''}{all.length} matching V3 game forecasts · {mode==='PICKS'?number+' model projections':
        all.reduce((n,g)=>n+g.rows.length,0)+' numerical projections'}
    {' · '}{doc.original_games_audited} original games audited
   </div>}
