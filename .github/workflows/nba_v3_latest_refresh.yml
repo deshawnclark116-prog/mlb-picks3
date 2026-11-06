@@ -10,6 +10,10 @@ name: NBA V3 latest run (re-simulate with current injuries)
 on:
   schedule:
     - cron: "*/20 * * * *"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/nba_v3_latest_refresh.yml"
   workflow_dispatch:
     inputs:
       force:
@@ -178,9 +182,12 @@ jobs:
                       original=json.load(f)["games"][0]
                   created=dt.datetime.fromisoformat(original["forecast_at_utc"].replace("Z","+00:00"))
                   tip=dt.datetime.fromisoformat(original["tipoff_utc"].replace("Z","+00:00"))
-                  return 0<=(now-created).total_seconds()<=30*60 and tip-now>=15*60
+                  return 0 <= (now-created).total_seconds() <= 30*60 and (tip-now).total_seconds() >= 15*60
               except (OSError,KeyError,ValueError):
                   return False
+          # A previous deployment failed at this exact clock comparison.
+          # Keep the check visible so it cannot silently block publication.
+          assert isinstance((now-dt.datetime.now(dt.timezone.utc)).total_seconds(),float)
           candidates=[str(g["game_id"]) for g in games if eligible(g)]
           # Keep the experimental V3 slate to exactly new, strictly paired
           # champion first-seen games; never backfill unrelated older games.
