@@ -34,7 +34,9 @@ class ReboundZonesTests(unittest.TestCase):
 
     def test_unpaired_and_delayed_rebounds_are_excluded(self):
         p=pbp(4)
-        p["events"][1][1]=589  # eleven seconds later, beyond the ten-second cap
+        # Preserve monotone regulation clocks while testing an 11-second delay.
+        for k,left in enumerate((600,589,588,587,586,585,584,583)):
+            p["events"][k][1]=left
         p["events"][3][4]=""   # unnamed team rebound
         r=ReboundZoneState()
         self.assertEqual(r.add_valid_game(p),2)
