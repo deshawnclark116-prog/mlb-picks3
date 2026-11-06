@@ -33,6 +33,11 @@ def verified_shot_teams(pb):
             fixed.append(e)
             continue
         per,left,kind,tid,pid,prior=e[:6]
+        if int(per)>4 or int(per)<1:
+            # Strict integrity validation covers regulation only; do not
+            # infer overtime floor assignments or alter those raw events.
+            fixed.append(e)
+            continue
         tid=str(tid)
         pid=str(pid or "")
         prior=str(prior or "")
