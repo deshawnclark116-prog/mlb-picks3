@@ -59,16 +59,20 @@ confound the on/off rates.
 GitHub Actions: `nba_v5_lineup_pairs.yml` on PR #82,
 70 selected games after March 1, 2026, 68 scored, 1,391 player-games.
 The unchanged V5/V4 champion and candidate used identical historical-game
-rosters, seeds and simulation budgets. Brier scores used the CHAMPION'S OWN
+rosters, seeds and simulation budgets. A second regression uncovered that
+an unordered Python player set could reassign seeded draws across processes.
+V5's team-input roster is now **sorted**, and CI confirms that separate
+PYTHONHASHSEED=1 and PYTHONHASHSEED=87 replays produce byte-identical reports.
+The table below uses the new **deterministic** replay, not earlier provisional runs. Brier scores used the CHAMPION'S OWN
 rounded number to prevent easier substituted thresholds.
 
 | Metric | n | Champion error | Pair candidate | Mean error reduction | 95% game-cluster interval |
 |---|---:|---:|---:|---:|---|
-| Points Brier (V4/V5 blend) | 1,186 | 0.249870 | 0.248278 | +0.001592 | [+0.000407, +0.002780] |
-| Rebounds Brier (blend) | 1,102 | 0.248991 | 0.249009 | -0.000018 | [-0.001140, +0.001074] |
-| Assists Brier (blend) | 962 | 0.241882 | 0.242010 | -0.000128 | [-0.001101, +0.000828] |
-| Threes Brier (blend) | 1,068 | 0.237104 | 0.236809 | +0.000295 | [-0.000551, +0.001050] |
-| Minutes MAE | 1,391 | 5.390999 | 5.375132 | +0.015868 | [-0.003224, +0.035779] |
+| Points Brier (V4/V5 blend) | 1,184 | 0.250121 | 0.248576 | +0.001545 | [+0.000720, +0.002410] |
+| Rebounds Brier (blend) | 1,101 | 0.249169 | 0.249242 | -0.000073 | [-0.001087, +0.001033] |
+| Assists Brier (blend) | 956 | 0.244298 | 0.244429 | -0.000132 | [-0.001077, +0.000832] |
+| Threes Brier (blend) | 1,073 | 0.236113 | 0.235457 | +0.000656 | [-0.000102, +0.001447] |
+| Minutes MAE | 1,391 | 5.406065 | 5.426487 | -0.020423 | [-0.041578, +0.002307] |
 
 Points Brier shows a promising exploratory signal; other main stats are
 inconclusive. No independently untouched future period has confirmed it and
