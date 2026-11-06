@@ -103,7 +103,7 @@ def known_players(history_paths):
     return ids
 
 
-def build_receipts(v3, known, ledger_path: Path, now=None):
+def build_receipts(v3, known, ledger_path: Path, now=None, official_matches=None):
     now = now or dt.datetime.now(dt.timezone.utc)
     league, league_ts = league_feed()
     seen_keys = set()
@@ -128,7 +128,8 @@ def build_receipts(v3, known, ledger_path: Path, now=None):
         teams = {g["home_id"], g["away_id"]}
         lg = {k: v for k, v in league.items() if k[0] in teams}
         keys = set(lg) | set(gf)
-        checks = {"stale": [], "conflict": [], "only_in_one_feed": [], "duplicate_identity": [], "unknown_player": [], "feed_error": err}
+        checks = {"stale": [], "conflict": [], "only_in_one_feed": [], "duplicate_identity": [], "unknown_player": [], "feed_error": err,
+                  "official_conflict": [], "official_invalid_or_stale": []}
         entries = []
         for k in sorted(keys):
             a, b = lg.get(k), gf.get(k)
@@ -153,6 +154,42 @@ def build_receipts(v3, known, ledger_path: Path, now=None):
                     new_events.append({"key": key, "game_id": g["game_id"], "player_id": k[1], "source": src, "status": rec["status"],
                                        "published_at": rec["published"], "first_seen_by_us": now.isoformat(), "body_part": rec.get("type"),
                                        "location": rec.get("location"), "detail": rec.get("detail"), "return_date": rec.get("return_date")})
+        # Official NBA reports are game-specific, stamped PDFs published by
+        # the league, independent of ESPN. Never infer AVAILABLE from absence.
+        # The matching stage accepted only exact matchup/team/player identity.
+        roster = {(str(r["team_id"]),str(r["player_id"])) for r in g["rows"]}
+        used_official = set()
+        for o in (official_matches or {}).get(str(g["game_id"]), []):
+            tid,pid=str(o.get("team_id")),str(o.get("player_id"))
+            pub=parse_time(o.get("published_at_utc"))
+            status=o.get("status")
+            if ((tid,pid) not in roster or status not in ("OUT","DOUBTFUL","QUESTIONABLE","PROBABLE","AVAILABLE")
+                or pub is None or pub>now or now-pub>dt.timedelta(hours=36)
+                or o.get("source")!="official_nba_injury_report"):
+                checks["official_invalid_or_stale"].append({"player_id":pid,"reason":"INVALID_OR_STALE"})
+                continue
+            if (tid,pid) in used_official:
+                checks["official_invalid_or_stale"].append({"player_id":pid,"reason":"DUPLICATE"})
+                continue
+            used_official.add((tid,pid))
+            for src, old in (("league_feed",lg.get((tid,pid))),("game_feed",gf.get((tid,pid)))):
+                if old and old["status"]!=status and not (status=="AVAILABLE" and old["status"]=="PROBABLE"):
+                    checks["official_conflict"].append({
+                       "player_id":pid,"source":src,"reported":old["status"],"official":status})
+            key=hashlib.sha256(
+                f"{g['game_id']}|{pid}|official_nba_injury_report|{status}|{o['published_at_utc']}".encode()
+            ).hexdigest()[:24]
+            official_entry={"player_id":pid,"team_id":tid,"player":o["player"],
+                "source":"official_nba_injury_report","status":status,
+                "published_at":o["published_at_utc"],"first_seen_by_us":None,"key":key,
+                "detail":o.get("reason"),"reason":o.get("reason"),"report_url":o.get("report_url")}
+            entries.append(official_entry)
+            if key not in seen_keys:
+                seen_keys.add(key)
+                new_events.append({"key":key,"game_id":g["game_id"],"player_id":pid,
+                   "source":"official_nba_injury_report","status":status,
+                   "published_at":o["published_at_utc"],"first_seen_by_us":now.isoformat(),
+                   "detail":o.get("reason"),"report_url":o.get("report_url")})
         names = {}
         for r in g["rows"]:
             names.setdefault(r["player"], set()).add(r["player_id"])
@@ -161,7 +198,8 @@ def build_receipts(v3, known, ledger_path: Path, now=None):
         checks["duplicate_identity"] = [{"player": n, "ids": sorted(ids)} for n, ids in names.items() if len(ids) > 1]
         checks["unknown_player"] = list({x["player_id"]: x for x in checks["unknown_player"]}.values())
         receipts[g["game_id"]] = {"retrieved_at": now.isoformat(), "league_feed_built_at": league_ts,
-                                  "sources": ["espn_league_injuries", "espn_game_summary_injuries"], "reports": entries,
+                                  "sources": ["espn_league_injuries", "espn_game_summary_injuries"] + (["official_nba_injury_report"] if used_official else []),
+                                  "official_matched_player_count":len(used_official), "reports": entries,
                                   "checks": {k: v for k, v in checks.items()},
                                   "clean": not (checks["conflict"] or checks["duplicate_identity"] or checks["feed_error"])}
     return receipts, new_events
@@ -173,9 +211,11 @@ def main() -> int:
     ap.add_argument("--history", action="append", required=True)
     ap.add_argument("--ledger", required=True)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--official-matches", default="", help="Optional league PDF source matched to V3 game/team/player IDs")
     a = ap.parse_args()
     v3 = json.loads(Path(a.v3).read_text())
-    receipts, events = build_receipts(v3, known_players(a.history), Path(a.ledger))
+    matches=json.loads(Path(a.official_matches).read_text()) if a.official_matches and Path(a.official_matches).exists() else {}
+    receipts, events = build_receipts(v3, known_players(a.history), Path(a.ledger), official_matches=matches)
     Path(a.out).write_text(json.dumps(receipts, separators=(",", ":")))
     if events:
         Path(a.ledger).parent.mkdir(parents=True, exist_ok=True)

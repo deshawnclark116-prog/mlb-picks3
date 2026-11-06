@@ -1,0 +1,53 @@
+name: NBA V5 official injury source, player matching and no-lookahead
+on:
+  pull_request:
+    paths:
+      - "nba/nba_v5_official_injuries.py"
+      - "nba/nba_v5_info.py"
+      - "nba/nba_v5_forecast.py"
+      - "tests/test_nba_v5_official_injuries.py"
+      - ".github/workflows/nba_v3_latest_refresh.yml"
+      - ".github/workflows/nba_v5_official_source.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  injury-source-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Dependencies for geometric PDF extraction and existing V5
+        run: python -m pip install -q "pdfplumber>=0.11,<0.13" "numpy>=2.1,<2.5" "scipy>=1.14,<1.18"
+      - name: NBA V5 original simulation and new official injury source tests
+        run: python -m unittest discover -s tests -p "test_nba_v5*.py" -v
+      - name: Test latest officially published league injury PDF
+        run: |
+          python -u -m nba.nba_v5_official_injuries \
+            --v3 docs/nba_v3_latest/latest.json \
+            --out /tmp/nba_official_report.json \
+            --matches-out /tmp/nba_official_matches.json
+          python - <<'PY'
+          import json
+          d=json.load(open('/tmp/nba_official_report.json'))
+          m=json.load(open('/tmp/nba_official_matches.json'))
+          assert d['source_kind']=='NBA_OFFICIAL_PDF_PREGAME_STATUS'
+          assert d['rows'] >= 20, d
+          assert len({r['team_abbr'] for r in d['reports']})>=5, d
+          assert not d['game_active_roster_certified']
+          assert d['absence_from_report_does_not_mean_healthy']
+          print('NBA_OFFICIAL_REPORT_QUALITY',d['rows'],
+                'teams',len({r['team_abbr'] for r in d['reports']}),
+                'matched_players',sum(len(v) for v in m.values()),
+                'malformed',d['unparsed_name_rows'])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-official-injury-source-evidence
+          path: |
+            /tmp/nba_official_report.json
+            /tmp/nba_official_matches.json
+          retention-days: 7
