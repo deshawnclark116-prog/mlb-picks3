@@ -31,6 +31,7 @@ from nba import nba_v5_learn as learnm
 from nba.nba_v5_rank import MARKET_ORDER, MEANINGFUL_MIN, rank_for_screen, reach_prob, whole
 from nba.nba_v5_role_change import detect_role_change
 from nba.nba_v5_archetypes import player_archetype
+from nba.nba_v5_external_source import read_source
 from nba.nba_v5_uncertainty import forecast_uncertainty, reach_with_dnp
 from nba.nba_v5_sim import League, league_from, simulate_game, MARKETS
 
@@ -191,6 +192,7 @@ def main() -> int:
     ap.add_argument("--grades", default="", help="docs/nba_v5_grades/summary.json: learned chance of playing by reported status")
     ap.add_argument("--features", default="", help="docs/nba_v5_latest/features.json: which simulation pieces are switched on (only those that tested as helpful)")
     ap.add_argument("--v4", default="", help="V4 forecast file for the same games; averaged with the V5 simulation for points, rebounds, assists, threes")
+    ap.add_argument("--licensed-data", action="append", default=[], help="Optional authorized tracking/play-type historical JSON; diagnostic only until paired validation")
     ap.add_argument("--archive", default="", help="directory for frozen forecasts: first/<game>.json.gz (never rewritten) and last/<game>.json.gz (replaced until 15 min before tip, kept only within 4 hours of tip)")
     a = ap.parse_args()
     games = v4.load(a.games)
@@ -216,6 +218,18 @@ def main() -> int:
     v4doc = json.loads(Path(a.v4).read_text()) if a.v4 and Path(a.v4).exists() else None
     v4rows = {(g["game_id"], r["player_id"], r["market"]): r for g in (v4doc or {"games": []})["games"] for r in g["rows"] if r.get("cdf_lattice")}
     now = dt.datetime.now(dt.timezone.utc)
+    current_roster={(str(r["team_id"]),str(r["player_id"]))
+                    for g in v3.get("games",[]) for r in g.get("rows",[])}
+    licensed_profiles=[]
+    source_audits=[]
+    data_schemas=set()
+    for path in a.licensed_data:
+        vals,quality=read_source(path,now,current_roster)
+        if quality["dataset_schema"] in data_schemas:
+            raise ValueError("NBA_V5_DUPLICATE_LICENSED_DATASET")
+        data_schemas.add(quality["dataset_schema"])
+        licensed_profiles.append((quality["dataset_schema"],vals))
+        source_audits.append(quality)
     out_games, skipped = [], []
     for g3 in v3["games"]:
         tip = dt.datetime.fromisoformat(g3["tipoff_utc"])
@@ -320,6 +334,12 @@ def main() -> int:
                                "fga_mean": round(float(sd["fga"][played, j].mean()), 2), "fta_mean": round(float(sd["fta"][played, j].mean()), 2),
                                "depends_on": sens.get((pid, m), [])[:3],
                                "archetype": archetypes[pid],
+                               "authorized_data_field_coverage": {
+                                   schema:{"fields_present":len(values[(str(ti.team_id),str(pid))]["features"]),
+                                           "sample_games":values[(str(ti.team_id),str(pid))]["sample_games"]}
+                                   for schema,values in licensed_profiles
+                                   if (str(ti.team_id),str(pid)) in values},
+                               "external_tracking_model_effect":"SOURCE_QA_ONLY_NOT_PROMOTED",
                                "role_change": {"status": role_audit[pid]["status"],
                                                "candidate_metrics": role_audit[pid].get("candidate_metrics", []),
                                                "shadow_only": True},
@@ -374,6 +394,8 @@ def main() -> int:
     doc.update({"games": out_games, "games_forecast": len(out_games), "skipped": skipped, "model_version": VERSION,
                 "generated_at_utc": now.isoformat(), "model_promoted": False, "v5_training_games": len(games),
                 "v5_history_through": games[-1]["date"], "v3_source_sha256": sha(Path(a.v3)),
+                "authorized_source_quality": source_audits,
+                "authorized_source_model_effect":"DIAGNOSTIC_ONLY_NOT_PROMOTED",
                 "note": "NBA V5: equal-weight blend of the whole-game possession simulation and the V4 model for points, rebounds, assists and threes; "
                         "the simulation alone for steals, blocks and turnovers. Conditional on playing; availability layer is V3's. "
                         "Research only, not validated for 2026-27, no sportsbook input."})
