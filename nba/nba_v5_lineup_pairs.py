@@ -123,7 +123,18 @@ def replay_game(pb: dict) -> dict:
             bad = "MALFORMED_EVENT"
             break
     if bad is not None or valid_player_events < 100 or n_subs < 2:
+        detail = {
+            "period": locals().get("period"),
+            "left_seconds": locals().get("left"),
+            "event_kind": locals().get("kind"),
+            "team": locals().get("tid"),
+            "acting_player": locals().get("a"),
+            "second_player": locals().get("b"),
+            "court_home": list(on[teamids[0]]),
+            "court_away": list(on[teamids[1]]),
+        }
         return {"valid": False, "reason": bad or "LOW_EVENT_OR_SUB_COVERAGE",
+                "first_failure": detail,
                 "player": {}, "pair": {},
                 "named_events_seen": valid_player_events, "substitutions": n_subs}
     accrue(GAME_SECONDS)
@@ -146,10 +157,12 @@ class LineupPairState:
         self.accepted_games = 0
         self.rejected_games = defaultdict(int)
         self.games_by_team = defaultdict(int)
+        self.last_rejection = None
 
     def add_game(self, pb: dict) -> bool:
         r = replay_game(pb)
         if not r["valid"]:
+            self.last_rejection = r.get("first_failure")
             self.rejected_games[r["reason"]] += 1
             return False
         for k, vals in r["player"].items():
