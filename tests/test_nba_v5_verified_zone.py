@@ -36,7 +36,7 @@ class VerifiedZoneSourceTests(unittest.TestCase):
         shooter,raw=game_zone_tallies(pb)
         corrected,diag=verified_defence_zone_tallies(pb)
         self.assertEqual(diag["shot_event_team_corrections"],audit["shot_event_team_corrections"])
-        self.assertAlmostEqual(float(raw["1"][0].sum()),0)
+        self.assertAlmostEqual(float(raw["2"][0].sum()),0)
         self.assertGreater(float(corrected["1"][0].sum()),0)
         self.assertGreater(float(corrected["2"][0].sum()),0)
         repaired_shooter,_=game_zone_tallies(fixed)
