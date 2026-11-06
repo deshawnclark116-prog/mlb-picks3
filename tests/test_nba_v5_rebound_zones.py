@@ -51,7 +51,9 @@ class ReboundZonesTests(unittest.TestCase):
 
     def test_bounded_location_effects_need_real_player_and_team_events(self):
         r=ReboundZoneState()
-        r.add_valid_game(pbp(80))
+        # Research gate needs at least 100 real team-side observations; 80
+        # should be neutral by design, while 120 can infer bounded effects.
+        r.add_valid_game(pbp(120))
         effect,audit=r.for_roster("2",["v","w","x"])
         self.assertGreater(effect["dreb"][0,0],0)
         self.assertGreater(effect["dreb"][1,4],0)
