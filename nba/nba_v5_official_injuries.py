@@ -267,8 +267,22 @@ def main():
     ap.add_argument("--out",required=True)
     ap.add_argument("--v3",default="")
     ap.add_argument("--matches-out",default="")
+    ap.add_argument("--captured",default="",help="Reuse identical source observation captured earlier in this job")
     args=ap.parse_args()
-    snapshot=fetch_snapshot()
+    now=dt.datetime.now(dt.timezone.utc)
+    snapshot=json.loads(Path(args.captured).read_text()) if args.captured else fetch_snapshot(now)
+    if (snapshot.get("schema")!="NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1"
+        or snapshot.get("source_kind")!="NBA_OFFICIAL_PDF_PREGAME_STATUS"
+        or not snapshot.get("absence_from_report_does_not_mean_healthy")
+        or snapshot.get("game_active_roster_certified") is not False
+        or not isinstance(snapshot.get("reports"),list)
+        or len(snapshot["reports"])<5
+        or len(str(snapshot.get("source_sha256","")))!=64):
+        raise ValueError("NBA_OFFICIAL_CAPTURED_SNAPSHOT_INVALID")
+    published=dt.datetime.fromisoformat(snapshot["published_at_utc"].replace("Z","+00:00"))
+    captured=dt.datetime.fromisoformat(snapshot["captured_at_utc"].replace("Z","+00:00"))
+    if not (published<=captured<=now and now-published<=dt.timedelta(hours=36)):
+        raise ValueError("NBA_OFFICIAL_CAPTURED_SNAPSHOT_FUTURE_OR_STALE")
     Path(args.out).parent.mkdir(parents=True,exist_ok=True)
     Path(args.out).write_text(json.dumps(snapshot,indent=2)+"\n")
     if args.v3:
