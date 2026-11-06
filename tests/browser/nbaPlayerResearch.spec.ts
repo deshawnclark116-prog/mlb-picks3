@@ -49,7 +49,8 @@ test('NBA V2 selector preserves day filters and never hides source-incomplete pl
   await page.getByRole('button',{name:'10-21'}).click();
   await expect(root.getByTestId('nba-player-matchup')).toHaveCount(11);
   await page.getByRole('button',{name:'All games'}).click();
-  const input=page.getByRole('textbox',{name:'Find NBA team'});
+  await page.getByRole('button',{name:'Search',exact:true}).click();
+  const input=page.getByRole('textbox',{name:'Find NBA team or player'});
   await input.fill('Jayson Tatum');
   await expect(root.getByTestId('nba-player-matchup')).toHaveCount(1);
   await root.getByTestId('nba-player-matchup').first().locator('summary').click();
