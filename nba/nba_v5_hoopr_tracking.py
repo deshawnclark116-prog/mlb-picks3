@@ -139,6 +139,14 @@ def normalize_tables(tables, roster, captured, season_start):
             # TOT and franchise mismatch are never reassigned.
             if key not in roster:
                 continue
+            # Reject preseason, playoffs, or other leagues. Only the
+            # completed NBA regular season is an eligible player prior.
+            season_type=str(row.get("season_type") or "Regular Season").lower().replace(" ","")
+            if season_type not in ("regularseason","2"):
+                continue
+            league_id=str(row.get("league_id") or "00").strip()
+            if league_id not in ("00","0","0.0"):
+                continue
             if key in family_seen:
                 raise ValueError("NBA_V5_HOOPR_AMBIGUOUS_PLAYER_TEAM:"+str(key))
             family_seen.add(key)
