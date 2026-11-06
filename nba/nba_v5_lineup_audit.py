@@ -46,6 +46,8 @@ def main():
         "accepted":st.accepted_games,
         "rejected": dict(st.rejected_games),
         "accepted_fraction":round(st.accepted_games/max(attempted,1),4),
+        "event_team_label_corrections":st.corrected_events,
+        "correction_scope":"Named player matched exactly one verified on-court lineup",
         "teams_accepted":len(st.games_by_team),
         "valid_on_court_pair_ledger_entries":len(st.pairs),
         "caveat":"Only ESPN's observed substitutions; do not infer unseen quarter-start rotations.",
