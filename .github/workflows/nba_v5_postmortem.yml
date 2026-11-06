@@ -34,12 +34,33 @@ jobs:
         run: |
           PYTHONPATH=. python -u -m nba.nba_v5_grade_health \
             --archive docs/nba_v5_archive --grades docs/nba_v5_grades
+      - name: Grade original frozen lineup challenger without changing public champion
+        run: |
+          set -euo pipefail
+          if [ -d docs/nba_v5_lineup_archive/first ]; then
+            PYTHONPATH=. python -u -m nba.nba_v5_postmortem \
+              --archive docs/nba_v5_lineup_archive \
+              --grades docs/nba_v5_lineup_grades \
+              --ledger docs/nba_v5_info/ledger.jsonl
+          else
+            echo "No forward lineup challenger archived yet; original V5 grading unaffected"
+          fi
+      - name: Compare actual first-seen original player/stat forecasts against lineup challenger
+        run: |
+          set -euo pipefail
+          if [ -d docs/nba_v5_lineup_archive/first ]; then
+            PYTHONPATH=. python -u -m nba.nba_v5_forward_compare \
+              --champion-archive docs/nba_v5_archive \
+              --challenger-archive docs/nba_v5_lineup_archive \
+              --grades docs/nba_v5_grades \
+              --out docs/nba_v5_forward/lineup_challenger_latest.json
+          fi
       - name: Publish grades
         run: |
           set -euo pipefail
           git config user.name "nba-v5-postmortem[bot]"
           git config user.email "nba-v5-postmortem[bot]@users.noreply.github.com"
-          git add -A docs/nba_v5_grades || true
+          git add -A docs/nba_v5_grades docs/nba_v5_lineup_grades docs/nba_v5_forward || true
           git diff --cached --quiet && { echo "nothing new"; exit 0; }
           git commit -m "NBA V5 grades $(date -u +%Y-%m-%dT%H:%MZ) [skip ci]"
           for i in 1 2 3; do git pull --rebase --autostash origin main && git push origin HEAD:main && exit 0; sleep 5; done
