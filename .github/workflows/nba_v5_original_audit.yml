@@ -4,7 +4,7 @@ on:
     paths:
       - "nba/nba_v5_original_audit.py"
       - "tests/test_nba_v5_original_audit.py"
-      - ".github/workflows/nba_v5_postmortem.yml"
+      - ".github/workflows/nba_v5_original_audit_publish.yml"
       - ".github/workflows/nba_v5_original_audit.yml"
   workflow_dispatch: {}
 permissions:
