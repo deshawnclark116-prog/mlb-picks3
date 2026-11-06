@@ -78,3 +78,24 @@ test('an unknown model version is still rejected',()=>{
  const g:any=game('2026-11-04T21:30:00Z',9);g.rows.forEach((r:any)=>{r.model_version='something-else';});
  assert.equal(mergeLatestRun(base(),header([g],'2026-11-04T21:30:05Z'),NOW,'V4_LATEST').games[0].rows[0].mean,5);
 });
+
+test('a V5 simulation run layers on top of V4, carries the new stats, and still points at the first forecast',()=>{
+ const V5='nba-v5-possession-simulation-20261106';
+ const g4:any=game('2026-11-04T21:30:00Z',9);g4.rows.forEach((r:any)=>{r.model_version='nba-v4-minutes-rate-teammates-out-20261106';});
+ const doc4:any=header([g4],'2026-11-04T21:30:05Z');doc4.model_version='nba-v4-minutes-rate-teammates-out-20261106';
+ const v4=mergeLatestRun(base(),doc4,NOW,'V4_LATEST');
+ const g5:any=game('2026-11-04T21:40:00Z',11);
+ g5.rows.forEach((r:any)=>{r.model_version=V5;r.mean_basis='CONDITIONAL_ON_PLAYING';});
+ g5.rows[0].market='steals';g5.rows[1].market='blocks';g5.rows[2].market='turnovers';
+ g5.rows.forEach((r:any)=>{r.p_start=.9;r.depends_on=[{if_out:'7',if_out_name:'Star Player',projection_if_out:3,change:1}];});
+ const doc5:any=header([g5],'2026-11-04T21:40:05Z');doc5.model_version=V5;
+ const out=mergeLatestRun(v4,doc5,NOW,'V5_LATEST');
+ assert.equal(out.latest_run.applied,1);
+ assert.equal(out.games[0].forecast_kind,'V5_LATEST');
+ assert.deepEqual(out.games[0].rows.map((r:any)=>r.market).slice(0,3),['steals','blocks','turnovers']);
+ assert.equal(out.games[0].first_seen_forecast_at_utc,'2026-11-01T01:06:14Z');
+});
+test('an unknown stat name is still rejected',()=>{
+ const g:any=game('2026-11-04T21:30:00Z',9);g.rows[0].market='free_throws';
+ assert.equal(mergeLatestRun(base(),header([g],'2026-11-04T21:30:05Z'),NOW).games[0].rows[0].mean,5);
+});

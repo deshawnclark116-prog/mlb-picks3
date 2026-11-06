@@ -9,6 +9,11 @@ import {validateShadowHeader,validateShadowGame} from './nbaV3Shadow.ts';
 // Read from the app's own checkout (like the original V3 files): this repo is private, so a web fetch of a raw file would 404.
 export const LATEST_FILE=path.resolve(process.cwd(),'docs','nba_v3_latest','latest.json');
 export const V4_LATEST_FILE=path.resolve(process.cwd(),'docs','nba_v4_latest','latest.json');
+export const V5_LATEST_FILE=path.resolve(process.cwd(),'docs','nba_v5_latest','latest.json');
+export const V5_SWITCH_FILE=path.resolve(process.cwd(),'docs','nba_v5_latest','screen.json');
+export function v5OnScreen(file=V5_SWITCH_FILE){
+ try{return existsSync(file)&&JSON.parse(readFileSync(file,'utf8'))?.show===true;}catch{return false;}
+}
 export const LATEST_MAX_AGE_MS=10*3600_000;
 const MIN_PREGAME_MS=15*60_000;
 
@@ -42,9 +47,11 @@ export function overlayLatestRun(result:any,file=LATEST_FILE,now=Date.now(),kind
  }catch{return {...result,latest_run:{applied:0,reason:'LATEST_FILE_UNREADABLE'}};}
 }
 
-/** V3 latest run first, then the V4 shadow run on top of it for any game where V4 is newer and passes the same checks. */
+/** V3 latest run first, then V4, then the V5 simulation on top for any game where it is newer and passes the same checks. */
 export function overlayNewestRuns(result:any,now=Date.now()){
  const v3=overlayLatestRun(result,LATEST_FILE,now,'LATEST_RUN');
  const v4=overlayLatestRun(v3,V4_LATEST_FILE,now,'V4_LATEST');
- return {...v4,latest_run:v3.latest_run,v4_latest_run:v4.latest_run};
+ // V5 is published as a shadow; it reaches the screen only when docs/nba_v5_latest/screen.json says {"show":true}.
+ const v5=v5OnScreen()?overlayLatestRun(v4,V5_LATEST_FILE,now,'V5_LATEST'):{...v4,latest_run:{applied:0,reason:'V5_NOT_ON_SCREEN'}};
+ return {...v5,latest_run:v3.latest_run,v4_latest_run:v4.latest_run,v5_latest_run:v5.latest_run};
 }

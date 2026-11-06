@@ -13,7 +13,7 @@ const sha=(s:unknown)=>typeof s==='string'&&/^[0-9a-f]{64}$/.test(s);
 type ShadowRow={
  game_id:string;team_id:string;player_id:string;player:string;
  model_version:string;
- market:'points'|'rebounds'|'assists'|'three_pointers_made';
+ market:'points'|'rebounds'|'assists'|'three_pointers_made'|'steals'|'blocks'|'turnovers';
  mean:number;median:number;p10:number;p25:number;p75:number;p90:number;
  p_active:number;role_share:number;exp_opp:number;sd:number;
  model_target:{milestone:number;probability:number;method:string}|null;
@@ -29,8 +29,8 @@ type ShadowGame={
  team_opportunity_diagnostics:Record<string,unknown>;
 };
 const finite=(x:unknown)=>typeof x==='number'&&Number.isFinite(x);
-/** V3 or the V4 shadow (same file format, same checks). */
-const okVersion=(v:unknown)=>v===VERSION||(typeof v==='string'&&/^nba-v4-[a-z0-9-]+$/.test(v));
+/** V3, or the V4 / V5 shadow (same file format, same checks). */
+const okVersion=(v:unknown)=>v===VERSION||(typeof v==='string'&&/^nba-v[45]-[a-z0-9-]+$/.test(v));
 export function validateShadowHeader(d:any){
   if(d.schema!=='NBA_V3_2026_27_FIRSTSEEN_FULL_DISTRIBUTION_SHADOW_V1'||
      !okVersion(d.model_version)||
@@ -59,7 +59,7 @@ export function validateShadowGame(g:ShadowGame,seen:Set<string>){
       const key=r.team_id+'|'+r.player_id+'|'+r.market;
       if(ids.has(key)||r.game_id!==g.game_id||
          !okVersion(r.model_version)||
-         !['points','rebounds','assists','three_pointers_made'].includes(r.market)||
+         !['points','rebounds','assists','three_pointers_made','steals','blocks','turnovers'].includes(r.market)||
          r.calibrated_for_2026_27!==false||r.research_only!==true||
          r.not_an_official_bet!==true||
          !finite(r.mean)||!finite(r.median)||!finite(r.p_active)||
