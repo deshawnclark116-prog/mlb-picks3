@@ -14,7 +14,10 @@ async function launch(page:any, playerDoc:unknown=players){
   await page.setViewportSize({width:360,height:760});
   await page.goto('/');
   await page.locator('#tab-btn-nba').click();
-  await page.getByRole('button',{name:'V2 player stats'}).click();
+  // Historical V2 player research now lives behind the explicit archive,
+  // while the current NBA projection system remains the default view.
+  await page.getByText('OPENING-WEEK ORIGINAL RESEARCH ARCHIVE · NOT THE BETTING BOARD').click();
+  await page.getByRole('button',{name:'All opening player stats'}).click();
 }
 
 test('real forward-saved 225 NBA players and 900 stats render without invented bookmaker side',async({page})=>{
