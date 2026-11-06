@@ -114,3 +114,8 @@ Full source-integrity and paired results: [LINEUP_PAIR_RESEARCH.md](LINEUP_PAIR_
 - Fixed-target, clustered 68-game retrospective testing (1,391 player-games) showed a **0.001545 point-Brier reduction**, 95% interval [+0.000720,+0.002410]. Rebounds and assists did not improve; threes were inconclusive.
 - A second test identified a deterministic-replay bug in unordered player-roster set iteration; this was fixed by stable sorting and verified across distinct Python hash seeds before freezing the above results.
 - **No promotion**: this is an exploratory reused retrospective sample, not independent prospective proof. No sportsbook inputs. Production `lineup_pairs=false`.
+
+
+## November 6: shot-execution-style hypothesis failed, OFF
+
+The player/zone shot-family experiment from 240,495 parsed ESPN shot events did not yield a significant improvement in points, assists, rebounds or threes. On 68 identical held-out historical games and 1,391 player-games, points Brier improvement was +0.000595 (95% game-cluster interval [-0.000158,+0.001361]), but blocks Brier worsened by 0.003782 (interval of error improvement [-0.006866,-0.001090]). This branch was **not promoted and must not be rescue-tuned** on this reused sample. See [SHOT_STYLE_RESEARCH.md](SHOT_STYLE_RESEARCH.md).
