@@ -16,6 +16,8 @@ test('real saved Oct 19 NBA V1 forecasts render on 360px app without a bookmaker
   await launch(page);
   await page.locator('#tab-btn-nba').click();
   await expect(page.getByTestId('nba-research-screen')).toBeVisible();
+  await page.getByText('OPENING-WEEK ORIGINAL RESEARCH ARCHIVE · NOT THE BETTING BOARD').click();
+  await page.getByRole('button',{name:'Original team forecasts'}).click();
   await expect(page.getByText('14 matching historical pregame forecasts')).toBeVisible();
   const games=page.getByTestId('nba-research-screen').locator('article');
   await expect(games).toHaveCount(14);
@@ -37,6 +39,8 @@ test('real saved Oct 19 NBA V1 forecasts render on 360px app without a bookmaker
 test('forged NBA official bet fields fail closed on the public tab',async ({page})=>{
   await launch(page,{...saved,official_wagers:1});
   await page.locator('#tab-btn-nba').click();
-  await expect(page.getByRole('alert')).toContainText('NBA data unavailable');
+  await page.getByText('OPENING-WEEK ORIGINAL RESEARCH ARCHIVE · NOT THE BETTING BOARD').click();
+  await page.getByRole('button',{name:'Original team forecasts'}).click();
+  await expect(page.getByRole('alert')).toContainText('Archived original NBA research unavailable');
   await expect(page.getByTestId('nba-research-screen').locator('article')).toHaveCount(0);
 });
