@@ -16,6 +16,6 @@
     "defenders": "same test: better assist probabilities (clear), no clear harm elsewhere",
     "timing": "same test: no clear effect on any stat, so it stays off",
     "lineup_pairs": "OFF: 94.97% valid historical PBP lineups and reproducible seeded replay. Exploratory 68-game paired test reduced points Brier by 0.001545, 95% game-cluster CI [0.000720, 0.002410], but no untouched prospective confirmation; other stats inconclusive. Do not promote.",
-    "shot_style": "OFF: newly implemented ESPN shot-execution-style mixture; shot-style is not Synergy play type. Needs paired historical test and later untouched prospective validation."
+    "shot_style": "OFF — 240,495 ESPN shot events/638 players parsed, paired 68-game trial failed: no significant core-stat benefit; blocks Brier worsened by 0.003782 (95% game-cluster interval -0.006866 to -0.001090). Frozen failed branch, no rescue tuning."
   }
 }
