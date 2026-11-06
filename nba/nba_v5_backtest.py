@@ -27,6 +27,7 @@ from nba import nba_v5_learn as learnm
 from nba.nba_v5_lineup_pairs import LineupPairState
 from nba.nba_v5_shot_style import ShotStyleState
 from nba.nba_v5_game_flow import GameFlowState
+from nba.nba_v5_cold_start import LowHistoryRotations
 from nba.nba_v5_sim import (rho_for_relative_stint, SEG, League, RotationTables, TeamInput, build_profile, league_from, presence_from_events,
                             simulate_game, MARKETS)
 
@@ -76,6 +77,7 @@ class Replay:
         self.lineup_pairs = LineupPairState()                # strict valid play-by-play, earlier dates only
         self.shot_style = ShotStyleState()                    # observed ESPN shot descriptions, earlier dates only
         self.flow = GameFlowState()                           # previous ESPN PBP possession proxy cadence only
+        self.cold_start = LowHistoryRotations()               # past-only starter/bench shape priors
 
     def add(self, g, pb):
         d = v4.day_of(g)
@@ -127,6 +129,7 @@ class Replay:
             for tid_, arr in against.items():
                 self.zone_def[tid_].append((d, arr))
             pres, fouls_seg, margin_seg, team_of = presence_from_events(pb)
+            self.cold_start.add_finished_game(g, pres)
             self.tables.add_game(pb, pres, fouls_seg, margin_seg, team_of)
             self.learn.add(pb, learnm.game_learning(pb), pres, team_of)
             for pid, arr in pres.items():
@@ -211,29 +214,49 @@ def roster_player_ids(players, side):
     return sorted({str(p["id"]) for p in players if p["side"] == side})
 
 
-def team_input(rp: Replay, g, side, d, L: League, lg_tot, avail_ids):
+def team_input(rp: Replay, g, side, d, L: League, lg_tot, avail_ids, cold_start=False):
     tid = g[side]["id"]
     other = g["away" if side == "home" else "home"]["id"]
     ids, prof, pres, pplay, start = [], [], [], [], []
+    low_history_audit={}
+    current_players={str(p["id"]):p for p in g["players"] if p["side"]==side}
     tonight = roster_player_ids(g["players"], side)
     for pid in tonight:
         h = [x for x in rp.hist[pid] if x["date"] < d]
-        if len(h) < MIN_GAMES:
+        is_cold=len(h)<MIN_GAMES
+        if is_cold and (not cold_start or not h):
             continue
         pr = [a for dd, a in rp.pres[pid] if dd < d][-15:]
-        if not pr:
+        if not pr and not cold_start:
             continue
-        w = np.array([0.5 ** ((len(pr) - 1 - i) / 8.0) for i in range(len(pr))])
-        pres_vec = np.average(np.array(pr), axis=0, weights=w)
-        cur = float(pres_vec.sum() * 2.0)                       # minutes implied by the learned floor-time pattern
-        target = float(v4.ewma([x["min"] for x in h]))          # his recent minutes (same weighting as V4)
-        if cur > 0 and target > 0:
-            pres_vec = np.clip(pres_vec * float(np.clip(target / cur, 0.4, 2.5)), 0.0, 1.0)
+        target = float(v4.ewma([x["min"] for x in h]))
+        started=float(np.mean([1.0 if x["start"] else 0.0 for x in h[-5:]]))
+        if is_cold or not pr:
+            # Real, already observed NBA minutes plus optional V3 pregame
+            # minutes forecast, never hindsight upcoming-game minutes.
+            source=current_players[pid].get("prior_minutes_estimate")
+            if source is not None:
+                try:
+                    source=float(source)
+                    if 3<=source<=38:
+                        target=.6*source+.4*target
+                except (TypeError,ValueError):
+                    pass
+            target=float(np.clip(target,3.0,38.0))
+            pres_vec,reason=rp.cold_start.prior(started>=.5,target)
+            low_history_audit[pid]=dict(reason,prior_nba_box_games=len(h),
+                                        not_causal_role_prediction=True)
+        else:
+            w = np.array([0.5 ** ((len(pr) - 1 - i) / 8.0) for i in range(len(pr))])
+            pres_vec = np.average(np.array(pr), axis=0, weights=w)
+            cur = float(pres_vec.sum() * 2.0)
+            if cur > 0 and target > 0:
+                pres_vec = np.clip(pres_vec * float(np.clip(target / cur, 0.4, 2.5)), 0.0, 1.0)
         ids.append(pid)
-        prof.append(build_profile(h, L))
+        prof.append(build_profile(h, L, prior_min=240.0 if is_cold else 60.0))
         pres.append(pres_vec)
         pplay.append(1.0)
-        start.append(float(np.mean([1.0 if x["start"] else 0.0 for x in h[-5:]])))
+        start.append(started)
     if len(ids) < 6:
         return None
     start = np.array(start)
@@ -245,6 +268,13 @@ def team_input(rp: Replay, g, side, d, L: League, lg_tot, avail_ids):
     rmult = np.array([rp.ret.mult(ctxm.games_since_return(rp.pdates[pid], rp.tdates[tid], d)) for pid in ids])
     LZ = league_zone_stats(rp)
     zs = [zone_profile(rp, pid, d, LZ) for pid in ids]
+    if cold_start:
+        # A rookie with no NBA shot coordinates must not disable proven zone
+        # modeling for all existing veterans. Use the *earlier league* prior
+        # for that specific player only, with explicitly broad effective N.
+        zs = [z if z is not None else
+              (np.array(LZ["freq"]), np.array(LZ["pct"]),
+               np.full(5,30.0), LZ["overall"]) for z in zs]
     zf = zp = zn = asr = None
     if all(z is not None for z in zs):
         zf, zp, zn = np.array([z[0] for z in zs]), np.array([z[1] for z in zs]), np.array([z[2] for z in zs])
@@ -264,7 +294,8 @@ def team_input(rp: Replay, g, side, d, L: League, lg_tot, avail_ids):
                      zf=zf, zp=zp, zn=zn, assisted=asr, dz_freq=dzf, dz_pct=dzp,
                      team_id=tid, dfreq=dfreq, dpct=dpct, rho=rho_t,
                      pair_effects=pair_eff, pair_baselines=pair_base,
-                     style_probs=style_probs, style_mult=style_mult)
+                     style_probs=style_probs, style_mult=style_mult,
+                     low_history_evidence=low_history_audit)
 
 
 def pace_for(rp: Replay, g, d):
