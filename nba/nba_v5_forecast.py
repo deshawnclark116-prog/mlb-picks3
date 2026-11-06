@@ -112,6 +112,39 @@ def pseudo_game(g3):
     return {"home": {"id": g3["home_id"]}, "away": {"id": g3["away_id"]}, "players": players, "officials": g3.get("officials") or []}
 
 
+def choose_availability_reports(reports, now):
+    """Prefer a recent, explicitly matched official status over older ESPN.
+
+    Absence from any report is never evidence that a player is active.
+    Malformed or post-as-of timestamps are ignored, not trusted.
+    """
+    found={}
+    for e in reports:
+        pid=str(e.get("player_id") or "")
+        if not pid:
+            continue
+        src=e.get("source")
+        stamp=avm.norm_status(e.get("status"))
+        try:
+            published=dt.datetime.fromisoformat(str(e["published_at"]).replace("Z","+00:00")) if e.get("published_at") else None
+            if published is not None and (published.tzinfo is None or published>now):
+                continue
+        except (TypeError,ValueError):
+            continue
+        is_official=src=="official_nba_injury_report"
+        age=(now-published).total_seconds()/3600 if published else 1e6
+        fresh_official=is_official and 0<=age<=2.0
+        score=(2 if fresh_official else 1 if not is_official else 0,
+               published or dt.datetime.min.replace(tzinfo=dt.timezone.utc))
+        cur=found.get(pid)
+        if cur is None or score>cur["precedence"]:
+            found[pid]={"status":stamp,"raw_status":e.get("status"),
+                       "body":e.get("location") or e.get("body_part"),
+                       "source":src,"published_at":e.get("published_at"),
+                       "precedence":score,"fresh_official":fresh_official}
+    return found
+
+
 def team_sensitivity(th, ta, L, tables, ctx, base_means, S, pace, seed, side, top_k=3, features=None):
     """Re-simulate with each of the team's top-usage players out; report who moves and by how much."""
     out = {}
@@ -194,30 +227,8 @@ def main() -> int:
         role_audit = {pid: detect_role_change(rp.hist.get(pid, []), d)
                       for ti in (th, ta) for pid in ti.ids}
         # chance each player plays: learned from graded results by reported status (and body part), not a fixed guess
-        rep_by = {}
         evidence = (receipts.get(str(g3["game_id"])) or {}).get("reports", [])
-        for e in evidence:
-            pid = str(e.get("player_id") or "")
-            if not pid:
-                continue
-            src=e.get("source")
-            stamp=avm.norm_status(e.get("status"))
-            published=dt.datetime.fromisoformat(str(e["published_at"]).replace("Z","+00:00")) if e.get("published_at") else None
-            if published is not None and published>now:
-                continue
-            # Official statuses are primary for the same pregame observation
-            # window, but an older PDF cannot override a newly reported ESPN
-            # status indefinitely. Absence from the PDF never implies active.
-            is_official=src=="official_nba_injury_report"
-            age=(now-published).total_seconds()/3600 if published else 1e6
-            fresh_official=is_official and 0<=age<=2.0
-            score=(2 if fresh_official else 1 if not is_official else 0, published or dt.datetime.min.replace(tzinfo=dt.timezone.utc))
-            cur=rep_by.get(pid)
-            if cur is None or score>cur["precedence"]:
-                rep_by[pid]={"status":stamp,"raw_status":e.get("status"),
-                             "body":e.get("location") or e.get("body_part"),
-                             "source":src,"published_at":e.get("published_at"),
-                             "precedence":score,"fresh_official":fresh_official}
+        rep_by = choose_availability_reports(evidence, now)
         official_out={pid for pid,info in rep_by.items()
                       if info["fresh_official"] and info["status"]=="OUT"}
         pa = {}
