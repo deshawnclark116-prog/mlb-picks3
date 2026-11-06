@@ -25,6 +25,7 @@ from nba import nba_v4_backtest as v4
 from nba import nba_v5_context as ctxm
 from nba import nba_v5_learn as learnm
 from nba.nba_v5_lineup_pairs import LineupPairState
+from nba.nba_v5_assist_network import AssistNetworkState
 from nba.nba_v5_shot_style import ShotStyleState
 from nba.nba_v5_game_flow import GameFlowState
 from nba.nba_v5_cold_start import LowHistoryRotations
@@ -75,6 +76,7 @@ class Replay:
         self.zone_league = np.zeros((3, 5))
         self.tdates = collections.defaultdict(list)        # team -> dates played
         self.lineup_pairs = LineupPairState()                # strict valid play-by-play, earlier dates only
+        self.assist_network = AssistNetworkState()           # named passer/scorer only from strict valid court games
         self.shot_style = ShotStyleState()                    # observed ESPN shot descriptions, earlier dates only
         self.flow = GameFlowState()                           # previous ESPN PBP possession proxy cadence only
         self.cold_start = LowHistoryRotations()               # past-only starter/bench shape priors
@@ -119,7 +121,9 @@ class Replay:
             self.lines_all.append(ln)
         if pb:
             # Accumulate only after date scoring; no live/future leakage.
-            self.lineup_pairs.add_game(pb)
+            valid_pbp=self.lineup_pairs.add_game(pb)
+            if valid_pbp:
+                self.assist_network.add_valid_game(pb)
             self.shot_style.add_game(pb)
             self.flow.add_game(pb)
             shooter, against = ctxm.game_zone_tallies(pb)
@@ -286,6 +290,7 @@ def team_input(rp: Replay, g, side, d, L: League, lg_tot, avail_ids, cold_start=
     lg_s, lg_b = rp.learn.stint_minutes("__league__")
     rho_t = rho_for_relative_stint((0.6 * s_st + 0.4 * b_st) / (0.6 * lg_s + 0.4 * lg_b))
     pair_eff, pair_base, pair_audit = rp.lineup_pairs.for_roster(tid, ids)
+    assist_effect,assist_audit=rp.assist_network.for_roster(tid,ids,rp.lineup_pairs)
     styles=[rp.shot_style.profile(pid,L) for pid in ids]
     style_probs=np.stack([v[0] for v in styles]) if any(v[2]["valid"] for v in styles) else None
     style_mult=np.stack([v[1] for v in styles]) if style_probs is not None else None
@@ -294,6 +299,7 @@ def team_input(rp: Replay, g, side, d, L: League, lg_tot, avail_ids, cold_start=
                      zf=zf, zp=zp, zn=zn, assisted=asr, dz_freq=dzf, dz_pct=dzp,
                      team_id=tid, dfreq=dfreq, dpct=dpct, rho=rho_t,
                      pair_effects=pair_eff, pair_baselines=pair_base,
+                     assist_receiver_log_effect=assist_effect,
                      style_probs=style_probs, style_mult=style_mult,
                      low_history_evidence=low_history_audit)
 
@@ -336,8 +342,12 @@ def run(args):
         if args.config or args.features=="ablate":
             raise ValueError("--flow-trial incompatible with --config and ablation")
         configs["game_flow"]={"game_flow":True}
-    if sum(bool(getattr(args,n,False)) for n in ("lineup_trial","role_trial","style_trial","flow_trial","cold_start_trial"))>1:
+    if sum(bool(getattr(args,n,False)) for n in ("lineup_trial","role_trial","style_trial","flow_trial","cold_start_trial","assist_network_trial"))>1:
         raise ValueError("One experimental arm at a time")
+    if getattr(args, "assist_network_trial", False):
+        if args.config or args.features=="ablate":
+            raise ValueError("--assist-network-trial incompatible with --config and ablation")
+        configs["assist_network"]={"assist_network":True}
     if getattr(args, "style_trial", False):
         if args.config or args.features=="ablate":
             raise ValueError("--style-trial incompatible with --config and ablation")
@@ -436,6 +446,8 @@ def run(args):
         print("GAME_FLOW_PBP_AUDIT",json.dumps(rp.flow.audit()),flush=True)
     if getattr(args, "style_trial", False):
         print("SHOT_STYLE_PBP_COVERAGE",json.dumps(rp.shot_style.audit()),flush=True)
+    if getattr(args, "assist_network_trial", False):
+        print("ASSIST_NETWORK_PBP_AUDIT",json.dumps(rp.assist_network.audit()),flush=True)
     if getattr(args, "lineup_trial", False):
         print("LINEUP_PBP_VALIDATION", json.dumps({"accepted_games": rp.lineup_pairs.accepted_games,
             "rejected": dict(rp.lineup_pairs.rejected_games),
@@ -577,14 +589,22 @@ def main():
     ap.add_argument("--style-trial", action="store_true", help="paired shadow test of ESPN labeled shot execution, not Synergy plays")
     ap.add_argument("--flow-trial", action="store_true", help="paired shadow test of historically learned 2-minute possession distribution")
     ap.add_argument("--cold-start-trial", action="store_true", help="unpromoted 1-4 prior game player/rotation prior experiment")
+    ap.add_argument("--assist-network-trial", action="store_true", help="paired unpromoted passer-to-scorer assist experiment")
     a = ap.parse_args()
     results, rows, v4_preds, chosen = run(a)
     if a.dump:
-        Path(a.dump).write_text(json.dumps(results if a.role_trial or a.lineup_trial or a.style_trial or a.flow_trial or a.cold_start_trial else next(iter(results.values()))))
+        Path(a.dump).write_text(json.dumps(results if a.role_trial or a.lineup_trial or a.style_trial or a.flow_trial or a.cold_start_trial or a.assist_network_trial else next(iter(results.values()))))
     report = {c: score(r, rows, v4_preds) for c, r in results.items() if r}
     if a.cold_start_trial:
         from nba.nba_v5_cold_start import evaluate_cold_start
         report["paired_low_history_trial"]=evaluate_cold_start(results["full"],results["cold_start_candidate"],v4_preds)
+    if a.assist_network_trial:
+        from nba.nba_v5_role_trial_score import evaluate
+        paired=evaluate(results["full"],results["assist_network"],v4_preds)
+        paired["experiment"]="NBA_V5_VERIFIED_NAMED_ASSIST_NETWORK_V1"
+        paired["candidate"]="historical passer-to-made-scorer edge weight among five on court, shrink and bounds"
+        paired["observational_limitation"]="observes only named made-basket assists, not attempted passes or potential assists; retrospective actual roster"
+        report["paired_assist_network_trial"]=paired
     if a.role_trial:
         from nba.nba_v5_role_trial_score import evaluate
         report["paired_role_trial"] = evaluate(results["full"], results["role_adaptive"], v4_preds)
