@@ -43,6 +43,7 @@ class AssistNetworkState:
         if any(len(x)!=5 or len(set(x))!=5 for x in on.values()):
             raise ValueError("NBA_V5_ASSIST_NETWORK_UNVERIFIED_COURT")
         accepted=[]
+        makes=0
         for event in pb["events"]:
             per,left,kind,tid,a,b,pts=event[:7]
             if int(per)>4:
@@ -54,7 +55,7 @@ class AssistNetworkState:
                     raise ValueError("NBA_V5_ASSIST_NETWORK_BAD_SUBSTITUTION")
                 on[tid][on[tid].index(b)]=a
             elif kind in ("S2","S3") and int(pts)>0 and a:
-                self.named_makes+=1
+                makes+=1
                 if not b:
                     continue
                 matches=[t for t in teams if a in on[t] and b in on[t] and a!=b]
@@ -69,6 +70,7 @@ class AssistNetworkState:
             self.receiver_counts[(tid,receiver)]+=1
             self.team_counts[tid]+=1
         self.accepted_games+=1
+        self.named_makes+=makes
         self.assisted_makes+=len(accepted)
         return len(accepted)
 
