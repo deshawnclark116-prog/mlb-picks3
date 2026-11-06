@@ -2,18 +2,20 @@ import React,{useCallback,useEffect,useMemo,useState} from 'react';
 import {RefreshCw,ChevronDown} from 'lucide-react';
 import {wholeStatProjection} from '../lib/wholeStatProjection';
 
-type Market='points'|'rebounds'|'assists'|'three_pointers_made';
-const MARKETS:Market[]=['points','rebounds','assists','three_pointers_made'];
+type Market='points'|'rebounds'|'assists'|'three_pointers_made'|'steals'|'blocks'|'turnovers';
+const MARKETS:Market[]=['points','rebounds','assists','three_pointers_made','steals','blocks','turnovers'];
 const NAME:Record<Market,string>={points:'POINTS',rebounds:'REBOUNDS',
- assists:'ASSISTS',three_pointers_made:'THREES'};
+ assists:'ASSISTS',three_pointers_made:'THREES',steals:'STEALS',blocks:'BLOCKS',turnovers:'TURNOVERS'};
 const UNIT:Record<Market,string>={points:'PTS',rebounds:'REB',assists:'AST',
- three_pointers_made:'3PM'};
+ three_pointers_made:'3PM',steals:'STL',blocks:'BLK',turnovers:'TOV'};
 type Forecast={
  player:string;team_id:string;player_id:string;market:Market;
  mean:number;median:number;p10:number;p25:number;p75:number;p90:number;
  p_active:number;exp_opp:number;role_share:number;unc_reasons:string[];
  reported_status:string;
  lineup_label?:string;mean_early?:number;p_active_early?:number;
+ p_start?:number|null;p_close?:number|null;minutes_mean?:number;minutes_p10?:number;minutes_p90?:number;
+ depends_on?:{if_out:string;if_out_name?:string;projection_if_out:number;change:number}[];
  model_target:{milestone:number;probability:number;method:string}|null;
  cdf_lattice?:{step:number;cdf:number[]};
 };
@@ -60,7 +62,7 @@ export function v3QualifiedResearchTargets(g:Game):Forecast[]{
  * rule (x.6 and up rounds up) and its percentage is the chance of reaching AT LEAST
  * that number, taken from the same full-game simulation. cdf[i] = P(X < i+1), so
  * P(X >= k) = 1 - cdf[k-1]. No lower target is substituted. */
-const MEANINGFUL_MIN:Record<Market,number>={points:6,rebounds:3,assists:2,three_pointers_made:1};
+const MEANINGFUL_MIN:Record<Market,number>={points:6,rebounds:3,assists:2,three_pointers_made:1,steals:1,blocks:1,turnovers:2};
 export type ProjectionItem={row:Forecast;whole:number;prob:number|null};
 const pctOrDash=(v:number|null)=>v===null?'n/a':pct(v);
 export function chanceAtLeast(row:Forecast,k:number):number|null{
@@ -116,6 +118,11 @@ function V3Card({item}:{item:ProjectionItem}){
    10th–90th percentile: {fmt(row.p10)}–{fmt(row.p90)} {UNIT[row.market]}
    {' · '}{row.lineup_label==='CONFIRMED_IN'?'Confirmed to play (early P(plays) '+pct(row.p_active_early??row.p_active)+', early projection '+fmt(row.mean_early??row.mean)+')':'Simulated P(plays) '+pct(row.p_active)}
    {' · '}Modeled share of team minutes {pct(row.role_share)}</p>
+  {(row.p_start!=null||row.minutes_mean!=null)&&<p data-testid="nba-v3-role" className="text-[11px] text-gray-300">
+   {row.p_start!=null?'Starts '+pct(row.p_start)+(row.p_close!=null?' · on the floor to close '+pct(row.p_close):'')+' · ':''}
+   {row.minutes_mean!=null?'Minutes '+fmt(row.minutes_p10??row.minutes_mean)+'–'+fmt(row.minutes_p90??row.minutes_mean)+' (average '+fmt(row.minutes_mean)+')':''}</p>}
+  {row.depends_on&&row.depends_on.length>0&&<div data-testid="nba-v3-depends-list" className="text-[11px] text-amber-200">
+   {row.depends_on.map(d=><p key={d.if_out}>If {d.if_out_name||'a teammate'} sits: {fmt(d.projection_if_out)} {UNIT[row.market]} ({d.change>0?'+':''}{fmt(d.change)})</p>)}</div>}
   <details className="text-[11px] text-gray-400 border-t border-[#343434] pt-2">
    <summary className="min-h-9 cursor-pointer font-bold">MODEL EVIDENCE</summary>
    <p className="mt-1">Pregame NBA V3 shared-minute and opportunity simulation.
@@ -198,7 +205,7 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
        {d==='AUTO'?'Next slate':d==='TODAY'?"Today's games":d==='ALL'?'All upcoming':d.slice(5)}
       </button>)}
     </div>
-    {showFilters&&<div className="grid grid-cols-5 gap-1" aria-label="NBA V3 market filter">
+    {showFilters&&<div className="grid grid-cols-4 gap-1" aria-label="NBA V3 market filter">
     {(['ALL',...MARKETS] as const).map(m=><button type="button" key={m}
       onClick={()=>setMarket(m)} aria-pressed={market===m}
       className={'min-h-10 rounded-md border px-1 text-[10px] font-bold '+
@@ -227,7 +234,9 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
              TOP: {picks[0].row.player} · {picks[0].whole}
              {' '}{NAME[picks[0].row.market]} · {pctOrDash(picks[0].prob)}
            </p>}
-           <p className="mt-1 text-[10px] text-gray-500">{g.forecast_kind==='V4_LATEST'
+           <p className="mt-1 text-[10px] text-gray-500">{g.forecast_kind==='V5_LATEST'
+             ?<>Model V5 · updated {et(g.forecast_at_utc)}{' · '}first forecast {et(g.first_seen_forecast_at_utc||g.forecast_at_utc)}</>
+             :g.forecast_kind==='V4_LATEST'
              ?<>Model V4 · updated {et(g.forecast_at_utc)}{' · '}first forecast {et(g.first_seen_forecast_at_utc||g.forecast_at_utc)}</>
              :g.forecast_kind==='LATEST_RUN'
              ?<>Latest run {et(g.forecast_at_utc)}{' · '}first forecast {et(g.first_seen_forecast_at_utc||g.forecast_at_utc)}</>
@@ -243,6 +252,7 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
             <p className="mt-2 text-[26px] font-black leading-none tabular-nums text-[#79FF48]">{whole} <span className="text-[14px] font-bold">{UNIT[r.market]}</span></p>
             <p className={'mt-1.5 text-[13px] font-bold tabular-nums '+((prob??0)>=.65?'text-[#79FF48]':'text-gray-100')}>{pctOrDash(prob)} to reach {whole}+</p>
             <p className="mt-0.5 text-[11px] text-gray-400">Model average {fmt(r.mean)} · P(plays) {pct(r.p_active)}</p>
+            {r.depends_on&&r.depends_on.length>0&&<p data-testid="nba-v3-depends" className="mt-0.5 text-[11px] text-amber-200">Depends on {r.depends_on[0].if_out_name||'a teammate'} playing</p>}
           </div>)}
         </div>}
         {open&&<div className="p-3 border-t border-[#333] space-y-2">

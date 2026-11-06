@@ -38,3 +38,14 @@ test('ranked by chance, highest first; out, unlikely and trivial projections nev
 test('duplicate player and stat is refused',()=>{
  assert.throws(()=>v3ProjectionPicks(game([row({mean:4.1}),row({mean:4.1})]) as any),/DUPLICATE/);
 });
+
+test('steals, blocks and turnovers rank like every other stat, with their own minimum projection',()=>{
+ const g=game([
+  row({player_id:'s',market:'steals',mean:1.2}),        // 1 -> 90% (uniform 0..9)
+  row({player_id:'b',market:'blocks',mean:0.4}),        // 0 -> below the floor of 1, not shown
+  row({player_id:'t',market:'turnovers',mean:1.6}),     // rounds to 2 -> 80%
+  row({player_id:'p',market:'points',mean:6.2}),        // 6 -> 40%
+ ]);
+ const picks=v3ProjectionPicks(g as any);
+ assert.deepEqual(picks.map(p=>p.row.market),['steals','turnovers','points']);
+});
