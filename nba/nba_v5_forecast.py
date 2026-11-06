@@ -437,7 +437,7 @@ def main() -> int:
                 "certified_pregame_source_audit": pregame_audit,
                 "authorized_source_model_effect":"DIAGNOSTIC_ONLY_NOT_PROMOTED",
                 "note": "NBA V5: equal-weight blend of the whole-game possession simulation and the V4 model for points, rebounds, assists and threes; "
-                        "the simulation alone for steals, blocks and turnovers. Conditional on playing; availability layer is V3's. "
+                        "the simulation alone for steals, blocks and turnovers. Conditional on playing; V3 availability can be updated by verified NBA PDF and optional certified lineup evidence. "
                         "Research only, not validated for 2026-27, no sportsbook input."})
     Path(a.out).write_text(json.dumps(doc, separators=(",", ":")))
     if a.archive:
