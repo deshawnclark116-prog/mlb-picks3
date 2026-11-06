@@ -128,5 +128,19 @@ class OfficialInjuriesTests(unittest.TestCase):
             self.assertTrue(snap["42"]["checks"]["official_conflict"])
             self.assertIn("official_nba_injury_report",[e["source"] for e in events])
 
+
+    def test_fresh_available_only_restores_known_player_on_saved_roster(self):
+        from nba.nba_v5_forecast import pseudo_game
+        g={"home_id":"30","away_id":"2",
+           "rows":[{"player_id":"100","team_id":"2","player":"Payton Pritchard",
+                    "reported_status":"OUT","p_active":0.02},
+                   {"player_id":"101","team_id":"2","player":"Other Player",
+                    "reported_status":"QUESTIONABLE","p_active":0.5}]}
+        self.assertEqual([p["id"] for p in pseudo_game(g)["players"]],["101"])
+        restored=pseudo_game(g,officially_available={"100","999"})["players"]
+        self.assertEqual({p["id"] for p in restored},{"100","101"})
+        self.assertEqual(next(p for p in restored if p["id"]=="100")["side"],"away")
+
+
 if __name__=="__main__":
     unittest.main()
