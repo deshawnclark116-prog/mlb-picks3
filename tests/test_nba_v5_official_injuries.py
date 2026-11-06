@@ -85,5 +85,48 @@ class OfficialInjuriesTests(unittest.TestCase):
                "absence_from_report_does_not_mean_healthy":True}, {"games":[]},now)
 
 
+
+    def test_source_precedence_official_out_and_future_time(self):
+        from nba.nba_v5_forecast import choose_availability_reports
+        now=dt.datetime(2026,11,6,14,0,tzinfo=dt.timezone.utc)
+        espn={"player_id":"100","source":"game_feed","status":"QUESTIONABLE",
+              "published_at":"2026-11-06T13:58:00+00:00"}
+        official={"player_id":"100","source":"official_nba_injury_report","status":"OUT",
+                  "published_at":"2026-11-06T13:45:00+00:00"}
+        r=choose_availability_reports([espn,official],now)
+        self.assertTrue(r["100"]["fresh_official"])
+        self.assertEqual(r["100"]["status"],"OUT")
+        old=dict(official,published_at="2026-11-06T08:00:00+00:00")
+        self.assertEqual(choose_availability_reports([old,espn],now)["100"]["status"],"QUESTIONABLE")
+        future=dict(official,published_at="2026-11-06T16:00:00+00:00")
+        self.assertEqual(choose_availability_reports([future],now),{})
+
+    def test_official_receipts_log_source_and_espen_disagreements(self):
+        from unittest.mock import patch
+        import tempfile
+        from pathlib import Path
+        from nba import nba_v5_info as info
+        now=dt.datetime(2026,11,6,14,10,tzinfo=dt.timezone.utc)
+        g={"game_id":"42","home_id":"30","away_id":"2",
+           "tipoff_utc":"2026-11-06T23:00:00+00:00",
+           "rows":[{"player":"Payton Pritchard","player_id":"100","team_id":"2",
+                    "reported_status":"QUESTIONABLE"}]}
+        espn={"status":"QUESTIONABLE","name":"Payton Pritchard","published":"2026-11-06T13:59:00+00:00"}
+        off={"player_id":"100","team_id":"2","player":"Pritchard, Payton",
+             "status":"OUT","published_at_utc":"2026-11-06T14:00:00+00:00",
+             "source":"official_nba_injury_report","report_url":"https://ak-static.cms.nba.com/referee/injury/demo.pdf",
+             "reason":"Injury/Illness"}
+        with tempfile.TemporaryDirectory() as root:
+            ledger=Path(root)/"ledger.jsonl"
+            with patch.object(info,"league_feed",return_value=({("2","100"):espn},now.isoformat())), \
+                 patch.object(info,"game_feed",return_value={("2","100"):espn}):
+                snap,events=info.build_receipts({"games":[g]}, {"100"},ledger,now=now,
+                     official_matches={"42":[off]})
+            rows=snap["42"]["reports"]
+            self.assertEqual(len([r for r in rows if r["source"]=="official_nba_injury_report"]),1)
+            self.assertEqual(snap["42"]["official_matched_player_count"],1)
+            self.assertTrue(snap["42"]["checks"]["official_conflict"])
+            self.assertIn("official_nba_injury_report",[e["source"] for e in events])
+
 if __name__=="__main__":
     unittest.main()
