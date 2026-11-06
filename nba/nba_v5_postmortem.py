@@ -22,6 +22,8 @@ from pathlib import Path
 
 import numpy as np
 
+from nba.nba_v5_rank import rank_for_screen
+
 ESPN = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event="
 UA = {"User-Agent": "PropEdgeNBAV5Postmortem/1.0", "Accept": "application/json"}
 STAT_KEY = {"points": "PTS", "rebounds": "REB", "assists": "AST", "three_pointers_made": "3PM", "steals": "STL", "blocks": "BLK",
@@ -112,6 +114,7 @@ def grade_doc(doc, ledger_reports, kind):
         final = parse_final(get(ESPN + g["game_id"]) or {})
         if not final:
             continue
+        rank_for_screen(g["rows"])                      # the screen's featured order, recomputed the same way for every archived version
         rows_out = []
         for r in g["rows"]:
             if r.get("mean_basis") != "CONDITIONAL_ON_PLAYING" or r["market"] not in STAT_KEY:

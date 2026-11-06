@@ -150,3 +150,20 @@ class BlendTests(unittest.TestCase):
         r5 = {"mean": 2.0, "sd": 1.0, "cdf_lattice": {"step": 1, "cdf": [0.5, 1.0]}}
         r4 = {"mean": 3.0, "sd": 1.0, "cdf_lattice": {"step": 1, "cdf": [0.5, 0.8, 1.0]}}
         self.assertIs(blend_rows(r5, r4), r5)
+
+
+class FeaturedMixTests(unittest.TestCase):
+    def test_cheap_stats_do_not_crowd_out_the_rest(self):
+        from nba.nba_v5_rank import rank_for_screen
+        def r(market, mean, pid, k_prob):
+            lat = [0.0] * 40
+            return {"mean": mean, "market": market, "player": pid, "player_id": pid, "reported_status": "UNKNOWN", "p_active": 0.95,
+                    "mean_basis": "CONDITIONAL_ON_PLAYING", "cdf_lattice": {"step": 1, "cdf": [1 - k_prob if i == int(round(mean)) - 1 else (0.0 if i < int(round(mean)) - 1 else 1.0) for i in range(40)]}}
+        rows = [r("steals", 1.2, "a", 0.80), r("steals", 1.1, "b", 0.78), r("blocks", 1.3, "c", 0.77), r("turnovers", 2.1, "d", 0.76),
+                r("points", 18.2, "e", 0.62), r("assists", 5.1, "f", 0.60), r("rebounds", 6.0, "g", 0.58)]
+        rank_for_screen(rows)
+        featured = sorted([x for x in rows if x.get("frontend_rank")], key=lambda x: x["frontend_rank"])[:4]
+        self.assertEqual(len({x["market"] for x in featured}), 4)              # four different stats
+        self.assertEqual(featured[0]["market"], "steals")                       # the best pick overall still leads
+        self.assertEqual(rows[0]["rank_by_chance_only"], 1)
+        self.assertEqual(rows[1]["rank_by_chance_only"], 2)                     # the second steals pick is second by chance alone

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {v3ProjectionPicks,chanceAtLeast,projectionItem} from '../src/components/NbaV3ResearchPanel.tsx';
+import {v3ProjectionPicks,diversifiedPicks,chanceAtLeast,projectionItem} from '../src/components/NbaV3ResearchPanel.tsx';
 
 // cdf[i] = P(X < i+1): the published lattice. Uniform on 0..9 -> P(X>=k)=(10-k)/10.
 const uniform=Array.from({length:12},(_,i)=>Math.min(1,(i+1)/10));
@@ -48,4 +48,19 @@ test('steals, blocks and turnovers rank like every other stat, with their own mi
  ]);
  const picks=v3ProjectionPicks(g as any);
  assert.deepEqual(picks.map(p=>p.row.market),['steals','turnovers','points']);
+});
+
+test('featured tiles take the best pick of each stat first, so cheap stats cannot crowd out the rest',()=>{
+ const g=game([
+  row({player_id:'a',market:'steals',mean:1.2}),        // 1 -> 90%
+  row({player_id:'b',market:'steals',mean:1.1}),        // 1 -> 90%
+  row({player_id:'c',market:'blocks',mean:1.3}),        // 1 -> 90%
+  row({player_id:'d',market:'turnovers',mean:2.1}),     // 2 -> 80%
+  row({player_id:'e',market:'points',mean:6.2}),        // 6 -> 40%
+  row({player_id:'f',market:'assists',mean:3.2}),       // 3 -> 70%
+ ]);
+ const picks=v3ProjectionPicks(g as any);
+ const top4=diversifiedPicks(picks).slice(0,4).map(p=>p.row.market);
+ assert.equal(new Set(top4).size,4);
+ assert.deepEqual(picks.slice(0,3).map(p=>p.row.market),['steals','steals','blocks']);   // the expanded list stays in chance order
 });
