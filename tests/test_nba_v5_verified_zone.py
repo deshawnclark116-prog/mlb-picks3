@@ -12,8 +12,8 @@ def game():
     for t in range(20,2880,20):
         per=min(4,t//720+1)
         left=720-t%720
-        if t==600:ev.append([per,left,"SUB",home,"p5","p1",0])
-        if t==1800:ev.append([per,left,"SUB",home,"p1","p5",0])
+        if t==600:ev.append([per,left,"SUB",home,"p5","p1",0,None,None])
+        if t==1800:ev.append([per,left,"SUB",home,"p1","p5",0,None,None])
         # One of the two shooting teams is systematically mislabeled by
         # ESPN; the named player remains an independent court identifier.
         ev.append([per,left,"S2",away,"p0","",2,25,3])
@@ -46,7 +46,7 @@ class VerifiedZoneSourceTests(unittest.TestCase):
 
     def test_invalid_rotation_preserves_original_source_and_does_not_infer(self):
         pb=game()
-        pb["events"].insert(1,[1,690,"SUB","1","p9","NOT_ON",0])
+        pb["events"].insert(1,[1,690,"SUB","1","p9","NOT_ON",0,None,None])
         fixed,audit=verified_shot_teams(pb)
         self.assertFalse(audit["verified"])
         self.assertIs(fixed,pb)
@@ -54,7 +54,7 @@ class VerifiedZoneSourceTests(unittest.TestCase):
 
     def test_overtime_events_untouched_by_regulation_only_verifier(self):
         pb=game()
-        pb["events"].append([5,250,"SUB","1","brandnew","unknown",0])
+        pb["events"].append([5,250,"SUB","1","brandnew","unknown",0,None,None])
         pb["events"].append([5,245,"S2","1","brandnew","",2,25,3])
         fixed,audit=verified_shot_teams(pb)
         self.assertTrue(audit["verified"])
