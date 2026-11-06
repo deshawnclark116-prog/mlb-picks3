@@ -33,9 +33,12 @@ def main():
     for pb in _games(args.pbp):
         attempted += 1
         if not st.add_game(pb):
-            reason = next(reversed(st.rejected_games))
-            if example_bad[reason] < 3:
-                print("REJECTED_SAMPLE", reason, pb.get("game_id"), flush=True)
+            reason, count = next(
+                ((r,n) for r,n in st.rejected_games.items()
+                 if n > example_bad[r]), ("UNKNOWN", 0))
+            if example_bad[reason] < 4:
+                print("REJECTED_SAMPLE", reason, pb.get("game_id"),
+                      json.dumps(st.last_rejection, sort_keys=True), flush=True)
             example_bad[reason] += 1
     report = {
         "version":"NBA_V5_LINEUP_PBP_COVERAGE_AUDIT_V1",
