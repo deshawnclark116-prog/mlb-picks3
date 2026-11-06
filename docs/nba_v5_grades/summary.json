@@ -1,0 +1,20 @@
+{
+ "first": {
+  "games_graded": 0,
+  "cause_counts": {},
+  "stated_80_percent_range_coverage": {},
+  "stated_chance_vs_actual": {},
+  "mean_abs_error": {},
+  "source_reliability": {},
+  "note": "Patterns across many games change the model. One surprising result never does."
+ },
+ "last": {
+  "games_graded": 0,
+  "cause_counts": {},
+  "stated_80_percent_range_coverage": {},
+  "stated_chance_vs_actual": {},
+  "mean_abs_error": {},
+  "source_reliability": {},
+  "note": "Patterns across many games change the model. One surprising result never does."
+ }
+}
