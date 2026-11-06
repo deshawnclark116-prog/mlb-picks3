@@ -143,16 +143,28 @@ jobs:
         id: challenge
         run: |
           python - <<'PY'
-          import json,os
+          import json,os,gzip,datetime as dt
           from pathlib import Path
           first=Path("docs/nba_v5_archive/first")
           alternate=Path("docs/nba_v5_lineup_archive/first")
           fresh=Path("docs/nba_v5_latest/latest.json")
           try: games=json.loads(fresh.read_text())["games"]
           except (OSError,ValueError,KeyError): games=[]
-          candidates=[str(g["game_id"]) for g in games
-            if (first/(str(g["game_id"])+".json.gz")).exists()
-            and not (alternate/(str(g["game_id"])+".json.gz")).exists()]
+          now=dt.datetime.now(dt.timezone.utc)
+          def eligible(game):
+              gid=str(game["game_id"])
+              snap=first/(gid+".json.gz")
+              if not snap.exists() or (alternate/(gid+".json.gz")).exists():
+                  return False
+              try:
+                  with gzip.open(snap,"rt") as f:
+                      original=json.load(f)["games"][0]
+                  created=dt.datetime.fromisoformat(original["forecast_at_utc"].replace("Z","+00:00"))
+                  tip=dt.datetime.fromisoformat(original["tipoff_utc"].replace("Z","+00:00"))
+                  return 0<=(now-created).total_seconds()<=30*60 and tip-now>=15*60
+              except (OSError,KeyError,ValueError):
+                  return False
+          candidates=[str(g["game_id"]) for g in games if eligible(g)]
           with open(os.environ["GITHUB_OUTPUT"],"a") as out:
               out.write("run="+("true" if candidates else "false")+"\n")
           print("CHALLENGER_FROZEN_FIRST_REQUIRED",candidates)
