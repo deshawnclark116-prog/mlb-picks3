@@ -1,17 +1,19 @@
 {
- "_note": "Switches for the NBA V5 simulation. A piece is on only if testing showed a clear gain and no clear harm; edit and commit to change. Evidence: docs/nba_v5/BACKTEST_RESULTS.md",
- "features": {
-  "joint_availability": true,
-  "team_rotation": true,
-  "timeouts": true,
-  "defenders": true,
-  "timing": false
- },
- "evidence": {
-  "joint_availability": "predicts how many regulars are out better than independent draws, 5.2 standard errors on 1,720 team-games",
-  "team_rotation": "300 held-out games, 6,245 player-games: better assist and made-three probabilities (clear), no clear harm elsewhere",
-  "timeouts": "same test: better assist and made-three probabilities (clear), no clear harm elsewhere",
-  "defenders": "same test: better assist probabilities (clear), no clear harm elsewhere",
-  "timing": "same test: no clear effect on any stat, so it stays off"
- }
+  "_note": "Switches for the NBA V5 simulation. A piece is on only if testing showed a clear gain and no clear harm; edit and commit to change. Evidence: docs/nba_v5/BACKTEST_RESULTS.md",
+  "features": {
+    "joint_availability": true,
+    "team_rotation": true,
+    "timeouts": true,
+    "defenders": true,
+    "timing": false,
+    "lineup_pairs": false
+  },
+  "evidence": {
+    "joint_availability": "predicts how many regulars are out better than independent draws, 5.2 standard errors on 1,720 team-games",
+    "team_rotation": "300 held-out games, 6,245 player-games: better assist and made-three probabilities (clear), no clear harm elsewhere",
+    "timeouts": "same test: better assist and made-three probabilities (clear), no clear harm elsewhere",
+    "defenders": "same test: better assist probabilities (clear), no clear harm elsewhere",
+    "timing": "same test: no clear effect on any stat, so it stays off",
+    "lineup_pairs": "OFF — five-man PBP verified in 1,283/1,351 games; first exploratory 68-game sample needs deterministic rerun plus untouched prospective pregame validation before any promotion."
+  }
 }
