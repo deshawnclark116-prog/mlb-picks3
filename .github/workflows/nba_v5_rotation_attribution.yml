@@ -1,0 +1,35 @@
+name: NBA V5 original pretip roster coverage versus final minute errors
+on:
+  pull_request:
+    paths:
+      - "nba/nba_v5_rotation_attribution.py"
+      - "tests/test_nba_v5_rotation_attribution.py"
+      - ".github/workflows/nba_v5_postmortem.yml"
+      - ".github/workflows/nba_v5_rotation_attribution.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  original-rotation-cause:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify no hindsight or silent omission of players
+        run: PYTHONPATH=. python -m unittest discover -s tests -p "test_nba_v5_rotation_attribution.py" -v
+      - name: Grade real original frozen V5 player minutes on all completed games
+        run: |
+          set -euo pipefail
+          PYTHONPATH=. python -u -m nba.nba_v5_rotation_attribution \
+            --archive-last docs/nba_v5_archive/last \
+            --grades-last docs/nba_v5_grades/last \
+            --omissions docs/nba_v5_grades/roster_omission_audit.json \
+            --out /tmp/nba_v5_rotation_attribution.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-v5-roster-coverage-vs-minutes-error
+          path: /tmp/nba_v5_rotation_attribution.json
+          retention-days: 30
