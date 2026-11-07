@@ -78,7 +78,7 @@ jobs:
             --injury-snapshot "$RUNNER_TEMP/injuries.json" \
             --history-cache .cache/nba-v3-phase1 \
             --archive-root "$RUNNER_TEMP/empty-archive" \
-            --draws 8000 --out "$RUNNER_TEMP/latest-new.json"
+            --draws 8000 --window-hours "${WINDOW:-9}" --out "$RUNNER_TEMP/latest-new.json"
       - name: NBA V5 official starting-five observation (never confuse projected with confirmed)
         if: steps.src.outputs.run == 'true'
         continue-on-error: true
