@@ -231,14 +231,17 @@ jobs:
           print("NBA_V5_PREGAME_SOURCE_CHOICE",json.dumps(
               {"selected":selected,"available_sources":rows},sort_keys=True))
           PY
-          PREGAME_SOURCE=""
-          SOURCE_AUDIT=""
-          while IFS='|' read -r filename audit; do
+          # Every provider contributes its independently verified teams.
+          # The Python evidence loader resolves per-team confirmation and
+          # rejects disagreeing confirmed fives rather than dropping entire
+          # sources because another had more total confirmed teams.
+          PREGAME_ARGS=()
+          while IFS= read -r filename; do
             if [ -n "$filename" ]; then
-              PREGAME_SOURCE="--pregame-evidence $filename"
-              SOURCE_AUDIT="$audit"
+              PREGAME_ARGS+=(--pregame-evidence "$filename")
             fi
-          done < <(python -c 'import json,sys; d=json.load(open(sys.argv[1])); s=d.get("selected") or {}; print(s.get("evidence","")+"|"+s.get("audit",""))' "$RUNNER_TEMP/v5_pregame_choice.json")
+          done < <(python -c 'import json,sys; d=json.load(open(sys.argv[1])); [print(s["evidence"]) for s in d.get("available_sources",[]) if s.get("evidence")]' "$RUNNER_TEMP/v5_pregame_choice.json")
+          SOURCE_AUDIT="$(python -c 'import json,sys; s=json.load(open(sys.argv[1])).get("selected") or {}; print(s.get("audit",""))' "$RUNNER_TEMP/v5_pregame_choice.json")"
           cp "$RUNNER_TEMP/v5_pregame_choice.json" docs/nba_v5_latest/lineup_source_choice.json
           if [ -n "$SOURCE_AUDIT" ] && [ -s "$SOURCE_AUDIT" ]; then
             cp "$SOURCE_AUDIT" docs/nba_v5_latest/lineup_source_audit.json
@@ -253,7 +256,7 @@ jobs:
             --v3 "$RUNNER_TEMP/latest-new.json" --v4 docs/nba_v4_latest/latest.json --out docs/nba_v5_latest/latest.json --sims 10000 $CAL \
             --receipt docs/nba_v5_latest/information_receipt.json --grades docs/nba_v5_grades/summary.json \
             --features docs/nba_v5_latest/features.json \
-            --archive docs/nba_v5_archive $TRACKING_SOURCE $PREGAME_SOURCE
+            --archive docs/nba_v5_archive $TRACKING_SOURCE "${PREGAME_ARGS[@]}"
       - name: Audit V5 latest simulation probabilities, stale data and confirmed absences
         if: steps.src.outputs.run == 'true'
         continue-on-error: true
