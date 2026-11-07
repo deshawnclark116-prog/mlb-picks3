@@ -101,3 +101,41 @@ test('when V3 originals are missing frontend does not silently substitute V2 pic
    .toContainText('FORECAST VALIDATION STATUS');
  await expect(page.getByRole('button',{name:'V2 ARCHIVE'})).toBeVisible();
 });
+
+test('NBA featured game tiles show the four highest percentages across stat categories, never forced variety or turnovers',async({page})=>{
+ const sample=(id:string,player:string,market:string,mean:number,whole:number,prob:number)=>({
+  ...game.rows[0],player_id:id,player,market,mean,p_active:.95,
+  model_target:null,
+  reach_probabilities:{whole_projection:whole,probability_including_dnp:prob,
+   probability_if_playing:Math.min(1,prob/.95),p_active:.95,forward_calibrated:false}
+ });
+ const rows=[
+  sample('a','Top Points A','points',20.7,21,.85),
+  sample('b','Top Points B','points',18.7,19,.82),
+  sample('c','Top Rebound','rebounds',7.1,7,.76),
+  sample('d','Top Assist','assists',5.2,5,.75),
+  sample('e','Unbettable Turnover','turnovers',2.1,2,.98),
+  sample('f','Lower Block','blocks',1.1,1,.70),
+  sample('g','Lower Three','three_pointers_made',2.1,2,.65)
+ ];
+ await setup(page,{...research,games:[{...game,rows,rows_count:rows.length,
+   forecast_kind:'V5_LATEST'}]});
+ const card=page.getByTestId('nba-v3-game');
+ const tiles=card.getByTestId('nba-v3-tile');
+ await expect(tiles).toHaveCount(4);
+ await expect(tiles.nth(0)).toContainText('Top Points A');
+ await expect(tiles.nth(1)).toContainText('Top Points B');
+ await expect(tiles.nth(2)).toContainText('Top Rebound');
+ await expect(tiles.nth(3)).toContainText('Top Assist');
+ await expect(tiles.nth(0)).toContainText('85.0%');
+ await expect(tiles.nth(1)).toContainText('82.0%');
+ await expect(card.getByText('Unbettable Turnover')).toHaveCount(0);
+ await card.locator('button[aria-expanded]').click();
+ const detail=card.getByTestId('nba-v3-system-pick');
+ await expect(detail).toHaveCount(6);
+ await expect(detail.nth(0)).toContainText('Top Points A');
+ await expect(detail.nth(1)).toContainText('Top Points B');
+ await page.getByRole('button',{name:'MODEL BOARD',exact:true}).click();
+ await page.getByTestId('nba-v3-game').locator('button[aria-expanded]').click();
+ await expect(page.getByTestId('nba-v3-stat-projection').filter({hasText:'Unbettable Turnover'})).toHaveCount(1);
+});
