@@ -33,7 +33,7 @@ from nba.nba_v5_role_change import detect_role_change
 from nba.nba_v5_archetypes import player_archetype
 from nba.nba_v5_external_source import read_source
 from nba.nba_v5_tracking_opportunities import audit_and_apply as apply_tracking_opportunities
-from nba.nba_v5_pregame_certified import load as load_pregame, apply_confirmed
+from nba.nba_v5_pregame_certified import load_many as load_pregame_many, apply_confirmed
 from nba.nba_v5_uncertainty import forecast_uncertainty, reach_with_dnp
 from nba.nba_v5_roster_integrity import audit_team as audit_rotation_coverage
 from nba.nba_v5_sim import League, league_from, simulate_game, MARKETS
@@ -199,7 +199,7 @@ def main() -> int:
     ap.add_argument("--features", default="", help="docs/nba_v5_latest/features.json: which simulation pieces are switched on (only those that tested as helpful)")
     ap.add_argument("--v4", default="", help="V4 forecast file for the same games; averaged with the V5 simulation for points, rebounds, assists, threes")
     ap.add_argument("--licensed-data", action="append", default=[], help="Optional authorized tracking/play-type historical JSON; diagnostic only until paired validation")
-    ap.add_argument("--pregame-evidence", default="", help="Optional as-of confirmed lineup/inactive/minutes source export; projected lineups never override the model")
+    ap.add_argument("--pregame-evidence", action="append", default=[], help="Repeat for each independent as-of confirmed lineup/inactive/minutes source; projected lineups never override the model")
     ap.add_argument("--archive", default="", help="directory for frozen forecasts: first/<game>.json.gz (never rewritten) and last/<game>.json.gz (replaced until 15 min before tip, kept only within 4 hours of tip)")
     a = ap.parse_args()
     if a.sims < MIN_PRODUCTION_SIMS:
@@ -228,8 +228,7 @@ def main() -> int:
     v4doc = json.loads(Path(a.v4).read_text()) if a.v4 and Path(a.v4).exists() else None
     v4rows = {(g["game_id"], r["player_id"], r["market"]): r for g in (v4doc or {"games": []})["games"] for r in g["rows"] if r.get("cdf_lattice")}
     now = dt.datetime.now(dt.timezone.utc)
-    pregame, pregame_audit = (load_pregame(a.pregame_evidence, now, v3.get("games", []))
-                                if a.pregame_evidence else ({}, {"source_status": "NOT_CONNECTED", "confirmed_teams": 0}))
+    pregame, pregame_audit = load_pregame_many(a.pregame_evidence, now, v3.get("games", []))
     current_roster={(str(r["team_id"]),str(r["player_id"]))
                     for g in v3.get("games",[]) for r in g.get("rows",[])}
     licensed_profiles=[]
