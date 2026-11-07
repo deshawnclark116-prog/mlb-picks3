@@ -1,0 +1,14 @@
+{
+  "schema": "NBA_V5_FROZEN_FIRSTSEEN_CHALLENGER_COMPARISON_V1",
+  "model_promotion_allowed": false,
+  "comparison_scope": "Frozen original NBA V5 player/stat forecasts at the CHAMPION exact rounded number",
+  "injuries_and_dnp_included": true,
+  "nonfeatured_predictions_included": true,
+  "matched_archived_games": 7,
+  "graded_paired_games": 0,
+  "joined_original_player_stat_events": 0,
+  "excluded_games": {},
+  "metrics": {},
+  "per_original_projection": [],
+  "evidence_gate": "Needs sufficiently many untouched forward games, coverage and prospective calibration before manual promotion"
+}

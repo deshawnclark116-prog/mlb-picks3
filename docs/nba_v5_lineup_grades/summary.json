@@ -1,0 +1,30 @@
+{
+ "first": {
+  "games_graded": 0,
+  "cause_counts": {},
+  "stated_80_percent_range_coverage": {},
+  "stated_chance_vs_actual": {},
+  "mean_abs_error": {},
+  "mean_abs_error_by_role_change": {},
+  "mean_abs_error_by_archetype": {},
+  "stated_unconditional_chance_vs_actual": {},
+  "source_reliability": {},
+  "play_by_status": {},
+  "play_by_status_body": {},
+  "note": "Patterns across many games change the model. One surprising result never does."
+ },
+ "last": {
+  "games_graded": 0,
+  "cause_counts": {},
+  "stated_80_percent_range_coverage": {},
+  "stated_chance_vs_actual": {},
+  "mean_abs_error": {},
+  "mean_abs_error_by_role_change": {},
+  "mean_abs_error_by_archetype": {},
+  "stated_unconditional_chance_vs_actual": {},
+  "source_reliability": {},
+  "play_by_status": {},
+  "play_by_status_body": {},
+  "note": "Patterns across many games change the model. One surprising result never does."
+ }
+}
