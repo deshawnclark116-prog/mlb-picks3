@@ -1,0 +1,57 @@
+name: NBA V5 2026-27 low-history rotation challenger (no production promotion)
+on:
+  pull_request:
+    paths:
+      - "nba/nba_v5_roster_integrity.py"
+      - "nba/nba_v5_roster_omission_grade.py"
+      - "nba/nba_v5_forecast.py"
+      - ".github/workflows/nba_v5_2026_roster_candidate.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  historical-2026-paired-rotation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install historical simulation dependencies
+        run: python -m pip install -q "numpy>=2.1,<2.5" "scipy>=1.14,<1.18" "pandas>=2.2,<3.0" "pyarrow>=18,<25" "pdfplumber>=0.11,<0.13"
+      - name: Validate pretip and postgame roster accounting
+        run: |
+          python -m unittest discover -s tests -p "test_nba_v5_roster_integrity.py" -v
+          python -m unittest discover -s tests -p "test_nba_v5_roster_omission_grade.py" -v
+      - name: Paired V5 versus low-history candidate on 2026-27 historical games
+        run: |
+          set -euo pipefail
+          PYTHONPATH=. python -u -m nba.nba_v5_backtest \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz \
+            --pbp nba/data/nba_v5_pbp_2026_27.jsonl.gz \
+            --test-from 2026-10-20 \
+            --sample 60 --sims 500 --cold-start-trial \
+            --out /tmp/nba_v5_2026_roster_candidate.json
+      - name: Show preregistered paired score and preserve no-promotion status
+        run: |
+          python - <<'PY'
+          import json
+          o=json.load(open("/tmp/nba_v5_2026_roster_candidate.json"))
+          a=o["paired_low_history_trial"]
+          assert a["model_promotion_allowed"] is False
+          print("NBA_V5_2026_27_PAIRED_GAMES",
+                a.get("paired_games"),a.get("genuinely_new_player_game_count"))
+          for market,details in a.get("metrics",{}).items():
+              if "brier_fixed_champion_target" in market or market.startswith("minutes|"):
+                  print("NBA_V5_2026_PAIR",market,details)
+          print("NBA_V5_2026_NEW_PLAYER_ERROR",a.get("added_player_grade"))
+          print("PROMOTION_NOT_ALLOWED_FROM_RETROSPECTIVE_ROSTER",a["model_promotion_allowed"])
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-v5-2026-27-low-history-vs-incumbent-paired
+          path: /tmp/nba_v5_2026_roster_candidate.json
+          retention-days: 30
