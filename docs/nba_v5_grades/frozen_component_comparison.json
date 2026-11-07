@@ -1,0 +1,379 @@
+{
+  "by_market": {
+    "assists": {
+      "events": 220,
+      "game_cluster_bootstrap_95pct_reduction_interval": {
+        "v4_only": [
+          -0.00822,
+          0.08957
+        ],
+        "v5_only": [
+          -0.13566,
+          -0.03603
+        ]
+      },
+      "games": 11,
+      "mae": {
+        "blend": 1.62446,
+        "v4_only": 1.57983,
+        "v5_only": 1.71583
+      },
+      "mae_reduction_vs_blend_positive_better": {
+        "v4_only": 0.04463,
+        "v5_only": -0.09136
+      },
+      "mean_signed_error": {
+        "blend": 0.29992,
+        "v4_only": 0.11988,
+        "v5_only": 0.47996
+      }
+    },
+    "points": {
+      "events": 220,
+      "game_cluster_bootstrap_95pct_reduction_interval": {
+        "v4_only": [
+          -0.00503,
+          0.45072
+        ],
+        "v5_only": [
+          -0.64892,
+          -0.1705
+        ]
+      },
+      "games": 11,
+      "mae": {
+        "blend": 5.44873,
+        "v4_only": 5.24419,
+        "v5_only": 5.83506
+      },
+      "mae_reduction_vs_blend_positive_better": {
+        "v4_only": 0.20453,
+        "v5_only": -0.38634
+      },
+      "mean_signed_error": {
+        "blend": 1.58262,
+        "v4_only": 0.77169,
+        "v5_only": 2.39355
+      }
+    },
+    "rebounds": {
+      "events": 220,
+      "game_cluster_bootstrap_95pct_reduction_interval": {
+        "v4_only": [
+          0.02742,
+          0.19378
+        ],
+        "v5_only": [
+          -0.28473,
+          -0.11
+        ]
+      },
+      "games": 11,
+      "mae": {
+        "blend": 2.08978,
+        "v4_only": 1.98401,
+        "v5_only": 2.28255
+      },
+      "mae_reduction_vs_blend_positive_better": {
+        "v4_only": 0.10577,
+        "v5_only": -0.19277
+      },
+      "mean_signed_error": {
+        "blend": 0.55057,
+        "v4_only": 0.21382,
+        "v5_only": 0.88732
+      }
+    },
+    "three_pointers_made": {
+      "events": 220,
+      "game_cluster_bootstrap_95pct_reduction_interval": {
+        "v4_only": [
+          0.01006,
+          0.03866
+        ],
+        "v5_only": [
+          -0.05288,
+          -0.02421
+        ]
+      },
+      "games": 11,
+      "mae": {
+        "blend": 1.02644,
+        "v4_only": 1.0025,
+        "v5_only": 1.06367
+      },
+      "mae_reduction_vs_blend_positive_better": {
+        "v4_only": 0.02394,
+        "v5_only": -0.03723
+      },
+      "mean_signed_error": {
+        "blend": 0.12964,
+        "v4_only": 0.03,
+        "v5_only": 0.22928
+      }
+    }
+  },
+  "forward_frozen_same_target_probability": {
+    "DNP": "Counted as miss; no postgame adjustment",
+    "basis": "Original V4/V5 conditional CDF at the same frozen blend target; common pretip V5 availability risk",
+    "by_market": {},
+    "events": 0,
+    "status": "WAITING_FOR_NEW_PROSPECTIVE_COMPONENT_FORECASTS"
+  },
+  "games_evaluated": 11,
+  "method": "same original pretip athletes, actual final numerical means, played rows only",
+  "per_game_mae": {
+    "401909287": {
+      "assists": {
+        "blend": 1.98042,
+        "v4_only": 1.84961,
+        "v5_only": 2.11184
+      },
+      "points": {
+        "blend": 6.36375,
+        "v4_only": 6.27098,
+        "v5_only": 6.81256
+      },
+      "rebounds": {
+        "blend": 1.74799,
+        "v4_only": 1.69063,
+        "v5_only": 2.16058
+      },
+      "three_pointers_made": {
+        "blend": 1.07377,
+        "v4_only": 1.09489,
+        "v5_only": 1.09522
+      }
+    },
+    "401909288": {
+      "assists": {
+        "blend": 1.58752,
+        "v4_only": 1.42471,
+        "v5_only": 1.79319
+      },
+      "points": {
+        "blend": 4.70924,
+        "v4_only": 4.3134,
+        "v5_only": 5.22665
+      },
+      "rebounds": {
+        "blend": 1.39027,
+        "v4_only": 1.14676,
+        "v5_only": 1.73229
+      },
+      "three_pointers_made": {
+        "blend": 1.04345,
+        "v4_only": 1.01186,
+        "v5_only": 1.07503
+      }
+    },
+    "401909289": {
+      "assists": {
+        "blend": 1.46097,
+        "v4_only": 1.56474,
+        "v5_only": 1.3641
+      },
+      "points": {
+        "blend": 5.05649,
+        "v4_only": 5.36585,
+        "v5_only": 4.94151
+      },
+      "rebounds": {
+        "blend": 1.87996,
+        "v4_only": 1.81765,
+        "v5_only": 1.98569
+      },
+      "three_pointers_made": {
+        "blend": 0.84048,
+        "v4_only": 0.80514,
+        "v5_only": 0.88677
+      }
+    },
+    "401909290": {
+      "assists": {
+        "blend": 1.33788,
+        "v4_only": 1.27856,
+        "v5_only": 1.43777
+      },
+      "points": {
+        "blend": 6.1458,
+        "v4_only": 6.03337,
+        "v5_only": 6.25821
+      },
+      "rebounds": {
+        "blend": 2.826,
+        "v4_only": 2.84524,
+        "v5_only": 2.81737
+      },
+      "three_pointers_made": {
+        "blend": 1.41109,
+        "v4_only": 1.39917,
+        "v5_only": 1.423
+      }
+    },
+    "401909291": {
+      "assists": {
+        "blend": 1.36494,
+        "v4_only": 1.33926,
+        "v5_only": 1.50395
+      },
+      "points": {
+        "blend": 5.12942,
+        "v4_only": 4.91419,
+        "v5_only": 5.71448
+      },
+      "rebounds": {
+        "blend": 1.94537,
+        "v4_only": 2.02983,
+        "v5_only": 2.06442
+      },
+      "three_pointers_made": {
+        "blend": 0.78339,
+        "v4_only": 0.79202,
+        "v5_only": 0.80544
+      }
+    },
+    "401909292": {
+      "assists": {
+        "blend": 1.94421,
+        "v4_only": 1.87224,
+        "v5_only": 2.08148
+      },
+      "points": {
+        "blend": 5.37683,
+        "v4_only": 5.61411,
+        "v5_only": 5.36644
+      },
+      "rebounds": {
+        "blend": 2.09661,
+        "v4_only": 2.1485,
+        "v5_only": 2.08457
+      },
+      "three_pointers_made": {
+        "blend": 1.04754,
+        "v4_only": 1.01255,
+        "v5_only": 1.09899
+      }
+    },
+    "401909293": {
+      "assists": {
+        "blend": 1.48119,
+        "v4_only": 1.40584,
+        "v5_only": 1.55921
+      },
+      "points": {
+        "blend": 5.72949,
+        "v4_only": 5.92045,
+        "v5_only": 5.68247
+      },
+      "rebounds": {
+        "blend": 2.22401,
+        "v4_only": 2.22285,
+        "v5_only": 2.3439
+      },
+      "three_pointers_made": {
+        "blend": 0.93017,
+        "v4_only": 0.91434,
+        "v5_only": 0.95438
+      }
+    },
+    "401909294": {
+      "assists": {
+        "blend": 1.65764,
+        "v4_only": 1.72414,
+        "v5_only": 1.59113
+      },
+      "points": {
+        "blend": 5.81751,
+        "v4_only": 5.1836,
+        "v5_only": 6.45505
+      },
+      "rebounds": {
+        "blend": 2.01845,
+        "v4_only": 1.84045,
+        "v5_only": 2.19648
+      },
+      "three_pointers_made": {
+        "blend": 0.98085,
+        "v4_only": 0.95495,
+        "v5_only": 1.00675
+      }
+    },
+    "401909295": {
+      "assists": {
+        "blend": 1.40731,
+        "v4_only": 1.49991,
+        "v5_only": 1.52296
+      },
+      "points": {
+        "blend": 4.96906,
+        "v4_only": 3.77883,
+        "v5_only": 6.49195
+      },
+      "rebounds": {
+        "blend": 2.69768,
+        "v4_only": 2.29424,
+        "v5_only": 3.10113
+      },
+      "three_pointers_made": {
+        "blend": 0.98625,
+        "v4_only": 0.89689,
+        "v5_only": 1.09415
+      }
+    },
+    "401909936": {
+      "assists": {
+        "blend": 2.22992,
+        "v4_only": 2.1223,
+        "v5_only": 2.35433
+      },
+      "points": {
+        "blend": 5.61244,
+        "v4_only": 5.19915,
+        "v5_only": 6.28006
+      },
+      "rebounds": {
+        "blend": 2.58972,
+        "v4_only": 2.29781,
+        "v5_only": 2.95067
+      },
+      "three_pointers_made": {
+        "blend": 0.99544,
+        "v4_only": 0.95628,
+        "v5_only": 1.0596
+      }
+    },
+    "401909937": {
+      "assists": {
+        "blend": 1.46681,
+        "v4_only": 1.38079,
+        "v5_only": 1.5852
+      },
+      "points": {
+        "blend": 5.31671,
+        "v4_only": 5.159,
+        "v5_only": 5.52046
+      },
+      "rebounds": {
+        "blend": 1.71999,
+        "v4_only": 1.595,
+        "v5_only": 1.89415
+      },
+      "three_pointers_made": {
+        "blend": 1.17812,
+        "v4_only": 1.16327,
+        "v5_only": 1.19295
+      }
+    }
+  },
+  "projections_evaluated": 880,
+  "promoted": false,
+  "rejected_claims": [
+    "Older archives cannot be backfilled with native component probabilities; only future frozen same-target chances can be scored",
+    "No prospective promotion from reused small postgame clusters",
+    "Conditional MAE excludes DNP, which must be separately evaluated for displayed hit rates"
+  ],
+  "schema": "NBA_V5_FROZEN_COMPONENT_COMPARISON_V1",
+  "scope": "last immutable forecast; no later resimulation, no arbitrary alternate targets",
+  "v5_and_v4_component_mean_only": true
+}

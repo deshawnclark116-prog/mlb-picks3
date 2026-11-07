@@ -1,463 +1,623 @@
 {
-  "schema": "NBA_V5_POSTGAME_ROSTER_OMISSION_AUDIT_V1",
-  "purpose": "Postgame validation only; cannot supply a future pretip roster",
   "games": [
     {
-      "game_id": "401909287",
       "away": "Washington Wizards",
-      "home": "Atlanta Hawks",
       "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00",
-      "played_players": 18,
       "forecast_player_id_count": 18,
-      "played_players_missing_from_v5": 2,
-      "played_minutes_missing_from_v5": 51,
+      "game_id": "401909287",
+      "home": "Atlanta Hawks",
       "missing_minutes_by_side": {
-        "home": 15,
-        "away": 36
+        "away": 36.0,
+        "home": 15.0
       },
-      "omitted_played_starters": 1,
       "missing_players": [
         {
+          "actual_minutes": 36.0,
+          "actually_started": true,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "AJ Dybantsa",
           "player_id": "5142718",
           "side": "away",
-          "team_id": "27",
-          "actual_minutes": 36,
-          "actually_started": true
+          "team_id": "27"
         },
         {
+          "actual_minutes": 15.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Zuby Ejiofor",
           "player_id": "5106262",
           "side": "home",
-          "team_id": "1",
-          "actual_minutes": 15,
-          "actually_started": false
+          "team_id": "1"
         }
       ],
+      "omitted_played_starters": 1,
+      "played_minutes_missing_from_v5": 51.0,
+      "played_players": 18,
+      "played_players_missing_from_v5": 2,
       "report_is_postgame_diagnostic_only": true
     },
     {
-      "game_id": "401909288",
       "away": "Boston Celtics",
-      "home": "Charlotte Hornets",
       "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00",
-      "played_players": 24,
       "forecast_player_id_count": 22,
-      "played_players_missing_from_v5": 2,
-      "played_minutes_missing_from_v5": 38,
+      "game_id": "401909288",
+      "home": "Charlotte Hornets",
       "missing_minutes_by_side": {
-        "home": 27,
-        "away": 11
+        "away": 11.0,
+        "home": 27.0
       },
-      "omitted_played_starters": 0,
       "missing_players": [
         {
+          "actual_minutes": 11.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Mike Conley",
           "player_id": "3195",
           "side": "away",
-          "team_id": "2",
-          "actual_minutes": 11,
-          "actually_started": false
+          "team_id": "2"
         },
         {
+          "actual_minutes": 27.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Hannes Steinbach",
           "player_id": "5281370",
           "side": "home",
-          "team_id": "30",
-          "actual_minutes": 27,
-          "actually_started": false
+          "team_id": "30"
         }
       ],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 38.0,
+      "played_players": 24,
+      "played_players_missing_from_v5": 2,
       "report_is_postgame_diagnostic_only": true
     },
     {
-      "game_id": "401909289",
       "away": "Philadelphia 76ers",
-      "home": "Cleveland Cavaliers",
       "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00",
-      "played_players": 24,
       "forecast_player_id_count": 23,
-      "played_players_missing_from_v5": 2,
-      "played_minutes_missing_from_v5": 6,
+      "game_id": "401909289",
+      "home": "Cleveland Cavaliers",
       "missing_minutes_by_side": {
-        "home": 3,
-        "away": 3
+        "away": 3.0,
+        "home": 3.0
       },
-      "omitted_played_starters": 0,
       "missing_players": [
         {
+          "actual_minutes": 3.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Tacko Fall",
           "player_id": "3904625",
           "side": "away",
-          "team_id": "20",
-          "actual_minutes": 3,
-          "actually_started": false
+          "team_id": "20"
         },
         {
+          "actual_minutes": 3.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Norchad Omier",
           "player_id": "4702134",
           "side": "home",
-          "team_id": "5",
-          "actual_minutes": 3,
-          "actually_started": false
+          "team_id": "5"
         }
       ],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 6.0,
+      "played_players": 24,
+      "played_players_missing_from_v5": 2,
       "report_is_postgame_diagnostic_only": true
     },
     {
-      "game_id": "401909290",
       "away": "Utah Jazz",
-      "home": "Dallas Mavericks",
       "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00",
-      "played_players": 26,
       "forecast_player_id_count": 23,
-      "played_players_missing_from_v5": 5,
-      "played_minutes_missing_from_v5": 27,
+      "game_id": "401909290",
+      "home": "Dallas Mavericks",
       "missing_minutes_by_side": {
-        "home": 26,
-        "away": 1
+        "away": 1.0,
+        "home": 26.0
       },
-      "omitted_played_starters": 1,
       "missing_players": [
         {
+          "actual_minutes": 1.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Tony Bradley",
           "player_id": "4065673",
           "side": "away",
-          "team_id": "26",
-          "actual_minutes": 1,
-          "actually_started": false
+          "team_id": "26"
         },
         {
+          "actual_minutes": 13.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Santi Aldama",
           "player_id": "4593125",
           "side": "home",
-          "team_id": "6",
-          "actual_minutes": 13,
-          "actually_started": false
+          "team_id": "6"
         },
         {
+          "actual_minutes": 11.0,
+          "actually_started": true,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Caleb Martin",
           "player_id": "3138160",
           "side": "home",
-          "team_id": "6",
-          "actual_minutes": 11,
-          "actually_started": true
+          "team_id": "6"
         },
         {
+          "actual_minutes": 1.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Jett Howard",
           "player_id": "5105806",
           "side": "home",
-          "team_id": "6",
-          "actual_minutes": 1,
-          "actually_started": false
+          "team_id": "6"
         },
         {
+          "actual_minutes": 1.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Tobi Lawal",
           "player_id": "5106040",
           "side": "home",
-          "team_id": "6",
-          "actual_minutes": 1,
-          "actually_started": false
+          "team_id": "6"
         }
       ],
+      "omitted_played_starters": 1,
+      "played_minutes_missing_from_v5": 27.0,
+      "played_players": 26,
+      "played_players_missing_from_v5": 5,
       "report_is_postgame_diagnostic_only": true
     },
     {
-      "game_id": "401909291",
       "away": "Oklahoma City Thunder",
-      "home": "Memphis Grizzlies",
       "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00",
-      "played_players": 26,
       "forecast_player_id_count": 23,
-      "played_players_missing_from_v5": 4,
-      "played_minutes_missing_from_v5": 42,
+      "game_id": "401909291",
+      "home": "Memphis Grizzlies",
       "missing_minutes_by_side": {
-        "home": 4,
-        "away": 38
+        "away": 38.0,
+        "home": 4.0
       },
-      "omitted_played_starters": 0,
       "missing_players": [
         {
+          "actual_minutes": 18.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Micah Peavy",
           "player_id": "4432185",
           "side": "away",
-          "team_id": "25",
-          "actual_minutes": 18,
-          "actually_started": false
+          "team_id": "25"
         },
         {
+          "actual_minutes": 15.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Josh Dix",
           "player_id": "5105800",
           "side": "away",
-          "team_id": "25",
-          "actual_minutes": 15,
-          "actually_started": false
+          "team_id": "25"
         },
         {
+          "actual_minutes": 5.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Dalen Terry",
           "player_id": "4433159",
           "side": "away",
-          "team_id": "25",
-          "actual_minutes": 5,
-          "actually_started": false
+          "team_id": "25"
         },
         {
+          "actual_minutes": 4.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Karim Lopez",
           "player_id": "5231919",
           "side": "home",
-          "team_id": "29",
-          "actual_minutes": 4,
-          "actually_started": false
+          "team_id": "29"
         }
       ],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 42.0,
+      "played_players": 26,
+      "played_players_missing_from_v5": 4,
       "report_is_postgame_diagnostic_only": true
     },
     {
-      "game_id": "401909292",
       "away": "Toronto Raptors",
-      "home": "Milwaukee Bucks",
       "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00",
-      "played_players": 20,
       "forecast_player_id_count": 26,
-      "played_players_missing_from_v5": 0,
-      "played_minutes_missing_from_v5": 0,
+      "game_id": "401909292",
+      "home": "Milwaukee Bucks",
       "missing_minutes_by_side": {
-        "home": 0,
-        "away": 0
+        "away": 0.0,
+        "home": 0.0
       },
-      "omitted_played_starters": 0,
       "missing_players": [],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 0.0,
+      "played_players": 20,
+      "played_players_missing_from_v5": 0,
       "report_is_postgame_diagnostic_only": true
     },
     {
-      "game_id": "401909293",
       "away": "Minnesota Timberwolves",
-      "home": "New Orleans Pelicans",
       "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00",
-      "played_players": 19,
       "forecast_player_id_count": 21,
-      "played_players_missing_from_v5": 1,
-      "played_minutes_missing_from_v5": 19,
+      "game_id": "401909293",
+      "home": "New Orleans Pelicans",
       "missing_minutes_by_side": {
-        "home": 19,
-        "away": 0
+        "away": 0.0,
+        "home": 19.0
       },
-      "omitted_played_starters": 0,
       "missing_players": [
         {
+          "actual_minutes": 19.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Trendon Watford",
           "player_id": "4431675",
           "side": "home",
-          "team_id": "3",
-          "actual_minutes": 19,
-          "actually_started": false
+          "team_id": "3"
         }
       ],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 19.0,
+      "played_players": 19,
+      "played_players_missing_from_v5": 1,
       "report_is_postgame_diagnostic_only": true
     },
     {
-      "game_id": "401909294",
       "away": "Portland Trail Blazers",
-      "home": "Los Angeles Lakers",
       "forecast_at_utc": "2026-11-07T02:39:50.405315+00:00",
-      "played_players": 20,
       "forecast_player_id_count": 23,
-      "played_players_missing_from_v5": 3,
-      "played_minutes_missing_from_v5": 68,
+      "game_id": "401909294",
+      "home": "Los Angeles Lakers",
       "missing_minutes_by_side": {
-        "home": 20,
-        "away": 48
+        "away": 48.0,
+        "home": 20.0
       },
-      "omitted_played_starters": 1,
       "missing_players": [
         {
+          "actual_minutes": 37.0,
+          "actually_started": true,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Damian Lillard",
           "player_id": "6606",
           "side": "away",
-          "team_id": "22",
-          "actual_minutes": 37,
-          "actually_started": true
+          "team_id": "22"
         },
         {
+          "actual_minutes": 11.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Chris Youngblood",
           "player_id": "4706557",
           "side": "away",
-          "team_id": "22",
-          "actual_minutes": 11,
-          "actually_started": false
+          "team_id": "22"
         },
         {
+          "actual_minutes": 20.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Ziaire Williams",
           "player_id": "4433137",
           "side": "home",
-          "team_id": "13",
-          "actual_minutes": 20,
-          "actually_started": false
+          "team_id": "13"
         }
       ],
+      "omitted_played_starters": 1,
+      "played_minutes_missing_from_v5": 68.0,
+      "played_players": 20,
+      "played_players_missing_from_v5": 3,
       "report_is_postgame_diagnostic_only": true
     },
     {
-      "game_id": "401909295",
       "away": "San Antonio Spurs",
-      "home": "Sacramento Kings",
       "forecast_at_utc": "2026-11-07T02:39:50.405315+00:00",
-      "played_players": 23,
       "forecast_player_id_count": 18,
-      "played_players_missing_from_v5": 7,
-      "played_minutes_missing_from_v5": 147,
+      "game_id": "401909295",
+      "home": "Sacramento Kings",
       "missing_minutes_by_side": {
-        "home": 141,
-        "away": 6
+        "away": 6.0,
+        "home": 141.0
       },
-      "omitted_played_starters": 3,
       "missing_players": [
         {
+          "actual_minutes": 3.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "David Jones Garcia",
           "player_id": "4713010",
           "side": "away",
-          "team_id": "24",
-          "actual_minutes": 3,
-          "actually_started": false
+          "team_id": "24"
         },
         {
+          "actual_minutes": 3.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Tarris Reed Jr.",
           "player_id": "5105809",
           "side": "away",
-          "team_id": "24",
-          "actual_minutes": 3,
-          "actually_started": false
+          "team_id": "24"
         },
         {
+          "actual_minutes": 35.0,
+          "actually_started": true,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Zach LaVine",
           "player_id": "3064440",
           "side": "home",
-          "team_id": "23",
-          "actual_minutes": 35,
-          "actually_started": true
+          "team_id": "23"
         },
         {
+          "actual_minutes": 33.0,
+          "actually_started": true,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Darius Acuff Jr.",
           "player_id": "5142620",
           "side": "home",
-          "team_id": "23",
-          "actual_minutes": 33,
-          "actually_started": true
+          "team_id": "23"
         },
         {
+          "actual_minutes": 31.0,
+          "actually_started": true,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Domantas Sabonis",
           "player_id": "3155942",
           "side": "home",
-          "team_id": "23",
-          "actual_minutes": 31,
-          "actually_started": true
+          "team_id": "23"
         },
         {
+          "actual_minutes": 31.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Emanuel Sharp",
           "player_id": "5106058",
           "side": "home",
-          "team_id": "23",
-          "actual_minutes": 31,
-          "actually_started": false
+          "team_id": "23"
         },
         {
+          "actual_minutes": 11.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Alex Karaban",
           "player_id": "4917149",
           "side": "home",
-          "team_id": "23",
-          "actual_minutes": 11,
-          "actually_started": false
+          "team_id": "23"
         }
       ],
+      "omitted_played_starters": 3,
+      "played_minutes_missing_from_v5": 147.0,
+      "played_players": 23,
+      "played_players_missing_from_v5": 7,
       "report_is_postgame_diagnostic_only": true
     },
     {
-      "game_id": "401909936",
       "away": "Orlando Magic",
-      "home": "Phoenix Suns",
       "forecast_at_utc": "2026-11-06T01:34:44.132671+00:00",
-      "played_players": 25,
       "forecast_player_id_count": 23,
-      "played_players_missing_from_v5": 3,
-      "played_minutes_missing_from_v5": 6,
+      "game_id": "401909936",
+      "home": "Phoenix Suns",
       "missing_minutes_by_side": {
-        "home": 4,
-        "away": 2
+        "away": 2.0,
+        "home": 4.0
       },
-      "omitted_played_starters": 0,
       "missing_players": [
         {
+          "actual_minutes": 2.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Colin Castleton",
           "player_id": "4397204",
           "side": "away",
-          "team_id": "19",
-          "actual_minutes": 2,
-          "actually_started": false
+          "team_id": "19"
         },
         {
+          "actual_minutes": 2.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Duop Reath",
           "player_id": "4066268",
           "side": "home",
-          "team_id": "21",
-          "actual_minutes": 2,
-          "actually_started": false
+          "team_id": "21"
         },
         {
+          "actual_minutes": 2.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Koa Peat",
           "player_id": "5041953",
           "side": "home",
-          "team_id": "21",
-          "actual_minutes": 2,
-          "actually_started": false
+          "team_id": "21"
         }
       ],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 6.0,
+      "played_players": 25,
+      "played_players_missing_from_v5": 3,
       "report_is_postgame_diagnostic_only": true
     },
     {
-      "game_id": "401909937",
       "away": "Miami Heat",
-      "home": "Golden State Warriors",
       "forecast_at_utc": "2026-11-06T01:47:28.634814+00:00",
-      "played_players": 27,
       "forecast_player_id_count": 26,
-      "played_players_missing_from_v5": 3,
-      "played_minutes_missing_from_v5": 23,
+      "game_id": "401909937",
+      "home": "Golden State Warriors",
       "missing_minutes_by_side": {
-        "home": 22,
-        "away": 1
+        "away": 1.0,
+        "home": 22.0
       },
-      "omitted_played_starters": 0,
       "missing_players": [
         {
+          "actual_minutes": 1.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Nick Richards",
           "player_id": "4278076",
           "side": "away",
-          "team_id": "14",
-          "actual_minutes": 1,
-          "actually_started": false
+          "team_id": "14"
         },
         {
+          "actual_minutes": 21.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Brandon Williams",
           "player_id": "4397040",
           "side": "home",
-          "team_id": "9",
-          "actual_minutes": 21,
-          "actually_started": false
+          "team_id": "9"
         },
         {
+          "actual_minutes": 1.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
           "player": "Graham Ike",
           "player_id": "4703396",
           "side": "home",
-          "team_id": "9",
-          "actual_minutes": 1,
-          "actually_started": false
+          "team_id": "9"
         }
       ],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 23.0,
+      "played_players": 27,
+      "played_players_missing_from_v5": 3,
       "report_is_postgame_diagnostic_only": true
     }
   ],
   "games_graded": 11,
-  "total_missing_played_players": 32,
-  "total_missing_played_minutes": 427,
-  "games_with_missing_played_players": 10
+  "games_with_missing_played_players": 10,
+  "purpose": "Postgame validation only; cannot supply a future pretip roster",
+  "schema": "NBA_V5_POSTGAME_ROSTER_OMISSION_AUDIT_V1",
+  "total_missing_played_minutes": 427.0,
+  "total_missing_played_players": 32
 }
