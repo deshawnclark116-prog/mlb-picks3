@@ -1,17 +1,17 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-07_03_30PM.pdf",
-  "published_at_utc": "2026-11-07T20:30:00+00:00",
-  "captured_at_utc": "2026-11-07T20:43:46.638960+00:00",
-  "source_sha256": "0216b5d2f9351046a4d38dd64bdaf583b976e1561dc922e740af2205251f48ae",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-07_04_45PM.pdf",
+  "published_at_utc": "2026-11-07T21:45:00+00:00",
+  "captured_at_utc": "2026-11-07T21:59:57.559354+00:00",
+  "source_sha256": "0de481a85563622d363ed2acfff29c6f668c5eea9808f0f894b82cc3a2e052d7",
   "reports": [
     {
       "matchup": "DEN@IND",
       "team_abbr": "DEN",
       "player": "DeRozan, DeMar",
       "normalized_player": "demar derozan",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Low Back Spasms"
     },
     {
@@ -535,6 +535,166 @@
       "reason": "Injury/Illness - Right Knee Surgery"
     },
     {
+      "matchup": "SAS@POR",
+      "team_abbr": "POR",
+      "player": "Krejci, Vit",
+      "normalized_player": "vit krejci",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Ankle Fracture"
+    },
+    {
+      "matchup": "SAS@POR",
+      "team_abbr": "POR",
+      "player": "Morant, Ja",
+      "normalized_player": "ja morant",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Hamstring Strain"
+    },
+    {
+      "matchup": "SAS@POR",
+      "team_abbr": "POR",
+      "player": "Sharpe, Shaedon",
+      "normalized_player": "shaedon sharpe",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "SAS@POR",
+      "team_abbr": "POR",
+      "player": "Tonje, John",
+      "normalized_player": "john tonje",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "SAS@POR",
+      "team_abbr": "POR",
+      "player": "Williams III, Robert",
+      "normalized_player": "robert williams",
+      "status": "OUT",
+      "reason": "Rest"
+    },
+    {
+      "matchup": "PHI@CHI",
+      "team_abbr": "CHI",
+      "player": "Awaka, Tobe",
+      "normalized_player": "tobe awaka",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Left MCL Sprain"
+    },
+    {
+      "matchup": "PHI@CHI",
+      "team_abbr": "CHI",
+      "player": "Claxton, Nic",
+      "normalized_player": "nic claxton",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Left Hamstring Strain"
+    },
+    {
+      "matchup": "PHI@CHI",
+      "team_abbr": "CHI",
+      "player": "Collins, Zach",
+      "normalized_player": "zach collins",
+      "status": "OUT",
+      "reason": "Injury/Illness - Respiratory Illness"
+    },
+    {
+      "matchup": "PHI@CHI",
+      "team_abbr": "CHI",
+      "player": "Sellers, Jaylin",
+      "normalized_player": "jaylin sellers",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "PHI@CHI",
+      "team_abbr": "CHI",
+      "player": "Smith, Jalen",
+      "normalized_player": "jalen smith",
+      "status": "PROBABLE",
+      "reason": "Injury/Illness - Left Finger Sprain"
+    },
+    {
+      "matchup": "PHI@CHI",
+      "team_abbr": "CHI",
+      "player": "Swain, Dailyn",
+      "normalized_player": "dailyn swain",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Disc Irritation"
+    },
+    {
+      "matchup": "LAL@DET",
+      "team_abbr": "DET",
+      "player": "Duren, Jalen",
+      "normalized_player": "jalen duren",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Hamstring Strain"
+    },
+    {
+      "matchup": "LAL@DET",
+      "team_abbr": "DET",
+      "player": "Harkless, Elijah",
+      "normalized_player": "elijah harkless",
+      "status": "QUESTIONABLE",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "LAL@DET",
+      "team_abbr": "DET",
+      "player": "Joe, Isaiah",
+      "normalized_player": "isaiah joe",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Hip Contusion"
+    },
+    {
+      "matchup": "LAL@DET",
+      "team_abbr": "DET",
+      "player": "Jones, Isaac",
+      "normalized_player": "isaac jones",
+      "status": "QUESTIONABLE",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "LAL@DET",
+      "team_abbr": "DET",
+      "player": "Onyenso, Ugonna",
+      "normalized_player": "ugonna onyenso",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "BKN@DAL",
+      "team_abbr": "DAL",
+      "player": "Biberovic, Tarik",
+      "normalized_player": "tarik biberovic",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Heel Bursitis"
+    },
+    {
+      "matchup": "BKN@DAL",
+      "team_abbr": "DAL",
+      "player": "de Larrea, Sergio",
+      "normalized_player": "sergio de larrea",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Knee Sprain"
+    },
+    {
+      "matchup": "BKN@DAL",
+      "team_abbr": "DAL",
+      "player": "Lively II, Dereck",
+      "normalized_player": "dereck lively",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Foot Surgery"
+    },
+    {
+      "matchup": "BKN@DAL",
+      "team_abbr": "DAL",
+      "player": "Martin, Caleb",
+      "normalized_player": "caleb martin",
+      "status": "AVAILABLE",
+      "reason": "Injury/Illness - Right Thumb Sprain"
+    },
+    {
       "matchup": "NOP@LAC",
       "team_abbr": "NOP",
       "player": "Dia, Malik",
@@ -559,7 +719,7 @@
       "reason": "G League - Two-Way"
     }
   ],
-  "rows": 69,
+  "rows": 89,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
