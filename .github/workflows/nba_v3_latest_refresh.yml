@@ -91,6 +91,18 @@ jobs:
             --audit "$RUNNER_TEMP/v5_official_starters_audit.json"
           # If the public NBA feed lacks an explicit pretip five, status remains
           # NOT_POSTED. No guessed player receives the CONFIRMED label.
+      - name: NBA V5 official daily-lineups JSON pretip confirmation
+        if: steps.src.outputs.run == 'true'
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          test -s "$RUNNER_TEMP/latest-new.json"
+          PYTHONPATH=. python -u -m nba.nba_v5_daily_lineups_feed \
+            --v3 "$RUNNER_TEMP/latest-new.json" \
+            --out "$RUNNER_TEMP/v5_daily_starters.json" \
+            --audit "$RUNNER_TEMP/v5_daily_starters_audit.json"
+          # Team is CONFIRMED only when the NBA feed shows a not-started game
+          # and five distinct PG/SG/SF/PF/C players with Confirmed+Active.
       - name: NBA Today's Lineups authorized snapshot bridge (no NBA page scraping)
         if: steps.src.outputs.run == 'true'
         continue-on-error: true
@@ -187,19 +199,47 @@ jobs:
             --ledger docs/nba_v5_info/ledger.jsonl --out docs/nba_v5_latest/information_receipt.json \
             --official-matches docs/nba_v5_latest/official_matches.json
           CAL=""; test -f docs/nba_v5_latest/calibration.json && CAL="--calibration docs/nba_v5_latest/calibration.json"
+          # Prefer the source that verified the most teams. On ties,
+          # official NBA daily JSON takes precedence over an authorized
+          # snapshot and the older live boxscore source. Never promote
+          # zero-confirmation reports to confirmed pregame evidence.
+          PYTHONPATH=. python - <<'PY'
+          import json, os
+          from pathlib import Path
+          root=Path(os.environ["RUNNER_TEMP"])
+          sources=[
+              ("NBA_OFFICIAL_DAILY_LINEUPS","v5_daily_starters.json","v5_daily_starters_audit.json"),
+              ("NBA_TODAYS_LINEUPS_AUTHORIZED_SNAPSHOT","v5_today_starters.json","v5_today_starters_audit.json"),
+              ("NBA_OFFICIAL_LIVE_BOXSCORE","v5_official_starters.json","v5_official_starters_audit.json"),
+          ]
+          rows=[]
+          for provider,filename,auditfile in sources:
+              doc, audit = root/filename, root/auditfile
+              if not doc.is_file() or not audit.is_file():
+                  continue
+              try:
+                  info=json.loads(audit.read_text())
+                  count=int(info.get("confirmed_teams",0))
+                  if count<0: continue
+                  if json.loads(doc.read_text()).get("provider")!=provider: continue
+                  rows.append({"provider":provider,"evidence":str(doc),"audit":str(audit),"confirmed_teams":count})
+              except (OSError,ValueError,TypeError,KeyError):
+                  continue
+          selected=max(rows,key=lambda x:x["confirmed_teams"]) if rows else None
+          Path(root,"v5_pregame_choice.json").write_text(json.dumps(
+              {"selected":selected,"available_sources":rows},sort_keys=True))
+          print("NBA_V5_PREGAME_SOURCE_CHOICE",json.dumps(
+              {"selected":selected,"available_sources":rows},sort_keys=True))
+          PY
           PREGAME_SOURCE=""
           SOURCE_AUDIT=""
-          if [ -s "$RUNNER_TEMP/v5_official_starters.json" ]; then
-            PREGAME_SOURCE="--pregame-evidence $RUNNER_TEMP/v5_official_starters.json"
-            SOURCE_AUDIT="$RUNNER_TEMP/v5_official_starters_audit.json"
-          fi
-          # Explicitly confirmed, permissioned NBA Today Lineups snapshots take
-          # precedence over the NBA boxscore feed. Unconfirmed/empty exports do not.
-          if [ -s "$RUNNER_TEMP/v5_today_starters.json" ] && \
-             python -c 'import json,sys; assert json.load(open(sys.argv[1]))["confirmed_teams"] > 0' "$RUNNER_TEMP/v5_today_starters_audit.json"; then
-            PREGAME_SOURCE="--pregame-evidence $RUNNER_TEMP/v5_today_starters.json"
-            SOURCE_AUDIT="$RUNNER_TEMP/v5_today_starters_audit.json"
-          fi
+          while IFS='|' read -r filename audit; do
+            if [ -n "$filename" ]; then
+              PREGAME_SOURCE="--pregame-evidence $filename"
+              SOURCE_AUDIT="$audit"
+            fi
+          done < <(python -c 'import json,sys; d=json.load(open(sys.argv[1])); s=d.get("selected") or {}; print(s.get("evidence","")+"|"+s.get("audit",""))' "$RUNNER_TEMP/v5_pregame_choice.json")
+          cp "$RUNNER_TEMP/v5_pregame_choice.json" docs/nba_v5_latest/lineup_source_choice.json
           if [ -n "$SOURCE_AUDIT" ] && [ -s "$SOURCE_AUDIT" ]; then
             cp "$SOURCE_AUDIT" docs/nba_v5_latest/lineup_source_audit.json
           fi
