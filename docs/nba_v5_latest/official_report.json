@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-07_12_00PM.pdf",
-  "published_at_utc": "2026-11-07T17:00:00+00:00",
-  "captured_at_utc": "2026-11-07T17:11:14.257516+00:00",
-  "source_sha256": "3e9fbe81bc025d13a3c85d09ee953c6372a4b3162140205f6e73349df16e10bf",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-07_01_00PM.pdf",
+  "published_at_utc": "2026-11-07T18:00:00+00:00",
+  "captured_at_utc": "2026-11-07T18:15:08.961666+00:00",
+  "source_sha256": "0e37bfdbe60540e897651d6652d5ca8c1404772c2ffc56c2cd70c24a835232f2",
   "reports": [
     {
       "matchup": "DEN@IND",
@@ -119,12 +119,132 @@
       "reason": "G League - On Assignment"
     },
     {
+      "matchup": "BKN@ATL",
+      "team_abbr": "ATL",
+      "player": "Dennis, RayJ",
+      "normalized_player": "rayj dennis",
+      "status": "QUESTIONABLE",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "BKN@ATL",
+      "team_abbr": "ATL",
+      "player": "Gilbert, Keshon",
+      "normalized_player": "keshon gilbert",
+      "status": "OUT",
+      "reason": "Inflammation/Non-Surgical"
+    },
+    {
+      "matchup": "BKN@ATL",
+      "team_abbr": "ATL",
+      "player": "Gueye, Mouhamed",
+      "normalized_player": "mouhamed gueye",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Foot Fracture"
+    },
+    {
+      "matchup": "BKN@ATL",
+      "team_abbr": "ATL",
+      "player": "Johnson, Jalen",
+      "normalized_player": "jalen johnson",
+      "status": "PROBABLE",
+      "reason": "Injury/Illness - Left Ankle Sprain"
+    },
+    {
+      "matchup": "BKN@ATL",
+      "team_abbr": "ATL",
+      "player": "Landale, Jock",
+      "normalized_player": "jock landale",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Hip Strain"
+    },
+    {
+      "matchup": "BKN@ATL",
+      "team_abbr": "ATL",
+      "player": "Newell, Asa",
+      "normalized_player": "asa newell",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "BKN@ATL",
+      "team_abbr": "ATL",
+      "player": "Veesaar, Henri",
+      "normalized_player": "henri veesaar",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right ACL Tear"
+    },
+    {
+      "matchup": "BKN@ATL",
+      "team_abbr": "ATL",
+      "player": "Wilson, Jalen",
+      "normalized_player": "jalen wilson",
+      "status": "QUESTIONABLE",
+      "reason": "G League - Two-Way"
+    },
+    {
       "matchup": "NYK@CLE",
       "team_abbr": "NYK",
       "player": "Hart, Josh",
       "normalized_player": "josh hart",
       "status": "OUT",
       "reason": "Injury/Illness - Right Ankle Soreness"
+    },
+    {
+      "matchup": "NYK@CLE",
+      "team_abbr": "CLE",
+      "player": "Allen, Jarrett",
+      "normalized_player": "jarrett allen",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Knee Contusion"
+    },
+    {
+      "matchup": "NYK@CLE",
+      "team_abbr": "CLE",
+      "player": "Diop, Khalifa",
+      "normalized_player": "khalifa diop",
+      "status": "OUT",
+      "reason": "G League - On Assignment"
+    },
+    {
+      "matchup": "NYK@CLE",
+      "team_abbr": "CLE",
+      "player": "Enaruna, Tristan",
+      "normalized_player": "tristan enaruna",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "NYK@CLE",
+      "team_abbr": "CLE",
+      "player": "Merrill, Sam",
+      "normalized_player": "sam merrill",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "NYK@CLE",
+      "team_abbr": "CLE",
+      "player": "Tomlin, Nae'Qwan",
+      "normalized_player": "nae qwan tomlin",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "NYK@CLE",
+      "team_abbr": "CLE",
+      "player": "Tyson, Jaylon",
+      "normalized_player": "jaylon tyson",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Ankle Sprain"
+    },
+    {
+      "matchup": "NYK@CLE",
+      "team_abbr": "CLE",
+      "player": "Udeh, Jr., Ernest",
+      "normalized_player": ", ernest udeh",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
     },
     {
       "matchup": "ORL@GSW",
@@ -279,7 +399,7 @@
       "reason": "Injury/Illness - Left Shoulder Surgery"
     }
   ],
-  "rows": 34,
+  "rows": 49,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
