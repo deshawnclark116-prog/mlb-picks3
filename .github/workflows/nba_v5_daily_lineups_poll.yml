@@ -1,0 +1,81 @@
+name: NBA V5 official daily-lineups pretip poll and change-trigger
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch: {}
+  pull_request:
+    paths:
+      - "nba/nba_v5_daily_lineups_feed.py"
+      - "nba/nba_v5_daily_lineups_trigger.py"
+      - "tests/test_nba_v5_daily_lineups_feed.py"
+      - "tests/test_nba_v5_daily_lineups_trigger.py"
+      - ".github/workflows/nba_v5_daily_lineups_poll.yml"
+permissions:
+  contents: write
+  actions: write
+concurrency:
+  group: nba-v5-daily-lineup-poll
+  cancel-in-progress: false
+jobs:
+  check-confirmed-lineup-changes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Unit tests for source shape, pretip and source-change triggers
+        if: github.event_name == 'pull_request'
+        run: |
+          python -m unittest discover -s tests -p "test_nba_v5_daily_lineups_feed.py" -v
+          python -m unittest discover -s tests -p "test_nba_v5_daily_lineups_trigger.py" -v
+      - name: Read live daily lineups for next games (no post-tip certification)
+        if: github.event_name != 'pull_request'
+        run: |
+          set -euo pipefail
+          test -s docs/nba_v3_latest/latest.json
+          PYTHONPATH=. python -u -m nba.nba_v5_daily_lineups_feed \
+            --v3 docs/nba_v3_latest/latest.json \
+            --out "$RUNNER_TEMP/nba_lineups_pretip.json" \
+            --audit "$RUNNER_TEMP/nba_lineups_pretip_audit.json" \
+            --window-hours 2
+      - name: Detect genuinely new confirmed starting five or late scratch
+        if: github.event_name != 'pull_request'
+        id: delta
+        run: |
+          set -euo pipefail
+          PYTHONPATH=. python -u -m nba.nba_v5_daily_lineups_trigger \
+            --evidence "$RUNNER_TEMP/nba_lineups_pretip.json" \
+            --state docs/nba_v5_latest/daily_lineups_trigger_state.json \
+            --out-state docs/nba_v5_latest/daily_lineups_trigger_state.json \
+            --summary "$RUNNER_TEMP/lineup_trigger_decision.json"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          state=json.loads((Path(os.environ["RUNNER_TEMP"])/"lineup_trigger_decision.json").read_text())
+          with open(os.environ["GITHUB_OUTPUT"],"a") as f:
+              f.write("changed="+("true" if state.get("changed") else "false")+"\n")
+          print("NBA_V5_PREGAME_DISPATCH_DECISION",state)
+          PY
+      - name: Store new lineup fingerprints and dispatch immediate V5 refresh
+        if: github.event_name != 'pull_request' && steps.delta.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name "nba-v5-lineup-bot"
+          git config user.email "nba-v5-lineup-bot@users.noreply.github.com"
+          git add docs/nba_v5_latest/daily_lineups_trigger_state.json
+          git diff --cached --quiet && exit 0
+          git commit -m "NBA V5 pretip five confirmed/changed [skip ci]"
+          for i in 1 2 3; do
+            if git pull --rebase origin main && git push origin HEAD:main; then
+              gh workflow run nba_v3_latest_refresh.yml --ref main -f force=true -f window_hours=9
+              echo "NBA_V5_DAILY_LINEUP_REFRESH_DISPATCHED"
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "NBA_V5_DAILY_LINEUP_REFRESH_DISPATCH_FAILED"
+          exit 1

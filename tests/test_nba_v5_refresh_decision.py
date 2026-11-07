@@ -87,6 +87,14 @@ class RefreshDecisionTests(unittest.TestCase):
         self.assertFalse(r["run"])
         self.assertEqual(r["games"],0)
 
+    def test_lineup_confirmation_ten_minutes_before_tip_can_trigger(self):
+        close={**fixture()["games"][0],
+               "tipoff_utc":(NOW+dt.timedelta(minutes=10)).isoformat()}
+        res=decide({"games":[close]},espn(),official(),{},NOW,force=True)
+        self.assertTrue(res["run"])
+        self.assertEqual(res["games"],1)
+        self.assertIn("manual_force",res["reasons"])
+
     def test_age_force_and_no_future_handling(self):
         first=self.evaluate()
         old={"hash":first["hash"],"official_signature":first["official_signature"],
