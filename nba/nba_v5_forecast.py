@@ -35,6 +35,7 @@ from nba.nba_v5_external_source import read_source
 from nba.nba_v5_tracking_opportunities import audit_and_apply as apply_tracking_opportunities
 from nba.nba_v5_pregame_certified import load as load_pregame, apply_confirmed
 from nba.nba_v5_uncertainty import forecast_uncertainty, reach_with_dnp
+from nba.nba_v5_roster_integrity import audit_team as audit_rotation_coverage
 from nba.nba_v5_sim import League, league_from, simulate_game, MARKETS
 
 VERSION = "nba-v5-blend-possession-simulation-20261106"
@@ -276,6 +277,12 @@ def main() -> int:
         if not th or not ta:
             skipped.append(g3["game_id"])
             continue
+        roster_integrity = {
+            "home": audit_rotation_coverage(rp, th, pg, d),
+            "away": audit_rotation_coverage(rp, ta, pg, d),
+        }
+        # This is QA-only; a historic core missing tonight could be a
+        # legitimate injury. Never override availability or inflate chances.
         # Only histories strictly earlier than tipoff feed the role-change audit.
         # No shadow signal changes the published simulation until it passes OOS tests.
         role_audit = {pid: detect_role_change(rp.hist.get(pid, []), d)
@@ -442,6 +449,7 @@ def main() -> int:
         g5.update({"rows": new_rows, "rows_count": len(new_rows), "model_version": VERSION, "forecast_kind": "V5_SHADOW",
                    "forecast_at_utc": now.isoformat(), "asof_utc": now.isoformat(), "model_simulations": a.sims,
                    "pace_used": pace, "official_foul_multiplier": ctx["ft_mult"], "simulation_pieces_on": switches or "defaults",
+                   "roster_integrity_audit": roster_integrity,
                    "role_change_audit": role_audit,
                    "archetype_role_audit": archetypes,
                     "tracking_role_audit": tracking_role_audit,
