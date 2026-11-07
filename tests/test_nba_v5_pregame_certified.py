@@ -217,6 +217,17 @@ class MultiplePregameProviderRegression(unittest.TestCase):
         self.assertEqual(records[("400", "1")]["source_provider"],
                          "NBA_OFFICIAL_DAILY_LINEUPS")
 
+    def test_same_five_different_source_order_not_a_conflict(self):
+        daily = evidence()
+        daily["provider"] = "NBA_OFFICIAL_DAILY_LINEUPS"
+        live = evidence()
+        live["provider"] = "NBA_OFFICIAL_LIVE_BOXSCORE"
+        live["games"][0]["teams"][0]["starters"] = ["5", "4", "3", "2", "1"]
+        records, audit = self.combine(daily, live)
+        self.assertEqual(audit["confirmed_teams"], 1)
+        self.assertFalse(audit["confirmed_conflicts_rejected"])
+        self.assertIn(("400", "1"), records)
+
     def test_without_sources_retains_unknown_state(self):
         records, audit = load_many([], NOW, slate())
         self.assertEqual(records, {})
