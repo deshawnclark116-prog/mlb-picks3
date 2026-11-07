@@ -1,5 +1,6 @@
 import React,{useCallback,useEffect,useMemo,useState} from 'react';
-import {RefreshCw,ChevronDown} from 'lucide-react';
+import {RefreshCw,ChevronDown,Image} from 'lucide-react';
+import NbaV5ShareModal from './NbaV5ShareModal';
 import {wholeStatProjection} from '../lib/wholeStatProjection';
 
 type Market='points'|'rebounds'|'assists'|'three_pointers_made'|'steals'|'blocks'|'turnovers';
@@ -162,6 +163,7 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
  const [error,setError]=useState('');
  const [loading,setLoading]=useState(true);
  const [expanded,setExpanded]=useState<string|null>(null);
+ const [share,setShare]=useState<{game:Game;ranked:ProjectionItem[]}|null>(null);
  const [day,setDay]=useState('AUTO');
  const [showFilters,setShowFilters]=useState(false);
  const [market,setMarket]=useState<'ALL'|Market>('ALL');
@@ -241,7 +243,8 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
     {!all.length&&<p className="text-xs text-gray-400">No first-seen V3 forecasts on the selected date.
       Select another date or All upcoming. No old-model picks are substituted.</p>}
     {all.map(g=>{
-      const picks=v3ProjectionPicks(g).filter(p=>
+      const ranked=v3ProjectionPicks(g);  // canonical, UNFILTERED model probability ranking
+      const picks=ranked.filter(p=>
         activeMarket==='ALL'||p.row.market===activeMarket);
       const every=g.rows.filter(r=>activeMarket==='ALL'||r.market===activeMarket);
       const shown:ProjectionItem[]=mode==='PICKS'?picks:
@@ -249,9 +252,10 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
       const open=expanded===g.game_id;
       return <article key={g.game_id} data-testid="nba-v3-game"
         className="rounded-xl border border-[#333] bg-[#191919] overflow-hidden">
+        <div className="flex items-stretch">
         <button type="button" aria-expanded={open}
           onClick={()=>setExpanded(open?null:g.game_id)}
-          className="w-full min-h-20 p-3 flex items-center justify-between text-left gap-2">
+          className="min-w-0 flex-1 min-h-20 p-3 flex items-center justify-between text-left gap-2">
           <div>
            <strong className="text-sm text-white">{g.away} at {g.home}</strong>
            <p className="mt-1 text-[11px] text-gray-400">{et(g.tipoff_utc)}
@@ -276,8 +280,18 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
              :<>V3 first observed {et(g.forecast_at_utc)}</>}
              {' · '}No verified bookmaker line</p>
           </div>
-          <ChevronDown className={'text-gray-400 '+(open?'rotate-180':'')} size={18}/>
+          <ChevronDown className={'shrink-0 text-gray-400 '+(open?'rotate-180':'')} size={18}/>
         </button>
+        {g.forecast_kind==='V5_LATEST'&&ranked.length>0&&
+         <button type="button"
+           aria-label={`Open NBA V5 top 10 game card for ${g.away} at ${g.home}`}
+           title="NBA V5 top 10 · full game share card"
+           data-testid="nba-v5-open-top10"
+           onClick={()=>setShare({game:g,ranked})}
+           className="my-3 mr-3 flex min-h-11 min-w-16 shrink-0 flex-col items-center justify-center gap-1 rounded-xl border border-[#79FF48]/40 bg-[#79FF48]/10 px-2 text-[#79FF48]">
+          <Image size={18}/><span className="text-[10px] font-black">TOP 10</span>
+         </button>}
+        </div>
         {shown.length>0&&<div data-testid="nba-v3-tiles" className="grid grid-cols-2 gap-2 px-3 pb-3">
           {topProbabilityPicks(picks).map(({row:r,whole,prob})=><div key={r.player_id+r.market} data-testid="nba-v3-tile" className="min-w-0 rounded-xl border border-white/10 bg-[#12181b] p-3">
             <p className="truncate text-[11px] text-gray-400">{NAME[r.market]}</p>
@@ -310,6 +324,7 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
        all.reduce((n,g)=>n+g.rows.length,0)+' numerical projections'}
    {' · '}{doc.original_games_audited} original games audited
   </div>}
+  {share&&<NbaV5ShareModal game={share.game} ranked={share.ranked} close={()=>setShare(null)}/>}
   <p className="text-[11px] text-amber-200 font-bold">MODEL-ESTIMATED PROJECTION CHANCES · NOT YET PROSPECTIVELY CALIBRATED.</p>
   <details data-testid="nba-v3-about" className="rounded-xl border border-[#00FF41]/30 bg-[#0e2115] px-3 text-[13px] leading-relaxed text-gray-300">
    <summary className="min-h-10 cursor-pointer py-2 font-semibold text-gray-200">About these numbers <span className="font-normal text-amber-200">· research estimates, not yet calibrated</span></summary>
