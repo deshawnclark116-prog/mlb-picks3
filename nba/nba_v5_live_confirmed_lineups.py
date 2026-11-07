@@ -73,7 +73,7 @@ def roster_by_name(game,team_id):
 def starters_from_box(box,side,abbr,game_id,game,team_id):
     root=box.get("game") or {}
     if (str(root.get("gameId"))!=str(game_id)
-        or root.get("gameStatus")!=1):
+        or str(root.get("gameStatus"))!="1"):
         return [],"BOX_NOT_PREGAME"
     team=root.get(side+"Team")
     if not isinstance(team,dict) or team.get("teamTricode")!=abbr:
@@ -114,7 +114,7 @@ def capture(v3,scoreboard,boxes,now):
             raise ValueError("NBA_STARTERS_INVALID_ESPN_TEAM")
         candidates=[]
         for item in feed:
-            if not isinstance(item,dict) or item.get("gameStatus")!=1:
+            if not isinstance(item,dict) or str(item.get("gameStatus"))!="1":
                 continue
             if ((item.get("homeTeam") or {}).get("teamTricode")!=home_abbr
                 or (item.get("awayTeam") or {}).get("teamTricode")!=away_abbr):
@@ -171,7 +171,7 @@ def main():
         # Never fetch a game that has already started. Match by fixture and
         # time, *not* by an unverified ESPN<->NBA game-id equivalence.
         for item in games:
-            if not isinstance(item,dict) or item.get("gameStatus")!=1:
+            if not isinstance(item,dict) or str(item.get("gameStatus"))!="1":
                 continue
             gid=str(item.get("gameId") or "")
             if not re.fullmatch(r"\d{10}",gid):
