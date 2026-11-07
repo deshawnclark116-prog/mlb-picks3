@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-07_08_15AM.pdf",
-  "published_at_utc": "2026-11-07T13:15:00+00:00",
-  "captured_at_utc": "2026-11-07T13:28:31.455104+00:00",
-  "source_sha256": "9e62e347a79e1a829622ddc04d035625bf36a19fa95ceab8822476cb9aa0bce7",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-07_12_00PM.pdf",
+  "published_at_utc": "2026-11-07T17:00:00+00:00",
+  "captured_at_utc": "2026-11-07T17:11:14.257516+00:00",
+  "source_sha256": "3e9fbe81bc025d13a3c85d09ee953c6372a4b3162140205f6e73349df16e10bf",
   "reports": [
     {
       "matchup": "DEN@IND",
@@ -73,6 +73,14 @@
     {
       "matchup": "BKN@ATL",
       "team_abbr": "BKN",
+      "player": "Clowney, Noah",
+      "normalized_player": "noah clowney",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Illness"
+    },
+    {
+      "matchup": "BKN@ATL",
+      "team_abbr": "BKN",
       "player": "Demin, Egor",
       "normalized_player": "egor demin",
       "status": "OUT",
@@ -99,7 +107,7 @@
       "team_abbr": "BKN",
       "player": "Powell, Drake",
       "normalized_player": "drake powell",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "G League - On Assignment"
     },
     {
@@ -271,7 +279,7 @@
       "reason": "Injury/Illness - Left Shoulder Surgery"
     }
   ],
-  "rows": 33,
+  "rows": 34,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
