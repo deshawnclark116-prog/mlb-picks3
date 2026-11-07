@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install simulation dependencies
-        run: python -m pip install -q "numpy>=2.1,<2.5" "scipy>=1.14,<1.18"
+        run: python -m pip install -q "numpy>=2.1,<2.5" "scipy>=1.14,<1.18" "pandas>=2.2,<3.0" "pyarrow>=18,<25"
       - name: Validate source and integration syntax
         run: |
           python -m py_compile nba/nba_v5_pregame_certified.py nba/nba_v5_forecast.py
