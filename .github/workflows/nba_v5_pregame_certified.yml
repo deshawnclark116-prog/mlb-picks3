@@ -5,8 +5,10 @@ on:
       - "nba/nba_v5_pregame_certified.py"
       - "nba/nba_v5_forecast.py"
       - "nba/nba_v5_todays_lineups.py"
+      - "nba/nba_v5_daily_lineups_feed.py"
       - "tests/test_nba_v5_pregame_certified.py"
       - "tests/test_nba_v5_todays_lineups.py"
+      - "tests/test_nba_v5_daily_lineups_feed.py"
       - ".github/workflows/nba_v5_pregame_certified.yml"
   workflow_dispatch: {}
 permissions:
@@ -28,5 +30,7 @@ jobs:
           python -m unittest discover -s tests -p "test_nba_v5_pregame_certified.py" -v
       - name: Today's Lineups authorized capture adapter tests
         run: python -m unittest discover -s tests -p "test_nba_v5_todays_lineups.py" -v
+      - name: Official NBA daily JSON positional-confirmation and no-lookahead tests
+        run: python -m unittest discover -s tests -p "test_nba_v5_daily_lineups_feed.py" -v
       - name: Existing core numerical game regressions
         run: python -m unittest discover -s tests -p "test_nba_v5*.py" -v
