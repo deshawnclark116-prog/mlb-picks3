@@ -46,6 +46,16 @@ jobs:
             --archive-last docs/nba_v5_archive/last \
             --grades-last docs/nba_v5_grades/last \
             --out docs/nba_v5_grades/frozen_component_comparison.json
+      - name: Attribute original V5 minute and player-stat errors to pretip roster coverage
+        run: |
+          set -euo pipefail
+          PYTHONPATH=. python -u -m nba.nba_v5_rotation_attribution \
+            --archive-last docs/nba_v5_archive/last \
+            --grades-last docs/nba_v5_grades/last \
+            --historical-games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --historical-games nba/data/nba_v4_games_2026_27.jsonl \
+            --omissions docs/nba_v5_grades/roster_omission_audit.json \
+            --out docs/nba_v5_grades/rotation_attribution.json
       - name: Audit immutable forecast coverage and pending results
         run: |
           PYTHONPATH=. python -u -m nba.nba_v5_grade_health \
