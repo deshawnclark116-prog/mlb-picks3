@@ -1,6 +1,10 @@
 """The postgame scorer finds absent players without changing pretip probability."""
 import unittest
-from nba.nba_v5_roster_omission_grade import grade_omissions, exclusion_cause
+import tempfile
+import json
+import gzip
+from pathlib import Path
+from nba.nba_v5_roster_omission_grade import grade_omissions, exclusion_cause, _open_records
 
 
 class OmissionGradeTests(unittest.TestCase):
@@ -42,6 +46,14 @@ class OmissionGradeTests(unittest.TestCase):
                          "PRESENT_BUT_NOT_SIMULATED_OTHER_REASON")
         self.assertEqual(exclusion_cause(snapshot,"d")["cause"],
                          "SIMULATED_BUT_NOT_IN_GRADED_OUTPUT")
+
+    def test_jsonl_and_gzip_are_read_before_file_closes(self):
+        with tempfile.TemporaryDirectory() as folder:
+            for name, writer in (("box.jsonl", lambda p: p.write_text('{"game_id":"X"}\n')),
+                                 ("box.jsonl.gz",lambda p: gzip.open(p,"wt").write('{"game_id":"X"}\n'))):
+                p=Path(folder,name)
+                writer(p)
+                self.assertEqual(list(_open_records(p)),[{"game_id":"X"}])
 
     def test_game_mismatch_does_not_join_wrong_box(self):
         with self.assertRaisesRegex(ValueError,"game_id mismatch"):
