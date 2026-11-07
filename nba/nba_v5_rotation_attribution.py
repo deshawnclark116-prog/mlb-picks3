@@ -9,14 +9,17 @@ model input. Both high/low coverage cohorts retain every eligible player.
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import gzip
 import json
 import math
 from collections import defaultdict
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 CORE=("points","rebounds","assists","three_pointers_made")
 ARMS=("v4_only","v5_only","blend")
+ET=ZoneInfo("America/New_York")
 
 
 def bucket(coverage):
@@ -29,6 +32,90 @@ def bucket(coverage):
     if coverage < .90:
         return "PARTIAL_75_TO_90PCT"
     return "HIGH_AT_LEAST_90PCT"
+
+
+
+def _timestamp(value):
+    x=dt.datetime.fromisoformat(str(value).replace("Z","+00:00"))
+    if x.tzinfo is None:
+        raise ValueError("NBA_V5_RESEARCH_SOURCE_NAIVE_CLOCK")
+    return x.astimezone(ET)
+
+
+def load_past_team_games(paths):
+    """Index actual final box games by club and *Eastern game day*.
+
+    A future final in the current file cannot enter a historical roster
+    reconstructed for an earlier target game's forecast. Same-day games
+    are also excluded, even if nominally earlier, to prevent partial-final
+    status ambiguity and mirror V5's previous-date training cutoff.
+    """
+    result=defaultdict(list)
+    seen=set()
+    for path in paths:
+        opener=gzip.open if str(path).endswith(".gz") else open
+        with opener(path,"rt",encoding="utf-8") as fh:
+            for line in fh:
+                if not line.strip():continue
+                g=json.loads(line)
+                gid=str(g["game_id"])
+                if gid in seen:
+                    raise ValueError("NBA_V5_RESEARCH_DUPLICATE_HISTORY_GAME")
+                seen.add(gid)
+                day=_timestamp(g["date"]).date()
+                for side in ("home","away"):
+                    team=str(g[side]["id"])
+                    minutes={}
+                    for p in g.get("players",[]):
+                        if str(p.get("side"))!=side or str(p.get("team"))!=team:
+                            continue
+                        minute=float(p.get("min") or 0)
+                        if 0 < minute <= 53:
+                            pid=str(p["id"])
+                            if pid in minutes:
+                                raise ValueError("NBA_V5_RESEARCH_DUPLICATE_HISTORY_PLAYER")
+                            minutes[pid]=minute
+                    if minutes:
+                        result[team].append((day,gid,minutes))
+    for tid,items in result.items():
+        items.sort(key=lambda x:(x[0],x[1]))
+    return result
+
+
+def reconstruct_prior_rotation(game,historical):
+    """Prior-only coverage *reconstruction*, never actual frozen evidence."""
+    day=_timestamp(game["tipoff_utc"]).date()
+    output={}
+    for side in ("home","away"):
+        tid=str(game[side+"_id"])
+        previous=[x for x in historical.get(tid,[]) if x[0]<day][-3:]
+        total=defaultdict(float)
+        for date,gid,minutes in previous:
+            for pid,minute in minutes.items():
+                total[pid]+=minute
+        modeled={str(r["player_id"]) for r in game.get("rows",[])
+                 if str(r.get("team_id"))==tid and
+                    str(r.get("model_version","")).startswith("nba-v5-") and
+                    r.get("mean_basis")=="CONDITIONAL_ON_PLAYING"}
+        observed=sum(total.values())
+        represented=sum(v for pid,v in total.items() if pid in modeled)
+        if observed and represented>observed+1e-6:
+            raise ValueError("NBA_V5_RECONSTRUCTED_MINUTES_IMPOSSIBLE")
+        cov=round(represented/observed,4) if (len(previous)>=2 and observed>=200) else None
+        output[side]={
+            "represented_fraction":cov,
+            "warning":("NO_ELIGIBLE_PRIOR_ROTATION" if cov is None
+                       else "MATERIAL_PRIOR_ROTATION_UNREPRESENTED" if cov<.75
+                       else "NORMAL_OR_PARTIAL_RECONSTRUCTED_COVERAGE"),
+            "past_games_observed":len(previous),
+            "past_minutes_total":round(observed,2),
+            "represented_prior_minutes":round(represented,2),
+            "missing_from_fixture_prior_minutes":None,
+            "missing_from_model_prior_minutes":round(observed-represented,2),
+            "coverage_source":"RECONSTRUCTED_PAST_ONLY_ET_GAMEDAYS_NOT_FROZEN",
+            "source_note":"Uses only final games with Eastern calendar date strictly before target game. Later final data never enters the reconstructed past rotation.",
+        }
+    return output
 
 
 def _archived(path):
@@ -84,7 +171,8 @@ def summarize(events):
     return out
 
 
-def build(archive_last, grades_last, omission_path=None):
+def build(archive_last, grades_last, omission_path=None, historical_games=None):
+    historic=load_past_team_games(historical_games or [])
     omit={}
     if omission_path:
         doc=json.loads(Path(omission_path).read_text())
@@ -107,6 +195,17 @@ def build(archive_last, grades_last, omission_path=None):
         if game["forecast_at_utc"]!=grade["forecast_at_utc"]:
             raise ValueError("NBA_V5_ROTATION_GRADE_FORECAST_CLOCK_CHANGED")
         coverage_by_side=game.get("roster_integrity_audit") or {}
+        # Older frozen first-seen games predate the coverage instrument.
+        # Use strictly older *calendar-day* finished games as an explicitly
+        # labeled retrospective audit; never assert the reconstructed value
+        # was itself observed in the original pretip archive.
+        if historic:
+            inferred=reconstruct_prior_rotation(game,historic)
+            coverage_by_side={side:(
+                coverage_by_side.get(side)
+                if (coverage_by_side.get(side) or {}).get("represented_fraction") is not None
+                else inferred[side])
+                for side in ("home","away")}
         source_teams={"home":str(game["home_id"]),"away":str(game["away_id"])}
         mapped={}
         for r in game.get("rows",[]):
@@ -166,6 +265,8 @@ def build(archive_last, grades_last, omission_path=None):
             record["teams"][side]={
                 "team_id":source_teams[side],
                 "prior_rotation_coverage":prior.get("represented_fraction"),
+                "prior_coverage_source":prior.get("coverage_source","FROZEN_PRETIP_AUDIT"),
+                "prior_games_observed":prior.get("past_games_observed"),
                 "prior_coverage_warning":prior.get("warning"),
                 "prior_missing_from_fixture_minutes":prior.get("missing_from_fixture_prior_minutes"),
                 "prior_missing_from_model_minutes":prior.get("missing_from_model_prior_minutes"),
@@ -180,6 +281,8 @@ def build(archive_last, grades_last, omission_path=None):
         "schema":"NBA_V5_PRETIP_ROTATION_VS_FINAL_ROOT_CAUSE_V1",
         "scope":"original frozen V5 pretip player means and independent final actuals",
         "no_filled_missing_values_or_hindsight_roster":True,
+        "retrospective_past_only_reconstruction_used":bool(historic),
+        "reconstructed_coverage_not_original_pretip_receipt":True,
         "all_markets_and_players_included_not_frontend_selected":True,
         "games":len(games_out),
         "events":len(all_events),
@@ -197,9 +300,10 @@ def main():
     p.add_argument("--archive-last",required=True)
     p.add_argument("--grades-last",required=True)
     p.add_argument("--omissions",default=None)
+    p.add_argument("--historical-games",action="append",default=[],help="Completed box games; only days strictly before each forecast game are used to reconstruct older missing coverage audits")
     p.add_argument("--out",required=True)
     a=p.parse_args()
-    result=build(a.archive_last,a.grades_last,a.omissions)
+    result=build(a.archive_last,a.grades_last,a.omissions,a.historical_games)
     out=Path(a.out)
     out.parent.mkdir(parents=True,exist_ok=True)
     out.write_text(json.dumps(result,indent=2,sort_keys=True)+"\n")
