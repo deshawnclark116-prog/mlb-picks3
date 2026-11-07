@@ -176,7 +176,7 @@ def load_many(paths, now, slate):
     for key, entries in sorted(candidates.items()):
         confirmed = [record for record in entries
                      if record["lineup_state"] == "CONFIRMED"]
-        if len({tuple(record["starters"]) for record in confirmed}) > 1:
+        if len({frozenset(record["starters"]) for record in confirmed}) > 1:
             # Neither provider has authority to override a contradictory
             # explicitly confirmed five without newer source verification.
             conflicts.append({"game_id": key[0], "team_id": key[1],
