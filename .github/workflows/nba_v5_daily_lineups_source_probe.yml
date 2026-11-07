@@ -44,4 +44,15 @@ jobs:
                   print("ARRAY",path,"length",len(value))
                   if value:walk(value[0],path+"[0]",depth+1)
           walk(obj)
+          from collections import Counter
+          for g in obj.get("games",[]):
+              print("GAME",g.get("gameId"),"status",g.get("gameStatus"),"description",g.get("gameStatusText"))
+              for side in ("awayTeam","homeTeam"):
+                  team=g.get(side,{})
+                  players=team.get("players",[])
+                  status_counts=Counter(str(p.get("lineupStatus")) for p in players)
+                  pos_counts=Counter(str(p.get("position")) for p in players if p.get("lineupStatus") == "Confirmed")
+                  marked=[(p.get("playerName"),p.get("position"),p.get("lineupStatus"),p.get("rosterStatus"),p.get("timestamp")) for p in players
+                      if p.get("lineupStatus") == "Confirmed"]
+                  print("TEAM",team.get("teamAbbreviation"),"total",len(players),"statuses",dict(status_counts),"confirmed_positions",dict(pos_counts),"confirmed_example",marked[:6])
           PY
