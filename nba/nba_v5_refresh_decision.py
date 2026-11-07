@@ -94,16 +94,25 @@ def decide(fixtures,espn,official,state,now,window_hours=9,force=False):
     previous=_time(state.get("generated_at_utc"))
     age=(now-previous).total_seconds() if previous else float("inf")
     changed=state.get("hash")!=key
-    run=bool(soon) and (bool(force) or changed or age>3*3600)
+    # A lineup can be formally announced at T-30 without any injury-status
+    # change. The old 3-hour gate therefore missed it entirely. Poll the
+    # genuinely near-tipoff window on EVERY scheduled tick, including while
+    # source statuses are unchanged. Never force a run after scheduled tip.
+    near_tip_lineup_recheck=any(
+        20*60 <= (_time(g["tipoff_utc"])-now).total_seconds() <= 90*60
+        for g in soon)
+    run=bool(soon) and (bool(force) or changed or age>3*3600 or near_tip_lineup_recheck)
     return {"run":run,"hash":key,"games":len(soon),
             "official_signature":official_signature,
             "official_source_observed":official_used,
             "espn_relevant_status_count":len(statuses),
             "official_relevant_matchup_count":len(matchup_ids) if official_used else 0,
             "source_changed":changed,
+            "near_tip_lineup_recheck":near_tip_lineup_recheck,
             "last_forecast_age_seconds":int(age) if age!=float("inf") else None,
             "reasons":([x for x,v in (("manual_force",force),("source_changed",changed),
-                     ("stale_3hours",age>3*3600)) if v] if soon else ["no_nearby_games"])}
+                     ("stale_3hours",age>3*3600),
+                     ("near_tip_lineup_recheck",near_tip_lineup_recheck)) if v] if soon else ["no_nearby_games"])}
 
 
 def main():
