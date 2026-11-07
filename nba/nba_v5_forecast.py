@@ -215,6 +215,24 @@ def team_sensitivity(th, ta, L, tables, ctx, base_means, S, pace, seed, side, to
     return out
 
 
+
+def optional_dependency_sensitivity(enabled, th, ta, L, tables, ctx,
+                                    base_means, S, pace, seed, features=None):
+    """Optional post-simulation what-if research; never needed for main P(hit).
+
+    Crucially, the mandatory 10,000-world full-game simulation happens
+    separately before this function. When disabled, this does not call the
+    expensive six additional 3,333-world replays.
+    """
+    if not enabled:
+        return {}
+    extra = {}
+    for side in ("home", "away"):
+        extra.update(team_sensitivity(th, ta, L, tables, ctx, base_means,
+                                      S, pace, seed, side, features=features))
+    return extra
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--games", action="append", required=True)
@@ -382,15 +400,9 @@ def main() -> int:
                     continue
                 for m, key in MARKETS.items():
                     base_means[(pid, m)] = float(sd[key][played, j].mean())
-        sens = {}
-        # One full 10,000-world main game is mandatory. The six optional
-        # teammate-out research reruns total ~20,000 MORE worlds per match,
-        # but do not change the published player means, probabilities, or
-        # standings. Keep them out of the near-tip production hot path.
-        # An explicit research invocation can still compute dependencies.
-        if a.compute_sensitivity:
-            for side in ("home", "away"):
-                sens.update(team_sensitivity(th, ta, L, tables_g, ctx, base_means, a.sims, pace, seed, side, features=switches))
+        sens = optional_dependency_sensitivity(
+            a.compute_sensitivity, th, ta, L, tables_g, ctx,
+            base_means, a.sims, pace, seed, features=switches)
         for side, (ti, sd, av, f5, c5) in side_data.items():
             for j, pid in enumerate(ti.ids):
                 played = av[:, j] & (sd["min"][:, j] > 0)
