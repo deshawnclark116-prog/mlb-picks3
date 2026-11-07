@@ -9,6 +9,7 @@ on:
       - "nba/nba_v5_todays_lineups.py"
       - "nba/nba_v5_daily_lineups_feed.py"
       - "tests/test_nba_v5_pregame_certified.py"
+      - "tests/test_nba_v5_pregame_runtime.py"
       - "tests/test_nba_v5_roster_integrity.py"
       - "tests/test_nba_v5_roster_omission_grade.py"
       - "tests/test_nba_v5_todays_lineups.py"
