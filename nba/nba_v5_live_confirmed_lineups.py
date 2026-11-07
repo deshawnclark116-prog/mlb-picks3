@@ -106,8 +106,8 @@ def capture(v3,scoreboard,boxes,now):
     status_counts={}
     for game in v3.get("games",[]):
         tip=utc(game["tipoff_utc"])
-        if not now<tip:
-            continue
+        if not 0<(tip-now).total_seconds()<=9*3600:
+            continue  # only the current near-game slate, never future-day filler
         home_id,away_id=str(game["home_id"]),str(game["away_id"])
         home_abbr,away_abbr=ESPN_ABBR.get(home_id),ESPN_ABBR.get(away_id)
         if not home_abbr or not away_abbr:
@@ -181,7 +181,7 @@ def main():
                        and (item.get("homeTeam") or {}).get("teamTricode")==ESPN_ABBR[str(g["home_id"])]
                        and (item.get("awayTeam") or {}).get("teamTricode")==ESPN_ABBR[str(g["away_id"])]
                        and (abs((utc(item["gameTimeUTC"])-utc(g["tipoff_utc"])).total_seconds())<=15*60)
-                       and now<utc(g["tipoff_utc"])
+                       and 0<(utc(g["tipoff_utc"])-now).total_seconds()<=120*60
                        for g in v3.get("games",[])):
                 continue
             try:
