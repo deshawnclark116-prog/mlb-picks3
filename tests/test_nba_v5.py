@@ -181,7 +181,25 @@ class FeaturedMixTests(unittest.TestCase):
                 r("points", 18.2, "e", 0.62), r("assists", 5.1, "f", 0.60), r("rebounds", 6.0, "g", 0.58)]
         rank_for_screen(rows)
         featured = sorted([x for x in rows if x.get("frontend_rank")], key=lambda x: x["frontend_rank"])[:4]
-        self.assertEqual(len({x["market"] for x in featured}), 4)              # four different stats
+        self.assertEqual([x["market"] for x in featured], ["steals", "steals", "blocks", "points"])   # strict percentage rank, no forced variety
         self.assertEqual(featured[0]["market"], "steals")                       # the best pick overall still leads
         self.assertEqual(rows[0]["rank_by_chance_only"], 1)
         self.assertEqual(rows[1]["rank_by_chance_only"], 2)                     # the second steals pick is second by chance alone
+
+
+class ProductionBudgetTests(unittest.TestCase):
+    def test_published_v5_uses_at_least_ten_thousand_joint_game_worlds(self):
+        # Unit tests may simulate a few hundred worlds for speed. The
+        # public forecast CLI cannot publish fewer than 10,000.
+        import subprocess
+        import sys
+        from nba.nba_v5_forecast import MIN_PRODUCTION_SIMS
+        self.assertEqual(MIN_PRODUCTION_SIMS, 10_000)
+        run=subprocess.run(
+            [sys.executable,"-m","nba.nba_v5_forecast",
+             "--games","missing.jsonl","--pbp","missing.jsonl",
+             "--v3","missing.json","--out","unused.json",
+             "--sims","9999"],
+            capture_output=True,text=True,check=False)
+        self.assertNotEqual(run.returncode,0)
+        self.assertIn("NBA_V5_REQUIRES_AT_LEAST_10000_COMPLETE_GAME_SIMS",run.stderr)
