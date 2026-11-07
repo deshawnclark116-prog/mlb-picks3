@@ -6,7 +6,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import numpy as np
-from nba.nba_v5_pregame_certified import load, apply_confirmed
+from nba.nba_v5_pregame_certified import load, load_many, apply_confirmed
 
 NOW = "2026-11-06T22:00:00Z"
 TIP = "2026-11-06T23:00:00Z"
@@ -149,6 +149,78 @@ class CertifiedLineupContract(unittest.TestCase):
         d["published_at_utc"] = "2026-11-06T21:45:00"
         with self.assertRaisesRegex(ValueError, "timezone"):
             read(d)
+
+
+
+class MultiplePregameProviderRegression(unittest.TestCase):
+    """Disjoint verified teams must survive the slate-wide provider chooser."""
+
+    @staticmethod
+    def combine(*documents):
+        with tempfile.TemporaryDirectory() as tmp:
+            files = []
+            for i, document in enumerate(documents):
+                path = Path(tmp) / f"evidence-{i}.json"
+                path.write_text(json.dumps(document))
+                files.append(str(path))
+            return load_many(files, NOW, slate())
+
+    @staticmethod
+    def second_team(provider="NBA_OFFICIAL_LIVE_BOXSCORE"):
+        doc = evidence()
+        doc["provider"] = provider
+        doc["games"][0]["teams"] = [{
+            "team_id": "2", "lineup_state": "CONFIRMED",
+            "starters": ["8", "9", "10", "11", "12"],
+            "inactive": [], "minute_limits": [],
+        }]
+        return doc
+
+    def test_two_sources_complement_different_teams_in_one_game(self):
+        daily = evidence()
+        daily["provider"] = "NBA_OFFICIAL_DAILY_LINEUPS"
+        records, audit = self.combine(daily, self.second_team())
+        self.assertEqual(audit["confirmed_teams"], 2)
+        self.assertEqual(records[("400", "1")]["source_provider"],
+                         "NBA_OFFICIAL_DAILY_LINEUPS")
+        self.assertEqual(records[("400", "2")]["source_provider"],
+                         "NBA_OFFICIAL_LIVE_BOXSCORE")
+        self.assertEqual(len(records), 2)
+
+    def test_conflicting_confirmed_fives_fail_closed_only_for_that_team(self):
+        daily = evidence()
+        daily["provider"] = "NBA_OFFICIAL_DAILY_LINEUPS"
+        conflicting = evidence()
+        conflicting["provider"] = "NBA_OFFICIAL_LIVE_BOXSCORE"
+        conflicting["games"][0]["teams"][0]["starters"][-1] = "6"
+        records, audit = self.combine(daily, conflicting, self.second_team())
+        self.assertNotIn(("400", "1"), records)
+        self.assertIn(("400", "2"), records)
+        self.assertEqual(audit["confirmed_teams"], 1)
+        self.assertEqual(audit["confirmed_conflicts_rejected"][0]["team_id"], "1")
+
+    def test_bad_source_cannot_erase_other_valid_team(self):
+        invalid = evidence()
+        invalid["captured_at_utc"] = "2026-11-06T23:30:00Z"
+        records, audit = self.combine(invalid, self.second_team())
+        self.assertEqual(audit["rejected_source_count"], 1)
+        self.assertEqual(audit["confirmed_teams"], 1)
+        self.assertEqual(set(records), {("400", "2")})
+
+    def test_same_confirmed_five_prefers_daily_provider(self):
+        daily = evidence()
+        daily["provider"] = "NBA_OFFICIAL_DAILY_LINEUPS"
+        live = evidence()
+        live["provider"] = "NBA_OFFICIAL_LIVE_BOXSCORE"
+        records, audit = self.combine(live, daily)
+        self.assertEqual(audit["confirmed_teams"], 1)
+        self.assertEqual(records[("400", "1")]["source_provider"],
+                         "NBA_OFFICIAL_DAILY_LINEUPS")
+
+    def test_without_sources_retains_unknown_state(self):
+        records, audit = load_many([], NOW, slate())
+        self.assertEqual(records, {})
+        self.assertEqual(audit["source_status"], "NOT_CONNECTED")
 
 
 if __name__ == "__main__":
