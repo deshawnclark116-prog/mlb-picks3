@@ -118,6 +118,7 @@ class BridgeTests(unittest.TestCase):
         # contradictory ESPN team membership, not an unobserved transfer.
         new,_,audit=supplement(fixture(),roster,h,source(),ASOF)
         self.assertIn("100",new["23"])
+        h[("6","100")]=list(h[("23","100")])
         h[("23","100")]=[]
         new,_,audit=supplement(fixture(),roster,h,source(),ASOF)
         self.assertNotIn("100",new["23"])
