@@ -26,6 +26,8 @@ jobs:
           PYTHONPATH=. python -u -m nba.nba_v5_rotation_attribution \
             --archive-last docs/nba_v5_archive/last \
             --grades-last docs/nba_v5_grades/last \
+            --historical-games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --historical-games nba/data/nba_v4_games_2026_27.jsonl \
             --omissions docs/nba_v5_grades/roster_omission_audit.json \
             --out /tmp/nba_v5_rotation_attribution.json
       - uses: actions/upload-artifact@v4
