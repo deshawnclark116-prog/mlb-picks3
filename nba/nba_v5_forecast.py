@@ -11,7 +11,7 @@ Beyond the projection every row says how likely the player is to start and to be
 range, and which teammates' availability would change the projection most (re-simulated with that teammate out).
 Nothing from after tip-off is used. No sportsbook input. Shadow only.
 
-Usage: python -m nba.nba_v5_forecast --games g.jsonl[.gz] --pbp p.jsonl --v3 latest.json --out v5.json [--sims 3000]
+Usage: python -m nba.nba_v5_forecast --games g.jsonl[.gz] --pbp p.jsonl --v3 latest.json --out v5.json [--sims 10000]
 """
 from __future__ import annotations
 import argparse
@@ -38,6 +38,8 @@ from nba.nba_v5_uncertainty import forecast_uncertainty, reach_with_dnp
 from nba.nba_v5_sim import League, league_from, simulate_game, MARKETS
 
 VERSION = "nba-v5-blend-possession-simulation-20261106"
+# All published V5 full-game projections share at least this many joint worlds.
+MIN_PRODUCTION_SIMS = 10_000
 CORE = ("points", "rebounds", "assists", "three_pointers_made")
 CDF_MAX = {"points": 90, "rebounds": 45, "assists": 35, "three_pointers_made": 17, "steals": 12, "blocks": 12, "turnovers": 15}
 SENS_MIN_SHARE = 0.08                    # a projection "depends on" a teammate if it moves by 8% or more
@@ -189,7 +191,7 @@ def main() -> int:
     ap.add_argument("--pbp", action="append", required=True)
     ap.add_argument("--v3", required=True)
     ap.add_argument("--out", required=True)
-    ap.add_argument("--sims", type=int, default=3000)
+    ap.add_argument("--sims", type=int, default=MIN_PRODUCTION_SIMS, help="Minimum 10,000 complete correlated game simulations per matchup")
     ap.add_argument("--calibration", default="")
     ap.add_argument("--receipt", default="", help="information receipt (nba_v5_info) with each player's reported status, body part and return date")
     ap.add_argument("--grades", default="", help="docs/nba_v5_grades/summary.json: learned chance of playing by reported status")
@@ -199,6 +201,8 @@ def main() -> int:
     ap.add_argument("--pregame-evidence", default="", help="Optional as-of confirmed lineup/inactive/minutes source export; projected lineups never override the model")
     ap.add_argument("--archive", default="", help="directory for frozen forecasts: first/<game>.json.gz (never rewritten) and last/<game>.json.gz (replaced until 15 min before tip, kept only within 4 hours of tip)")
     a = ap.parse_args()
+    if a.sims < MIN_PRODUCTION_SIMS:
+        ap.error(f"NBA_V5_REQUIRES_AT_LEAST_{MIN_PRODUCTION_SIMS}_COMPLETE_GAME_SIMS")
     games = v4.load(a.games)
     pbp = b5.load_pbp(a.pbp)
     rp = b5.Replay()
