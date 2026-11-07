@@ -18,7 +18,34 @@ def _open_records(path):
         return (json.loads(line) for line in f if line.strip())
 
 
-def grade_omissions(box, forecast_grade):
+def exclusion_cause(frozen_doc, player_id):
+    """Classify only from a frozen pre-tip forecast, never from final stats."""
+    if frozen_doc is None:
+        return {"cause":"ARCHIVE_NOT_READ","frozen_reported_status":None,
+                "frozen_availability_source":None}
+    games=frozen_doc.get("games") or []
+    rows=[r for g in games for r in (g.get("rows") or [])
+          if str(r.get("player_id"))==str(player_id)]
+    if not rows:
+        cause="ABSENT_FROM_FROZEN_V5_INPUT"
+    elif any(str(r.get("model_version","")).startswith("nba-v5-") and
+             r.get("mean_basis")=="CONDITIONAL_ON_PLAYING" for r in rows):
+        cause="SIMULATED_BUT_NOT_IN_GRADED_OUTPUT"
+    elif any(r.get("reported_status")=="OUT" for r in rows):
+        cause="PRESENT_BUT_EXCLUDED_AS_OUT"
+    elif any(float(r.get("p_active") or 0)<0.2 for r in rows):
+        cause="PRESENT_BUT_LOW_ACTIVE_PROBABILITY"
+    else:
+        cause="PRESENT_BUT_NOT_SIMULATED_OTHER_REASON"
+    r=next((r for r in rows if r.get("market")=="points"),rows[0] if rows else {})
+    return {"cause":cause,
+            "frozen_reported_status":r.get("reported_status"),
+            "frozen_availability_source":r.get("availability_source"),
+            "frozen_p_active":r.get("p_active"),
+            "frozen_model_version":r.get("model_version")}
+
+
+def grade_omissions(box, forecast_grade, frozen_doc=None):
     gid = str(box["game_id"])
     if str(forecast_grade["game_id"]) != gid:
         raise ValueError("game_id mismatch")
@@ -38,6 +65,7 @@ def grade_omissions(box, forecast_grade):
             raise ValueError("unexpected actual player side")
         missing_minutes[side]+=duration
         extra.append({
+            **exclusion_cause(frozen_doc,str(p["id"])),
             "player":p.get("name"),"player_id":str(p["id"]),
             "side":side,"team_id":str(p.get("team")),"actual_minutes":duration,
             "actually_started":bool(p.get("start")),
@@ -56,7 +84,7 @@ def grade_omissions(box, forecast_grade):
     }
 
 
-def build(box_paths, grade_dir):
+def build(box_paths, grade_dir, archive_last=None):
     boxes={}
     for file in box_paths:
         for x in _open_records(file):
@@ -72,7 +100,16 @@ def build(box_paths, grade_dir):
         grade=json.loads(p.read_text())
         if grade.get("kind")!="last":
             continue
-        result.append(grade_omissions(boxes[gid],grade))
+        frozen_doc=None
+        if archive_last is not None:
+            archive=Path(archive_last)/(gid+".json.gz")
+            if archive.exists():
+                with gzip.open(archive,"rt") as f:
+                    frozen_doc=json.load(f)
+                games=frozen_doc.get("games") or []
+                if len(games)!=1 or str(games[0].get("game_id"))!=gid:
+                    raise ValueError("frozen archive game_id mismatch")
+        result.append(grade_omissions(boxes[gid],grade,frozen_doc))
     return {
         "schema":"NBA_V5_POSTGAME_ROSTER_OMISSION_AUDIT_V1",
         "purpose":"Postgame validation only; cannot supply a future pretip roster",
@@ -88,9 +125,10 @@ def main():
     a=argparse.ArgumentParser()
     a.add_argument("--games",action="append",required=True)
     a.add_argument("--grades",required=True)
+    a.add_argument("--archive-last",default=None)
     a.add_argument("--out",required=True)
     args=a.parse_args()
-    result=build(args.games,args.grades)
+    result=build(args.games,args.grades,args.archive_last)
     p=Path(args.out)
     p.parent.mkdir(parents=True,exist_ok=True)
     p.write_text(json.dumps(result,indent=2,sort_keys=True)+"\n")
