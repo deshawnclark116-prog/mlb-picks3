@@ -235,6 +235,30 @@ def optional_dependency_sensitivity(enabled, th, ta, L, tables, ctx,
     return extra
 
 
+def prospective_recency_pplay(old_p, report, reported_status,
+                             team_history, pid, game_day_et, enable=False):
+    """Freeze both play chances before simulation; only opt-in changes P(play).
+
+    An injury report, questionable status, or verified absence is NEVER
+    replaced with a generic 'played last game' rule.
+    """
+    old_p=float(old_p)
+    if report is None and reported_status=="UNKNOWN_NOT_ACTIVE_CERTIFIED":
+        proposed, reason=estimate_unlisted(old_p,team_history,pid,game_day_et)
+    else:
+        proposed, reason=old_p,"KEEP_OFFICIAL_OR_REPORTED_STATUS_UNCHANGED"
+    receipt={
+        "schema": "NBA_V5_ORIGINAL_PRETIP_PPLAY_SHADOW_V1",
+        "original_P_play": round(old_p,6),
+        "challenger_P_play": round(float(proposed),6),
+        "change_reason":reason,
+        "origin":"OBSERVED_PREVIOUS_TEAM_GAME_PARTICIPATION_ONLY",
+        "promoted":bool(enable),
+    }
+    return float(proposed if enable else old_p), receipt
+
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--games", action="append", required=True)
@@ -366,24 +390,12 @@ def main() -> int:
                 span = recent[first:] if first is not None else []
                 part = (sum(1 for m in span if p["id"] in m) + 3 * 0.96) / (len(span) + 3) if span else 0.96
                 pa[p["id"]] = min(play_table.p_play("UNLISTED"), part)
-            old_p = float(pa[p["id"]])
-            if (info is None and
-                original_player_status.get(str(p["id"])) == "UNKNOWN_NOT_ACTIVE_CERTIFIED"):
-                proposed, reason = estimate_unlisted(
-                    old_p, recency_team_history.get(str(p["team"]), []),
-                    str(p["id"]), game_day_et)
-            else:
-                proposed, reason = old_p, "KEEP_OFFICIAL_OR_REPORTED_STATUS_UNCHANGED"
-            recency_play_trial[str(p["id"])] = {
-                "schema": "NBA_V5_ORIGINAL_PRETIP_PPLAY_SHADOW_V1",
-                "original_P_play": round(old_p, 6),
-                "challenger_P_play": round(float(proposed), 6),
-                "change_reason": reason,
-                "origin": "OBSERVED_PREVIOUS_TEAM_GAME_PARTICIPATION_ONLY",
-                "promoted": bool(switches.get("recency_play_probability", False)),
-            }
-            if switches.get("recency_play_probability", False):
-                pa[p["id"]] = float(proposed)
+            pa[p["id"]], recency_play_trial[str(p["id"])] = prospective_recency_pplay(
+                pa[p["id"]], info,
+                original_player_status.get(str(p["id"])),
+                recency_team_history.get(str(p["team"]), []),
+                str(p["id"]), game_day_et,
+                enable=bool(switches.get("recency_play_probability", False)))
         th.p_play = np.array([pa[i] for i in th.ids])
         ta.p_play = np.array([pa[i] for i in ta.ids])
         pregame_team_effect = {}
