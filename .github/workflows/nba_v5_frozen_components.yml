@@ -1,0 +1,35 @@
+name: NBA V5 compare frozen V4 V5 and blended numerical projections
+on:
+  pull_request:
+    paths:
+      - "nba/nba_v5_frozen_components.py"
+      - "tests/test_nba_v5_frozen_components.py"
+      - ".github/workflows/nba_v5_postmortem.yml"
+      - ".github/workflows/nba_v5_frozen_components.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  compare-frozen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Strict frozen-component grade contracts
+        run: |
+          PYTHONPATH=. python -m unittest discover -s tests -p "test_nba_v5_frozen_components.py" -v
+      - name: Compare all available actual frozen NBA games without re-simulation
+        run: |
+          set -euo pipefail
+          PYTHONPATH=. python -u -m nba.nba_v5_frozen_components \
+            --archive-last docs/nba_v5_archive/last \
+            --grades-last docs/nba_v5_grades/last \
+            --out /tmp/nba_v5_frozen_components.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-v5-frozen-component-comparison
+          path: /tmp/nba_v5_frozen_components.json
+          retention-days: 30
