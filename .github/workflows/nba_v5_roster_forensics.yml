@@ -41,6 +41,33 @@ jobs:
                      for p in g["missing_players"]])
           assert o["games_graded"]>=9
           PY
+      - name: Cross-check all missing players against FIRST original V3 game roster
+        run: |
+          python - <<'PY'
+          from collections import Counter
+          from pathlib import Path
+          import json
+          orig={}
+          for path in sorted(Path("docs/nba_v3_phase1_corrected_shadow").glob("*.json")):
+              doc=json.loads(path.read_text())
+              for g in doc.get("games",[]):
+                  gid=str(g["game_id"])
+                  if gid in orig:
+                      raise AssertionError("Duplicate first-seen V3 game "+gid)
+                  orig[gid]={str(p["player_id"]) for p in g.get("rows",[])}
+          report=json.load(open("/tmp/nba_v5_roster_causes.json"))
+          count=Counter()
+          for g in report["games"]:
+              origin=orig.get(str(g["game_id"]))
+              for p in g["missing_players"]:
+                  k=("NO_ORIGINAL_V3_GAME" if origin is None else
+                     "MISSING_EVEN_IN_FIRST_V3_ROSTER" if p["player_id"] not in origin else
+                     "PRESENT_IN_FIRST_V3_NOT_IN_LAST_V5")
+                  count[k]+=1
+                  print("NBA_V5_ROSTER_ORIGIN",g["game_id"],p["player"],
+                        p["actual_minutes"],k)
+          print("NBA_V5_FIRSTSEEN_ROSTER_MISSING_CAUSES",dict(count))
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: nba-v5-original-pretip-omission-root-causes
