@@ -5,10 +5,12 @@ on:
       - "nba/nba_v5_pregame_certified.py"
       - "nba/nba_v5_forecast.py"
       - "nba/nba_v5_roster_integrity.py"
+      - "nba/nba_v5_roster_omission_grade.py"
       - "nba/nba_v5_todays_lineups.py"
       - "nba/nba_v5_daily_lineups_feed.py"
       - "tests/test_nba_v5_pregame_certified.py"
       - "tests/test_nba_v5_roster_integrity.py"
+      - "tests/test_nba_v5_roster_omission_grade.py"
       - "tests/test_nba_v5_todays_lineups.py"
       - "tests/test_nba_v5_daily_lineups_feed.py"
       - ".github/workflows/nba_v5_pregame_certified.yml"
@@ -36,5 +38,7 @@ jobs:
         run: python -m unittest discover -s tests -p "test_nba_v5_daily_lineups_feed.py" -v
       - name: Verify as-of roster coverage cannot use future results
         run: python -m unittest discover -s tests -p "test_nba_v5_roster_integrity.py" -v
+      - name: Verify final-grade omitted-player minute accounting
+        run: python -m unittest discover -s tests -p "test_nba_v5_roster_omission_grade.py" -v
       - name: Existing core numerical game regressions
         run: python -m unittest discover -s tests -p "test_nba_v5*.py" -v
