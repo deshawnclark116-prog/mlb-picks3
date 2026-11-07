@@ -14,8 +14,11 @@ from pathlib import Path
 
 
 def _open_records(path):
-    with gzip.open(path,"rt") if str(path).endswith(".gz") else open(path) as f:
-        return (json.loads(line) for line in f if line.strip())
+    with (gzip.open(path,"rt") if str(path).endswith(".gz")
+          else open(path,encoding="utf-8")) as f:
+        for line in f:
+            if line.strip():
+                yield json.loads(line)
 
 
 def exclusion_cause(frozen_doc, player_id):
