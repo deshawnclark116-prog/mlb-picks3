@@ -279,7 +279,7 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
           <ChevronDown className={'text-gray-400 '+(open?'rotate-180':'')} size={18}/>
         </button>
         {shown.length>0&&<div data-testid="nba-v3-tiles" className="grid grid-cols-2 gap-2 px-3 pb-3">
-          {topProbabilityPicks(shown).map(({row:r,whole,prob})=><div key={r.player_id+r.market} data-testid="nba-v3-tile" className="min-w-0 rounded-xl border border-white/10 bg-[#12181b] p-3">
+          {topProbabilityPicks(picks).map(({row:r,whole,prob})=><div key={r.player_id+r.market} data-testid="nba-v3-tile" className="min-w-0 rounded-xl border border-white/10 bg-[#12181b] p-3">
             <p className="truncate text-[11px] text-gray-400">{NAME[r.market]}</p>
             <p className="mt-0.5 break-words text-[15px] font-bold leading-snug text-white">{r.player}</p>
             <p className="mt-2 text-[26px] font-black leading-none tabular-nums text-[#79FF48]">{whole} <span className="text-[14px] font-bold">{UNIT[r.market]}</span></p>
