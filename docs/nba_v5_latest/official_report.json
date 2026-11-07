@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-06_06_15PM.pdf",
-  "published_at_utc": "2026-11-06T23:15:00+00:00",
-  "captured_at_utc": "2026-11-06T23:28:31.314727+00:00",
-  "source_sha256": "cd3efd292fafb60c63f206560b3b3e6b04c6689679d1c7e92b2027f86d1ae1fd",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-06_09_30PM.pdf",
+  "published_at_utc": "2026-11-07T02:30:00+00:00",
+  "captured_at_utc": "2026-11-07T02:39:11.249024+00:00",
+  "source_sha256": "1a85bf794a12a0eee5086fa3fddad18e75244237170e16977b52003ecbeae6e6",
   "reports": [
     {
       "matchup": "BOS@CHA",
@@ -259,7 +259,7 @@
       "team_abbr": "CLE",
       "player": "Allen, Jarrett",
       "normalized_player": "jarrett allen",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Right Knee Contusion"
     },
     {
@@ -307,7 +307,7 @@
       "team_abbr": "CLE",
       "player": "Watson, Peyton",
       "normalized_player": "peyton watson",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -425,6 +425,14 @@
     {
       "matchup": "OKC@MEM",
       "team_abbr": "MEM",
+      "player": "Cooper, Carson",
+      "normalized_player": "carson cooper",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "OKC@MEM",
+      "team_abbr": "MEM",
       "player": "Pippen Jr., Scotty",
       "normalized_player": "scotty pippen",
       "status": "OUT",
@@ -443,7 +451,7 @@
       "team_abbr": "TOR",
       "player": "Anderson, Kyle",
       "normalized_player": "kyle anderson",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Illness"
     },
     {
@@ -451,8 +459,8 @@
       "team_abbr": "TOR",
       "player": "Barnes, Scottie",
       "normalized_player": "scottie barnes",
-      "status": "QUESTIONABLE",
-      "reason": ""
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Groin Strain"
     },
     {
       "matchup": "TOR@MIL",
@@ -483,7 +491,7 @@
       "team_abbr": "TOR",
       "player": "Poeltl, Jakob",
       "normalized_player": "jakob poeltl",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Left Shoulder Bursitis"
     },
     {
@@ -491,7 +499,7 @@
       "team_abbr": "TOR",
       "player": "Quickley, Immanuel",
       "normalized_player": "immanuel quickley",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": ""
     },
     {
@@ -571,7 +579,7 @@
       "team_abbr": "DAL",
       "player": "Aldama, Santi",
       "normalized_player": "santi aldama",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Knee Surgery"
     },
     {
@@ -587,7 +595,7 @@
       "team_abbr": "DAL",
       "player": "Christie, Max",
       "normalized_player": "max christie",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -603,7 +611,7 @@
       "team_abbr": "DAL",
       "player": "Irving, Kyrie",
       "normalized_player": "kyrie irving",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Illness"
     },
     {
@@ -723,7 +731,7 @@
       "team_abbr": "SAC",
       "player": "Hunter, De'Andre",
       "normalized_player": "de andre hunter",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Illness"
     },
     {
@@ -908,7 +916,7 @@
       "player": "Suggs, Jalen",
       "normalized_player": "jalen suggs",
       "status": "OUT",
-      "reason": "Injury/Illness - Right Knee Contusion"
+      "reason": ""
     },
     {
       "matchup": "ORL@GSW",
@@ -997,9 +1005,33 @@
       "normalized_player": "bruce thornton",
       "status": "OUT",
       "reason": "G League - On Assignment"
+    },
+    {
+      "matchup": "HOU@PHX",
+      "team_abbr": "PHX",
+      "player": "Fleming, Rasheer",
+      "normalized_player": "rasheer fleming",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Left Ankle Sprain"
+    },
+    {
+      "matchup": "HOU@PHX",
+      "team_abbr": "PHX",
+      "player": "Goodwin, Jordan",
+      "normalized_player": "jordan goodwin",
+      "status": "DOUBTFUL",
+      "reason": ""
+    },
+    {
+      "matchup": "HOU@PHX",
+      "team_abbr": "PHX",
+      "player": "Williams, Mark",
+      "normalized_player": "mark williams",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Shoulder Surgery"
     }
   ],
-  "rows": 124,
+  "rows": 128,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
