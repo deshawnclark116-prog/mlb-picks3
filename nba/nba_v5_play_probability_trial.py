@@ -86,7 +86,19 @@ def compare(archive_root,grades_root,history_paths):
             original_status=str(before.get("reported_status") or "")
             # DO NOT override known or suspected injury statuses; also do
             # not infer full game availability from an NBA active roster.
-            if original_status=="UNKNOWN_NOT_ACTIVE_CERTIFIED":
+            frozen_trial=before.get("participation_recency_trial")
+            source="RETROSPECTIVE_PAST_ONLY_NOT_FROZEN"
+            if frozen_trial:
+                if (frozen_trial.get("schema")!="NBA_V5_ORIGINAL_PRETIP_PPLAY_SHADOW_V1"
+                    or abs(float(frozen_trial["original_P_play"])-p)>.0015
+                    or not 0<=float(frozen_trial["challenger_P_play"])<=1):
+                    raise ValueError("NBA_V5_PPLAY_CORRUPT_ORIGINAL_SHADOW_PROB")
+                alt=float(frozen_trial["challenger_P_play"])
+                reason=frozen_trial["change_reason"]
+                source=("FROZEN_ORIGINAL_PRETIP_UNPROMOTED"
+                        if frozen_trial.get("promoted") is False
+                        else "ALREADY_PROMOTED_NOT_AN_INDEPENDENT_PAIR")
+            elif original_status=="UNKNOWN_NOT_ACTIVE_CERTIFIED":
                 alt,reason=estimate_unlisted(p,histories.get(tid,[]),pid,day)
             else:
                 alt,reason=p,"UNCHANGED_EXPLICIT_OR_UNVERIFIED_STATUS"
@@ -94,6 +106,7 @@ def compare(archive_root,grades_root,history_paths):
                 "game_id":gid,"player_id":pid,"team_id":tid,
                 "original_status":original_status,"incumbent":p,
                 "candidate":alt,"reason":reason,
+                "comparison_source":source,
                 "played":int(bool(r["played"])),
             })
     unknown=[r for r in rows if r["original_status"]=="UNKNOWN_NOT_ACTIVE_CERTIFIED"]
@@ -116,6 +129,8 @@ def compare(archive_root,grades_root,history_paths):
         ci=[round(differences[int(.025*(len(differences)-1))],6),
             round(differences[int(.975*(len(differences)-1))],6)]
     original=_summarize(unknown)
+    true_forward=[r for r in unknown if
+                  r["comparison_source"]=="FROZEN_ORIGINAL_PRETIP_UNPROMOTED"]
     original["Brier_reduction_positive_better"]=round(
         original["incumbent_Brier"]-original["candidate_Brier"],6) if unknown else None
     original["game_cluster_bootstrap_95pct_interval"]=ci
@@ -123,6 +138,10 @@ def compare(archive_root,grades_root,history_paths):
         "schema":"NBA_V5_UNLISTED_PPLAY_FIXED_RESEARCH_TRIAL_V1",
         "original_frozen_players_scored_all_including_DNP":len(rows),
         "unlisted_status_challenger":original,
+        "true_forward_frozen_unlisted":_summarize(true_forward),
+        "unlisted_reconstructed_old_archive":_summarize([
+            r for r in unknown if r["comparison_source"]==
+                "RETROSPECTIVE_PAST_ONLY_NOT_FROZEN"]),
         "other_statuses_unchanged":_summarize(
             [r for r in rows if r["original_status"]!="UNKNOWN_NOT_ACTIVE_CERTIFIED"]),
         "formula":{
@@ -151,6 +170,7 @@ def main():
     dest.write_text(json.dumps(result,sort_keys=True,indent=2)+"\n")
     print("NBA_V5_UNLISTED_PPLAY_TRIAL",json.dumps({
         "unlisted":result["unlisted_status_challenger"],
+        "true_forward":result["true_forward_frozen_unlisted"],
         "other_statuses":result["other_statuses_unchanged"],
         "promotion_allowed":False,
     },sort_keys=True))
