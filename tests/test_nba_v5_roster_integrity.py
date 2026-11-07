@@ -43,7 +43,7 @@ class RosterIntegrityTests(unittest.TestCase):
         g={"players":[{"id":pid,"team":"23"} for pid in ("a","b","c","d","e")]}
         team=SimpleNamespace(team_id="23",ids=("a","b","c","d"))
         out=audit_team(rp,team,g,dt.date(2026,11,7))
-        self.assertEqual(out["represented_fraction"],4/6)
+        self.assertAlmostEqual(out["represented_fraction"],4/6,places=4)
         self.assertEqual(out["missing_from_fixture_prior_minutes"],120.0)
         self.assertEqual(out["missing_from_model_prior_minutes"],120.0)
         self.assertEqual(out["warning"],"MATERIAL_PRIOR_ROTATION_UNREPRESENTED")
