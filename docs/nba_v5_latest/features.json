@@ -13,7 +13,8 @@
     "assist_network": false,
     "matchup_rotation": false,
     "rebound_zones": false,
-    "tracking_opportunity_role": false
+    "tracking_opportunity_role": false,
+    "recency_play_probability": false
   },
   "evidence": {
     "joint_availability": "predicts how many regulars are out better than independent draws, 5.2 standard errors on 1,720 team-games",
@@ -28,6 +29,7 @@
     "assist_network": "OFF: verified historical named passer-to-scorer made-basket assist events; model is a research challenger only, NOT passing/potential-assist tracking. Requires fixed-threshold paired game-cluster validation.",
     "matchup_rotation": "OFF: free prior-opponent 3PA style and verified past coach rotation profiles built, 1,171 game/25,141 player-rotation coverage. Paired 68-game test failed promotion gate (minutes MAE -0.00628, points Brier +0.000074, CIs cross zero); do not rescue tune.",
     "rebound_zones": "OFF: 96,491 strictly matched real named rebound outcomes by shot-origin zone from 1,283 verified games, 30 teams. 68-game paired rebounds Brier +0.000099, 95% CI [-0.000266,+0.000490], not reliable; no promotion/tuning on used holdout.",
-    "tracking_opportunity_role": "OFF: completed-season CC BY tracking source now automatically acquired and joined to current roster; potential assists, touches, drives and rebound chances can alter V5 opportunity weights in the research arm. No untouched prospective paired validation or verified same-season player-role stability yet; never auto-promote."
+    "tracking_opportunity_role": "OFF: completed-season CC BY tracking source now automatically acquired and joined to current roster; potential assists, touches, drives and rebound chances can alter V5 opportunity weights in the research arm. No untouched prospective paired validation or verified same-season player-role stability yet; never auto-promote.",
+    "recency_play_probability": "OFF until untouched forward game results: on 11 already-inspected Nov6 archived games, past-only six-game recency candidate reduced unlisted-player P(play) Brier from 0.093556 to 0.068680 (cluster 95% gain 0.007846 to 0.040955; n=232). This reused sample is exploratory, not promotion evidence. New original pretip candidate probabilities are now frozen for future unbiased grading; official injury statuses never overridden."
   }
 }
