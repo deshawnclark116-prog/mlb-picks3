@@ -101,6 +101,7 @@ def supplement(game,rosters,histories,snapshot,asof):
            "confirmed_starters_by_team":{tid:[] for tid in teams},
            "ambiguous_name_count":0,"unmatched_name_count":0,
            "conflicting_team_count":0,
+           "verified_new_team_prior_game_count":0,
            "source_player_count":0,"source_timestamp_utc":None}
     if not snapshot:
         return result,{tid:[] for tid in teams},audit
@@ -158,9 +159,19 @@ def supplement(game,rosters,histories,snapshot,asof):
                 continue
             pid=next(iter(match))
             other_team=occupied.get(pid)
-            if other_team and other_team!=tid and len(histories.get((tid,pid),[]))<5:
+            new_team_prior_games=len(histories.get((tid,pid),[]))
+            if other_team and other_team!=tid and new_team_prior_games<1:
+                # The official *dated* NBA team list is newer evidence of
+                # membership than ESPN's stale old-team roster, but a bare
+                # listing alone cannot disambiguate a contradictory transfer.
+                # One real completed game already played FOR the new club
+                # independently proves the transfer even when fewer than
+                # five games have accrued there. The source histories are
+                # compiled strictly before the current forecast timestamp.
                 audit["conflicting_team_count"]+=1
                 continue
+            if other_team and other_team!=tid and new_team_prior_games>=1:
+                audit["verified_new_team_prior_game_count"]+=1
             # Model V3 needs >=5 real prior boxes. Rookies with fewer
             # observations stay research-only; don't synthesize outcomes.
             if max((len(h) for (ht,hpid),h in histories.items()
@@ -173,7 +184,10 @@ def supplement(game,rosters,histories,snapshot,asof):
                     "player_id":pid,"player_name":p.get("playerName"),
                     "source_url":feed_url(date),
                     "current_roster_verified_only":True,
-                    "active_for_game_not_inferred":True})
+                    "active_for_game_not_inferred":True,
+                    "new_team_prior_games":new_team_prior_games,
+                    "old_team_espn_roster_conflict_resolved_by_prior_play":
+                        bool(other_team and other_team!=tid)})
         if complete_five:
             mapped=[resolved.get(id(p)) for p in positional]
             if all(mapped) and len(set(mapped))==5:
