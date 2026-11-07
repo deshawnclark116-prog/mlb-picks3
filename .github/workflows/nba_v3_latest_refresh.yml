@@ -91,6 +91,42 @@ jobs:
             --audit "$RUNNER_TEMP/v5_official_starters_audit.json"
           # If the public NBA feed lacks an explicit pretip five, status remains
           # NOT_POSTED. No guessed player receives the CONFIRMED label.
+      - name: NBA Today's Lineups authorized snapshot bridge (no NBA page scraping)
+        if: steps.src.outputs.run == 'true'
+        continue-on-error: true
+        env:
+          AUTHORIZED_LINEUP_JSON_URL: ${{ secrets.NBA_V5_AUTHORIZED_LINEUP_JSON_URL }}
+        run: |
+          set -euo pipefail
+          if [ -z "$AUTHORIZED_LINEUP_JSON_URL" ]; then
+            echo "NBA_TODAY_LINEUPS_NOT_CONFIGURED: authorized data URL missing; existing official collector remains fallback"
+            exit 0
+          fi
+          # This URL must point to a permissioned JSON snapshot exporter, NOT
+          # nba.com/players/todays-lineups (a client-rendered HTML web page).
+          python - <<'PY'
+          import os, urllib.parse, urllib.request
+          from pathlib import Path
+          url = os.environ["AUTHORIZED_LINEUP_JSON_URL"]
+          parsed = urllib.parse.urlsplit(url)
+          if parsed.scheme != "https" or not parsed.hostname or parsed.username or parsed.password:
+              raise ValueError("NBA_LINEUP_AUTHORIZED_SOURCE_REQUIRES_HTTPS")
+          req = urllib.request.Request(url, headers={"Accept":"application/json"})
+          with urllib.request.urlopen(req, timeout=12) as response:
+              if urllib.parse.urlsplit(response.geturl()).scheme != "https":
+                  raise ValueError("NBA_LINEUP_AUTHORIZED_SOURCE_REDIRECT_NOT_HTTPS")
+              raw = response.read(2_000_001)
+          if len(raw) > 2_000_000:
+              raise ValueError("NBA_LINEUP_AUTHORIZED_SOURCE_TOO_LARGE")
+          Path(os.environ["RUNNER_TEMP"], "nba_todays_lineups_authorized_capture.json").write_bytes(raw)
+          PY
+          PYTHONPATH=. python -u -m nba.nba_v5_todays_lineups \
+            --v3 "$RUNNER_TEMP/latest-new.json" \
+            --snapshot "$RUNNER_TEMP/nba_todays_lineups_authorized_capture.json" \
+            --out "$RUNNER_TEMP/v5_today_starters.json" \
+            --audit "$RUNNER_TEMP/v5_today_starters_audit.json"
+          # A successful parse is not automatically a verified source licence or
+          # confirmed lineup. The JSON must carry explicit pretip team confirmations.
       - name: NBA V5 real player-tracking source from free completed-season releases
         if: steps.src.outputs.run == 'true'
         continue-on-error: true
@@ -152,8 +188,20 @@ jobs:
             --official-matches docs/nba_v5_latest/official_matches.json
           CAL=""; test -f docs/nba_v5_latest/calibration.json && CAL="--calibration docs/nba_v5_latest/calibration.json"
           PREGAME_SOURCE=""
+          SOURCE_AUDIT=""
           if [ -s "$RUNNER_TEMP/v5_official_starters.json" ]; then
             PREGAME_SOURCE="--pregame-evidence $RUNNER_TEMP/v5_official_starters.json"
+            SOURCE_AUDIT="$RUNNER_TEMP/v5_official_starters_audit.json"
+          fi
+          # Explicitly confirmed, permissioned NBA Today Lineups snapshots take
+          # precedence over the NBA boxscore feed. Unconfirmed/empty exports do not.
+          if [ -s "$RUNNER_TEMP/v5_today_starters.json" ] && \
+             python -c 'import json,sys; assert json.load(open(sys.argv[1]))["confirmed_teams"] > 0' "$RUNNER_TEMP/v5_today_starters_audit.json"; then
+            PREGAME_SOURCE="--pregame-evidence $RUNNER_TEMP/v5_today_starters.json"
+            SOURCE_AUDIT="$RUNNER_TEMP/v5_today_starters_audit.json"
+          fi
+          if [ -n "$SOURCE_AUDIT" ] && [ -s "$SOURCE_AUDIT" ]; then
+            cp "$SOURCE_AUDIT" docs/nba_v5_latest/lineup_source_audit.json
           fi
           TRACKING_SOURCE=""
           if [ -s "$RUNNER_TEMP/hoopr_tracking.json" ]; then
