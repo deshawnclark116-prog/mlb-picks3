@@ -124,7 +124,7 @@ class RotationAttributionTests(unittest.TestCase):
             games.append({"game_id":"999","date":"2026-11-06T23:30:00+00:00",
                           "home":{"id":"1"},"away":{"id":"2"},
                           "players":[{"id":"100","team":"1","side":"home","min":48}]})
-            historical.write_text("".join(json.dumps(g)+"\\n" for g in games))
+            historical.write_text("".join(json.dumps(g)+"\n" for g in games))
             result=build(archive,grades,historical_games=[historical])
             home=result["per_game_team_audit"][0]["teams"]["home"]
             self.assertEqual(home["prior_coverage_source"],
