@@ -188,13 +188,13 @@ def main():
                 boxes[gid]=fetch_json(BOX_URL.format(game_id=gid))
             except Exception as exc:
                 print("NBA_PREGAME_BOX_UNAVAILABLE",gid,type(exc).__name__,flush=True)
-        doc,audit=capture(v3,feed,boxes,now)
+        doc,audit=capture(v3,feed,boxes,dt.datetime.now(dt.timezone.utc))
         audit["live_scoreboard_fetch"]="OK"
     except Exception as exc:
         # A provider outage is never a confirmation. Preserve the precise
         # degraded result for the user-facing audit; V5 stays on projections.
         fallback={"scoreboard":{"games":[]}}
-        doc,audit=capture(v3,fallback,{},now)
+        doc,audit=capture(v3,fallback,{},dt.datetime.now(dt.timezone.utc))
         audit["live_scoreboard_fetch"]="UNAVAILABLE"
         audit["source_error_type"]=type(exc).__name__
     Path(a.out).write_text(json.dumps(doc,sort_keys=True,separators=(",",":")))
