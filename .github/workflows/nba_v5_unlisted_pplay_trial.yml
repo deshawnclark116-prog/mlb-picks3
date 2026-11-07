@@ -1,0 +1,35 @@
+name: NBA V5 unlisted player play-probability research challenger
+on:
+  pull_request:
+    paths:
+      - "nba/nba_v5_play_probability_trial.py"
+      - "tests/test_nba_v5_play_probability_trial.py"
+      - ".github/workflows/nba_v5_unlisted_pplay_trial.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  paired-original-availability:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify same pretip player pool, DNP grading and no later-data leakage
+        run: PYTHONPATH=. python -m unittest discover -s tests -p "test_nba_v5_play_probability_trial.py" -v
+      - name: Score candidate against existing immutable final-game archives
+        run: |
+          set -euo pipefail
+          PYTHONPATH=. python -u -m nba.nba_v5_play_probability_trial \
+            --archive-last docs/nba_v5_archive/last \
+            --grades-last docs/nba_v5_grades/last \
+            --historical-games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --historical-games nba/data/nba_v4_games_2026_27.jsonl \
+            --out /tmp/nba_v5_unlisted_pplay_candidate.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-v5-original-unlisted-player-play-probability-trial
+          path: /tmp/nba_v5_unlisted_pplay_candidate.json
+          retention-days: 30
