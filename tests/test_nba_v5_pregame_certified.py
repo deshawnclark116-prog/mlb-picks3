@@ -87,6 +87,15 @@ class CertifiedLineupContract(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "OUT"):
             read(d, games=rows)
 
+    def test_official_nba_starter_supersedes_old_espn_out_not_nba_injury_pdf(self):
+        d = evidence()
+        d["provider"] = "NBA_OFFICIAL_LIVE_BOXSCORE"
+        rows = slate()
+        rows[0]["rows"][0]["reported_status"] = "OUT"
+        records, proof = read(d, games=rows)
+        self.assertEqual(proof["confirmed_teams"], 1)
+        self.assertEqual(records[("400","1")]["starters"][0], "1")
+
     def test_capture_after_tip_rejected(self):
         d = evidence()
         d["published_at_utc"] = "2026-11-06T22:30:00Z"

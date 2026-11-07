@@ -375,6 +375,12 @@ def main() -> int:
                                "p_close": None if p_close is None else round(p_close, 3),
                                "minutes_mean": round(float(mins.mean()), 2), "role_share": round(float(mins.mean()) / 240.0, 6),
                                "minutes_p10": quant(mins, 0.10), "minutes_p90": quant(mins, 0.90),
+                               "starter_evidence": ("CONFIRMED_STARTER" if str(pid) in confirmed_starters
+                                   else "CONFIRMED_NONSTARTER" if (certified_by_team.get(str(ti.team_id)) or {}).get("lineup_state") == "CONFIRMED"
+                                   else "NOT_VERIFIED"),
+                               "starter_source": ((certified_by_team.get(str(ti.team_id)) or {}).get("source_provider")
+                                   if (certified_by_team.get(str(ti.team_id)) or {}).get("lineup_state") == "CONFIRMED"
+                                   else None),
                                "fga_mean": round(float(sd["fga"][played, j].mean()), 2), "fta_mean": round(float(sd["fta"][played, j].mean()), 2),
                                "depends_on": sens.get((pid, m), [])[:3],
                                "archetype": archetypes[pid],

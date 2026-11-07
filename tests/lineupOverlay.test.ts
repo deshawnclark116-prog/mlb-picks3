@@ -146,3 +146,19 @@ test('NBA V5: lineup updates recompute all-scenarios probability without changin
  assert.equal(out.reach_probabilities,null);
  assert.equal(out.p_active,0);
 });
+
+
+test('NBA: injury IN alone is NOT a certified starting five or guaranteed play',()=>{
+ const row=nbaRow({mean_basis:'CONDITIONAL_ON_PLAYING'});
+ const status=new Map([['g',{lineupPosted:true,
+   players:new Map([['1|patplayer','IN' as const]]),
+   sources:['espn_injuries']}]]);
+ const result=applyNbaOverlay({games:[{game_id:'g',rows:[row]}]},status);
+ assert.equal(result.games[0].rows[0].p_active,.6);
+ assert.equal(result.games[0].rows[0].lineup_label,'NO_NEW_INFO');
+ assert.equal(result.games[0].rows[0].mean,row.mean);
+ const verified=applyNbaOverlay({games:[{game_id:'g',rows:[
+   {...row,starter_evidence:'CONFIRMED_STARTER'}]}]},status);
+ assert.equal(verified.games[0].rows[0].lineup_label,'CONFIRMED_IN');
+ assert.equal(verified.games[0].rows[0].p_active,1);
+});

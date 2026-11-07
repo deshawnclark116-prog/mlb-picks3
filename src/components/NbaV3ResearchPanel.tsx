@@ -13,6 +13,8 @@ type Forecast={
  mean:number;median:number;p10:number;p25:number;p75:number;p90:number;
  p_active:number;exp_opp:number;role_share:number;unc_reasons:string[];
  reported_status:string;
+ starter_evidence?:'CONFIRMED_STARTER'|'CONFIRMED_NONSTARTER'|'NOT_VERIFIED';
+ starter_source?:string|null;
  lineup_label?:string;mean_early?:number;p_active_early?:number;
  p_start?:number|null;p_close?:number|null;minutes_mean?:number;minutes_p10?:number;minutes_p90?:number;
  depends_on?:{if_out:string;if_out_name?:string;projection_if_out:number;change:number}[];
@@ -25,7 +27,8 @@ type Forecast={
 };
 type Game={game_id:string;away:string;home:string;tipoff_utc:string;
  forecast_at_utc:string;rows_count:number;rows:Forecast[];
- forecast_kind?:string;first_seen_forecast_at_utc?:string};
+ forecast_kind?:string;first_seen_forecast_at_utc?:string;
+ certified_pregame_team_effect?:Record<string,{applied:boolean;confirmed_starters?:number}>};
 type Shadow={schema:string;status:string;upcoming_games:number;
  original_games_audited:number;research_only:true;official_bets:0;games:Game[];
  prospective_model_probability_calibration_verified:false;
@@ -119,7 +122,7 @@ function V3Card({item}:{item:ProjectionItem}){
    <div><p className="text-sm font-bold text-white">{row.player}</p>
     <p className="text-[11px] text-gray-400">{NAME[row.market]}</p></div>
    <span className="text-[10px] border border-[#487b54] rounded-lg p-2 font-bold text-[#00FF41]">MODEL PROJECTION</span>
-   {row.lineup_label==='CONFIRMED_IN'&&<span data-testid="nba-v3-lineup-confirmed" className="text-[10px] border border-[#487b54] rounded-lg p-2 font-bold text-white">LINEUP CONFIRMED</span>}
+   {row.starter_evidence==='CONFIRMED_STARTER'&&<span data-testid="nba-v5-verified-starter" className="text-[10px] border border-[#487b54] rounded-lg p-2 font-bold text-white">STARTER VERIFIED</span>}
   </div>
   <p data-testid="nba-v3-selected-target" className="text-base font-bold">
    {item.whole} {NAME[row.market]}
@@ -135,7 +138,7 @@ function V3Card({item}:{item:ProjectionItem}){
   </div>
   <p className="text-[11px] text-gray-300">
    10th–90th percentile: {fmt(row.p10)}–{fmt(row.p90)} {UNIT[row.market]}
-   {' · '}{row.lineup_label==='CONFIRMED_IN'?'Confirmed to play (early P(plays) '+pct(row.p_active_early??row.p_active)+', early projection '+fmt(row.mean_early??row.mean)+')':'Simulated P(plays) '+pct(row.p_active)}
+   {' · '}{row.lineup_label==='CONFIRMED_IN'?'Live availability adjustment (early P(plays) '+pct(row.p_active_early??row.p_active)+', early projection '+fmt(row.mean_early??row.mean)+')':'Simulated P(plays) '+pct(row.p_active)}
    {' · '}Modeled share of team minutes {pct(row.role_share)}</p>
   {(row.p_start!=null||row.minutes_mean!=null)&&<p data-testid="nba-v3-role" className="text-[11px] text-gray-300">
    {row.p_start!=null?'Starts '+pct(row.p_start)+(row.p_close!=null?' · on the floor to close '+pct(row.p_close):'')+' · ':''}
@@ -256,6 +259,13 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
            {picks[0]&&<p className="mt-1 text-[11px] text-gray-200">
              TOP: {picks[0].row.player} · {picks[0].whole}
              {' '}{NAME[picks[0].row.market]} · {pctOrDash(displayedChance(picks[0]))}
+           </p>}
+           {g.forecast_kind==='V5_LATEST'&&<p data-testid="nba-v5-starter-verification" className="mt-1 text-[11px] text-amber-100">
+             Starting lineups: {Object.values(g.certified_pregame_team_effect??{}).filter(v=>v?.confirmed_starters===5).length===2
+               ?'Both teams verified'
+               :Object.values(g.certified_pregame_team_effect??{}).filter(v=>v?.confirmed_starters===5).length===1
+               ?'One team verified · other unverified'
+               :'Not verified · projected rotations'}.
            </p>}
            <p className="mt-1 text-[10px] text-gray-500">{g.forecast_kind==='V5_LATEST'
              ?<>Model V5 · updated {et(g.forecast_at_utc)}{' · '}first forecast {et(g.first_seen_forecast_at_utc||g.forecast_at_utc)}</>
