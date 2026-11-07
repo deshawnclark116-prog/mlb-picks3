@@ -166,6 +166,38 @@ def build(fixtures,rosters,receipts,games,boxes,asof,seen,
     }
     return result
 
+
+def narrow_to_pregame_window(fixtures, asof, hours):
+    """Only refresh matches in the announced pregame horizon.
+
+    Fixture retrieval covers two calendar days to catch schedule changes;
+    it is not permission to rerun expensive V3/V4/V5 projections for all
+    48 hours when just one team is approaching tipoff. The pure filter is
+    intentionally separate from lineup/roster evidence collection. When
+    hours is None, legacy first-seen full-slate behavior is preserved.
+    """
+    if hours is None:
+        return fixtures
+    if not 0 < float(hours) <= 48:
+        raise ValueError("NBA_V3_INVALID_PREGAME_WINDOW_HOURS")
+    if asof.tzinfo is None:
+        raise ValueError("NBA_V3_NAIVE_PREGAME_WINDOW_CLOCK")
+    horizon=dt.timedelta(hours=float(hours))
+    selected=[]
+    for game in fixtures.get("games", []):
+        delta=datetime_utc(game["tipoff_utc"])-asof
+        if MIN_PREGAME_GAP <= delta <= horizon:
+            selected.append(game)
+    # Maintain the source schema's exact game-count invariant. Preserve an
+    # explicit receipt of the independently validated original slate so a
+    # derived near-tip slice cannot masquerade as the full ESPN response.
+    return {**fixtures, "games":selected, "future_games":len(selected),
+            "original_fixture_source_sha256":source_hash(fixtures),
+            "original_fixture_future_games":len(fixtures.get("games", [])),
+            "forecast_window_hours":float(hours)}
+
+
+
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument("--fixture",type=Path,required=True)
@@ -174,12 +206,17 @@ def main():
     parser.add_argument("--archive-root",type=Path,default=Path(ROOT))
     parser.add_argument("--injury-snapshot",type=Path)
     parser.add_argument("--draws",type=int,default=8000)
+    parser.add_argument("--window-hours",type=float,default=None,help="Optional strict near-tip horizon to avoid re-simulating the entire two-day fixture slate")
     parser.add_argument("--no-daily-roster-bridge",action="store_true",help="Disable optional independently observed NBA pretip roster corroboration")
     args=parser.parse_args()
     if args.out.exists():raise ValueError("NBA_V3_PRETIP_SHADOW_FILE_ALREADY_EXISTS")
     asof=dt.datetime.now(UTC)
     fixture=json.loads(args.fixture.read_text())
     validate_fixture_source(fixture,asof)
+    fixture=narrow_to_pregame_window(fixture,asof,args.window_hours)
+    if not fixture["games"]:
+        print("NBA_V3_NO_FIXTURES_INSIDE_PREGAME_WINDOW",flush=True)
+        return
     seen=already_seen(args.archive_root)
     upcoming=[x for x in fixture["games"] if
       x["game_id"] not in seen and

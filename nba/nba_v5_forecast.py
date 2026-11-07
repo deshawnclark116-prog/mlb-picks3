@@ -215,6 +215,24 @@ def team_sensitivity(th, ta, L, tables, ctx, base_means, S, pace, seed, side, to
     return out
 
 
+
+def optional_dependency_sensitivity(enabled, th, ta, L, tables, ctx,
+                                    base_means, S, pace, seed, features=None):
+    """Optional post-simulation what-if research; never needed for main P(hit).
+
+    Crucially, the mandatory 10,000-world full-game simulation happens
+    separately before this function. When disabled, this does not call the
+    expensive six additional 3,333-world replays.
+    """
+    if not enabled:
+        return {}
+    extra = {}
+    for side in ("home", "away"):
+        extra.update(team_sensitivity(th, ta, L, tables, ctx, base_means,
+                                      S, pace, seed, side, features=features))
+    return extra
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--games", action="append", required=True)
@@ -222,6 +240,7 @@ def main() -> int:
     ap.add_argument("--v3", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--sims", type=int, default=MIN_PRODUCTION_SIMS, help="Minimum 10,000 complete correlated game simulations per matchup")
+    ap.add_argument("--compute-sensitivity", action="store_true", help="Optional six additional teammate-absence research re-simulations per game; OFF for fast pretip production")
     ap.add_argument("--calibration", default="")
     ap.add_argument("--receipt", default="", help="information receipt (nba_v5_info) with each player's reported status, body part and return date")
     ap.add_argument("--grades", default="", help="docs/nba_v5_grades/summary.json: learned chance of playing by reported status")
@@ -381,9 +400,9 @@ def main() -> int:
                     continue
                 for m, key in MARKETS.items():
                     base_means[(pid, m)] = float(sd[key][played, j].mean())
-        sens = {}
-        for side in ("home", "away"):
-            sens.update(team_sensitivity(th, ta, L, tables_g, ctx, base_means, a.sims, pace, seed, side, features=switches))
+        sens = optional_dependency_sensitivity(
+            a.compute_sensitivity, th, ta, L, tables_g, ctx,
+            base_means, a.sims, pace, seed, features=switches)
         for side, (ti, sd, av, f5, c5) in side_data.items():
             for j, pid in enumerate(ti.ids):
                 played = av[:, j] & (sd["min"][:, j] > 0)
@@ -476,6 +495,8 @@ def main() -> int:
         g5 = dict(g3)
         g5.update({"rows": new_rows, "rows_count": len(new_rows), "model_version": VERSION, "forecast_kind": "V5_SHADOW",
                    "forecast_at_utc": now.isoformat(), "asof_utc": now.isoformat(), "model_simulations": a.sims,
+                   "dependency_sensitivity_reruns": 6 if a.compute_sensitivity else 0,
+                   "dependency_sensitivity_status": "OPTIONAL_RESEARCH_RERUNS" if a.compute_sensitivity else "SKIPPED_FOR_TIMELY_PREGAME_RELEASE",
                    "pace_used": pace, "official_foul_multiplier": ctx["ft_mult"], "simulation_pieces_on": switches or "defaults",
                    "roster_integrity_audit": roster_integrity,
                    "role_change_audit": role_audit,
