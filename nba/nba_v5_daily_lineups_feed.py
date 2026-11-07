@@ -146,11 +146,11 @@ def capture(v3, feeds_by_date, now):
     return doc, audit
 
 
-def collect(v3, now=None, fetch=fetch_json):
+def collect(v3, now=None, fetch=fetch_json, window_hours=9.0):
     now = now or dt.datetime.now(dt.timezone.utc)
     requested = {utc(g["tipoff_utc"]).astimezone(ET).strftime("%Y%m%d")
                  for g in v3.get("games", [])
-                 if 0 < (utc(g["tipoff_utc"]) - now).total_seconds() <= 9 * 3600}
+                 if 0 < (utc(g["tipoff_utc"]) - now).total_seconds() <= float(window_hours) * 3600}
     feeds, errors = {}, {}
     for date in sorted(requested):
         try:
@@ -170,9 +170,10 @@ def main():
     p.add_argument("--v3", required=True)
     p.add_argument("--out", required=True)
     p.add_argument("--audit", required=True)
+    p.add_argument("--window-hours", type=float, default=9.0)
     a = p.parse_args()
     v3 = json.loads(Path(a.v3).read_text())
-    doc, audit = collect(v3)
+    doc, audit = collect(v3, window_hours=a.window_hours)
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     Path(a.out).write_text(json.dumps(doc, sort_keys=True, separators=(",", ":")))
     Path(a.audit).write_text(json.dumps(audit, sort_keys=True, indent=2))
