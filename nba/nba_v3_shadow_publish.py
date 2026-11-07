@@ -188,7 +188,13 @@ def narrow_to_pregame_window(fixtures, asof, hours):
         delta=datetime_utc(game["tipoff_utc"])-asof
         if MIN_PREGAME_GAP <= delta <= horizon:
             selected.append(game)
-    return {**fixtures,"games":selected}
+    # Maintain the source schema's exact game-count invariant. Preserve an
+    # explicit receipt of the independently validated original slate so a
+    # derived near-tip slice cannot masquerade as the full ESPN response.
+    return {**fixtures, "games":selected, "future_games":len(selected),
+            "original_fixture_source_sha256":source_hash(fixtures),
+            "original_fixture_future_games":len(fixtures.get("games", [])),
+            "forecast_window_hours":float(hours)}
 
 
 
