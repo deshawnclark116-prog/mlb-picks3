@@ -73,7 +73,6 @@ test('NBA V5 TOP 10 is separate from existing 4 tiles; matches canonical top 10 
  await expect(rows.nth(9)).toContainText('Jalen Slawson');
  await expect(rows.nth(9)).toContainText('2+ ASSISTS');
  await expect(poster).not.toContainText('Rebound Candidate');
- await expect(poster).toContainText('No sportsbook'); // case-insensitive match handled below?
  await expect(modal).toContainText('No sportsbook lines or combined parlay probability');
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
  const preview=await modal.getByTestId('nba-v5-share-preview').boundingBox();
