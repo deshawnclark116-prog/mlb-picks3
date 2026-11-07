@@ -60,7 +60,10 @@ jobs:
           set -euo pipefail
           git config user.name "nba-v5-postmortem[bot]"
           git config user.email "nba-v5-postmortem[bot]@users.noreply.github.com"
-          git add -A docs/nba_v5_grades docs/nba_v5_lineup_grades docs/nba_v5_forward || true
+          git add -A docs/nba_v5_grades
+          for optional in docs/nba_v5_lineup_grades docs/nba_v5_forward; do
+            if [ -d "$optional" ]; then git add -A "$optional"; fi
+          done
           git diff --cached --quiet && { echo "nothing new"; exit 0; }
           git commit -m "NBA V5 grades $(date -u +%Y-%m-%dT%H:%MZ) [skip ci]"
           for i in 1 2 3; do git pull --rebase --autostash origin main && git push origin HEAD:main && exit 0; sleep 5; done
