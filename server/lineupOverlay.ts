@@ -212,7 +212,12 @@ export function applyNbaOverlay(result:any,statusByGame:Map<string,GameStatus>){
   if(!gs)return g;
   gamesWithInfo++;
   const rows=g.rows.map((r:any)=>{
-   const out=adjustNbaRow(r,gs.players.get(String(r.team_id)+'|'+normName(r.player)));
+   const raw=gs.players.get(String(r.team_id)+'|'+normName(r.player));
+   // ESPN IN/AVAILABLE/PROBABLE injury statuses are *not* an actual
+   // pretip starting five. Only the verified V5 lineup source can remove
+   // the DNP uncertainty and label a player confirmed.
+   const status=raw==='IN'&&r.starter_evidence!=='CONFIRMED_STARTER'?undefined:raw;
+   const out=adjustNbaRow(r,status);
    if(out.lineup_label!=='NO_NEW_INFO'&&out.lineup_label!=='QUESTIONABLE')adjusted++;
    return out;
   });
