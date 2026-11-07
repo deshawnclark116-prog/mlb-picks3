@@ -48,7 +48,13 @@ class CandidatePlayProbabilityTests(unittest.TestCase):
             grades.mkdir()
             rows=[
                 {"player_id":"100","team_id":"1","market":"points",
-                 "p_active":.60,"reported_status":"UNKNOWN_NOT_ACTIVE_CERTIFIED"},
+                 "p_active":.60,"reported_status":"UNKNOWN_NOT_ACTIVE_CERTIFIED",
+                 "participation_recency_trial":{
+                     "schema":"NBA_V5_ORIGINAL_PRETIP_PPLAY_SHADOW_V1",
+                     "original_P_play":.60,
+                     "challenger_P_play":.977,
+                     "change_reason":"RECENCY_SHRUNK_SAME_TEAM_PRIOR_APPEARANCES",
+                     "promoted":False}},
                 {"player_id":"200","team_id":"2","market":"points",
                  "p_active":.55,"reported_status":"QUESTIONABLE"},
             ]
@@ -74,6 +80,8 @@ class CandidatePlayProbabilityTests(unittest.TestCase):
             score=compare(archives,grades,[historical])
             self.assertEqual(score["original_frozen_players_scored_all_including_DNP"],2)
             self.assertEqual(score["unlisted_status_challenger"]["played"],1)
+            self.assertEqual(score["true_forward_frozen_unlisted"]["n"],1)
+            self.assertEqual(score["unlisted_reconstructed_old_archive"]["n"],0)
             self.assertGreater(score["unlisted_status_challenger"]["candidate_mean_P_play"],.6)
             self.assertEqual(score["other_statuses_unchanged"]["incumbent_mean_P_play"],.55)
             self.assertEqual(score["other_statuses_unchanged"]["candidate_mean_P_play"],.55)
