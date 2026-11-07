@@ -124,6 +124,33 @@ class BridgeTests(unittest.TestCase):
         self.assertNotIn("100",new["23"])
         self.assertGreater(audit["conflicting_team_count"],0)
 
+    def test_one_actual_new_team_game_resolves_stale_espn_transfer(self):
+        roster=rosters()
+        roster["6"]=[{"player_id":"100"}]  # ESPN still lists old club
+        h=history()
+        h[("6","100")]=list(h[("23","100")])
+        h[("23","100")]=[{"player":"Domantas Sabonis"}]  # one prior completed new-team game
+        resolved,active,audit=supplement(fixture(),roster,h,source(),ASOF)
+        self.assertIn("100",resolved["23"])
+        self.assertEqual(audit["verified_new_team_prior_game_count"],1)
+        recovered=next(x for x in audit["added_by_team"]["23"]
+                       if x["player_id"]=="100")
+        self.assertEqual(recovered["new_team_prior_games"],1)
+        self.assertTrue(recovered["old_team_espn_roster_conflict_resolved_by_prior_play"])
+        self.assertTrue(recovered["active_for_game_not_inferred"])
+
+    def test_transferred_player_not_false_confirmed_from_expected_lineup(self):
+        roster=rosters()
+        roster["6"]=[{"player_id":"100"}]
+        h=history()
+        h[("6","100")]=list(h[("23","100")])
+        h[("23","100")]=[{"player":"Domantas Sabonis"}]
+        resolved,active,audit=supplement(
+            fixture(),roster,h,source(raw(confirmed=False)),ASOF)
+        self.assertIn("100",resolved["23"])
+        self.assertFalse(active["23"])
+        self.assertEqual(audit["confirmed_starters_by_team"]["23"],[])
+
     def test_collect_only_upcoming_date_and_uses_injected_source(self):
         times=[]
         def fake(date):
