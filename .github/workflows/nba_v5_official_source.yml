@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Dependencies for geometric PDF extraction and existing V5
-        run: python -m pip install -q "pdfplumber>=0.11,<0.13" "numpy>=2.1,<2.5" "scipy>=1.14,<1.18"
+        run: python -m pip install -q "pdfplumber>=0.11,<0.13" "numpy>=2.1,<2.5" "scipy>=1.14,<1.18" "pandas>=2.2,<3.0" "pyarrow>=18,<25"
       - name: NBA V5 original simulation and new official injury source tests
         run: python -m unittest discover -s tests -p "test_nba_v5*.py" -v
       - name: Test latest officially published league injury PDF
