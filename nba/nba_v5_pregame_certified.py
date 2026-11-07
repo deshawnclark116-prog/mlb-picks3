@@ -14,7 +14,7 @@ from pathlib import Path
 
 SCHEMA = "NBA_V5_PREGAME_LINEUP_V1"
 MAX_AGE = dt.timedelta(minutes=90)
-SOURCES = frozenset(("OFFICIAL_TEAM_RELEASE", "AUTHORIZED_LINEUP_PROVIDER", "NBA_OFFICIAL_LIVE_BOXSCORE", "NBA_TODAYS_LINEUPS_AUTHORIZED_SNAPSHOT"))
+SOURCES = frozenset(("OFFICIAL_TEAM_RELEASE", "AUTHORIZED_LINEUP_PROVIDER", "NBA_OFFICIAL_LIVE_BOXSCORE", "NBA_TODAYS_LINEUPS_AUTHORIZED_SNAPSHOT", "NBA_OFFICIAL_DAILY_LINEUPS"))
 
 
 def _utc(x):
@@ -105,7 +105,7 @@ def load(path, now, slate):
                 # than a stale ESPN OUT observation. The V5 forecast still
                 # rejects any contradiction with a fresh NBA injury PDF.
                 if (state == "CONFIRMED" and roster[pid].get("reported_status") == "OUT"
-                    and data["provider"] != "NBA_OFFICIAL_LIVE_BOXSCORE"):
+                    and data["provider"] not in ("NBA_OFFICIAL_LIVE_BOXSCORE", "NBA_OFFICIAL_DAILY_LINEUPS")):
                     raise ValueError("confirmed starter conflicts with OUT report")
             limits = {}
             for item in team.get("minute_limits", []):
