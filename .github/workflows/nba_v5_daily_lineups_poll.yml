@@ -38,7 +38,8 @@ jobs:
           PYTHONPATH=. python -u -m nba.nba_v5_daily_lineups_feed \
             --v3 docs/nba_v3_latest/latest.json \
             --out "$RUNNER_TEMP/nba_lineups_pretip.json" \
-            --audit "$RUNNER_TEMP/nba_lineups_pretip_audit.json"
+            --audit "$RUNNER_TEMP/nba_lineups_pretip_audit.json" \
+            --window-hours 2
       - name: Detect genuinely new confirmed starting five or late scratch
         if: github.event_name != 'pull_request'
         id: delta
