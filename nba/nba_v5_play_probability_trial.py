@@ -17,36 +17,7 @@ from pathlib import Path
 
 from nba.nba_v5_rotation_attribution import _archived, _timestamp, load_past_team_games
 
-LOOKBACK=6
-HALF_LIFE_GAMES=2.0
-PRIOR_P=.96
-PRIOR_GAME_EQUIVALENTS=3.0
-
-
-def estimate_unlisted(incumbent, team_history, player_id, target_game_day):
-    """Player was selected for V5 pretip; improve *only* uncertain play chance.
-
-    A real previous-team appearance is necessary. An unsigned newcomer or
-    no-history athlete retains the incumbent, not a fabricated confidence.
-    Observations before the first recent appearance on the current club
-    are deliberately excluded (trades/debuts aren't implicit DNPs).
-    """
-    before=[item for item in team_history
-            if item[0] < target_game_day][-LOOKBACK:]
-    if len(before)<3:
-        return incumbent, "INSUFFICIENT_PRIOR_TEAM_GAMES"
-    first=next((i for i,(_,_,members) in enumerate(before)
-                if str(player_id) in members),None)
-    if first is None:
-        return incumbent, "NO_CURRENT_TEAM_PRIOR_APPEARANCE"
-    recent=before[first:]
-    n=len(recent)
-    weights=[.5**((n-1-i)/HALF_LIFE_GAMES) for i in range(n)]
-    played=sum(w for w,item in zip(weights,recent)
-               if str(player_id) in item[2])
-    p=(PRIOR_GAME_EQUIVALENTS*PRIOR_P+played)/(PRIOR_GAME_EQUIVALENTS+sum(weights))
-    return round(max(.05,min(.99,p)),6), "RECENCY_SHRUNK_SAME_TEAM_PRIOR_APPEARANCES"
-
+from nba.nba_v5_recency_pplay import estimate_unlisted, LOOKBACK, HALF_LIFE_GAMES, PRIOR_P, PRIOR_GAME_EQUIVALENTS
 
 def _loss(p,y):
     x=max(1e-7,min(1-1e-7,p))
