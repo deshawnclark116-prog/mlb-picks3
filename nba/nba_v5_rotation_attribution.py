@@ -180,6 +180,7 @@ def build(archive_last, grades_last, omission_path=None, historical_games=None):
             raise ValueError("NBA_V5_ROTATION_OMISSION_REPORT_BAD_SCHEMA")
         omit={str(g["game_id"]):g for g in doc.get("games",[])}
     groups=defaultdict(list)
+    by_status=defaultdict(list)
     games_out=[]
     all_events=[]
     for path in sorted(Path(grades_last).glob("*.json")):
@@ -252,9 +253,12 @@ def build(archive_last, grades_last, omission_path=None, historical_games=None):
                "played":played,"actual":actual,"forecast_minutes":min_forecast,
                "actual_minutes":min_actual,
                "p_active":float(before.get("p_active") or 0),
+               "original_reported_status":str(before.get("reported_status") or "UNSPECIFIED"),
+               "original_availability_source":str(before.get("availability_source") or "NO_PROVIDER"),
                "component_means":means}
             all_events.append(e)
             groups[label].append(e)
+            by_status[e["original_reported_status"]].append(e)
             by_side[side].append(e)
         record={"game_id":gid,"away":game["away"],"home":game["home"],"teams":{}}
         for side in ("home","away"):
@@ -289,6 +293,8 @@ def build(archive_last, grades_last, omission_path=None, historical_games=None):
         "overall":summarize(all_events),
         "by_frozen_pretip_roster_coverage":{
             k:summarize(v) for k,v in sorted(groups.items())},
+        "by_original_reported_availability_status":{
+            k:summarize(v) for k,v in sorted(by_status.items())},
         "per_game_team_audit":games_out,
         "warning":"Historical roster coverage is an ex-ante quality proxy; missing prior players may genuinely be OUT. Correlation is not causation.",
         "promoted":False,
@@ -311,6 +317,7 @@ def main():
         "games":result["games"],"events":result["events"],
         "overall":result["overall"],
         "by_frozen_pretip_roster_coverage":result["by_frozen_pretip_roster_coverage"],
+        "by_original_reported_availability_status":result["by_original_reported_availability_status"],
         "promoted":False,
     },sort_keys=True))
 

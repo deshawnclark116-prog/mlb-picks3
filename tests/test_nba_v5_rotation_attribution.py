@@ -68,6 +68,8 @@ class RotationAttributionTests(unittest.TestCase):
             self.assertEqual(result["games"],1)
             self.assertEqual(result["events"],2)
             self.assertEqual(result["overall"]["DNP_players"],1)
+            self.assertEqual(result["by_original_reported_availability_status"]
+                             ["UNSPECIFIED"]["DNP_players"],1)
             lower=result["by_frozen_pretip_roster_coverage"]["LOW_UNDER_75PCT"]
             higher=result["by_frozen_pretip_roster_coverage"]["HIGH_AT_LEAST_90PCT"]
             self.assertEqual(lower["played_players"],1)
