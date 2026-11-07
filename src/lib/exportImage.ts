@@ -15,11 +15,11 @@ export function downloadBlob(blob:Blob,filename:string) {
  try {link.click();} finally {link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 }
 type FileShare=Pick<Navigator,'share'|'canShare'>;
-export async function shareBlob(blob:Blob,filename:string,api:FileShare=navigator):Promise<'shared'|'unsupported'|'cancelled'> {
+export async function shareBlob(blob:Blob,filename:string,api:FileShare=navigator,title='PROP EDGE NFL'):Promise<'shared'|'unsupported'|'cancelled'> {
  const file=new File([blob],filename,{type:'image/png'});
  try {
    if(typeof api.share!=='function' || typeof api.canShare!=='function' || !api.canShare({files:[file]})) return 'unsupported';
-   await api.share({files:[file],title:'PROP EDGE NFL'});return 'shared';
+   await api.share({files:[file],title});return 'shared';
  } catch(error) {
    if(error instanceof Error && error.name==='AbortError')return 'cancelled';
    if(error instanceof Error && ['NotAllowedError','NotSupportedError','TypeError','SecurityError'].includes(error.name))return 'unsupported';
