@@ -252,7 +252,7 @@ def compare(archive_root, grades_root):
         "by_market": by_stat,
         "per_game_mae": per_game,
         "rejected_claims": [
-            "MAE cannot establish calibrated P(hit) without original separate probability CDFs",
+            "Older archives cannot be backfilled with native component probabilities; only future frozen same-target chances can be scored",
             "No prospective promotion from reused small postgame clusters",
             "Conditional MAE excludes DNP, which must be separately evaluated for displayed hit rates",
         ],
@@ -270,7 +270,7 @@ def compare(archive_root, grades_root):
             "basis": "Original V4/V5 conditional CDF at the same frozen blend target; common pretip V5 availability risk",
             "DNP": "Counted as miss; no postgame adjustment",
         },
-        "v5_and_v4_component_mean_only": False,
+        "v5_and_v4_component_mean_only": not bool(probability_rows),
         "promoted": False,
     }
 
