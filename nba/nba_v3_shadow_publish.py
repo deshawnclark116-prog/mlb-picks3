@@ -25,6 +25,7 @@ from nba.nba_v2_rolling_predictions import (
     _source_rosters,MIN_PREGAME_GAP
 )
 from nba.nba_live_injury_source import validate as verify_injuries
+from nba.nba_v3_daily_roster import collect as collect_official_daily_rosters, supplement as supplement_daily_roster
 from nba.nba_v3_phase1_engine import (
     VERSION,SCHEMA,role_pool,simulate_matchup,source_hash,TEAM_MINUTES
 )
@@ -77,7 +78,7 @@ def historically_observed_pace(games,boxes,team_ids):
            for tid in team_ids}
 
 def build(fixtures,rosters,receipts,games,boxes,asof,seen,
-          injury_snapshot=None,draws=8000):
+          injury_snapshot=None,draws=8000,daily_roster_snapshot=None):
     validate_fixture_source(fixtures,asof)
     _source_rosters(rosters,receipts,asof)
     if injury_snapshot:verify_injuries(injury_snapshot,asof)
@@ -104,14 +105,24 @@ def build(fixtures,rosters,receipts,games,boxes,asof,seen,
             skipped.append({"game_id":gid,"reason":"FIRSTSEEN_V3_ARCHIVE_EXISTS"});continue
         if tip-asof<MIN_PREGAME_GAP:
             skipped.append({"game_id":gid,"reason":"NBA_V3_STRICT_15M_ORIGINAL_CUTOFF"});continue
+        # This NBA daily feed was ACTUALLY observed before tipoff. It
+        # corroborates current team membership when ESPN's roster omits a
+        # historically verified player. Expected is not confirmed ACTIVE.
+        supplemental, nba_active, roster_audit = supplement_daily_roster(
+            g,rosters,histories,daily_roster_snapshot,asof)
         teams={}
         for tid in (g["away_id"],g["home_id"]):
-            roster={str(x["player_id"]) for x in rosters[tid]}
+            roster=supplemental[str(tid)]
             # Include proven old-team played histories for CURRENT roster
             # members; the V3 role model conservatively chooses exactly one
             # source team and does not create fictitious new-team appearances.
             subset={k:v for k,v in histories.items() if k[1] in roster}
             statuses=[x for x in injury_by_team[tid] if x["player_id"] in roster]
+            for officially_confirmed in nba_active[str(tid)]:
+                # A genuine five-starter NBA confirmation is newer and more
+                # specific than a stale ESPN OUT report for the same person.
+                statuses=[x for x in statuses if x["player_id"] != officially_confirmed["player_id"]]
+                statuses.append(officially_confirmed)
             teams[tid]=role_pool(tid,subset,team_games,first,last,roster,
                 asof_utc=asof.isoformat(),tipoff_utc=g["tipoff_utc"],
                 statuses=statuses)
@@ -128,6 +139,7 @@ def build(fixtures,rosters,receipts,games,boxes,asof,seen,
             "source_opportunity_history_ends_before_forecast":True,
             "roster_receipt_sha256":{
                 t:receipts[t]["sha256"] for t in (g["home_id"],g["away_id"])},
+            "nba_daily_roster_bridge_audit":roster_audit,
             "source_opportunity_pace":pace,
             "injury_source_is_not_active_roster_certification":True,
             **mc
@@ -162,6 +174,7 @@ def main():
     parser.add_argument("--archive-root",type=Path,default=Path(ROOT))
     parser.add_argument("--injury-snapshot",type=Path)
     parser.add_argument("--draws",type=int,default=8000)
+    parser.add_argument("--no-daily-roster-bridge",action="store_true",help="Disable optional independently observed NBA pretip roster corroboration")
     args=parser.parse_args()
     if args.out.exists():raise ValueError("NBA_V3_PRETIP_SHADOW_FILE_ALREADY_EXISTS")
     asof=dt.datetime.now(UTC)
@@ -177,11 +190,16 @@ def main():
     games,boxes,meta,missing=collect(asof.date(),args.history_cache,
         asof_utc=asof)
     rosters,receipts=live_rosters()
+    # Fetch before the V3 player pool is assembled, not after V3 has
+    # already filtered out players missing from ESPN's roster.
+    daily_roster_snapshot=(None if args.no_daily_roster_bridge else
+                           collect_official_daily_rosters(fixture))
     newer=dt.datetime.now(UTC)
     injuries=(json.loads(args.injury_snapshot.read_text())
               if args.injury_snapshot and args.injury_snapshot.is_file() else None)
     doc=build(fixture,rosters,receipts,games,boxes,newer,seen,
-              injury_snapshot=injuries,draws=args.draws)
+              injury_snapshot=injuries,draws=args.draws,
+              daily_roster_snapshot=daily_roster_snapshot)
     if doc["games_forecast"]:
         args.out.parent.mkdir(parents=True,exist_ok=True)
         args.out.write_text(json.dumps(doc,indent=2,sort_keys=True,allow_nan=False)+"\n")

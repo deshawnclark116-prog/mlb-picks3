@@ -94,7 +94,11 @@ def role_pool(team_id,histories,team_games,first_seen,last_seen,roster_ids,
             first_seen[(tid,pid)]!=indices[0]):
             raise ValueError("NBA_V3_FUTURE_TEAM_GAME_HISTORY")
         # Preserve known bench players; don't fabricate games for a transfer.
-        if idx-1-indices[-1]>7:continue
+        # A VERIFIED official five-starter observation is new pretip
+        # evidence that this player returned, even after >7 absent games.
+        # Do not admit merely rostered or EXPECTED players on this basis.
+        if idx-1-indices[-1]>7 and evidence.get(str(pid))!="ACTIVE":
+            continue
         appearances=sum(x>=idx-8 for x in indices)
         observed_span=min(8,idx-int(first_seen[(tid,pid)]))
         observed_span=max(1,observed_span)

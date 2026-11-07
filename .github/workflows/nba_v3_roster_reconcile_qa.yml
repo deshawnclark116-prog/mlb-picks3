@@ -1,0 +1,31 @@
+name: NBA V3 pretip roster supplement and V5 starter-source integration
+on:
+  pull_request:
+    paths:
+      - "nba/nba_v3_daily_roster.py"
+      - "nba/nba_v3_shadow_publish.py"
+      - "nba/nba_v3_phase1_engine.py"
+      - "tests/test_nba_v3_daily_roster.py"
+      - ".github/workflows/nba_v3_roster_reconcile_qa.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -q "numpy>=2.1,<2.5" "scipy>=1.14,<1.18" "pandas>=2.2,<3.0" "pyarrow>=18,<25" "pdfplumber>=0.11,<0.13"
+      - name: Source bridge and original V3 numerical contracts
+        run: |
+          python -m py_compile nba/nba_v3_daily_roster.py nba/nba_v3_shadow_publish.py nba/nba_v3_phase1_engine.py
+          python -m unittest discover -s tests -p "test_nba_v3_daily_roster.py" -v
+          python -m unittest discover -s tests -p "test_nba_v3_phase1.py" -v
+      - name: Existing V5 daily confirmed starters remain fail closed
+        run: |
+          python -m unittest discover -s tests -p "test_nba_v5_daily_lineups_feed.py" -v
+          python -m unittest discover -s tests -p "test_nba_v5_pregame_certified.py" -v
