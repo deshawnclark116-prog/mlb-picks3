@@ -30,6 +30,14 @@ jobs:
           set -euo pipefail
           test -d docs/nba_v5_archive || { echo "nothing archived yet"; exit 0; }
           PYTHONPATH=. python -u -m nba.nba_v5_postmortem --archive docs/nba_v5_archive --grades docs/nba_v5_grades --ledger docs/nba_v5_info/ledger.jsonl
+      - name: Grade missed played rotation minutes without hindsight in forecasts
+        run: |
+          set -euo pipefail
+          PYTHONPATH=. python -u -m nba.nba_v5_roster_omission_grade \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --grades docs/nba_v5_grades/last \
+            --out docs/nba_v5_grades/roster_omission_audit.json
       - name: Audit immutable forecast coverage and pending results
         run: |
           PYTHONPATH=. python -u -m nba.nba_v5_grade_health \
