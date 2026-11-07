@@ -39,6 +39,13 @@ jobs:
             --grades docs/nba_v5_grades/last \
             --archive-last docs/nba_v5_archive/last \
             --out docs/nba_v5_grades/roster_omission_audit.json
+      - name: Compare V4 and standalone V5 numerical means against original frozen blend
+        run: |
+          set -euo pipefail
+          PYTHONPATH=. python -u -m nba.nba_v5_frozen_components \
+            --archive-last docs/nba_v5_archive/last \
+            --grades-last docs/nba_v5_grades/last \
+            --out docs/nba_v5_grades/frozen_component_comparison.json
       - name: Audit immutable forecast coverage and pending results
         run: |
           PYTHONPATH=. python -u -m nba.nba_v5_grade_health \
