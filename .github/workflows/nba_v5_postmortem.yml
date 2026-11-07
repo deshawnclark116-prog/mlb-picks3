@@ -56,6 +56,15 @@ jobs:
             --historical-games nba/data/nba_v4_games_2026_27.jsonl \
             --omissions docs/nba_v5_grades/roster_omission_audit.json \
             --out docs/nba_v5_grades/rotation_attribution.json
+      - name: Grade originally frozen V5 alternative player participation probabilities
+        run: |
+          set -euo pipefail
+          PYTHONPATH=. python -u -m nba.nba_v5_play_probability_trial \
+            --archive-last docs/nba_v5_archive/last \
+            --grades-last docs/nba_v5_grades/last \
+            --historical-games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --historical-games nba/data/nba_v4_games_2026_27.jsonl \
+            --out docs/nba_v5_grades/recency_pplay_forward_grade.json
       - name: Audit immutable forecast coverage and pending results
         run: |
           PYTHONPATH=. python -u -m nba.nba_v5_grade_health \
