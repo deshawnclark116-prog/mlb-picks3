@@ -37,6 +37,7 @@ jobs:
             --games nba/data/nba_v4_games_2025_26.jsonl.gz \
             --games nba/data/nba_v4_games_2026_27.jsonl \
             --grades docs/nba_v5_grades/last \
+            --archive-last docs/nba_v5_archive/last \
             --out docs/nba_v5_grades/roster_omission_audit.json
       - name: Audit immutable forecast coverage and pending results
         run: |

@@ -1,0 +1,75 @@
+name: NBA V5 frozen roster omission root-cause audit
+on:
+  pull_request:
+    paths:
+      - "nba/nba_v5_roster_omission_grade.py"
+      - "tests/test_nba_v5_roster_omission_grade.py"
+      - ".github/workflows/nba_v5_roster_forensics.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  inspect-postgame-original-exclusions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify frozen cause classifier
+        run: python -m unittest discover -s tests -p "test_nba_v5_roster_omission_grade.py" -v
+      - name: Diagnose yesterday's omitted players using frozen pretip archive
+        run: |
+          set -euo pipefail
+          python -m nba.nba_v5_roster_omission_grade \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --grades docs/nba_v5_grades/last \
+            --archive-last docs/nba_v5_archive/last \
+            --out /tmp/nba_v5_roster_causes.json
+          python - <<'PY'
+          from collections import Counter
+          import json
+          o=json.load(open("/tmp/nba_v5_roster_causes.json"))
+          counts=Counter(p["cause"] for g in o["games"] for p in g["missing_players"])
+          print("NBA_V5_FROZEN_OMISSION_ROOT_CAUSES",json.dumps(dict(counts),sort_keys=True))
+          for g in o["games"]:
+              print("NBA_V5_GAME_OMISSION",g["game_id"],g["played_minutes_missing_from_v5"],
+                    [{"name":p["player"],"min":p["actual_minutes"],
+                      "cause":p["cause"],"status":p["frozen_reported_status"],
+                      "source":p["frozen_availability_source"]}
+                     for p in g["missing_players"]])
+          assert o["games_graded"]>=9
+          PY
+      - name: Cross-check all missing players against FIRST original V3 game roster
+        run: |
+          python - <<'PY'
+          from collections import Counter
+          from pathlib import Path
+          import json
+          orig={}
+          for path in sorted(Path("docs/nba_v3_phase1_corrected_shadow").glob("*.json")):
+              doc=json.loads(path.read_text())
+              for g in doc.get("games",[]):
+                  gid=str(g["game_id"])
+                  if gid in orig:
+                      raise AssertionError("Duplicate first-seen V3 game "+gid)
+                  orig[gid]={str(p["player_id"]) for p in g.get("rows",[])}
+          report=json.load(open("/tmp/nba_v5_roster_causes.json"))
+          count=Counter()
+          for g in report["games"]:
+              origin=orig.get(str(g["game_id"]))
+              for p in g["missing_players"]:
+                  k=("NO_ORIGINAL_V3_GAME" if origin is None else
+                     "MISSING_EVEN_IN_FIRST_V3_ROSTER" if p["player_id"] not in origin else
+                     "PRESENT_IN_FIRST_V3_NOT_IN_LAST_V5")
+                  count[k]+=1
+                  print("NBA_V5_ROSTER_ORIGIN",g["game_id"],p["player"],
+                        p["actual_minutes"],k)
+          print("NBA_V5_FIRSTSEEN_ROSTER_MISSING_CAUSES",dict(count))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-v5-original-pretip-omission-root-causes
+          path: /tmp/nba_v5_roster_causes.json
+          retention-days: 30
