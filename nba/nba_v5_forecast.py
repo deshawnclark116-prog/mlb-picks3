@@ -36,6 +36,8 @@ from nba.nba_v5_tracking_opportunities import audit_and_apply as apply_tracking_
 from nba.nba_v5_pregame_certified import load_many as load_pregame_many, apply_confirmed
 from nba.nba_v5_uncertainty import forecast_uncertainty, reach_with_dnp
 from nba.nba_v5_roster_integrity import audit_team as audit_rotation_coverage
+from nba.nba_v5_rotation_attribution import load_past_team_games, _timestamp as dated_eastern
+from nba.nba_v5_recency_pplay import estimate_unlisted
 from nba.nba_v5_sim import League, league_from, simulate_game, MARKETS
 
 VERSION = "nba-v5-blend-possession-simulation-20261106"
@@ -253,6 +255,9 @@ def main() -> int:
     if a.sims < MIN_PRODUCTION_SIMS:
         ap.error(f"NBA_V5_REQUIRES_AT_LEAST_{MIN_PRODUCTION_SIMS}_COMPLETE_GAME_SIMS")
     games = v4.load(a.games)
+    # Lightweight dated roster receipt for an UNPROMOTED participation trial.
+    # It never reads target-date games into the pretip candidate probability.
+    recency_team_history = load_past_team_games(a.games)
     pbp = b5.load_pbp(a.pbp)
     rp = b5.Replay()
     for g in games:
@@ -299,6 +304,7 @@ def main() -> int:
         if tip <= now:
             continue
         d = (tip - dt.timedelta(hours=5)).date()
+        game_day_et = dated_eastern(g3["tipoff_utc"]).date()
         evidence = (receipts.get(str(g3["game_id"])) or {}).get("reports", [])
         rep_by = choose_availability_reports(evidence, now)
         certified_by_team = {str(tid): pregame.get((str(g3["game_id"]), str(tid)))
@@ -340,6 +346,9 @@ def main() -> int:
         official_out={pid for pid,info in rep_by.items()
                       if info["fresh_official"] and info["status"]=="OUT"}
         pa = {}
+        recency_play_trial = {}
+        original_player_status={str(row["player_id"]):str(row.get("reported_status") or "")
+                                for row in g3["rows"]}
         for p in pg["players"]:
             info = rep_by.get(p["id"])
             if info:
@@ -357,6 +366,24 @@ def main() -> int:
                 span = recent[first:] if first is not None else []
                 part = (sum(1 for m in span if p["id"] in m) + 3 * 0.96) / (len(span) + 3) if span else 0.96
                 pa[p["id"]] = min(play_table.p_play("UNLISTED"), part)
+            old_p = float(pa[p["id"]])
+            if (info is None and
+                original_player_status.get(str(p["id"])) == "UNKNOWN_NOT_ACTIVE_CERTIFIED"):
+                proposed, reason = estimate_unlisted(
+                    old_p, recency_team_history.get(str(p["team"]), []),
+                    str(p["id"]), game_day_et)
+            else:
+                proposed, reason = old_p, "KEEP_OFFICIAL_OR_REPORTED_STATUS_UNCHANGED"
+            recency_play_trial[str(p["id"])] = {
+                "schema": "NBA_V5_ORIGINAL_PRETIP_PPLAY_SHADOW_V1",
+                "original_P_play": round(old_p, 6),
+                "challenger_P_play": round(float(proposed), 6),
+                "change_reason": reason,
+                "origin": "OBSERVED_PREVIOUS_TEAM_GAME_PARTICIPATION_ONLY",
+                "promoted": bool(switches.get("recency_play_probability", False)),
+            }
+            if switches.get("recency_play_probability", False):
+                pa[p["id"]] = float(proposed)
         th.p_play = np.array([pa[i] for i in th.ids])
         ta.p_play = np.array([pa[i] for i in ta.ids])
         pregame_team_effect = {}
@@ -365,6 +392,15 @@ def main() -> int:
             pregame_team_effect[str(team_id)] = apply_confirmed(team_input, record)
             for pos, pid in enumerate(team_input.ids):
                 pa[pid] = float(team_input.p_play[pos])
+                rec = recency_play_trial.get(str(pid))
+                if (rec and record and record["lineup_state"] == "CONFIRMED"
+                    and (str(pid) in record["starters"] or str(pid) in record["inactive"])):
+                    # The official five is higher-confidence evidence than
+                    # either participation estimator. It is not an A/B test
+                    # of recency if certification already fixes this player.
+                    rec["original_P_play"] = round(pa[pid], 6)
+                    rec["challenger_P_play"] = round(pa[pid], 6)
+                    rec["change_reason"] = "OVERRIDDEN_BY_VERIFIED_LINEUP"
         # Real prior-season player tracking modifies relative opportunities
         # ONLY when a separately validated research switch is enabled.
         # The default champion is exactly unchanged. No inferred tracking.
@@ -453,6 +489,7 @@ def main() -> int:
                                "role_change": {"status": role_audit[pid]["status"],
                                                "candidate_metrics": role_audit[pid].get("candidate_metrics", []),
                                                "shadow_only": True},
+                               "participation_recency_trial": recency_play_trial.get(str(pid)),
                                "uncertainty_audit": forecast_uncertainty(samp, mins, float(pa.get(pid, 1.0))),
                                "calibration": calib.get(m)})
                     new_rows.append(nr)
@@ -511,6 +548,7 @@ def main() -> int:
                    "certified_pregame_team_effect": pregame_team_effect,
                    "certified_pregame_source_captured_at_utc": pregame_audit.get("captured_at_utc"),
                    "role_change_model_effect": "SHADOW_ONLY_NO_PROJECTION_ADJUSTMENT",
+                   "participation_recency_trial_status": ("RESEARCH_SWITCH_ENABLED_UNPROVEN" if switches.get("recency_play_probability") else "PROSPECTIVE_PRETIP_SHADOW_SAVED_NO_NUMERICAL_EFFECT"),
                    "uncertainty_model_effect": "DIAGNOSTIC_ONLY; MINUTES_AND_DNP_VARIANCE_CONSERVED"})
         out_games.append(g5)
         print("simulated", g3["away"], "at", g3["home"], "rows", len(new_rows), flush=True)
