@@ -90,6 +90,50 @@ class RotationAttributionTests(unittest.TestCase):
             self.assertEqual(home["postgame_missing_actual_player_minutes"],35.0)
             self.assertEqual(home["prior_rotation_coverage"],0.60)
 
+    def test_prior_day_only_reconstruction_recovers_missing_old_audit(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            archive,grades=fixture(tmp)
+            # This 11/6 archive has a modern synthetic audit; older real
+            # archives did not. Remove it and reproduce evidence only from
+            # earlier dated final-game team minutes.
+            a=archive/"123.json.gz"
+            with gzip.open(a,"rt") as f:
+                doc=json.load(f)
+            doc["games"][0].pop("roster_integrity_audit")
+            for row in doc["games"][0]["rows"]:
+                row["model_version"]="nba-v5-testing"
+                row["mean_basis"]="CONDITIONAL_ON_PLAYING"
+            with gzip.open(a,"wt") as f:
+                json.dump(doc,f)
+            historical=Path(tmp)/"past.jsonl"
+            games=[]
+            for n,day in enumerate(("2026-11-02","2026-11-03","2026-11-04"),1):
+                games.append({
+                    "game_id":str(700+n),"date":day+"T23:00:00+00:00",
+                    "home":{"id":"1"},"away":{"id":"2"},
+                    "players":[{"id":"100","team":"1","side":"home","min":30},
+                               {"id":"900","team":"1","side":"home","min":42},
+                               {"id":"901","team":"1","side":"home","min":42},
+                               {"id":"902","team":"1","side":"home","min":42},
+                               {"id":"903","team":"1","side":"home","min":42},
+                               {"id":"904","team":"1","side":"home","min":42},
+                               {"id":"200","team":"2","side":"away","min":40}]
+                })
+            # A final game occurring on the target game day is known NOW,
+            # but not when the original forecast was frozen: ignore it.
+            games.append({"game_id":"999","date":"2026-11-06T23:30:00+00:00",
+                          "home":{"id":"1"},"away":{"id":"2"},
+                          "players":[{"id":"100","team":"1","side":"home","min":48}]})
+            historical.write_text("".join(json.dumps(g)+"\\n" for g in games))
+            result=build(archive,grades,historical_games=[historical])
+            home=result["per_game_team_audit"][0]["teams"]["home"]
+            self.assertEqual(home["prior_coverage_source"],
+                             "RECONSTRUCTED_PAST_ONLY_ET_GAMEDAYS_NOT_FROZEN")
+            self.assertEqual(home["prior_games_observed"],3)
+            self.assertEqual(home["prior_rotation_coverage"],0.125)
+            self.assertEqual(result["by_frozen_pretip_roster_coverage"]
+                             ["LOW_UNDER_75PCT"]["played_players"],1)
+
     def test_mismatched_original_forecast_time_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             archives,grades=fixture(tmp)
