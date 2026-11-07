@@ -23,6 +23,7 @@ from nba.nba_v5_official_injuries import abbr
 
 REGULAR_STATUSES={"OUT","DOUBTFUL","QUESTIONABLE","PROBABLE","DAY_TO_DAY","AVAILABLE"}
 MAX_OFFICIAL_SOURCE_AGE_H=36
+MIN_PRETIP_REFRESH_SECONDS=5*60  # late confirmed starting-five source can post inside T-20
 
 
 def _time(value):
@@ -47,7 +48,7 @@ def decide(fixtures,espn,official,state,now,window_hours=9,force=False):
         if not tip:
             continue
         delta=(tip-now).total_seconds()
-        if 20*60 <= delta <= float(window_hours)*3600:
+        if MIN_PRETIP_REFRESH_SECONDS <= delta <= float(window_hours)*3600:
             soon.append(g)
     soon.sort(key=lambda g:str(g["game_id"]))
     teamids={str(k) for g in soon for k in (g["home_id"],g["away_id"])}
@@ -99,7 +100,7 @@ def decide(fixtures,espn,official,state,now,window_hours=9,force=False):
     # genuinely near-tipoff window on EVERY scheduled tick, including while
     # source statuses are unchanged. Never force a run after scheduled tip.
     near_tip_lineup_recheck=any(
-        20*60 <= (_time(g["tipoff_utc"])-now).total_seconds() <= 90*60
+        MIN_PRETIP_REFRESH_SECONDS <= (_time(g["tipoff_utc"])-now).total_seconds() <= 90*60
         for g in soon)
     run=bool(soon) and (bool(force) or changed or age>3*3600 or near_tip_lineup_recheck)
     return {"run":run,"hash":key,"games":len(soon),
