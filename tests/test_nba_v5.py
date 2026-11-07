@@ -160,8 +160,32 @@ class BlendTests(unittest.TestCase):
         self.assertAlmostEqual(b["mean"], 2.5)
         self.assertEqual(b["cdf_lattice"]["cdf"], [0.15, 0.5, 0.85, 1.0])
         self.assertEqual(b["blend"]["weights"], [0.5, 0.5])
+        c = b["research_fixed_event_component_probabilities"]
+        self.assertEqual(c["target"], 2)  # blended 2.5 rounds DOWN
+        self.assertEqual(c["conditional_reach"],
+                         {"v4_only": 0.4, "v5_only": 0.6, "blend": 0.5})
+        self.assertEqual(c["including_dnp_reach"],c["conditional_reach"])
+
         self.assertGreater(b["sd"], 1.0)                                  # spread includes the disagreement between the models
         self.assertTrue(all(y >= x for x, y in zip(b["cdf_lattice"]["cdf"], b["cdf_lattice"]["cdf"][1:])))
+
+    def test_component_probs_use_same_pretip_dnp_risk_for_fair_comparison(self):
+        from nba.nba_v5_forecast import blend_rows
+        r5 = {"mean": 2.0, "sd": 1.0, "p_active": 0.8,
+              "cdf_lattice": {"step": 1, "cdf": [0.1, 0.4, 0.8, 1.0]}}
+        r4 = {"mean": 3.0, "sd": 1.2,
+              "cdf_lattice": {"step": 1, "cdf": [0.2, 0.6, 0.9, 1.0]}}
+        original5 = list(r5["cdf_lattice"]["cdf"])
+        original4 = list(r4["cdf_lattice"]["cdf"])
+        b = blend_rows(r5, r4)
+        c = b["research_fixed_event_component_probabilities"]
+        self.assertEqual(c["common_play_probability"],0.8)
+        self.assertEqual(c["including_dnp_reach"],
+                         {"v4_only":0.32,"v5_only":0.48,"blend":0.4})
+        self.assertEqual(r5["cdf_lattice"]["cdf"],original5)
+        self.assertEqual(r4["cdf_lattice"]["cdf"],original4)
+        self.assertEqual(b["mean"],2.5)
+        self.assertEqual(b["cdf_lattice"]["cdf"],[0.15,0.5,0.85,1.0])
 
     def test_blend_is_skipped_when_the_lattices_do_not_match(self):
         from nba.nba_v5_forecast import blend_rows

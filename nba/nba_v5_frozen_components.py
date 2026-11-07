@@ -91,6 +91,105 @@ def _paired(archive_root, grades_root):
     return result
 
 
+
+def _probability_rows(archive_root, grades_root):
+    """Grade all previously frozen same-target component chances, including DNP.
+
+    Old forecasts without the pretip component record stay unavailable; never
+    reconstruct their probabilities from postgame outcomes or current models.
+    """
+    from nba.nba_v5_rank import whole
+    result = []
+    for path in sorted(Path(grades_root).glob("*.json")):
+        grade = json.loads(path.read_text())
+        if grade.get("kind") != "last":
+            continue
+        gid = str(grade.get("game_id"))
+        if gid != path.stem:
+            raise ValueError("NBA_COMPONENT_GRADE_ID_MISMATCH")
+        archived = Path(archive_root) / (gid + ".json.gz")
+        if not archived.is_file():
+            raise ValueError("NBA_COMPONENT_FROZEN_PRETIP_ARCHIVE_MISSING")
+        game = _open_archived(archived)
+        if (game.get("forecast_at_utc") != grade.get("forecast_at_utc") or
+            game["forecast_at_utc"] >= game["tipoff_utc"]):
+            raise ValueError("NBA_COMPONENT_PROBABILITY_ORIGINAL_FORECAST_TIME_MISMATCH")
+        records = {(str(r.get("player_id")), str(r.get("market"))): r
+                   for r in game.get("rows", [])}
+        if len(records) != len(game.get("rows", [])):
+            raise ValueError("NBA_COMPONENT_PROBABILITY_DUPLICATE_FROZEN_EVENT")
+        graded = set()
+        for row in grade.get("rows", []):
+            mk = row.get("market")
+            if mk not in CORE:
+                continue
+            key = (str(row.get("player_id")), str(mk))
+            if key in graded:
+                raise ValueError("NBA_COMPONENT_PROBABILITY_DUPLICATE_GRADED_EVENT")
+            graded.add(key)
+            original = records.get(key)
+            if not original:
+                raise ValueError("NBA_COMPONENT_PROBABILITY_GRADE_NOT_IN_ARCHIVE")
+            trial = original.get("research_fixed_event_component_probabilities")
+            if not trial:
+                continue
+            if trial.get("schema") != "NBA_V5_SAME_TARGET_COMPONENT_PROBS_V1":
+                raise ValueError("NBA_COMPONENT_PROBABILITY_SCHEMA_MISMATCH")
+            k = int(trial["target"])
+            if k < 1 or k != whole(float(original["mean"])):
+                raise ValueError("NBA_COMPONENT_PROBABILITY_TARGET_CHANGED")
+            if abs(float(row["projection"]) - float(original["mean"])) > 0.00011:
+                raise ValueError("NBA_COMPONENT_PROBABILITY_GRADE_MEAN_CHANGED")
+            active = bool(row.get("played"))
+            if active and row.get("actual") is None:
+                raise ValueError("NBA_COMPONENT_PROBABILITY_PLAYED_WITHOUT_FINAL")
+            hit = int(active and float(row["actual"]) >= k)
+            p = trial["including_dnp_reach"]
+            if set(p) != set(ARMS) or any(not isinstance(v, (float, int)) or
+                                         not math.isfinite(v) or not 0 <= v <= 1
+                                         for v in p.values()):
+                raise ValueError("NBA_COMPONENT_PROBABILITY_INVALID_P")
+            result.append({
+                "game_id": gid, "market": mk, "event": k,
+                "hit": hit, "played": active,
+                "squared_error": {arm: (float(p[arm]) - hit) ** 2 for arm in ARMS},
+            })
+    return result
+
+
+def _brier_stat(rows, seed):
+    games = sorted({r["game_id"] for r in rows})
+    errors = {
+        arm: round(sum(r["squared_error"][arm] for r in rows) / len(rows), 6)
+        for arm in ARMS
+    }
+    groups = defaultdict(list)
+    for row in rows:
+        groups[row["game_id"]].append(row)
+    rng = random.Random(seed)
+    intervals = {}
+    for arm in ("v4_only", "v5_only"):
+        differences = []
+        for _ in range(1500):
+            sample = [groups[games[rng.randrange(len(games))]] for _ in games]
+            n = sum(len(g) for g in sample)
+            differences.append(sum(r["squared_error"]["blend"] - r["squared_error"][arm]
+                                   for g in sample for r in g) / n)
+        differences.sort()
+        intervals[arm] = [round(_quantile(differences, 0.025), 6),
+                          round(_quantile(differences, 0.975), 6)]
+    return {
+        "n_original_events_including_dnp": len(rows),
+        "n_games": len(games),
+        "hits": sum(r["hit"] for r in rows),
+        "dnp_events_counted_as_misses": sum(not r["played"] for r in rows),
+        "brier": errors,
+        "brier_reduction_vs_blend_positive_better": {
+            arm: round(errors["blend"] - errors[arm], 6)
+            for arm in ("v4_only", "v5_only")},
+        "game_cluster_bootstrap_95pct_reduction_interval": intervals,
+    }
+
 def _quantile(sorted_vals, pct):
     return sorted_vals[min(len(sorted_vals) - 1, int((len(sorted_vals) - 1) * pct))]
 
@@ -130,6 +229,7 @@ def _stat(rows, seed):
 
 def compare(archive_root, grades_root):
     rows = _paired(archive_root, grades_root)
+    probability_rows = _probability_rows(archive_root, grades_root)
     by_stat = {}
     for market in CORE:
         selected = [x for x in rows if x["market"] == market]
@@ -152,11 +252,25 @@ def compare(archive_root, grades_root):
         "by_market": by_stat,
         "per_game_mae": per_game,
         "rejected_claims": [
-            "MAE cannot establish calibrated P(hit) without original separate probability CDFs",
+            "Older archives cannot be backfilled with native component probabilities; only future frozen same-target chances can be scored",
             "No prospective promotion from reused small postgame clusters",
             "Conditional MAE excludes DNP, which must be separately evaluated for displayed hit rates",
         ],
-        "v5_and_v4_component_mean_only": True,
+        "forward_frozen_same_target_probability": {
+            "status": ("FROZEN_COMPONENTS_GRADED" if probability_rows else
+                       "WAITING_FOR_NEW_PROSPECTIVE_COMPONENT_FORECASTS"),
+            "events": len(probability_rows),
+            "by_market": {
+                market: _brier_stat([r for r in probability_rows
+                                     if r["market"] == market],
+                                    20261107 + CORE.index(market))
+                for market in CORE
+                if any(r["market"] == market for r in probability_rows)
+            },
+            "basis": "Original V4/V5 conditional CDF at the same frozen blend target; common pretip V5 availability risk",
+            "DNP": "Counted as miss; no postgame adjustment",
+        },
+        "v5_and_v4_component_mean_only": not bool(probability_rows),
         "promoted": False,
     }
 
@@ -175,6 +289,7 @@ def main():
         "games": output["games_evaluated"],
         "events": output["projections_evaluated"],
         "markets": output["by_market"],
+        "prospective_probability": output["forward_frozen_same_target_probability"],
         "promoted": False,
     }, sort_keys=True))
 

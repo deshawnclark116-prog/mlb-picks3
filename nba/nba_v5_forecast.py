@@ -81,10 +81,39 @@ def blend_rows(r5: dict, r4: dict) -> dict:
     sd = float(np.sqrt(0.5 * (r5["sd"] ** 2 + r4["sd"] ** 2) + 0.25 * (m5 - m4) ** 2))
     out = dict(r5)
     cdf = [round(float(x), 4) for x in mix]
+    # Freeze ORIGINAL probabilities before the mixture replaces both CDFs.
+    # Compare both arms at the same displayed blend threshold, under one
+    # common pretip P(plays); the report isolates skill distributions, not
+    # the different availability models. No component probability affects
+    # published ranking, mean, CDF or odds.
+    threshold = whole(round(mean, 4))
+    shared_play = float(r5.get("p_active", 1.0))
+    if not 0.0 <= shared_play <= 1.0:
+        raise ValueError("NBA_V5_COMPONENT_INVALID_PLAY_PROBABILITY")
+    conditional = {
+        "v4_only": round(float(reach_prob(c4, threshold)), 6),
+        "v5_only": round(float(reach_prob(c5, threshold)), 6),
+        "blend": round(float(reach_prob(cdf, threshold)), 6),
+    }
+    frozen_components = {
+        "schema": "NBA_V5_SAME_TARGET_COMPONENT_PROBS_V1",
+        "target": threshold,
+        "common_play_probability": round(shared_play, 6),
+        "conditional_reach": conditional,
+        "including_dnp_reach": {
+            arm: round(prob * shared_play, 6)
+            for arm, prob in conditional.items()
+        },
+        "target_basis": "ORIGINAL_BLENDED_MEAN_ROUNDED_WITH_X_POINT_6_RULE",
+        "availability_basis": "SAME_V5_ASOF_P_ACTIVE_FOR_EVERY_ARM",
+        "score_after_game_only": True,
+        "experimental_only_no_production_effect": True,
+    }
     out.update({"mean": round(mean, 4), "median": cdf_quantile(cdf, 0.5), "p10": cdf_quantile(cdf, 0.10), "p25": cdf_quantile(cdf, 0.25),
                 "p75": cdf_quantile(cdf, 0.75), "p90": cdf_quantile(cdf, 0.90), "sd": round(sd, 4), "unc": round(sd, 4),
                 "cdf_lattice": {"step": 1, "cdf": cdf},
-                "blend": {"v5_simulation_mean": round(m5, 4), "v4_model_mean": round(m4, 4), "weights": [0.5, 0.5]}})
+                "blend": {"v5_simulation_mean": round(m5, 4), "v4_model_mean": round(m4, 4), "weights": [0.5, 0.5]},
+                "research_fixed_event_component_probabilities": frozen_components})
     return out
 
 

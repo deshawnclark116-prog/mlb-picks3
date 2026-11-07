@@ -73,6 +73,40 @@ class FrozenCompareTests(unittest.TestCase):
                                     [(good,8,True),(dnp,None,False)])
             self.assertEqual(compare(archive,grades)["projections_evaluated"],1)
 
+    def test_future_original_component_brier_includes_dnp(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            p1=pair("1","points",2.5,3,2)
+            p2=pair("2","points",2.5,3,2)
+            for p in (p1,p2):
+                p["research_fixed_event_component_probabilities"]={
+                    "schema":"NBA_V5_SAME_TARGET_COMPONENT_PROBS_V1",
+                    "target":2,
+                    "including_dnp_reach":{"v4_only":0.4,"v5_only":0.6,"blend":0.5},
+                }
+            archive,grades=self.put(root,"100",[p1,p2],
+                                    [(p1,3,True),(p2,None,False)])
+            score=compare(archive,grades)["forward_frozen_same_target_probability"]
+            self.assertEqual(score["status"],"FROZEN_COMPONENTS_GRADED")
+            self.assertEqual(score["events"],2)
+            pts=score["by_market"]["points"]
+            self.assertEqual(pts["hits"],1)
+            self.assertEqual(pts["dnp_events_counted_as_misses"],1)
+            self.assertAlmostEqual(pts["brier"]["blend"],0.25)
+            self.assertAlmostEqual(pts["brier"]["v4_only"],0.26)
+            self.assertAlmostEqual(pts["brier"]["v5_only"],0.26)
+
+    def test_changing_original_component_target_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            p=pair("1","points",2.5,3,2)
+            p["research_fixed_event_component_probabilities"]={
+                "schema":"NBA_V5_SAME_TARGET_COMPONENT_PROBS_V1",
+                "target":3,"including_dnp_reach":{"v4_only":0.4,"v5_only":0.6,"blend":0.5}}
+            archive,grades=self.put(root,"100",[p],[(p,3,True)])
+            with self.assertRaisesRegex(ValueError,"TARGET_CHANGED"):
+                compare(archive,grades)
+
     def test_unmatched_postgame_forecast_time_fails_closed(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp)
