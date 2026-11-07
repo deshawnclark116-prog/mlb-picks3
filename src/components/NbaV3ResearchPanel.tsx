@@ -95,7 +95,8 @@ export function v3ProjectionPicks(g:Game):ProjectionItem[]{
  const seen=new Set<string>();
  const out:ProjectionItem[]=[];
  for(const r of g.rows){
-  if(r.reported_status==='OUT'||!(r.p_active>=.75))continue;
+  // The full MODEL BOARD retains turnovers; they are not featured picks.
+  if(r.market==='turnovers'||r.reported_status==='OUT'||!(r.p_active>=.75))continue;
   const it=projectionItem(r);
   if(!it||it.prob===null)continue;
   // A projection of "0 threes" or "1 point" is not a meaningful pick; same floor as the model's lattice.
@@ -107,14 +108,10 @@ export function v3ProjectionPicks(g:Game):ProjectionItem[]{
  return out.sort((a,b)=>(displayedChance(b)??0)-(displayedChance(a)??0)||b.row.p_active-a.row.p_active||
   a.row.player.localeCompare(b.row.player)||MARKETS.indexOf(a.row.market)-MARKETS.indexOf(b.row.market));
 }
-/** The featured tiles: the best pick from each stat first (highest chance first), then the second best from each stat, and so on,
- *  so one cheap stat (1 steal, 1 block) cannot crowd points, rebounds, assists and threes out. The expanded list keeps pure probability order. */
-export function diversifiedPicks(picks:ProjectionItem[]):ProjectionItem[]{
- const seen=new Map<Market,number>();
- const keyed=picks.map(p=>{const n=seen.get(p.row.market)??0;seen.set(p.row.market,n+1);return {p,n};});
- return keyed.sort((a,b)=>a.n-b.n||(displayedChance(b.p)??0)-(displayedChance(a.p)??0)||b.p.row.p_active-a.p.row.p_active||
-  a.p.row.player.localeCompare(b.p.row.player)||MARKETS.indexOf(a.p.row.market)-MARKETS.indexOf(b.p.row.market)).map(x=>x.p);
-}
+/** The featured tiles are exactly the highest-ranked predictions, with
+ * no category quota, rerank or arbitrary preference for variety. */
+export const topProbabilityPicks=(picks:ProjectionItem[],count=4):ProjectionItem[]=>
+ picks.slice(0,count);
 function V3Card({item}:{item:ProjectionItem}){
  const row=item.row;
  return <article data-testid="nba-v3-system-pick" className="rounded-xl border border-[#374239] bg-[#101912] p-3 space-y-2">
@@ -168,6 +165,9 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
  const [day,setDay]=useState('AUTO');
  const [showFilters,setShowFilters]=useState(false);
  const [market,setMarket]=useState<'ALL'|Market>('ALL');
+ // If MODEL BOARD had a turnovers filter, reset the effective filter on
+ // returning to SYSTEM PICKS rather than showing an apparently empty game.
+ const activeMarket=mode==='PICKS'&&market==='turnovers'?'ALL':market;
  const refresh=useCallback(async()=>{
   setLoading(true);
   try{
@@ -201,7 +201,7 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
     .includes(search.toLowerCase()))
  )||[],[doc,day,today,nextSlate,search]);
  const number=all.reduce((n,g)=>n+v3ProjectionPicks(g).filter(p=>
-  market==='ALL'||p.row.market===market).length,0);
+  activeMarket==='ALL'||p.row.market===activeMarket).length,0);
  return <section className="space-y-3" data-testid="nba-v3-primary-board">
   <div className="flex items-center justify-between gap-2">
    <strong className="text-[13px] text-[#00FF41]">{mode==='PICKS'?'System picks':'Full model board'}</strong>
@@ -232,7 +232,7 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
       </button>)}
     </div>
     {showFilters&&<div className="grid grid-cols-4 gap-1" aria-label="NBA V3 market filter">
-    {(['ALL',...MARKETS] as const).map(m=><button type="button" key={m}
+    {(['ALL',...(mode==='PICKS'?MARKETS.filter(m=>m!=='turnovers'):MARKETS)] as const).map(m=><button type="button" key={m}
       onClick={()=>setMarket(m)} aria-pressed={market===m}
       className={'min-h-10 rounded-md border px-1 text-[10px] font-bold '+
         (market===m?'border-[#00FF41] text-[#00FF41]':'border-[#333] text-gray-400')}>
@@ -242,8 +242,8 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
       Select another date or All upcoming. No old-model picks are substituted.</p>}
     {all.map(g=>{
       const picks=v3ProjectionPicks(g).filter(p=>
-        market==='ALL'||p.row.market===market);
-      const every=g.rows.filter(r=>market==='ALL'||r.market===market);
+        activeMarket==='ALL'||p.row.market===activeMarket);
+      const every=g.rows.filter(r=>activeMarket==='ALL'||r.market===activeMarket);
       const shown:ProjectionItem[]=mode==='PICKS'?picks:
         every.map(projectionItem).filter((x):x is ProjectionItem=>x!==null);
       const open=expanded===g.game_id;
@@ -279,7 +279,7 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
           <ChevronDown className={'text-gray-400 '+(open?'rotate-180':'')} size={18}/>
         </button>
         {shown.length>0&&<div data-testid="nba-v3-tiles" className="grid grid-cols-2 gap-2 px-3 pb-3">
-          {(mode==='PICKS'?diversifiedPicks(shown):shown).slice(0,4).map(({row:r,whole,prob})=><div key={r.player_id+r.market} data-testid="nba-v3-tile" className="min-w-0 rounded-xl border border-white/10 bg-[#12181b] p-3">
+          {topProbabilityPicks(shown).map(({row:r,whole,prob})=><div key={r.player_id+r.market} data-testid="nba-v3-tile" className="min-w-0 rounded-xl border border-white/10 bg-[#12181b] p-3">
             <p className="truncate text-[11px] text-gray-400">{NAME[r.market]}</p>
             <p className="mt-0.5 break-words text-[15px] font-bold leading-snug text-white">{r.player}</p>
             <p className="mt-2 text-[26px] font-black leading-none tabular-nums text-[#79FF48]">{whole} <span className="text-[14px] font-bold">{UNIT[r.market]}</span></p>
