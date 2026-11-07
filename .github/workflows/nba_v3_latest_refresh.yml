@@ -32,7 +32,7 @@ concurrency:
 jobs:
   latest:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
         with:
@@ -162,7 +162,7 @@ jobs:
           PYTHONPATH=. python -u -m nba.nba_v5_forecast \
             --games nba/data/nba_v4_games_2025_26.jsonl.gz --games nba/data/nba_v4_games_2026_27.jsonl \
             --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz --pbp "$RUNNER_TEMP/pbp_2026.jsonl" \
-            --v3 "$RUNNER_TEMP/latest-new.json" --v4 docs/nba_v4_latest/latest.json --out docs/nba_v5_latest/latest.json --sims 3000 $CAL \
+            --v3 "$RUNNER_TEMP/latest-new.json" --v4 docs/nba_v4_latest/latest.json --out docs/nba_v5_latest/latest.json --sims 10000 $CAL \
             --receipt docs/nba_v5_latest/information_receipt.json --grades docs/nba_v5_grades/summary.json \
             --features docs/nba_v5_latest/features.json \
             --archive docs/nba_v5_archive $TRACKING_SOURCE $PREGAME_SOURCE
@@ -234,7 +234,7 @@ jobs:
             --games nba/data/nba_v4_games_2025_26.jsonl.gz --games nba/data/nba_v4_games_2026_27.jsonl \
             --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz --pbp "$RUNNER_TEMP/pbp_2026.jsonl" \
             --v3 "$RUNNER_TEMP/v5_lineup_games.json" --v4 docs/nba_v4_latest/latest.json \
-            --out docs/nba_v5_lineup_latest/latest.json --sims 3000 \
+            --out docs/nba_v5_lineup_latest/latest.json --sims 10000 \
             --receipt docs/nba_v5_latest/information_receipt.json \
             --grades docs/nba_v5_grades/summary.json \
             --features "$RUNNER_TEMP/v5_lineup_features.json" \
