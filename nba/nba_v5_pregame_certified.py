@@ -137,6 +137,80 @@ def load(path, now, slate):
     return found, audit
 
 
+
+def load_many(paths, now, slate):
+    """Use every independently valid pretip source, selecting by *team*.
+
+    Selecting one provider for an entire slate loses verified lineups that
+    another provider captured for different games. Each source is validated
+    against the same as-of roster and clock before any data is combined.
+    Conflicting confirmed fives are excluded for that team, not guessed.
+    """
+    if not isinstance(paths, (list, tuple)) or len(paths) > 6:
+        raise ValueError("pregame sources must be a bounded list")
+    priority = {
+        "NBA_OFFICIAL_DAILY_LINEUPS": 0,
+        "NBA_TODAYS_LINEUPS_AUTHORIZED_SNAPSHOT": 1,
+        "NBA_OFFICIAL_LIVE_BOXSCORE": 2,
+        "OFFICIAL_TEAM_RELEASE": 3,
+        "AUTHORIZED_LINEUP_PROVIDER": 4,
+    }
+    candidates = {}
+    valid_sources = []
+    rejected_sources = []
+    for path in paths:
+        try:
+            records, audit = load(path, now, slate)
+        except (OSError, ValueError, TypeError, KeyError, AttributeError) as exc:
+            # Invalid/stale sources can never erase a separately verified five.
+            rejected_sources.append(type(exc).__name__)
+            continue
+        valid_sources.append({"provider": audit["source_provider"],
+                              "teams_recorded": audit["teams_recorded"],
+                              "confirmed_teams": audit["confirmed_teams"]})
+        for key, record in records.items():
+            candidates.setdefault(key, []).append(record)
+
+    selected = {}
+    conflicts = []
+    for key, entries in sorted(candidates.items()):
+        confirmed = [record for record in entries
+                     if record["lineup_state"] == "CONFIRMED"]
+        if len({tuple(record["starters"]) for record in confirmed}) > 1:
+            # Neither provider has authority to override a contradictory
+            # explicitly confirmed five without newer source verification.
+            conflicts.append({"game_id": key[0], "team_id": key[1],
+                              "reason": "CONFLICTING_CONFIRMED_STARTING_FIVES"})
+            continue
+        viable = confirmed if confirmed else entries
+        selected[key] = min(
+            viable,
+            key=lambda record: (
+                -len(record["minute_limits"]),
+                priority.get(record["source_provider"], 99),
+                -_utc(record["captured_at_utc"]).timestamp(),
+            ),
+        )
+
+    timestamps = [record["captured_at_utc"] for record in selected.values()]
+    audit = {
+        "schema": SCHEMA,
+        "source_status": ("VALIDATED_TEAMWISE_MERGE" if valid_sources
+                          else "ALL_SOURCES_REJECTED" if paths else "NOT_CONNECTED"),
+        "source_provider": "MULTIPLE_VALIDATED_ORIGINAL_PROVIDERS",
+        "valid_sources": valid_sources,
+        "rejected_source_count": len(rejected_sources),
+        "rejected_source_error_types": rejected_sources,
+        "confirmed_teams": sum(record["lineup_state"] == "CONFIRMED"
+                               for record in selected.values()),
+        "teams_recorded": len(selected),
+        "confirmed_conflicts_rejected": conflicts,
+        "captured_at_utc": max(timestamps) if timestamps else None,
+        "model_effect": "ONLY_VALIDATED_UNCONFLICTED_CONFIRMATIONS",
+    }
+    return selected, audit
+
+
 def apply_confirmed(team, record):
     """Attach certified starters/inactive/minute inputs to the V5 TeamInput.
 
