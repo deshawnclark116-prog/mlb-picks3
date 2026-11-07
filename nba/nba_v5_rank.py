@@ -22,7 +22,11 @@ def rank_for_screen(rows):
     earlier versions retain conditional ranking. Conditional accuracy is logged separately."""
     picks = []
     for r in rows:
-        if r.get("mean_basis") != "CONDITIONAL_ON_PLAYING" or r["reported_status"] == "OUT" or not r["p_active"] >= 0.75:
+        # Match the main frontend. Turnovers remain in the full model
+        # dataset but are not featured as wager-facing player picks.
+        if (r.get("market") == "turnovers" or
+            r.get("mean_basis") != "CONDITIONAL_ON_PLAYING" or
+            r["reported_status"] == "OUT" or not r["p_active"] >= 0.75):
             continue
         w = whole(r["mean"])
         if w < MEANINGFUL_MIN[r["market"]]:
@@ -33,20 +37,12 @@ def rank_for_screen(rows):
         rank_p = conditional * r["p_active"] if str(r.get("model_version", "")).startswith("nba-v5-") else conditional
         picks.append((rank_p, r["p_active"], r["player"], r["market"], w, r, conditional))
     picks.sort(key=lambda x: (-x[0], -x[1], x[2], x[3]))
-    pure_rank = {id(t[5]): i for i, t in enumerate(picks, 1)}
-    # featured order: best pick of each stat first, then the second best of each stat, and so on (the app's featured tiles)
-    seen = {}
-    keyed = []
-    for p_, pa_, nm, mk, w, r, conditional in picks:
-        n = seen.get(mk, 0)
-        seen[mk] = n + 1
-        keyed.append((n, -p_, -pa_, nm, MARKET_ORDER.index(mk), w, p_, r, conditional))
-    keyed.sort(key=lambda x: x[:5])
-    for i, (n, np_, npa, nm, mi, w, p_, r, conditional) in enumerate(keyed, 1):
+    # One rule, end-to-end: first four and expanded picks are both
+    # ordered by the exact estimated chance of reaching the player's
+    # OWN projected whole number, including DNP for V5. No stat quotas.
+    for i, (p_, pa_, nm, mk, w, r, conditional) in enumerate(picks, 1):
         r["frontend_rank"] = i
         r["whole_projection"] = w
-        r["reach_probability"] = round(conditional, 4)  # grade only when player actually played
-        r["frontend_ranking_probability"] = round(p_, 4)  # V5 includes DNP
-        r["rank_by_chance_only"] = pure_rank[id(r)]
-
-
+        r["reach_probability"] = round(conditional, 4)
+        r["frontend_ranking_probability"] = round(p_, 4)
+        r["rank_by_chance_only"] = i
