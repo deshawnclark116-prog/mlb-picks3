@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {rankNflOwnProjections,hasNflOwnProjectionEvidence,rankNflRoleSupportedOwnProjections,rankNflPregameSnapshotForDisplay,hasNflNbaMeanProjectionEvidence,rankNflNbaMeanProjections,rankNflRoleSupportedNbaMeanProjections,rankNflPregameNbaMeanSnapshotForDisplay} from '../src/nfl/ownProjectionRank.ts';
+import {rankNflOwnProjections,hasNflOwnProjectionEvidence,rankNflRoleSupportedOwnProjections,rankNflPregameSnapshotForDisplay,hasNflNbaMeanProjectionEvidence,rankNflNbaMeanProjections,rankNflRoleSupportedNbaMeanProjections,rankNflPregameNbaMeanSnapshotForDisplay} from '../src/nfl/ownProjectionRank.ts,hasNflMeaningfulTargetEvidence,rankNflMeaningfulTargets,rankNflRoleSupportedMeaningfulTargets,rankNflPregameMeaningfulTargetsForDisplay} from '../src/nfl/ownProjectionRank.ts';
 import {parseExistingNfl,type ExistingYardProjection} from '../src/nfl/existing.ts';
 
 const make=(player:string,p:number|null,median=30):ExistingYardProjection=>({
@@ -168,4 +168,75 @@ test('NBA-style NFL event survives real source parser and identity-matched role 
  assert.deepEqual(rankNflRoleSupportedNbaMeanProjections([row],warned,generated,kickoff,before),[]);
  const future={...role,captured_at_utc:'2026-11-08T18:01:00Z'};
  assert.deepEqual(rankNflPregameNbaMeanSnapshotForDisplay([row],future,generated,kickoff,after),[]);
+});
+
+
+const meaningful=(name:string,chance:number,target=35):ExistingYardProjection=>{
+ const p=make(name,.52,40);
+ p.projected_mean=50;
+ const selected={yards:target,probability:chance,wilson_lower_95:chance-.01};
+ p.nfl_model_target=selected;
+ p.nfl_model_target_event='P_YARDS_AT_LEAST_FIXED_MEANINGFUL_THRESHOLD';
+ p.nfl_model_target_grid={
+   schema:'nfl_meaningful_yardage_targets_v1',simulation_n:10000,
+   minimum_absolute_yards:25,minimum_relative_mean_fraction:.55,
+   required_wilson_lower_95:.65,grid_step_yards:5,
+   conditional_on_modeled_opportunities:true,forward_calibrated:false,
+   official_active_status_verified:false,chosen_target:selected,
+   grid:[
+     {yards:30,probability:.94,wilson_lower_95:.93},
+     ...(target>35?[{yards:35,probability:.87,wilson_lower_95:.86}]:[]),
+     selected,{yards:target+5,probability:.47,wilson_lower_95:.46}
+   ].filter((x,i,a)=>a.findIndex(y=>y.yards===x.yards)===i)
+    .sort((a,b)=>a.yards-b.yards)
+ };
+ return p;
+};
+
+test('feature targets are true highest qualified probabilities, not mean-reach, old band or book odds',()=>{
+ const strong=meaningful('Strong',.84,35),weaker=meaningful('Weaker',.71,40);
+ (strong as any).model_prob=.12; (weaker as any).model_prob=.98;
+ strong.nba_style_reach_probability=.30;weaker.nba_style_reach_probability=.99;
+ strong.projection_within_10_probability=.10;weaker.projection_within_10_probability=.99;
+ assert(hasNflMeaningfulTargetEvidence(strong));
+ assert.deepEqual(rankNflMeaningfulTargets([weaker,strong]).map(x=>x.player),['Strong','Weaker']);
+ assert.equal(rankNflMeaningfulTargets([weaker,strong],1)[0].nfl_model_target?.probability,.84);
+});
+
+test('no trivial yards, v2 overwrite, out-of-grid targets or <65% lower bound survive',()=>{
+ const good=meaningful('Good',.77,35);
+ const tiny=meaningful('Trivial',.99,5);
+ const under=meaningful('Uncertain',.659,35);
+ under.nfl_model_target!.wilson_lower_95=.649;
+ under.nfl_model_target_grid!.chosen_target=under.nfl_model_target;
+ under.nfl_model_target_grid!.grid[1]=under.nfl_model_target;
+ const v2=meaningful('V2',.91,35);
+ v2.projection_probability_source='UNAVAILABLE_V2_CONTEXT_NO_MATCHED_DISTRIBUTION';
+ const madeUp=meaningful('Missing simulation',.96,35);
+ madeUp.projection_simulation_n=8000;
+ const wrong=meaningful('Mismatch',.83,35);
+ wrong.nfl_model_target!.yards=30;
+ assert.deepEqual(rankNflMeaningfulTargets([tiny,under,v2,madeUp,wrong,good]).map(x=>x.player),['Good']);
+});
+
+test('the identical original pregame role receipt gates target picks before and after kickoff',()=>{
+ const generated='2026-11-08T17:52:00Z',kickoff='2026-11-08T18:00:00Z';
+ const p=meaningful('Source Verified',.81,35);
+ const role:any={schema:'nfl-role-evidence-coverage-v1',
+   status:'PREGAME_RESEARCH_ROLE_SNAPSHOT',
+   forecast_generated_at_utc:generated,captured_at_utc:'2026-11-08T17:52:02Z',
+   player_market_evidence:[{
+     player:p.player,team:p.team,opponent:p.opponent,market:p.market,kickoff_utc:kickoff,
+     published_model_median:p.projected_median,published_model_source:p.model_source,
+     role_evidence_complete_for_showcase:true,observed_stat_rows:3,
+     roster_status:'ROSTER_LISTED_NOT_STARTER_VERIFIED',
+     has_verified_starting_role:false,has_calibrated_book_bet_probability:false,warnings:[]
+   }]
+ };
+ const before=Date.parse('2026-11-08T17:55:00Z'),after=Date.parse('2026-11-08T18:15:00Z');
+ assert.deepEqual(rankNflRoleSupportedMeaningfulTargets([p],role,generated,kickoff,before).map(x=>x.player),[p.player]);
+ assert.deepEqual(rankNflRoleSupportedMeaningfulTargets([p],role,generated,kickoff,after),[]);
+ assert.deepEqual(rankNflPregameMeaningfulTargetsForDisplay([p],role,generated,kickoff,after).map(x=>x.player),[p.player]);
+ const warn={...role,player_market_evidence:[{...role.player_market_evidence[0],warnings:['INACTIVE_UNVERIFIED']}]};
+ assert.deepEqual(rankNflPregameMeaningfulTargetsForDisplay([p],warn,generated,kickoff,after),[]);
 });
