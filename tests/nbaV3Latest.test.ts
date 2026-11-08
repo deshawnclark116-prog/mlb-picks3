@@ -21,6 +21,11 @@ const header=(games:any[],at:string)=>({schema:'NBA_V3_2026_27_FIRSTSEEN_FULL_DI
  prior_game_id_sha256:'b'.repeat(64),roster_sources_verified_all_30:true,historical_source_boxes:500,model_promoted:false,live_nba_system_board_changed:false,
  official_bets:0,research_only:true,no_lookahead_or_retrospective_backfill:true,games_forecast:games.length,games,generated_at_utc:at});
 const base=()=>({games:[game('2026-11-01T01:06:14Z',5)]});
+function withTmp(fn:(root:string)=>void){
+ const root=mkdtempSync(path.join(tmpdir(),'nba-v5-saved-'));
+ try{fn(root)}finally{rmSync(root,{recursive:true,force:true});}
+}
+
 
 test('a newer, valid latest run replaces the original and keeps a pointer to it',()=>{
  const out=mergeLatestRun(base(),header([game('2026-11-04T21:30:00Z',9)],'2026-11-04T21:30:05Z'),NOW);
