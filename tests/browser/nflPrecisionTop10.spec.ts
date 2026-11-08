@@ -50,7 +50,7 @@ test('360px NFL frontend ranks real own-projection precision and leaves unverifi
  await page.getByTestId('existing-nfl-toggle').first().click();
  const shortlist=page.getByTestId('nfl-top10-simulation-research');
  await expect(shortlist).toContainText('TOP 2 PRECISION-RANKED PROJECTIONS');
- const cards=shortlist.getByTestId('existing-nfl-projection');
+ const cards=shortlist.locator(':scope > article[data-testid="existing-nfl-projection"]');
  await expect(cards).toHaveCount(2);
  await expect(cards.first()).toContainText('Top Precision');
  await expect(cards.first()).toContainText('68.0%');
