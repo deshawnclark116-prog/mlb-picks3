@@ -1,0 +1,66 @@
+name: NFL weekly 14-game visibility and real game-day source acceptance
+on:
+  pull_request:
+    paths:
+      - src/components/ExistingNflProjectionSlate.tsx
+      - src/components/NflTodayScreen.tsx
+      - tests/browser/nflPhase1.spec.ts
+      - .github/workflows/nfl_weekly_all_games_visible.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Exact source contract and React type checking
+        run: |
+          npm run lint
+          node --import tsx --test tests/nflExisting.test.ts tests/nflCurrent.test.ts tests/nflExistingCardRank.test.ts
+      - name: Verify public Sunday 9:15 NFL publication covers EVERY remaining game, with 0 invalid numeric rows
+        run: |
+          node --import tsx --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import {loadCurrentNfl} from './server/nflCurrent.ts';
+          import {parseExistingNfl} from './src/nfl/existing.ts';
+          const {document,origin}=await loadCurrentNfl();
+          const generated=Date.parse(document.generated_at_utc);
+          assert.equal(origin,'github_main');
+          assert.ok(Number.isFinite(generated));
+          assert.ok(document.scheduled_games.length>=14);
+          const beforeKickoff=document.scheduled_games.filter(g=>Date.parse(g.kickoff_utc)>generated);
+          const accepted=parseExistingNfl(document,new Date(generated+60000));
+          const lookup=new Map(accepted.games.map(g=>[g.teams.join('-'),g]));
+          const summary=[];
+          for(const game of beforeKickoff){
+            const teams=[game.home_team,game.away_team].sort().join('-');
+            const match=lookup.get(teams);
+            assert.ok(match,'MISSING_SCHEDULED_NFL_GAME_'+teams);
+            assert.ok(match.projections.length>0,'MISSING_WEEKLY_PLAYER_PROJECTIONS_'+teams);
+            summary.push({matchup:teams,kickoff:match.kickoff_utc,n:match.projections.length});
+          }
+          assert.equal(summary.length,beforeKickoff.length);
+          assert.ok(summary.length>=10,'Sunday and Monday game slate missing');
+          assert.ok(summary.some(g=>g.kickoff.startsWith('2026-11-10')),'Monday night game missing');
+          assert.ok(summary.some(g=>g.kickoff.startsWith('2026-11-08T14:30')),'9:30 AM international game missing');
+          assert.equal(accepted.scheduleComplete,true);
+          assert.equal(accepted.scheduledGames,document.scheduled_games.length);
+          console.log('NFL_REAL_PUBLISHED_FULL_UPCOMING_SLATE',JSON.stringify({
+            source:origin,generated_at_utc:document.generated_at_utc,
+            scheduled:accepted.scheduledGames,upcoming:summary.length,
+            currentPlayerProjections:accepted.projections,
+            games:summary
+          }));
+          JS
+      - name: Mobile browser proves overlapping weekly and frozen T90 games are BOTH distinguishable
+        run: |
+          npx playwright install chromium
+          mkdir -p /workspace/scratch
+          npx playwright test tests/browser/nflPhase1.spec.ts --reporter=line
