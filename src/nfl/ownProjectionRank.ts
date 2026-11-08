@@ -203,6 +203,12 @@ export function hasNflMeaningfulTargetEvidence(p:ExistingYardProjection):boolean
     g.chosen_target?.yards!==t.yards||
     g.chosen_target.probability!==t.probability||
     g.chosen_target.wilson_lower_95!==t.wilson_lower_95)return false;
+ if(g.grid.some((x,i)=>!Number.isInteger(x.yards)||x.yards%5!==0||
+    !Number.isFinite(x.probability)||!Number.isFinite(x.wilson_lower_95)||
+    x.probability<0||x.probability>1||x.wilson_lower_95<0||
+    x.wilson_lower_95>x.probability||
+    (i>0&&(g.grid[i-1].yards>=x.yards||
+       g.grid[i-1].probability<x.probability))))return false;
  const valid=g.grid.filter(x=>x.wilson_lower_95>=.65);
  return valid.length>0&&valid[valid.length-1].yards===t.yards&&
     valid[valid.length-1].probability===t.probability&&
