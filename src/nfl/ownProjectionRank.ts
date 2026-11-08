@@ -30,9 +30,13 @@ export function rankNflOwnProjections(
   projections:readonly ExistingYardProjection[],limit=10
 ):ExistingYardProjection[]{
   if(!Number.isInteger(limit)||limit<1||limit>24)throw new Error('invalid NFL model shortlist size');
+  // Median attainment is approximately 50% by construction and cannot
+  // meaningfully rank numerical forecast ACCURACY. Use a single fixed
+  // +/-10-yard numerical error window across all candidates instead.
+  // This is an uncalibrated simulation estimate, not a verified hit rate.
   return projections.filter(hasNflOwnProjectionEvidence)
-    .sort((a,b)=>b.projection_reach_probability!-a.projection_reach_probability! ||
-      b.projection_within_10_probability!-a.projection_within_10_probability! ||
+    .sort((a,b)=>b.projection_within_10_probability!-a.projection_within_10_probability! ||
+      b.projection_reach_probability!-a.projection_reach_probability! ||
       (b.games_played||0)-(a.games_played||0) ||
       a.player.localeCompare(b.player) ||
       a.market.localeCompare(b.market)).slice(0,limit);
