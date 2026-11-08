@@ -1,0 +1,26 @@
+name: NBA V5 one-time 7:40 ET pretip refresh dispatch (Nov 7)
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/nba_v5_740_pretip_dispatch.yml"
+  workflow_dispatch: {}
+permissions:
+  actions: write
+  contents: read
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Recheck NBA confirmed source and dispatch full V5 refresh immediately
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          gh workflow run nba_v5_daily_lineups_poll.yml --ref main
+          gh workflow run nba_v3_latest_refresh.yml --ref main -f force=true -f window_hours=9
+          echo "NBA_V5_NOV7_PREGAME_REFRESH_DISPATCHED"
+          echo "A dispatch does not certify that the NBA source has posted five confirmed starters."
+          echo "Verify the separate refresh run and docs/nba_v5_latest/lineup_source_audit.json before declaring confirmed status."
