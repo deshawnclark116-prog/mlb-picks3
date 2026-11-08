@@ -3,7 +3,7 @@
  * median event, not a bookmaker line, not an all-scenarios DNP rate.
  */
 import type {ExistingNflGame,ExistingYardProjection} from './existing';
-import {hasNflNbaMeanProjectionEvidence} from './ownProjectionRank';
+import {hasNflMeaningfulTargetEvidence} from './ownProjectionRank';
 
 export type NflPrecisionPosterRow={
  rank:number;player:string;team:string;market:string;
@@ -27,7 +27,7 @@ export function nflPrecisionPosterData(game:ExistingNflGame,ranked:readonly Exis
  const seen=new Set<string>();
  const picks:NflPrecisionPosterRow[]=[];
  for(const p of ranked){
-  if(!hasNflNbaMeanProjectionEvidence(p)||!valid(p.nba_style_reach_probability)||
+  if(!hasNflMeaningfulTargetEvidence(p)||!valid(p.nfl_model_target?.probability)||
      p.kickoff_utc!==game.kickoff_utc||
      !game.teams.includes(p.team)||!game.teams.includes(p.opponent))continue;
   const key=[p.player_id,p.team,p.market].join('|');
@@ -35,14 +35,14 @@ export function nflPrecisionPosterData(game:ExistingNflGame,ranked:readonly Exis
   seen.add(key);
   picks.push({
    rank:picks.length+1,player:p.player,team:p.team,market:p.market,
-   projectedYards:p.nba_style_whole_mean_projection!,meanYards:p.projected_mean,
-   reach:p.nba_style_reach_probability!,simulations:p.projection_simulation_n!
+   projectedYards:p.nfl_model_target!.yards,meanYards:p.projected_mean,
+   reach:p.nfl_model_target!.probability,simulations:p.projection_simulation_n!
   });
   if(picks.length===10)break;
  }
  for(let i=1;i<picks.length;i++)
   if(picks[i].reach>picks[i-1].reach+1e-12)
-   throw Error('NFL_POSTER_REQUIRES_NBA_MEAN_REACH_RANKED_INPUT');
+   throw Error('NFL_POSTER_REQUIRES_MEANINGFUL_TARGET_RANKED_INPUT');
  return {game,week,forecastAtUtc,picks,
   model:'WEEKLY_PLAYER_BOOTSTRAP',
   probabilityForwardCalibrated:false,bettingLineIncluded:false,
