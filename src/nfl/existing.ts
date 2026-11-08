@@ -15,6 +15,11 @@ export interface ExistingYardProjection {
   whole_projection?: number|null;
   projection_reach_probability?: number|null;
   projection_within_10_probability?: number|null;
+  /** NBA V5 display convention: round published model mean using x.6 up. */
+  nba_style_whole_mean_projection?: number|null;
+  /** P(yards >= that exact NBA-style mean threshold), from matched samples. */
+  nba_style_reach_probability?: number|null;
+  nba_style_probability_event?: string|null;
   projection_simulation_n?: number|null;
   projection_probability_source?: string|null;
 }
@@ -97,6 +102,9 @@ export function parseExistingNfl(raw:unknown,now=new Date(),expected?:{season:nu
       whole_projection:Number.isInteger(row.whole_projection)&&row.whole_projection>=0?row.whole_projection:null,
       projection_reach_probability:finite(row.projection_reach_probability)&&row.projection_reach_probability>=0&&row.projection_reach_probability<=1?row.projection_reach_probability:null,
       projection_within_10_probability:finite(row.projection_within_10_probability)&&row.projection_within_10_probability>=0&&row.projection_within_10_probability<=1?row.projection_within_10_probability:null,
+      nba_style_whole_mean_projection:Number.isInteger(row.nba_style_whole_mean_projection)&&row.nba_style_whole_mean_projection>=0?row.nba_style_whole_mean_projection:null,
+      nba_style_reach_probability:finite(row.nba_style_reach_probability)&&row.nba_style_reach_probability>=0&&row.nba_style_reach_probability<=1?row.nba_style_reach_probability:null,
+      nba_style_probability_event:typeof row.nba_style_probability_event==='string'?row.nba_style_probability_event:null,
       projection_simulation_n:Number.isInteger(row.projection_simulation_n)&&row.projection_simulation_n>=10_000?row.projection_simulation_n:null,
       projection_probability_source:typeof row.projection_probability_source==='string'?row.projection_probability_source:null
     };
