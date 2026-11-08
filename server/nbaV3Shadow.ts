@@ -5,7 +5,8 @@ import {existsSync,readdirSync,readFileSync} from 'node:fs';
 import path from 'node:path';
 import type {Request,Response} from 'express';
 import {overlayNba} from './lineupOverlay.ts';
-import {overlayNewestRuns} from './nbaV3Latest.ts';
+import {overlayNewestRuns,v5OnScreen} from './nbaV3Latest.ts';
+import {overlayPublishedV5} from './nbaV5PublishedSync.ts';
 export const NBA_V3_READONLY_SCHEMA='NBA_V3_FULL_GAME_DISTRIBUTION_READ_ONLY_V1';
 const ROOT=path.resolve(process.cwd(),'docs','nba_v3_phase1_corrected_shadow');
 const VERSION='nba-v3-phase1-opportunity-role-mc-shotratefix-20261026';
@@ -116,8 +117,13 @@ export function nbaV3ShadowHandler(){
   try {
    const result=loadNbaV3Shadow();
    res.setHeader('Cache-Control','no-store, max-age=0');
+   // Reconcile GitHub's current public V5 release with a possibly stale
+   // local checkout before displaying old 5 PM snapshots as if live at 8 PM.
+   // Preserve V5-off switch and original pretip/game CDF validation.
+   const local=overlayNewestRuns(result);
+   const published=v5OnScreen()?await overlayPublishedV5(local):local;
    // Late lineup overlay: fail-open, keeps the early forecast beside the adjusted one.
-   res.json(await overlayNba(overlayNewestRuns(result)));
+   res.json(await overlayNba(published));
   }catch(err){
    res.setHeader('Cache-Control','no-store, max-age=0');
    res.status(503).json({error:'NBA_V3_FIRSTSEEN_DISTRIBUTION_SOURCE_NOT_VERIFIED',
