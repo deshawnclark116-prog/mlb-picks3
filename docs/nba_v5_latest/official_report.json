@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-08_09_15AM.pdf",
-  "published_at_utc": "2026-11-08T14:15:00+00:00",
-  "captured_at_utc": "2026-11-08T14:31:42.700339+00:00",
-  "source_sha256": "dab83dc8e0fc50fbd0a60d1b573f92d255e4a03015e1aaeb52124f2b19e7c132",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-08_02_00PM.pdf",
+  "published_at_utc": "2026-11-08T19:00:00+00:00",
+  "captured_at_utc": "2026-11-08T19:08:05.744154+00:00",
+  "source_sha256": "10598b8bf0f0e67a1e27251d02974822d9342479e4b3c50c499b05494e377027",
   "reports": [
     {
       "matchup": "PHI@CHI",
@@ -65,6 +65,14 @@
     {
       "matchup": "PHI@CHI",
       "team_abbr": "CHI",
+      "player": "Powell, Norman",
+      "normalized_player": "norman powell",
+      "status": "QUESTIONABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "PHI@CHI",
+      "team_abbr": "CHI",
       "player": "Sellers, Jaylin",
       "normalized_player": "jaylin sellers",
       "status": "OUT",
@@ -91,7 +99,7 @@
       "team_abbr": "LAL",
       "player": "Doncic, Luka",
       "normalized_player": "luka doncic",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Low Back Tightness"
     },
     {
@@ -115,7 +123,7 @@
       "team_abbr": "DET",
       "player": "Harkless, Elijah",
       "normalized_player": "elijah harkless",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "G League - Two-Way"
     },
     {
@@ -131,7 +139,7 @@
       "team_abbr": "DET",
       "player": "Jones, Isaac",
       "normalized_player": "isaac jones",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "G League - Two-Way"
     },
     {
@@ -149,6 +157,14 @@
       "normalized_player": "trey alexander",
       "status": "OUT",
       "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "UTA@MIN",
+      "team_abbr": "UTA",
+      "player": "George, Keyonte",
+      "normalized_player": "keyonte george",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Illness"
     },
     {
       "matchup": "UTA@MIN",
@@ -187,7 +203,7 @@
       "team_abbr": "MIN",
       "player": "Beringer, Joan",
       "normalized_player": "joan beringer",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -205,6 +221,54 @@
       "normalized_player": "anthony edwards",
       "status": "OUT",
       "reason": ""
+    },
+    {
+      "matchup": "BKN@DAL",
+      "team_abbr": "BKN",
+      "player": "Bilodeau, Tyler",
+      "normalized_player": "tyler bilodeau",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "BKN@DAL",
+      "team_abbr": "BKN",
+      "player": "Brown Jr., Mikel",
+      "normalized_player": "mikel brown",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "BKN@DAL",
+      "team_abbr": "BKN",
+      "player": "Demin, Egor",
+      "normalized_player": "egor demin",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Bone Bruise"
+    },
+    {
+      "matchup": "BKN@DAL",
+      "team_abbr": "BKN",
+      "player": "Jefferson, Joshua",
+      "normalized_player": "joshua jefferson",
+      "status": "OUT",
+      "reason": "G League - On Assignment"
+    },
+    {
+      "matchup": "BKN@DAL",
+      "team_abbr": "BKN",
+      "player": "Nelson, Grant",
+      "normalized_player": "grant nelson",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "BKN@DAL",
+      "team_abbr": "BKN",
+      "player": "Saraf, Ben",
+      "normalized_player": "ben saraf",
+      "status": "OUT",
+      "reason": "G League - On Assignment"
     },
     {
       "matchup": "BKN@DAL",
@@ -265,6 +329,14 @@
     {
       "matchup": "BOS@MIL",
       "team_abbr": "BOS",
+      "player": "Robinson, Mitchell",
+      "normalized_player": "mitchell robinson",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Illness"
+    },
+    {
+      "matchup": "BOS@MIL",
+      "team_abbr": "BOS",
       "player": "Williams, Amari",
       "normalized_player": "amari williams",
       "status": "OUT",
@@ -301,6 +373,14 @@
       "normalized_player": "cormac ryan",
       "status": "OUT",
       "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "BOS@MIL",
+      "team_abbr": "MIL",
+      "player": "Trent Jr., Gary",
+      "normalized_player": "gary trent",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Illness"
     },
     {
       "matchup": "MIA@SAC",
@@ -423,7 +503,7 @@
       "reason": "Injury/Illness - Right Lisfranc Surgery"
     }
   ],
-  "rows": 52,
+  "rows": 62,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
