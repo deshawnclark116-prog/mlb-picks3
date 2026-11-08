@@ -10,8 +10,9 @@ const et=(iso:string)=>new Intl.DateTimeFormat('en-US',{
 }).format(new Date(iso)).toUpperCase();
 const market=(s:string)=>s==='rushing_yards'?'RUSH YDS':'REC YDS';
 
-/** Exact NBA V5 image dimensions, typography and 10-row layout.
- * Percentages describe a ±10-yard numerical band, NOT P(over a book line).
+/** NBA V5 image dimensions and ranking semantics:
+ * display rounded model MEAN with P(yards >= that exact number).
+ * No sportsbook lines, DNP-inclusive probabilities or ±10-yard bands.
  */
 export default function NflPrecisionGameShareCard({data,cardRef}:{
  data:NflPrecisionPoster;cardRef?:React.Ref<HTMLDivElement>
@@ -40,7 +41,7 @@ export default function NflPrecisionGameShareCard({data,cardRef}:{
    height:56,boxSizing:'border-box',padding:'0 17px',background:'#17241E',
    border:'1px solid #304D39',borderRadius:13}}>
    <strong style={{fontSize:23,color:green,letterSpacing:1}}>TOP {picks.length} MODEL PROJECTIONS</strong>
-   <span style={{fontSize:14,fontWeight:700,color:'#C0CEC8'}}>RANKED BY ±10-YARD PRECISION</span>
+   <span style={{fontSize:14,fontWeight:700,color:'#C0CEC8'}}>RANKED BY P(REACH MODEL MEAN)</span>
   </div>
   <section data-testid="nfl-top10-share-rows" style={{marginTop:15,display:'grid',
    gridTemplateRows:'repeat(10, 76px)',gap:6}}>
@@ -59,8 +60,8 @@ export default function NflPrecisionGameShareCard({data,cardRef}:{
      </div>
     </div>
     <div style={{textAlign:'right',flexShrink:0}}>
-     <strong style={{fontSize:31,color:green,fontVariantNumeric:'tabular-nums'}}>{pct(p.withinTen)}</strong>
-     <div style={{fontSize:12,color:muted}}>WITHIN ±10 YDS</div>
+     <strong style={{fontSize:31,color:green,fontVariantNumeric:'tabular-nums'}}>{pct(p.reach)}</strong>
+     <div style={{fontSize:12,color:muted}}>P(REACH TARGET)</div>
     </div>
    </div>)}
    {picks.length<10&&<div style={{fontSize:25,color:'#F6B8A2',padding:22,
@@ -74,9 +75,9 @@ export default function NflPrecisionGameShareCard({data,cardRef}:{
     ORIGINAL PREGAME SNAPSHOT · {et(data.forecastAtUtc)}
    </div>
    <p style={{fontSize:15,color:muted,lineHeight:1.4,margin:'7px 0 0'}}>
-    Chance within ±10 yards is an uncalibrated player-simulation estimate, NOT a
-    verified bet probability. Historical role observations do not confirm game-day
-    active status. Same-game outcomes are correlated.
+    P(reach) is the uncalibrated probability of reaching the shown model-mean target,
+    from historical player simulations (not DNP-inclusive). NOT a sportsbook wager.
+    Game-day active status is unverified; same-game outcomes are correlated.
    </p>
   </footer>
  </div>;
