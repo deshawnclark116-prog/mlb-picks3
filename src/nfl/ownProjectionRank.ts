@@ -47,16 +47,17 @@ export function rankNflOwnProjections(
  * A weekly roster listing alone is NOT proof that a player will be active.
  * Missing/conflicting/old snapshots fail closed to the full research ledger.
  */
-export function rankNflRoleSupportedOwnProjections(
+/** Share ONE timestamp/role gate across archival numerical precision
+ * research and the NBA V5-style P(reach mean target) presentation.
+ * Never backfill starter or play probability from a roster listing. */
+function roleMatchedPregameRows(
   projections:readonly ExistingYardProjection[],
   role:NflRoleSnapshot|null,
   generatedAtUtc:string,
   kickoffUtc:string,
-  now=Date.now(),
-  limit=10
+  now:number
 ):ExistingYardProjection[]{
-  if(!Number.isInteger(limit)||limit<1||limit>24)throw new Error('invalid NFL model shortlist size');
-  const generated=Date.parse(generatedAtUtc), captured=Date.parse(role?.captured_at_utc||''),
+  const generated=Date.parse(generatedAtUtc),captured=Date.parse(role?.captured_at_utc||''),
     kickoff=Date.parse(kickoffUtc);
   if(role?.schema!=='nfl-role-evidence-coverage-v1'||
     role.status!=='PREGAME_RESEARCH_ROLE_SNAPSHOT'||
@@ -76,11 +77,80 @@ export function rankNflRoleSupportedOwnProjections(
     verified.add([row.player.trim().toLowerCase(),row.team,row.opponent,
       row.market,row.published_model_median,row.published_model_source].join('|'));
   }
-  return rankNflOwnProjections(projections.filter(p=>verified.has([
+  return projections.filter(p=>verified.has([
     p.player.trim().toLowerCase(),p.team,p.opponent,p.market,
-    p.projected_median,p.model_source].join('|'))),limit);
+    p.projected_median,p.model_source].join('|')));
+}
+export function rankNflRoleSupportedOwnProjections(
+  projections:readonly ExistingYardProjection[],
+  role:NflRoleSnapshot|null,
+  generatedAtUtc:string,
+  kickoffUtc:string,
+  now=Date.now(),
+  limit=10
+):ExistingYardProjection[]{
+  if(!Number.isInteger(limit)||limit<1||limit>24)throw new Error('invalid NFL model shortlist size');
+  return rankNflOwnProjections(
+    roleMatchedPregameRows(projections,role,generatedAtUtc,kickoffUtc,now),limit);
 }
 
+/** NBA V5's ACTUAL display event is P(stat >= wholeStatProjection(MEAN)).
+ * Never show the median-based ~50% number or a +/-10 yard error-band
+ * probability beside the NBA-style mean target. Published mean and the
+ * event probability must come from the identical player simulation.
+ * DNP probability is NOT supplied by this NFL engine.
+ */
+export function hasNflNbaMeanProjectionEvidence(p:ExistingYardProjection):boolean{
+  return p.projected_mean>0 &&
+    p.projection_probability_source==='UNCALIBRATED_HISTORICAL_USAGE_BOOTSTRAP' &&
+    p.projection_simulation_n!=null&&p.projection_simulation_n>=10_000 &&
+    p.nba_style_probability_event==='P_YARDS_AT_LEAST_ROUNDED_PUBLISHED_MEAN' &&
+    p.nba_style_whole_mean_projection!=null &&
+    p.nba_style_whole_mean_projection>0 &&
+    p.nba_style_whole_mean_projection===wholeStatProjection(p.projected_mean) &&
+    p.nba_style_reach_probability!=null &&
+    Number.isFinite(p.nba_style_reach_probability) &&
+    p.nba_style_reach_probability>=0&&p.nba_style_reach_probability<=1;
+}
+export function rankNflNbaMeanProjections(
+  projections:readonly ExistingYardProjection[],limit=10
+):ExistingYardProjection[]{
+  if(!Number.isInteger(limit)||limit<1||limit>24)throw new Error('invalid NFL model shortlist size');
+  return projections.filter(hasNflNbaMeanProjectionEvidence)
+    .sort((a,b)=>b.nba_style_reach_probability!-a.nba_style_reach_probability!||
+      (b.games_played||0)-(a.games_played||0)||
+      a.player.localeCompare(b.player)||a.market.localeCompare(b.market)).slice(0,limit);
+}
+export function rankNflRoleSupportedNbaMeanProjections(
+  projections:readonly ExistingYardProjection[],
+  role:NflRoleSnapshot|null,
+  generatedAtUtc:string,
+  kickoffUtc:string,
+  now=Date.now(),
+  limit=10
+):ExistingYardProjection[]{
+  if(!Number.isInteger(limit)||limit<1||limit>24)throw new Error('invalid NFL model shortlist size');
+  return rankNflNbaMeanProjections(
+    roleMatchedPregameRows(projections,role,generatedAtUtc,kickoffUtc,now),limit);
+}
+
+/** The NBA screen keeps original prescheduled projections visible after tipoff.
+ * This is a HISTORICAL pregame display, never a new postkickoff decision. */
+export function rankNflPregameNbaMeanSnapshotForDisplay(
+  projections:readonly ExistingYardProjection[],
+  role:NflRoleSnapshot|null,
+  generatedAtUtc:string,
+  kickoffUtc:string,
+  now=Date.now(),
+  limit=10
+):ExistingYardProjection[]{
+  const tip=Date.parse(kickoffUtc),at=Date.parse(generatedAtUtc),
+    roleAt=Date.parse(role?.captured_at_utc||'');
+  if(!Number.isFinite(tip)||!Number.isFinite(at)||at>=tip||
+     !Number.isFinite(roleAt)||roleAt>=tip)return [];
+  return rankNflRoleSupportedNbaMeanProjections(
+    projections,role,generatedAtUtc,kickoffUtc,Math.min(now,tip-1000),limit);
+}
 
 /** Display a REAL saved pre-kickoff projection after the game starts.
  * Historical cards remain visible for accountability, just like NBA V5.
