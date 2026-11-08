@@ -55,7 +55,7 @@ const team=(x:unknown):x is string=>typeof x==='string'&&/^[A-Z]{2,3}$/.test(x);
 const time=(x:unknown):x is string=>typeof x==='string'&&Number.isFinite(Date.parse(x))&&/(Z|[+-][0-9]{2}:[0-9]{2})$/.test(x);
 const markets:ExistingYardMarket[]=['rushing_yards','receiving_yards'];
 const parsedEvent=(v:unknown):NflMeaningfulEvent|null=>{
-  if(!record(v)||!Number.isInteger(v.yards)||!finite(v.probability)||
+  if(!record(v)||!finite(v.yards)||!Number.isInteger(v.yards)||!finite(v.probability)||
      !finite(v.wilson_lower_95)||v.yards<1||v.probability<0||
      v.probability>1||v.wilson_lower_95<0||
      v.wilson_lower_95>v.probability)return null;
@@ -64,8 +64,8 @@ const parsedEvent=(v:unknown):NflMeaningfulEvent|null=>{
 };
 function parsedGrid(raw:unknown):NflMeaningfulGrid|null{
   if(!record(raw)||raw.schema!=='nfl_meaningful_yardage_targets_v1'||
-     !Number.isInteger(raw.simulation_n)||raw.simulation_n<10000||
-     !Number.isInteger(raw.minimum_absolute_yards)||
+     !finite(raw.simulation_n)||!Number.isInteger(raw.simulation_n)||raw.simulation_n<10000||
+     !finite(raw.minimum_absolute_yards)||!Number.isInteger(raw.minimum_absolute_yards)||
      !finite(raw.minimum_relative_mean_fraction)||
      !finite(raw.required_wilson_lower_95)||
      raw.grid_step_yards!==5||raw.conditional_on_modeled_opportunities!==true||
