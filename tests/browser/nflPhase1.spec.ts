@@ -69,7 +69,7 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   await expect(page.getByTestId('existing-nfl-preview').first()).toContainText('68');
   // Codex's per-game 1080x1350 share-image workflow is preserved for
   // the original new-engine game and now also available for missing games.
-  await expect(page.getByRole('button',{name:'Create share card for PHI vs JAX'})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Create weekly model share card for PHI vs JAX'})).toBeVisible();
   await expect(page.getByRole('button',{name:'Create share card for NYJ vs CHI'})).toBeVisible();
   const toggles=page.getByTestId('existing-nfl-toggle');
   await toggles.first().click();
@@ -81,7 +81,7 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   // Preserve the validated Phase1 fixture's default clock; rewind only
   // before testing the *pregame* live book quote for the 9:30 match.
   await page.clock.setFixedTime(new Date('2026-10-04T12:00:00Z'));
-  await page.getByRole('button',{name:'Create share card for PHI vs JAX'}).click();
+  await page.getByRole('button',{name:'Create weekly model share card for PHI vs JAX'}).click();
   await expect(page.getByRole('heading',{name:'CREATE GAME CARD'})).toBeVisible();
   await expect(page.getByTestId('game-share-poster')).toBeVisible();
   await expect(page.getByTestId('existing-poster-projections')).toContainText('68');
@@ -134,7 +134,7 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
 });
 test('no actual sportsbook market disables export instead of showing six fake top picks',async({page})=>{
   await setup(page);
-  await page.getByRole('button',{name:'Create share card for PHI vs JAX'}).click();
+  await page.getByRole('button',{name:'Create weekly model share card for PHI vs JAX'}).click();
   await expect(page.getByTestId('verified-nfl-quote-status')).toContainText('0 market-matched lines');
   await expect(page.getByTestId('existing-poster-no-lines')).toContainText('NO ROLE-SUPPORTED FEATURED PROJECTIONS');
   await expect(page.getByRole('button',{name:'SAVE PNG'})).toBeDisabled();
