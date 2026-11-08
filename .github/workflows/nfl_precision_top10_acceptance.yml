@@ -7,6 +7,7 @@ on:
       - 'src/nfl/ownProjectionRank.ts'
       - 'src/components/ExistingNflProjectionSlate.tsx'
       - 'tests/nflOwnProjectionRank.test.ts'
+      - 'tests/nflPrecisionPoster.test.ts'
       - 'tests/nflExisting.test.ts'
       - 'tests/browser/nflPrecisionTop10.spec.ts'
       - '.github/workflows/nfl_precision_top10_acceptance.yml'
@@ -16,6 +17,7 @@ on:
       - 'src/nfl/ownProjectionRank.ts'
       - 'src/components/ExistingNflProjectionSlate.tsx'
       - 'tests/nflOwnProjectionRank.test.ts'
+      - 'tests/nflPrecisionPoster.test.ts'
       - 'tests/nflExisting.test.ts'
       - 'tests/browser/nflPrecisionTop10.spec.ts'
   workflow_dispatch: {}
@@ -35,7 +37,7 @@ jobs:
       - name: Verify React app compiles with the independent NFL top ten
         run: npm run lint && npm run build
       - name: Verify NFL own-median and precision semantics plus role gating
-        run: node --import tsx --test tests/nflOwnProjectionRank.test.ts tests/nflExisting.test.ts
+        run: node --import tsx --test tests/nflOwnProjectionRank.test.ts tests/nflExisting.test.ts tests/nflPrecisionPoster.test.ts
       - name: Install Chromium for actual 360px NFL UI
         run: npx playwright install chromium
       - name: Test ranked NFL mobile game card against simulated source
