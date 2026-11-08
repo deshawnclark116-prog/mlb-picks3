@@ -9,7 +9,13 @@ name: NBA V3 latest run (re-simulate with current injuries)
 # A V4 failure never blocks V3. It re-simulates only when the set of OUT players changed (or the file is older than 3h), so commits stay rare.
 on:
   schedule:
-    - cron: "*/10 * * * *"
+    # Avoid the busiest top-of-hour scheduler boundary; the lineup poll
+    # additionally invokes this workflow through workflow_run on its own ticks.
+    - cron: "1,11,21,31,41,51 * * * *"
+  workflow_run:
+    workflows:
+      - "NBA V5 official daily-lineups pretip poll and change-trigger"
+    types: [completed]
   push:
     branches: [main]
     paths:
@@ -31,6 +37,13 @@ concurrency:
   cancel-in-progress: false
 jobs:
   latest:
+    # Poll-triggered runs must originate from the trusted default branch;
+    # never execute write-capable pregame jobs for PR-triggered poll tests.
+    if: >-
+      github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.event != 'pull_request' &&
+       github.event.workflow_run.head_branch == 'main' &&
+       github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
