@@ -1,15 +1,17 @@
 import {test,expect} from '@playwright/test';
 
-test('360px NFL frontend ranks real own-projection precision and leaves unverified rows in research',async({page})=>{
+test('360px NFL UI matches NBA model-mean percentage ranking and poster',async({page})=>{
  await page.clock.install({time:new Date('2026-11-08T17:55:00Z')});
  const kickoff='2026-11-08T18:00:00Z';
  const generated='2026-11-08T17:52:00Z';
- const row=(player:string,pid:string,median:number,band:number)=>({
+ const row=(player:string,pid:string,median:number,reach:number)=>({
    market:'receiving_yards',player_id:pid,player,team:'CLE',opponent:'NO',
    kickoff_utc:kickoff,projected_median:median,projected_mean:median,
    projected_low:1,projected_high:140,model_source:'blended_sim',games_played:7,
    whole_projection:median,projection_reach_probability:.502,
-   projection_within_10_probability:band,projection_simulation_n:10000,
+   projection_within_10_probability:1-reach,projection_simulation_n:10000,
+   nba_style_whole_mean_projection:median,nba_style_reach_probability:reach,
+   nba_style_probability_event:'P_YARDS_AT_LEAST_ROUNDED_PUBLISHED_MEAN',
    projection_probability_source:'UNCALIBRATED_HISTORICAL_USAGE_BOOTSTRAP'
  });
  const picks=[
@@ -51,7 +53,8 @@ test('360px NFL frontend ranks real own-projection precision and leaves unverifi
  const tiles=page.getByTestId('nfl-top-projection-tiles').getByTestId('nfl-projection-tile');
  await expect(tiles).toHaveCount(2);
  await expect(tiles.first()).toContainText('Top Precision');
- await expect(tiles.first()).toContainText('68.0%');
+ await expect(tiles.first()).toContainText('68.0% to reach 42+ yds');
+ await expect(tiles.first()).not.toContainText('within ±10 yds');
  await expect(tiles.nth(1)).toContainText('Low Precision');
  await expect(page.getByTestId('nfl-open-top10')).toBeVisible();
  await page.getByTestId('nfl-open-top10').click();
@@ -61,6 +64,8 @@ test('360px NFL frontend ranks real own-projection precision and leaves unverifi
  await expect(poster).toHaveCount(2);
  await expect(poster.first()).toContainText('Top Precision');
  await expect(poster.first()).toContainText('68.0%');
+ await expect(poster.first()).toContainText('P(REACH TARGET)');
+ await expect(page.getByTestId('nfl-top10-share-poster')).not.toContainText('WITHIN ±10');
  await expect(page.getByRole('button',{name:'SAVE PNG'})).toBeEnabled({timeout:20000});
  const downloadPromise=page.waitForEvent('download');
  await page.getByRole('button',{name:'SAVE PNG'}).click();
@@ -74,6 +79,7 @@ test('360px NFL frontend ranks real own-projection precision and leaves unverifi
  await expect(cards).toHaveCount(2);
  await expect(cards.first()).toContainText('Top Precision');
  await expect(cards.first()).toContainText('68.0%');
+ await expect(cards.first()).toContainText('CHANCE OF 42+ YDS');
  await expect(cards.nth(1)).toContainText('Low Precision');
  await shortlist.getByText(/SHOW OTHER 2 NUMERICAL MODEL PROJECTIONS/).click();
  await expect(page.getByText('Unverified',{exact:true})).toBeVisible();
