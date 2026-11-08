@@ -57,7 +57,7 @@ export default function NflPrecisionShareModal({game,ranked,week,forecastAtUtc,c
     <p className="mt-1 text-xs text-gray-400">{game.away||game.teams[0]} at {game.home||game.teams[1]}</p></div>
    <span className="shrink-0 text-[10px] text-gray-500">{EXPORT_WIDTH} × {EXPORT_HEIGHT}</span>
   </header>
-  <p className="mt-3 text-xs text-amber-200">These {data.picks.length} source-matched NFL player projections are ranked by the simulated chance of finishing within ±10 yards of the projected number, not by sportsbook prices. Official active status and forward calibration remain unverified.</p>
+  <p className="mt-3 text-xs text-amber-200">These {data.picks.length} NFL model projections are ranked like NBA V5: P(reaching the displayed rounded MEAN yardage or more), directly from the same 10,000+ simulations. No sportsbook lines, verified game-day active status, DNP-inclusive rates, or forward calibration are implied.</p>
   <div ref={wrapper} data-testid="nfl-top10-share-preview" style={{
     width:'100%',height:EXPORT_HEIGHT*scale,position:'relative',
     overflow:'hidden',borderRadius:10,marginTop:12}}>
