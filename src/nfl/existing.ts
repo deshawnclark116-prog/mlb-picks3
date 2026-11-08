@@ -3,6 +3,20 @@
 import { etDate } from './phase1.ts';
 
 export type ExistingYardMarket = 'rushing_yards' | 'receiving_yards';
+export type NflMeaningfulEvent={yards:number;probability:number;wilson_lower_95:number};
+export type NflMeaningfulGrid={
+  schema:'nfl_meaningful_yardage_targets_v1';
+  simulation_n:number;
+  minimum_absolute_yards:number;
+  minimum_relative_mean_fraction:number;
+  required_wilson_lower_95:number;
+  grid_step_yards:number;
+  conditional_on_modeled_opportunities:true;
+  forward_calibrated:false;
+  official_active_status_verified:false;
+  chosen_target:NflMeaningfulEvent|null;
+  grid:NflMeaningfulEvent[];
+};
 export interface ExistingYardProjection {
   player: string; team: string; opponent: string; market: ExistingYardMarket;
   kickoff_utc: string; projected_median: number; projected_mean: number;
@@ -20,6 +34,11 @@ export interface ExistingYardProjection {
   /** P(yards >= that exact NBA-style mean threshold), from matched samples. */
   nba_style_reach_probability?: number|null;
   nba_style_probability_event?: string|null;
+  /** Independent of any sportsbook or the model mean: hardest meaningful
+   * fixed-grid threshold with one-sided 95% Wilson lower bound >=65%. */
+  nfl_model_target?: NflMeaningfulEvent|null;
+  nfl_model_target_event?: string|null;
+  nfl_model_target_grid?: NflMeaningfulGrid|null;
   projection_simulation_n?: number|null;
   projection_probability_source?: string|null;
 }
@@ -35,6 +54,47 @@ const finite=(x:unknown):x is number=>typeof x==='number'&&Number.isFinite(x);
 const team=(x:unknown):x is string=>typeof x==='string'&&/^[A-Z]{2,3}$/.test(x);
 const time=(x:unknown):x is string=>typeof x==='string'&&Number.isFinite(Date.parse(x))&&/(Z|[+-][0-9]{2}:[0-9]{2})$/.test(x);
 const markets:ExistingYardMarket[]=['rushing_yards','receiving_yards'];
+const parsedEvent=(v:unknown):NflMeaningfulEvent|null=>{
+  if(!record(v)||!Number.isInteger(v.yards)||!finite(v.probability)||
+     !finite(v.wilson_lower_95)||v.yards<1||v.probability<0||
+     v.probability>1||v.wilson_lower_95<0||
+     v.wilson_lower_95>v.probability)return null;
+  return {yards:v.yards as number,probability:v.probability,
+    wilson_lower_95:v.wilson_lower_95};
+};
+function parsedGrid(raw:unknown):NflMeaningfulGrid|null{
+  if(!record(raw)||raw.schema!=='nfl_meaningful_yardage_targets_v1'||
+     !Number.isInteger(raw.simulation_n)||raw.simulation_n<10000||
+     !Number.isInteger(raw.minimum_absolute_yards)||
+     !finite(raw.minimum_relative_mean_fraction)||
+     !finite(raw.required_wilson_lower_95)||
+     raw.grid_step_yards!==5||raw.conditional_on_modeled_opportunities!==true||
+     raw.forward_calibrated!==false||raw.official_active_status_verified!==false||
+     !Array.isArray(raw.grid))return null;
+  const grid: NflMeaningfulEvent[]=[];
+  for(const item of raw.grid){
+    const value=parsedEvent(item);
+    if(!value)return null;
+    if(grid.length>0&&(grid[grid.length-1].yards>=value.yards||
+       grid[grid.length-1].probability<value.probability))return null;
+    grid.push(value);
+  }
+  const chosen=raw.chosen_target==null?null:parsedEvent(raw.chosen_target);
+  if(raw.chosen_target!=null&&!chosen)return null;
+  if(chosen&&!grid.some(x=>x.yards===chosen.yards&&
+      x.probability===chosen.probability&&
+      x.wilson_lower_95===chosen.wilson_lower_95))return null;
+  return {schema:'nfl_meaningful_yardage_targets_v1',
+    simulation_n:raw.simulation_n as number,
+    minimum_absolute_yards:raw.minimum_absolute_yards as number,
+    minimum_relative_mean_fraction:raw.minimum_relative_mean_fraction,
+    required_wilson_lower_95:raw.required_wilson_lower_95,
+    grid_step_yards:5,
+    conditional_on_modeled_opportunities:true,
+    forward_calibrated:false,
+    official_active_status_verified:false,
+    chosen_target:chosen,grid};
+}
 const fail=(reason:string):never=>{throw new Error('Existing NFL projection feed invalid: '+reason)};
 
 /** Never merge these projections into immutable Phase1 rows or call the ranges P10/P90.
@@ -105,6 +165,9 @@ export function parseExistingNfl(raw:unknown,now=new Date(),expected?:{season:nu
       nba_style_whole_mean_projection:Number.isInteger(row.nba_style_whole_mean_projection)&&row.nba_style_whole_mean_projection>=0?row.nba_style_whole_mean_projection:null,
       nba_style_reach_probability:finite(row.nba_style_reach_probability)&&row.nba_style_reach_probability>=0&&row.nba_style_reach_probability<=1?row.nba_style_reach_probability:null,
       nba_style_probability_event:typeof row.nba_style_probability_event==='string'?row.nba_style_probability_event:null,
+      nfl_model_target:parsedEvent(row.nfl_model_target),
+      nfl_model_target_event:typeof row.nfl_model_target_event==='string'?row.nfl_model_target_event:null,
+      nfl_model_target_grid:parsedGrid(row.nfl_model_target_grid),
       projection_simulation_n:Number.isInteger(row.projection_simulation_n)&&row.projection_simulation_n>=10_000?row.projection_simulation_n:null,
       projection_probability_source:typeof row.projection_probability_source==='string'?row.projection_probability_source:null
     };
