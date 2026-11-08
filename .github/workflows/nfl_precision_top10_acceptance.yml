@@ -1,0 +1,36 @@
+name: NFL numerical precision top-10 source contract
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/nfl/existing.ts'
+      - 'src/nfl/ownProjectionRank.ts'
+      - 'src/components/ExistingNflProjectionSlate.tsx'
+      - 'tests/nflOwnProjectionRank.test.ts'
+      - 'tests/nflExisting.test.ts'
+      - '.github/workflows/nfl_precision_top10_acceptance.yml'
+  pull_request:
+    paths:
+      - 'src/nfl/existing.ts'
+      - 'src/nfl/ownProjectionRank.ts'
+      - 'src/components/ExistingNflProjectionSlate.tsx'
+      - 'tests/nflOwnProjectionRank.test.ts'
+      - 'tests/nflExisting.test.ts'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  nfl-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Verify React app compiles with the independent NFL top ten
+        run: npm run lint && npm run build
+      - name: Verify NFL own-median and precision semantics plus role gating
+        run: node --import tsx --test tests/nflOwnProjectionRank.test.ts tests/nflExisting.test.ts
