@@ -46,6 +46,9 @@ async function setup(page:any,get=()=>structuredClone(source),live=false) {
     } else {await route.fulfill({json:{predictions:[],picks:[],games:[]}});}
   });
   await page.goto('/');await page.locator('#tab-btn-nfl').click();await expect(page.getByTestId('nfl-game')).toHaveCount(1);
+   // Filter controls are intentionally collapsed on mobile; expand them
+   // before the tests operate on RUSH, T24 and other filter controls.
+   await page.getByRole('button',{name:'Filter',exact:true}).click();
   return {requests,legacy:()=>legacy};
 }
 const screen=()=>process.env.NFL_SCREENSHOT_DIR || '/workspace/scratch';
@@ -62,7 +65,7 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   await expect(page.getByTestId('existing-nfl-expanded')).toHaveCount(0);
   await expect(page.getByTestId('existing-nfl-slate')).toContainText('PHI vs JAX');
   await expect(page.getByTestId('existing-nfl-slate')).toContainText('LV vs NE');
-  await expect(page.getByTestId('existing-nfl-slate')).toContainText('NYJ vs CHI');
+  await expect(page.getByTestId('existing-nfl-slate')).toContainText('CHI vs NYJ');
   await expect(page.getByTestId('nfl-weekly-generation-receipt')).toContainText('Forecast generated: Oct 3, 7:00 PM EDT');
   await expect(page.getByTestId('nfl-frozen-separate')).toContainText('FROZEN RESEARCH');
   await expect(page.getByTestId('existing-nfl-preview').first()).toContainText('Early Runner');
