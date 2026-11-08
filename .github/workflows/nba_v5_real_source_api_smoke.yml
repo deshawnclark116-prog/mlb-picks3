@@ -26,23 +26,30 @@ jobs:
           import assert from 'node:assert/strict';
           import {loadNbaV3Shadow} from './server/nbaV3Shadow.ts';
           import {createPublishedV5Sync} from './server/nbaV5PublishedSync.ts';
-          const asOf=Date.parse('2026-11-08T00:50:00Z');
+          const asOf=Date.now();
           const original=loadNbaV3Shadow(new Date(asOf));
           const before=original.games.find(g=>g.game_id==='401909940');
           assert.ok(before,'original Knicks Cavaliers game');
+          const readyResponse=await fetch('https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks3/main/docs/nba_v5_latest/readiness.json',{cache:'no-store'});
+          assert.equal(readyResponse.status,200);
+          const ready=await readyResponse.json();
           const synced=await createPublishedV5Sync()(original,asOf);
-          const game=synced.games.find(g=>g.game_id==='401909940');
           console.log('NBA_V5_LIVE_SOURCE_DIAGNOSTIC',JSON.stringify(synced.v5_published_sync));
           assert.equal(synced.v5_published_sync.source_state,'SOURCE_VERIFIED');
-          assert.equal(synced.v5_published_sync.latest_generation_at_utc,'2026-11-08T00:15:42.876975+00:00');
-          assert.ok(game,'Knicks Cavaliers retained');
-          assert.equal(game.forecast_kind,'V5_LATEST');
-          assert.equal(game.forecast_at_utc,'2026-11-08T00:15:42.876975+00:00');
-          assert.ok(game.rows.some(r=>r.player==='Mikal Bridges' && r.market==='three_pointers_made' && Math.abs(r.mean-1.5072)<.0002));
-          console.log('NBA_V5_LIVE_PUBLISHED_KNICKS_CAVALIERS_REACHED_API',JSON.stringify({
-            forecast_at_utc:game.forecast_at_utc,
-            source:synced.v5_published_sync,
-            original_forecast:before.forecast_at_utc
+          assert.equal(synced.v5_published_sync.latest_generation_at_utc,ready.document_generated_at_utc);
+          const currentlyPublished=ready.games.map(g=>String(g.game_id));
+          const latestForecasts=synced.games.filter(g=>currentlyPublished.includes(g.game_id)&&g.forecast_kind==='V5_LATEST');
+          assert.ok(latestForecasts.length>0,'real latest V5 source must appear on original game board');
+          const archived=synced.games.find(g=>g.game_id==='401909940');
+          assert.equal(archived.forecast_kind,'V5_LATEST');
+          assert.equal(archived.forecast_at_utc,'2026-11-08T00:15:42.876975+00:00');
+          assert.ok(archived.rows.some(r=>r.player==='Mikal Bridges' && r.market==='three_pointers_made' && Math.abs(r.mean-1.5072)<.0002));
+          console.log('NBA_V5_LIVE_PUBLISHED_MODEL_REACHED_API',JSON.stringify({
+            latest_generation_at_utc:ready.document_generated_at_utc,
+            current_games:latestForecasts.map(g=>g.game_id),
+            archived_knicks_forecast:archived.forecast_at_utc,
+            original_knicks_forecast:before.forecast_at_utc,
+            source:synced.v5_published_sync
           }));
           JS
       - name: Boot actual Express/React server and request the NBA frontend endpoint
