@@ -150,15 +150,15 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
           <p className="text-[11px] text-gray-400">Numerical weekly projections, not 65%+ system targets or verified sportsbook bets. {mode==='BETTABLE NOW'?'No verified book lines supplied.':''}</p>
           {g.shown.length>0?<div className="space-y-3">
             {top.length>0?<div data-testid="nfl-top10-simulation-research" className="space-y-3">
-              <p className="text-xs font-bold text-[#00FF41]">TOP {top.length} ROLE-SUPPORTED MODEL EVENTS · RESEARCH ONLY</p>
-              <p className="text-[11px] text-amber-200">Ranked by the 10,000+ simulated chance of reaching the model's own rounded projected yardage, after checking timestamp-matched three-game role evidence. Still uncalibrated player bootstraps—not confirmed game-day actives, a full-game NFL simulation, or recommended bets.</p>
+              <p className="text-xs font-bold text-[#00FF41]">TOP {top.length} PRECISION-RANKED PROJECTIONS · RESEARCH ONLY</p>
+              <p className="text-[11px] text-amber-200">Ranked by the probability of finishing within ±10 yards of each model projection, with 10,000+ simulation draws and matching recent role evidence. The ±10-yard band is NOT an exact-yard hit, a calibrated accuracy rate, confirmed game-day availability, or a bet.</p>
               {top.map(p=><Projection key={p.player_id+'|'+p.player+'|'+p.team+'|'+p.market} p={p}/>)}
               {remaining.length>0&&<details className="rounded-xl border border-[#292929] p-3">
                 <summary className="min-h-11 cursor-pointer text-xs font-bold text-gray-300">SHOW OTHER {remaining.length} NUMERICAL MODEL PROJECTIONS ▾</summary>
                 <div className="space-y-3 pt-3">{remaining.map(p=><Projection key={p.player_id+'|'+p.player+'|'+p.team+'|'+p.market} p={p}/>)}</div>
               </details>}
             </div>:<div className="space-y-3">
-              <p className="text-[11px] text-amber-200">No fresh, matching simulation AND pregame role evidence is available for a probability-ranked shortlist. All original model projections remain visible below.</p>
+              <p className="text-[11px] text-amber-200">No fresh, matching simulation AND pregame role evidence is available for an accuracy-band-ranked shortlist. All original model projections remain visible below.</p>
               {g.shown.map(p=><Projection key={p.player_id+'|'+p.player+'|'+p.team+'|'+p.market} p={p}/>)}
             </div>}
           </div>:<p className="py-2 text-xs text-gray-400">No qualifying numerical projections available for this game and filter.</p>}
