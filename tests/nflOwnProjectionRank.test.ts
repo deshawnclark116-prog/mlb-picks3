@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {rankNflOwnProjections,hasNflOwnProjectionEvidence} from '../src/nfl/ownProjectionRank.ts';
+import {rankNflOwnProjections,hasNflOwnProjectionEvidence,rankNflRoleSupportedOwnProjections} from '../src/nfl/ownProjectionRank.ts';
 import {parseExistingNfl,type ExistingYardProjection} from '../src/nfl/existing.ts';
 
 const make=(player:string,p:number|null,median=30):ExistingYardProjection=>({
@@ -45,4 +45,33 @@ test('published, same-simulation research events survive parser with no sportsbo
   assert.equal(p.projection_reach_probability,.56);
   assert.equal(p.whole_projection,30);
   assert.deepEqual(rankNflOwnProjections(slate.games[0].projections).map(x=>x.player),['Research']);
+});
+
+test('top ten requires source-matched, fresh three-game pregame role evidence',()=>{
+  const p=make('Research',.56,30);
+  const generated='2026-11-08T17:15:48Z',kickoff='2026-11-08T18:00:00Z';
+  const now=Date.parse('2026-11-08T17:17:00Z');
+  const role:any={
+    schema:'nfl-role-evidence-coverage-v1',status:'PREGAME_RESEARCH_ROLE_SNAPSHOT',
+    captured_at_utc:'2026-11-08T17:16:00Z',forecast_generated_at_utc:generated,
+    player_market_evidence:[{
+      player:'Research',team:'CLE',opponent:'NO',market:'receiving_yards',
+      kickoff_utc:kickoff,published_model_median:30,published_model_source:'blended_sim',
+      roster_status:'ROSTER_LISTED_NOT_STARTER_VERIFIED',observed_stat_rows:3,
+      role_evidence_complete_for_showcase:true,has_verified_starting_role:false,
+      has_calibrated_book_bet_probability:false,warnings:[]
+    }]
+  };
+  const ranked=(r:any,t=now)=>rankNflRoleSupportedOwnProjections([p],r,generated,kickoff,t);
+  assert.deepEqual(ranked(null),[],'no independent pregame receipt');
+  assert.deepEqual(ranked(role).map(x=>x.player),['Research']);
+  assert.deepEqual(ranked({...role,forecast_generated_at_utc:'2026-11-08T16:15:48Z'}),[]);
+  assert.deepEqual(ranked({...role,player_market_evidence:[{
+    ...role.player_market_evidence[0],observed_stat_rows:2
+  }]}),[]);
+  assert.deepEqual(ranked({...role,player_market_evidence:[{
+    ...role.player_market_evidence[0],warnings:['INJURY_UNCERTAIN']
+  }]}),[]);
+  assert.deepEqual(ranked(role,Date.parse('2026-11-08T18:00:00Z')),[],
+    'kickoff closes pregame selections');
 });
