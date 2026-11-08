@@ -1,4 +1,5 @@
 import type {ExistingYardProjection} from './existing';
+import type {NflRoleSnapshot} from './roleSupportedNfl';
 import {wholeStatProjection} from '../lib/wholeStatProjection';
 
 /**
@@ -35,4 +36,43 @@ export function rankNflOwnProjections(
       (b.games_played||0)-(a.games_played||0) ||
       a.player.localeCompare(b.player) ||
       a.market.localeCompare(b.market)).slice(0,limit);
+}
+
+/**
+ * NBA-style availability/role gate for the research shortlist.
+ * A weekly roster listing alone is NOT proof that a player will be active.
+ * Missing/conflicting/old snapshots fail closed to the full research ledger.
+ */
+export function rankNflRoleSupportedOwnProjections(
+  projections:readonly ExistingYardProjection[],
+  role:NflRoleSnapshot|null,
+  generatedAtUtc:string,
+  kickoffUtc:string,
+  now=Date.now(),
+  limit=10
+):ExistingYardProjection[]{
+  if(!Number.isInteger(limit)||limit<1||limit>24)throw new Error('invalid NFL model shortlist size');
+  const generated=Date.parse(generatedAtUtc), captured=Date.parse(role?.captured_at_utc||''),
+    kickoff=Date.parse(kickoffUtc);
+  if(role?.schema!=='nfl-role-evidence-coverage-v1'||
+    role.status!=='PREGAME_RESEARCH_ROLE_SNAPSHOT'||
+    !Array.isArray(role.player_market_evidence)||
+    !Number.isFinite(generated)||!Number.isFinite(captured)||!Number.isFinite(kickoff)||
+    Date.parse(role.forecast_generated_at_utc)!==generated||
+    captured<generated||captured>now||now-captured>8*3600_000||
+    captured>=kickoff||now>=kickoff)return [];
+  const verified=new Set<string>();
+  for(const row of role.player_market_evidence){
+    if(row.role_evidence_complete_for_showcase!==true||
+      row.roster_status!=='ROSTER_LISTED_NOT_STARTER_VERIFIED'||
+      row.observed_stat_rows!==3||row.has_verified_starting_role!==false||
+      row.has_calibrated_book_bet_probability!==false||
+      !Array.isArray(row.warnings)||row.warnings.length!==0||
+      Date.parse(row.kickoff_utc)!==kickoff)continue;
+    verified.add([row.player.trim().toLowerCase(),row.team,row.opponent,
+      row.market,row.published_model_median,row.published_model_source].join('|'));
+  }
+  return rankNflOwnProjections(projections.filter(p=>verified.has([
+    p.player.trim().toLowerCase(),p.team,p.opponent,p.market,
+    p.projected_median,p.model_source].join('|'))),limit);
 }
