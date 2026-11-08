@@ -2,13 +2,55 @@
 import React,{useEffect,useState} from 'react';
 import {ChevronDown,Image} from 'lucide-react';
 import NflExistingShareModal from './NflExistingShareModal';
+import NflPrecisionShareModal from './NflPrecisionShareModal';
 import {formatET,type Horizon,type Phase1View} from '../nfl/phase1';
 import {wholeStatProjection} from '../lib/wholeStatProjection';
-import {hasNflOwnProjectionEvidence,rankNflRoleSupportedOwnProjections} from '../nfl/ownProjectionRank';
+import {hasNflOwnProjectionEvidence,rankNflPregameSnapshotForDisplay} from '../nfl/ownProjectionRank';
 import type {NflRoleSnapshot} from '../nfl/roleSupportedNfl';
 import {parseExistingNfl,existingMatchup,type ExistingNflSlate,type ExistingNflGame,type ExistingYardProjection} from '../nfl/existing';
 const n=(x:number)=>x.toLocaleString('en-US',{maximumFractionDigits:1});
 const label=(m:string)=>m==='rushing_yards'?'RUSH YDS':'REC YDS';
+const chance=(n:number|null|undefined)=>n!=null&&Number.isFinite(n)?(n*100).toFixed(1)+'%':'n/a';
+/** NBA V5's compact two-across projection cards, but truthful NFL events. */
+function NflPrecisionTile({p}:{p:ExistingYardProjection}){
+ return <div data-testid="nfl-projection-tile" className="min-w-0 rounded-xl border border-white/10 bg-[#12181b] p-3">
+  <p className="truncate text-[11px] text-gray-400">{p.team} · {label(p.market)}</p>
+  <p className="mt-0.5 min-h-9 break-words text-[15px] font-bold leading-snug text-white">{p.player}</p>
+  <p className="mt-2 text-[26px] font-black leading-none tabular-nums text-[#79FF48]">
+   {p.whole_projection} <span className="text-[14px] font-bold">YDS</span></p>
+  <p className="mt-1.5 text-[13px] font-bold tabular-nums text-[#79FF48]">
+   {chance(p.projection_within_10_probability)} <span className="text-[11px] text-gray-200">within ±10 yds</span></p>
+  <p className="mt-0.5 text-[11px] text-gray-400">P({p.whole_projection}+): {chance(p.projection_reach_probability)}
+  {' · '}Mean {n(p.projected_mean)}</p>
+ </div>;
+}
+function NflPrecisionPick({p}:{p:ExistingYardProjection}){
+ return <article data-testid="nfl-precision-pick" className="rounded-xl border border-[#374239] bg-[#101912] p-3 space-y-2">
+  <div className="flex items-start justify-between gap-2">
+   <div><p className="text-sm font-bold text-white">{p.player}</p>
+    <p className="text-[11px] text-gray-400">{p.team} · {label(p.market)}</p></div>
+   <span className="rounded-lg border border-[#487b54] p-2 text-[10px] font-bold text-[#00FF41]">MODEL PROJECTION</span>
+  </div>
+  <div className="grid grid-cols-2 gap-2 rounded-lg border border-[#32533d] bg-[#102418] p-3">
+   <div><p className="text-[10px] text-gray-400">MODEL PROJECTION</p>
+    <p className="text-xl font-bold text-white">{p.whole_projection} YDS</p>
+    <p className="text-[10px] text-gray-400">Mean {n(p.projected_mean)} · Median {n(p.projected_median)}</p>
+   </div>
+   <div><p className="text-[10px] text-gray-400">CHANCE WITHIN ±10 YDS</p>
+    <p data-testid="nfl-precision-percentage" className="text-xl font-bold text-[#00FF41]">{chance(p.projection_within_10_probability)}</p>
+    <p className="text-[10px] text-gray-300">P({p.whole_projection}+ yds): {chance(p.projection_reach_probability)}</p>
+    <p className="text-[10px] text-amber-200">Not forward-calibrated</p>
+   </div>
+  </div>
+  <details className="border-t border-[#343434] pt-2 text-[11px] text-gray-400">
+   <summary className="min-h-9 cursor-pointer font-bold">MODEL EVIDENCE</summary>
+   <p className="mt-1">{p.projection_simulation_n?.toLocaleString()} deterministic individual-player simulations.
+    Model range: {n(p.projected_low)}–{n(p.projected_high)} yards.
+    Recent workload evidence checked, but official active/starting status not confirmed.
+    Probability is not a sportsbook line or verified betting edge.</p>
+  </details>
+ </article>;
+}
 function matches(p:ExistingYardProjection,search:string,family:string){
   return (!search.trim()||(p.player+' '+p.team+' '+p.opponent).toLowerCase().includes(search.trim().toLowerCase()))&&
     (family==='ALL'||(family==='RUSH'&&p.market==='rushing_yards')||(family==='REC'&&p.market==='receiving_yards'));
@@ -46,6 +88,7 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
   // could consume dozens of phone screens before the original board appeared.
   const [expanded,setExpanded]=useState<string|null>(null);
   const [shareGame,setShareGame]=useState<ExistingNflGame|null>(null);
+  const [precisionShare,setPrecisionShare]=useState<{game:ExistingNflGame;picks:ExistingYardProjection[]}|null>(null);
   useEffect(()=>{
     let cancelled=false;let abort:AbortController|null=null;
     async function refresh(){
@@ -120,7 +163,7 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
     {games.map(g=>{
       const opened=expanded===g.id;
       const started=Date.now()>=Date.parse(g.kickoff_utc);
-      const top=rankNflRoleSupportedOwnProjections(g.shown,role,slate?.generated_at_utc||'',g.kickoff_utc,Date.now(),10);
+      const top=rankNflPregameSnapshotForDisplay(g.shown,role,slate?.generated_at_utc||'',g.kickoff_utc,Date.now(),10);
       const topKeys=new Set(top.map(p=>[p.player_id,p.player,p.team,p.market].join('|')));
       const remaining=g.shown.filter(p=>!topKeys.has([p.player_id,p.player,p.team,p.market].join('|')));
       const preview=top[0]||g.shown[0];
@@ -135,24 +178,38 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
                 <span className="text-[11px] text-gray-500">{formatET(g.kickoff_utc)}</span>
               </div>
               <p className="mt-2 text-[10px] font-bold text-gray-400">{g.projections.length} PLAYER OUTCOMES · WEEKLY MODEL</p>
-              {preview&&<p data-testid="existing-nfl-preview" className="mt-2 truncate text-[11px] text-gray-300">{top.length?'TOP RESEARCH MODEL EVENT':'MODEL MEDIAN'}: <span className="capitalize text-white">{preview.player}</span> · <span className="font-black text-[#00FF41]">{n(preview.projected_median)} {label(preview.market)}</span></p>}
+              {preview&&<p data-testid="existing-nfl-preview" className="mt-2 truncate text-[11px] text-gray-300">
+                {top.length?'TOP: ':'MODEL MEDIAN: '}<span className="capitalize text-white">{preview.player}</span>
+                {' · '}<span className="font-black text-[#00FF41]">{top.length?preview.whole_projection:n(preview.projected_median)} {label(preview.market)}</span>
+                {top.length>0&&<span className="text-[#79FF48]"> · {chance(preview.projection_within_10_probability)} within ±10 yds</span>}
+              </p>}
               {!preview&&<p role="status" className="mt-1 text-[11px] text-amber-200">{g.projections.length===0?'No eligible player projections for this matchup':'No matching projected stats'}</p>}
               {started&&<p className="mt-1 text-[10px] text-gray-500">Kickoff passed · archived pregame projections</p>}
             </div>
             <ChevronDown size={16} className={`shrink-0 text-gray-500 ${opened?'rotate-180':''}`}/>
           </button>
-          <button aria-label={`Create weekly model share card for ${existingMatchup(g)}`} onClick={()=>setShareGame(g)}
+          {top.length>0?<button type="button"
+            aria-label={`Open NFL top 10 game card for ${existingMatchup(g)}`}
+            title="NFL top 10 · game share card"
+            data-testid="nfl-open-top10"
+            onClick={()=>setPrecisionShare({game:g,picks:top})}
+            className="my-3 mr-0 flex min-h-11 min-w-16 shrink-0 flex-col items-center justify-center gap-1 rounded-xl border border-[#79FF48]/40 bg-[#79FF48]/10 px-2 text-[#79FF48]">
+            <Image size={18}/><span className="text-[10px] font-black">TOP 10</span>
+          </button>:<button aria-label={`Create weekly model share card for ${existingMatchup(g)}`} onClick={()=>setShareGame(g)}
             className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-xl border border-[#333] bg-[#1B211E] text-gray-300">
             <Image size={18}/>
-          </button>
+          </button>}
         </div>
+        {mode==='SYSTEM PICKS'&&top.length>0&&<div data-testid="nfl-top-projection-tiles" className="grid grid-cols-2 gap-2 px-3 pb-3">
+           {top.slice(0,4).map(p=><NflPrecisionTile key={p.team+'|'+p.player_id+'|'+p.market} p={p}/>)}
+        </div>}
         {opened&&<div id={`existing-game-${g.id}`} data-testid="existing-nfl-expanded" className="space-y-3 border-t border-[#292929] p-3">
           <p className="text-[11px] text-gray-400">Numerical weekly projections, not 65%+ system targets or verified sportsbook bets. {mode==='BETTABLE NOW'?'No verified book lines supplied.':''}</p>
           {g.shown.length>0?<div className="space-y-3">
             {top.length>0?<div data-testid="nfl-top10-simulation-research" className="space-y-3">
-              <p className="text-xs font-bold text-[#00FF41]">TOP {top.length} PRECISION-RANKED PROJECTIONS · RESEARCH ONLY</p>
+              <p className="text-xs font-bold text-[#00FF41]">TOP {top.length} MODEL PROJECTIONS</p>
               <p className="text-[11px] text-amber-200">Ranked by the probability of finishing within ±10 yards of each model projection, with 10,000+ simulation draws and matching recent role evidence. The ±10-yard band is NOT an exact-yard hit, a calibrated accuracy rate, confirmed game-day availability, or a bet.</p>
-              {top.map(p=><Projection key={p.player_id+'|'+p.player+'|'+p.team+'|'+p.market} p={p}/>)}
+              {top.map(p=><NflPrecisionPick key={p.player_id+'|'+p.player+'|'+p.team+'|'+p.market} p={p}/>)}
               {remaining.length>0&&<details className="rounded-xl border border-[#292929] p-3">
                 <summary className="min-h-11 cursor-pointer text-xs font-bold text-gray-300">SHOW OTHER {remaining.length} NUMERICAL MODEL PROJECTIONS ▾</summary>
                 <div className="space-y-3 pt-3">{remaining.map(p=><Projection key={p.player_id+'|'+p.player+'|'+p.team+'|'+p.market} p={p}/>)}</div>
@@ -167,5 +224,8 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
     })}
     {shareGame&&slate&&<NflExistingShareModal game={shareGame} week={slate.week}
       forecastGeneratedAtUtc={slate.generated_at_utc} onClose={()=>setShareGame(null)}/>}
+    {precisionShare&&slate&&<NflPrecisionShareModal game={precisionShare.game}
+      ranked={precisionShare.picks} week={slate.week} forecastAtUtc={slate.generated_at_utc}
+      close={()=>setPrecisionShare(null)}/>}
   </section>;
 }
