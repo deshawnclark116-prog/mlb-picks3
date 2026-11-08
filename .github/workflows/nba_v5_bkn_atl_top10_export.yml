@@ -1,0 +1,54 @@
+name: NBA V5 show actual Nets Hawks pretip top ten (source-only export)
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/nba_v5_bkn_atl_top10_export.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: nba-v5-real-bkn-atl-top10
+  cancel-in-progress: false
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Read only original pretip latest/last/first artifact and print exact frontend Top 10
+        run: |
+          set -euo pipefail
+          python -m py_compile scripts/export_nba_v5_bkn_atl_top10.py
+          python -u scripts/export_nba_v5_bkn_atl_top10.py \
+            --game-id 401909939 \
+            --latest docs/nba_v5_latest/latest.json \
+            --last docs/nba_v5_archive/last/401909939.json.gz \
+            --first docs/nba_v5_archive/first/401909939.json.gz \
+            --out docs/nba_v5_latest/bkn_atl_20261107_top10.json
+      - name: Commit separate small as-of forecast receipt (never override original model)
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -- docs/nba_v5_latest/bkn_atl_20261107_top10.json
+          if git diff --cached --quiet; then
+            echo NBA_V5_TOP10_ALREADY_CAPTURED
+            exit 0
+          fi
+          git commit -m "NBA V5 source-exact BKN@ATL pretip top10 [skip ci]"
+          for k in 1 2 3 4 5; do
+            if git push origin HEAD:main; then
+              echo NBA_V5_TOP10_SOURCE_RECEIPT_PUBLISHED
+              exit 0
+            fi
+            git fetch origin main
+            git rebase --autostash origin/main
+            sleep $((k*2))
+          done
+          exit 1
