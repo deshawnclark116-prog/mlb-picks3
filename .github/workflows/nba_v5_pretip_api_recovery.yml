@@ -21,5 +21,26 @@ jobs:
       - name: Verify actual NBA V5 game card recovers from source-timed saved pretip forecast
         run: |
           node --import tsx --test tests/nbaV3Latest.test.ts tests/nbaV3ShadowApi.test.ts tests/nbaV3ProjectionPicks.test.ts tests/nbaV5ShareCard.test.ts
+      - name: Verify actual existing Nets Hawks pretip V5 archive survives latest eviction in API
+        run: |
+          node --import tsx --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import {loadNbaV3Shadow} from './server/nbaV3Shadow.ts';
+          import {overlayNewestRuns} from './server/nbaV3Latest.ts';
+          const fixedNow=Date.parse('2026-11-08T00:24:00Z');
+          const before=loadNbaV3Shadow(new Date(fixedNow));
+          const merged=overlayNewestRuns(before,fixedNow);
+          const g=merged.games.find(x=>x.game_id==='401909939');
+          assert.ok(g,'Original pretip Nets Hawks game must exist in original frontend source');
+          assert.equal(g.forecast_kind,'V5_LATEST');
+          assert.equal(g.forecast_at_utc,'2026-11-08T00:13:37.665935+00:00');
+          assert.equal(Object.values(g.certified_pregame_team_effect??{})
+            .filter(x=>x?.confirmed_starters===5).length,2);
+          assert.ok(merged.v5_saved_pretip_run.applied>=1);
+          console.log('NBA_V5_BKN_ATL_ARCHIVE_FRONTEND_API_RECOVERED',{
+            source:g.forecast_at_utc,game:g.game_id,rows:g.rows.length,
+            saved:merged.v5_saved_pretip_run
+          });
+          JS
       - name: Type check serving and API
         run: npm run lint
