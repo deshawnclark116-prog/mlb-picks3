@@ -1,0 +1,38 @@
+name: NFL live reader top-ten model-only source contract
+on:
+  push:
+    branches: [main]
+    paths:
+      - src/nfl/existing.ts
+      - src/nfl/ownProjectionRank.ts
+      - src/components/ExistingNflProjectionSlate.tsx
+      - tests/nflOwnProjectionRank.test.ts
+      - tests/nflExisting.test.ts
+      - .github/workflows/nfl_own_projection_top10.yml
+  pull_request:
+    paths:
+      - src/nfl/existing.ts
+      - src/nfl/ownProjectionRank.ts
+      - src/components/ExistingNflProjectionSlate.tsx
+      - tests/nflOwnProjectionRank.test.ts
+      - tests/nflExisting.test.ts
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Validate complete React and source model
+        run: |
+          npm run lint
+          npm run build
+      - name: Prove source-only events, exact as-of role coverage and no-book substitution
+        run: node --import tsx --test tests/nflExisting.test.ts tests/nflOwnProjectionRank.test.ts tests/nflExistingCardRank.test.ts
