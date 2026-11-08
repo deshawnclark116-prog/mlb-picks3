@@ -22,6 +22,16 @@ test('top ten are model-own-event ranked, not yardage-amount or book-line ranked
   assert.deepEqual(rows,before,'original model source ordering must be untouched');
 });
 
+test('numerical accuracy window outranks near-50% median reach',()=>{
+  const precise=make('Precise',.502,70);
+  precise.projection_within_10_probability=.72;
+  const volatile=make('Volatile',.54,40);
+  volatile.projection_within_10_probability=.19;
+  assert.deepEqual(rankNflOwnProjections([volatile,precise]).map(p=>p.player),
+    ['Precise','Volatile'],
+    'highest P(at least median) is NOT strongest numeric projection');
+});
+
 test('no fake percentages from odds, v2 context or fewer than 10k worlds',()=>{
   const fake=make('Bookline',null);(fake as any).model_prob=.97;
   const v2=make('Context',.9);v2.model_source='v2_context';
