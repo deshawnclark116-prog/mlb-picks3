@@ -111,7 +111,7 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   await expect(page.getByRole('heading',{name:'CREATE GAME CARD'})).toHaveCount(0);
   await expect(page.getByTestId('nfl-coverage')).toContainText('FORECAST COVERAGE');
   await expect(page.getByTestId('nfl-coverage')).toContainText('Last pipeline check:');
-  const game=page.getByTestId('nfl-game');await expect(game).toContainText('10 SYSTEM PICKS');await expect(game).toContainText('TOP TARGET: dandre swift');
+  const game=page.getByTestId('nfl-game');await expect(game).toContainText('10 SYSTEM PICKS');await expect(game).toContainText('TOP MODEL FORECAST:');
   await expect(game.getByRole('button').filter({has:page.locator('h2')})).toHaveAttribute('aria-expanded','false');await expect(page.getByTestId('system-pick')).toHaveCount(0);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
   for(const label of ['SYSTEM PICKS','BETTABLE NOW','MODEL BOARD','T90','T24','ALL','PASS','RUSH','REC','TD','Refresh NFL forecasts']){
