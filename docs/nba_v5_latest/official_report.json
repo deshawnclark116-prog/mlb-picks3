@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-08_05_45PM.pdf",
-  "published_at_utc": "2026-11-08T22:45:00+00:00",
-  "captured_at_utc": "2026-11-08T22:52:41.135333+00:00",
-  "source_sha256": "3acb5d1e6d5a8699c3c7b782bb8d01eb05e802155751ba28d92fd42db2837902",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-08_06_00PM.pdf",
+  "published_at_utc": "2026-11-08T23:00:00+00:00",
+  "captured_at_utc": "2026-11-08T23:05:10.056789+00:00",
+  "source_sha256": "73fd96ceb7caa844f8ec555f5466105ff8f7f829d77587f73bbdfcdf38d6e865",
   "reports": [
     {
       "matchup": "PHI@CHI",
@@ -783,6 +783,38 @@
       "reason": "G League - Two-Way"
     },
     {
+      "matchup": "IND@DAL",
+      "team_abbr": "IND",
+      "player": "Furphy, Johnny",
+      "normalized_player": "johnny furphy",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "IND@DAL",
+      "team_abbr": "IND",
+      "player": "Haliburton, Tyrese",
+      "normalized_player": "tyrese haliburton",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Hamstring Strain"
+    },
+    {
+      "matchup": "IND@DAL",
+      "team_abbr": "IND",
+      "player": "McConnell, T.J.",
+      "normalized_player": "t j mcconnell",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Right Hamstring Strain"
+    },
+    {
+      "matchup": "IND@DAL",
+      "team_abbr": "IND",
+      "player": "Sheppard, Ben",
+      "normalized_player": "ben sheppard",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Meniscus Surgery"
+    },
+    {
       "matchup": "DEN@HOU",
       "team_abbr": "DEN",
       "player": "Braun, Christian",
@@ -871,7 +903,7 @@
       "reason": "G League - Two-Way"
     }
   ],
-  "rows": 108,
+  "rows": 112,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
