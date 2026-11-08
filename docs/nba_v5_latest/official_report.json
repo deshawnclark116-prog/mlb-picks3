@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-07_07_00PM.pdf",
-  "published_at_utc": "2026-11-08T00:00:00+00:00",
-  "captured_at_utc": "2026-11-08T00:15:12.118108+00:00",
-  "source_sha256": "1ef71e34a48f33338233076c6637d7cef028d3e3421b5a7c35291218fcb94f71",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-07_08_15PM.pdf",
+  "published_at_utc": "2026-11-08T01:15:00+00:00",
+  "captured_at_utc": "2026-11-08T01:18:38.413933+00:00",
+  "source_sha256": "f5fce6d49c686c6d060dc87baa144f51e3aaede72178305ecb98ec38c75afddf",
   "reports": [
     {
       "matchup": "DEN@IND",
@@ -483,7 +483,7 @@
       "team_abbr": "PHX",
       "player": "Fleming, Rasheer",
       "normalized_player": "rasheer fleming",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Left Ankle Sprain"
     },
     {
@@ -491,8 +491,16 @@
       "team_abbr": "PHX",
       "player": "Goodwin, Jordan",
       "normalized_player": "jordan goodwin",
-      "status": "DOUBTFUL",
+      "status": "OUT",
       "reason": ""
+    },
+    {
+      "matchup": "HOU@PHX",
+      "team_abbr": "PHX",
+      "player": "Timme, Drew",
+      "normalized_player": "drew timme",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
     },
     {
       "matchup": "HOU@PHX",
@@ -871,6 +879,62 @@
       "reason": "G League - Two-Way"
     },
     {
+      "matchup": "MIA@SAC",
+      "team_abbr": "MIA",
+      "player": "Donaldson, Tre",
+      "normalized_player": "tre donaldson",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "MIA@SAC",
+      "team_abbr": "MIA",
+      "player": "Goldin, Vladislav",
+      "normalized_player": "vladislav goldin",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "MIA@SAC",
+      "team_abbr": "SAC",
+      "player": "Mogbo, Jonathan",
+      "normalized_player": "jonathan mogbo",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "MIA@SAC",
+      "team_abbr": "SAC",
+      "player": "Murray, Keegan",
+      "normalized_player": "keegan murray",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Left Ankle Capsulitis"
+    },
+    {
+      "matchup": "MIA@SAC",
+      "team_abbr": "SAC",
+      "player": "Pedulla, Sean",
+      "normalized_player": "sean pedulla",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "MIA@SAC",
+      "team_abbr": "SAC",
+      "player": "Raynaud, Maxime",
+      "normalized_player": "maxime raynaud",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "MIA@SAC",
+      "team_abbr": "SAC",
+      "player": "Simmons, Ben",
+      "normalized_player": "ben simmons",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
       "matchup": "NOP@LAC",
       "team_abbr": "NOP",
       "player": "Dia, Malik",
@@ -893,9 +957,49 @@
       "normalized_player": "jaron pierre",
       "status": "OUT",
       "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "NOP@LAC",
+      "team_abbr": "LAC",
+      "player": "Beal, Bradley",
+      "normalized_player": "bradley beal",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "NOP@LAC",
+      "team_abbr": "LAC",
+      "player": "Ingram, Brandon",
+      "normalized_player": "brandon ingram",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Heel Surgery"
+    },
+    {
+      "matchup": "NOP@LAC",
+      "team_abbr": "LAC",
+      "player": "Jackson, Isaiah",
+      "normalized_player": "isaiah jackson",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Groin Soreness"
+    },
+    {
+      "matchup": "NOP@LAC",
+      "team_abbr": "LAC",
+      "player": "Miller, Jordan",
+      "normalized_player": "jordan miller",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "NOP@LAC",
+      "team_abbr": "LAC",
+      "player": "Niederhauser, Yanic Konan",
+      "normalized_player": "yanic konan niederhauser",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Lisfranc Surgery"
     }
   ],
-  "rows": 111,
+  "rows": 124,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
