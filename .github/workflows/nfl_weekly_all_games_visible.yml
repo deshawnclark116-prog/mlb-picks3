@@ -62,5 +62,5 @@ jobs:
       - name: Mobile browser proves overlapping weekly and frozen T90 games are BOTH distinguishable
         run: |
           npx playwright install chromium
-          mkdir -p /workspace/scratch
-          npx playwright test tests/browser/nflPhase1.spec.ts --reporter=line
+          mkdir -p "$RUNNER_TEMP/nfl-screens"
+          NFL_SCREENSHOT_DIR="$RUNNER_TEMP/nfl-screens" npx playwright test tests/browser/nflPhase1.spec.ts --reporter=line
