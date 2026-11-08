@@ -48,9 +48,19 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
         if(!response.ok)throw new Error('NFL weekly feed HTTP '+response.status);
         const document=await response.json();
         const parsed=parseExistingNfl(document,new Date());
-        if(!cancelled){setSlate(parsed);setOrigin(document.serving_origin||'');setError(null);}
+        if(!cancelled){
+          // A temporary CDN cache race must never roll a newer validated
+          // weekly forecast back to yesterday's version.
+          setSlate(previous=>previous&&Date.parse(previous.generated_at_utc)>Date.parse(parsed.generated_at_utc)?previous:parsed);
+          setOrigin(document.serving_origin||response.headers.get('X-NFL-Forecast-Source')||'');
+          setError(null);
+        }
       }catch(e){
-        if(!cancelled&&(e as Error).name!=='AbortError'){setSlate(null);setError(e instanceof Error?e.message:'Existing model feed unavailable');}
+        if(!cancelled&&(e as Error).name!=='AbortError'){
+          // Keep last validated source visible with its ORIGINAL timestamp;
+          // never silently replace it with a cached unverified estimate.
+          setError(e instanceof Error?e.message:'Existing model feed unavailable');
+        }
       }finally{if(!cancelled)setLoading(false);}
     }
     void refresh();const interval=setInterval(()=>void refresh(),60000);
@@ -60,21 +70,36 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
   // Phase1 is an independent *research* publication. Its week being stale or
   // unavailable must never hide the game-day model or the league schedule.
   const mismatch=Boolean(slate&&view&&(slate.season!==view.artifact.status.season||slate.week!==view.artifact.status.week));
-  // Prefer the original Phase1 matchup/share card when that horizon has
-  // actual frozen game rows. Only use weekly model cards for the games
-  // Phase1 missed; never display a duplicate game in two different designs.
-  const published=view?.games.filter(g=>g.horizons[horizon]&&view.rows[horizon].some(r=>r.game_id===g.game_id))||[];
-  const games=(slate?.games||[]).filter(g=>!published.some(p=>
-    Date.parse(p.kickoff_utc)===Date.parse(g.kickoff_utc) &&
-    [p.away,p.home].sort().join('_')===g.teams.join('_')))
+  // Every official weekly matchup must appear, including games with old
+  // frozen Phase1 T24/T90 research. Suppressing those weekly matchups was
+  // causing today's validated projections to disappear behind stale cards.
+  // The frozen research section below is explicitly separate.
+  const games=(slate?.games||[])
     .map(g=>({...g,shown:g.projections.filter(p=>matches(p,search,family))}))
     .filter(g=>!(search.trim()||family!=='ALL')||g.shown.length>0);
-  return <div className="mt-4 space-y-3" aria-label="NFL other scheduled games" data-testid="existing-nfl-slate">
+  const sourceAgeMs=slate?Date.now()-Date.parse(slate.generated_at_utc):null;
+  const forecastTime=slate?new Intl.DateTimeFormat('en-US',{
+    timeZone:'America/New_York',month:'short',day:'numeric',hour:'numeric',
+    minute:'2-digit',timeZoneName:'short'
+  }).format(new Date(slate.generated_at_utc)):'Unavailable';
+  return <section className="mt-4 space-y-3" aria-label="NFL current weekly predictions" data-testid="existing-nfl-slate">
+    <div className="rounded-xl border border-[#00FF41]/35 bg-[#0F2015] p-3" data-testid="nfl-weekly-generation-receipt">
+      <p className="text-[12px] font-black uppercase tracking-wide text-[#00FF41]">Current weekly NFL model · Week {slate?.week||'—'}</p>
+      <p className="mt-1 text-[12px] text-gray-200">Forecast generated: {forecastTime}</p>
+      {slate&&<p className="mt-1 text-[11px] text-gray-300">
+        {games.length} visible scheduled matchups · {slate.projections} weekly player-yardage projections
+      </p>}
+      {slate&&sourceAgeMs!==null&&sourceAgeMs>90*60_000&&
+        <p role="status" className="mt-2 text-[11px] font-semibold text-amber-300">
+          This weekly forecast is over 90 minutes old. Refresh pending; verify injury/availability before using its projections.
+        </p>}
+      <p className="mt-1 text-[10px] text-gray-400">Separate from frozen T24/T90 research. No verified sportsbook hit probability is implied.</p>
+    </div>
     {slate&&!slate.scheduleComplete&&<p role="status" className="text-xs text-amber-200">The independent model only lists games with projections. Full schedule coverage is not verified.</p>}
     {origin==='render_outage_fallback'&&<p role="status" className="text-xs text-amber-200">GitHub temporarily unavailable. Showing a checked Render fallback.</p>}
     {mismatch&&<p role="status" className="text-xs text-amber-200">T24/T90 research covers another week. Weekly game-day projections remain visible.</p>}
     {loading&&!slate&&<p className="py-2 text-xs text-gray-400">Loading other NFL games…</p>}
-    {error&&<p role="alert" className="text-xs text-amber-300">Additional NFL matchups unavailable: {error}</p>}
+    {error&&<p role="alert" className="text-xs text-amber-300">NFL source refresh failed: {error}. {slate?'Displaying the last verified forecast with its original generation time.':'No verified weekly projection can be shown.'}</p>}
     {games.map(g=>{
       const opened=expanded===g.id;
       const started=Date.now()>=Date.parse(g.kickoff_utc);
@@ -96,7 +121,7 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
             </div>
             <ChevronDown size={16} className={`shrink-0 text-gray-500 ${opened?'rotate-180':''}`}/>
           </button>
-          <button aria-label={`Create share card for ${existingMatchup(g)}`} onClick={()=>setShareGame(g)}
+          <button aria-label={`Create weekly model share card for ${existingMatchup(g)}`} onClick={()=>setShareGame(g)}
             className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-xl border border-[#333] bg-[#1B211E] text-gray-300">
             <Image size={18}/>
           </button>
@@ -110,5 +135,5 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
     })}
     {shareGame&&slate&&<NflExistingShareModal game={shareGame} week={slate.week}
       forecastGeneratedAtUtc={slate.generated_at_utc} onClose={()=>setShareGame(null)}/>}
-  </div>;
+  </section>;
 }

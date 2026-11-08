@@ -167,6 +167,8 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh,role=null
         {(freshness?.stale || freshness?.unknown) && <p role="status" className="mt-2 font-bold text-amber-300">LINE MAY HAVE MOVED<br/>VERIFY BEFORE PLACING{freshness?.unknown?' · Timestamp unavailable or invalid.':''}</p>}</div>}
       {error?<><ExistingNflProjectionSlate view={null} search={search} family={family} visible={true} horizon={selected} mode={mode}/><div role="alert" className="mt-4 rounded-xl border border-red-900 p-4 text-sm text-red-300">T24/T90 research unavailable<p className="mt-2 break-words">{error}</p><button className={`${touch} mt-3 w-full`} onClick={()=>void refresh()}>Retry research feed</button></div></>
       :!view?<><ExistingNflProjectionSlate view={null} search={search} family={family} visible={true} horizon={selected} mode={mode}/><p role="status" className="py-4 text-center text-xs text-gray-500">{loading?'Loading T24/T90 research…':empty}</p></>:<>
+        <ExistingNflProjectionSlate view={view} search={search} family={family} visible={true} horizon={selected} mode={mode}/>
+        <div className="mt-6 rounded-lg border border-[#383838] px-3 py-2 text-[11px] text-amber-200" data-testid="nfl-frozen-separate">T24/T90 FROZEN RESEARCH BELOW · historical snapshot probabilities, not the current weekly forecasts above.</div>
         {mode==='SYSTEM PICKS' && best.length>0 && <section className="mt-6" aria-label="Today's best">
           <h2 className="mb-3 text-sm font-black text-gray-200">TODAY'S BEST</h2>
           <div className="flex gap-3 overflow-x-auto pb-2">{best.map(p=><button data-testid="today-best" key={p.row.id}
@@ -176,7 +178,6 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh,role=null
             <p className="mt-auto pt-3 text-[11px] text-amber-200">P(exact result) unavailable</p>
           </button>)}</div>
         </section>}
-        <ExistingNflProjectionSlate view={view} search={search} family={family} visible={true} horizon={selected} mode={mode}/>
         {groups.length===0 && <p role="status" className="mt-4 rounded-xl border border-[#222] p-4 text-sm text-gray-500">{empty}</p>}
         <div className="mt-4 space-y-3">{groups.map(game=>{
           const preview=game.picks[0];const count=mode==='MODEL BOARD'?game.visibleRows.length:game.picks.length;

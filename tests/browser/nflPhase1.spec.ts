@@ -46,6 +46,9 @@ async function setup(page:any,get=()=>structuredClone(source),live=false) {
     } else {await route.fulfill({json:{predictions:[],picks:[],games:[]}});}
   });
   await page.goto('/');await page.locator('#tab-btn-nfl').click();await expect(page.getByTestId('nfl-game')).toHaveCount(1);
+   // Filter controls are intentionally collapsed on mobile; expand them
+   // before the tests operate on RUSH, T24 and other filter controls.
+   await page.getByRole('button',{name:'Filter',exact:true}).click();
   return {requests,legacy:()=>legacy};
 }
 const screen=()=>process.env.NFL_SCREENSHOT_DIR || '/workspace/scratch';
@@ -56,18 +59,20 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   // Original user-approved layout: Today's Best first, the existing
   // game cards inline, game-by-game export buttons (no giant player dump).
   await expect(page.getByRole('heading',{name:"TODAY'S BEST"})).toBeVisible();
-  await expect(page.getByTestId('existing-nfl-game')).toHaveCount(2);
-  await expect(page.getByTestId('existing-nfl-preview')).toHaveCount(1);
+  await expect(page.getByTestId('existing-nfl-game')).toHaveCount(3);
+  await expect(page.getByTestId('existing-nfl-preview')).toHaveCount(2);
   await expect(page.getByTestId('existing-nfl-projection')).toHaveCount(0);
   await expect(page.getByTestId('existing-nfl-expanded')).toHaveCount(0);
   await expect(page.getByTestId('existing-nfl-slate')).toContainText('PHI vs JAX');
   await expect(page.getByTestId('existing-nfl-slate')).toContainText('LV vs NE');
-  await expect(page.getByTestId('existing-nfl-slate')).not.toContainText('NYJ vs CHI');
-  await expect(page.getByTestId('existing-nfl-preview')).toContainText('Early Runner');
-  await expect(page.getByTestId('existing-nfl-preview')).toContainText('68');
+  await expect(page.getByTestId('existing-nfl-slate')).toContainText('CHI vs NYJ');
+  await expect(page.getByTestId('nfl-weekly-generation-receipt')).toContainText('Forecast generated: Oct 3, 7:00 PM EDT');
+  await expect(page.getByTestId('nfl-frozen-separate')).toContainText('FROZEN RESEARCH');
+  await expect(page.getByTestId('existing-nfl-preview').first()).toContainText('Early Runner');
+  await expect(page.getByTestId('existing-nfl-preview').first()).toContainText('68');
   // Codex's per-game 1080x1350 share-image workflow is preserved for
   // the original new-engine game and now also available for missing games.
-  await expect(page.getByRole('button',{name:'Create share card for PHI vs JAX'})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Create weekly model share card for PHI vs JAX'})).toBeVisible();
   await expect(page.getByRole('button',{name:'Create share card for NYJ vs CHI'})).toBeVisible();
   const toggles=page.getByTestId('existing-nfl-toggle');
   await toggles.first().click();
@@ -79,7 +84,7 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   // Preserve the validated Phase1 fixture's default clock; rewind only
   // before testing the *pregame* live book quote for the 9:30 match.
   await page.clock.setFixedTime(new Date('2026-10-04T12:00:00Z'));
-  await page.getByRole('button',{name:'Create share card for PHI vs JAX'}).click();
+  await page.getByRole('button',{name:'Create weekly model share card for PHI vs JAX'}).click();
   await expect(page.getByRole('heading',{name:'CREATE GAME CARD'})).toBeVisible();
   await expect(page.getByTestId('game-share-poster')).toBeVisible();
   await expect(page.getByTestId('existing-poster-projections')).toContainText('68');
@@ -106,7 +111,7 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   await expect(page.getByRole('heading',{name:'CREATE GAME CARD'})).toHaveCount(0);
   await expect(page.getByTestId('nfl-coverage')).toContainText('FORECAST COVERAGE');
   await expect(page.getByTestId('nfl-coverage')).toContainText('Last pipeline check:');
-  const game=page.getByTestId('nfl-game');await expect(game).toContainText('10 SYSTEM PICKS');await expect(game).toContainText('TOP TARGET: dandre swift');
+  const game=page.getByTestId('nfl-game');await expect(game).toContainText('10 SYSTEM PICKS');await expect(game).toContainText('TOP MODEL FORECAST:');
   await expect(game.getByRole('button').filter({has:page.locator('h2')})).toHaveAttribute('aria-expanded','false');await expect(page.getByTestId('system-pick')).toHaveCount(0);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
   for(const label of ['SYSTEM PICKS','BETTABLE NOW','MODEL BOARD','T90','T24','ALL','PASS','RUSH','REC','TD','Refresh NFL forecasts']){
@@ -121,7 +126,7 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   await page.locator('#nfl-scroll-area').evaluate(el=>{const game=el.querySelector('[data-testid="nfl-game"]')!;el.scrollTop+=game.getBoundingClientRect().top-el.getBoundingClientRect().top;});await page.screenshot({path:`${screen()}/nfl-nyj-chi-expanded-360.png`});
   await pick.getByText('VIEW DETAILS ▾',{exact:true}).click();await expect(pick.getByTestId('system-details')).toHaveAttribute('open','');await expect(pick.getByText('Expected opportunities',{exact:true})).toBeVisible();
   await page.getByRole('button',{name:'BETTABLE NOW',exact:true}).click();
-  await expect(page.getByTestId('existing-nfl-game')).toHaveCount(2);
+  await expect(page.getByTestId('existing-nfl-game')).toHaveCount(3);
   await expect(game).toContainText('0 BETTABLE NOW');await game.getByRole('button').filter({has:page.locator('h2')}).click();
   await expect(page.getByText("No current sportsbook market matches this game's system picks.",{exact:true})).toBeVisible();await expect(page.getByText('LINE MAY HAVE MOVED',{exact:false})).toBeVisible();
   await page.locator('#nfl-scroll-area').evaluate(el=>el.scrollTop=0);await page.screenshot({path:`${screen()}/nfl-bettable-now-360.png`});
@@ -132,7 +137,7 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
 });
 test('no actual sportsbook market disables export instead of showing six fake top picks',async({page})=>{
   await setup(page);
-  await page.getByRole('button',{name:'Create share card for PHI vs JAX'}).click();
+  await page.getByRole('button',{name:'Create weekly model share card for PHI vs JAX'}).click();
   await expect(page.getByTestId('verified-nfl-quote-status')).toContainText('0 market-matched lines');
   await expect(page.getByTestId('existing-poster-no-lines')).toContainText('NO ROLE-SUPPORTED FEATURED PROJECTIONS');
   await expect(page.getByRole('button',{name:'SAVE PNG'})).toBeDisabled();
