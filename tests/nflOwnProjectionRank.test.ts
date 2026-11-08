@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {rankNflOwnProjections,hasNflOwnProjectionEvidence,rankNflRoleSupportedOwnProjections} from '../src/nfl/ownProjectionRank.ts';
+import {rankNflOwnProjections,hasNflOwnProjectionEvidence,rankNflRoleSupportedOwnProjections,rankNflPregameSnapshotForDisplay} from '../src/nfl/ownProjectionRank.ts';
 import {parseExistingNfl,type ExistingYardProjection} from '../src/nfl/existing.ts';
 
 const make=(player:string,p:number|null,median=30):ExistingYardProjection=>({
@@ -84,4 +84,29 @@ test('top ten requires source-matched, fresh three-game pregame role evidence',(
   }]}),[]);
   assert.deepEqual(ranked(role,Date.parse('2026-11-08T18:00:00Z')),[],
     'kickoff closes pregame selections');
+});
+
+test('NBA-style visible archive keeps authentic PREKICKOFF projection after kickoff',()=>{
+ const original=make('PreKickoff',.52);
+ const kickoff='2026-11-08T18:00:00Z',generated='2026-11-08T17:56:00Z';
+ const role:any={schema:'nfl-role-evidence-coverage-v1',
+   status:'PREGAME_RESEARCH_ROLE_SNAPSHOT',
+   forecast_generated_at_utc:generated,captured_at_utc:'2026-11-08T17:56:02Z',
+   player_market_evidence:[{
+     player:'PreKickoff',team:'CLE',opponent:'NO',market:'receiving_yards',
+     kickoff_utc:kickoff,published_model_median:30,
+     published_model_source:'blended_sim',
+     role_evidence_complete_for_showcase:true,observed_stat_rows:3,
+     roster_status:'ROSTER_LISTED_NOT_STARTER_VERIFIED',
+     has_verified_starting_role:false,has_calibrated_book_bet_probability:false,
+     warnings:[]
+   }]};
+ const after=Date.parse('2026-11-08T18:10:00Z');
+ assert.deepEqual(rankNflRoleSupportedOwnProjections([original],role,generated,kickoff,after),[],
+  'NEW decisions remain closed after kickoff');
+ assert.deepEqual(rankNflPregameSnapshotForDisplay([original],role,generated,kickoff,after)
+   .map(p=>p.player),['PreKickoff'],'original pregame preview remains visible after start');
+ const late={...role,captured_at_utc:'2026-11-08T18:01:00Z'};
+ assert.deepEqual(rankNflPregameSnapshotForDisplay([original],late,generated,kickoff,after),[]);
+ assert.deepEqual(rankNflPregameSnapshotForDisplay([original],role,'2026-11-08T18:02:00Z',kickoff,after),[]);
 });
