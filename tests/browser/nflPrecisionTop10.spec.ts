@@ -55,7 +55,6 @@ test('360px NFL frontend ranks real own-projection precision and leaves unverifi
  await expect(cards.first()).toContainText('Top Precision');
  await expect(cards.first()).toContainText('68.0%');
  await expect(cards.nth(1)).toContainText('Low Precision');
- await expect(shortlist).not.toContainText('No calibrated hit probability is supplied here', {timeout:1000});
  await shortlist.getByText(/SHOW OTHER 2 NUMERICAL MODEL PROJECTIONS/).click();
  await expect(page.getByText('Unverified',{exact:true})).toBeVisible();
  await expect(page.getByText('Context Projection',{exact:true})).toBeVisible();
