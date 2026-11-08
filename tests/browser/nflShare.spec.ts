@@ -18,7 +18,8 @@ async function setup(page:any,get=()=>structuredClone(source)) {
 const open=async(page:any)=>{await page.getByRole('button',{name:'Create share card for NYJ vs CHI',exact:true}).click();return page.getByRole('dialog');};
 test('360px modal, canonical source despite filters, real PNG download, exact dimensions, and honest bettable export',async({page})=>{
  test.setTimeout(60000);await setup(page);
- await page.getByRole('button',{name:'RUSH',exact:true}).click();await page.getByRole('searchbox',{name:'Search player or team'}).fill('Geno Smith');
+ await page.getByRole('button',{name:'Filter',exact:true}).click();
+  await page.getByRole('button',{name:'RUSH',exact:true}).click();await page.getByRole('searchbox',{name:'Search player or team'}).fill('Geno Smith');
  const accordion=page.getByTestId('nfl-game').getByRole('button').filter({has:page.locator('h2')});await expect(accordion).toHaveAttribute('aria-expanded','false');
  const modal=await open(page);await expect(modal).toBeVisible();await expect(accordion).toHaveAttribute('aria-expanded','false');
  await expect(modal.getByRole('button',{name:'SYSTEM CARD',exact:true})).toHaveAttribute('aria-pressed','true');
