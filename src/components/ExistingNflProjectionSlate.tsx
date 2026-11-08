@@ -4,7 +4,8 @@ import {ChevronDown,Image} from 'lucide-react';
 import NflExistingShareModal from './NflExistingShareModal';
 import {formatET,type Horizon,type Phase1View} from '../nfl/phase1';
 import {wholeStatProjection} from '../lib/wholeStatProjection';
-import {hasNflOwnProjectionEvidence,rankNflOwnProjections} from '../nfl/ownProjectionRank';
+import {hasNflOwnProjectionEvidence,rankNflRoleSupportedOwnProjections} from '../nfl/ownProjectionRank';
+import type {NflRoleSnapshot} from '../nfl/roleSupportedNfl';
 import {parseExistingNfl,existingMatchup,type ExistingNflSlate,type ExistingNflGame,type ExistingYardProjection} from '../nfl/existing';
 const n=(x:number)=>x.toLocaleString('en-US',{maximumFractionDigits:1});
 const label=(m:string)=>m==='rushing_yards'?'RUSH YDS':'REC YDS';
@@ -37,6 +38,7 @@ function Projection({p}:{p:ExistingYardProjection}){
 type Props={view:Phase1View|null;search:string;family:string;visible:boolean;horizon:Horizon;mode:string};
 export default function ExistingNflProjectionSlate({view,search,family,visible,horizon,mode}:Props){
   const [slate,setSlate]=useState<ExistingNflSlate|null>(null);
+  const [role,setRole]=useState<NflRoleSnapshot|null>(null);
   const [error,setError]=useState<string|null>(null);
   const [loading,setLoading]=useState(true);
   const [origin,setOrigin]=useState<string>('');
@@ -53,11 +55,21 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
         if(!response.ok)throw new Error('NFL weekly feed HTTP '+response.status);
         const document=await response.json();
         const parsed=parseExistingNfl(document,new Date());
+        // Independent, timestamp-matched pregame workload evidence: no
+        // response or stale/mismatched source means no featured shortlist.
+        // The complete archived numerical ledger remains visible.
+        let roleDoc:NflRoleSnapshot|null=null;
+        try{
+          const roleResponse=await fetch('/api/nfl-role-snapshot?t='+Date.now(),
+            {cache:'no-store',signal:abort.signal});
+          if(roleResponse.ok)roleDoc=await roleResponse.json() as NflRoleSnapshot;
+        }catch{/* Snapshot unavailable: fail closed, never invent role proof. */}
         if(!cancelled){
           // A temporary CDN cache race must never roll a newer validated
           // weekly forecast back to yesterday's version.
           setSlate(previous=>previous&&Date.parse(previous.generated_at_utc)>Date.parse(parsed.generated_at_utc)?previous:parsed);
           setOrigin(document.serving_origin||response.headers.get('X-NFL-Forecast-Source')||'');
+          setRole(roleDoc);
           setError(null);
         }
       }catch(e){
@@ -108,7 +120,7 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
     {games.map(g=>{
       const opened=expanded===g.id;
       const started=Date.now()>=Date.parse(g.kickoff_utc);
-      const top=rankNflOwnProjections(g.shown,10);
+      const top=rankNflRoleSupportedOwnProjections(g.shown,role,slate?.generated_at_utc||'',g.kickoff_utc,Date.now(),10);
       const topKeys=new Set(top.map(p=>[p.player_id,p.player,p.team,p.market].join('|')));
       const remaining=g.shown.filter(p=>!topKeys.has([p.player_id,p.player,p.team,p.market].join('|')));
       const preview=top[0]||g.shown[0];
@@ -138,15 +150,15 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
           <p className="text-[11px] text-gray-400">Numerical weekly projections, not 65%+ system targets or verified sportsbook bets. {mode==='BETTABLE NOW'?'No verified book lines supplied.':''}</p>
           {g.shown.length>0?<div className="space-y-3">
             {top.length>0?<div data-testid="nfl-top10-simulation-research" className="space-y-3">
-              <p className="text-xs font-bold text-[#00FF41]">TOP {top.length} OWN-PROJECTION MODEL EVENTS · RESEARCH ONLY</p>
-              <p className="text-[11px] text-amber-200">Ranked by the 10,000+ simulated chance of reaching the model's own rounded projected yardage. These are uncalibrated, independent player bootstraps—not a full-game joint NFL simulation, verified active status, numerical accuracy guarantee or recommended bets.</p>
+              <p className="text-xs font-bold text-[#00FF41]">TOP {top.length} ROLE-SUPPORTED MODEL EVENTS · RESEARCH ONLY</p>
+              <p className="text-[11px] text-amber-200">Ranked by the 10,000+ simulated chance of reaching the model's own rounded projected yardage, after checking timestamp-matched three-game role evidence. Still uncalibrated player bootstraps—not confirmed game-day actives, a full-game NFL simulation, or recommended bets.</p>
               {top.map(p=><Projection key={p.player_id+'|'+p.player+'|'+p.team+'|'+p.market} p={p}/>)}
               {remaining.length>0&&<details className="rounded-xl border border-[#292929] p-3">
                 <summary className="min-h-11 cursor-pointer text-xs font-bold text-gray-300">SHOW OTHER {remaining.length} NUMERICAL MODEL PROJECTIONS ▾</summary>
                 <div className="space-y-3 pt-3">{remaining.map(p=><Projection key={p.player_id+'|'+p.player+'|'+p.team+'|'+p.market} p={p}/>)}</div>
               </details>}
             </div>:<div className="space-y-3">
-              <p className="text-[11px] text-amber-200">No source-matched own-projection simulations are available for a probability-ranked shortlist. Original model projections remain visible below.</p>
+              <p className="text-[11px] text-amber-200">No fresh, matching simulation AND pregame role evidence is available for a probability-ranked shortlist. All original model projections remain visible below.</p>
               {g.shown.map(p=><Projection key={p.player_id+'|'+p.player+'|'+p.team+'|'+p.market} p={p}/>)}
             </div>}
           </div>:<p className="py-2 text-xs text-gray-400">No qualifying numerical projections available for this game and filter.</p>}
