@@ -1,0 +1,82 @@
+name: NBA V5 real published source -> frontend API smoke
+on:
+  pull_request:
+    paths:
+      - server/nbaV5PublishedSync.ts
+      - server/nbaV3Shadow.ts
+      - server/nbaV3Latest.ts
+      - .github/workflows/nba_v5_real_source_api_smoke.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  prove-real:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Verify real 7:15 V5 release replaces earlier pregame game values without re-simulating
+        run: |
+          node --import tsx --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import {loadNbaV3Shadow} from './server/nbaV3Shadow.ts';
+          import {createPublishedV5Sync} from './server/nbaV5PublishedSync.ts';
+          const asOf=Date.parse('2026-11-08T00:50:00Z');
+          const original=loadNbaV3Shadow(new Date(asOf));
+          const before=original.games.find(g=>g.game_id==='401909940');
+          assert.ok(before,'original Knicks Cavaliers game');
+          const synced=await createPublishedV5Sync()(original,asOf);
+          const game=synced.games.find(g=>g.game_id==='401909940');
+          assert.equal(synced.v5_published_sync.source_state,'SOURCE_VERIFIED');
+          assert.equal(synced.v5_published_sync.latest_generation_at_utc,'2026-11-08T00:15:42.876975+00:00');
+          assert.ok(game,'Knicks Cavaliers retained');
+          assert.equal(game.forecast_kind,'V5_LATEST');
+          assert.equal(game.forecast_at_utc,'2026-11-08T00:15:42.876975+00:00');
+          assert.ok(game.rows.some(r=>r.player==='Mikal Bridges' && r.market==='three_pointers_made' && Math.abs(r.mean-1.5072)<.0002));
+          console.log('NBA_V5_LIVE_PUBLISHED_KNICKS_CAVALIERS_REACHED_API',JSON.stringify({
+            forecast_at_utc:game.forecast_at_utc,
+            source:synced.v5_published_sync,
+            original_forecast:before.forecast_at_utc
+          }));
+          JS
+      - name: Boot actual Express/React server and request the NBA frontend endpoint
+        run: |
+          set -euo pipefail
+          (npm run dev > /tmp/prop-edge-smoke-server.log 2>&1 & echo $! >/tmp/prop-edge-smoke-server.pid)
+          ready=0
+          for i in $(seq 1 30); do
+            if curl -fsS --max-time 2 http://127.0.0.1:3000/ >/dev/null 2>&1; then
+              ready=1; break
+            fi
+            sleep 1
+          done
+          if [ "$ready" != 1 ]; then
+            echo "APP_DID_NOT_BOOT"; tail -100 /tmp/prop-edge-smoke-server.log; exit 1
+          fi
+          curl --fail --silent --show-error --max-time 65 \
+            "http://127.0.0.1:3000/api/nba-v3-shadow" -o /tmp/prop-edge-nba-v5-api.json
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import {readFileSync} from 'node:fs';
+          const d=JSON.parse(readFileSync('/tmp/prop-edge-nba-v5-api.json','utf8'));
+          assert.equal(d.schema,'NBA_V3_FULL_GAME_DISTRIBUTION_READ_ONLY_V1');
+          assert.ok(Array.isArray(d.games));
+          assert.ok(d.v5_published_sync,'HTTP endpoint must expose V5 public source freshness to frontend');
+          assert.ok(['SOURCE_VERIFIED','SOURCE_UNAVAILABLE_LOCAL_FALLBACK'].includes(d.v5_published_sync.source_state));
+          console.log('NBA_V5_ACTUAL_HTTP_ENDPOINT_DELIVERS_SOURCE_STATUS',JSON.stringify({
+            state:d.v5_published_sync.source_state,
+            source_gen:d.v5_published_sync.latest_generation_at_utc,
+            games:d.games.length,
+            error:d.v5_published_sync.source_error
+          }));
+          JS
+      - name: Verify live frontend compile and same-source Top10 selection
+        run: |
+          npm run lint
+          npm run build
+          node --import tsx --test tests/nbaV5PublishedSync.test.ts tests/nbaV3Latest.test.ts tests/nbaV5ShareCard.test.ts
