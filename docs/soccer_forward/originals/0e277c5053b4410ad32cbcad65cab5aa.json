@@ -1,0 +1,34 @@
+{
+  "schema": "soccer-forward-original-v1",
+  "id": "0e277c5053b4410ad32cbcad65cab5aa",
+  "captured_at_utc": "2026-11-08T08:54:06.999Z",
+  "capture_code_sha": "0a0373541b749a1b797b9c1fd0abbb96cd3ff4ca",
+  "source_set_sha256": "ab57af47e25f6bd95f74ad89d3c28e78399886286741c85167226f8de274a2ef",
+  "fixture_source_sha256": "721a6c220fecb8208287e41401fa2fce652cd23765ce58a39bf98cdaa3d528ad",
+  "source_receipts_count": 20,
+  "model_version": "soccer-v1-raw-goal-poisson-historical-walkforward-20261018",
+  "forecast": {
+    "league": "SerieA",
+    "season": "2026-27",
+    "date": "2026-11-22",
+    "home": "Bologna FC 1909",
+    "away": "Udinese Calcio",
+    "expectedHomeGoals": 1.4351,
+    "expectedAwayGoals": 1.4057,
+    "baselineHomeGoals": 1.4191,
+    "baselineAwayGoals": 1.2896,
+    "probabilities": {
+      "home": 0.3813,
+      "draw": 0.2507,
+      "away": 0.368,
+      "over25": 0.5402,
+      "btts": 0.5751
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 14.6656,
+    "awayWeightedMatches": 14.3598,
+    "source": "openfootball/football.json/2026-27/it.1.json",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  },
+  "eligibility": "FROZEN_ON_PRIOR_UTC_CALENDAR_DAY_NO_VERIFIED_KICKOFF"
+}

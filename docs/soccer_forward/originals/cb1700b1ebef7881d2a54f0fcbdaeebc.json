@@ -1,0 +1,34 @@
+{
+  "schema": "soccer-forward-original-v1",
+  "id": "cb1700b1ebef7881d2a54f0fcbdaeebc",
+  "captured_at_utc": "2026-11-08T08:54:06.999Z",
+  "capture_code_sha": "0a0373541b749a1b797b9c1fd0abbb96cd3ff4ca",
+  "source_set_sha256": "ab57af47e25f6bd95f74ad89d3c28e78399886286741c85167226f8de274a2ef",
+  "fixture_source_sha256": "721a6c220fecb8208287e41401fa2fce652cd23765ce58a39bf98cdaa3d528ad",
+  "source_receipts_count": 20,
+  "model_version": "soccer-v1-raw-goal-poisson-historical-walkforward-20261018",
+  "forecast": {
+    "league": "SerieA",
+    "season": "2026-27",
+    "date": "2026-11-22",
+    "home": "US Sassuolo Calcio",
+    "away": "Genoa CFC",
+    "expectedHomeGoals": 1.4891,
+    "expectedAwayGoals": 1.2414,
+    "baselineHomeGoals": 1.4191,
+    "baselineAwayGoals": 1.2896,
+    "probabilities": {
+      "home": 0.4295,
+      "draw": 0.2542,
+      "away": 0.3162,
+      "over25": 0.5138,
+      "btts": 0.5506
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 12.5105,
+    "awayWeightedMatches": 11.982,
+    "source": "openfootball/football.json/2026-27/it.1.json",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  },
+  "eligibility": "FROZEN_ON_PRIOR_UTC_CALENDAR_DAY_NO_VERIFIED_KICKOFF"
+}

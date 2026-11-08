@@ -1,0 +1,34 @@
+{
+  "schema": "soccer-forward-original-v1",
+  "id": "e5354a49b0852f2519782ed47bcf162b",
+  "captured_at_utc": "2026-11-08T08:54:06.999Z",
+  "capture_code_sha": "0a0373541b749a1b797b9c1fd0abbb96cd3ff4ca",
+  "source_set_sha256": "ab57af47e25f6bd95f74ad89d3c28e78399886286741c85167226f8de274a2ef",
+  "fixture_source_sha256": "07fab65d4a1de8ce4c8472da9ccf4d1d2b145ecd5abdc5b6d4250a5c119d7681",
+  "source_receipts_count": 20,
+  "model_version": "soccer-v1-raw-goal-poisson-historical-walkforward-20261018",
+  "forecast": {
+    "league": "Bundesliga",
+    "season": "2026-27",
+    "date": "2026-11-22",
+    "home": "FC Augsburg",
+    "away": "1. FSV Mainz 05",
+    "expectedHomeGoals": 1.784,
+    "expectedAwayGoals": 1.604,
+    "baselineHomeGoals": 1.9214,
+    "baselineAwayGoals": 1.4773,
+    "probabilities": {
+      "home": 0.4244,
+      "draw": 0.226,
+      "away": 0.3496,
+      "over25": 0.6579,
+      "btts": 0.6647
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 12.3717,
+    "awayWeightedMatches": 13.279,
+    "source": "openfootball/football.json/2026-27/de.1.json",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  },
+  "eligibility": "FROZEN_ON_PRIOR_UTC_CALENDAR_DAY_NO_VERIFIED_KICKOFF"
+}
