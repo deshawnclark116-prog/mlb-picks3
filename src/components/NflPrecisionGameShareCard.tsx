@@ -10,8 +10,8 @@ const et=(iso:string)=>new Intl.DateTimeFormat('en-US',{
 }).format(new Date(iso)).toUpperCase();
 const market=(s:string)=>s==='rushing_yards'?'RUSH YDS':'REC YDS';
 
-/** NBA V5 image dimensions and ranking semantics:
- * display rounded model MEAN with P(yards >= that exact number).
+/** NBA V5 appearance, NFL model-derived meaningful yardage threshold
+ * events. Same exact target and percentage as the compact game tiles.
  * No sportsbook lines, DNP-inclusive probabilities or ±10-yard bands.
  */
 export default function NflPrecisionGameShareCard({data,cardRef}:{
@@ -41,7 +41,7 @@ export default function NflPrecisionGameShareCard({data,cardRef}:{
    height:56,boxSizing:'border-box',padding:'0 17px',background:'#17241E',
    border:'1px solid #304D39',borderRadius:13}}>
    <strong style={{fontSize:23,color:green,letterSpacing:1}}>TOP {picks.length} MODEL PROJECTIONS</strong>
-   <span style={{fontSize:14,fontWeight:700,color:'#C0CEC8'}}>RANKED BY P(REACH MODEL MEAN)</span>
+   <span style={{fontSize:14,fontWeight:700,color:'#C0CEC8'}}>RANKED BY HIGHEST QUALIFIED MODEL CHANCE</span>
   </div>
   <section data-testid="nfl-top10-share-rows" style={{marginTop:15,display:'grid',
    gridTemplateRows:'repeat(10, 76px)',gap:6}}>
@@ -75,9 +75,9 @@ export default function NflPrecisionGameShareCard({data,cardRef}:{
     ORIGINAL PREGAME SNAPSHOT · {et(data.forecastAtUtc)}
    </div>
    <p style={{fontSize:15,color:muted,lineHeight:1.4,margin:'7px 0 0'}}>
-    P(reach) is the uncalibrated probability of reaching the shown model-mean target,
-    from historical player simulations (not DNP-inclusive). NOT a sportsbook wager.
-    Game-day active status is unverified; same-game outcomes are correlated.
+    P(reach) is the uncalibrated chance of reaching the shown meaningful yardage
+    target from the player's 10,000+ simulations, not including DNP risk.
+    No sportsbook lines; active status unverified. Same-game outcomes are correlated.
    </p>
   </footer>
  </div>;
