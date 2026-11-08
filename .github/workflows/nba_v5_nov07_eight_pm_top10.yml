@@ -1,0 +1,70 @@
+name: NBA V5 exact Top 10 for both November 7 eight PM games
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/nba_v5_nov07_eight_pm_top10.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: nba-v5-nov7-eight-pm-real-pretip-export
+  cancel-in-progress: false
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Extract identical actual frontend Top 10 from latest or frozen last/first pretip simulations
+        run: |
+          set -euo pipefail
+          python -u scripts/export_nba_v5_bkn_atl_top10.py \
+            --game-id 401909940 \
+            --latest docs/nba_v5_latest/latest.json \
+            --last docs/nba_v5_archive/last/401909940.json.gz \
+            --first docs/nba_v5_archive/first/401909940.json.gz \
+            --out docs/nba_v5_latest/nov07_8pm_401909940_top10.json
+          python -u scripts/export_nba_v5_bkn_atl_top10.py \
+            --game-id 401909941 \
+            --latest docs/nba_v5_latest/latest.json \
+            --last docs/nba_v5_archive/last/401909941.json.gz \
+            --first docs/nba_v5_archive/first/401909941.json.gz \
+            --out docs/nba_v5_latest/nov07_8pm_401909941_top10.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          for gid in ("401909940","401909941"):
+              p=Path(f"docs/nba_v5_latest/nov07_8pm_{gid}_top10.json")
+              d=json.loads(p.read_text())
+              assert d["game_id"]==gid and d["tipoff_utc"]=="2026-11-08T01:00:00+00:00",d
+              assert len(d["picks"])==10,d
+              assert d["forecast_at_utc"]<d["tipoff_utc"]
+              assert d["model_probability_forward_calibrated"] is False
+              assert d["sportsbook_line_or_odds_verified"] is False
+              print("NBA_V5_EIGHT_PM_REAL_TOP10",json.dumps({
+                  "matchup":d["away"]+" @ "+d["home"],
+                  "game_id":gid,"forecast_at_utc":d["forecast_at_utc"],
+                  "source_kind":d["source_kind"],"confirmed":d["certified_pregame_team_effect"],
+                  "picks":d["picks"]},ensure_ascii=False))
+          PY
+      - name: Publish short audit receipts only; never mutate original forecasts
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -- docs/nba_v5_latest/nov07_8pm_401909940_top10.json docs/nba_v5_latest/nov07_8pm_401909941_top10.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Publish source-exact NBA V5 November 7 eight PM Top10 [skip ci]"
+          for attempt in 1 2 3 4 5; do
+            if git push origin HEAD:main; then
+              echo NBA_V5_EIGHT_PM_ACTUAL_TOP10_PUBLISHED
+              exit 0
+            fi
+            git fetch origin main
+            git rebase --autostash origin/main
+            sleep $((2*attempt))
+          done
+          exit 1
