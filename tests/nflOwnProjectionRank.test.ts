@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {rankNflOwnProjections,hasNflOwnProjectionEvidence,rankNflRoleSupportedOwnProjections,rankNflPregameSnapshotForDisplay} from '../src/nfl/ownProjectionRank.ts';
+import {rankNflOwnProjections,hasNflOwnProjectionEvidence,rankNflRoleSupportedOwnProjections,rankNflPregameSnapshotForDisplay,hasNflNbaMeanProjectionEvidence,rankNflNbaMeanProjections,rankNflRoleSupportedNbaMeanProjections,rankNflPregameNbaMeanSnapshotForDisplay} from '../src/nfl/ownProjectionRank.ts';
 import {parseExistingNfl,type ExistingYardProjection} from '../src/nfl/existing.ts';
 
 const make=(player:string,p:number|null,median=30):ExistingYardProjection=>({
@@ -109,4 +109,63 @@ test('NBA-style visible archive keeps authentic PREKICKOFF projection after kick
  const late={...role,captured_at_utc:'2026-11-08T18:01:00Z'};
  assert.deepEqual(rankNflPregameSnapshotForDisplay([original],late,generated,kickoff,after),[]);
  assert.deepEqual(rankNflPregameSnapshotForDisplay([original],role,'2026-11-08T18:02:00Z',kickoff,after),[]);
+});
+
+test('NBA V5 frontend ranks P(reaching rounded model mean), NEVER the old ±10-yard chance',()=>{
+ const a={...make('High NBA Chance',.48,40),projected_mean:57.6,
+   projected_high:120,projection_within_10_probability:.11,
+   nba_style_whole_mean_projection:58,nba_style_reach_probability:.73,
+   nba_style_probability_event:'P_YARDS_AT_LEAST_ROUNDED_PUBLISHED_MEAN'};
+ const b={...make('Old Band Winner',.57,38),projected_mean:38.2,
+   projected_high:130,projection_within_10_probability:.95,
+   nba_style_whole_mean_projection:38,nba_style_reach_probability:.64,
+   nba_style_probability_event:'P_YARDS_AT_LEAST_ROUNDED_PUBLISHED_MEAN'};
+ assert.deepEqual(rankNflNbaMeanProjections([b,a]).map(p=>p.player),
+   ['High NBA Chance','Old Band Winner']);
+ assert.equal(a.nba_style_whole_mean_projection,58,'model mean x.6 rounds up');
+ assert(hasNflNbaMeanProjectionEvidence(a));
+ assert.equal(rankNflOwnProjections([b,a])[0].player,'Old Band Winner',
+   'existing old ±10 research history is preserved without promotion');
+ const falseProb={...a,player:'Bookline',nba_style_reach_probability:null,model_prob:.999};
+ assert(!hasNflNbaMeanProjectionEvidence(falseProb));
+ const stale={...a,nba_style_whole_mean_projection:40};
+ assert(!hasNflNbaMeanProjectionEvidence(stale));
+ const wrongEvent={...a,nba_style_probability_event:'P_YARDS_WITHIN_TEN'};
+ assert(!hasNflNbaMeanProjectionEvidence(wrongEvent));
+ const v2={...a,model_source:'v2_context',
+   projection_probability_source:'UNAVAILABLE_V2_CONTEXT_NO_MATCHED_DISTRIBUTION'};
+ assert(!hasNflNbaMeanProjectionEvidence(v2));
+ assert.deepEqual(rankNflNbaMeanProjections([falseProb,stale,wrongEvent,v2,a])
+   .map(p=>p.player),['High NBA Chance']);
+});
+
+test('NBA-style NFL event survives real source parser and identity-matched role gate',()=>{
+ const generated='2026-11-08T17:54:00Z',kickoff='2026-11-08T18:00:00Z';
+ const p={...make('Matched',.5,40),projected_mean:49.6,
+   nba_style_whole_mean_projection:50,nba_style_reach_probability:.67,
+   nba_style_probability_event:'P_YARDS_AT_LEAST_ROUNDED_PUBLISHED_MEAN'};
+ const input={season:2026,week:9,generated_at_utc:generated,
+   scheduled_games:[{home_team:'NO',away_team:'CLE',kickoff_utc:kickoff}],
+   picks:[{...p,model_prob:.99,line:39.5}]};
+ const slate=parseExistingNfl(input,new Date('2026-11-08T17:55:00Z'));
+ const row=slate.games[0].projections[0];
+ assert.equal(row.nba_style_reach_probability,.67);
+ assert.equal(row.nba_style_whole_mean_projection,50);
+ const role:any={schema:'nfl-role-evidence-coverage-v1',status:'PREGAME_RESEARCH_ROLE_SNAPSHOT',
+   captured_at_utc:'2026-11-08T17:54:02Z',forecast_generated_at_utc:generated,
+   player_market_evidence:[{
+     player:'Matched',team:'CLE',opponent:'NO',market:'receiving_yards',kickoff_utc:kickoff,
+     published_model_median:40,published_model_source:'blended_sim',observed_stat_rows:3,
+     role_evidence_complete_for_showcase:true,roster_status:'ROSTER_LISTED_NOT_STARTER_VERIFIED',
+     has_verified_starting_role:false,has_calibrated_book_bet_probability:false,warnings:[]
+   }]};
+ const before=Date.parse('2026-11-08T17:55:00Z'),after=Date.parse('2026-11-08T18:10:00Z');
+ assert.equal(rankNflRoleSupportedNbaMeanProjections([row],role,generated,kickoff,before)[0].nba_style_reach_probability,.67);
+ assert.deepEqual(rankNflRoleSupportedNbaMeanProjections([row],role,generated,kickoff,after),[]);
+ assert.deepEqual(rankNflPregameNbaMeanSnapshotForDisplay([row],role,generated,kickoff,after)
+    .map(p=>p.player),['Matched']);
+ const warned={...role,player_market_evidence:[{...role.player_market_evidence[0],warnings:['OUT']}]};
+ assert.deepEqual(rankNflRoleSupportedNbaMeanProjections([row],warned,generated,kickoff,before),[]);
+ const future={...role,captured_at_utc:'2026-11-08T18:01:00Z'};
+ assert.deepEqual(rankNflPregameNbaMeanSnapshotForDisplay([row],future,generated,kickoff,after),[]);
 });
