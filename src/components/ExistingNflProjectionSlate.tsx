@@ -121,7 +121,7 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
             </div>
             <ChevronDown size={16} className={`shrink-0 text-gray-500 ${opened?'rotate-180':''}`}/>
           </button>
-          <button aria-label={`Create share card for ${existingMatchup(g)}`} onClick={()=>setShareGame(g)}
+          <button aria-label={`Create weekly model share card for ${existingMatchup(g)}`} onClick={()=>setShareGame(g)}
             className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-xl border border-[#333] bg-[#1B211E] text-gray-300">
             <Image size={18}/>
           </button>
