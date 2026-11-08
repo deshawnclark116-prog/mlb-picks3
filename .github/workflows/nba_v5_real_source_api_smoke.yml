@@ -32,6 +32,7 @@ jobs:
           assert.ok(before,'original Knicks Cavaliers game');
           const synced=await createPublishedV5Sync()(original,asOf);
           const game=synced.games.find(g=>g.game_id==='401909940');
+          console.log('NBA_V5_LIVE_SOURCE_DIAGNOSTIC',JSON.stringify(synced.v5_published_sync));
           assert.equal(synced.v5_published_sync.source_state,'SOURCE_VERIFIED');
           assert.equal(synced.v5_published_sync.latest_generation_at_utc,'2026-11-08T00:15:42.876975+00:00');
           assert.ok(game,'Knicks Cavaliers retained');
