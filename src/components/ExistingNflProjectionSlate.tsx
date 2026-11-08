@@ -5,7 +5,7 @@ import NflExistingShareModal from './NflExistingShareModal';
 import NflPrecisionShareModal from './NflPrecisionShareModal';
 import {formatET,type Horizon,type Phase1View} from '../nfl/phase1';
 import {wholeStatProjection} from '../lib/wholeStatProjection';
-import {hasNflOwnProjectionEvidence,rankNflPregameNbaMeanSnapshotForDisplay} from '../nfl/ownProjectionRank';
+import {hasNflNbaMeanProjectionEvidence,rankNflPregameNbaMeanSnapshotForDisplay} from '../nfl/ownProjectionRank';
 import type {NflRoleSnapshot} from '../nfl/roleSupportedNfl';
 import {parseExistingNfl,existingMatchup,type ExistingNflSlate,type ExistingNflGame,type ExistingYardProjection} from '../nfl/existing';
 const n=(x:number)=>x.toLocaleString('en-US',{maximumFractionDigits:1});
@@ -55,17 +55,18 @@ function matches(p:ExistingYardProjection,search:string,family:string){
     (family==='ALL'||(family==='RUSH'&&p.market==='rushing_yards')||(family==='REC'&&p.market==='receiving_yards'));
 }
 function Projection({p}:{p:ExistingYardProjection}){
+  const nbaStyle=hasNflNbaMeanProjectionEvidence(p);
   return <article data-testid="existing-nfl-projection" className="min-w-0 rounded-2xl border border-[#292929] bg-[#1C1C1C] p-4">
     <h3 className="break-words text-base font-bold capitalize text-white">{p.player}</h3>
     <p className="mt-1 text-[11px] text-gray-400">{p.team} · {label(p.market)}</p>
     <div data-testid="existing-nfl-median" className="my-4 rounded-xl border border-[#00FF41]/25 bg-[#0E1D14] p-3">
-      <p className="text-[10px] font-bold tracking-wide text-gray-300">PREDICTED STAT · MODEL MEDIAN</p>
-      <p className="mt-1 text-3xl font-black text-[#00FF41]">{wholeStatProjection(p.projected_median)} yds</p>
-      {hasNflOwnProjectionEvidence(p)?<div data-testid="nfl-own-projection-research" className="mt-2 space-y-1 text-xs text-amber-100">
-        <p>Model P(at least {p.whole_projection} yds): <strong>{(p.projection_reach_probability!*100).toFixed(1)}%</strong></p>
-        <p>Model P(within ±10 yds): {(p.projection_within_10_probability!*100).toFixed(1)}%</p>
-        <p className="text-[10px] text-gray-400">{p.projection_simulation_n?.toLocaleString()} player bootstrap simulations · uncalibrated · game-day availability not certified · no sportsbook input to this percentage</p>
-      </div>:<p className="mt-1 text-xs text-amber-200">Own-projection probability unavailable for this model. A book-line probability cannot substitute for it.</p>}
+      <p className="text-[10px] font-bold tracking-wide text-gray-300">{nbaStyle?'MODEL PROJECTION · ROUNDED MEAN':'PREDICTED STAT · MODEL MEDIAN'}</p>
+      <p className="mt-1 text-3xl font-black text-[#00FF41]">{nbaStyle?p.nba_style_whole_mean_projection:wholeStatProjection(p.projected_median)}{nbaStyle?'+':''} yds</p>
+      {nbaStyle?<div data-testid="nfl-own-projection-research" className="mt-2 space-y-1 text-xs text-amber-100">
+        <p>Model chance of reaching {p.nba_style_whole_mean_projection}+ yds:
+          <strong> {chance(p.nba_style_reach_probability)}</strong></p>
+        <p className="text-[10px] text-gray-400">{p.projection_simulation_n?.toLocaleString()} historical player simulations · not forward-calibrated · DNP and game-day active status unverified · no sportsbook line used</p>
+      </div>:<p className="mt-1 text-xs text-amber-200">No matching mean-target probability is available for this numerical model. A sportsbook event cannot substitute for it.</p>}
        <p className="mt-1 text-xs text-gray-400">Mean: {n(p.projected_mean)} yds · Model range: {n(p.projected_low)}–{n(p.projected_high)} yds</p>
     </div>
     <p className="text-[11px] text-gray-400">WEEKLY MODEL · {p.model_source} · separate from frozen V2 T24/T90 forecasts</p>
