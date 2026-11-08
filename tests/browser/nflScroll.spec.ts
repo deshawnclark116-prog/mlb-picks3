@@ -80,6 +80,8 @@ test('NFL expanded player projections scroll to last cards without horizontal ov
 test('NFL stat chips remain reachable on narrow mobile after vertical scroll fix',async({page})=>{
  await page.setViewportSize({width:300,height:760});
  await openNfl(page);
+ // Current 300px UI intentionally collapses the stat filters until opened.
+ await page.getByRole('button',{name:'Filter',exact:true}).click();
  const filter=page.locator('[aria-label="Outcome family"]');
  // The stat chips can be wider than a 360px phone, but must remain usable.
  const bounds=await filter.boundingBox();
