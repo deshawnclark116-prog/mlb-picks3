@@ -1,7 +1,9 @@
 name: NBA V5 official daily-lineups pretip poll and change-trigger
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    # Stagger relative to the independent V5 forecast schedule and
+    # avoid the top-of-hour GitHub Actions scheduler congestion.
+    - cron: "3,8,13,18,23,28,33,38,43,48,53,58 * * * *"
   workflow_dispatch: {}
   pull_request:
     paths:
