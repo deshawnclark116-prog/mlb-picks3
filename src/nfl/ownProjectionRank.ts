@@ -80,3 +80,29 @@ export function rankNflRoleSupportedOwnProjections(
     p.player.trim().toLowerCase(),p.team,p.opponent,p.market,
     p.projected_median,p.model_source].join('|'))),limit);
 }
+
+
+/** Display a REAL saved pre-kickoff projection after the game starts.
+ * Historical cards remain visible for accountability, just like NBA V5.
+ * This never authorizes post-kickoff selection or regenerates a forecast
+ * using later injuries or actual box scores.
+ */
+export function rankNflPregameSnapshotForDisplay(
+  projections:readonly ExistingYardProjection[],
+  role:NflRoleSnapshot|null,
+  generatedAtUtc:string,
+  kickoffUtc:string,
+  now=Date.now(),
+  limit=10
+):ExistingYardProjection[]{
+  const tip=Date.parse(kickoffUtc),at=Date.parse(generatedAtUtc);
+  const roleAt=Date.parse(role?.captured_at_utc||'');
+  if(!Number.isFinite(tip)||!Number.isFinite(at)||at>=tip||
+     !Number.isFinite(roleAt)||roleAt>=tip)return [];
+  // For a started game, validate the original archived pregame snapshot
+  // against its genuine pre-kickoff clock, without treating it as live.
+  const originalDecisionClock=Math.min(now,tip-1000);
+  return rankNflRoleSupportedOwnProjections(
+    projections,role,generatedAtUtc,kickoffUtc,originalDecisionClock,limit
+  );
+}
