@@ -4,6 +4,7 @@ import {ChevronDown,Image} from 'lucide-react';
 import NflExistingShareModal from './NflExistingShareModal';
 import {formatET,type Horizon,type Phase1View} from '../nfl/phase1';
 import {wholeStatProjection} from '../lib/wholeStatProjection';
+import {hasNflOwnProjectionEvidence,rankNflOwnProjections} from '../nfl/ownProjectionRank';
 import {parseExistingNfl,existingMatchup,type ExistingNflSlate,type ExistingNflGame,type ExistingYardProjection} from '../nfl/existing';
 const n=(x:number)=>x.toLocaleString('en-US',{maximumFractionDigits:1});
 const label=(m:string)=>m==='rushing_yards'?'RUSH YDS':'REC YDS';
@@ -18,7 +19,11 @@ function Projection({p}:{p:ExistingYardProjection}){
     <div data-testid="existing-nfl-median" className="my-4 rounded-xl border border-[#00FF41]/25 bg-[#0E1D14] p-3">
       <p className="text-[10px] font-bold tracking-wide text-gray-300">PREDICTED STAT · MODEL MEDIAN</p>
       <p className="mt-1 text-3xl font-black text-[#00FF41]">{wholeStatProjection(p.projected_median)} yds</p>
-      <p className="mt-1 text-xs text-amber-200">P(exactly this integer): unavailable. No probability distribution supplied.</p>
+      {hasNflOwnProjectionEvidence(p)?<div data-testid="nfl-own-projection-research" className="mt-2 space-y-1 text-xs text-amber-100">
+        <p>Model P(at least {p.whole_projection} yds): <strong>{(p.projection_reach_probability!*100).toFixed(1)}%</strong></p>
+        <p>Model P(within ±10 yds): {(p.projection_within_10_probability!*100).toFixed(1)}%</p>
+        <p className="text-[10px] text-gray-400">{p.projection_simulation_n?.toLocaleString()} player bootstrap simulations · uncalibrated · game-day availability not certified · no sportsbook input to this percentage</p>
+      </div>:<p className="mt-1 text-xs text-amber-200">Own-projection probability unavailable for this model. A book-line probability cannot substitute for it.</p>}
        <p className="mt-1 text-xs text-gray-400">Mean: {n(p.projected_mean)} yds · Model range: {n(p.projected_low)}–{n(p.projected_high)} yds</p>
     </div>
     <p className="text-[11px] text-gray-400">WEEKLY MODEL · {p.model_source} · separate from frozen V2 T24/T90 forecasts</p>
@@ -103,7 +108,10 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
     {games.map(g=>{
       const opened=expanded===g.id;
       const started=Date.now()>=Date.parse(g.kickoff_utc);
-      const preview=g.shown[0];
+      const top=rankNflOwnProjections(g.shown,10);
+      const topKeys=new Set(top.map(p=>[p.player_id,p.player,p.team,p.market].join('|')));
+      const remaining=g.shown.filter(p=>!topKeys.has([p.player_id,p.player,p.team,p.market].join('|')));
+      const preview=top[0]||g.shown[0];
       return <section key={g.id} data-testid="existing-nfl-game" className="min-w-0 overflow-hidden rounded-2xl border border-[#292929] bg-[#141414]">
         <div className="flex items-center gap-1 pr-3">
           <button type="button" data-testid="existing-nfl-toggle" aria-expanded={opened} aria-controls={`existing-game-${g.id}`}
@@ -115,7 +123,7 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
                 <span className="text-[11px] text-gray-500">{formatET(g.kickoff_utc)}</span>
               </div>
               <p className="mt-2 text-[10px] font-bold text-gray-400">{g.projections.length} PLAYER OUTCOMES · WEEKLY MODEL</p>
-              {preview&&<p data-testid="existing-nfl-preview" className="mt-2 truncate text-[11px] text-gray-300">MODEL MEDIAN: <span className="capitalize text-white">{preview.player}</span> · <span className="font-black text-[#00FF41]">{n(preview.projected_median)} {label(preview.market)}</span></p>}
+              {preview&&<p data-testid="existing-nfl-preview" className="mt-2 truncate text-[11px] text-gray-300">{top.length?'TOP RESEARCH MODEL EVENT':'MODEL MEDIAN'}: <span className="capitalize text-white">{preview.player}</span> · <span className="font-black text-[#00FF41]">{n(preview.projected_median)} {label(preview.market)}</span></p>}
               {!preview&&<p role="status" className="mt-1 text-[11px] text-amber-200">{g.projections.length===0?'No eligible player projections for this matchup':'No matching projected stats'}</p>}
               {started&&<p className="mt-1 text-[10px] text-gray-500">Kickoff passed · archived pregame projections</p>}
             </div>
@@ -128,8 +136,20 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
         </div>
         {opened&&<div id={`existing-game-${g.id}`} data-testid="existing-nfl-expanded" className="space-y-3 border-t border-[#292929] p-3">
           <p className="text-[11px] text-gray-400">Numerical weekly projections, not 65%+ system targets or verified sportsbook bets. {mode==='BETTABLE NOW'?'No verified book lines supplied.':''}</p>
-          {g.shown.length>0?<div className="space-y-3">{g.shown.map(p=><Projection key={p.player_id+'|'+p.player+'|'+p.team+'|'+p.market} p={p}/>)}</div>
-          :<p className="py-2 text-xs text-gray-400">No qualifying numerical projections available for this game and filter.</p>}
+          {g.shown.length>0?<div className="space-y-3">
+            {top.length>0?<div data-testid="nfl-top10-simulation-research" className="space-y-3">
+              <p className="text-xs font-bold text-[#00FF41]">TOP {top.length} OWN-PROJECTION MODEL EVENTS · RESEARCH ONLY</p>
+              <p className="text-[11px] text-amber-200">Ranked by the 10,000+ simulated chance of reaching the model's own rounded projected yardage. These are uncalibrated, independent player bootstraps—not a full-game joint NFL simulation, verified active status, numerical accuracy guarantee or recommended bets.</p>
+              {top.map(p=><Projection key={p.player_id+'|'+p.player+'|'+p.team+'|'+p.market} p={p}/>)}
+              {remaining.length>0&&<details className="rounded-xl border border-[#292929] p-3">
+                <summary className="min-h-11 cursor-pointer text-xs font-bold text-gray-300">SHOW OTHER {remaining.length} NUMERICAL MODEL PROJECTIONS ▾</summary>
+                <div className="space-y-3 pt-3">{remaining.map(p=><Projection key={p.player_id+'|'+p.player+'|'+p.team+'|'+p.market} p={p}/>)}</div>
+              </details>}
+            </div>:<div className="space-y-3">
+              <p className="text-[11px] text-amber-200">No source-matched own-projection simulations are available for a probability-ranked shortlist. Original model projections remain visible below.</p>
+              {g.shown.map(p=><Projection key={p.player_id+'|'+p.player+'|'+p.team+'|'+p.market} p={p}/>)}
+            </div>}
+          </div>:<p className="py-2 text-xs text-gray-400">No qualifying numerical projections available for this game and filter.</p>}
         </div>}
       </section>;
     })}
