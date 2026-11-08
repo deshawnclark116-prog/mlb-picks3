@@ -12,11 +12,11 @@ export interface ExistingYardProjection {
   confidence: 'HIGH'|'MEDIUM'|'LOW'|null; games_played: number|null;
   // Same original simulation's numerical events, NOT market-line odds,
   // independent active-status proof, or forward-calibrated probabilities.
-  whole_projection: number|null;
-  projection_reach_probability: number|null;
-  projection_within_10_probability: number|null;
-  projection_simulation_n: number|null;
-  projection_probability_source: string|null;
+  whole_projection?: number|null;
+  projection_reach_probability?: number|null;
+  projection_within_10_probability?: number|null;
+  projection_simulation_n?: number|null;
+  projection_probability_source?: string|null;
 }
 export interface ExistingNflGame {
   id: string; kickoff_utc: string; teams: [string,string]; home?: string; away?: string; projections: ExistingYardProjection[];
