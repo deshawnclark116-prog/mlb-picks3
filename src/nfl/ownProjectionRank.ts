@@ -176,3 +176,71 @@ export function rankNflPregameSnapshotForDisplay(
     projections,role,generatedAtUtc,kickoffUtc,originalDecisionClock,limit
   );
 }
+
+
+/** Highest meaningful MODEL-DERIVED yardage thresholds, separate from
+ * the mean projection. No sportsbook line used. The one-sided Wilson
+ * bound only controls finite-MC noise; it is NOT a backtested success rate.
+ */
+export function hasNflMeaningfulTargetEvidence(p:ExistingYardProjection):boolean{
+ const t=p.nfl_model_target,g=p.nfl_model_target_grid;
+ if(!t||!g||!Number.isFinite(p.projected_mean)||p.projected_mean<=0||
+    p.projection_probability_source!=='UNCALIBRATED_HISTORICAL_USAGE_BOOTSTRAP'||
+    p.nfl_model_target_event!=='P_YARDS_AT_LEAST_FIXED_MEANINGFUL_THRESHOLD'||
+    p.projection_simulation_n==null||p.projection_simulation_n<10_000||
+    g.schema!=='nfl_meaningful_yardage_targets_v1'||
+    g.simulation_n!==p.projection_simulation_n||
+    g.minimum_relative_mean_fraction!==.55||
+    g.required_wilson_lower_95!==.65||g.grid_step_yards!==5||
+    g.conditional_on_modeled_opportunities!==true||
+    g.forward_calibrated!==false||g.official_active_status_verified!==false||
+    g.minimum_absolute_yards!==(p.market==='receiving_yards'?25:30)||
+    !Number.isInteger(t.yards)||t.yards%5!==0||
+    t.yards<Math.max(g.minimum_absolute_yards,Math.ceil(.55*p.projected_mean))||
+    !Number.isFinite(t.probability)||t.probability<.65||t.probability>1||
+    !Number.isFinite(t.wilson_lower_95)||t.wilson_lower_95<.65||
+    t.wilson_lower_95>t.probability||!Array.isArray(g.grid)||
+    g.chosen_target?.yards!==t.yards||
+    g.chosen_target.probability!==t.probability||
+    g.chosen_target.wilson_lower_95!==t.wilson_lower_95)return false;
+ const valid=g.grid.filter(x=>x.wilson_lower_95>=.65);
+ return valid.length>0&&valid[valid.length-1].yards===t.yards&&
+    valid[valid.length-1].probability===t.probability&&
+    valid[valid.length-1].wilson_lower_95===t.wilson_lower_95;
+}
+export function rankNflMeaningfulTargets(
+  projections:readonly ExistingYardProjection[],limit=10
+):ExistingYardProjection[]{
+ if(!Number.isInteger(limit)||limit<1||limit>24)throw new Error('invalid NFL shortlist size');
+ return projections.filter(hasNflMeaningfulTargetEvidence)
+  .sort((a,b)=>b.nfl_model_target!.probability-a.nfl_model_target!.probability||
+     b.nfl_model_target!.wilson_lower_95-a.nfl_model_target!.wilson_lower_95||
+     b.nfl_model_target!.yards-a.nfl_model_target!.yards||
+     (b.games_played||0)-(a.games_played||0)||
+     a.player.localeCompare(b.player)||a.market.localeCompare(b.market))
+  .slice(0,limit);
+}
+export function rankNflRoleSupportedMeaningfulTargets(
+  projections:readonly ExistingYardProjection[],
+  role:NflRoleSnapshot|null,
+  generatedAtUtc:string,kickoffUtc:string,
+  now=Date.now(),limit=10
+):ExistingYardProjection[]{
+ return rankNflMeaningfulTargets(
+   roleMatchedPregameRows(projections,role,generatedAtUtc,kickoffUtc,now),limit);
+}
+/** Historical pregame list remains visible after kickoff; new betting or
+ * research decisions cannot be created from in-game or postgame data. */
+export function rankNflPregameMeaningfulTargetsForDisplay(
+  projections:readonly ExistingYardProjection[],
+  role:NflRoleSnapshot|null,
+  generatedAtUtc:string,kickoffUtc:string,
+  now=Date.now(),limit=10
+):ExistingYardProjection[]{
+ const tip=Date.parse(kickoffUtc),at=Date.parse(generatedAtUtc),
+   roleAt=Date.parse(role?.captured_at_utc||'');
+ if(!Number.isFinite(tip)||!Number.isFinite(at)||at>=tip||
+    !Number.isFinite(roleAt)||roleAt>=tip)return [];
+ return rankNflRoleSupportedMeaningfulTargets(
+   projections,role,generatedAtUtc,kickoffUtc,Math.min(now,tip-1000),limit);
+}
