@@ -72,7 +72,7 @@ export function overlaySavedNbaV5Pretip(result:any,root=V5_LAST_ARCHIVE_DIR,now=
   const id=String(orig.game_id);
   // Only numeric NBA game IDs may select a file. Never treat a game name as
   // an arbitrary pathname.
-  if(!/^\d{6,12}$/.test(id))continue;
+  if(!/^\d{1,12}$/.test(id))continue;
   const archive=path.join(root,id+'.json.gz');
   if(!existsSync(archive))continue;
   try{
