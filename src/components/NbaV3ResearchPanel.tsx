@@ -33,7 +33,17 @@ type Game={game_id:string;away:string;home:string;tipoff_utc:string;
 type Shadow={schema:string;status:string;upcoming_games:number;
  original_games_audited:number;research_only:true;official_bets:0;games:Game[];
  prospective_model_probability_calibration_verified:false;
- sportsbook_lines_required:false};
+ sportsbook_lines_required:false;
+ v5_published_sync?:{
+  provider:'PUBLIC_GITHUB_V5_ASOF_RELEASE';
+  checked_at_utc:string;
+  latest_generation_at_utc:string|null;
+  source_state:'SOURCE_VERIFIED'|'SOURCE_UNAVAILABLE_LOCAL_FALLBACK';
+  latest_applied:number;
+  archived_applied:number;
+  source_error:string|null;
+ };
+};
 const pct=(v:number)=>(v*100).toFixed(1)+'%';
 const fmt=(v:number)=>v.toLocaleString('en-US',{maximumFractionDigits:1});
 const dateET=(iso:string)=>{
@@ -224,7 +234,16 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
     'V3 is the selected frontend model. Its first authentic pregame game distribution has not yet been published; old V2 predictions will NOT be mislabeled as V3.':
     'No upcoming first-seen V3 game distributions are available. Predictions cannot be safely backfilled after tipoff.'}
   </p>}
-  {doc&&doc.status==='AVAILABLE_RESEARCH_ONLY'&&<>
+  {doc?.v5_published_sync&&<p data-testid="nba-v5-published-freshness"
+     className={'text-xs '+(doc.v5_published_sync.source_state==='SOURCE_VERIFIED'?'text-gray-300':'text-amber-300')}>
+     {doc.v5_published_sync.source_state==='SOURCE_VERIFIED'
+      ?<>Published V5 source checked {et(doc.v5_published_sync.checked_at_utc)}
+        {doc.v5_published_sync.latest_generation_at_utc
+         ?<> · Latest published model {et(doc.v5_published_sync.latest_generation_at_utc)}</>:null}
+        {' · '}Pregame forecasts retained as originally simulated.</>
+      :<>V5 published-source check unavailable. These may be older local projections; use the date on each game.</>}
+   </p>}
+   {doc&&doc.status==='AVAILABLE_RESEARCH_ONLY'&&<>
     <div className="flex gap-2 overflow-x-auto pb-1" aria-label="NBA V3 game date">
       {['AUTO','TODAY','ALL',...dates].map(d=><button type="button" key={d}
        onClick={()=>{setDay(d);setExpanded(null);}} aria-pressed={day===d}

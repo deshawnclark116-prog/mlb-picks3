@@ -1,0 +1,41 @@
+name: NBA V5 live source sync for stale preview server
+on:
+  pull_request:
+    paths:
+      - "server/nbaV5PublishedSync.ts"
+      - "server/nbaV3Shadow.ts"
+      - "src/components/NbaV3ResearchPanel.tsx"
+      - "tests/nbaV5PublishedSync.test.ts"
+      - ".github/workflows/nba_v5_live_source_sync.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  source-truth:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Verify no-lookahead V5 5pm to 7pm release recovery and network fallback
+        run: |
+          node --import tsx --test tests/nbaV5PublishedSync.test.ts tests/nbaV3Latest.test.ts tests/nbaV3ProjectionPicks.test.ts tests/nbaV5ShareCard.test.ts
+      - name: Typecheck API and mobile JSX freshness receipt
+        run: npm run lint
+      - name: Verify exact public V5 readiness release really is fetchable without GitHub credentials
+        run: |
+          node --input-type=module <<'JS'
+          const url="https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks3/main/docs/nba_v5_latest/readiness.json";
+          const r=await fetch(url,{cache:"no-store",signal:AbortSignal.timeout(12000)});
+          if(!r.ok)throw Error('V5_PUBLIC_GITHUB_READINESS_UNREACHABLE_'+r.status);
+          const d=await r.json();
+          if(d.schema!=='NBA_V5_FORECAST_READINESS_V1'||!Number.isFinite(Date.parse(d.document_generated_at_utc)))
+            throw Error('V5_PUBLIC_READINESS_SCHEMA_NOT_VERIFIED');
+          console.log('V5_REAL_PUBLIC_RELEASE_AVAILABLE_WITHOUT_TOKEN',JSON.stringify({
+            source:url,generated_at_utc:d.document_generated_at_utc,games:d.games?.length
+          }));
+          JS
