@@ -10,6 +10,13 @@ export interface ExistingYardProjection {
   ungraded: boolean; player_id: string;
   /** Historical simulator workload stability, NOT calibrated yardage-hit likelihood. */
   confidence: 'HIGH'|'MEDIUM'|'LOW'|null; games_played: number|null;
+  // Same original simulation's numerical events, NOT market-line odds,
+  // independent active-status proof, or forward-calibrated probabilities.
+  whole_projection: number|null;
+  projection_reach_probability: number|null;
+  projection_within_10_probability: number|null;
+  projection_simulation_n: number|null;
+  projection_probability_source: string|null;
 }
 export interface ExistingNflGame {
   id: string; kickoff_utc: string; teams: [string,string]; home?: string; away?: string; projections: ExistingYardProjection[];
@@ -86,7 +93,12 @@ export function parseExistingNfl(raw:unknown,now=new Date(),expected?:{season:nu
       model_source:typeof row.model_source==='string'?row.model_source:'unlabeled_existing_model',
       ungraded:row.ungraded!==false,player_id:typeof row.player_id==='string'?row.player_id:'',
       confidence:['HIGH','MEDIUM','LOW'].includes(row.confidence)?row.confidence:null,
-      games_played:Number.isInteger(row.games_played)&&row.games_played>0?row.games_played:null
+      games_played:Number.isInteger(row.games_played)&&row.games_played>0?row.games_played:null,
+      whole_projection:Number.isInteger(row.whole_projection)&&row.whole_projection>=0?row.whole_projection:null,
+      projection_reach_probability:finite(row.projection_reach_probability)&&row.projection_reach_probability>=0&&row.projection_reach_probability<=1?row.projection_reach_probability:null,
+      projection_within_10_probability:finite(row.projection_within_10_probability)&&row.projection_within_10_probability>=0&&row.projection_within_10_probability<=1?row.projection_within_10_probability:null,
+      projection_simulation_n:Number.isInteger(row.projection_simulation_n)&&row.projection_simulation_n>=10_000?row.projection_simulation_n:null,
+      projection_probability_source:typeof row.projection_probability_source==='string'?row.projection_probability_source:null
     };
     if(!games.has(id))games.set(id,{id,kickoff_utc:row.kickoff_utc,teams,projections:[]});
     games.get(id)!.projections.push(item);
