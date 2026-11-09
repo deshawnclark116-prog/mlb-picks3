@@ -19,6 +19,7 @@ import {validateShadowHeader} from './nbaV3Shadow.ts';
 
 export const V5_PUBLIC_RELEASE_ROOT=
  'https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks3/main';
+const RELEASE_COMMIT_API='https://api.github.com/repos/deshawnclark116-prog/mlb-picks3/commits/main';
 const READINESS_PATH='/docs/nba_v5_latest/readiness.json';
 const LATEST_PATH='/docs/nba_v5_latest/latest.json';
 // Current multi-game V5 empirical releases exceed 5 MB. Keep a strict
@@ -28,7 +29,8 @@ const MAX_LATEST_BYTES=12_000_000;
 const MAX_ARCHIVE_BYTES=750_000;
 const MAX_DECOMPRESSED_BYTES=8_000_000;
 const MIN_PREGAME_MS=15*60_000;
-const CHECK_EVERY_MS=60_000;
+// At most 30 anonymous GitHub API commit lookups/hour per app instance.
+const CHECK_EVERY_MS=120_000;
 const MAX_ARCHIVE_GAMES=8;
 
 export type GithubSourceGetter=(url:string,options:RequestInit)=>Promise<Response>;
@@ -42,8 +44,23 @@ async function bounded(response:Response,limit:number):Promise<Buffer>{
  if(!raw.length||raw.byteLength>limit)throw Error('NBA_V5_RELEASE_UNEXPECTED_BYTES');
  return raw;
 }
-async function fetchPublic(path:string,limit:number,get:GithubSourceGetter,at:number){
- const url=V5_PUBLIC_RELEASE_ROOT+path+'?v='+Math.floor(at/60_000);
+// Always pin a single immutable Git commit for BOTH readiness and full
+// projection JSON. The public /main CDN can serve a stale previous release
+// for several minutes after a successful pretip publication.
+async function fetchReleaseCommit(get:GithubSourceGetter,at:number){
+ const response=await get(RELEASE_COMMIT_API+'?v='+Math.floor(at/CHECK_EVERY_MS),{
+  signal:AbortSignal.timeout(9000),cache:'no-store',
+  headers:{Accept:'application/vnd.github+json','User-Agent':'PropEdge-NBA-V5-PublishedSync'}
+ });
+ const doc=JSON.parse((await bounded(response,250_000)).toString('utf8'));
+ if(typeof doc.sha!=='string'||!/^[0-9a-f]{40}$/.test(doc.sha))
+  throw Error('NBA_V5_RELEASE_COMMIT_INVALID');
+ return doc.sha as string;
+}
+async function fetchPublic(path:string,limit:number,get:GithubSourceGetter,at:number,ref:string){
+ if(!/^[0-9a-f]{40}$/.test(ref))throw Error('NBA_V5_UNPINNED_RELEASE_REF');
+ const root=V5_PUBLIC_RELEASE_ROOT.replace(/\\/main$/, '/'+ref);
+ const url=root+path+'?v='+Math.floor(at/60_000);
  const response=await get(url,{
   signal:AbortSignal.timeout(9000),cache:'no-store',
   headers:{Accept:'application/json, */*'}
@@ -75,6 +92,7 @@ export function createPublishedV5Sync(get:GithubSourceGetter=fetch){
  let readyGeneration:string|null=null;
  let latestDocument:any|null=null;
  let lastError:string|null=null;
+ let releaseCommit:string|null=null;
  let refresh:Promise<void>|null=null;
  const archives=new Map<string,RecentArchive>();
 
@@ -84,16 +102,18 @@ export function createPublishedV5Sync(get:GithubSourceGetter=fetch){
   refresh=(async()=>{
    checkedAt=now;
    try{
-    const ready=JSON.parse((await fetchPublic(READINESS_PATH,60_000,get,now)).toString('utf8'));
+    const commit=await fetchReleaseCommit(get,now);
+    const ready=JSON.parse((await fetchPublic(READINESS_PATH,60_000,get,now,commit)).toString('utf8'));
     const generation=ready?.document_generated_at_utc;
     if(!validDate(generation)||ready?.schema!=='NBA_V5_FORECAST_READINESS_V1'||
        Date.parse(generation)>now+60_000||
        now-Date.parse(generation)>10*3600_000)
      throw Error('NBA_V5_PUBLIC_READINESS_UNTRUSTED_OR_STALE');
     if(readyGeneration===generation&&latestDocument){
+     releaseCommit=commit;
      lastError=null;return;
     }
-    const doc=JSON.parse((await fetchPublic(LATEST_PATH,MAX_LATEST_BYTES,get,now)).toString('utf8'));
+    const doc=JSON.parse((await fetchPublic(LATEST_PATH,MAX_LATEST_BYTES,get,now,commit)).toString('utf8'));
     validateShadowHeader(doc);
     if(doc.model_version?.startsWith('nba-v5-')!==true||
        doc.generated_at_utc!==generation)
@@ -101,6 +121,7 @@ export function createPublishedV5Sync(get:GithubSourceGetter=fetch){
     // Only commit to the cache after the source and readiness agree.
     latestDocument=doc;
     readyGeneration=generation;
+    releaseCommit=commit;
     lastError=null;
    }catch(e){
     lastError=e instanceof Error?e.message:'NBA_V5_REMOTE_SOURCE_UNAVAILABLE';
@@ -117,7 +138,7 @@ export function createPublishedV5Sync(get:GithubSourceGetter=fetch){
   let doc:any|null=null;
   try{
    const bytes=await fetchPublic(
-    '/docs/nba_v5_archive/last/'+id+'.json.gz',MAX_ARCHIVE_BYTES,get,now);
+    '/docs/nba_v5_archive/last/'+id+'.json.gz',MAX_ARCHIVE_BYTES,get,now,releaseCommit);
    const json=gunzipSync(bytes,{maxOutputLength:MAX_DECOMPRESSED_BYTES}).toString('utf8');
    doc=verifyArchive(JSON.parse(json),id,tip,now);
   }catch{
