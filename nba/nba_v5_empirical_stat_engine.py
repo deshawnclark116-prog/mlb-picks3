@@ -82,16 +82,36 @@ def simulate_empirical_game(home, away, history, date, *, worlds, seed,
     for team in teams:
         n = len(team.ids)
         mins = np.zeros((worlds, n))
-        playable = rng.random((worlds, n)) < np.asarray(team.p_play)[None, :]
+        if (getattr(team, "avail_corr", None) is not None and
+                np.any((np.asarray(team.p_play) > 0.) & (np.asarray(team.p_play) < 1.))):
+            from nba.nba_v5_availability import copula_availability
+            playable = copula_availability(rng, np.asarray(team.p_play),
+                                          team.avail_corr, worlds)
+        else:
+            playable = rng.random((worlds, n)) < np.asarray(team.p_play)[None, :]
         histories = []
         for j, pid in enumerate(team.ids):
             h = [p for p in history[pid] if p["date"] < date and p["min"] > 0][-24:]
             histories.append(h)
-            if len(h) < 3:
+            if not h:
                 playable[:, j] = False
                 continue
             expected, sd = _recent_minute_prior(h, team.starter[j])
-            mins[:, j] = np.clip(rng.normal(expected, sd, worlds), 0., MAX_MINUTES)
+            if len(h) < 3:
+                # Still reserve genuine one/two-game teammates' minutes:
+                # lack of a deep NBA sample must not award their playing
+                # time to star scorers. Their low-confidence stats are not
+                # eligible for featured ranking.
+                expected = (len(h) * expected + 5. * 15.) / (len(h) + 5.)
+                sd = max(sd, 10.)
+            if getattr(team, "return_mult", None) is not None:
+                expected *= float(team.return_mult[j])
+            if bool(team.starter[j]) and getattr(team, "start_mult", 1.) != 1.:
+                expected *= float(team.start_mult)
+            vals = np.clip(rng.normal(expected, sd, worlds), 0., MAX_MINUTES)
+            if getattr(team, "minutes_cap", None) is not None:
+                vals = np.minimum(vals, float(team.minutes_cap[j]))
+            mins[:, j] = vals
         mins *= playable
         # Do not allocate more than a regulation team's 240 minutes.
         # Unknown player minutes remain unallocated; this avoids V5's
@@ -102,7 +122,7 @@ def simulate_empirical_game(home, away, history, date, *, worlds, seed,
                  for key in (*MARKETS.keys(), *OTHER)}
         for j, pid in enumerate(team.ids):
             h = histories[j]
-            if len(h) < 3:
+            if not h:
                 continue
             pool, draws = _sample_index(rng, h, team.starter[j], worlds)
             past_min = np.asarray([float(p["min"]) for p in pool])[draws]
