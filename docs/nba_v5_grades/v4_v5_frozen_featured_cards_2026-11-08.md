@@ -21,12 +21,12 @@ V4's displayed P(reach) is **conditional on playing**, whereas V5's is **includi
 
 | Stat | V4 hits / selections | V5 hits / selections |
 |---|---:|---:|
-| PTS | 0/0 | 0/0 |
-| REB | 0/0 | 0/0 |
-| AST | 0/0 | 0/0 |
-| 3PM | 0/0 | 0/0 |
-| STL | 0/0 | 0/0 |
-| BLK | 0/0 | 0/0 |
+| PTS | 1/3 | 0/0 |
+| REB | 8/15 | 2/3 |
+| AST | 11/16 | 1/2 |
+| 3PM | 22/36 | 16/30 |
+| STL | 0/0 | 15/28 |
+| BLK | 0/0 | 4/7 |
 
 **Overlap:** 19/70 identical player-stat selections between cards. All 19 shared selections used the same rounded target; differences arise mainly from which selections each model prioritizes.
 
