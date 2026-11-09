@@ -202,9 +202,9 @@ def markdown(report):
         s = block["summary"]
         out += [
             f'## {sport} — {block["game_count"]} archived matchups',
-            f'**Target hits:** {s["summary"]["hits"]}/{s["summary"]["graded"]} '
-            f'({pct(s["summary"]["hit_rate"])}); {s["summary"]["unverified"]} unresolved; '
-            f'average stated reach chance {pct(s["summary"]["mean_stated_probability"])}.',
+            f'**Target hits:** {s["hits"]}/{s["graded"]} '
+            f'({pct(s["hit_rate"])}); {s["unverified"]} unresolved; '
+            f'average stated reach chance {pct(s["mean_stated_probability"])}.',
             '',
             '| Game | Hits / verified | Predicted reach | DNP | Unverified |',
             '|---|---:|---:|---:|---:|',
