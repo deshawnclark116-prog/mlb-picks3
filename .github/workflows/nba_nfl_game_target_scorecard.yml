@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       date:
-        description: "Eastern game date YYYY-MM-DD (blank = yesterday)"
+        description: "Eastern game date YYYY-MM-DD (blank = last 3 days)"
         required: false
         type: string
   push:
@@ -42,13 +42,15 @@ jobs:
           python - <<'PY'
           import datetime as dt, os
           from zoneinfo import ZoneInfo
-          day = (os.environ.get("REQUESTED") or
-                 (dt.datetime.now(ZoneInfo("America/New_York")).date() -
-                  dt.timedelta(days=1)).isoformat())
-          dt.date.fromisoformat(day)
+          explicit = os.environ.get("REQUESTED")
+          today = dt.datetime.now(ZoneInfo("America/New_York")).date()
+          days = [dt.date.fromisoformat(explicit)] if explicit else [
+              today - dt.timedelta(days=i) for i in (1, 2, 3)
+          ]
+          days_str = " ".join(x.isoformat() for x in days)
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
-              f.write(f"date={day}\n")
-          print("FROZEN_OUTCOME_DATE", day)
+              f.write(f"dates={days_str}\\n")
+          print("FROZEN_OUTCOME_DATES", days_str)
           PY
       - name: Read genuine NFL first-seen ledger and verified outcome grade
         run: |
@@ -63,26 +65,31 @@ jobs:
           test -s "$RUNNER_TEMP/nfl_original/nfl_precision_forward_grade.json"
       - name: Run deterministic scorecard tests and output both sports
         env:
-          DAY: ${{ steps.day.outputs.date }}
+          DAYS: ${{ steps.day.outputs.dates }}
         run: |
-          python -m nba.nba_nfl_game_target_scorecard \
-            --date "$DAY" \
-            --nfl-firstseen "$RUNNER_TEMP/nfl_original/nfl_precision_firstseen.jsonl" \
-            --nfl-grades "$RUNNER_TEMP/nfl_original/nfl_precision_forward_grade.json" \
-            --output docs/projection_outcome \
-            --self-test
+          set -euo pipefail
+          for DAY in $DAYS; do
+            python -m nba.nba_nfl_game_target_scorecard \
+              --date "$DAY" \
+              --nfl-firstseen "$RUNNER_TEMP/nfl_original/nfl_precision_firstseen.jsonl" \
+              --nfl-grades "$RUNNER_TEMP/nfl_original/nfl_precision_forward_grade.json" \
+              --output docs/projection_outcome \
+              --self-test
+          done
       - name: Publish only authentic pregame target grades
         env:
-          DAY: ${{ steps.day.outputs.date }}
+          DAYS: ${{ steps.day.outputs.dates }}
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "docs/projection_outcome/$DAY.json" "docs/projection_outcome/$DAY.md"
+          for DAY in $DAYS; do
+            git add "docs/projection_outcome/$DAY.json" "docs/projection_outcome/$DAY.md"
+          done
           if git diff --cached --quiet; then
             echo "SCORECARD_UNCHANGED"
             exit 0
           fi
-          git commit -m "Research: frozen NBA/NFL per-game projection outcomes $DAY"
+          git commit -m "Research: rolling frozen NBA/NFL per-game projection outcomes"
           git pull --rebase origin main
           git push origin HEAD:main
