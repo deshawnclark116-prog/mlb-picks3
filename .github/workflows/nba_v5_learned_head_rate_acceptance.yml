@@ -1,0 +1,35 @@
+name: NBA V5 learned player-stat next-game rate holdout
+on:
+  push:
+    branches: [main]
+    paths:
+      - "nba/nba_v5_learned_opportunity_head.py"
+      - "nba/nba_v5_learned_head_rate_validation.py"
+      - ".github/workflows/nba_v5_learned_head_rate_acceptance.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  independent-rates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install "numpy>=2.1,<2.5" "scipy>=1.14,<1.18"
+      - name: Strict no-hindsight model and core stat math tests
+        run: python -m unittest -v tests.test_nba_v5_learned_opportunity_head
+      - name: Independently grade unseen next-game player stat rates
+        run: |
+          PYTHONPATH=. python -u -m nba.nba_v5_learned_head_rate_validation \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --train-before 2026-10-27 --test-through 2026-11-09 \
+            --out /tmp/nba_v5_learned_head_rate_holdout.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-v5-learned-head-next-game-rate-holdout
+          path: /tmp/nba_v5_learned_head_rate_holdout.json
+          retention-days: 30
