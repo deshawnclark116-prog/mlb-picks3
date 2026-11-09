@@ -110,7 +110,7 @@ jobs:
           set -euo pipefail
           test -s "$RUNNER_TEMP/latest-new.json"
           PYTHONPATH=. python -u -m nba.nba_v5_live_confirmed_lineups \
-            --v3 "$RUNNER_TEMP/latest-new.json" \
+            --v3 "$RUNNER_TEMP/v5_game_facts.json" \
             --out "$RUNNER_TEMP/v5_official_starters.json" \
             --audit "$RUNNER_TEMP/v5_official_starters_audit.json"
           # If the public NBA feed lacks an explicit pretip five, status remains
@@ -122,7 +122,7 @@ jobs:
           set -euo pipefail
           test -s "$RUNNER_TEMP/latest-new.json"
           PYTHONPATH=. python -u -m nba.nba_v5_daily_lineups_feed \
-            --v3 "$RUNNER_TEMP/latest-new.json" \
+            --v3 "$RUNNER_TEMP/v5_game_facts.json" \
             --out "$RUNNER_TEMP/v5_daily_starters.json" \
             --audit "$RUNNER_TEMP/v5_daily_starters_audit.json"
           # Team is CONFIRMED only when the NBA feed shows a not-started game
@@ -157,7 +157,7 @@ jobs:
           Path(os.environ["RUNNER_TEMP"], "nba_todays_lineups_authorized_capture.json").write_bytes(raw)
           PY
           PYTHONPATH=. python -u -m nba.nba_v5_todays_lineups \
-            --v3 "$RUNNER_TEMP/latest-new.json" \
+            --v3 "$RUNNER_TEMP/v5_game_facts.json" \
             --snapshot "$RUNNER_TEMP/nba_todays_lineups_authorized_capture.json" \
             --out "$RUNNER_TEMP/v5_today_starters.json" \
             --audit "$RUNNER_TEMP/v5_today_starters_audit.json"
@@ -171,7 +171,7 @@ jobs:
           test -s "$RUNNER_TEMP/latest-new.json"
           python -m pip install -q 'pandas>=2.2,<3.0' 'pyarrow>=18,<25'
           PYTHONPATH=. python -u -m nba.nba_v5_hoopr_tracking \
-            --v3 "$RUNNER_TEMP/latest-new.json" \
+            --v3 "$RUNNER_TEMP/v5_game_facts.json" \
             --out "$RUNNER_TEMP/hoopr_tracking.json" \
             --receipt "$RUNNER_TEMP/hoopr_tracking_receipt.json"
           # Real source *quality* can now be attached to each forecast. The
@@ -209,7 +209,7 @@ jobs:
           rm -f docs/nba_v5_latest/official_report.json docs/nba_v5_latest/official_matches.json
           PYTHONPATH=. python -u -m nba.nba_v5_official_injuries \
             --captured "$RUNNER_TEMP/official_probe.json" \
-            --v3 "$RUNNER_TEMP/latest-new.json" \
+            --v3 "$RUNNER_TEMP/v5_game_facts.json" \
             --out docs/nba_v5_latest/official_report.json \
             --matches-out docs/nba_v5_latest/official_matches.json
       - name: V5 - whole-game simulation, information receipt, frozen archive
@@ -218,7 +218,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p docs/nba_v5_latest docs/nba_v5_info
-          PYTHONPATH=. python -u -m nba.nba_v5_info --v3 "$RUNNER_TEMP/latest-new.json" \
+          PYTHONPATH=. python -u -m nba.nba_v5_info --v3 "$RUNNER_TEMP/v5_game_facts.json" \
             --history nba/data/nba_v4_games_2025_26.jsonl.gz --history nba/data/nba_v4_games_2026_27.jsonl \
             --ledger docs/nba_v5_info/ledger.jsonl --out docs/nba_v5_latest/information_receipt.json \
             --official-matches docs/nba_v5_latest/official_matches.json
