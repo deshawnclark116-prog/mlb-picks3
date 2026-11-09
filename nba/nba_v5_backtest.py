@@ -366,6 +366,10 @@ def run(args):
         print("LEARNED_OPPORTUNITY_HEAD_TRAINING",
               json.dumps({"cutoff": str(cutoff), "samples": learned_head.training_examples}),
               flush=True)
+    if getattr(args, "empirical_game_trial", False):
+        if args.config or args.features == "ablate":
+            raise ValueError("--empirical-game-trial incompatible with --config and ablation")
+        configs["empirical_game_head"] = {}
     if getattr(args,"cold_start_trial",False):
         if args.config or args.features=="ablate":
             raise ValueError("--cold-start-trial incompatible with --config and ablation")
@@ -374,7 +378,7 @@ def run(args):
         if args.config or args.features=="ablate":
             raise ValueError("--flow-trial incompatible with --config and ablation")
         configs["game_flow"]={"game_flow":True}
-    if sum(bool(getattr(args,n,False)) for n in ("lineup_trial","role_trial","style_trial","flow_trial","cold_start_trial","assist_network_trial","matchup_rotation_trial","rebound_zone_trial","learned_head_trial"))>1:
+    if sum(bool(getattr(args,n,False)) for n in ("lineup_trial","role_trial","style_trial","flow_trial","cold_start_trial","assist_network_trial","matchup_rotation_trial","rebound_zone_trial","learned_head_trial","empirical_game_trial"))>1:
         raise ValueError("One experimental arm at a time")
     if getattr(args, "rebound_zone_trial", False):
         if args.config or args.features=="ablate":
@@ -459,7 +463,17 @@ def run(args):
                         sh,sa=cold_teams
                     else:
                         sh, sa = (adapted[0], adapted[1]) if cname == "role_adaptive" else (th, ta)
-                    sim = simulate_game(sh, sa, L, tables, S=args.sims, pace=pace, seed=int(g["game_id"]) % 100003, features=feats, ctx=cx)
+                    if cname == "empirical_game_head":
+                        from nba.nba_v5_empirical_stat_engine import simulate_empirical_game
+                        sim = simulate_empirical_game(
+                            sh, sa, rp.hist, d, worlds=args.sims,
+                            seed=int(g["game_id"]) % 100003,
+                            expected_pace=pace_for(rp, g, d),
+                            historic_league_pace=L.poss)
+                    else:
+                        sim = simulate_game(sh, sa, L, tables, S=args.sims, pace=pace,
+                                            seed=int(g["game_id"]) % 100003,
+                                            features=feats, ctx=cx)
                     for side, ti in (("home", sh), ("away", sa)):
                         for j, pid in enumerate(ti.ids):
                             p = actual[pid]
@@ -639,6 +653,8 @@ def main():
     ap.add_argument("--style-trial", action="store_true", help="paired shadow test of ESPN labeled shot execution, not Synergy plays")
     ap.add_argument("--flow-trial", action="store_true", help="paired shadow test of historically learned 2-minute possession distribution")
     ap.add_argument("--cold-start-trial", action="store_true", help="unpromoted 1-4 prior game player/rotation prior experiment")
+    ap.add_argument("--empirical-game-trial", action="store_true",
+                    help="compare independent per-game stat bootstrap against V5 possession generation")
     ap.add_argument("--learned-head-trial", action="store_true",
                     help="independent supervised next-game player-opportunity rates versus native V5 simulation")
     ap.add_argument("--learned-head-train-before", default="",
@@ -649,8 +665,15 @@ def main():
     a = ap.parse_args()
     results, rows, v4_preds, chosen = run(a)
     if a.dump:
-        Path(a.dump).write_text(json.dumps(results if a.role_trial or a.lineup_trial or a.style_trial or a.flow_trial or a.cold_start_trial or a.assist_network_trial or a.matchup_rotation_trial or a.rebound_zone_trial or a.learned_head_trial else next(iter(results.values()))))
+        Path(a.dump).write_text(json.dumps(results if a.role_trial or a.lineup_trial or a.style_trial or a.flow_trial or a.cold_start_trial or a.assist_network_trial or a.matchup_rotation_trial or a.rebound_zone_trial or a.learned_head_trial or a.empirical_game_trial else next(iter(results.values()))))
     report = {c: score(r, rows, v4_preds) for c, r in results.items() if r}
+    if a.empirical_game_trial:
+        from nba.nba_v5_learned_opportunity_head_score import evaluate_native
+        paired = evaluate_native(results["full"], results["empirical_game_head"])
+        paired["experiment"] = "NBA_V5_INDEPENDENT_EMPIRICAL_GAME_OUTCOME_ENGINE_V1"
+        paired["candidate"] = "Independent player-game history bootstrap with shared pace and own sampled minutes"
+        paired["evaluation_limit"] = "Retrospective game roster observed; no lineup hindsight in historical box sampling"
+        report["paired_empirical_game_trial"] = paired
     if a.learned_head_trial:
         from nba.nba_v5_learned_opportunity_head_score import evaluate_native
         report["paired_learned_opportunity_head_trial"] = evaluate_native(
