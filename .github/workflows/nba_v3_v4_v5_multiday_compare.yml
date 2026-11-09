@@ -1,0 +1,47 @@
+name: NBA V3 V4 V5 all-available frozen top-ten comparison
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - "nba/nba_v3_v4_v5_multiday_compare.py"
+      - ".github/workflows/nba_v3_v4_v5_multiday_compare.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-v3-v4-v5-historical-top10-multiday-compare
+  cancel-in-progress: false
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Audit all frozen V3 V4 V5 featured cards against verified original finals
+        run: |
+          set -euo pipefail
+          python -m nba.nba_v3_v4_v5_multiday_compare
+      - name: Publish all-game research scorecard only
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/nba_v5_grades/v3_v4_v5_multiday_featured_comparison.json \
+                  docs/nba_v5_grades/v3_v4_v5_multiday_featured_comparison.md
+          if git diff --cached --quiet; then
+            echo "MULTIDAY_REPORT_UNCHANGED"
+            exit 0
+          fi
+          git commit -m "Research: all frozen NBA V3/V4/V5 original top-ten card outcomes"
+          git pull --rebase origin main
+          git push origin HEAD:main
