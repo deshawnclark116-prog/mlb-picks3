@@ -4,6 +4,7 @@ import {gzipSync} from 'node:zlib';
 import {createPublishedV5Sync} from '../server/nbaV5PublishedSync.ts';
 
 const V5='nba-v5-blend-possession-simulation-20261106';
+const RELEASE_SHA='f'.repeat(40);
 const TIP='2026-11-08T01:00:00+00:00';
 const NOW=Date.parse('2026-11-08T00:50:00Z');
 const GENERATION='2026-11-08T00:15:42.876975+00:00';
@@ -43,6 +44,8 @@ function mock(getResponse:(path:string)=>string|Uint8Array|null){
  const get=async (url:string,_opts:RequestInit)=>{
   const pathname=new URL(url).pathname;
   calls.push(pathname);
+  if(pathname==='/repos/deshawnclark116-prog/mlb-picks3/commits/main')
+   return new Response(JSON.stringify({sha:RELEASE_SHA}),{status:200});
   const body=getResponse(pathname);
   if(body===null)return new Response('not found',{status:404});
   return new Response(body,{status:200});
@@ -72,11 +75,12 @@ test('long-running AI Studio preview receives published 7:15 V5 instead of its o
  assert.deepEqual(newer.latest_run,original.latest_run);
  assert.equal(original.games[0].rows[0].mean,5);
  assert.deepEqual(calls,[
-  '/deshawnclark116-prog/mlb-picks3/main/docs/nba_v5_latest/readiness.json',
-  '/deshawnclark116-prog/mlb-picks3/main/docs/nba_v5_latest/latest.json'
+  '/repos/deshawnclark116-prog/mlb-picks3/commits/main',
+  '/deshawnclark116-prog/mlb-picks3/'+RELEASE_SHA+'/docs/nba_v5_latest/readiness.json',
+  '/deshawnclark116-prog/mlb-picks3/'+RELEASE_SHA+'/docs/nba_v5_latest/latest.json'
  ]);
  await run(original,NOW+30_000);
- assert.equal(calls.length,2,'60s TTL must prevent repeated 3MB downloads per UI viewer');
+ assert.equal(calls.length,3,'120s TTL must prevent repeated large downloads and commit lookups per UI viewer');
 });
 test('published empirical V5 full-slate payload above old 5 MB cap reaches the frontend API',async()=>{
  const fullSlate=JSON.stringify({
