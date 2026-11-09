@@ -60,6 +60,12 @@ jobs:
         run: |
           set -euo pipefail
           for tick in $(seq 1 15); do
+            # GitHub scheduled daily-lineup checks have been skipped during
+            # real T-30 windows. Dispatch the official starting-five poll on
+            # every guardian tick; its own source-change fingerprint decides
+            # whether a new confirmed-five refresh is necessary.
+            gh workflow run nba_v5_daily_lineups_poll.yml --ref main
+            echo "NBA_GUARDIAN_LINEUP_POLL_DISPATCH tick=$tick"
             active="$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/nba_v3_latest_refresh.yml/runs?per_page=40" \
               --jq '[.workflow_runs[] | select(.status=="queued" or .status=="in_progress" or .status=="waiting" or .status=="pending")] | length')"
             if [ "$active" -eq 0 ]; then
