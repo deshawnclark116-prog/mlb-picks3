@@ -104,10 +104,29 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
     async function refresh(){
       abort?.abort();abort=new AbortController();
       try{
-        const response=await fetch('/api/nfl-predictions?t='+Date.now(),{cache:'no-store',signal:abort.signal});
-        if(!response.ok)throw new Error('NFL weekly feed HTTP '+response.status);
-        const document=await response.json();
-        const parsed=parseExistingNfl(document,new Date());
+        // AI Studio can keep its preview API offline even while the public,
+        // independently published NFL forecast on GitHub is current.
+        // Check BOTH paths, validate with the same model parser, and select
+        // the newest authentic model generation. Never use Render or odds.
+        const at=Date.now();
+        const sources=await Promise.allSettled([
+          {url:'/api/nfl-predictions?t='+at,source:'preview_api'},
+          {url:'https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks2/main/docs/nfl_predictions.json?t='+at,
+           source:'github_browser_direct'}
+        ].map(async ({url,source})=>{
+          const response=await fetch(url,{cache:'no-store',signal:abort!.signal});
+          if(!response.ok)throw new Error(source+' HTTP '+response.status);
+          const document=await response.json();
+          const parsed=parseExistingNfl(document,new Date());
+          return {parsed,source:source==='preview_api'?
+            (document.serving_origin||response.headers.get('X-NFL-Forecast-Source')||source):source};
+        }));
+        const verified=sources.filter((x):x is PromiseFulfilledResult<{
+          parsed:ExistingNflSlate;source:string
+        }>=>x.status==='fulfilled').map(x=>x.value);
+        if(!verified.length)throw new Error('No valid NFL model publication from preview or GitHub');
+        verified.sort((a,b)=>Date.parse(b.parsed.generated_at_utc)-Date.parse(a.parsed.generated_at_utc));
+        const {parsed,source}=verified[0];
         // Independent, timestamp-matched pregame workload evidence: no
         // response or stale/mismatched source means no featured shortlist.
         // The complete archived numerical ledger remains visible.
@@ -121,7 +140,7 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
           // A temporary CDN cache race must never roll a newer validated
           // weekly forecast back to yesterday's version.
           setSlate(previous=>previous&&Date.parse(previous.generated_at_utc)>Date.parse(parsed.generated_at_utc)?previous:parsed);
-          setOrigin(document.serving_origin||response.headers.get('X-NFL-Forecast-Source')||'');
+          setOrigin(source);
           setRole(roleDoc);
           setError(null);
         }
