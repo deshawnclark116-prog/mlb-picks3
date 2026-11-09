@@ -15,6 +15,7 @@ Usage: python -m nba.nba_v5_forecast --games g.jsonl[.gz] --pbp p.jsonl --v3 lat
 """
 from __future__ import annotations
 import argparse
+import copy
 import datetime as dt
 import gzip
 import hashlib
@@ -41,6 +42,7 @@ from nba.nba_v5_recency_pplay import estimate_unlisted
 from nba.nba_v5_sim import League, league_from, simulate_game, MARKETS
 
 VERSION = "nba-v5-blend-possession-simulation-20261106"
+SIMULATION_ONLY_VERSION = "nba-v5-simulation-only-research-20261109"
 # All published V5 full-game projections share at least this many joint worlds.
 MIN_PRODUCTION_SIMS = 10_000
 CORE = ("points", "rebounds", "assists", "three_pointers_made")
@@ -265,6 +267,8 @@ def main() -> int:
     ap.add_argument("--pbp", action="append", required=True)
     ap.add_argument("--v3", required=True)
     ap.add_argument("--out", required=True)
+    ap.add_argument("--simulation-only-out", default="", help="Research: preserve unblended V5 simulation projected means and CDFs; does not affect champion")
+    ap.add_argument("--simulation-only-archive", default="", help="Research-only first/last immutable pretip original simulation snapshots")
     ap.add_argument("--sims", type=int, default=MIN_PRODUCTION_SIMS, help="Minimum 10,000 complete correlated game simulations per matchup")
     ap.add_argument("--compute-sensitivity", action="store_true", help="Optional six additional teammate-absence research re-simulations per game; OFF for fast pretip production")
     ap.add_argument("--calibration", default="")
@@ -323,6 +327,7 @@ def main() -> int:
     if switches.get("tracking_opportunity_role") and not tracking_profiles:
         raise ValueError("NBA_V5_TRACKING_ROLE_SWITCH_REQUIRES_OBSERVED_SOURCE")
     out_games, skipped = [], []
+    simulation_only_games = []
     for g3 in v3["games"]:
         tip = dt.datetime.fromisoformat(g3["tipoff_utc"])
         if tip <= now:
@@ -509,6 +514,11 @@ def main() -> int:
         for r in new_rows:
             for dep in r.get("depends_on", []):
                 dep["if_out_name"] = name_of.get(dep["if_out"], dep["if_out"])
+        # Research challenger: capture the actual V5 possession simulation
+        # BEFORE V4 mixtures alter any mean/CDF. This is NOT a postgame
+        # model recreation and consumes no additional simulation draws.
+        # Deep copy prevents the champion's blend from mutating this arm.
+        pure_sim_rows = copy.deepcopy(new_rows) if a.simulation_only_out else None
         for i_, r in enumerate(new_rows):
             r4 = v4rows.get((g3["game_id"], r["player_id"], r["market"]))
             if r4 is not None and r["market"] in CORE and r.get("mean_basis") == "CONDITIONAL_ON_PLAYING" and r4.get("mean_basis") == "CONDITIONAL_ON_PLAYING":
@@ -541,6 +551,44 @@ def main() -> int:
                     out_row["availability_source"]="OFFICIAL_NBA_PDF"
                     out_row["availability_published_at_utc"]=rep_by[str(r["player_id"])]["published_at"]
                 new_rows.append(out_row)
+                if pure_sim_rows is not None:
+                    pure_sim_rows.append(copy.deepcopy(out_row))
+        if pure_sim_rows is not None:
+            # Same targets, same availability inputs, same rounding policy,
+            # independently ranked from the V5 simulation's own player stats.
+            for r in pure_sim_rows:
+                for key in ("frontend_rank", "whole_projection", "reach_probability",
+                            "frontend_ranking_probability", "rank_by_chance_only",
+                            "reach_probabilities", "blend",
+                            "research_fixed_event_component_probabilities"):
+                    r.pop(key, None)
+                if r.get("model_version", "").startswith("nba-v5-"):
+                    r["model_version"] = SIMULATION_ONLY_VERSION
+            rank_for_screen(pure_sim_rows)
+            for r in pure_sim_rows:
+                if r.get("mean_basis") == "CONDITIONAL_ON_PLAYING":
+                    target = whole(float(r["mean"]))
+                    if target >= 1:
+                        r["reach_probabilities"] = reach_with_dnp(
+                            reach_prob(r["cdf_lattice"]["cdf"], target),
+                            float(r["p_active"]), target)
+                trim_lattice(r)
+            game_pure = dict(g3)
+            game_pure.update({
+                "rows": pure_sim_rows,
+                "rows_count": len(pure_sim_rows),
+                "model_version": SIMULATION_ONLY_VERSION,
+                "forecast_kind": "V5_SIMULATION_ONLY_RESEARCH",
+                "forecast_at_utc": now.isoformat(),
+                "asof_utc": now.isoformat(),
+                "model_simulations": a.sims,
+                "uses_v4_forecast_means_or_cdfs": False,
+                "depends_on_v3_roster_availability_input": True,
+                "source_game_v3_id": str(g3["game_id"]),
+                "no_production_or_frontend_effect": True,
+                "research_only": True,
+            })
+            simulation_only_games.append(game_pure)
         g5 = dict(g3)
         g5.update({"rows": new_rows, "rows_count": len(new_rows), "model_version": VERSION, "forecast_kind": "V5_SHADOW",
                    "forecast_at_utc": now.isoformat(), "asof_utc": now.isoformat(), "model_simulations": a.sims,
@@ -575,6 +623,44 @@ def main() -> int:
                         "the simulation alone for steals, blocks and turnovers. Conditional on playing; V3 availability can be updated by verified NBA PDF and optional certified lineup evidence. "
                         "Research only, not validated for 2026-27, no sportsbook input."})
     Path(a.out).write_text(json.dumps(doc, separators=(",", ":")))
+    if a.simulation_only_out:
+        pure_doc = {k: v for k, v in doc.items()
+                    if k not in ("games", "model_version", "note")}
+        pure_doc.update({
+            "games": simulation_only_games,
+            "games_forecast": len(simulation_only_games),
+            "model_version": SIMULATION_ONLY_VERSION,
+            "research_only": True,
+            "model_promoted": False,
+            "no_frontend_or_champion_effect": True,
+            "no_v4_mean_or_cdf_input": True,
+            "still_uses_v3_player_availability_source": True,
+            "generated_at_utc": now.isoformat(),
+            "note": "Pure V5 full-game possession simulation before V4 blending. "
+                    "Shares champion V3-derived roster and pregame participation source. "
+                    "Not yet a fully source-independent V5. Prospective research only.",
+        })
+        pure_dest = Path(a.simulation_only_out)
+        pure_dest.parent.mkdir(parents=True, exist_ok=True)
+        pure_dest.write_text(json.dumps(pure_doc, separators=(",", ":")))
+        if a.simulation_only_archive:
+            for game_pure in simulation_only_games:
+                tip = dt.datetime.fromisoformat(game_pure["tipoff_utc"])
+                if tip - now < dt.timedelta(minutes=15):
+                    continue
+                one_pure = {k: v for k, v in pure_doc.items() if k != "games"}
+                one_pure.update({"games": [game_pure], "games_forecast": 1})
+                for kind in ("first", "last"):
+                    if kind == "last" and tip - now > dt.timedelta(hours=4):
+                        continue
+                    original_path = (Path(a.simulation_only_archive) / kind /
+                                     (str(game_pure["game_id"]) + ".json.gz"))
+                    if kind == "first" and original_path.exists():
+                        continue
+                    original_path.parent.mkdir(parents=True, exist_ok=True)
+                    with gzip.open(original_path, "wt", compresslevel=9) as fh:
+                        fh.write(json.dumps(one_pure, separators=(",", ":")))
+        print("simulation_only_research_games", len(simulation_only_games), flush=True)
     if a.archive:
         for g5 in out_games:
             tip = dt.datetime.fromisoformat(g5["tipoff_utc"])
