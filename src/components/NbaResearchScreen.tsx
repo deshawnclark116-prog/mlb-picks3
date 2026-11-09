@@ -80,8 +80,9 @@ export default function NbaResearchScreen() {
     {mode==='EVIDENCE'&&<section data-testid="nba-v5-evidence" className="rounded-xl border border-[#465650] bg-[#102018] p-4 text-sm text-gray-100">
       <strong>NBA MODEL · FORECAST VALIDATION STATUS</strong>
       <p className="mt-2 text-xs">All numerical projections come from the NBA forecasting system, independently
-       of sportsbook prices. V5 includes a linked game simulation and a V4 blend for markets where historical
-       testing favored it. Per-game model version is shown on each matchup.</p>
+       of sportsbook prices. The current V5 empirical-game head projects player totals from prior completed player games and
+       uses pregame minutes and shared pace scenarios. It does not blend V3/V4 numerical forecasts.
+       The native V5 possession simulator remains a separate comparison baseline. Per-game model version is shown on each matchup.</p>
       <p className="mt-2 text-xs">Projection probabilities are model estimates, not yet certified by
        current-season forward calibration. Original forecasts are retained for result-by-result grading;
        new role-change signals are research-only until they improve chronological holdout performance.</p>
