@@ -1,7 +1,7 @@
 {
   "schema": "CROSS_SPORT_ORIGINAL_PLAYER_TARGET_SCORECARD_V1",
   "date": "2026-11-06",
-  "generated_at_utc": "2026-11-09T14:14:45.349210+00:00",
+  "generated_at_utc": "2026-11-09T14:16:55.761124+00:00",
   "nba_date_basis": "PRETIP_LAST_FORECAST_ET_DATE_PROXY",
   "nfl_date_basis": "PREGAME_SCHEDULED_KICKOFF_ET_DATE",
   "research_only_no_promotion": true,
@@ -75,27 +75,6 @@
               "minutes_off_by_6_plus",
               "role_wrong_starter_vs_bench",
               "shot_volume_off"
-            ],
-            "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00"
-          },
-          {
-            "sport": "NBA",
-            "game_id": "401909287",
-            "game": "Washington Wizards at Atlanta Hawks",
-            "rank": 3,
-            "player": "Nickeil Alexander-Walker",
-            "market": "turnovers",
-            "target": 2,
-            "actual": 3,
-            "hit": true,
-            "status": "GRADED",
-            "prob": 0.6142,
-            "model_mean": 2.4463,
-            "minutes_forecast": 39.95,
-            "minutes_actual": 33.0,
-            "shortfall": 0,
-            "causes": [
-              "minutes_off_by_6_plus"
             ],
             "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00"
           },
@@ -205,29 +184,6 @@
             "game_id": "401909287",
             "game": "Washington Wizards at Atlanta Hawks",
             "rank": 9,
-            "player": "CJ McCollum",
-            "market": "turnovers",
-            "target": 2,
-            "actual": 3,
-            "hit": true,
-            "status": "GRADED",
-            "prob": 0.5781,
-            "model_mean": 2.2831,
-            "minutes_forecast": 37.13,
-            "minutes_actual": 23.0,
-            "shortfall": 0,
-            "causes": [
-              "minutes_off_by_6_plus",
-              "role_wrong_starter_vs_bench",
-              "shot_volume_off"
-            ],
-            "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00"
-          },
-          {
-            "sport": "NBA",
-            "game_id": "401909287",
-            "game": "Washington Wizards at Atlanta Hawks",
-            "rank": 9,
             "player": "Kingston Flemings",
             "market": "steals",
             "target": 1,
@@ -263,14 +219,14 @@
           }
         ],
         "summary": {
-          "n": 12,
-          "graded": 12,
+          "n": 10,
+          "graded": 10,
           "unverified": 0,
-          "hits": 6,
+          "hits": 4,
           "misses": 6,
-          "hit_rate": 0.5,
-          "mean_stated_probability": 0.6232,
-          "expected_hits_on_scored_rows": 7.4784,
+          "hit_rate": 0.4,
+          "mean_stated_probability": 0.62861,
+          "expected_hits_on_scored_rows": 6.2861,
           "dnps": 0,
           "near_misses": 4
         }
@@ -346,30 +302,6 @@
               "minutes_off_by_6_plus",
               "shot_volume_off",
               "blowout_cut_minutes"
-            ],
-            "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00"
-          },
-          {
-            "sport": "NBA",
-            "game_id": "401909288",
-            "game": "Boston Celtics at Charlotte Hornets",
-            "rank": 4,
-            "player": "Brandon Miller",
-            "market": "turnovers",
-            "target": 2,
-            "actual": 0,
-            "hit": false,
-            "status": "GRADED",
-            "prob": 0.6036,
-            "model_mean": 2.3753,
-            "minutes_forecast": 35.83,
-            "minutes_actual": 14.0,
-            "shortfall": 2,
-            "causes": [
-              "minutes_off_by_6_plus",
-              "shot_volume_off",
-              "blowout_cut_minutes",
-              "outside_stated_80_percent_range"
             ],
             "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00"
           },
@@ -524,14 +456,14 @@
           }
         ],
         "summary": {
-          "n": 11,
-          "graded": 11,
+          "n": 10,
+          "graded": 10,
           "unverified": 0,
           "hits": 8,
-          "misses": 3,
-          "hit_rate": 0.7272727272727273,
-          "mean_stated_probability": 0.6118,
-          "expected_hits_on_scored_rows": 6.7298,
+          "misses": 2,
+          "hit_rate": 0.8,
+          "mean_stated_probability": 0.6126199999999999,
+          "expected_hits_on_scored_rows": 6.1262,
           "dnps": 0,
           "near_misses": 1
         }
@@ -622,25 +554,6 @@
               "shot_volume_off",
               "foul_trouble"
             ],
-            "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00"
-          },
-          {
-            "sport": "NBA",
-            "game_id": "401909289",
-            "game": "Philadelphia 76ers at Cleveland Cavaliers",
-            "rank": 5,
-            "player": "Jaylen Brown",
-            "market": "turnovers",
-            "target": 2,
-            "actual": 2,
-            "hit": true,
-            "status": "GRADED",
-            "prob": 0.5959,
-            "model_mean": 2.4762,
-            "minutes_forecast": 34.28,
-            "minutes_actual": 34.0,
-            "shortfall": 0,
-            "causes": [],
             "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00"
           },
           {
@@ -768,36 +681,17 @@
             "shortfall": 0,
             "causes": [],
             "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00"
-          },
-          {
-            "sport": "NBA",
-            "game_id": "401909289",
-            "game": "Philadelphia 76ers at Cleveland Cavaliers",
-            "rank": 10,
-            "player": "Donovan Mitchell",
-            "market": "turnovers",
-            "target": 2,
-            "actual": 4,
-            "hit": true,
-            "status": "GRADED",
-            "prob": 0.5768,
-            "model_mean": 2.3225,
-            "minutes_forecast": 31.68,
-            "minutes_actual": 33.0,
-            "shortfall": 0,
-            "causes": [],
-            "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00"
           }
         ],
         "summary": {
-          "n": 12,
-          "graded": 12,
+          "n": 10,
+          "graded": 10,
           "unverified": 0,
-          "hits": 9,
+          "hits": 7,
           "misses": 3,
-          "hit_rate": 0.75,
-          "mean_stated_probability": 0.6168083333333333,
-          "expected_hits_on_scored_rows": 7.4017,
+          "hit_rate": 0.7,
+          "mean_stated_probability": 0.6229,
+          "expected_hits_on_scored_rows": 6.229,
           "dnps": 0,
           "near_misses": 3
         }
@@ -841,25 +735,6 @@
             "status": "GRADED",
             "prob": 0.6469,
             "model_mean": 1.3723,
-            "minutes_forecast": 35.58,
-            "minutes_actual": 33.0,
-            "shortfall": 0,
-            "causes": [],
-            "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00"
-          },
-          {
-            "sport": "NBA",
-            "game_id": "401909290",
-            "game": "Utah Jazz at Dallas Mavericks",
-            "rank": 3,
-            "player": "Cooper Flagg",
-            "market": "turnovers",
-            "target": 2,
-            "actual": 3,
-            "hit": true,
-            "status": "GRADED",
-            "prob": 0.6151,
-            "model_mean": 2.5252,
             "minutes_forecast": 35.58,
             "minutes_actual": 33.0,
             "shortfall": 0,
@@ -1006,25 +881,6 @@
             "game_id": "401909290",
             "game": "Utah Jazz at Dallas Mavericks",
             "rank": 10,
-            "player": "Keyonte George",
-            "market": "turnovers",
-            "target": 2,
-            "actual": 5,
-            "hit": true,
-            "status": "GRADED",
-            "prob": 0.5949,
-            "model_mean": 2.3967,
-            "minutes_forecast": 28.7,
-            "minutes_actual": 32.0,
-            "shortfall": 0,
-            "causes": [],
-            "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00"
-          },
-          {
-            "sport": "NBA",
-            "game_id": "401909290",
-            "game": "Utah Jazz at Dallas Mavericks",
-            "rank": 10,
             "player": "Isaiah Collier",
             "market": "steals",
             "target": 1,
@@ -1044,14 +900,14 @@
           }
         ],
         "summary": {
-          "n": 12,
-          "graded": 12,
+          "n": 10,
+          "graded": 10,
           "unverified": 0,
-          "hits": 8,
+          "hits": 6,
           "misses": 4,
-          "hit_rate": 0.6666666666666666,
-          "mean_stated_probability": 0.6129916666666667,
-          "expected_hits_on_scored_rows": 7.3559,
+          "hit_rate": 0.6,
+          "mean_stated_probability": 0.61459,
+          "expected_hits_on_scored_rows": 6.1459,
           "dnps": 1,
           "near_misses": 4
         }
@@ -1125,27 +981,6 @@
             "causes": [
               "minutes_off_by_6_plus",
               "shot_volume_off",
-              "blowout_cut_minutes"
-            ],
-            "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00"
-          },
-          {
-            "sport": "NBA",
-            "game_id": "401909291",
-            "game": "Oklahoma City Thunder at Memphis Grizzlies",
-            "rank": 3,
-            "player": "Shai Gilgeous-Alexander",
-            "market": "turnovers",
-            "target": 2,
-            "actual": 4,
-            "hit": true,
-            "status": "GRADED",
-            "prob": 0.6071,
-            "model_mean": 2.4361,
-            "minutes_forecast": 35.66,
-            "minutes_actual": 30.0,
-            "shortfall": 0,
-            "causes": [
               "blowout_cut_minutes"
             ],
             "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00"
@@ -1301,39 +1136,17 @@
               "shot_volume_off"
             ],
             "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00"
-          },
-          {
-            "sport": "NBA",
-            "game_id": "401909291",
-            "game": "Oklahoma City Thunder at Memphis Grizzlies",
-            "rank": 10,
-            "player": "Isaiah Hartenstein",
-            "market": "turnovers",
-            "target": 2,
-            "actual": 3,
-            "hit": true,
-            "status": "GRADED",
-            "prob": 0.5624,
-            "model_mean": 2.2598,
-            "minutes_forecast": 31.33,
-            "minutes_actual": 26.0,
-            "shortfall": 0,
-            "causes": [
-              "shot_volume_off",
-              "blowout_cut_minutes"
-            ],
-            "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00"
           }
         ],
         "summary": {
-          "n": 12,
-          "graded": 12,
+          "n": 10,
+          "graded": 10,
           "unverified": 0,
-          "hits": 9,
+          "hits": 7,
           "misses": 3,
-          "hit_rate": 0.75,
-          "mean_stated_probability": 0.5977166666666667,
-          "expected_hits_on_scored_rows": 7.1726,
+          "hit_rate": 0.7,
+          "mean_stated_probability": 0.60031,
+          "expected_hits_on_scored_rows": 6.0031,
           "dnps": 0,
           "near_misses": 3
         }
@@ -1470,25 +1283,6 @@
             "sport": "NBA",
             "game_id": "401909292",
             "game": "Toronto Raptors at Milwaukee Bucks",
-            "rank": 6,
-            "player": "Jaime Jaquez Jr.",
-            "market": "turnovers",
-            "target": 2,
-            "actual": 1,
-            "hit": false,
-            "status": "GRADED",
-            "prob": 0.5174,
-            "model_mean": 2.0792,
-            "minutes_forecast": 28.25,
-            "minutes_actual": 28.0,
-            "shortfall": 1,
-            "causes": [],
-            "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00"
-          },
-          {
-            "sport": "NBA",
-            "game_id": "401909292",
-            "game": "Toronto Raptors at Milwaukee Bucks",
             "rank": 7,
             "player": "AJ Green",
             "market": "three_pointers_made",
@@ -1566,16 +1360,16 @@
           }
         ],
         "summary": {
-          "n": 11,
-          "graded": 11,
+          "n": 10,
+          "graded": 10,
           "unverified": 0,
           "hits": 9,
-          "misses": 2,
-          "hit_rate": 0.8181818181818182,
-          "mean_stated_probability": 0.5765909090909092,
-          "expected_hits_on_scored_rows": 6.3425,
+          "misses": 1,
+          "hit_rate": 0.9,
+          "mean_stated_probability": 0.58251,
+          "expected_hits_on_scored_rows": 5.8251,
           "dnps": 0,
-          "near_misses": 2
+          "near_misses": 1
         }
       },
       {
@@ -1641,25 +1435,6 @@
             "minutes_forecast": 33.62,
             "minutes_actual": 36.0,
             "shortfall": 1,
-            "causes": [],
-            "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00"
-          },
-          {
-            "sport": "NBA",
-            "game_id": "401909293",
-            "game": "Minnesota Timberwolves at New Orleans Pelicans",
-            "rank": 3,
-            "player": "Jeremiah Fears",
-            "market": "turnovers",
-            "target": 2,
-            "actual": 2,
-            "hit": true,
-            "status": "GRADED",
-            "prob": 0.618,
-            "model_mean": 2.55,
-            "minutes_forecast": 33.62,
-            "minutes_actual": 36.0,
-            "shortfall": 0,
             "causes": [],
             "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00"
           },
@@ -1787,28 +1562,6 @@
             "sport": "NBA",
             "game_id": "401909293",
             "game": "Minnesota Timberwolves at New Orleans Pelicans",
-            "rank": 9,
-            "player": "Derik Queen",
-            "market": "turnovers",
-            "target": 2,
-            "actual": 4,
-            "hit": true,
-            "status": "GRADED",
-            "prob": 0.5997,
-            "model_mean": 2.4803,
-            "minutes_forecast": 28.76,
-            "minutes_actual": 10.0,
-            "shortfall": 0,
-            "causes": [
-              "minutes_off_by_6_plus",
-              "shot_volume_off"
-            ],
-            "forecast_at_utc": "2026-11-06T23:29:50.407805+00:00"
-          },
-          {
-            "sport": "NBA",
-            "game_id": "401909293",
-            "game": "Minnesota Timberwolves at New Orleans Pelicans",
             "rank": 10,
             "player": "Trey Murphy III",
             "market": "rebounds",
@@ -1828,14 +1581,14 @@
           }
         ],
         "summary": {
-          "n": 12,
-          "graded": 12,
+          "n": 10,
+          "graded": 10,
           "unverified": 0,
-          "hits": 7,
+          "hits": 5,
           "misses": 5,
-          "hit_rate": 0.5833333333333334,
-          "mean_stated_probability": 0.6188,
-          "expected_hits_on_scored_rows": 7.4256,
+          "hit_rate": 0.5,
+          "mean_stated_probability": 0.6207900000000001,
+          "expected_hits_on_scored_rows": 6.2079,
           "dnps": 0,
           "near_misses": 5
         }
@@ -2309,16 +2062,16 @@
       }
     ],
     "summary": {
-      "n": 102,
-      "graded": 102,
+      "n": 90,
+      "graded": 90,
       "unverified": 0,
-      "hits": 69,
-      "misses": 33,
-      "hit_rate": 0.6764705882352942,
-      "mean_stated_probability": 0.6148813725490196,
-      "expected_hits_on_scored_rows": 62.7179,
+      "hits": 59,
+      "misses": 31,
+      "hit_rate": 0.6555555555555556,
+      "mean_stated_probability": 0.6181633333333334,
+      "expected_hits_on_scored_rows": 55.6347,
       "dnps": 1,
-      "near_misses": 29
+      "near_misses": 28
     },
     "markets": {
       "assists": {
@@ -2380,18 +2133,6 @@
         "expected_hits_on_scored_rows": 22.6603,
         "dnps": 1,
         "near_misses": 11
-      },
-      "turnovers": {
-        "n": 12,
-        "graded": 12,
-        "unverified": 0,
-        "hits": 10,
-        "misses": 2,
-        "hit_rate": 0.8333333333333334,
-        "mean_stated_probability": 0.5902666666666666,
-        "expected_hits_on_scored_rows": 7.0832,
-        "dnps": 0,
-        "near_misses": 1
       }
     },
     "game_count": 9
