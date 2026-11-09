@@ -47,7 +47,7 @@ function mock(getResponse:(path:string)=>string|Uint8Array|null){
   if(pathname==='/repos/deshawnclark116-prog/mlb-picks3/commits/main')
    return new Response(JSON.stringify({sha:RELEASE_SHA}),{status:200});
   const body=getResponse(pathname);
-  if(body===null)return new Response('not found',{status:404});
+  if(body===null){console.log('V5_TEST_UNKNOWN_SOURCE_PATH',pathname);return new Response('not found',{status:404});}
   return new Response(body,{status:200});
  };
  return {get,calls};
