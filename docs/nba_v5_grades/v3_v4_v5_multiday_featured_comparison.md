@@ -3,6 +3,10 @@
 Every row is a *model-produced whole-number target*, graded at its own target.
 V3/V4 are reconstructed shadow cards. V5 uses frozen original featured
 ranks. No odds, sportsbook lines, hindsight line changes, or resimulation.
+Some early models produced fewer than ten eligible ranked predictions;
+those short cards are retained with their genuine denominators, not padded.
+Verified outcomes missing in last V5 grade may be recovered from the
+same game's separately frozen FIRST grade; that source is recorded.
 V3/V4 each support four stats; V5 also offers steals and blocks.
 V4's probability is conditional on playing; V5 includes nonparticipation.
 Only original model generations before the same game's V5 last-pretip
@@ -12,40 +16,48 @@ snapshot are included; every exclusion and coverage gap is reported.
 
 | Version | Hits | Total | Hit rate |
 |---|---:|---:|---:|
-| V3 | 108 | 180 | 60.0% |
-| V4 | 103 | 180 | 57.2% |
-| V5 | 108 | 180 | 60.0% |
+| V3 | 145 | 245 | 59.2% |
+| V4 | 144 | 249 | 57.8% |
+| V5 | 147 | 247 | 59.5% |
 
 ## Per-day original target hits
 
 | Eastern game date | Games | V3 | V4 | V5 |
 |---|---:|---:|---:|---:|
-| 2026-11-06 | 5 | 30/50 | 27/50 | 35/50 |
-| 2026-11-07 | 6 | 36/60 | 34/60 | 35/60 |
+| 2026-11-05 | 2 | 10/20 | 10/20 | 9/17 |
+| 2026-11-06 | 9 | 52/88 | 51/90 | 59/90 |
+| 2026-11-07 | 7 | 41/67 | 41/69 | 41/70 |
 | 2026-11-08 | 7 | 42/70 | 42/70 | 38/70 |
 
 ## Market mix: model-featured targets only
 
 | Market | V3 | V4 | V5 |
 |---|---:|---:|---:|
-| points | 8/16 | 1/3 | 0/0 |
-| rebounds | 30/45 | 24/36 | 3/4 |
-| assists | 22/41 | 21/46 | 6/9 |
-| three_pointers_made | 48/78 | 57/95 | 48/85 |
-| steals | 0/0 | 0/0 | 42/68 |
-| blocks | 0/0 | 0/0 | 9/14 |
+| points | 10/23 | 2/6 | 1/2 |
+| rebounds | 44/66 | 37/59 | 5/7 |
+| assists | 30/59 | 29/60 | 9/16 |
+| three_pointers_made | 61/97 | 76/124 | 64/107 |
+| steals | 0/0 | 0/0 | 57/95 |
+| blocks | 0/0 | 0/0 | 11/20 |
 
 ## Every included matchup
 
 | Matchup | V3 | V4 | V5 | V4-to-V5 age |
 |---|---:|---:|---:|---:|
+| Orlando Magic at Phoenix Suns (2026-11-05) | 5/10 | 5/10 | 4/8 | 0.2 min |
+| Miami Heat at Golden State Warriors (2026-11-05) | 5/10 | 5/10 | 5/9 | 0.2 min |
+| Washington Wizards at Atlanta Hawks (2026-11-06) | 7/10 | 7/10 | 4/10 | 0.4 min |
+| Boston Celtics at Charlotte Hornets (2026-11-06) | 5/10 | 8/10 | 8/10 | 0.4 min |
 | Philadelphia 76ers at Cleveland Cavaliers (2026-11-06) | 8/10 | 4/10 | 7/10 | 0.4 min |
 | Utah Jazz at Dallas Mavericks (2026-11-06) | 4/10 | 5/10 | 6/10 | 0.4 min |
+| Oklahoma City Thunder at Memphis Grizzlies (2026-11-06) | 6/8 | 4/10 | 7/10 | 0.4 min |
 | Toronto Raptors at Milwaukee Bucks (2026-11-06) | 6/10 | 7/10 | 9/10 | 0.4 min |
+| Minnesota Timberwolves at New Orleans Pelicans (2026-11-06) | 4/10 | 5/10 | 5/10 | 0.4 min |
 | Portland Trail Blazers at Los Angeles Lakers (2026-11-06) | 7/10 | 5/10 | 6/10 | 0.3 min |
 | San Antonio Spurs at Sacramento Kings (2026-11-06) | 5/10 | 6/10 | 7/10 | 0.3 min |
 | Denver Nuggets at Indiana Pacers (2026-11-07) | 5/10 | 4/10 | 3/10 | 0.4 min |
 | Brooklyn Nets at Atlanta Hawks (2026-11-07) | 6/10 | 5/10 | 7/10 | 0.3 min |
+| New York Knicks at Cleveland Cavaliers (2026-11-07) | 5/7 | 7/9 | 6/10 | 0.2 min |
 | Washington Wizards at Oklahoma City Thunder (2026-11-07) | 6/10 | 6/10 | 6/10 | 0.2 min |
 | Orlando Magic at Golden State Warriors (2026-11-07) | 7/10 | 8/10 | 6/10 | 0.2 min |
 | Houston Rockets at Phoenix Suns (2026-11-07) | 7/10 | 4/10 | 5/10 | 0.2 min |
@@ -59,6 +71,74 @@ snapshot are included; every exclusion and coverage gap is reported.
 | Miami Heat at Sacramento Kings (2026-11-08) | 7/10 | 8/10 | 7/10 | 0.4 min |
 
 ## Per-player original projected targets and actual results
+
+### 2026-11-05: Orlando Magic at Phoenix Suns (401909936)
+
+Frozen V3 / V4 / V5 generations: 2026-11-06T01:34:22.672051+00:00 / 2026-11-06T01:34:34.493768+00:00 / 2026-11-06T01:34:44.132671+00:00.
+
+| Rank | V3 | V4 | V5 |
+|---:|---|---|---|
+| 1 | Collin Gillespie 1+ three_pointers_made (actual 2) HIT | Oso Ighodaro 2+ assists (actual 1) MISS | Khaman Maluach 1+ blocks (actual 0) MISS |
+| 2 | Tristan da Silva 2+ assists (actual 1) MISS | Franz Wagner 1+ three_pointers_made (actual 0) MISS | Franz Wagner 1+ three_pointers_made (actual 0) MISS |
+| 3 | Jamal Cain 1+ three_pointers_made (actual 1) HIT | Desmond Bane 3+ assists (actual 0) MISS | — (no ranked projection) |
+| 4 | Dillon Brooks 3+ rebounds (actual 1) MISS | Dillon Brooks 3+ rebounds (actual 1) MISS | Desmond Bane 1+ steals (actual 0) MISS |
+| 5 | Collin Gillespie 3+ assists (actual 2) MISS | Ryan Dunn 3+ rebounds (actual 3) HIT | Tristan da Silva 2+ assists (actual 1) MISS |
+| 6 | Desmond Bane 3+ assists (actual 0) MISS | Jamal Cain 1+ three_pointers_made (actual 1) HIT | Jamal Cain 3+ rebounds (actual 5) HIT |
+| 7 | Dillon Brooks 2+ assists (actual 1) MISS | Collin Gillespie 2+ three_pointers_made (actual 2) HIT | Wendell Carter Jr. 12+ points (actual 27) HIT |
+| 8 | Desmond Bane 3+ three_pointers_made (actual 3) HIT | Nikola Vucevic 4+ rebounds (actual 0) MISS | Jamal Cain 1+ three_pointers_made (actual 1) HIT |
+| 9 | Jase Richardson 2+ assists (actual 3) HIT | Khaman Maluach 5+ rebounds (actual 6) HIT | — (no ranked projection) |
+| 10 | Desmond Bane 4+ rebounds (actual 6) HIT | Desmond Bane 2+ three_pointers_made (actual 3) HIT | Franz Wagner 1+ steals (actual 4) HIT |
+
+### 2026-11-05: Miami Heat at Golden State Warriors (401909937)
+
+Frozen V3 / V4 / V5 generations: 2026-11-06T01:47:09.469066+00:00 / 2026-11-06T01:47:18.809389+00:00 / 2026-11-06T01:47:28.634814+00:00.
+
+| Rank | V3 | V4 | V5 |
+|---:|---|---|---|
+| 1 | De'Anthony Melton 1+ three_pointers_made (actual 0) MISS | Bam Adebayo 1+ three_pointers_made (actual 0) MISS | Bam Adebayo 1+ three_pointers_made (actual 0) MISS |
+| 2 | Bam Adebayo 1+ three_pointers_made (actual 0) MISS | Georges Niang 1+ three_pointers_made (actual 2) HIT | De'Anthony Melton 1+ steals (actual 3) HIT |
+| 3 | Bobby Portis 1+ three_pointers_made (actual 0) MISS | Yaxel Lendeborg 2+ three_pointers_made (actual 1) MISS | Andrew Wiggins 2+ assists (actual 4) HIT |
+| 4 | De'Anthony Melton 2+ assists (actual 2) HIT | Andrew Wiggins 2+ assists (actual 4) HIT | — (no ranked projection) |
+| 5 | Tim Hardaway Jr. 1+ three_pointers_made (actual 0) MISS | De'Anthony Melton 3+ rebounds (actual 6) HIT | Bobby Portis 5+ rebounds (actual 5) HIT |
+| 6 | Pelle Larsson 3+ rebounds (actual 1) MISS | Bam Adebayo 3+ assists (actual 0) MISS | Andrew Wiggins 1+ blocks (actual 1) HIT |
+| 7 | Yaxel Lendeborg 3+ assists (actual 6) HIT | Pelle Larsson 3+ assists (actual 4) HIT | De'Anthony Melton 13+ points (actual 5) MISS |
+| 8 | Yaxel Lendeborg 5+ rebounds (actual 8) HIT | Pelle Larsson 3+ rebounds (actual 1) MISS | Georges Niang 1+ three_pointers_made (actual 2) HIT |
+| 9 | Georges Niang 3+ rebounds (actual 4) HIT | Giannis Antetokounmpo 5+ assists (actual 4) MISS | Bam Adebayo 3+ assists (actual 0) MISS |
+| 10 | Giannis Antetokounmpo 8+ rebounds (actual 14) HIT | Georges Niang 3+ rebounds (actual 4) HIT | Giannis Antetokounmpo 1+ steals (actual 0) MISS |
+
+### 2026-11-06: Washington Wizards at Atlanta Hawks (401909287)
+
+Frozen V3 / V4 / V5 generations: 2026-11-06T03:29:25.958807+00:00 / 2026-11-06T23:29:27.805121+00:00 / 2026-11-06T23:29:50.407805+00:00.
+
+| Rank | V3 | V4 | V5 |
+|---:|---|---|---|
+| 1 | Anthony Davis 2+ assists (actual 0) MISS | Aaron Wiggins 1+ three_pointers_made (actual 3) HIT | Aaron Wiggins 1+ steals (actual 0) MISS |
+| 2 | Onyeka Okongwu 1+ three_pointers_made (actual 2) HIT | Tre Johnson 1+ three_pointers_made (actual 5) HIT | Luguentz Dort 1+ steals (actual 2) HIT |
+| 3 | Nickeil Alexander-Walker 3+ rebounds (actual 2) MISS | Alex Sarr 2+ assists (actual 3) HIT | CJ McCollum 1+ steals (actual 0) MISS |
+| 4 | Onyeka Okongwu 2+ assists (actual 1) MISS | Nickeil Alexander-Walker 3+ rebounds (actual 2) MISS | Onyeka Okongwu 1+ steals (actual 4) HIT |
+| 5 | Luguentz Dort 3+ rebounds (actual 7) HIT | CJ McCollum 2+ three_pointers_made (actual 0) MISS | Onyeka Okongwu 1+ blocks (actual 0) MISS |
+| 6 | Aaron Wiggins 2+ three_pointers_made (actual 3) HIT | Kyshawn George 4+ rebounds (actual 4) HIT | Dyson Daniels 2+ steals (actual 2) HIT |
+| 7 | Bilal Coulibaly 3+ rebounds (actual 5) HIT | CJ McCollum 3+ rebounds (actual 3) HIT | Trae Young 1+ steals (actual 1) HIT |
+| 8 | Aaron Wiggins 3+ rebounds (actual 4) HIT | Deandre Ayton 5+ rebounds (actual 11) HIT | CJ McCollum 2+ three_pointers_made (actual 0) MISS |
+| 9 | Deandre Ayton 3+ rebounds (actual 11) HIT | Bilal Coulibaly 2+ assists (actual 0) MISS | Kingston Flemings 1+ steals (actual 0) MISS |
+| 10 | Onyeka Okongwu 5+ rebounds (actual 10) HIT | Nickeil Alexander-Walker 3+ three_pointers_made (actual 4) HIT | Onyeka Okongwu 3+ assists (actual 1) MISS |
+
+### 2026-11-06: Boston Celtics at Charlotte Hornets (401909288)
+
+Frozen V3 / V4 / V5 generations: 2026-11-06T03:29:25.958807+00:00 / 2026-11-06T23:29:27.805121+00:00 / 2026-11-06T23:29:50.407805+00:00.
+
+| Rank | V3 | V4 | V5 |
+|---:|---|---|---|
+| 1 | Brandon Miller 2+ assists (actual 1) MISS | Baylor Scheierman 1+ three_pointers_made (actual 1) HIT | Baylor Scheierman 1+ three_pointers_made (actual 1) HIT |
+| 2 | Sion James 1+ three_pointers_made (actual 3) HIT | Sion James 2+ assists (actual 0) MISS | Sion James 1+ three_pointers_made (actual 3) HIT |
+| 3 | Sion James 2+ assists (actual 0) MISS | Sion James 1+ three_pointers_made (actual 3) HIT | Ryan Kalkbrenner 1+ blocks (actual 0) MISS |
+| 4 | Royce O'Neale 1+ three_pointers_made (actual 2) HIT | Naz Reid 2+ three_pointers_made (actual 2) HIT | Tidjane Salaun 1+ three_pointers_made (actual 2) HIT |
+| 5 | Moussa Diabate 2+ assists (actual 0) MISS | Tidjane Salaun 1+ three_pointers_made (actual 2) HIT | Naz Reid 2+ three_pointers_made (actual 2) HIT |
+| 6 | Dennis Schroder 3+ rebounds (actual 0) MISS | Naz Reid 2+ assists (actual 2) HIT | Grayson Allen 1+ steals (actual 1) HIT |
+| 7 | Naz Reid 2+ three_pointers_made (actual 2) HIT | Baylor Scheierman 3+ rebounds (actual 4) HIT | Payton Pritchard 2+ three_pointers_made (actual 4) HIT |
+| 8 | Brandon Miller 4+ rebounds (actual 2) MISS | Royce O'Neale 3+ rebounds (actual 4) HIT | Paul George 3+ assists (actual 1) MISS |
+| 9 | Naz Reid 2+ assists (actual 2) HIT | Brandon Miller 3+ three_pointers_made (actual 0) MISS | Royce O'Neale 2+ three_pointers_made (actual 2) HIT |
+| 10 | Ryan Kalkbrenner 3+ rebounds (actual 5) HIT | Jordan Walsh 3+ rebounds (actual 3) HIT | Royce O'Neale 2+ assists (actual 2) HIT |
 
 ### 2026-11-06: Philadelphia 76ers at Cleveland Cavaliers (401909289)
 
@@ -94,6 +174,23 @@ Frozen V3 / V4 / V5 generations: 2026-11-06T03:29:25.958807+00:00 / 2026-11-06T2
 | 9 | Zaccharie Risacher 1+ three_pointers_made (actual 0) MISS | Keyonte George 2+ three_pointers_made (actual 1) MISS | Zaccharie Risacher 1+ steals (actual 0) MISS |
 | 10 | Cooper Flagg 1+ three_pointers_made (actual 1) HIT | Ace Bailey 2+ assists (actual 0) MISS | Isaiah Collier 1+ steals (actual 0) MISS |
 
+### 2026-11-06: Oklahoma City Thunder at Memphis Grizzlies (401909291)
+
+Frozen V3 / V4 / V5 generations: 2026-11-06T03:29:25.958807+00:00 / 2026-11-06T23:29:27.805121+00:00 / 2026-11-06T23:29:50.407805+00:00.
+
+| Rank | V3 | V4 | V5 |
+|---:|---|---|---|
+| 1 | Kenrich Williams 1+ three_pointers_made (actual 1) HIT | Bennett Stirtz 1+ three_pointers_made (actual 2) HIT | Shai Gilgeous-Alexander 1+ steals (actual 1) HIT |
+| 2 | Jared McCain 2+ assists (actual 0) MISS | Isaiah Hartenstein 3+ assists (actual 7) HIT | Isaiah Hartenstein 1+ steals (actual 1) HIT |
+| 3 | Jared McCain 2+ three_pointers_made (actual 3) HIT | GG Jackson 3+ rebounds (actual 0) MISS | Kenrich Williams 1+ three_pointers_made (actual 1) HIT |
+| 4 | Jared McCain 14+ points (actual 21) HIT | Kenrich Williams 1+ three_pointers_made (actual 1) HIT | Jared McCain 1+ steals (actual 4) HIT |
+| 5 | Jared McCain 4+ rebounds (actual 5) HIT | Ty Jerome 3+ rebounds (actual 2) MISS | Ajay Mitchell 1+ three_pointers_made (actual 4) HIT |
+| 6 | Kenrich Williams 4+ rebounds (actual 6) HIT | Cameron Boozer 2+ three_pointers_made (actual 0) MISS | Kenrich Williams 1+ steals (actual 0) MISS |
+| 7 | Kenrich Williams 9+ points (actual 4) MISS | GG Jackson 1+ three_pointers_made (actual 0) MISS | Zach Edey 1+ blocks (actual 0) MISS |
+| 8 | Kenrich Williams 2+ assists (actual 3) HIT | Ajay Mitchell 1+ three_pointers_made (actual 4) HIT | Quinten Post 1+ three_pointers_made (actual 0) MISS |
+| 9 | — (no ranked projection) | Shai Gilgeous-Alexander 4+ rebounds (actual 3) MISS | Jared McCain 2+ three_pointers_made (actual 3) HIT |
+| 10 | — (no ranked projection) | Jaylen Wells 3+ rebounds (actual 0) MISS | Jerami Grant 2+ three_pointers_made (actual 2) HIT |
+
 ### 2026-11-06: Toronto Raptors at Milwaukee Bucks (401909292)
 
 Frozen V3 / V4 / V5 generations: 2026-11-06T03:29:25.958807+00:00 / 2026-11-06T23:29:27.805121+00:00 / 2026-11-06T23:29:50.407805+00:00.
@@ -110,6 +207,23 @@ Frozen V3 / V4 / V5 generations: 2026-11-06T03:29:25.958807+00:00 / 2026-11-06T2
 | 8 | Scottie Barnes 6+ assists (actual 0) MISS | Kasparas Jakucionis 1+ three_pointers_made (actual 0) MISS | Tyler Herro 3+ assists (actual 10) HIT |
 | 9 | Ja'Kobe Walter 2+ three_pointers_made (actual 1) MISS | Kyle Kuzma 4+ rebounds (actual 4) HIT | Ja'Kobe Walter 2+ assists (actual 2) HIT |
 | 10 | Jamal Shead 4+ assists (actual 16) HIT | Collin Murray-Boyles 4+ rebounds (actual 7) HIT | Jaime Jaquez Jr. 1+ three_pointers_made (actual 2) HIT |
+
+### 2026-11-06: Minnesota Timberwolves at New Orleans Pelicans (401909293)
+
+Frozen V3 / V4 / V5 generations: 2026-11-06T03:29:25.958807+00:00 / 2026-11-06T23:29:27.805121+00:00 / 2026-11-06T23:29:50.407805+00:00.
+
+| Rank | V3 | V4 | V5 |
+|---:|---|---|---|
+| 1 | Jeremiah Fears 1+ three_pointers_made (actual 0) MISS | Jonathan Kuminga 1+ three_pointers_made (actual 1) HIT | LaMelo Ball 1+ steals (actual 0) MISS |
+| 2 | Terrence Shannon Jr. 1+ three_pointers_made (actual 0) MISS | Jaden McDaniels 1+ three_pointers_made (actual 2) HIT | Trey Murphy III 1+ steals (actual 2) HIT |
+| 3 | Jeremiah Fears 4+ rebounds (actual 5) HIT | Jeremiah Fears 1+ three_pointers_made (actual 0) MISS | Jeremiah Fears 1+ three_pointers_made (actual 0) MISS |
+| 4 | Jeremiah Fears 19+ points (actual 24) HIT | Trey Lyles 1+ three_pointers_made (actual 0) MISS | Jeremiah Fears 1+ steals (actual 2) HIT |
+| 5 | Joan Beringer 4+ rebounds (actual 3) MISS | Trey Murphy III 3+ assists (actual 5) HIT | Trey Murphy III 3+ assists (actual 5) HIT |
+| 6 | Derik Queen 7+ rebounds (actual 4) MISS | Herbert Jones 1+ three_pointers_made (actual 0) MISS | Ayo Dosunmu 1+ steals (actual 0) MISS |
+| 7 | Derik Queen 14+ points (actual 6) MISS | Bennedict Mathurin 3+ rebounds (actual 0) MISS | Rudy Gobert 1+ blocks (actual 1) HIT |
+| 8 | Terrence Shannon Jr. 12+ points (actual 0) MISS | Karlo Matkovic 4+ rebounds (actual 3) MISS | Trey Lyles 1+ three_pointers_made (actual 0) MISS |
+| 9 | Jeremiah Fears 4+ assists (actual 5) HIT | Trey Lyles 3+ rebounds (actual 13) HIT | Jonathan Kuminga 1+ steals (actual 1) HIT |
+| 10 | Jaylen Clark 1+ three_pointers_made (actual 1) HIT | Saddiq Bey 4+ rebounds (actual 5) HIT | Trey Murphy III 5+ rebounds (actual 4) MISS |
 
 ### 2026-11-06: Portland Trail Blazers at Los Angeles Lakers (401909294)
 
@@ -178,6 +292,23 @@ Frozen V3 / V4 / V5 generations: 2026-11-08T00:13:03.899067+00:00 / 2026-11-08T0
 | 8 | Kingston Flemings 3+ assists (actual 1) MISS | Nickeil Alexander-Walker 3+ assists (actual 1) MISS | Nolan Traore 1+ three_pointers_made (actual 2) HIT |
 | 9 | Luguentz Dort 2+ three_pointers_made (actual 1) MISS | Moritz Wagner 3+ rebounds (actual 2) MISS | Michael Porter Jr. 1+ steals (actual 1) HIT |
 | 10 | Keon Ellis 1+ three_pointers_made (actual 0) MISS | Danny Wolf 2+ assists (actual 1) MISS | Michael Porter Jr. 2+ assists (actual 1) MISS |
+
+### 2026-11-07: New York Knicks at Cleveland Cavaliers (401909940)
+
+Frozen V3 / V4 / V5 generations: 2026-11-08T00:15:15.215045+00:00 / 2026-11-08T00:15:28.850996+00:00 / 2026-11-08T00:15:42.876975+00:00.
+
+| Rank | V3 | V4 | V5 |
+|---:|---|---|---|
+| 1 | Evan Mobley 3+ assists (actual 5) HIT | Evan Mobley 1+ three_pointers_made (actual 1) HIT | Mikal Bridges 1+ three_pointers_made (actual 1) HIT |
+| 2 | Evan Mobley 1+ three_pointers_made (actual 1) HIT | Evan Mobley 3+ assists (actual 5) HIT | OG Anunoby 1+ steals (actual 1) HIT |
+| 3 | Evan Mobley 21+ points (actual 12) MISS | Jordan Clarkson 7+ points (actual 9) HIT | Donovan Mitchell 1+ steals (actual 2) HIT |
+| 4 | Tyrese Proctor 1+ three_pointers_made (actual 2) HIT | Tyrese Proctor 3+ assists (actual 3) HIT | Karl-Anthony Towns 1+ three_pointers_made (actual 2) HIT |
+| 5 | Evan Mobley 9+ rebounds (actual 9) HIT | Tyrese Proctor 2+ three_pointers_made (actual 2) HIT | Tyrese Proctor 1+ steals (actual 0) MISS |
+| 6 | Tyrese Proctor 8+ points (actual 7) MISS | Jordan Clarkson 1+ three_pointers_made (actual 1) HIT | Mikal Bridges 1+ steals (actual 0) MISS |
+| 7 | Tyrese Proctor 2+ assists (actual 3) HIT | Evan Mobley 8+ rebounds (actual 9) HIT | Evan Mobley 1+ three_pointers_made (actual 1) HIT |
+| 8 | — (no ranked projection) | Evan Mobley 17+ points (actual 12) MISS | James Harden 1+ steals (actual 0) MISS |
+| 9 | — (no ranked projection) | Tyrese Proctor 10+ points (actual 7) MISS | Craig Porter Jr. 1+ steals (actual 0) MISS |
+| 10 | — (no ranked projection) | — (no ranked projection) | OG Anunoby 2+ three_pointers_made (actual 3) HIT |
 
 ### 2026-11-07: Washington Wizards at Oklahoma City Thunder (401909941)
 
@@ -368,13 +499,7 @@ Frozen V3 / V4 / V5 generations: 2026-11-09T01:43:35.334099+00:00 / 2026-11-09T0
 
 ## Archived games excluded from fair matched comparison
 
-- Washington Wizards at Atlanta Hawks (401909287): RANKING_OR_OUTCOME_INTEGRITY: V3 401909287 missing frozen actual for ('6583', 'assists')
-- Boston Celtics at Charlotte Hornets (401909288): RANKING_OR_OUTCOME_INTEGRITY: V3 401909288 missing frozen actual for ('4433249', 'assists')
-- Oklahoma City Thunder at Memphis Grizzlies (401909291): RANKING_OR_OUTCOME_INTEGRITY: V3 401909291 has 8 ranked targets, not ten
-- Minnesota Timberwolves at New Orleans Pelicans (401909293): RANKING_OR_OUTCOME_INTEGRITY: V3 401909293 missing frozen actual for ('4432847', 'three_pointers_made')
-- Orlando Magic at Phoenix Suns (401909936): RANKING_OR_OUTCOME_INTEGRITY: V5 401909936: noncanonical ranks [1, 2, 4, 5, 6, 7, 8, 10]
-- Miami Heat at Golden State Warriors (401909937): RANKING_OR_OUTCOME_INTEGRITY: V5 401909937: noncanonical ranks [1, 2, 3, 5, 6, 7, 8, 9, 10]
-- New York Knicks at Cleveland Cavaliers (401909940): RANKING_OR_OUTCOME_INTEGRITY: V3 401909940 has 7 ranked targets, not ten
+None; every frozen game had an eligible matched V3/V4 revision.
 
 ## Interpretation
 - Only historical original pregame forecasts and real final stats were used.

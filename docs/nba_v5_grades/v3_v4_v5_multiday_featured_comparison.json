@@ -1,88 +1,70 @@
 {
   "schema": "NBA_THREE_VERSION_FROZEN_FEATURED_CARDS_ALL_AVAILABLE_V1",
   "total_grade_files": 25,
-  "matched_games": 18,
-  "excluded_games": [
-    {
-      "game_id": "401909287",
-      "game": "Washington Wizards at Atlanta Hawks",
-      "reason": "RANKING_OR_OUTCOME_INTEGRITY: V3 401909287 missing frozen actual for ('6583', 'assists')"
-    },
-    {
-      "game_id": "401909288",
-      "game": "Boston Celtics at Charlotte Hornets",
-      "reason": "RANKING_OR_OUTCOME_INTEGRITY: V3 401909288 missing frozen actual for ('4433249', 'assists')"
-    },
-    {
-      "game_id": "401909291",
-      "game": "Oklahoma City Thunder at Memphis Grizzlies",
-      "reason": "RANKING_OR_OUTCOME_INTEGRITY: V3 401909291 has 8 ranked targets, not ten"
-    },
-    {
-      "game_id": "401909293",
-      "game": "Minnesota Timberwolves at New Orleans Pelicans",
-      "reason": "RANKING_OR_OUTCOME_INTEGRITY: V3 401909293 missing frozen actual for ('4432847', 'three_pointers_made')"
-    },
-    {
-      "game_id": "401909936",
-      "game": "Orlando Magic at Phoenix Suns",
-      "reason": "RANKING_OR_OUTCOME_INTEGRITY: V5 401909936: noncanonical ranks [1, 2, 4, 5, 6, 7, 8, 10]"
-    },
-    {
-      "game_id": "401909937",
-      "game": "Miami Heat at Golden State Warriors",
-      "reason": "RANKING_OR_OUTCOME_INTEGRITY: V5 401909937: noncanonical ranks [1, 2, 3, 5, 6, 7, 8, 9, 10]"
-    },
-    {
-      "game_id": "401909940",
-      "game": "New York Knicks at Cleveland Cavaliers",
-      "reason": "RANKING_OR_OUTCOME_INTEGRITY: V3 401909940 has 7 ranked targets, not ten"
-    }
-  ],
+  "matched_games": 25,
+  "excluded_games": [],
   "history_integrity": {
     "missing_v3_game": 7
   },
   "date_coverage": {
+    "2026-11-05": {
+      "games": 2,
+      "V3": 10,
+      "V4": 10,
+      "V5": 9,
+      "N_V3": 20,
+      "N_V4": 20,
+      "N_V5": 17
+    },
     "2026-11-06": {
-      "games": 5,
-      "V3": 30,
-      "V4": 27,
-      "V5": 35
+      "games": 9,
+      "V3": 52,
+      "V4": 51,
+      "V5": 59,
+      "N_V3": 88,
+      "N_V4": 90,
+      "N_V5": 90
     },
     "2026-11-07": {
-      "games": 6,
-      "V3": 36,
-      "V4": 34,
-      "V5": 35
+      "games": 7,
+      "V3": 41,
+      "V4": 41,
+      "V5": 41,
+      "N_V3": 67,
+      "N_V4": 69,
+      "N_V5": 70
     },
     "2026-11-08": {
       "games": 7,
       "V3": 42,
       "V4": 42,
-      "V5": 38
+      "V5": 38,
+      "N_V3": 70,
+      "N_V4": 70,
+      "N_V5": 70
     }
   },
   "overall": {
     "V3": {
-      "n": 180,
-      "hits": 108,
-      "hit_rate": 0.6,
+      "n": 245,
+      "hits": 145,
+      "hit_rate": 0.5918367346938775,
       "markets": {
         "points": {
-          "n": 16,
-          "hits": 8
+          "n": 23,
+          "hits": 10
         },
         "rebounds": {
-          "n": 45,
-          "hits": 30
+          "n": 66,
+          "hits": 44
         },
         "assists": {
-          "n": 41,
-          "hits": 22
+          "n": 59,
+          "hits": 30
         },
         "three_pointers_made": {
-          "n": 78,
-          "hits": 48
+          "n": 97,
+          "hits": 61
         },
         "steals": {
           "n": 0,
@@ -95,25 +77,25 @@
       }
     },
     "V4": {
-      "n": 180,
-      "hits": 103,
-      "hit_rate": 0.5722222222222222,
+      "n": 249,
+      "hits": 144,
+      "hit_rate": 0.5783132530120482,
       "markets": {
         "points": {
-          "n": 3,
-          "hits": 1
+          "n": 6,
+          "hits": 2
         },
         "rebounds": {
-          "n": 36,
-          "hits": 24
+          "n": 59,
+          "hits": 37
         },
         "assists": {
-          "n": 46,
-          "hits": 21
+          "n": 60,
+          "hits": 29
         },
         "three_pointers_made": {
-          "n": 95,
-          "hits": 57
+          "n": 124,
+          "hits": 76
         },
         "steals": {
           "n": 0,
@@ -126,38 +108,2021 @@
       }
     },
     "V5": {
-      "n": 180,
-      "hits": 108,
-      "hit_rate": 0.6,
+      "n": 247,
+      "hits": 147,
+      "hit_rate": 0.5951417004048583,
       "markets": {
         "points": {
-          "n": 0,
-          "hits": 0
+          "n": 2,
+          "hits": 1
         },
         "rebounds": {
-          "n": 4,
-          "hits": 3
+          "n": 7,
+          "hits": 5
         },
         "assists": {
-          "n": 9,
-          "hits": 6
+          "n": 16,
+          "hits": 9
         },
         "three_pointers_made": {
-          "n": 85,
-          "hits": 48
+          "n": 107,
+          "hits": 64
         },
         "steals": {
-          "n": 68,
-          "hits": 42
+          "n": 95,
+          "hits": 57
         },
         "blocks": {
-          "n": 14,
-          "hits": 9
+          "n": 20,
+          "hits": 11
         }
       }
     }
   },
   "games": [
+    {
+      "id": "401909936",
+      "matchup": "Orlando Magic at Phoenix Suns",
+      "revision": "bae27afd48e9cbb93849ba71e6e5adf21db128bd",
+      "times": {
+        "V3": "2026-11-06T01:34:22.672051+00:00",
+        "V4": "2026-11-06T01:34:34.493768+00:00",
+        "V5": "2026-11-06T01:34:44.132671+00:00"
+      },
+      "cards": {
+        "V3": [
+          {
+            "player_id": "4278585",
+            "player": "Collin Gillespie",
+            "market": "three_pointers_made",
+            "mean": 1.5004,
+            "target": 1,
+            "probability": 0.650625,
+            "p_active": 0.8185,
+            "rank": 1,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4702382",
+            "player": "Tristan da Silva",
+            "market": "assists",
+            "mean": 2.5016,
+            "target": 2,
+            "probability": 0.6443749999999999,
+            "p_active": 0.904625,
+            "rank": 2,
+            "actual": 1,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4278572",
+            "player": "Jamal Cain",
+            "market": "three_pointers_made",
+            "mean": 1.1174,
+            "target": 1,
+            "probability": 0.6112500000000001,
+            "p_active": 0.912625,
+            "rank": 3,
+            "actual": 1,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "3155526",
+            "player": "Dillon Brooks",
+            "market": "rebounds",
+            "mean": 3.5109,
+            "target": 3,
+            "probability": 0.6038749999999999,
+            "p_active": 0.81675,
+            "rank": 4,
+            "actual": 1,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4278585",
+            "player": "Collin Gillespie",
+            "market": "assists",
+            "mean": 3.4707,
+            "target": 3,
+            "probability": 0.5842499999999999,
+            "p_active": 0.8185,
+            "rank": 5,
+            "actual": 2,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4066320",
+            "player": "Desmond Bane",
+            "market": "assists",
+            "mean": 3.2967,
+            "target": 3,
+            "probability": 0.58125,
+            "p_active": 0.908125,
+            "rank": 6,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "3155526",
+            "player": "Dillon Brooks",
+            "market": "assists",
+            "mean": 2.2407,
+            "target": 2,
+            "probability": 0.5746249999999999,
+            "p_active": 0.81675,
+            "rank": 7,
+            "actual": 1,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4066320",
+            "player": "Desmond Bane",
+            "market": "three_pointers_made",
+            "mean": 3.196,
+            "target": 3,
+            "probability": 0.5722499999999999,
+            "p_active": 0.908125,
+            "rank": 8,
+            "actual": 3,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "5239561",
+            "player": "Jase Richardson",
+            "market": "assists",
+            "mean": 2.3883,
+            "target": 2,
+            "probability": 0.5583750000000001,
+            "p_active": 0.806625,
+            "rank": 9,
+            "actual": 3,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4066320",
+            "player": "Desmond Bane",
+            "market": "rebounds",
+            "mean": 4.0968,
+            "target": 4,
+            "probability": 0.55225,
+            "p_active": 0.908125,
+            "rank": 10,
+            "actual": 6,
+            "played": true,
+            "hit": true
+          }
+        ],
+        "V4": [
+          {
+            "player_id": "4601023",
+            "player": "Oso Ighodaro",
+            "market": "assists",
+            "mean": 2.4724,
+            "target": 2,
+            "probability": 0.677508,
+            "p_active": 0.816625,
+            "rank": 1,
+            "actual": 1,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4566434",
+            "player": "Franz Wagner",
+            "market": "three_pointers_made",
+            "mean": 1.2127,
+            "target": 1,
+            "probability": 0.672411,
+            "p_active": 0.905375,
+            "rank": 2,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4066320",
+            "player": "Desmond Bane",
+            "market": "assists",
+            "mean": 3.5701,
+            "target": 3,
+            "probability": 0.654642,
+            "p_active": 0.908125,
+            "rank": 3,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "3155526",
+            "player": "Dillon Brooks",
+            "market": "rebounds",
+            "mean": 3.5301,
+            "target": 3,
+            "probability": 0.646066,
+            "p_active": 0.81675,
+            "rank": 4,
+            "actual": 1,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4888725",
+            "player": "Ryan Dunn",
+            "market": "rebounds",
+            "mean": 3.5228,
+            "target": 3,
+            "probability": 0.644865,
+            "p_active": 0.861875,
+            "rank": 5,
+            "actual": 3,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4278572",
+            "player": "Jamal Cain",
+            "market": "three_pointers_made",
+            "mean": 1.112,
+            "target": 1,
+            "probability": 0.642968,
+            "p_active": 0.912625,
+            "rank": 6,
+            "actual": 1,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4278585",
+            "player": "Collin Gillespie",
+            "market": "three_pointers_made",
+            "mean": 2.3014,
+            "target": 2,
+            "probability": 0.6253839999999999,
+            "p_active": 0.8185,
+            "rank": 7,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "6478",
+            "player": "Nikola Vucevic",
+            "market": "rebounds",
+            "mean": 4.4857,
+            "target": 4,
+            "probability": 0.612958,
+            "p_active": 0.862625,
+            "rank": 8,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "5203685",
+            "player": "Khaman Maluach",
+            "market": "rebounds",
+            "mean": 5.4999,
+            "target": 5,
+            "probability": 0.5963,
+            "p_active": 0.888875,
+            "rank": 9,
+            "actual": 6,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4066320",
+            "player": "Desmond Bane",
+            "market": "three_pointers_made",
+            "mean": 2.1549,
+            "target": 2,
+            "probability": 0.5944659999999999,
+            "p_active": 0.908125,
+            "rank": 10,
+            "actual": 3,
+            "played": true,
+            "hit": true
+          }
+        ],
+        "V5": [
+          {
+            "player_id": "5203685",
+            "player": "Khaman Maluach",
+            "market": "blocks",
+            "target": 1,
+            "mean": 1.4927,
+            "probability": null,
+            "p_active": 0.888875,
+            "rank": 1,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4566434",
+            "player": "Franz Wagner",
+            "market": "three_pointers_made",
+            "target": 1,
+            "mean": 1.3665,
+            "probability": null,
+            "p_active": 0.905375,
+            "rank": 2,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4066320",
+            "player": "Desmond Bane",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.2551,
+            "probability": null,
+            "p_active": 0.908125,
+            "rank": 4,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4702382",
+            "player": "Tristan da Silva",
+            "market": "assists",
+            "target": 2,
+            "mean": 2.3735,
+            "probability": null,
+            "p_active": 0.904625,
+            "rank": 5,
+            "actual": 1,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4278572",
+            "player": "Jamal Cain",
+            "market": "rebounds",
+            "target": 3,
+            "mean": 3.3268,
+            "probability": null,
+            "p_active": 0.912625,
+            "rank": 6,
+            "actual": 5,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4277847",
+            "player": "Wendell Carter Jr.",
+            "market": "points",
+            "target": 12,
+            "mean": 12.4471,
+            "probability": null,
+            "p_active": 0.906875,
+            "rank": 7,
+            "actual": 27,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4278572",
+            "player": "Jamal Cain",
+            "market": "three_pointers_made",
+            "target": 1,
+            "mean": 1.247,
+            "probability": null,
+            "p_active": 0.912625,
+            "rank": 8,
+            "actual": 1,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4566434",
+            "player": "Franz Wagner",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.0735,
+            "probability": null,
+            "p_active": 0.905375,
+            "rank": 10,
+            "actual": 4,
+            "played": true,
+            "hit": true
+          }
+        ]
+      },
+      "hits": {
+        "V3": 5,
+        "V4": 5,
+        "V5": 4
+      },
+      "counts": {
+        "V3": 10,
+        "V4": 10,
+        "V5": 8
+      },
+      "recovered_first_grade_actuals": [],
+      "v4_vs_v5_pretip_lag_minutes": 0.16,
+      "game_date_et": "2026-11-05"
+    },
+    {
+      "id": "401909937",
+      "matchup": "Miami Heat at Golden State Warriors",
+      "revision": "9d4402ad831f1e7f94de6b9bcf5516c54f66aa94",
+      "times": {
+        "V3": "2026-11-06T01:47:09.469066+00:00",
+        "V4": "2026-11-06T01:47:18.809389+00:00",
+        "V5": "2026-11-06T01:47:28.634814+00:00"
+      },
+      "cards": {
+        "V3": [
+          {
+            "player_id": "4066436",
+            "player": "De'Anthony Melton",
+            "market": "three_pointers_made",
+            "mean": 1.4612,
+            "target": 1,
+            "probability": 0.702125,
+            "p_active": 0.913375,
+            "rank": 1,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4066261",
+            "player": "Bam Adebayo",
+            "market": "three_pointers_made",
+            "mean": 1.3562,
+            "target": 1,
+            "probability": 0.6765,
+            "p_active": 0.91375,
+            "rank": 2,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "3064482",
+            "player": "Bobby Portis",
+            "market": "three_pointers_made",
+            "mean": 1.2098,
+            "target": 1,
+            "probability": 0.6388750000000001,
+            "p_active": 0.893,
+            "rank": 3,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4066436",
+            "player": "De'Anthony Melton",
+            "market": "assists",
+            "mean": 2.4451,
+            "target": 2,
+            "probability": 0.633625,
+            "p_active": 0.913375,
+            "rank": 4,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "2528210",
+            "player": "Tim Hardaway Jr.",
+            "market": "three_pointers_made",
+            "mean": 1.2328,
+            "target": 1,
+            "probability": 0.633625,
+            "p_active": 0.89025,
+            "rank": 5,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4601025",
+            "player": "Pelle Larsson",
+            "market": "rebounds",
+            "mean": 3.4301,
+            "target": 3,
+            "probability": 0.592875,
+            "p_active": 0.825,
+            "rank": 6,
+            "actual": 1,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "5175737",
+            "player": "Yaxel Lendeborg",
+            "market": "assists",
+            "mean": 3.2859,
+            "target": 3,
+            "probability": 0.5780000000000001,
+            "p_active": 0.87175,
+            "rank": 7,
+            "actual": 6,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "5175737",
+            "player": "Yaxel Lendeborg",
+            "market": "rebounds",
+            "mean": 5.4039,
+            "target": 5,
+            "probability": 0.577625,
+            "p_active": 0.87175,
+            "rank": 8,
+            "actual": 8,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "2990969",
+            "player": "Georges Niang",
+            "market": "rebounds",
+            "mean": 3.2216,
+            "target": 3,
+            "probability": 0.568875,
+            "p_active": 0.874625,
+            "rank": 9,
+            "actual": 4,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "3032977",
+            "player": "Giannis Antetokounmpo",
+            "market": "rebounds",
+            "mean": 8.3643,
+            "target": 8,
+            "probability": 0.5642499999999999,
+            "p_active": 0.88575,
+            "rank": 10,
+            "actual": 14,
+            "played": true,
+            "hit": true
+          }
+        ],
+        "V4": [
+          {
+            "player_id": "4066261",
+            "player": "Bam Adebayo",
+            "market": "three_pointers_made",
+            "mean": 1.5715,
+            "target": 1,
+            "probability": 0.756798,
+            "p_active": 0.91375,
+            "rank": 1,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "2990969",
+            "player": "Georges Niang",
+            "market": "three_pointers_made",
+            "mean": 1.2815,
+            "target": 1,
+            "probability": 0.690902,
+            "p_active": 0.874625,
+            "rank": 2,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "5175737",
+            "player": "Yaxel Lendeborg",
+            "market": "three_pointers_made",
+            "mean": 2.5759,
+            "target": 2,
+            "probability": 0.6771940000000001,
+            "p_active": 0.87175,
+            "rank": 3,
+            "actual": 1,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "3059319",
+            "player": "Andrew Wiggins",
+            "market": "assists",
+            "mean": 2.3465,
+            "target": 2,
+            "probability": 0.652182,
+            "p_active": 0.910625,
+            "rank": 4,
+            "actual": 4,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4066436",
+            "player": "De'Anthony Melton",
+            "market": "rebounds",
+            "mean": 3.5333,
+            "target": 3,
+            "probability": 0.646586,
+            "p_active": 0.913375,
+            "rank": 5,
+            "actual": 6,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4066261",
+            "player": "Bam Adebayo",
+            "market": "assists",
+            "mean": 3.4861,
+            "target": 3,
+            "probability": 0.640826,
+            "p_active": 0.91375,
+            "rank": 6,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4601025",
+            "player": "Pelle Larsson",
+            "market": "assists",
+            "mean": 3.3225,
+            "target": 3,
+            "probability": 0.612572,
+            "p_active": 0.825,
+            "rank": 7,
+            "actual": 4,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4601025",
+            "player": "Pelle Larsson",
+            "market": "rebounds",
+            "mean": 3.3301,
+            "target": 3,
+            "probability": 0.612089,
+            "p_active": 0.825,
+            "rank": 8,
+            "actual": 1,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "3032977",
+            "player": "Giannis Antetokounmpo",
+            "market": "assists",
+            "mean": 5.5954,
+            "target": 5,
+            "probability": 0.610982,
+            "p_active": 0.88575,
+            "rank": 9,
+            "actual": 4,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "2990969",
+            "player": "Georges Niang",
+            "market": "rebounds",
+            "mean": 3.2981,
+            "target": 3,
+            "probability": 0.6064,
+            "p_active": 0.874625,
+            "rank": 10,
+            "actual": 4,
+            "played": true,
+            "hit": true
+          }
+        ],
+        "V5": [
+          {
+            "player_id": "4066261",
+            "player": "Bam Adebayo",
+            "market": "three_pointers_made",
+            "target": 1,
+            "mean": 1.5827,
+            "probability": null,
+            "p_active": 0.91375,
+            "rank": 1,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4066436",
+            "player": "De'Anthony Melton",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.4453,
+            "probability": null,
+            "p_active": 0.913375,
+            "rank": 2,
+            "actual": 3,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "3059319",
+            "player": "Andrew Wiggins",
+            "market": "assists",
+            "target": 2,
+            "mean": 2.457,
+            "probability": null,
+            "p_active": 0.910625,
+            "rank": 3,
+            "actual": 4,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "3064482",
+            "player": "Bobby Portis",
+            "market": "rebounds",
+            "target": 5,
+            "mean": 5.5007,
+            "probability": null,
+            "p_active": 0.893,
+            "rank": 5,
+            "actual": 5,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "3059319",
+            "player": "Andrew Wiggins",
+            "market": "blocks",
+            "target": 1,
+            "mean": 0.8257,
+            "probability": null,
+            "p_active": 0.910625,
+            "rank": 6,
+            "actual": 1,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4066436",
+            "player": "De'Anthony Melton",
+            "market": "points",
+            "target": 13,
+            "mean": 13.5483,
+            "probability": null,
+            "p_active": 0.913375,
+            "rank": 7,
+            "actual": 5,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "2990969",
+            "player": "Georges Niang",
+            "market": "three_pointers_made",
+            "target": 1,
+            "mean": 1.5564,
+            "probability": null,
+            "p_active": 0.874625,
+            "rank": 8,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4066261",
+            "player": "Bam Adebayo",
+            "market": "assists",
+            "target": 3,
+            "mean": 3.5865,
+            "probability": null,
+            "p_active": 0.91375,
+            "rank": 9,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "3032977",
+            "player": "Giannis Antetokounmpo",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.1736,
+            "probability": null,
+            "p_active": 0.88575,
+            "rank": 10,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          }
+        ]
+      },
+      "hits": {
+        "V3": 5,
+        "V4": 5,
+        "V5": 5
+      },
+      "counts": {
+        "V3": 10,
+        "V4": 10,
+        "V5": 9
+      },
+      "recovered_first_grade_actuals": [],
+      "v4_vs_v5_pretip_lag_minutes": 0.16,
+      "game_date_et": "2026-11-05"
+    },
+    {
+      "id": "401909287",
+      "matchup": "Washington Wizards at Atlanta Hawks",
+      "revision": "c0f7a54b4afa5732b5705ebaa9c453aa9adf0d78",
+      "times": {
+        "V3": "2026-11-06T03:29:25.958807+00:00",
+        "V4": "2026-11-06T23:29:27.805121+00:00",
+        "V5": "2026-11-06T23:29:50.407805+00:00"
+      },
+      "cards": {
+        "V3": [
+          {
+            "player_id": "6583",
+            "player": "Anthony Davis",
+            "market": "assists",
+            "mean": 2.5894,
+            "target": 2,
+            "probability": 0.655375,
+            "p_active": 0.882625,
+            "rank": 1,
+            "actual": 0,
+            "played": false,
+            "hit": false
+          },
+          {
+            "player_id": "4431680",
+            "player": "Onyeka Okongwu",
+            "market": "three_pointers_made",
+            "mean": 1.3094,
+            "target": 1,
+            "probability": 0.624125,
+            "p_active": 0.81475,
+            "rank": 2,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4278039",
+            "player": "Nickeil Alexander-Walker",
+            "market": "rebounds",
+            "mean": 3.5928,
+            "target": 3,
+            "probability": 0.62,
+            "p_active": 0.8275,
+            "rank": 3,
+            "actual": 2,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4431680",
+            "player": "Onyeka Okongwu",
+            "market": "assists",
+            "mean": 2.4456,
+            "target": 2,
+            "probability": 0.612,
+            "p_active": 0.81475,
+            "rank": 4,
+            "actual": 1,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4397020",
+            "player": "Luguentz Dort",
+            "market": "rebounds",
+            "mean": 3.4891,
+            "target": 3,
+            "probability": 0.6105,
+            "p_active": 0.873,
+            "rank": 5,
+            "actual": 7,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4397183",
+            "player": "Aaron Wiggins",
+            "market": "three_pointers_made",
+            "mean": 2.2991,
+            "target": 2,
+            "probability": 0.60275,
+            "p_active": 0.869375,
+            "rank": 6,
+            "actual": 3,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "5104155",
+            "player": "Bilal Coulibaly",
+            "market": "rebounds",
+            "mean": 3.4324,
+            "target": 3,
+            "probability": 0.59825,
+            "p_active": 0.812625,
+            "rank": 7,
+            "actual": 5,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4397183",
+            "player": "Aaron Wiggins",
+            "market": "rebounds",
+            "mean": 3.3895,
+            "target": 3,
+            "probability": 0.5972500000000001,
+            "p_active": 0.869375,
+            "rank": 8,
+            "actual": 4,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4278129",
+            "player": "Deandre Ayton",
+            "market": "rebounds",
+            "mean": 3.3927,
+            "target": 3,
+            "probability": 0.589375,
+            "p_active": 0.890625,
+            "rank": 9,
+            "actual": 11,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4431680",
+            "player": "Onyeka Okongwu",
+            "market": "rebounds",
+            "mean": 5.5431,
+            "target": 5,
+            "probability": 0.58525,
+            "p_active": 0.81475,
+            "rank": 10,
+            "actual": 10,
+            "played": true,
+            "hit": true
+          }
+        ],
+        "V4": [
+          {
+            "player_id": "4397183",
+            "player": "Aaron Wiggins",
+            "market": "three_pointers_made",
+            "mean": 1.5927,
+            "target": 1,
+            "probability": 0.760926,
+            "p_active": 0.91275,
+            "rank": 1,
+            "actual": 3,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "5238230",
+            "player": "Tre Johnson",
+            "market": "three_pointers_made",
+            "mean": 1.3661,
+            "target": 1,
+            "probability": 0.7120310000000001,
+            "p_active": 0.81225,
+            "rank": 2,
+            "actual": 5,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "5160992",
+            "player": "Alex Sarr",
+            "market": "assists",
+            "mean": 2.3835,
+            "target": 2,
+            "probability": 0.659683,
+            "p_active": 0.814875,
+            "rank": 3,
+            "actual": 3,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4278039",
+            "player": "Nickeil Alexander-Walker",
+            "market": "rebounds",
+            "mean": 3.4994,
+            "target": 3,
+            "probability": 0.640971,
+            "p_active": 0.914,
+            "rank": 4,
+            "actual": 2,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "2490149",
+            "player": "CJ McCollum",
+            "market": "three_pointers_made",
+            "mean": 2.2689,
+            "target": 2,
+            "probability": 0.618699,
+            "p_active": 0.909875,
+            "rank": 5,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "5174563",
+            "player": "Kyshawn George",
+            "market": "rebounds",
+            "mean": 4.5024,
+            "target": 4,
+            "probability": 0.615353,
+            "p_active": 0.907375,
+            "rank": 6,
+            "actual": 4,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "2490149",
+            "player": "CJ McCollum",
+            "market": "rebounds",
+            "mean": 3.3097,
+            "target": 3,
+            "probability": 0.608438,
+            "p_active": 0.909875,
+            "rank": 7,
+            "actual": 3,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4278129",
+            "player": "Deandre Ayton",
+            "market": "rebounds",
+            "mean": 5.5876,
+            "target": 5,
+            "probability": 0.607537,
+            "p_active": 0.914,
+            "rank": 8,
+            "actual": 11,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "5104155",
+            "player": "Bilal Coulibaly",
+            "market": "assists",
+            "mean": 2.1347,
+            "target": 2,
+            "probability": 0.605295,
+            "p_active": 0.905,
+            "rank": 9,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4278039",
+            "player": "Nickeil Alexander-Walker",
+            "market": "three_pointers_made",
+            "mean": 3.374,
+            "target": 3,
+            "probability": 0.601416,
+            "p_active": 0.914,
+            "rank": 10,
+            "actual": 4,
+            "played": true,
+            "hit": true
+          }
+        ],
+        "V5": [
+          {
+            "player_id": "4397183",
+            "player": "Aaron Wiggins",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.5423,
+            "probability": 0.6839,
+            "p_active": 0.8833,
+            "rank": 1,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4397020",
+            "player": "Luguentz Dort",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.3977,
+            "probability": 0.6551,
+            "p_active": 0.8833,
+            "rank": 2,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "2490149",
+            "player": "CJ McCollum",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.3755,
+            "probability": 0.6544,
+            "p_active": 0.8833,
+            "rank": 3,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4431680",
+            "player": "Onyeka Okongwu",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.2504,
+            "probability": 0.6331,
+            "p_active": 0.8833,
+            "rank": 4,
+            "actual": 4,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4431680",
+            "player": "Onyeka Okongwu",
+            "market": "blocks",
+            "target": 1,
+            "mean": 1.3171,
+            "probability": 0.6328,
+            "p_active": 0.8833,
+            "rank": 5,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4869342",
+            "player": "Dyson Daniels",
+            "market": "steals",
+            "target": 2,
+            "mean": 2.5413,
+            "probability": 0.6182,
+            "p_active": 0.8833,
+            "rank": 6,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4277905",
+            "player": "Trae Young",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.2493,
+            "probability": 0.6167,
+            "p_active": 0.8833,
+            "rank": 7,
+            "actual": 1,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "2490149",
+            "player": "CJ McCollum",
+            "market": "three_pointers_made",
+            "target": 2,
+            "mean": 2.5882,
+            "probability": 0.6132,
+            "p_active": 0.8833,
+            "rank": 8,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "5149077",
+            "player": "Kingston Flemings",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.2045,
+            "probability": 0.6016,
+            "p_active": 0.8833,
+            "rank": 9,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4431680",
+            "player": "Onyeka Okongwu",
+            "market": "assists",
+            "target": 3,
+            "mean": 3.5105,
+            "probability": 0.5771,
+            "p_active": 0.8833,
+            "rank": 10,
+            "actual": 1,
+            "played": true,
+            "hit": false
+          }
+        ]
+      },
+      "hits": {
+        "V3": 7,
+        "V4": 7,
+        "V5": 4
+      },
+      "counts": {
+        "V3": 10,
+        "V4": 10,
+        "V5": 10
+      },
+      "recovered_first_grade_actuals": [
+        {
+          "id": "2578185",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "2578185",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "2578185",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "2578185",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "2578185",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "2578185",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "2578185",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4431714",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4431714",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4431714",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4431714",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4431714",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4431714",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4431714",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4701230",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4701230",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4701230",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4701230",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4701230",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4701230",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4701230",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4432819",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4432819",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4432819",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4432819",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4432819",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4432819",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4432819",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "6583",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "6583",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "6583",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "6583",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "6583",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "6583",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "6583",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        }
+      ],
+      "v4_vs_v5_pretip_lag_minutes": 0.38,
+      "game_date_et": "2026-11-06"
+    },
+    {
+      "id": "401909288",
+      "matchup": "Boston Celtics at Charlotte Hornets",
+      "revision": "c0f7a54b4afa5732b5705ebaa9c453aa9adf0d78",
+      "times": {
+        "V3": "2026-11-06T03:29:25.958807+00:00",
+        "V4": "2026-11-06T23:29:27.805121+00:00",
+        "V5": "2026-11-06T23:29:50.407805+00:00"
+      },
+      "cards": {
+        "V3": [
+          {
+            "player_id": "4433287",
+            "player": "Brandon Miller",
+            "market": "assists",
+            "mean": 2.4821,
+            "target": 2,
+            "probability": 0.646625,
+            "p_active": 0.91525,
+            "rank": 1,
+            "actual": 1,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4602025",
+            "player": "Sion James",
+            "market": "three_pointers_made",
+            "mean": 1.2328,
+            "target": 1,
+            "probability": 0.64625,
+            "p_active": 0.908625,
+            "rank": 2,
+            "actual": 3,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4602025",
+            "player": "Sion James",
+            "market": "assists",
+            "mean": 2.5023,
+            "target": 2,
+            "probability": 0.645125,
+            "p_active": 0.908625,
+            "rank": 3,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "2583632",
+            "player": "Royce O'Neale",
+            "market": "three_pointers_made",
+            "mean": 1.3344,
+            "target": 1,
+            "probability": 0.6445000000000001,
+            "p_active": 0.895625,
+            "rank": 4,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4433249",
+            "player": "Moussa Diabate",
+            "market": "assists",
+            "mean": 2.3878,
+            "target": 2,
+            "probability": 0.633625,
+            "p_active": 0.9125,
+            "rank": 5,
+            "actual": 0,
+            "played": false,
+            "hit": false
+          },
+          {
+            "player_id": "3032979",
+            "player": "Dennis Schroder",
+            "market": "rebounds",
+            "mean": 3.5678,
+            "target": 3,
+            "probability": 0.61575,
+            "p_active": 0.899,
+            "rank": 6,
+            "actual": 0,
+            "played": false,
+            "hit": false
+          },
+          {
+            "player_id": "4396971",
+            "player": "Naz Reid",
+            "market": "three_pointers_made",
+            "mean": 2.3524,
+            "target": 2,
+            "probability": 0.612625,
+            "p_active": 0.904625,
+            "rank": 7,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4433287",
+            "player": "Brandon Miller",
+            "market": "rebounds",
+            "mean": 4.5185,
+            "target": 4,
+            "probability": 0.609625,
+            "p_active": 0.91525,
+            "rank": 8,
+            "actual": 2,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4396971",
+            "player": "Naz Reid",
+            "market": "assists",
+            "mean": 2.2335,
+            "target": 2,
+            "probability": 0.596,
+            "p_active": 0.904625,
+            "rank": 9,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4576060",
+            "player": "Ryan Kalkbrenner",
+            "market": "rebounds",
+            "mean": 3.3718,
+            "target": 3,
+            "probability": 0.5916250000000001,
+            "p_active": 0.913,
+            "rank": 10,
+            "actual": 5,
+            "played": true,
+            "hit": true
+          }
+        ],
+        "V4": [
+          {
+            "player_id": "4593841",
+            "player": "Baylor Scheierman",
+            "market": "three_pointers_made",
+            "mean": 1.3243,
+            "target": 1,
+            "probability": 0.7018,
+            "p_active": 0.819125,
+            "rank": 1,
+            "actual": 1,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4602025",
+            "player": "Sion James",
+            "market": "assists",
+            "mean": 2.509,
+            "target": 2,
+            "probability": 0.684422,
+            "p_active": 0.913375,
+            "rank": 2,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4602025",
+            "player": "Sion James",
+            "market": "three_pointers_made",
+            "mean": 1.2567,
+            "target": 1,
+            "probability": 0.6843600000000001,
+            "p_active": 0.913375,
+            "rank": 3,
+            "actual": 3,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4396971",
+            "player": "Naz Reid",
+            "market": "three_pointers_made",
+            "mean": 2.4675,
+            "target": 2,
+            "probability": 0.6576299999999999,
+            "p_active": 0.911625,
+            "rank": 4,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "5211176",
+            "player": "Tidjane Salaun",
+            "market": "three_pointers_made",
+            "mean": 1.1507,
+            "target": 1,
+            "probability": 0.654623,
+            "p_active": 0.909375,
+            "rank": 5,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4396971",
+            "player": "Naz Reid",
+            "market": "assists",
+            "mean": 2.2709,
+            "target": 2,
+            "probability": 0.635966,
+            "p_active": 0.911625,
+            "rank": 6,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4593841",
+            "player": "Baylor Scheierman",
+            "market": "rebounds",
+            "mean": 3.4189,
+            "target": 3,
+            "probability": 0.6274569999999999,
+            "p_active": 0.819125,
+            "rank": 7,
+            "actual": 4,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "2583632",
+            "player": "Royce O'Neale",
+            "market": "rebounds",
+            "mean": 3.4014,
+            "target": 3,
+            "probability": 0.624451,
+            "p_active": 0.908625,
+            "rank": 8,
+            "actual": 4,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4433287",
+            "player": "Brandon Miller",
+            "market": "three_pointers_made",
+            "mean": 3.4305,
+            "target": 3,
+            "probability": 0.610514,
+            "p_active": 0.907625,
+            "rank": 9,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4683689",
+            "player": "Jordan Walsh",
+            "market": "rebounds",
+            "mean": 3.3135,
+            "target": 3,
+            "probability": 0.609104,
+            "p_active": 0.80375,
+            "rank": 10,
+            "actual": 3,
+            "played": true,
+            "hit": true
+          }
+        ],
+        "V5": [
+          {
+            "player_id": "4593841",
+            "player": "Baylor Scheierman",
+            "market": "three_pointers_made",
+            "target": 1,
+            "mean": 1.5331,
+            "probability": 0.6549,
+            "p_active": 0.8833,
+            "rank": 1,
+            "actual": 1,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4602025",
+            "player": "Sion James",
+            "market": "three_pointers_made",
+            "target": 1,
+            "mean": 1.4393,
+            "probability": 0.6488,
+            "p_active": 0.8833,
+            "rank": 2,
+            "actual": 3,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4576060",
+            "player": "Ryan Kalkbrenner",
+            "market": "blocks",
+            "target": 1,
+            "mean": 1.3618,
+            "probability": 0.645,
+            "p_active": 0.8833,
+            "rank": 3,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "5211176",
+            "player": "Tidjane Salaun",
+            "market": "three_pointers_made",
+            "target": 1,
+            "mean": 1.3379,
+            "probability": 0.6241,
+            "p_active": 0.8833,
+            "rank": 4,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4396971",
+            "player": "Naz Reid",
+            "market": "three_pointers_made",
+            "target": 2,
+            "mean": 2.5584,
+            "probability": 0.6119,
+            "p_active": 0.8833,
+            "rank": 5,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "3135045",
+            "player": "Grayson Allen",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.1703,
+            "probability": 0.6107,
+            "p_active": 0.8833,
+            "rank": 6,
+            "actual": 1,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4066354",
+            "player": "Payton Pritchard",
+            "market": "three_pointers_made",
+            "target": 2,
+            "mean": 2.1663,
+            "probability": 0.6048,
+            "p_active": 0.995,
+            "rank": 7,
+            "actual": 4,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4251",
+            "player": "Paul George",
+            "market": "assists",
+            "target": 3,
+            "mean": 3.5471,
+            "probability": 0.5785,
+            "p_active": 0.8833,
+            "rank": 8,
+            "actual": 1,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "2583632",
+            "player": "Royce O'Neale",
+            "market": "three_pointers_made",
+            "target": 2,
+            "mean": 2.3709,
+            "probability": 0.574,
+            "p_active": 0.8833,
+            "rank": 9,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "2583632",
+            "player": "Royce O'Neale",
+            "market": "assists",
+            "target": 2,
+            "mean": 2.4366,
+            "probability": 0.5735,
+            "p_active": 0.8833,
+            "rank": 10,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          }
+        ]
+      },
+      "hits": {
+        "V3": 5,
+        "V4": 8,
+        "V5": 8
+      },
+      "counts": {
+        "V3": 10,
+        "V4": 10,
+        "V5": 10
+      },
+      "recovered_first_grade_actuals": [
+        {
+          "id": "4433249",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4433249",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4433249",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4433249",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4433249",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4433249",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4433249",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "3032979",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "3032979",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "3032979",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "3032979",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "3032979",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "3032979",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "3032979",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "3195",
+          "market": "points",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "3195",
+          "market": "rebounds",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "3195",
+          "market": "assists",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "3195",
+          "market": "three_pointers_made",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "3195",
+          "market": "steals",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "3195",
+          "market": "blocks",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "3195",
+          "market": "turnovers",
+          "played": true,
+          "actual": 0
+        }
+      ],
+      "v4_vs_v5_pretip_lag_minutes": 0.38,
+      "game_date_et": "2026-11-06"
+    },
     {
       "id": "401909289",
       "matchup": "Philadelphia 76ers at Cleveland Cavaliers",
@@ -570,6 +2535,97 @@
         "V4": 4,
         "V5": 7
       },
+      "counts": {
+        "V3": 10,
+        "V4": 10,
+        "V5": 10
+      },
+      "recovered_first_grade_actuals": [
+        {
+          "id": "5105637",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5105637",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5105637",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5105637",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5105637",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5105637",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5105637",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5099752",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5099752",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5099752",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5099752",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5099752",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5099752",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5099752",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        }
+      ],
       "v4_vs_v5_pretip_lag_minutes": 0.38,
       "game_date_et": "2026-11-06"
     },
@@ -985,6 +3041,535 @@
         "V4": 5,
         "V5": 6
       },
+      "counts": {
+        "V3": 10,
+        "V4": 10,
+        "V5": 10
+      },
+      "recovered_first_grade_actuals": [
+        {
+          "id": "4683736",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4683736",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4683736",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4683736",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4683736",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4683736",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4683736",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        }
+      ],
+      "v4_vs_v5_pretip_lag_minutes": 0.38,
+      "game_date_et": "2026-11-06"
+    },
+    {
+      "id": "401909291",
+      "matchup": "Oklahoma City Thunder at Memphis Grizzlies",
+      "revision": "c0f7a54b4afa5732b5705ebaa9c453aa9adf0d78",
+      "times": {
+        "V3": "2026-11-06T03:29:25.958807+00:00",
+        "V4": "2026-11-06T23:29:27.805121+00:00",
+        "V5": "2026-11-06T23:29:50.407805+00:00"
+      },
+      "cards": {
+        "V3": [
+          {
+            "player_id": "3133626",
+            "player": "Kenrich Williams",
+            "market": "three_pointers_made",
+            "mean": 1.4304,
+            "target": 1,
+            "probability": 0.63325,
+            "p_active": 0.876375,
+            "rank": 1,
+            "actual": 1,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4683778",
+            "player": "Jared McCain",
+            "market": "assists",
+            "mean": 2.2035,
+            "target": 2,
+            "probability": 0.587375,
+            "p_active": 0.906625,
+            "rank": 2,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4683778",
+            "player": "Jared McCain",
+            "market": "three_pointers_made",
+            "mean": 2.0147,
+            "target": 2,
+            "probability": 0.54975,
+            "p_active": 0.906625,
+            "rank": 3,
+            "actual": 3,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4683778",
+            "player": "Jared McCain",
+            "market": "points",
+            "mean": 14.2141,
+            "target": 14,
+            "probability": 0.50825,
+            "p_active": 0.906625,
+            "rank": 4,
+            "actual": 21,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4683778",
+            "player": "Jared McCain",
+            "market": "rebounds",
+            "mean": 3.8219,
+            "target": 4,
+            "probability": 0.50125,
+            "p_active": 0.906625,
+            "rank": 5,
+            "actual": 5,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "3133626",
+            "player": "Kenrich Williams",
+            "market": "rebounds",
+            "mean": 4.1121,
+            "target": 4,
+            "probability": 0.49524999999999997,
+            "p_active": 0.876375,
+            "rank": 6,
+            "actual": 6,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "3133626",
+            "player": "Kenrich Williams",
+            "market": "points",
+            "mean": 9.5749,
+            "target": 9,
+            "probability": 0.48424999999999996,
+            "p_active": 0.876375,
+            "rank": 7,
+            "actual": 4,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "3133626",
+            "player": "Kenrich Williams",
+            "market": "assists",
+            "mean": 1.8214,
+            "target": 2,
+            "probability": 0.475125,
+            "p_active": 0.876375,
+            "rank": 8,
+            "actual": 3,
+            "played": true,
+            "hit": true
+          }
+        ],
+        "V4": [
+          {
+            "player_id": "5241364",
+            "player": "Bennett Stirtz",
+            "market": "three_pointers_made",
+            "mean": 1.4931,
+            "target": 1,
+            "probability": 0.7407,
+            "p_active": 0.876125,
+            "rank": 1,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4222252",
+            "player": "Isaiah Hartenstein",
+            "market": "assists",
+            "mean": 3.5506,
+            "target": 3,
+            "probability": 0.6513070000000001,
+            "p_active": 0.91025,
+            "rank": 2,
+            "actual": 7,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "5105550",
+            "player": "GG Jackson",
+            "market": "rebounds",
+            "mean": 3.5251,
+            "target": 3,
+            "probability": 0.645194,
+            "p_active": 0.905125,
+            "rank": 3,
+            "actual": 0,
+            "played": false,
+            "hit": false
+          },
+          {
+            "player_id": "3133626",
+            "player": "Kenrich Williams",
+            "market": "three_pointers_made",
+            "mean": 1.1181,
+            "target": 1,
+            "probability": 0.6448320000000001,
+            "p_active": 0.89975,
+            "rank": 4,
+            "actual": 1,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4065733",
+            "player": "Ty Jerome",
+            "market": "rebounds",
+            "mean": 3.5171,
+            "target": 3,
+            "probability": 0.6438889999999999,
+            "p_active": 0.817125,
+            "rank": 5,
+            "actual": 2,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "5041935",
+            "player": "Cameron Boozer",
+            "market": "three_pointers_made",
+            "mean": 2.3702,
+            "target": 2,
+            "probability": 0.6390819999999999,
+            "p_active": 0.911,
+            "rank": 6,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "5105550",
+            "player": "GG Jackson",
+            "market": "three_pointers_made",
+            "mean": 1.0768,
+            "target": 1,
+            "probability": 0.631969,
+            "p_active": 0.905125,
+            "rank": 7,
+            "actual": 0,
+            "played": false,
+            "hit": false
+          },
+          {
+            "player_id": "4900671",
+            "player": "Ajay Mitchell",
+            "market": "three_pointers_made",
+            "mean": 1.0052,
+            "target": 1,
+            "probability": 0.6084080000000001,
+            "p_active": 0.909375,
+            "rank": 8,
+            "actual": 4,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4278073",
+            "player": "Shai Gilgeous-Alexander",
+            "market": "rebounds",
+            "mean": 4.454,
+            "target": 4,
+            "probability": 0.608268,
+            "p_active": 0.912625,
+            "rank": 9,
+            "actual": 3,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "5112087",
+            "player": "Jaylen Wells",
+            "market": "rebounds",
+            "mean": 3.2058,
+            "target": 3,
+            "probability": 0.589601,
+            "p_active": 0.907125,
+            "rank": 10,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          }
+        ],
+        "V5": [
+          {
+            "player_id": "4278073",
+            "player": "Shai Gilgeous-Alexander",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.5988,
+            "probability": 0.6975,
+            "p_active": 0.8833,
+            "rank": 1,
+            "actual": 1,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4222252",
+            "player": "Isaiah Hartenstein",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.5386,
+            "probability": 0.6576,
+            "p_active": 0.8643,
+            "rank": 2,
+            "actual": 1,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "3133626",
+            "player": "Kenrich Williams",
+            "market": "three_pointers_made",
+            "target": 1,
+            "mean": 1.5697,
+            "probability": 0.6565,
+            "p_active": 0.8833,
+            "rank": 3,
+            "actual": 1,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4683778",
+            "player": "Jared McCain",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.1199,
+            "probability": 0.5802,
+            "p_active": 0.8833,
+            "rank": 4,
+            "actual": 4,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4900671",
+            "player": "Ajay Mitchell",
+            "market": "three_pointers_made",
+            "target": 1,
+            "mean": 1.1925,
+            "probability": 0.5793,
+            "p_active": 0.8643,
+            "rank": 5,
+            "actual": 4,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "3133626",
+            "player": "Kenrich Williams",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.0949,
+            "probability": 0.5786,
+            "p_active": 0.8833,
+            "rank": 6,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4600663",
+            "player": "Zach Edey",
+            "market": "blocks",
+            "target": 1,
+            "mean": 1.069,
+            "probability": 0.5704,
+            "p_active": 0.8833,
+            "rank": 7,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4593016",
+            "player": "Quinten Post",
+            "market": "three_pointers_made",
+            "target": 1,
+            "mean": 1.3041,
+            "probability": 0.5668,
+            "p_active": 0.8073,
+            "rank": 8,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4683778",
+            "player": "Jared McCain",
+            "market": "three_pointers_made",
+            "target": 2,
+            "mean": 2.3573,
+            "probability": 0.5595,
+            "p_active": 0.8833,
+            "rank": 9,
+            "actual": 3,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "2991070",
+            "player": "Jerami Grant",
+            "market": "three_pointers_made",
+            "target": 2,
+            "mean": 2.2732,
+            "probability": 0.5567,
+            "p_active": 0.8833,
+            "rank": 10,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          }
+        ]
+      },
+      "hits": {
+        "V3": 6,
+        "V4": 4,
+        "V5": 7
+      },
+      "counts": {
+        "V3": 8,
+        "V4": 10,
+        "V5": 10
+      },
+      "recovered_first_grade_actuals": [
+        {
+          "id": "4432185",
+          "market": "points",
+          "played": true,
+          "actual": 7
+        },
+        {
+          "id": "4432185",
+          "market": "rebounds",
+          "played": true,
+          "actual": 4
+        },
+        {
+          "id": "4432185",
+          "market": "assists",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "4432185",
+          "market": "three_pointers_made",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "4432185",
+          "market": "steals",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "4432185",
+          "market": "blocks",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "4432185",
+          "market": "turnovers",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "4433159",
+          "market": "points",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "4433159",
+          "market": "rebounds",
+          "played": true,
+          "actual": 4
+        },
+        {
+          "id": "4433159",
+          "market": "assists",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "4433159",
+          "market": "three_pointers_made",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "4433159",
+          "market": "steals",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "4433159",
+          "market": "blocks",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "4433159",
+          "market": "turnovers",
+          "played": true,
+          "actual": 0
+        }
+      ],
       "v4_vs_v5_pretip_lag_minutes": 0.38,
       "game_date_et": "2026-11-06"
     },
@@ -1400,6 +3985,771 @@
         "V4": 7,
         "V5": 9
       },
+      "counts": {
+        "V3": 10,
+        "V4": 10,
+        "V5": 10
+      },
+      "recovered_first_grade_actuals": [
+        {
+          "id": "4397114",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397114",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397114",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397114",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397114",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397114",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397114",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "2991043",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "2991043",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "2991043",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "2991043",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "2991043",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "2991043",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "2991043",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397233",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397233",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397233",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397233",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397233",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397233",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397233",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397784",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397784",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397784",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397784",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397784",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397784",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397784",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        }
+      ],
+      "v4_vs_v5_pretip_lag_minutes": 0.38,
+      "game_date_et": "2026-11-06"
+    },
+    {
+      "id": "401909293",
+      "matchup": "Minnesota Timberwolves at New Orleans Pelicans",
+      "revision": "c0f7a54b4afa5732b5705ebaa9c453aa9adf0d78",
+      "times": {
+        "V3": "2026-11-06T03:29:25.958807+00:00",
+        "V4": "2026-11-06T23:29:27.805121+00:00",
+        "V5": "2026-11-06T23:29:50.407805+00:00"
+      },
+      "cards": {
+        "V3": [
+          {
+            "player_id": "5144091",
+            "player": "Jeremiah Fears",
+            "market": "three_pointers_made",
+            "mean": 1.5424,
+            "target": 1,
+            "probability": 0.7052499999999999,
+            "p_active": 0.906625,
+            "rank": 1,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4432847",
+            "player": "Terrence Shannon Jr.",
+            "market": "three_pointers_made",
+            "mean": 1.5092,
+            "target": 1,
+            "probability": 0.60625,
+            "p_active": 0.798,
+            "rank": 2,
+            "actual": 0,
+            "played": false,
+            "hit": false
+          },
+          {
+            "player_id": "5144091",
+            "player": "Jeremiah Fears",
+            "market": "rebounds",
+            "mean": 4.2421,
+            "target": 4,
+            "probability": 0.5587500000000001,
+            "p_active": 0.906625,
+            "rank": 3,
+            "actual": 5,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "5144091",
+            "player": "Jeremiah Fears",
+            "market": "points",
+            "mean": 19.4286,
+            "target": 19,
+            "probability": 0.527,
+            "p_active": 0.906625,
+            "rank": 4,
+            "actual": 24,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "5279133",
+            "player": "Joan Beringer",
+            "market": "rebounds",
+            "mean": 4.4485,
+            "target": 4,
+            "probability": 0.526875,
+            "p_active": 0.87175,
+            "rank": 5,
+            "actual": 3,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4869780",
+            "player": "Derik Queen",
+            "market": "rebounds",
+            "mean": 7.127,
+            "target": 7,
+            "probability": 0.51875,
+            "p_active": 0.9085,
+            "rank": 6,
+            "actual": 4,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4869780",
+            "player": "Derik Queen",
+            "market": "points",
+            "mean": 14.0917,
+            "target": 14,
+            "probability": 0.51075,
+            "p_active": 0.9085,
+            "rank": 7,
+            "actual": 6,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4432847",
+            "player": "Terrence Shannon Jr.",
+            "market": "points",
+            "mean": 12.281,
+            "target": 12,
+            "probability": 0.49350000000000005,
+            "p_active": 0.798,
+            "rank": 8,
+            "actual": 0,
+            "played": false,
+            "hit": false
+          },
+          {
+            "player_id": "5144091",
+            "player": "Jeremiah Fears",
+            "market": "assists",
+            "mean": 3.7971,
+            "target": 4,
+            "probability": 0.491375,
+            "p_active": 0.906625,
+            "rank": 9,
+            "actual": 5,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4432247",
+            "player": "Jaylen Clark",
+            "market": "three_pointers_made",
+            "mean": 0.8379,
+            "target": 1,
+            "probability": 0.488375,
+            "p_active": 0.869,
+            "rank": 10,
+            "actual": 1,
+            "played": true,
+            "hit": true
+          }
+        ],
+        "V4": [
+          {
+            "player_id": "4433247",
+            "player": "Jonathan Kuminga",
+            "market": "three_pointers_made",
+            "mean": 1.5223,
+            "target": 1,
+            "probability": 0.746841,
+            "p_active": 0.9105,
+            "rank": 1,
+            "actual": 1,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4431671",
+            "player": "Jaden McDaniels",
+            "market": "three_pointers_made",
+            "mean": 1.3784,
+            "target": 1,
+            "probability": 0.714952,
+            "p_active": 0.90625,
+            "rank": 2,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "5144091",
+            "player": "Jeremiah Fears",
+            "market": "three_pointers_made",
+            "mean": 1.3275,
+            "target": 1,
+            "probability": 0.702592,
+            "p_active": 0.91025,
+            "rank": 3,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "3136196",
+            "player": "Trey Lyles",
+            "market": "three_pointers_made",
+            "mean": 1.1786,
+            "target": 1,
+            "probability": 0.662755,
+            "p_active": 0.912375,
+            "rank": 4,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4397688",
+            "player": "Trey Murphy III",
+            "market": "assists",
+            "mean": 3.5618,
+            "target": 3,
+            "probability": 0.653143,
+            "p_active": 0.81325,
+            "rank": 5,
+            "actual": 5,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4277813",
+            "player": "Herbert Jones",
+            "market": "three_pointers_made",
+            "mean": 1.116,
+            "target": 1,
+            "probability": 0.644189,
+            "p_active": 0.90975,
+            "rank": 6,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4683634",
+            "player": "Bennedict Mathurin",
+            "market": "rebounds",
+            "mean": 3.4222,
+            "target": 3,
+            "probability": 0.628011,
+            "p_active": 0.908125,
+            "rank": 7,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4997538",
+            "player": "Karlo Matkovic",
+            "market": "rebounds",
+            "mean": 4.5784,
+            "target": 4,
+            "probability": 0.626274,
+            "p_active": 0.814625,
+            "rank": 8,
+            "actual": 3,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "3136196",
+            "player": "Trey Lyles",
+            "market": "rebounds",
+            "mean": 3.4098,
+            "target": 3,
+            "probability": 0.625892,
+            "p_active": 0.912375,
+            "rank": 9,
+            "actual": 13,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4397136",
+            "player": "Saddiq Bey",
+            "market": "rebounds",
+            "mean": 4.5588,
+            "target": 4,
+            "probability": 0.623489,
+            "p_active": 0.909125,
+            "rank": 10,
+            "actual": 5,
+            "played": true,
+            "hit": true
+          }
+        ],
+        "V5": [
+          {
+            "player_id": "4432816",
+            "player": "LaMelo Ball",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.575,
+            "probability": 0.6943,
+            "p_active": 0.8833,
+            "rank": 1,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4397688",
+            "player": "Trey Murphy III",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.0762,
+            "probability": 0.6493,
+            "p_active": 0.995,
+            "rank": 2,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "5144091",
+            "player": "Jeremiah Fears",
+            "market": "three_pointers_made",
+            "target": 1,
+            "mean": 1.3891,
+            "probability": 0.6422,
+            "p_active": 0.8833,
+            "rank": 3,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "5144091",
+            "player": "Jeremiah Fears",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.259,
+            "probability": 0.6164,
+            "p_active": 0.8833,
+            "rank": 4,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4397688",
+            "player": "Trey Murphy III",
+            "market": "assists",
+            "target": 3,
+            "mean": 3.3341,
+            "probability": 0.6162,
+            "p_active": 0.995,
+            "rank": 5,
+            "actual": 5,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4397002",
+            "player": "Ayo Dosunmu",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.4054,
+            "probability": 0.6098,
+            "p_active": 0.8209,
+            "rank": 6,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "3032976",
+            "player": "Rudy Gobert",
+            "market": "blocks",
+            "target": 1,
+            "mean": 1.4169,
+            "probability": 0.602,
+            "p_active": 0.8209,
+            "rank": 7,
+            "actual": 1,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "3136196",
+            "player": "Trey Lyles",
+            "market": "three_pointers_made",
+            "target": 1,
+            "mean": 1.2445,
+            "probability": 0.5981,
+            "p_active": 0.8833,
+            "rank": 8,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4433247",
+            "player": "Jonathan Kuminga",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.166,
+            "probability": 0.5923,
+            "p_active": 0.8833,
+            "rank": 9,
+            "actual": 1,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4397688",
+            "player": "Trey Murphy III",
+            "market": "rebounds",
+            "target": 5,
+            "mean": 5.3598,
+            "probability": 0.5873,
+            "p_active": 0.995,
+            "rank": 10,
+            "actual": 4,
+            "played": true,
+            "hit": false
+          }
+        ]
+      },
+      "hits": {
+        "V3": 4,
+        "V4": 5,
+        "V5": 5
+      },
+      "counts": {
+        "V3": 10,
+        "V4": 10,
+        "V5": 10
+      },
+      "recovered_first_grade_actuals": [
+        {
+          "id": "5170947",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5170947",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5170947",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5170947",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5170947",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5170947",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5170947",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4683742",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4683742",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4683742",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4683742",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4683742",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4683742",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4683742",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4431675",
+          "market": "points",
+          "played": true,
+          "actual": 12
+        },
+        {
+          "id": "4431675",
+          "market": "rebounds",
+          "played": true,
+          "actual": 6
+        },
+        {
+          "id": "4431675",
+          "market": "assists",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "4431675",
+          "market": "three_pointers_made",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "4431675",
+          "market": "steals",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "4431675",
+          "market": "blocks",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "4431675",
+          "market": "turnovers",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "4432847",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4432847",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4432847",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4432847",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4432847",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4432847",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4432847",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        }
+      ],
       "v4_vs_v5_pretip_lag_minutes": 0.38,
       "game_date_et": "2026-11-06"
     },
@@ -1815,6 +5165,55 @@
         "V4": 5,
         "V5": 6
       },
+      "counts": {
+        "V3": 10,
+        "V4": 10,
+        "V5": 10
+      },
+      "recovered_first_grade_actuals": [
+        {
+          "id": "4683774",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4683774",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4683774",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4683774",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4683774",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4683774",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4683774",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        }
+      ],
       "v4_vs_v5_pretip_lag_minutes": 0.3,
       "game_date_et": "2026-11-06"
     },
@@ -2230,6 +5629,55 @@
         "V4": 6,
         "V5": 7
       },
+      "counts": {
+        "V3": 10,
+        "V4": 10,
+        "V5": 10
+      },
+      "recovered_first_grade_actuals": [
+        {
+          "id": "4709131",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4709131",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4709131",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4709131",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4709131",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4709131",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4709131",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        }
+      ],
       "v4_vs_v5_pretip_lag_minutes": 0.3,
       "game_date_et": "2026-11-06"
     },
@@ -2645,6 +6093,139 @@
         "V4": 4,
         "V5": 3
       },
+      "counts": {
+        "V3": 10,
+        "V4": 10,
+        "V5": 10
+      },
+      "recovered_first_grade_actuals": [
+        {
+          "id": "5105854",
+          "market": "points",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "5105854",
+          "market": "rebounds",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "5105854",
+          "market": "assists",
+          "played": true,
+          "actual": 2
+        },
+        {
+          "id": "5105854",
+          "market": "three_pointers_made",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "5105854",
+          "market": "steals",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "5105854",
+          "market": "blocks",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "5105854",
+          "market": "turnovers",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "4565698",
+          "market": "points",
+          "played": true,
+          "actual": 3
+        },
+        {
+          "id": "4565698",
+          "market": "rebounds",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "4565698",
+          "market": "assists",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "4565698",
+          "market": "three_pointers_made",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "4565698",
+          "market": "steals",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "4565698",
+          "market": "blocks",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "4565698",
+          "market": "turnovers",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "4698719",
+          "market": "points",
+          "played": true,
+          "actual": 3
+        },
+        {
+          "id": "4698719",
+          "market": "rebounds",
+          "played": true,
+          "actual": 4
+        },
+        {
+          "id": "4698719",
+          "market": "assists",
+          "played": true,
+          "actual": 2
+        },
+        {
+          "id": "4698719",
+          "market": "three_pointers_made",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "4698719",
+          "market": "steals",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "4698719",
+          "market": "blocks",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "4698719",
+          "market": "turnovers",
+          "played": true,
+          "actual": 0
+        }
+      ],
       "v4_vs_v5_pretip_lag_minutes": 0.37,
       "game_date_et": "2026-11-07"
     },
@@ -3060,7 +6641,678 @@
         "V4": 5,
         "V5": 7
       },
+      "counts": {
+        "V3": 10,
+        "V4": 10,
+        "V5": 10
+      },
+      "recovered_first_grade_actuals": [
+        {
+          "id": "5101761",
+          "market": "points",
+          "played": true,
+          "actual": 18
+        },
+        {
+          "id": "5101761",
+          "market": "rebounds",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "5101761",
+          "market": "assists",
+          "played": true,
+          "actual": 3
+        },
+        {
+          "id": "5101761",
+          "market": "three_pointers_made",
+          "played": true,
+          "actual": 3
+        },
+        {
+          "id": "5101761",
+          "market": "steals",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "5101761",
+          "market": "blocks",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "5101761",
+          "market": "turnovers",
+          "played": true,
+          "actual": 2
+        }
+      ],
       "v4_vs_v5_pretip_lag_minutes": 0.3,
+      "game_date_et": "2026-11-07"
+    },
+    {
+      "id": "401909940",
+      "matchup": "New York Knicks at Cleveland Cavaliers",
+      "revision": "2fc18b720819f78472d461cee52b41d8754a6578",
+      "times": {
+        "V3": "2026-11-08T00:15:15.215045+00:00",
+        "V4": "2026-11-08T00:15:28.850996+00:00",
+        "V5": "2026-11-08T00:15:42.876975+00:00"
+      },
+      "cards": {
+        "V3": [
+          {
+            "player_id": "4432158",
+            "player": "Evan Mobley",
+            "market": "assists",
+            "mean": 3.4786,
+            "target": 3,
+            "probability": 0.599375,
+            "p_active": 0.81625,
+            "rank": 1,
+            "actual": 5,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4432158",
+            "player": "Evan Mobley",
+            "market": "three_pointers_made",
+            "mean": 1.0554,
+            "target": 1,
+            "probability": 0.571125,
+            "p_active": 0.81625,
+            "rank": 2,
+            "actual": 1,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4432158",
+            "player": "Evan Mobley",
+            "market": "points",
+            "mean": 21.1905,
+            "target": 21,
+            "probability": 0.5700000000000001,
+            "p_active": 0.81625,
+            "rank": 3,
+            "actual": 12,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "5023693",
+            "player": "Tyrese Proctor",
+            "market": "three_pointers_made",
+            "mean": 1.2583,
+            "target": 1,
+            "probability": 0.5662499999999999,
+            "p_active": 0.7905,
+            "rank": 4,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4432158",
+            "player": "Evan Mobley",
+            "market": "rebounds",
+            "mean": 8.902,
+            "target": 9,
+            "probability": 0.54175,
+            "p_active": 0.81625,
+            "rank": 5,
+            "actual": 9,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "5023693",
+            "player": "Tyrese Proctor",
+            "market": "points",
+            "mean": 8.506,
+            "target": 8,
+            "probability": 0.48450000000000004,
+            "p_active": 0.7905,
+            "rank": 6,
+            "actual": 7,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "5023693",
+            "player": "Tyrese Proctor",
+            "market": "assists",
+            "mean": 1.9289,
+            "target": 2,
+            "probability": 0.47962499999999997,
+            "p_active": 0.7905,
+            "rank": 7,
+            "actual": 3,
+            "played": true,
+            "hit": true
+          }
+        ],
+        "V4": [
+          {
+            "player_id": "4432158",
+            "player": "Evan Mobley",
+            "market": "three_pointers_made",
+            "mean": 1.0656,
+            "target": 1,
+            "probability": 0.628182,
+            "p_active": 0.81625,
+            "rank": 1,
+            "actual": 1,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4432158",
+            "player": "Evan Mobley",
+            "market": "assists",
+            "mean": 3.3608,
+            "target": 3,
+            "probability": 0.618995,
+            "p_active": 0.81625,
+            "rank": 2,
+            "actual": 5,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "2528426",
+            "player": "Jordan Clarkson",
+            "market": "points",
+            "mean": 7.1942,
+            "target": 7,
+            "probability": 0.5157590000000001,
+            "p_active": 0.8115,
+            "rank": 3,
+            "actual": 9,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "5023693",
+            "player": "Tyrese Proctor",
+            "market": "assists",
+            "mean": 2.787,
+            "target": 3,
+            "probability": 0.507363,
+            "p_active": 0.7905,
+            "rank": 4,
+            "actual": 3,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "5023693",
+            "player": "Tyrese Proctor",
+            "market": "three_pointers_made",
+            "mean": 1.7694,
+            "target": 2,
+            "probability": 0.50098,
+            "p_active": 0.7905,
+            "rank": 5,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "2528426",
+            "player": "Jordan Clarkson",
+            "market": "three_pointers_made",
+            "mean": 0.7223,
+            "target": 1,
+            "probability": 0.496522,
+            "p_active": 0.8115,
+            "rank": 6,
+            "actual": 1,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4432158",
+            "player": "Evan Mobley",
+            "market": "rebounds",
+            "mean": 7.8355,
+            "target": 8,
+            "probability": 0.49239,
+            "p_active": 0.81625,
+            "rank": 7,
+            "actual": 9,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "4432158",
+            "player": "Evan Mobley",
+            "market": "points",
+            "mean": 16.7872,
+            "target": 17,
+            "probability": 0.460832,
+            "p_active": 0.81625,
+            "rank": 8,
+            "actual": 12,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "5023693",
+            "player": "Tyrese Proctor",
+            "market": "points",
+            "mean": 9.62,
+            "target": 10,
+            "probability": 0.45475299999999996,
+            "p_active": 0.7905,
+            "rank": 9,
+            "actual": 7,
+            "played": true,
+            "hit": false
+          }
+        ],
+        "V5": [
+          {
+            "player_id": "3147657",
+            "player": "Mikal Bridges",
+            "market": "three_pointers_made",
+            "target": 1,
+            "mean": 1.5072,
+            "probability": 0.7043,
+            "p_active": 0.9333,
+            "rank": 1,
+            "actual": 1,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "3934719",
+            "player": "OG Anunoby",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.4154,
+            "probability": 0.6989,
+            "p_active": 0.9333,
+            "rank": 2,
+            "actual": 1,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "3908809",
+            "player": "Donovan Mitchell",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.5682,
+            "probability": 0.6894,
+            "p_active": 0.8643,
+            "rank": 3,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "3136195",
+            "player": "Karl-Anthony Towns",
+            "market": "three_pointers_made",
+            "target": 1,
+            "mean": 1.5044,
+            "probability": 0.6848,
+            "p_active": 0.9078,
+            "rank": 4,
+            "actual": 2,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "5023693",
+            "player": "Tyrese Proctor",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.5296,
+            "probability": 0.6564,
+            "p_active": 0.8514,
+            "rank": 5,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "3147657",
+            "player": "Mikal Bridges",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.1598,
+            "probability": 0.6314,
+            "p_active": 0.9333,
+            "rank": 6,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4432158",
+            "player": "Evan Mobley",
+            "market": "three_pointers_made",
+            "target": 1,
+            "mean": 1.2404,
+            "probability": 0.6267,
+            "p_active": 0.9078,
+            "rank": 7,
+            "actual": 1,
+            "played": true,
+            "hit": true
+          },
+          {
+            "player_id": "3992",
+            "player": "James Harden",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.1302,
+            "probability": 0.6153,
+            "p_active": 0.9078,
+            "rank": 8,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "4701233",
+            "player": "Craig Porter Jr.",
+            "market": "steals",
+            "target": 1,
+            "mean": 1.5053,
+            "probability": 0.605,
+            "p_active": 0.7832,
+            "rank": 9,
+            "actual": 0,
+            "played": true,
+            "hit": false
+          },
+          {
+            "player_id": "3934719",
+            "player": "OG Anunoby",
+            "market": "three_pointers_made",
+            "target": 2,
+            "mean": 2.306,
+            "probability": 0.5987,
+            "p_active": 0.9333,
+            "rank": 10,
+            "actual": 3,
+            "played": true,
+            "hit": true
+          }
+        ]
+      },
+      "hits": {
+        "V3": 5,
+        "V4": 7,
+        "V5": 6
+      },
+      "counts": {
+        "V3": 7,
+        "V4": 9,
+        "V5": 10
+      },
+      "recovered_first_grade_actuals": [
+        {
+          "id": "2995706",
+          "market": "points",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "2995706",
+          "market": "rebounds",
+          "played": true,
+          "actual": 5
+        },
+        {
+          "id": "2995706",
+          "market": "assists",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "2995706",
+          "market": "three_pointers_made",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "2995706",
+          "market": "steals",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "2995706",
+          "market": "blocks",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "2995706",
+          "market": "turnovers",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "4066328",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066328",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066328",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066328",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066328",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066328",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066328",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066757",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066757",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066757",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066757",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066757",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066757",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066757",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4431734",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4431734",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4431734",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4431734",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4431734",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4431734",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4431734",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4576087",
+          "market": "points",
+          "played": true,
+          "actual": 12
+        },
+        {
+          "id": "4576087",
+          "market": "rebounds",
+          "played": true,
+          "actual": 6
+        },
+        {
+          "id": "4576087",
+          "market": "assists",
+          "played": true,
+          "actual": 3
+        },
+        {
+          "id": "4576087",
+          "market": "three_pointers_made",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "4576087",
+          "market": "steals",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "4576087",
+          "market": "blocks",
+          "played": true,
+          "actual": 2
+        },
+        {
+          "id": "4576087",
+          "market": "turnovers",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "5041951",
+          "market": "points",
+          "played": true,
+          "actual": 9
+        },
+        {
+          "id": "5041951",
+          "market": "rebounds",
+          "played": true,
+          "actual": 4
+        },
+        {
+          "id": "5041951",
+          "market": "assists",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "5041951",
+          "market": "three_pointers_made",
+          "played": true,
+          "actual": 3
+        },
+        {
+          "id": "5041951",
+          "market": "steals",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "5041951",
+          "market": "blocks",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "5041951",
+          "market": "turnovers",
+          "played": true,
+          "actual": 1
+        }
+      ],
+      "v4_vs_v5_pretip_lag_minutes": 0.23,
       "game_date_et": "2026-11-07"
     },
     {
@@ -3475,6 +7727,97 @@
         "V4": 6,
         "V5": 6
       },
+      "counts": {
+        "V3": 10,
+        "V4": 10,
+        "V5": 10
+      },
+      "recovered_first_grade_actuals": [
+        {
+          "id": "5174983",
+          "market": "points",
+          "played": true,
+          "actual": 18
+        },
+        {
+          "id": "5174983",
+          "market": "rebounds",
+          "played": true,
+          "actual": 8
+        },
+        {
+          "id": "5174983",
+          "market": "assists",
+          "played": true,
+          "actual": 3
+        },
+        {
+          "id": "5174983",
+          "market": "three_pointers_made",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "5174983",
+          "market": "steals",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "5174983",
+          "market": "blocks",
+          "played": true,
+          "actual": 3
+        },
+        {
+          "id": "5174983",
+          "market": "turnovers",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "5241364",
+          "market": "points",
+          "played": true,
+          "actual": 11
+        },
+        {
+          "id": "5241364",
+          "market": "rebounds",
+          "played": true,
+          "actual": 5
+        },
+        {
+          "id": "5241364",
+          "market": "assists",
+          "played": true,
+          "actual": 3
+        },
+        {
+          "id": "5241364",
+          "market": "three_pointers_made",
+          "played": true,
+          "actual": 2
+        },
+        {
+          "id": "5241364",
+          "market": "steals",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "5241364",
+          "market": "blocks",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "5241364",
+          "market": "turnovers",
+          "played": true,
+          "actual": 0
+        }
+      ],
       "v4_vs_v5_pretip_lag_minutes": 0.23,
       "game_date_et": "2026-11-07"
     },
@@ -3890,6 +8233,181 @@
         "V4": 8,
         "V5": 6
       },
+      "counts": {
+        "V3": 10,
+        "V4": 10,
+        "V5": 10
+      },
+      "recovered_first_grade_actuals": [
+        {
+          "id": "4397040",
+          "market": "points",
+          "played": true,
+          "actual": 9
+        },
+        {
+          "id": "4397040",
+          "market": "rebounds",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "4397040",
+          "market": "assists",
+          "played": true,
+          "actual": 2
+        },
+        {
+          "id": "4397040",
+          "market": "three_pointers_made",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "4397040",
+          "market": "steals",
+          "played": true,
+          "actual": 2
+        },
+        {
+          "id": "4397040",
+          "market": "blocks",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "4397040",
+          "market": "turnovers",
+          "played": true,
+          "actual": 2
+        },
+        {
+          "id": "4703396",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4703396",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4703396",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4703396",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4703396",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4703396",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4703396",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066320",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066320",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066320",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066320",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066320",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066320",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066320",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397204",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397204",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397204",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397204",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397204",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397204",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397204",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        }
+      ],
       "v4_vs_v5_pretip_lag_minutes": 0.23,
       "game_date_et": "2026-11-07"
     },
@@ -4305,6 +8823,223 @@
         "V4": 4,
         "V5": 5
       },
+      "counts": {
+        "V3": 10,
+        "V4": 10,
+        "V5": 10
+      },
+      "recovered_first_grade_actuals": [
+        {
+          "id": "4066268",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066268",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066268",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066268",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066268",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066268",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066268",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066383",
+          "market": "points",
+          "played": true,
+          "actual": 13
+        },
+        {
+          "id": "4066383",
+          "market": "rebounds",
+          "played": true,
+          "actual": 10
+        },
+        {
+          "id": "4066383",
+          "market": "assists",
+          "played": true,
+          "actual": 7
+        },
+        {
+          "id": "4066383",
+          "market": "three_pointers_made",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "4066383",
+          "market": "steals",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "4066383",
+          "market": "blocks",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "4066383",
+          "market": "turnovers",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "4278402",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4278402",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4278402",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4278402",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4278402",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4278402",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4278402",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "2990992",
+          "market": "points",
+          "played": true,
+          "actual": 5
+        },
+        {
+          "id": "2990992",
+          "market": "rebounds",
+          "played": true,
+          "actual": 2
+        },
+        {
+          "id": "2990992",
+          "market": "assists",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "2990992",
+          "market": "three_pointers_made",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "2990992",
+          "market": "steals",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "2990992",
+          "market": "blocks",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "2990992",
+          "market": "turnovers",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "2991230",
+          "market": "points",
+          "played": true,
+          "actual": 16
+        },
+        {
+          "id": "2991230",
+          "market": "rebounds",
+          "played": true,
+          "actual": 3
+        },
+        {
+          "id": "2991230",
+          "market": "assists",
+          "played": true,
+          "actual": 4
+        },
+        {
+          "id": "2991230",
+          "market": "three_pointers_made",
+          "played": true,
+          "actual": 4
+        },
+        {
+          "id": "2991230",
+          "market": "steals",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "2991230",
+          "market": "blocks",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "2991230",
+          "market": "turnovers",
+          "played": true,
+          "actual": 2
+        }
+      ],
       "v4_vs_v5_pretip_lag_minutes": 0.21,
       "game_date_et": "2026-11-07"
     },
@@ -4720,6 +9455,139 @@
         "V4": 7,
         "V5": 8
       },
+      "counts": {
+        "V3": 10,
+        "V4": 10,
+        "V5": 10
+      },
+      "recovered_first_grade_actuals": [
+        {
+          "id": "4066211",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066211",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066211",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066211",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066211",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066211",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4066211",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4706557",
+          "market": "points",
+          "played": true,
+          "actual": 11
+        },
+        {
+          "id": "4706557",
+          "market": "rebounds",
+          "played": true,
+          "actual": 4
+        },
+        {
+          "id": "4706557",
+          "market": "assists",
+          "played": true,
+          "actual": 4
+        },
+        {
+          "id": "4706557",
+          "market": "three_pointers_made",
+          "played": true,
+          "actual": 2
+        },
+        {
+          "id": "4706557",
+          "market": "steals",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "4706557",
+          "market": "blocks",
+          "played": true,
+          "actual": 1
+        },
+        {
+          "id": "4706557",
+          "market": "turnovers",
+          "played": true,
+          "actual": 3
+        },
+        {
+          "id": "6606",
+          "market": "points",
+          "played": true,
+          "actual": 12
+        },
+        {
+          "id": "6606",
+          "market": "rebounds",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "6606",
+          "market": "assists",
+          "played": true,
+          "actual": 7
+        },
+        {
+          "id": "6606",
+          "market": "three_pointers_made",
+          "played": true,
+          "actual": 2
+        },
+        {
+          "id": "6606",
+          "market": "steals",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "6606",
+          "market": "blocks",
+          "played": true,
+          "actual": 0
+        },
+        {
+          "id": "6606",
+          "market": "turnovers",
+          "played": true,
+          "actual": 3
+        }
+      ],
       "v4_vs_v5_pretip_lag_minutes": 0.21,
       "game_date_et": "2026-11-07"
     },
@@ -5135,6 +10003,55 @@
         "V4": 4,
         "V5": 5
       },
+      "counts": {
+        "V3": 10,
+        "V4": 10,
+        "V5": 10
+      },
+      "recovered_first_grade_actuals": [
+        {
+          "id": "2595516",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "2595516",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "2595516",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "2595516",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "2595516",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "2595516",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "2595516",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        }
+      ],
       "v4_vs_v5_pretip_lag_minutes": 0.38,
       "game_date_et": "2026-11-08"
     },
@@ -5550,6 +10467,55 @@
         "V4": 9,
         "V5": 7
       },
+      "counts": {
+        "V3": 10,
+        "V4": 10,
+        "V5": 10
+      },
+      "recovered_first_grade_actuals": [
+        {
+          "id": "3945274",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "3945274",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "3945274",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "3945274",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "3945274",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "3945274",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "3945274",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        }
+      ],
       "v4_vs_v5_pretip_lag_minutes": 0.38,
       "game_date_et": "2026-11-08"
     },
@@ -5965,6 +10931,12 @@
         "V4": 5,
         "V5": 5
       },
+      "counts": {
+        "V3": 10,
+        "V4": 10,
+        "V5": 10
+      },
+      "recovered_first_grade_actuals": [],
       "v4_vs_v5_pretip_lag_minutes": 0.31,
       "game_date_et": "2026-11-08"
     },
@@ -6380,6 +11352,55 @@
         "V4": 6,
         "V5": 7
       },
+      "counts": {
+        "V3": 10,
+        "V4": 10,
+        "V5": 10
+      },
+      "recovered_first_grade_actuals": [
+        {
+          "id": "5242502",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5242502",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5242502",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5242502",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5242502",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5242502",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "5242502",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        }
+      ],
       "v4_vs_v5_pretip_lag_minutes": 0.31,
       "game_date_et": "2026-11-08"
     },
@@ -6795,6 +11816,139 @@
         "V4": 3,
         "V5": 3
       },
+      "counts": {
+        "V3": 10,
+        "V4": 10,
+        "V5": 10
+      },
+      "recovered_first_grade_actuals": [
+        {
+          "id": "4397114",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397114",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397114",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397114",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397114",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397114",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397114",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397233",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397233",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397233",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397233",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397233",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397233",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4397233",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4697268",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4697268",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4697268",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4697268",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4697268",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4697268",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4697268",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        }
+      ],
       "v4_vs_v5_pretip_lag_minutes": 0.31,
       "game_date_et": "2026-11-08"
     },
@@ -7210,6 +12364,55 @@
         "V4": 7,
         "V5": 4
       },
+      "counts": {
+        "V3": 10,
+        "V4": 10,
+        "V5": 10
+      },
+      "recovered_first_grade_actuals": [
+        {
+          "id": "4432170",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4432170",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4432170",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4432170",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4432170",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4432170",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4432170",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        }
+      ],
       "v4_vs_v5_pretip_lag_minutes": 0.36,
       "game_date_et": "2026-11-08"
     },
@@ -7625,6 +12828,97 @@
         "V4": 8,
         "V5": 7
       },
+      "counts": {
+        "V3": 10,
+        "V4": 10,
+        "V5": 10
+      },
+      "recovered_first_grade_actuals": [
+        {
+          "id": "4702384",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4702384",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4702384",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4702384",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4702384",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4702384",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4702384",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4709131",
+          "market": "points",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4709131",
+          "market": "rebounds",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4709131",
+          "market": "assists",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4709131",
+          "market": "three_pointers_made",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4709131",
+          "market": "steals",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4709131",
+          "market": "blocks",
+          "played": false,
+          "actual": null
+        },
+        {
+          "id": "4709131",
+          "market": "turnovers",
+          "played": false,
+          "actual": null
+        }
+      ],
       "v4_vs_v5_pretip_lag_minutes": 0.36,
       "game_date_et": "2026-11-08"
     }
