@@ -276,9 +276,7 @@ jobs:
           PYTHONPATH=. python -u -m nba.nba_v5_forecast \
             --games nba/data/nba_v4_games_2025_26.jsonl.gz --games nba/data/nba_v4_games_2026_27.jsonl \
             --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz --pbp "$RUNNER_TEMP/pbp_2026.jsonl" \
-            --v3 "$RUNNER_TEMP/latest-new.json" --v4 docs/nba_v4_latest/latest.json --out docs/nba_v5_latest/latest.json --sims 10000 $CAL \
-            --simulation-only-out docs/nba_v5_independent_latest/latest.json \
-            --simulation-only-archive docs/nba_v5_independent_archive \
+            --v3 "$RUNNER_TEMP/latest-new.json" --out docs/nba_v5_latest/latest.json --sims 10000 $CAL \
             --receipt docs/nba_v5_latest/information_receipt.json --grades docs/nba_v5_grades/summary.json \
             --features docs/nba_v5_latest/features.json \
             --archive docs/nba_v5_archive $TRACKING_SOURCE "${PREGAME_ARGS[@]}"
@@ -349,7 +347,7 @@ jobs:
           PYTHONPATH=. python -u -m nba.nba_v5_forecast \
             --games nba/data/nba_v4_games_2025_26.jsonl.gz --games nba/data/nba_v4_games_2026_27.jsonl \
             --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz --pbp "$RUNNER_TEMP/pbp_2026.jsonl" \
-            --v3 "$RUNNER_TEMP/v5_lineup_games.json" --v4 docs/nba_v4_latest/latest.json \
+            --v3 "$RUNNER_TEMP/v5_lineup_games.json" \
             --out docs/nba_v5_lineup_latest/latest.json --sims 10000 \
             --receipt docs/nba_v5_latest/information_receipt.json \
             --grades docs/nba_v5_grades/summary.json \
@@ -375,7 +373,6 @@ jobs:
           git add -A docs/nba_v3_latest
           git add -A docs/nba_v4_latest nba/data || true
           git add -A docs/nba_v5_latest docs/nba_v5_info docs/nba_v5_archive || true
-          git add -A docs/nba_v5_independent_latest docs/nba_v5_independent_archive || true
           git add -A docs/nba_v5_lineup_archive docs/nba_v5_lineup_latest || true
           git status --short | head -10
           git restore --worktree -- . 2>/dev/null || true   # drop any other stray change so the rebase can run
