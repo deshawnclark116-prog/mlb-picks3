@@ -304,7 +304,12 @@ def main() -> int:
     head = None
     head_train_before = None
     head_enabled = bool(switches.get("learned_opportunity_head", False))
-    active_model_version = VERSION + ("-supervised-opportunity" if head_enabled else "")
+    empirical_enabled = bool(switches.get("empirical_game_projection", False))
+    if head_enabled and empirical_enabled:
+        raise ValueError("NBA_V5_CANNOT_COMBINE_COMPETING_STATISTICAL_HEADS")
+    active_model_version = VERSION + (
+        "-empirical-game" if empirical_enabled else
+        "-supervised-opportunity" if head_enabled else "")
     if head_enabled and v3["games"]:
         from nba.nba_v5_learned_opportunity_head import OpportunityHead
         head_train_before = min(
@@ -437,7 +442,20 @@ def main() -> int:
         tables_g = dict(tables)
         tables_g["blow_team"] = {t_: rp.tables.blow_mult_team(t_) for t_ in (g3["home_id"], g3["away_id"])}
         tables_g["foul_team"] = {t_: rp.tables.foul_mult_team(t_) for t_ in (g3["home_id"], g3["away_id"])}
-        sim = simulate_game(th, ta, L, tables_g, S=a.sims, pace=pace, seed=seed, ctx=ctx, features=switches)
+        # Keep the original 10,000-world connected possession engine running
+        # as a separate frozen reference. The independent empirical head
+        # replaces the numerical PTS/REB/AST/3PM/other distributions, NOT by
+        # mixing these with V3, V4 or native V5 means.
+        native_sim = simulate_game(th, ta, L, tables_g, S=a.sims, pace=pace,
+                                   seed=seed, ctx=ctx, features=switches)
+        if empirical_enabled:
+            from nba.nba_v5_empirical_stat_engine import simulate_empirical_game
+            sim = simulate_empirical_game(
+                th, ta, rp.hist, d, worlds=a.sims, seed=seed,
+                expected_pace=b5.pace_for(rp, pg, d),
+                historic_league_pace=L.poss)
+        else:
+            sim = native_sim
         rows_by = {(r["player_id"], r["market"]): r for r in g3["rows"]}
         new_rows, base_means = [], {}
         side_data = {"home": (th, sim["home"], sim["avail"][0], sim["first5"][0], sim["close5"][0]),
@@ -450,17 +468,19 @@ def main() -> int:
                     continue
                 for m, key in MARKETS.items():
                     base_means[(pid, m)] = float(sd[key][played, j].mean())
-        sens = optional_dependency_sensitivity(
+        sens = ({} if empirical_enabled else optional_dependency_sensitivity(
             a.compute_sensitivity, th, ta, L, tables_g, ctx,
-            base_means, a.sims, pace, seed, features=switches)
+            base_means, a.sims, pace, seed, features=switches))
+        # A possession-based teammate sensitivity rerun does not quantify
+        # the separate empirical prediction algorithm's dependencies.
         for side, (ti, sd, av, f5, c5) in side_data.items():
             for j, pid in enumerate(ti.ids):
                 played = av[:, j] & (sd["min"][:, j] > 0)
                 if played.sum() < 200:
                     continue
-                p_start = float(f5[played, j].mean())
+                p_start = float(f5[played, j].mean()) if f5 is not None else None
                 cm = played & close_mask
-                p_close = float(c5[cm, j].mean()) if cm.sum() > 50 else None
+                p_close = float(c5[cm, j].mean()) if c5 is not None and cm.sum() > 50 else None
                 mins = sd["min"][played, j]
                 for m, key in MARKETS.items():
                     samp = sd[key][played, j]
@@ -497,7 +517,7 @@ def main() -> int:
                                "p25": quant(samp, 0.25), "p75": quant(samp, 0.75), "p90": quant(samp, 0.90),
                                "sd": round(float(samp.std()), 4), "unc": round(float(samp.std()), 4), "model_target": None,
                                "cdf_lattice": {"step": 1, "cdf": lat}, "model_version": active_model_version,
-                               "mean_basis": "CONDITIONAL_ON_PLAYING", "p_start": round(p_start, 3),
+                               "mean_basis": "CONDITIONAL_ON_PLAYING", "p_start": round(p_start, 3) if p_start is not None else None,
                                "p_close": None if p_close is None else round(p_close, 3),
                                "minutes_mean": round(float(mins.mean()), 2), "role_share": round(float(mins.mean()) / 240.0, 6),
                                "minutes_p10": quant(mins, 0.10), "minutes_p90": quant(mins, 0.90),
@@ -566,13 +586,27 @@ def main() -> int:
                    "forecast_at_utc": now.isoformat(), "asof_utc": now.isoformat(), "model_simulations": a.sims,
                    "uses_v4_forecast_predictions": False,
                    "uses_v3_derived_roster_availability": True,
-                   "projection_source": ("V5_LEARNED_NEXT_GAME_OPPORTUNITY_PLUS_CONNECTED_SIM"
-                                         if head_enabled else "V5_GAME_SIMULATION_ONLY"),
+                   "projection_source": (
+                       "V5_INDEPENDENT_EMPIRICAL_GAME_HISTORY_JOINT_WORLD"
+                       if empirical_enabled else
+                       "V5_LEARNED_NEXT_GAME_OPPORTUNITY_PLUS_CONNECTED_SIM"
+                       if head_enabled else "V5_GAME_SIMULATION_ONLY"),
+                   "empirical_game_projection_active": empirical_enabled,
+                   "world_simulation_kind": (sim.get("world_kind") if empirical_enabled
+                                             else "POSSESSION_BY_POSSESSION_COMPLETE_GAME"),
+                   "native_possession_reference_simulations": a.sims,
+                   "null_starter_closer_probabilities_explained": (
+                       "Empirical game stat head cannot infer precise on-court possession sequence"
+                       if empirical_enabled else None),
                    "learned_head_training_cutoff": str(head_train_before) if head_enabled else None,
                    "learned_head_historical_examples": head.training_examples if head is not None else None,
                    "learned_head_modified_profiles": {"home": head_home_audit, "away": head_away_audit},
                    "dependency_sensitivity_reruns": 6 if a.compute_sensitivity else 0,
-                   "dependency_sensitivity_status": "OPTIONAL_RESEARCH_RERUNS" if a.compute_sensitivity else "SKIPPED_FOR_TIMELY_PREGAME_RELEASE",
+                   "dependency_sensitivity_status": (
+                       "NOT_APPLICABLE_TO_EMPIRICAL_NUMERICAL_HEAD"
+                       if empirical_enabled else
+                       "OPTIONAL_RESEARCH_RERUNS" if a.compute_sensitivity
+                       else "SKIPPED_FOR_TIMELY_PREGAME_RELEASE"),
                    "pace_used": pace, "official_foul_multiplier": ctx["ft_mult"], "simulation_pieces_on": switches or "defaults",
                    "roster_integrity_audit": roster_integrity,
                    "source_roster_recovered_player_ids": sorted(
@@ -610,10 +644,23 @@ def main() -> int:
                 "uses_v4_forecast_predictions": False,
                 "uses_v3_derived_roster_availability": True,
                 "learned_opportunity_head_active": head_enabled,
+                "empirical_game_projection_active": empirical_enabled,
+                "empirical_game_worlds": a.sims if empirical_enabled else 0,
+                "empirical_game_model_research_limit": (
+                    "Historical paired tests used retrospectively known rosters; "
+                    "live first-seen outcomes must be graded for genuine forward certification."
+                    if empirical_enabled else None),
                 "learned_opportunity_head_train_before": str(head_train_before) if head_enabled else None,
-                "note": "NBA V5: native full-game possession simulation is the final projection for every market. "
-                        "No V4 mixture. V3 supplies roster/participation inputs until source decoupling; "
-                        "official injury and lineup evidence can update availability. No sportsbook input."})
+                "note": (
+                    "NBA V5: independent empirical player-game joint worlds produce the final "
+                    "statistical projection, with the original 10000-world possession reference "
+                    "run separately, no averaging or V4/V3 forecast borrowing. "
+                    if empirical_enabled else
+                    "NBA V5: native full-game possession simulation is the final projection "
+                    "for every market. No V4 mixture. "
+                ) +
+                "V3 supplies roster/participation inputs until source decoupling; "
+                "official injury and lineup evidence can update availability. No sportsbook input."})
     Path(a.out).write_text(json.dumps(doc, separators=(",", ":")))
     if a.archive:
         for g5 in out_games:
