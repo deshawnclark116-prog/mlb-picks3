@@ -69,6 +69,21 @@ class IndependentGameForecastContracts(unittest.TestCase):
         np.testing.assert_array_equal(a["home"]["pts"], c["home"]["pts"])
         np.testing.assert_array_equal(a["away"]["reb"], c["away"]["reb"])
 
+    def test_10000_joint_worlds_and_pretip_injury_restriction(self):
+        home, away, h = inputs()
+        home.p_play[0] = 0.
+        home.minutes_cap = np.array([44. if j != 1 else 12. for j in range(10)])
+        home.return_mult = np.ones(10)
+        home.start_mult = 1.0
+        worlds = 10000
+        out = simulate_empirical_game(home, away, h, DAY, worlds=worlds, seed=44,
+                                      expected_pace=101, historic_league_pace=99)
+        self.assertEqual(out["home"]["pts"].shape, (worlds, 10))
+        self.assertTrue(np.all(out["home"]["min"][:, 0] == 0.))
+        self.assertTrue(np.all(out["home"]["min"][:, 1] <= 12.))
+        self.assertEqual(out["first5"], (None, None))
+        self.assertEqual(out["close5"], (None, None))
+
     def test_missing_known_player_does_not_increase_others_without_evidence(self):
         home, away, h = inputs()
         full = simulate_empirical_game(home, away, h, DAY, worlds=180, seed=21)
