@@ -59,7 +59,7 @@ async function fetchReleaseCommit(get:GithubSourceGetter,at:number){
 }
 async function fetchPublic(path:string,limit:number,get:GithubSourceGetter,at:number,ref:string){
  if(!/^[0-9a-f]{40}$/.test(ref))throw Error('NBA_V5_UNPINNED_RELEASE_REF');
- const root=V5_PUBLIC_RELEASE_ROOT.replace(/\\/main$/, '/'+ref);
+ const root=V5_PUBLIC_RELEASE_ROOT.replace(/main$/,ref);
  const url=root+path+'?v='+Math.floor(at/60_000);
  const response=await get(url,{
   signal:AbortSignal.timeout(9000),cache:'no-store',
