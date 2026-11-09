@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""NBA V5 shadow forecasts: the full-game simulation, run for tonight's games.
+"""NBA V5 native forecasts: the full-game simulation, run for tonight's games.
 
 Who is playing comes from the V3 file for the same games (same roster and injury sources): OUT players are removed and
 their minutes and shots go to the teammates who actually take them; everyone else plays with the probability V3 assigns.
@@ -15,7 +15,6 @@ Usage: python -m nba.nba_v5_forecast --games g.jsonl[.gz] --pbp p.jsonl --v3 lat
 """
 from __future__ import annotations
 import argparse
-import copy
 import datetime as dt
 import gzip
 import hashlib
@@ -41,11 +40,9 @@ from nba.nba_v5_rotation_attribution import load_past_team_games, _timestamp as 
 from nba.nba_v5_recency_pplay import estimate_unlisted
 from nba.nba_v5_sim import League, league_from, simulate_game, MARKETS
 
-VERSION = "nba-v5-blend-possession-simulation-20261106"
-SIMULATION_ONLY_VERSION = "nba-v5-simulation-only-research-20261109"
+VERSION = "nba-v5-native-possession-simulation-20261109"
 # All published V5 full-game projections share at least this many joint worlds.
 MIN_PRODUCTION_SIMS = 10_000
-CORE = ("points", "rebounds", "assists", "three_pointers_made")
 CDF_MAX = {"points": 90, "rebounds": 45, "assists": 35, "three_pointers_made": 17, "steals": 12, "blocks": 12, "turnovers": 15}
 SENS_MIN_SHARE = 0.08                    # a projection "depends on" a teammate if it moves by 8% or more
 
@@ -60,91 +57,6 @@ def trim_lattice(r):
     while n > 2 and c[n - 2] >= 0.9999:
         n -= 1
     lat["cdf"] = c[:n]
-
-
-def finalize_unblended_research_rows(rows: list[dict]) -> list[dict]:
-    """Rank the original V5 *simulation* independently of the V4 CDF.
-
-    Caller owns a deep copy captured before blending. This helper cannot
-    estimate absent availability or reconstruct historical counterfactuals.
-    """
-    for row in rows:
-        for key in ("frontend_rank", "whole_projection", "reach_probability",
-                    "frontend_ranking_probability", "rank_by_chance_only",
-                    "reach_probabilities", "blend",
-                    "research_fixed_event_component_probabilities"):
-            row.pop(key, None)
-        if str(row.get("model_version", "")).startswith("nba-v5-"):
-            row["model_version"] = SIMULATION_ONLY_VERSION
-    rank_for_screen(rows)
-    for row in rows:
-        if row.get("mean_basis") == "CONDITIONAL_ON_PLAYING":
-            target = whole(float(row["mean"]))
-            if target >= 1:
-                row["reach_probabilities"] = reach_with_dnp(
-                    reach_prob(row["cdf_lattice"]["cdf"], target),
-                    float(row["p_active"]), target)
-        trim_lattice(row)
-    return rows
-
-
-def cdf_quantile(cdf, q):
-    for i, v in enumerate(cdf):
-        if v >= q:
-            return float(i)
-    return float(len(cdf) - 1)
-
-
-def blend_rows(r5: dict, r4: dict) -> dict:
-    """Equal-weight mixture of the V5 simulation and the V4 model for one player and stat.
-
-    Tested on 150 held-out games (3,000+ player-games): the mixture had a smaller average miss than either model for
-    every stat and better probabilities than both for points and made threes (nba_v5_backtest.py). The mixture's chance of
-    reaching a number is the average of the two models' chances; its projection is the average of the two projections."""
-    c5, c4 = np.array(r5["cdf_lattice"]["cdf"]), np.array(r4["cdf_lattice"]["cdf"])
-    if len(c5) != len(c4):
-        return r5
-    mix = np.clip(0.5 * (c5 + c4), 0.0, 1.0)
-    mix[-1] = 1.0
-    m5, m4 = float(r5["mean"]), float(r4["mean"])
-    mean = 0.5 * (m5 + m4)
-    sd = float(np.sqrt(0.5 * (r5["sd"] ** 2 + r4["sd"] ** 2) + 0.25 * (m5 - m4) ** 2))
-    out = dict(r5)
-    cdf = [round(float(x), 4) for x in mix]
-    # Freeze ORIGINAL probabilities before the mixture replaces both CDFs.
-    # Compare both arms at the same displayed blend threshold, under one
-    # common pretip P(plays); the report isolates skill distributions, not
-    # the different availability models. No component probability affects
-    # published ranking, mean, CDF or odds.
-    threshold = whole(round(mean, 4))
-    shared_play = float(r5.get("p_active", 1.0))
-    if not 0.0 <= shared_play <= 1.0:
-        raise ValueError("NBA_V5_COMPONENT_INVALID_PLAY_PROBABILITY")
-    conditional = {
-        "v4_only": round(float(reach_prob(c4, threshold)), 6),
-        "v5_only": round(float(reach_prob(c5, threshold)), 6),
-        "blend": round(float(reach_prob(cdf, threshold)), 6),
-    }
-    frozen_components = {
-        "schema": "NBA_V5_SAME_TARGET_COMPONENT_PROBS_V1",
-        "target": threshold,
-        "common_play_probability": round(shared_play, 6),
-        "conditional_reach": conditional,
-        "including_dnp_reach": {
-            arm: round(prob * shared_play, 6)
-            for arm, prob in conditional.items()
-        },
-        "target_basis": "ORIGINAL_BLENDED_MEAN_ROUNDED_WITH_X_POINT_6_RULE",
-        "availability_basis": "SAME_V5_ASOF_P_ACTIVE_FOR_EVERY_ARM",
-        "score_after_game_only": True,
-        "experimental_only_no_production_effect": True,
-    }
-    out.update({"mean": round(mean, 4), "median": cdf_quantile(cdf, 0.5), "p10": cdf_quantile(cdf, 0.10), "p25": cdf_quantile(cdf, 0.25),
-                "p75": cdf_quantile(cdf, 0.75), "p90": cdf_quantile(cdf, 0.90), "sd": round(sd, 4), "unc": round(sd, 4),
-                "cdf_lattice": {"step": 1, "cdf": cdf},
-                "blend": {"v5_simulation_mean": round(m5, 4), "v4_model_mean": round(m4, 4), "weights": [0.5, 0.5]},
-                "research_fixed_event_component_probabilities": frozen_components})
-    return out
 
 
 def sha(path: Path) -> str:
@@ -293,15 +205,12 @@ def main() -> int:
     ap.add_argument("--pbp", action="append", required=True)
     ap.add_argument("--v3", required=True)
     ap.add_argument("--out", required=True)
-    ap.add_argument("--simulation-only-out", default="", help="Research: preserve unblended V5 simulation projected means and CDFs; does not affect champion")
-    ap.add_argument("--simulation-only-archive", default="", help="Research-only first/last immutable pretip original simulation snapshots")
     ap.add_argument("--sims", type=int, default=MIN_PRODUCTION_SIMS, help="Minimum 10,000 complete correlated game simulations per matchup")
     ap.add_argument("--compute-sensitivity", action="store_true", help="Optional six additional teammate-absence research re-simulations per game; OFF for fast pretip production")
     ap.add_argument("--calibration", default="")
     ap.add_argument("--receipt", default="", help="information receipt (nba_v5_info) with each player's reported status, body part and return date")
     ap.add_argument("--grades", default="", help="docs/nba_v5_grades/summary.json: learned chance of playing by reported status")
     ap.add_argument("--features", default="", help="docs/nba_v5_latest/features.json: which simulation pieces are switched on (only those that tested as helpful)")
-    ap.add_argument("--v4", default="", help="V4 forecast file for the same games; averaged with the V5 simulation for points, rebounds, assists, threes")
     ap.add_argument("--licensed-data", action="append", default=[], help="Optional authorized tracking/play-type historical JSON; diagnostic only until paired validation")
     ap.add_argument("--pregame-evidence", action="append", default=[], help="Repeat for each independent as-of confirmed lineup/inactive/minutes source; projected lineups never override the model")
     ap.add_argument("--archive", default="", help="directory for frozen forecasts: first/<game>.json.gz (never rewritten) and last/<game>.json.gz (replaced until 15 min before tip, kept only within 4 hours of tip)")
@@ -332,8 +241,6 @@ def main() -> int:
     play_table = avm.PlayTable.from_grades(a.grades) if a.grades else avm.PlayTable()
     switches = json.loads(Path(a.features).read_text())["features"] if a.features and Path(a.features).exists() else {}
     receipts = json.loads(Path(a.receipt).read_text()) if a.receipt and Path(a.receipt).exists() else {}
-    v4doc = json.loads(Path(a.v4).read_text()) if a.v4 and Path(a.v4).exists() else None
-    v4rows = {(g["game_id"], r["player_id"], r["market"]): r for g in (v4doc or {"games": []})["games"] for r in g["rows"] if r.get("cdf_lattice")}
     now = dt.datetime.now(dt.timezone.utc)
     pregame, pregame_audit = load_pregame_many(a.pregame_evidence, now, v3.get("games", []))
     current_roster={(str(r["team_id"]),str(r["player_id"]))
@@ -353,7 +260,6 @@ def main() -> int:
     if switches.get("tracking_opportunity_role") and not tracking_profiles:
         raise ValueError("NBA_V5_TRACKING_ROLE_SWITCH_REQUIRES_OBSERVED_SOURCE")
     out_games, skipped = [], []
-    simulation_only_games = []
     for g3 in v3["games"]:
         tip = dt.datetime.fromisoformat(g3["tipoff_utc"])
         if tip <= now:
@@ -540,17 +446,11 @@ def main() -> int:
         for r in new_rows:
             for dep in r.get("depends_on", []):
                 dep["if_out_name"] = name_of.get(dep["if_out"], dep["if_out"])
-        # Research challenger: capture the actual V5 possession simulation
-        # BEFORE V4 mixtures alter any mean/CDF. This is NOT a postgame
-        # model recreation and consumes no additional simulation draws.
-        # Deep copy prevents the champion's blend from mutating this arm.
-        pure_sim_rows = copy.deepcopy(new_rows) if a.simulation_only_out else None
-        for i_, r in enumerate(new_rows):
-            r4 = v4rows.get((g3["game_id"], r["player_id"], r["market"]))
-            if r4 is not None and r["market"] in CORE and r.get("mean_basis") == "CONDITIONAL_ON_PLAYING" and r4.get("mean_basis") == "CONDITIONAL_ON_PLAYING":
-                new_rows[i_] = blend_rows(r, r4)
-            elif r.get("mean_basis") == "CONDITIONAL_ON_PLAYING":
-                r["blend"] = None
+        # All markets now use V5's original simulated distribution. There is
+        # no consultation of V4 statistical forecasts or ensemble averages.
+        for row in new_rows:
+            row.pop("blend", None)
+            row.pop("research_fixed_event_component_probabilities", None)
         rank_for_screen(new_rows)
         for r in new_rows:
             # Preserve conditional chance, and separately report the chance
@@ -577,29 +477,12 @@ def main() -> int:
                     out_row["availability_source"]="OFFICIAL_NBA_PDF"
                     out_row["availability_published_at_utc"]=rep_by[str(r["player_id"])]["published_at"]
                 new_rows.append(out_row)
-                if pure_sim_rows is not None:
-                    pure_sim_rows.append(copy.deepcopy(out_row))
-        if pure_sim_rows is not None:
-            pure_sim_rows = finalize_unblended_research_rows(pure_sim_rows)
-            game_pure = dict(g3)
-            game_pure.update({
-                "rows": pure_sim_rows,
-                "rows_count": len(pure_sim_rows),
-                "model_version": SIMULATION_ONLY_VERSION,
-                "forecast_kind": "V5_SIMULATION_ONLY_RESEARCH",
-                "forecast_at_utc": now.isoformat(),
-                "asof_utc": now.isoformat(),
-                "model_simulations": a.sims,
-                "uses_v4_forecast_means_or_cdfs": False,
-                "depends_on_v3_roster_availability_input": True,
-                "source_game_v3_id": str(g3["game_id"]),
-                "no_production_or_frontend_effect": True,
-                "research_only": True,
-            })
-            simulation_only_games.append(game_pure)
         g5 = dict(g3)
         g5.update({"rows": new_rows, "rows_count": len(new_rows), "model_version": VERSION, "forecast_kind": "V5_SHADOW",
                    "forecast_at_utc": now.isoformat(), "asof_utc": now.isoformat(), "model_simulations": a.sims,
+                   "uses_v4_forecast_predictions": False,
+                   "uses_v3_derived_roster_availability": True,
+                   "projection_source": "V5_GAME_SIMULATION_ONLY",
                    "dependency_sensitivity_reruns": 6 if a.compute_sensitivity else 0,
                    "dependency_sensitivity_status": "OPTIONAL_RESEARCH_RERUNS" if a.compute_sensitivity else "SKIPPED_FOR_TIMELY_PREGAME_RELEASE",
                    "pace_used": pace, "official_foul_multiplier": ctx["ft_mult"], "simulation_pieces_on": switches or "defaults",
@@ -627,48 +510,12 @@ def main() -> int:
                 "authorized_source_quality": source_audits,
                 "certified_pregame_source_audit": pregame_audit,
                 "authorized_source_model_effect":"DIAGNOSTIC_ONLY_NOT_PROMOTED",
-                "note": "NBA V5: equal-weight blend of the whole-game possession simulation and the V4 model for points, rebounds, assists and threes; "
-                        "the simulation alone for steals, blocks and turnovers. Conditional on playing; V3 availability can be updated by verified NBA PDF and optional certified lineup evidence. "
-                        "Research only, not validated for 2026-27, no sportsbook input."})
+                "uses_v4_forecast_predictions": False,
+                "uses_v3_derived_roster_availability": True,
+                "note": "NBA V5: native full-game possession simulation is the final projection for every market. "
+                        "No V4 mixture. V3 supplies roster/participation inputs until source decoupling; "
+                        "official injury and lineup evidence can update availability. No sportsbook input."})
     Path(a.out).write_text(json.dumps(doc, separators=(",", ":")))
-    if a.simulation_only_out:
-        pure_doc = {k: v for k, v in doc.items()
-                    if k not in ("games", "model_version", "note")}
-        pure_doc.update({
-            "games": simulation_only_games,
-            "games_forecast": len(simulation_only_games),
-            "model_version": SIMULATION_ONLY_VERSION,
-            "research_only": True,
-            "model_promoted": False,
-            "no_frontend_or_champion_effect": True,
-            "no_v4_mean_or_cdf_input": True,
-            "still_uses_v3_player_availability_source": True,
-            "generated_at_utc": now.isoformat(),
-            "note": "Pure V5 full-game possession simulation before V4 blending. "
-                    "Shares champion V3-derived roster and pregame participation source. "
-                    "Not yet a fully source-independent V5. Prospective research only.",
-        })
-        pure_dest = Path(a.simulation_only_out)
-        pure_dest.parent.mkdir(parents=True, exist_ok=True)
-        pure_dest.write_text(json.dumps(pure_doc, separators=(",", ":")))
-        if a.simulation_only_archive:
-            for game_pure in simulation_only_games:
-                tip = dt.datetime.fromisoformat(game_pure["tipoff_utc"])
-                if tip - now < dt.timedelta(minutes=15):
-                    continue
-                one_pure = {k: v for k, v in pure_doc.items() if k != "games"}
-                one_pure.update({"games": [game_pure], "games_forecast": 1})
-                for kind in ("first", "last"):
-                    if kind == "last" and tip - now > dt.timedelta(hours=4):
-                        continue
-                    original_path = (Path(a.simulation_only_archive) / kind /
-                                     (str(game_pure["game_id"]) + ".json.gz"))
-                    if kind == "first" and original_path.exists():
-                        continue
-                    original_path.parent.mkdir(parents=True, exist_ok=True)
-                    with gzip.open(original_path, "wt", compresslevel=9) as fh:
-                        fh.write(json.dumps(one_pure, separators=(",", ":")))
-        print("simulation_only_research_games", len(simulation_only_games), flush=True)
     if a.archive:
         for g5 in out_games:
             tip = dt.datetime.fromisoformat(g5["tipoff_utc"])
