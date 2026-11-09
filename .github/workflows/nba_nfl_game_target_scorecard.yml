@@ -1,0 +1,88 @@
+name: NBA NFL frozen player-target game-by-game audit
+on:
+  schedule:
+    # Late morning Eastern after NBA box scores and the postmortem publisher.
+    - cron: "37 14 * * *"
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Eastern game date YYYY-MM-DD (blank = yesterday)"
+        required: false
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - "nba/nba_nfl_game_target_scorecard.py"
+      - ".github/workflows/nba_nfl_game_target_scorecard.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nba-nfl-frozen-outcome-report
+  cancel-in-progress: false
+
+jobs:
+  score:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Resolve ET outcome date and preserve pretip-only sources
+        id: day
+        env:
+          REQUESTED: ${{ inputs.date }}
+        run: |
+          python - <<'PY'
+          import datetime as dt, os
+          from zoneinfo import ZoneInfo
+          day = (os.environ.get("REQUESTED") or
+                 (dt.datetime.now(ZoneInfo("America/New_York")).date() -
+                  dt.timedelta(days=1)).isoformat())
+          dt.date.fromisoformat(day)
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"date={day}\n")
+          print("FROZEN_OUTCOME_DATE", day)
+          PY
+      - name: Read genuine NFL first-seen ledger and verified outcome grade
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/nfl_original"
+          for name in nfl_precision_firstseen.jsonl nfl_precision_forward_grade.json; do
+            curl -fLSs --retry 4 --retry-all-errors --max-time 45 \
+              -o "$RUNNER_TEMP/nfl_original/$name" \
+              "https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks2/main/docs/$name"
+          done
+          test -s "$RUNNER_TEMP/nfl_original/nfl_precision_firstseen.jsonl"
+          test -s "$RUNNER_TEMP/nfl_original/nfl_precision_forward_grade.json"
+      - name: Run deterministic scorecard tests and output both sports
+        env:
+          DAY: ${{ steps.day.outputs.date }}
+        run: |
+          python -m nba.nba_nfl_game_target_scorecard \
+            --date "$DAY" \
+            --nfl-firstseen "$RUNNER_TEMP/nfl_original/nfl_precision_firstseen.jsonl" \
+            --nfl-grades "$RUNNER_TEMP/nfl_original/nfl_precision_forward_grade.json" \
+            --output docs/projection_outcome \
+            --self-test
+      - name: Publish only authentic pregame target grades
+        env:
+          DAY: ${{ steps.day.outputs.date }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "docs/projection_outcome/$DAY.json" "docs/projection_outcome/$DAY.md"
+          if git diff --cached --quiet; then
+            echo "SCORECARD_UNCHANGED"
+            exit 0
+          fi
+          git commit -m "Research: frozen NBA/NFL per-game projection outcomes $DAY"
+          git pull --rebase origin main
+          git push origin HEAD:main
