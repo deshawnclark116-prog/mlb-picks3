@@ -204,8 +204,8 @@ def markdown(report):
         '> NBA game date uses archived last-forecast ET date because the grade files do not store tipoff;',
         '> NFL game date uses verified pretip kickoff. Frozen model targets are NEVER altered.',
         '> This reconstructs ranked cards from archives; it cannot guarantee each user saw that exact snapshot.',
-        '> Diagnostic cause flags are associations, NOT established causal explanations.
-> Legacy turnover rankings are excluded because they were not featured as player picks.',
+        '> Diagnostic cause flags are associations, NOT established causal explanations.',
+        '> Legacy turnover rankings are excluded because they were not featured as player picks.',
         '',
     ]
     for sport in ["NBA", "NFL"]:
