@@ -1,0 +1,62 @@
+name: NBA V5 learned player-stat projection head - historical paired acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - "nba/nba_v5_learned_opportunity_head.py"
+      - "nba/nba_v5_learned_opportunity_head_score.py"
+      - "nba/nba_v5_backtest.py"
+      - "tests/test_nba_v5_learned_opportunity_head.py"
+      - ".github/workflows/nba_v5_learned_head_acceptance.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  historical-comparison:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install scientific runtime
+        run: python -m pip install "numpy>=2.1,<2.5" "scipy>=1.14,<1.18"
+      - name: Validate mathematical code and strict historical-causality contracts
+        run: |
+          python -m compileall -q nba/nba_v5_learned_opportunity_head.py nba/nba_v5_learned_opportunity_head_score.py nba/nba_v5_backtest.py
+          python -m unittest -v tests.test_nba_v5_learned_opportunity_head
+      - name: Forward historical same-game V5 native versus learned player rates
+        run: |
+          PYTHONPATH=. python -u -m nba.nba_v5_backtest \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz \
+            --pbp nba/data/nba_v5_pbp_2026_27.jsonl.gz \
+            --test-from 2026-10-27 \
+            --learned-head-train-before 2026-10-27 \
+            --sample 38 --sims 750 \
+            --learned-head-trial \
+            --out /tmp/nba_v5_learned_head_paired.json
+      - name: Print actual independent unblended scorecard
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open('/tmp/nba_v5_learned_head_paired.json'))
+          p=r['paired_learned_opportunity_head_trial']
+          print('PAIRED_NATIVE_HOLDOUT',p['experiment'])
+          print('NO_V4_BLENDING',p['not_using_v3_or_v4_forecasts'])
+          print('FOUR_CORE_MAE_IMPROVED',p['all_four_core_mean_mae_improved'])
+          print('FOUR_CORE_FIXED_EVENT_BRIER_NONREGRESSION',p['all_four_core_fixed_event_brier_nonregression'])
+          for stat in ('points','rebounds','assists','three_pointers_made',
+                       'steals','blocks','turnovers'):
+              for suffix in ('native_v5_mean_mae','native_fixed_projection_brier'):
+                  k=stat+'|'+suffix
+                  if k in p['metrics']:
+                      print(k,json.dumps(p['metrics'][k],sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-v5-independent-learned-head-paired-historical
+          path: /tmp/nba_v5_learned_head_paired.json
+          retention-days: 20
