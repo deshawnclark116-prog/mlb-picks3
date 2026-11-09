@@ -24,6 +24,15 @@ class V5GameFactsTests(unittest.TestCase):
             t:{"sha256":"abcdef"+t,"url":"https://example.org/roster/"+t,
                "retrieved_at_utc":self.asof.isoformat()}
             for t in ("1","2")}
+        # A genuine run requires a complete thirty-team source capture;
+        # only teams 1 and 2 have a game in the synthetic fixture.
+        for num in range(3,31):
+            t=str(num)
+            self.rosters[t]=[{"player_id":str(10000+num*100+i),
+                              "player":f"Other {t} {i}"} for i in range(10,17)]
+            self.receipts[t]={"sha256":"abcdef"+t,
+                               "url":"https://example.org/roster/"+t,
+                               "retrieved_at_utc":self.asof.isoformat()}
         self.supplemental = {
             t:{r["player_id"] for r in self.rosters[t]}
             for t in ("1","2")
