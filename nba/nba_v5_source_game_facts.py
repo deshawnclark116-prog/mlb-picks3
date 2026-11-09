@@ -143,11 +143,16 @@ def build(fixtures, rosters, receipts, games, boxes, asof,
 
 
 def validate(doc, now):
-    if doc.get("schema") != SCHEMA or not doc.get("no_v3_v4_projection_means"):
-        raise ValueError("NBA_V5_UNTRUSTED_NEUTRAL_GAME_FACTS")
+    if (doc.get("schema") != SCHEMA
+        or doc.get("no_v3_v4_projection_means") is not True
+        or doc.get("no_prior_model_CDF_or_minutes") is not True
+        or doc.get("source_rosters_verified_all_30") is not True):
+        raise ValueError("NBA_V5_UNTRUSTED_OR_PARTIAL_NEUTRAL_GAME_FACTS")
     at = utc(doc["generated_at_utc"])
     if at > utc(now) or (utc(now)-at) > dt.timedelta(hours=4):
         raise ValueError("NBA_V5_STALE_OR_FUTURE_GAME_FACTS")
+    if not doc.get("games") or doc.get("games_forecast") != len(doc["games"]):
+        raise ValueError("NBA_V5_NEUTRAL_FACTS_MISSING_GAMES")
     for g in doc["games"]:
         tip = utc(g["tipoff_utc"])
         if at >= tip - MIN_PREGAME_GAP:
@@ -155,7 +160,10 @@ def validate(doc, now):
         teams={str(g["home_id"]),str(g["away_id"])}
         if len(teams)!=2:
             raise ValueError("NBA_V5_DUPLICATE_TEAM")
+        if g.get("rows_count") != len(g["rows"]):
+            raise ValueError("NBA_V5_GAME_FACTS_ROW_COUNT_MISMATCH")
         players={}
+        player_markets={}
         for r in g["rows"]:
             if r.get("market") not in MARKETS:
                 raise ValueError("NBA_V5_GAME_FACTS_UNKNOWN_MARKET")
@@ -165,10 +173,24 @@ def validate(doc, now):
                 raise ValueError("NBA_V5_GAME_FACTS_WRONG_TEAM_OR_GAME")
             if r["p_active"] not in (0.0, 1.0):
                 raise ValueError("NBA_V5_GAME_FACTS_HAS_PROBABILISTIC_PRIOR")
+            if r["reported_status"] not in ("OUT","AVAILABLE","UNKNOWN_NOT_ACTIVE_CERTIFIED"):
+                raise ValueError("NBA_V5_GAME_FACTS_UNKNOWN_SOURCE_AVAILABILITY")
+            if (r["reported_status"]=="OUT") != (r["p_active"]==0.0):
+                raise ValueError("NBA_V5_GAME_FACTS_CONTRADICTORY_SOURCE_AVAILABILITY")
+            if r.get("source_roster_gate_not_forecast_probability") is not True:
+                raise ValueError("NBA_V5_GAME_FACTS_UNDECLARED_FORECAST_PROBABILITY")
             pid=str(r["player_id"]); team=str(r["team_id"])
             if pid in players and players[pid]!=team:
                 raise ValueError("NBA_V5_GAME_FACTS_PLAYER_ON_BOTH_SIDES")
             players[pid]=team
+            fields=player_markets.setdefault((pid,team),set())
+            if r["market"] in fields:
+                raise ValueError("NBA_V5_GAME_FACTS_DUPLICATE_PLAYER_MARKET")
+            fields.add(r["market"])
         if not players:
             raise ValueError("NBA_V5_GAME_FACTS_MISSING_ROSTER")
+        if any(fields != set(MARKETS) for fields in player_markets.values()):
+            raise ValueError("NBA_V5_GAME_FACTS_INCOMPLETE_PLAYER_MARKETS")
+        if any(sum(1 for team in players.values() if team==t) < 7 for t in teams):
+            raise ValueError("NBA_V5_GAME_FACTS_TOO_FEW_TEAM_PLAYERS")
     return True
