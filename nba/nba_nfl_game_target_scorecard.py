@@ -206,13 +206,16 @@ def markdown(report):
             f'({pct(s["hit_rate"])}); {s["unverified"]} unresolved; '
             f'average stated reach chance {pct(s["mean_stated_probability"])}.',
             '',
-            '| Game | Hits / verified | Predicted reach | DNP | Unverified |',
-            '|---|---:|---:|---:|---:|',
+            '| Game | Hits / verified | Expected hits | Mean predicted chance | DNP | Unverified |',
+            '|---|---:|---:|---:|---:|---:|',
         ]
         for g in block["games"]:
             x = g["summary"]
+            expected = x["expected_hits_on_scored_rows"]
             out.append(f'| {clean(g["game"])} | {x["hits"]}/{x["graded"]} | '
-                       f'{pct(x["mean_stated_probability"])} | {x["dnps"]} | {x["unverified"]} |')
+                       f'{expected:.1f} | ' if expected is not None else
+                       f'| {clean(g["game"])} | {x["hits"]}/{x["graded"]} | — | ')
+            out[-1] += f'{pct(x["mean_stated_probability"])} | {x["dnps"]} | {x["unverified"]} |'
         out += ['', '### By market',
                 '| Market | Hits / verified | Observed | Model chance |',
                 '|---|---:|---:|---:|']
@@ -225,16 +228,23 @@ def markdown(report):
                 f'### {g["game"]} — {g["game_id"]}',
                 f'Archived forecast: {g["forecast_at_utc"]}',
                 '',
-                '| Rank | Player | Stat | Original target | Actual | Reach chance | Result |',
-                '|---:|---|---|---:|---:|---:|---|',
+                '| Rank | Player | Stat | Model mean | Target | Actual | P(hit) | Minutes forecast / actual | Result |',
+                '|---:|---|---|---:|---:|---:|---:|---|---|',
             ]
             for r in g["rows"]:
                 status = ("HIT" if r["hit"] is True else "MISS" if r["hit"] is False
                           else r["status"])
                 actual = str(r["actual"]) if r["actual"] is not None else "—"
+                mean = r.get("model_mean")
+                mean_str = f'{mean:.2f}' if valid_num(mean) else "—"
+                fm = r.get("minutes_forecast")
+                am = r.get("minutes_actual")
+                minutes = (f'{fm:.1f} / {am:.1f}' if valid_num(fm) and valid_num(am)
+                           else f'{fm:.1f} / DNP' if valid_num(fm) and r["status"] == "DNP"
+                           else "—")
                 out.append(f'| {r["rank"] or "—"} | {clean(r["player"])} | '
-                           f'{clean(r["market"])} | {r["target"]}+ | {actual} | '
-                           f'{pct(r["prob"])} | {status} |')
+                           f'{clean(r["market"])} | {mean_str} | {r["target"]}+ | {actual} | '
+                           f'{pct(r["prob"])} | {minutes} | {status} |')
             out.append('')
             misses = [r for r in g["rows"] if r["hit"] is False]
             if misses and sport == "NBA":
