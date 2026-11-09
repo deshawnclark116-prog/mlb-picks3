@@ -10,7 +10,7 @@ const NAME:Record<Market,string>={points:'POINTS',rebounds:'REBOUNDS',
 const UNIT:Record<Market,string>={points:'PTS',rebounds:'REB',assists:'AST',
  three_pointers_made:'3PM',steals:'STL',blocks:'BLK',turnovers:'TOV'};
 type Forecast={
- player:string;team_id:string;player_id:string;market:Market;
+ player:string;team_id:string;player_id:string;market:Market;model_version?:string;
  mean:number;median:number;p10:number;p25:number;p75:number;p90:number;
  p_active:number;exp_opp:number;role_share:number;unc_reasons:string[];
  reported_status:string;
@@ -291,7 +291,7 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
                :'Not verified · projected rotations'}.
            </p>}
            <p className="mt-1 text-[10px] text-gray-500">{g.forecast_kind==='V5_LATEST'
-             ?<>Model V5 · updated {et(g.forecast_at_utc)}{' · '}first forecast {et(g.first_seen_forecast_at_utc||g.forecast_at_utc)}</>
+             ?<>Model V5{g.rows.some(r=>r.model_version?.includes('-empirical-game'))?' · EMPIRICAL GAME':''} · updated {et(g.forecast_at_utc)}{' · '}first forecast {et(g.first_seen_forecast_at_utc||g.forecast_at_utc)}</>
              :g.forecast_kind==='V4_LATEST'
              ?<>Model V4 · updated {et(g.forecast_at_utc)}{' · '}first forecast {et(g.first_seen_forecast_at_utc||g.forecast_at_utc)}</>
              :g.forecast_kind==='LATEST_RUN'
