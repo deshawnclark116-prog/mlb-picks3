@@ -26,7 +26,11 @@ def rank_for_screen(rows):
         # dataset but are not featured as wager-facing player picks.
         if (r.get("market") == "turnovers" or
             r.get("mean_basis") != "CONDITIONAL_ON_PLAYING" or
-            r["reported_status"] == "OUT" or not r["p_active"] >= 0.75):
+            r["reported_status"] == "OUT" or not r["p_active"] >= 0.75 or
+            (r.get("source_roster_recovered") and
+             int(r.get("prior_history_n", 0)) < 5)):
+            # Low-history newcomers occupy real game minutes, but one or
+            # two past boxes cannot justify a top-10 confidence ranking.
             continue
         w = whole(r["mean"])
         if w < MEANINGFUL_MIN[r["market"]]:
