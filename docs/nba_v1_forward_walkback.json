@@ -20466,7 +20466,7 @@
     "url_format": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=YYYYMMDD",
     "regular_season_only": true
   },
-  "generated_at_utc": "2026-11-09T19:33:18.170229+00:00",
+  "generated_at_utc": "2026-11-09T19:34:58.282972+00:00",
   "research_only": true,
   "official_bets": 0,
   "market_lines_verified": false,
