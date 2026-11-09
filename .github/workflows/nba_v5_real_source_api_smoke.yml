@@ -52,6 +52,12 @@ jobs:
           assert.equal(ready.schema,'NBA_V5_FORECAST_READINESS_V1');
           const synced=await createPublishedV5Sync()(original,asOf);
           console.log('NBA_V5_LIVE_SOURCE_DIAGNOSTIC',JSON.stringify(synced.v5_published_sync));
+          console.log('NBA_V5_LINEUP_BY_GAME',JSON.stringify((synced.games??[]).filter(g=>g.forecast_kind==='V5_LATEST').map(g=>({
+            game_id:g.game_id,home:g.home,away:g.away,
+            forecast_at:g.forecast_at_utc,
+            certified_pregame_team_effect:g.certified_pregame_team_effect,
+            top_row_model:g.rows?.[0]?.model_version
+          }))));
           assert.equal(synced.v5_published_sync.source_state,'SOURCE_VERIFIED',synced.v5_published_sync.source_error);
           assert.equal(synced.v5_published_sync.latest_generation_at_utc,ready.document_generated_at_utc);
           const currentIds=new Set((ready.games??[]).map(g=>String(g.game_id)));
