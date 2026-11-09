@@ -1,4 +1,4 @@
 {
   "show": true,
-  "reason": "V5 native player-stat distributions now come directly from its full-game simulation for every stat; the former 50/50 V4 forecast mixture is removed. The established historical V3/V4 benchmarks remain research only. V5 still uses V3-derived roster inputs pending full source decoupling. Untouched forward accuracy advantage is NOT established."
+  "reason": "V5 now produces every final player-stat projection from its own 10,000-world possession simulation. It does not blend V4 or consume V3/V4 predicted means, CDFs, minute estimates, or P(playing). Independent time-stamped roster, injury, NBA confirmed lineups and prior-game histories feed the V5 model. V3 and V4 remain separate benchmarks; forward accuracy improvement has not yet been established."
 }

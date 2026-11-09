@@ -149,49 +149,39 @@ if __name__ == "__main__":
     unittest.main()
 
 
-class BlendTests(unittest.TestCase):
-    def test_blend_is_an_equal_mixture(self):
-        from nba.nba_v5_forecast import blend_rows
-        c5 = [0.1, 0.4, 0.8, 1.0]
-        c4 = [0.2, 0.6, 0.9, 1.0]
-        r5 = {"mean": 2.0, "sd": 1.0, "cdf_lattice": {"step": 1, "cdf": c5}, "market": "assists"}
-        r4 = {"mean": 3.0, "sd": 1.2, "cdf_lattice": {"step": 1, "cdf": c4}}
-        b = blend_rows(r5, r4)
-        self.assertAlmostEqual(b["mean"], 2.5)
-        self.assertEqual(b["cdf_lattice"]["cdf"], [0.15, 0.5, 0.85, 1.0])
-        self.assertEqual(b["blend"]["weights"], [0.5, 0.5])
-        c = b["research_fixed_event_component_probabilities"]
-        self.assertEqual(c["target"], 2)  # blended 2.5 rounds DOWN
-        self.assertEqual(c["conditional_reach"],
-                         {"v4_only": 0.4, "v5_only": 0.6, "blend": 0.5})
-        self.assertEqual(c["including_dnp_reach"],c["conditional_reach"])
+class NativeForecastTests(unittest.TestCase):
+    """The old 50/50 V4/V5 mixture is forbidden in the published V5."""
+    def test_production_has_no_blend_operator(self):
+        from nba import nba_v5_forecast
+        self.assertFalse(hasattr(nba_v5_forecast, "blend_rows"))
+        self.assertTrue(nba_v5_forecast.VERSION.startswith("nba-v5-native-"))
 
-        self.assertGreater(b["sd"], 1.0)                                  # spread includes the disagreement between the models
-        self.assertTrue(all(y >= x for x, y in zip(b["cdf_lattice"]["cdf"], b["cdf_lattice"]["cdf"][1:])))
+    def test_core_stats_are_directly_rounded_from_native_means(self):
+        from nba.nba_v5_rank import rank_for_screen
+        rows = [{"model_version":"nba-v5-native-possession-simulation-20261109",
+                 "player":f"Player {i}","player_id":str(i),
+                 "market":market,"mean":mean,
+                 "p_active":0.97,"reported_status":"UNKNOWN",
+                 "mean_basis":"CONDITIONAL_ON_PLAYING",
+                 "cdf_lattice":{"step":1,"cdf":cdf}}
+                for i,(market,mean,cdf) in enumerate([
+                    ("points",15.60,[0.0]*15+[.3]+[1.0]*90),
+                    ("rebounds",5.59,[0.0]*5+[.3]+[1.0]*45),
+                    ("assists",3.60,[0.0]*3+[.3]+[1.0]*35),
+                    ("three_pointers_made",2.59,[0.0]*2+[.3]+[1.0]*20)])]
+        original=[(r["mean"],list(r["cdf_lattice"]["cdf"])) for r in rows]
+        rank_for_screen(rows)
+        self.assertEqual([r["whole_projection"] for r in rows],[16,5,4,2])
+        self.assertTrue(all("blend" not in r for r in rows))
+        self.assertEqual(original,[(r["mean"],r["cdf_lattice"]["cdf"]) for r in rows])
 
-    def test_component_probs_use_same_pretip_dnp_risk_for_fair_comparison(self):
-        from nba.nba_v5_forecast import blend_rows
-        r5 = {"mean": 2.0, "sd": 1.0, "p_active": 0.8,
-              "cdf_lattice": {"step": 1, "cdf": [0.1, 0.4, 0.8, 1.0]}}
-        r4 = {"mean": 3.0, "sd": 1.2,
-              "cdf_lattice": {"step": 1, "cdf": [0.2, 0.6, 0.9, 1.0]}}
-        original5 = list(r5["cdf_lattice"]["cdf"])
-        original4 = list(r4["cdf_lattice"]["cdf"])
-        b = blend_rows(r5, r4)
-        c = b["research_fixed_event_component_probabilities"]
-        self.assertEqual(c["common_play_probability"],0.8)
-        self.assertEqual(c["including_dnp_reach"],
-                         {"v4_only":0.32,"v5_only":0.48,"blend":0.4})
-        self.assertEqual(r5["cdf_lattice"]["cdf"],original5)
-        self.assertEqual(r4["cdf_lattice"]["cdf"],original4)
-        self.assertEqual(b["mean"],2.5)
-        self.assertEqual(b["cdf_lattice"]["cdf"],[0.15,0.5,0.85,1.0])
-
-    def test_blend_is_skipped_when_the_lattices_do_not_match(self):
-        from nba.nba_v5_forecast import blend_rows
-        r5 = {"mean": 2.0, "sd": 1.0, "cdf_lattice": {"step": 1, "cdf": [0.5, 1.0]}}
-        r4 = {"mean": 3.0, "sd": 1.0, "cdf_lattice": {"step": 1, "cdf": [0.5, 0.8, 1.0]}}
-        self.assertIs(blend_rows(r5, r4), r5)
+    def test_cli_does_not_accept_v3_or_v4_forecasts(self):
+        import subprocess,sys
+        cmd=[sys.executable,"-m","nba.nba_v5_forecast","--help"]
+        run=subprocess.run(cmd,capture_output=True,text=True,check=True)
+        self.assertIn("--game-facts",run.stdout)
+        self.assertNotIn("--v3",run.stdout)
+        self.assertNotIn("--v4",run.stdout)
 
 
 class FeaturedMixTests(unittest.TestCase):
@@ -222,7 +212,7 @@ class ProductionBudgetTests(unittest.TestCase):
         run=subprocess.run(
             [sys.executable,"-m","nba.nba_v5_forecast",
              "--games","missing.jsonl","--pbp","missing.jsonl",
-             "--v3","missing.json","--out","unused.json",
+             "--game-facts","missing.json","--out","unused.json",
              "--sims","9999"],
             capture_output=True,text=True,check=False)
         self.assertNotEqual(run.returncode,0)

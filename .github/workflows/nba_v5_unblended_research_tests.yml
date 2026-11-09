@@ -2,9 +2,12 @@ name: NBA V5 native projection acceptance
 on:
   workflow_dispatch: {}
   push:
-    branches: [main, "fix/nba-v5-native-projections-20261109"]
+    branches: [main, "fix/nba-v5-raw-game-facts-20261109"]
     paths:
       - "nba/nba_v5_forecast.py"
+      - "nba/nba_v5_source_game_facts.py"
+      - "nba/nba_v3_shadow_publish.py"
+      - "tests/test_nba_v5_game_facts.py"
       - "tests/test_nba_v5_unblended_research.py"
       - ".github/workflows/nba_v5_postmortem.yml"
       - ".github/workflows/nba_v3_latest_refresh.yml"
@@ -24,10 +27,12 @@ jobs:
           python-version: "3.12"
       - name: Compile research and unchanged production modules
         run: |
-          python -m py_compile nba/nba_v5_forecast.py nba/nba_v5_rank.py nba/nba_v5_uncertainty.py
+          python -m py_compile nba/nba_v5_forecast.py nba/nba_v5_rank.py nba/nba_v5_uncertainty.py nba/nba_v5_source_game_facts.py nba/nba_v3_shadow_publish.py
       - name: Install minimal NBA V5 runtime libraries
         run: |
           python -m pip install --disable-pip-version-check "numpy>=2.1,<2.5" "scipy>=1.14,<1.18"
       - name: Verify V5 native player targets and no V4 runtime model dependency
         run: |
           python -m unittest discover -s tests -p "test_nba_v5_unblended_research.py" -v
+          python -m unittest discover -s tests -p "test_nba_v5_game_facts.py" -v
+          python -m unittest discover -s tests -p "test_nba_v5_probability_rank.py" -v

@@ -26,6 +26,7 @@ from nba.nba_v2_rolling_predictions import (
 )
 from nba.nba_live_injury_source import validate as verify_injuries
 from nba.nba_v3_daily_roster import collect as collect_official_daily_rosters, supplement as supplement_daily_roster
+from nba.nba_v5_source_game_facts import build as build_v5_source_facts
 from nba.nba_v3_phase1_engine import (
     VERSION,SCHEMA,role_pool,simulate_matchup,source_hash,TEAM_MINUTES
 )
@@ -202,6 +203,7 @@ def main():
     parser=argparse.ArgumentParser()
     parser.add_argument("--fixture",type=Path,required=True)
     parser.add_argument("--out",type=Path,required=True)
+    parser.add_argument("--v5-facts-out",type=Path,default=None,help="Neutral current game/roster facts for independent V5 model inputs (not V3 projections)")
     parser.add_argument("--history-cache",type=Path,default=Path(".cache/nba-v3-phase1"))
     parser.add_argument("--archive-root",type=Path,default=Path(ROOT))
     parser.add_argument("--injury-snapshot",type=Path)
@@ -234,6 +236,21 @@ def main():
     newer=dt.datetime.now(UTC)
     injuries=(json.loads(args.injury_snapshot.read_text())
               if args.injury_snapshot and args.injury_snapshot.is_file() else None)
+    if args.v5_facts_out:
+        # Construct from source fixtures, ESPN rosters, independently observed
+        # injuries and prior raw player boxes BEFORE any V3 prediction is made.
+        # Never copy V3's mean, P(play), minutes or CDF into this V5 input.
+        neutral = build_v5_source_facts(
+            fixture, rosters, receipts, games, boxes, newer,
+            injury_snapshot=injuries, daily_roster_snapshot=daily_roster_snapshot)
+        if not neutral["games_forecast"]:
+            raise ValueError("NBA_V5_NEUTRAL_SOURCES_HAVE_NO_PRETIP_GAMES")
+        args.v5_facts_out.parent.mkdir(parents=True,exist_ok=True)
+        args.v5_facts_out.write_text(json.dumps(neutral,sort_keys=True,allow_nan=False)+"\n")
+        print("NBA_V5_NEUTRAL_PREGAME_GAME_FACTS",json.dumps({
+            "games":neutral["games_forecast"],
+            "players":sum(len(g["rows"])//7 for g in neutral["games"]),
+            "source_only":True}),flush=True)
     doc=build(fixture,rosters,receipts,games,boxes,newer,seen,
               injury_snapshot=injuries,draws=args.draws,
               daily_roster_snapshot=daily_roster_snapshot)
