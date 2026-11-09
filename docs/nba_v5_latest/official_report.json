@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-09_12_00PM.pdf",
-  "published_at_utc": "2026-11-09T17:00:00+00:00",
-  "captured_at_utc": "2026-11-09T17:01:48.386263+00:00",
-  "source_sha256": "a19340bfe263ae8c8c29758c6eccae4f8fdaa1923ce872ef42c122413133ba6a",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-09_02_30PM.pdf",
+  "published_at_utc": "2026-11-09T19:30:00+00:00",
+  "captured_at_utc": "2026-11-09T19:44:57.944103+00:00",
+  "source_sha256": "8a6307f46647ff702f36af628cc75d1a194542cf96d2ddfd0a2f9de20654fa04",
   "reports": [
     {
       "matchup": "CLE@CHA",
@@ -59,7 +59,7 @@
       "team_abbr": "CHA",
       "player": "Ajayi, Michael",
       "normalized_player": "michael ajayi",
-      "status": "OUT",
+      "status": "QUESTIONABLE",
       "reason": "G League - Two-Way"
     },
     {
@@ -75,7 +75,7 @@
       "team_abbr": "CHA",
       "player": "Diabate, Moussa",
       "normalized_player": "moussa diabate",
-      "status": "QUESTIONABLE",
+      "status": "DOUBTFUL",
       "reason": ""
     },
     {
@@ -83,7 +83,7 @@
       "team_abbr": "CHA",
       "player": "Hall, PJ",
       "normalized_player": "pj hall",
-      "status": "OUT",
+      "status": "QUESTIONABLE",
       "reason": "G League - Two-Way"
     },
     {
@@ -117,6 +117,30 @@
       "normalized_player": "grant williams",
       "status": "OUT",
       "reason": "Injury/Illness - Right Hamstring Strain"
+    },
+    {
+      "matchup": "LAL@ATL",
+      "team_abbr": "LAL",
+      "player": "Grimes, Quentin",
+      "normalized_player": "quentin grimes",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Finger Sprain"
+    },
+    {
+      "matchup": "LAL@ATL",
+      "team_abbr": "LAL",
+      "player": "Kessler, Walker",
+      "normalized_player": "walker kessler",
+      "status": "AVAILABLE",
+      "reason": "Injury/Illness - Left Finger Splint"
+    },
+    {
+      "matchup": "LAL@ATL",
+      "team_abbr": "LAL",
+      "player": "Reaves, Austin",
+      "normalized_player": "austin reaves",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Illness"
     },
     {
       "matchup": "LAL@ATL",
@@ -193,6 +217,14 @@
     {
       "matchup": "WAS@DET",
       "team_abbr": "WAS",
+      "player": "Coulibaly, Bilal",
+      "normalized_player": "bilal coulibaly",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Left Hand Soreness"
+    },
+    {
+      "matchup": "WAS@DET",
+      "team_abbr": "WAS",
       "player": "Davis, Anthony",
       "normalized_player": "anthony davis",
       "status": "QUESTIONABLE",
@@ -213,6 +245,46 @@
       "normalized_player": "jamir watkins",
       "status": "OUT",
       "reason": ""
+    },
+    {
+      "matchup": "WAS@DET",
+      "team_abbr": "DET",
+      "player": "Duren, Jalen",
+      "normalized_player": "jalen duren",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Hamstring Strain"
+    },
+    {
+      "matchup": "WAS@DET",
+      "team_abbr": "DET",
+      "player": "Harkless, Elijah",
+      "normalized_player": "elijah harkless",
+      "status": "QUESTIONABLE",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "WAS@DET",
+      "team_abbr": "DET",
+      "player": "Joe, Isaiah",
+      "normalized_player": "isaiah joe",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Hip Contusion"
+    },
+    {
+      "matchup": "WAS@DET",
+      "team_abbr": "DET",
+      "player": "Jones, Isaac",
+      "normalized_player": "isaac jones",
+      "status": "QUESTIONABLE",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "WAS@DET",
+      "team_abbr": "DET",
+      "player": "Onyenso, Ugonna",
+      "normalized_player": "ugonna onyenso",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
     },
     {
       "matchup": "MEM@TOR",
@@ -281,6 +353,14 @@
     {
       "matchup": "MEM@TOR",
       "team_abbr": "TOR",
+      "player": "Murray-Boyles, Collin",
+      "normalized_player": "collin murray boyles",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Illness"
+    },
+    {
+      "matchup": "MEM@TOR",
+      "team_abbr": "TOR",
       "player": "Quickley, Immanuel",
       "normalized_player": "immanuel quickley",
       "status": "QUESTIONABLE",
@@ -327,11 +407,51 @@
       "reason": "Injury/Illness - Left Meniscus Surgery"
     },
     {
+      "matchup": "IND@DAL",
+      "team_abbr": "DAL",
+      "player": "Biberovic, Tarik",
+      "normalized_player": "tarik biberovic",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Heel Bursitis"
+    },
+    {
+      "matchup": "IND@DAL",
+      "team_abbr": "DAL",
+      "player": "de Larrea, Sergio",
+      "normalized_player": "sergio de larrea",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Knee Sprain"
+    },
+    {
+      "matchup": "IND@DAL",
+      "team_abbr": "DAL",
+      "player": "Johnson Jr., Morez",
+      "normalized_player": "morez johnson",
+      "status": "QUESTIONABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "IND@DAL",
+      "team_abbr": "DAL",
+      "player": "Lively II, Dereck",
+      "normalized_player": "dereck lively",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Foot Surgery"
+    },
+    {
+      "matchup": "IND@DAL",
+      "team_abbr": "DAL",
+      "player": "Martin, Caleb",
+      "normalized_player": "caleb martin",
+      "status": "AVAILABLE",
+      "reason": "Injury/Illness - Right Thumb Splint"
+    },
+    {
       "matchup": "DEN@HOU",
       "team_abbr": "DEN",
       "player": "Braun, Christian",
       "normalized_player": "christian braun",
-      "status": "QUESTIONABLE",
+      "status": "PROBABLE",
       "reason": ""
     },
     {
@@ -339,7 +459,7 @@
       "team_abbr": "DEN",
       "player": "DeRozan, DeMar",
       "normalized_player": "demar derozan",
-      "status": "QUESTIONABLE",
+      "status": "PROBABLE",
       "reason": "Injury/Illness - Low Back Spasms"
     },
     {
@@ -347,7 +467,7 @@
       "team_abbr": "DEN",
       "player": "Gordon, Aaron",
       "normalized_player": "aaron gordon",
-      "status": "QUESTIONABLE",
+      "status": "PROBABLE",
       "reason": ""
     },
     {
@@ -355,15 +475,15 @@
       "team_abbr": "DEN",
       "player": "Johnson, Cameron",
       "normalized_player": "cameron johnson",
-      "status": "QUESTIONABLE",
-      "reason": ""
+      "status": "PROBABLE",
+      "reason": "Injury/Illness - Right Ankle Sprain"
     },
     {
       "matchup": "DEN@HOU",
       "team_abbr": "DEN",
       "player": "Jokic, Nikola",
       "normalized_player": "nikola jokic",
-      "status": "QUESTIONABLE",
+      "status": "PROBABLE",
       "reason": "Injury/Illness - Right Elbow Sprain"
     },
     {
@@ -371,7 +491,7 @@
       "team_abbr": "DEN",
       "player": "Murray, Jamal",
       "normalized_player": "jamal murray",
-      "status": "QUESTIONABLE",
+      "status": "PROBABLE",
       "reason": ""
     },
     {
@@ -459,7 +579,7 @@
       "team_abbr": "SAS",
       "player": "Vassell, Devin",
       "normalized_player": "devin vassell",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": ""
     },
     {
@@ -497,6 +617,14 @@
     {
       "matchup": "NOP@GSW",
       "team_abbr": "GSW",
+      "player": "Payton II, Gary",
+      "normalized_player": "gary payton",
+      "status": "QUESTIONABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "NOP@GSW",
+      "team_abbr": "GSW",
       "player": "Porzingis, Kristaps",
       "normalized_player": "kristaps porzingis",
       "status": "OUT",
@@ -519,7 +647,7 @@
       "reason": "Injury/Illness - Left Knee Tendinitis"
     }
   ],
-  "rows": 64,
+  "rows": 80,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
