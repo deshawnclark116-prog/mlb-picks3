@@ -153,9 +153,20 @@ class OpportunityHead:
                 prof["rate"][key] = self.predict_rate(earlier, key, before[key])
             # A learned 3PA rate must change the *chance of a three*,
             # otherwise the old simulator would discard this information.
-            prof["sh3"] = float(np.clip(
+            predicted_three_share = float(np.clip(
                 prof["rate"]["tpa"] / max(prof["rate"]["fga"], 1e-6),
                 .02, .90))
+            prof["sh3"] = predicted_three_share
+            if candidate.zf is not None:
+                # V5 uses zone weights instead of sh3 when zone data exist.
+                # Preserve within-two/within-three zone mixture, changing
+                # only their total share to the independently learned 3PA%.
+                old_zones = np.asarray(candidate.zf[i], float)
+                n2 = float(old_zones[:3].sum())
+                n3 = float(old_zones[3:].sum())
+                if n2 > 0 and n3 > 0:
+                    candidate.zf[i, :3] = old_zones[:3] * (1. - predicted_three_share) / n2
+                    candidate.zf[i, 3:] = old_zones[3:] * predicted_three_share / n3
             audit[str(pid)] = {
                 "baseline_fga_per_min": round(before["fga"], 5),
                 "learned_fga_per_min": round(prof["rate"]["fga"], 5),
