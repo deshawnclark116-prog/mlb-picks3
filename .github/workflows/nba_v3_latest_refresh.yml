@@ -31,6 +31,7 @@ on:
       - ".github/workflows/nba_v3_latest_refresh.yml"
       - "docs/nba_v5_latest/features.json"
       - "nba/nba_v5_empirical_stat_engine.py"
+      - "nba/nba_v5_forecast.py"
   workflow_dispatch:
     inputs:
       force:
@@ -91,7 +92,9 @@ jobs:
             --state docs/nba_v3_latest/state.json \
             --force "${FORCE:-false}" --window-hours "${WINDOW:-9}"
         env:
-          FORCE: ${{ github.event.inputs.force }}
+          # A forecast-generator source push must regenerate published
+          # distributions, even when injury inputs have not changed.
+          FORCE: ${{ github.event_name == 'push' && 'true' || github.event.inputs.force }}
           WINDOW: ${{ github.event.inputs.window_hours }}
       - name: Re-simulate (same model, same checks, empty first-seen archive)
         if: steps.src.outputs.run == 'true'
