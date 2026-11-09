@@ -78,6 +78,25 @@ test('long-running AI Studio preview receives published 7:15 V5 instead of its o
  await run(original,NOW+30_000);
  assert.equal(calls.length,2,'60s TTL must prevent repeated 3MB downloads per UI viewer');
 });
+test('published empirical V5 full-slate payload above old 5 MB cap reaches the frontend API',async()=>{
+ const fullSlate=JSON.stringify({
+  ...header([game(GENERATION,23)]),
+  source_audit_padding:'x'.repeat(5_900_000)
+ });
+ assert.ok(Buffer.byteLength(fullSlate)>5_000_000);
+ assert.ok(Buffer.byteLength(fullSlate)<12_000_000);
+ const {get}=mock(path=>{
+  if(path.endsWith('/readiness.json'))return ready();
+  if(path.endsWith('/latest.json'))return fullSlate;
+  return null;
+ });
+ const out=await createPublishedV5Sync(get)(local(),NOW);
+ assert.equal(out.games[0].rows[0].mean,23);
+ assert.equal(out.games[0].forecast_kind,'V5_LATEST');
+ assert.equal(out.v5_published_sync.latest_applied,1);
+ assert.equal(out.v5_published_sync.source_state,'SOURCE_VERIFIED');
+});
+
 test('only readiness changes cause another full latest download',async()=>{
  let stamp=GENERATION;
  const newer='2026-11-08T00:20:00+00:00';
@@ -154,7 +173,7 @@ test('after-tip archive and mismatched game identity cannot replace an original 
 test('oversized or malformed public release cannot override a locally verified distribution',async()=>{
  const {get}=mock(path=>{
   if(path.endsWith('/readiness.json'))return ready();
-  if(path.endsWith('/latest.json'))return 'x'.repeat(5_000_001);
+  if(path.endsWith('/latest.json'))return 'x'.repeat(12_000_001);
   return null;
  });
  const out=await createPublishedV5Sync(get)(local(),NOW);
