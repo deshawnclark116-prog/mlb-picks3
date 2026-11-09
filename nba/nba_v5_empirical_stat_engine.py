@@ -119,8 +119,16 @@ def simulate_empirical_game(home, away, history, date, *, worlds, seed,
         avail.append(playable)
     score = np.column_stack((outputs[0]["pts"].sum(axis=1),
                              outputs[1]["pts"].sum(axis=1)))
+    # The empirical head forecasts game totals, not exact substitution
+    # sequences; do not manufacture first/last five observations.
+    # These fields retain the V5 return shape without fictitious starter
+    # certainty. Published p_start/p_close are explicitly nullable.
     return {"home": outputs[0], "away": outputs[1],
             "score": score, "avail": avail,
+            "first5": (None, None),
+            "close5": (None, None),
+            "close_mask": np.zeros(worlds, bool),
             "empirical_head": True,
             "independent_of_v3_v4_forecasts": True,
+            "world_kind": "JOINT_PLAYER_GAME_HISTORY_WITH_SHARED_PACE",
             "minutes_capped_at_240_per_team": True}
