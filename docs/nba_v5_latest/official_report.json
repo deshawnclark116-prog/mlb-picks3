@@ -1,17 +1,17 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-09_05_30PM.pdf",
-  "published_at_utc": "2026-11-09T22:30:00+00:00",
-  "captured_at_utc": "2026-11-09T22:48:36.663265+00:00",
-  "source_sha256": "100aacac971a5578ccbf34b9aae0ac253d31d2af8b7c79ce0892bf613ae56e92",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-09_06_30PM.pdf",
+  "published_at_utc": "2026-11-09T23:30:00+00:00",
+  "captured_at_utc": "2026-11-09T23:39:36.285308+00:00",
+  "source_sha256": "d2e00266effe9c4802c7801a215b90115f8c6d7a497225d9a99a5662a1ce3709",
   "reports": [
     {
       "matchup": "CLE@CHA",
       "team_abbr": "CLE",
       "player": "Allen, Jarrett",
       "normalized_player": "jarrett allen",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Knee Contusion"
     },
     {
@@ -139,7 +139,7 @@
       "team_abbr": "LAL",
       "player": "Reaves, Austin",
       "normalized_player": "austin reaves",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Illness"
     },
     {
@@ -172,7 +172,7 @@
       "player": "Landale, Jock",
       "normalized_player": "jock landale",
       "status": "AVAILABLE",
-      "reason": "Injury/Illness - Left Hip Strain"
+      "reason": "Injury/Illness - Face mask"
     },
     {
       "matchup": "LAL@ATL",
@@ -219,7 +219,7 @@
       "team_abbr": "WAS",
       "player": "Coulibaly, Bilal",
       "normalized_player": "bilal coulibaly",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Left Hand Soreness"
     },
     {
@@ -227,7 +227,7 @@
       "team_abbr": "WAS",
       "player": "Davis, Anthony",
       "normalized_player": "anthony davis",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Ankle Sprain"
     },
     {
@@ -259,7 +259,7 @@
       "team_abbr": "DET",
       "player": "Harkless, Elijah",
       "normalized_player": "elijah harkless",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "G League - Two-Way"
     },
     {
@@ -275,7 +275,7 @@
       "team_abbr": "DET",
       "player": "Jones, Isaac",
       "normalized_player": "isaac jones",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "G League - Two-Way"
     },
     {
@@ -323,7 +323,7 @@
       "team_abbr": "TOR",
       "player": "Barnes, Scottie",
       "normalized_player": "scottie barnes",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Left Groin Strain"
     },
     {
@@ -355,7 +355,7 @@
       "team_abbr": "TOR",
       "player": "Murray-Boyles, Collin",
       "normalized_player": "collin murray boyles",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Illness"
     },
     {
@@ -363,7 +363,7 @@
       "team_abbr": "TOR",
       "player": "Quickley, Immanuel",
       "normalized_player": "immanuel quickley",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": ""
     },
     {
@@ -765,9 +765,57 @@
       "normalized_player": "ariel hukporti",
       "status": "OUT",
       "reason": ""
+    },
+    {
+      "matchup": "MIA@UTA",
+      "team_abbr": "MIA",
+      "player": "Antetokounmpo, Giannis",
+      "normalized_player": "giannis antetokounmpo",
+      "status": "PROBABLE",
+      "reason": "Injury/Illness - Right Wrist Sprain"
+    },
+    {
+      "matchup": "ORL@SAC",
+      "team_abbr": "ORL",
+      "player": "Banchero, Paolo",
+      "normalized_player": "paolo banchero",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "ORL@SAC",
+      "team_abbr": "ORL",
+      "player": "Isaac, Jonathan",
+      "normalized_player": "jonathan isaac",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "ORL@SAC",
+      "team_abbr": "ORL",
+      "player": "Nelson, Izaiyah",
+      "normalized_player": "izaiyah nelson",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "ORL@SAC",
+      "team_abbr": "ORL",
+      "player": "Penda, Noah",
+      "normalized_player": "noah penda",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "ORL@SAC",
+      "team_abbr": "ORL",
+      "player": "Suggs, Jalen",
+      "normalized_player": "jalen suggs",
+      "status": "OUT",
+      "reason": ""
     }
   ],
-  "rows": 95,
+  "rows": 101,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
