@@ -97,31 +97,6 @@ jobs:
               --grades docs/nba_v5_grades \
               --out docs/nba_v5_forward/lineup_challenger_latest.json
           fi
-      - name: Grade original V5 simulation-only pretip forecasts, with their OWN targets
-        if: ${{ always() && steps.grade_originals.outcome == 'success' }}
-        run: |
-          set -euo pipefail
-          if [ -d docs/nba_v5_independent_archive/first ]; then
-            PYTHONPATH=. python -u -m nba.nba_v5_postmortem \
-              --archive docs/nba_v5_independent_archive \
-              --grades docs/nba_v5_independent_grades \
-              --ledger docs/nba_v5_info/ledger.jsonl
-          else
-            echo "Pure V5 first-seen pregame snapshots not yet available"
-          fi
-      - name: Prospectively compare unblended V5 and deployed blend at identical champion thresholds
-        if: ${{ always() && steps.grade_originals.outcome == 'success' }}
-        run: |
-          set -euo pipefail
-          if [ -d docs/nba_v5_independent_archive/first ]; then
-            PYTHONPATH=. python -u -m nba.nba_v5_forward_compare \
-              --champion-archive docs/nba_v5_archive \
-              --challenger-archive docs/nba_v5_independent_archive \
-              --grades docs/nba_v5_grades \
-              --out docs/nba_v5_forward/unblended_simulation_challenger_latest.json
-          else
-            echo "No paired frozen pretip V5 component study available yet"
-          fi
       # A separate research comparator can correctly flag a scientific
       # inconsistency without discarding already validated immutable final
       # game grades. Keep the job RED, but persist the untouched grade output.
@@ -132,7 +107,7 @@ jobs:
           git config user.name "nba-v5-postmortem[bot]"
           git config user.email "nba-v5-postmortem[bot]@users.noreply.github.com"
           git add -A docs/nba_v5_grades
-          for optional in docs/nba_v5_lineup_grades docs/nba_v5_independent_grades docs/nba_v5_forward; do
+          for optional in docs/nba_v5_lineup_grades docs/nba_v5_forward; do
             if [ -d "$optional" ]; then git add -A "$optional"; fi
           done
           git diff --cached --quiet && { echo "nothing new"; exit 0; }
