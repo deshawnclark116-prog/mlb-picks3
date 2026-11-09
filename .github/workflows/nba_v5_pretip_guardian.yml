@@ -1,0 +1,74 @@
+name: NBA V5 pretip continuity guardian (GitHub-only)
+# Best-effort GitHub schedule alone has missed entire pretip windows.
+# Once started, this bounded resident job dispatches the EXISTING validated
+# pipeline at 8-minute intervals. No model changes, no after-tip backfills.
+on:
+  schedule:
+    # UTC hours cover both Eastern standard/daylight afternoon/evening waves.
+    # Only keep the guardian resident when real ESPN games approach tipoff.
+    - cron: "17 0,2,4,18,20,22 * * *"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/nba_v5_pretip_guardian.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: nba-v5-pretip-continuity-guardian
+  cancel-in-progress: false
+
+jobs:
+  continuity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 135
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check real upcoming ESPN NBA fixtures before occupying a runner
+        id: upcoming
+        run: |
+          set -euo pipefail
+          PYTHONPATH=. python -u nba/nba_rolling_future_fixtures.py \
+            --days 2 --out "$RUNNER_TEMP/nba_guardian_fixtures.json"
+          python - <<'PY'
+          import datetime as dt,json,os
+          from pathlib import Path
+          d=json.loads((Path(os.environ["RUNNER_TEMP"])/"nba_guardian_fixtures.json").read_text())
+          now=dt.datetime.now(dt.timezone.utc)
+          def lead(game):
+              t=dt.datetime.fromisoformat(game["tipoff_utc"].replace("Z","+00:00"))
+              return (t-now).total_seconds()
+          soon=sorted(str(g["game_id"]) for g in d["games"]
+                      if 15*60 < lead(g) <= 2.5*3600)
+          with open(os.environ["GITHUB_OUTPUT"],"a") as f:
+              f.write("run="+("true" if soon else "false")+"\n")
+          print("NBA_GUARDIAN_REAL_UPCOMING_GAMES",soon,flush=True)
+          PY
+      - name: Maintain independent pretip refresh attempts while games approach
+        if: steps.upcoming.outputs.run == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          for tick in $(seq 1 15); do
+            active="$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/nba_v3_latest_refresh.yml/runs?per_page=40" \
+              --jq '[.workflow_runs[] | select(.status=="queued" or .status=="in_progress" or .status=="waiting" or .status=="pending")] | length')"
+            if [ "$active" -eq 0 ]; then
+              gh workflow run nba_v3_latest_refresh.yml --ref main \
+                -f force=false -f window_hours=9
+              echo "NBA_GUARDIAN_DISPATCH tick=$tick"
+            else
+              echo "NBA_GUARDIAN_EXISTING_REFRESH_ACTIVE tick=$tick count=$active"
+            fi
+            # Do not spend Actions time beyond the bounded, real pretip wave.
+            if [ "$tick" -lt 15 ]; then sleep 480; fi
+          done
