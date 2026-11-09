@@ -39,7 +39,10 @@ jobs:
           import {createPublishedV5Sync} from './server/nbaV5PublishedSync.ts';
           const asOf=Date.now();
           const original=loadNbaV3Shadow(new Date(asOf));
-          const readyResponse=await fetch('https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks3/main/docs/nba_v5_latest/readiness.json',{cache:'no-store'});
+          const {execFileSync}=await import('node:child_process');
+          const checkoutCommit=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
+          const immutableRoot='https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks3/'+checkoutCommit;
+          const readyResponse=await fetch(immutableRoot+'/docs/nba_v5_latest/readiness.json',{cache:'no-store'});
           assert.equal(readyResponse.status,200);
           const ready=await readyResponse.json();
           const {readFileSync}=await import('node:fs');
@@ -54,7 +57,7 @@ jobs:
           const currentIds=new Set((ready.games??[]).map(g=>String(g.game_id)));
           const eligible=(ready.games??[]).filter(g=>Date.parse(g.tipoff_utc)>asOf+15*60_000);
           const shared=eligible.filter(g=>original.games.some(x=>String(x.game_id)===String(g.game_id)));
-          const fullResponse=await fetch('https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks3/main/docs/nba_v5_latest/latest.json',{cache:'no-store'});
+          const fullResponse=await fetch(immutableRoot+'/docs/nba_v5_latest/latest.json',{cache:'no-store'});
           assert.equal(fullResponse.status,200);
           const full=await fullResponse.json();
           const {validateShadowHeader,validateShadowGame}=await import('./server/nbaV3Shadow.ts');
