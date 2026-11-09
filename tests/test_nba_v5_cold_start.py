@@ -53,7 +53,7 @@ class LowHistoryRotationContracts(unittest.TestCase):
         game=pseudo_game(source)
         self.assertEqual(len(game["players"]),1)
         self.assertEqual(game["players"][0]["id"],"101")
-        self.assertAlmostEqual(game["players"][0]["prior_minutes_estimate"],14.5)
+        self.assertNotIn("prior_minutes_estimate", game["players"][0])  # V5 learns minutes independently
 
 
 def record(pid,pt,actual):
