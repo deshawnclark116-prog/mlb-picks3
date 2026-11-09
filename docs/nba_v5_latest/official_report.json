@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-09_04_30PM.pdf",
-  "published_at_utc": "2026-11-09T21:30:00+00:00",
-  "captured_at_utc": "2026-11-09T21:32:53.278899+00:00",
-  "source_sha256": "e81b0d1e74abe54371f09664acbd15e676f764576b6d876d33bf7b4b3727ffd8",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-09_05_30PM.pdf",
+  "published_at_utc": "2026-11-09T22:30:00+00:00",
+  "captured_at_utc": "2026-11-09T22:48:36.663265+00:00",
+  "source_sha256": "100aacac971a5578ccbf34b9aae0ac253d31d2af8b7c79ce0892bf613ae56e92",
   "reports": [
     {
       "matchup": "CLE@CHA",
@@ -59,7 +59,7 @@
       "team_abbr": "CHA",
       "player": "Ajayi, Michael",
       "normalized_player": "michael ajayi",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "G League - Two-Way"
     },
     {
@@ -75,7 +75,7 @@
       "team_abbr": "CHA",
       "player": "Diabate, Moussa",
       "normalized_player": "moussa diabate",
-      "status": "DOUBTFUL",
+      "status": "OUT",
       "reason": ""
     },
     {
@@ -83,7 +83,7 @@
       "team_abbr": "CHA",
       "player": "Hall, PJ",
       "normalized_player": "pj hall",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "G League - Two-Way"
     },
     {
@@ -147,7 +147,7 @@
       "team_abbr": "ATL",
       "player": "Dennis, RayJ",
       "normalized_player": "rayj dennis",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "G League - Two-Way"
     },
     {
@@ -171,7 +171,7 @@
       "team_abbr": "ATL",
       "player": "Landale, Jock",
       "normalized_player": "jock landale",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Left Hip Strain"
     },
     {
@@ -195,7 +195,7 @@
       "team_abbr": "ATL",
       "player": "Wilson, Jalen",
       "normalized_player": "jalen wilson",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "G League - Two-Way"
     },
     {
@@ -640,6 +640,14 @@
     },
     {
       "matchup": "NOP@GSW",
+      "team_abbr": "NOP",
+      "player": "Williamson, Zion",
+      "normalized_player": "zion williamson",
+      "status": "OUT",
+      "reason": "Rest"
+    },
+    {
+      "matchup": "NOP@GSW",
       "team_abbr": "GSW",
       "player": "Butler III, Jimmy",
       "normalized_player": "jimmy butler",
@@ -660,7 +668,7 @@
       "player": "Payton II, Gary",
       "normalized_player": "gary payton",
       "status": "QUESTIONABLE",
-      "reason": "Injury/Illness - Left Knee"
+      "reason": ""
     },
     {
       "matchup": "NOP@GSW",
@@ -685,6 +693,22 @@
       "normalized_player": "gui santos",
       "status": "PROBABLE",
       "reason": "Injury/Illness - Left Knee Tendinitis"
+    },
+    {
+      "matchup": "MIL@NYK",
+      "team_abbr": "MIL",
+      "player": "Herro, Tyler",
+      "normalized_player": "tyler herro",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Right Contusion"
+    },
+    {
+      "matchup": "MIL@NYK",
+      "team_abbr": "NYK",
+      "player": "Hart, Josh",
+      "normalized_player": "josh hart",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Right Ankle Soreness"
     },
     {
       "matchup": "BOS@PHI",
@@ -717,9 +741,33 @@
       "normalized_player": "amari williams",
       "status": "OUT",
       "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "BOS@PHI",
+      "team_abbr": "PHI",
+      "player": "Barlow, Dominick",
+      "normalized_player": "dominick barlow",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "BOS@PHI",
+      "team_abbr": "PHI",
+      "player": "Bona, Adem",
+      "normalized_player": "adem bona",
+      "status": "OUT",
+      "reason": "Injury/Illness - Cervical Spine Sprain"
+    },
+    {
+      "matchup": "BOS@PHI",
+      "team_abbr": "PHI",
+      "player": "Hukporti, Ariel",
+      "normalized_player": "ariel hukporti",
+      "status": "OUT",
+      "reason": ""
     }
   ],
-  "rows": 89,
+  "rows": 95,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
