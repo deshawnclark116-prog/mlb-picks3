@@ -1,5 +1,13 @@
 name: NBA V5 real published source -> frontend API smoke
 on:
+  push:
+    branches: [main]
+    paths:
+      - server/nbaV5PublishedSync.ts
+      - tests/nbaV5PublishedSync.test.ts
+      - src/components/NbaV3ResearchPanel.tsx
+      - src/components/NbaResearchScreen.tsx
+      - .github/workflows/nba_v5_real_source_api_smoke.yml
   pull_request:
     paths:
       - server/nbaV5PublishedSync.ts
@@ -20,7 +28,7 @@ jobs:
           node-version: '22'
           cache: npm
       - run: npm ci --no-audit --no-fund
-      - name: Verify real 7:15 V5 release replaces earlier pregame game values without re-simulating
+      - name: Verify CURRENT V5 empirical-game release replaces old numeric projections
         run: |
           node --import tsx --input-type=module <<'JS'
           import assert from 'node:assert/strict';
@@ -28,29 +36,35 @@ jobs:
           import {createPublishedV5Sync} from './server/nbaV5PublishedSync.ts';
           const asOf=Date.now();
           const original=loadNbaV3Shadow(new Date(asOf));
-          const before=original.games.find(g=>g.game_id==='401909940');
-          assert.ok(before,'original Knicks Cavaliers game');
           const readyResponse=await fetch('https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks3/main/docs/nba_v5_latest/readiness.json',{cache:'no-store'});
           assert.equal(readyResponse.status,200);
           const ready=await readyResponse.json();
+          assert.equal(ready.schema,'NBA_V5_FORECAST_READINESS_V1');
           const synced=await createPublishedV5Sync()(original,asOf);
           console.log('NBA_V5_LIVE_SOURCE_DIAGNOSTIC',JSON.stringify(synced.v5_published_sync));
-          assert.equal(synced.v5_published_sync.source_state,'SOURCE_VERIFIED');
+          assert.equal(synced.v5_published_sync.source_state,'SOURCE_VERIFIED',synced.v5_published_sync.source_error);
           assert.equal(synced.v5_published_sync.latest_generation_at_utc,ready.document_generated_at_utc);
-          const currentlyPublished=ready.games.map(g=>String(g.game_id));
-          const latestForecasts=synced.games.filter(g=>currentlyPublished.includes(g.game_id)&&g.forecast_kind==='V5_LATEST');
-          assert.ok(latestForecasts.length>0,'real latest V5 source must appear on original game board');
-          const archived=synced.games.find(g=>g.game_id==='401909940');
-          assert.equal(archived.forecast_kind,'V5_LATEST');
-          assert.equal(archived.forecast_at_utc,'2026-11-08T00:15:42.876975+00:00');
-          assert.ok(archived.rows.some(r=>r.player==='Mikal Bridges' && r.market==='three_pointers_made' && Math.abs(r.mean-1.5072)<.0002));
-          console.log('NBA_V5_LIVE_PUBLISHED_MODEL_REACHED_API',JSON.stringify({
-            latest_generation_at_utc:ready.document_generated_at_utc,
-            current_games:latestForecasts.map(g=>g.game_id),
-            archived_knicks_forecast:archived.forecast_at_utc,
-            original_knicks_forecast:before.forecast_at_utc,
-            source:synced.v5_published_sync
-          }));
+          const currentIds=new Set((ready.games??[]).map(g=>String(g.game_id)));
+          const eligible=(ready.games??[]).filter(g=>Date.parse(g.tipoff_utc)>asOf+15*60_000);
+          const shared=eligible.filter(g=>original.games.some(x=>String(x.game_id)===String(g.game_id)));
+          if(shared.length){
+            const displayed=synced.games.filter(g=>currentIds.has(String(g.game_id))&&g.forecast_kind==='V5_LATEST');
+            assert.ok(displayed.length>0,'current published pretip V5 projections must reach served NBA games');
+            if(ready.model_version?.includes('-empirical-game')){
+              assert.ok(displayed.some(g=>g.rows.some(r=>r.model_version?.includes('-empirical-game'))),
+                'frontend-served model must be empirical-game, not old native V5/V3');
+            }
+            console.log('NBA_V5_CURRENT_RELEASE_REACHED_API',JSON.stringify({
+              model:ready.model_version,shared_games:shared.map(g=>g.game_id),
+              v5_displayed:displayed.map(g=>g.game_id),generation:ready.document_generated_at_utc
+            }));
+          }else{
+            console.log('NBA_V5_NO_CURRENT_SHARED_PREGAME_GAMES',JSON.stringify({
+              now:new Date(asOf).toISOString(),ready_games:ready.games?.length,
+              original_games:original.games.length
+            }));
+            if(eligible.length)throw Error('NBA_V5_PUBLISHED_GAMES_NOT_PRESENT_ON_FRONTEND_BASE');
+          }
           JS
       - name: Boot actual Express/React server and request the NBA frontend endpoint
         run: |
@@ -75,7 +89,7 @@ jobs:
           assert.equal(d.schema,'NBA_V3_FULL_GAME_DISTRIBUTION_READ_ONLY_V1');
           assert.ok(Array.isArray(d.games));
           assert.ok(d.v5_published_sync,'HTTP endpoint must expose V5 public source freshness to frontend');
-          assert.ok(['SOURCE_VERIFIED','SOURCE_UNAVAILABLE_LOCAL_FALLBACK'].includes(d.v5_published_sync.source_state));
+          assert.equal(d.v5_published_sync.source_state,'SOURCE_VERIFIED',d.v5_published_sync.source_error);
           console.log('NBA_V5_ACTUAL_HTTP_ENDPOINT_DELIVERS_SOURCE_STATUS',JSON.stringify({
             state:d.v5_published_sync.source_state,
             source_gen:d.v5_published_sync.latest_generation_at_utc,
