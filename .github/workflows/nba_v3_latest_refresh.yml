@@ -329,6 +329,7 @@ jobs:
           subset=json.loads(facts.read_text()) if candidates else {"games":[]}
           subset["games"]=[g for g in subset.get("games",[])
                            if str(g["game_id"]) in candidates]
+          subset["games_forecast"]=len(subset["games"])
           with open(Path(os.environ["RUNNER_TEMP"])/"v5_lineup_games.json","w") as fh:
               json.dump(subset,fh)
           with open(os.environ["GITHUB_OUTPUT"],"a") as out:
