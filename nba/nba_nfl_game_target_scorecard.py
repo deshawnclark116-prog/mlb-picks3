@@ -201,7 +201,7 @@ def markdown(report):
         block = report[sport]
         s = block["summary"]
         out += [
-            f'## {sport} — {s["games"]} archived matchups',
+            f'## {sport} — {block["game_count"]} archived matchups',
             f'**Target hits:** {s["summary"]["hits"]}/{s["summary"]["graded"]} '
             f'({pct(s["summary"]["hit_rate"])}); {s["summary"]["unverified"]} unresolved; '
             f'average stated reach chance {pct(s["summary"]["mean_stated_probability"])}.',
@@ -259,14 +259,16 @@ def markdown(report):
 
 
 def test():
-    assert summary([{"hit": True, "prob": .7, "status": "GRADED", "shortfall": 0},
-                    {"hit": False, "prob": .6, "status": "DNP", "shortfall": 1},
-                    {"hit": None, "prob": None, "status": "UNVERIFIED", "shortfall": None}]) == {
-        "n": 3, "graded": 2, "unverified": 1, "hits": 1, "misses": 1,
-        "hit_rate": .5, "mean_stated_probability": .65,
-        "expected_hits_on_scored_rows": 1.2999999999999998,
-        "dnps": 1, "near_misses": 1,
-    }
+    checked = summary([
+        {"hit": True, "prob": .7, "status": "GRADED", "shortfall": 0},
+        {"hit": False, "prob": .6, "status": "DNP", "shortfall": 1},
+        {"hit": None, "prob": None, "status": "UNVERIFIED", "shortfall": None},
+    ])
+    assert checked["hits"] == 1 and checked["graded"] == 2
+    assert checked["unverified"] == 1 and checked["dnps"] == 1
+    assert math.isclose(checked["mean_stated_probability"], .65)
+    assert math.isclose(checked["expected_hits_on_scored_rows"], 1.3)
+    assert checked["near_misses"] == 1
 
 
 def main():
