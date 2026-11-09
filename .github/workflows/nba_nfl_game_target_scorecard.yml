@@ -49,7 +49,7 @@ jobs:
           ]
           days_str = " ".join(x.isoformat() for x in days)
           with open(os.environ["GITHUB_OUTPUT"], "a") as f:
-              f.write(f"dates={days_str}\\n")
+              f.write(f"dates={days_str}\n")
           print("FROZEN_OUTCOME_DATES", days_str)
           PY
       - name: Read genuine NFL first-seen ledger and verified outcome grade
