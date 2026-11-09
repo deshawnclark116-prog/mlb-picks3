@@ -1,0 +1,55 @@
+name: NBA V5 independent empirical game projection challenger
+on:
+  push:
+    branches: [main]
+    paths:
+      - "nba/nba_v5_empirical_stat_engine.py"
+      - "nba/nba_v5_backtest.py"
+      - "tests/test_nba_v5_empirical_stat_engine.py"
+      - ".github/workflows/nba_v5_empirical_game_challenger.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  pure-game-forecast:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install "numpy>=2.1,<2.5" "scipy>=1.14,<1.18"
+      - name: Independent projection math, causality and team-minute guarantees
+        run: |
+          python -m compileall -q nba/nba_v5_empirical_stat_engine.py nba/nba_v5_backtest.py
+          python -m unittest -v tests.test_nba_v5_empirical_stat_engine
+      - name: Same-historical-game independent empirical projections versus native V5
+        run: |
+          PYTHONPATH=. python -u -m nba.nba_v5_backtest \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz \
+            --pbp nba/data/nba_v5_pbp_2026_27.jsonl.gz \
+            --test-from 2026-10-27 --sample 60 --sims 750 \
+            --empirical-game-trial \
+            --out /tmp/nba_v5_empirical_game_trial.json
+      - name: Show honest same-event pure V5 comparison with CIs
+        run: |
+          python - <<'PY'
+          import json
+          p=json.load(open('/tmp/nba_v5_empirical_game_trial.json'))['paired_empirical_game_trial']
+          print('GAME_FORECAST_CHALLENGER',p['experiment'])
+          print('FOUR_CORE_MAE_IMPROVED',p['all_four_core_mean_mae_improved'])
+          print('FOUR_CORE_FIXED_EVENT_BRIER_NONREGRESSION',p['all_four_core_fixed_event_brier_nonregression'])
+          print('NOT_PROMOTED',not p['promotion_allowed'])
+          for stat in ('points','rebounds','assists','three_pointers_made','steals','blocks','turnovers'):
+              for metric in ('native_v5_mean_mae','native_fixed_projection_brier'):
+                  k=stat+'|'+metric
+                  print(k,json.dumps(p['metrics'].get(k,{}),sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-v5-independent-empirical-game-forecast-paired-holdout
+          path: /tmp/nba_v5_empirical_game_trial.json
+          retention-days: 20
