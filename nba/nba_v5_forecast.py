@@ -298,6 +298,19 @@ def main() -> int:
                               if schema == "NBA_PLAYER_TRACKING_AGGREGATES_V1"), {})
     if switches.get("tracking_opportunity_role") and not tracking_profiles:
         raise ValueError("NBA_V5_TRACKING_ROLE_SWITCH_REQUIRES_OBSERVED_SOURCE")
+    # The independent head can replace the statistical physics inputs
+    # after an honest paired validation. It trains ONLY on completed games
+    # strictly before the earliest slate game; no V3/V4 projections enter.
+    head = None
+    head_train_before = None
+    head_enabled = bool(switches.get("learned_opportunity_head", False))
+    active_model_version = VERSION + ("-supervised-opportunity" if head_enabled else "")
+    if head_enabled and v3["games"]:
+        from nba.nba_v5_learned_opportunity_head import OpportunityHead
+        head_train_before = min(
+            (dt.datetime.fromisoformat(g["tipoff_utc"]) -
+             dt.timedelta(hours=5)).date() for g in v3["games"])
+        head = OpportunityHead.fit_completed(games, head_train_before)
     out_games, skipped = [], []
     for g3 in v3["games"]:
         tip = dt.datetime.fromisoformat(g3["tipoff_utc"])
@@ -406,6 +419,13 @@ def main() -> int:
                 ta, tracking_profiles, activate=bool(switches.get("tracking_opportunity_role", False)))
             tracking_role_audit = {"home": audit_home, "away": audit_away,
                                     "source_status": "OBSERVED_PREVIOUS_SEASON"}
+        if head is not None:
+            # This changes possession-owner and rebound/assist allocation
+            # rates themselves, not a post-simulation V3/V4 mean blend.
+            th, head_home_audit = head.apply_team(th, rp.hist, d)
+            ta, head_away_audit = head.apply_team(ta, rp.hist, d)
+        else:
+            head_home_audit = head_away_audit = {}
         for ti_, tid_ in ((th, g3["home_id"]), (ta, g3["away_id"])):                 # teammates who tend to sit together
             ids_h, A = avm.absence_matrix(rp.v4.team_rosters.get(tid_, []), d)
             if A is not None:
@@ -476,7 +496,7 @@ def main() -> int:
                     nr.update({"market": m, "mean": round(float(samp.mean()), 4), "median": quant(samp, 0.5), "p10": quant(samp, 0.10),
                                "p25": quant(samp, 0.25), "p75": quant(samp, 0.75), "p90": quant(samp, 0.90),
                                "sd": round(float(samp.std()), 4), "unc": round(float(samp.std()), 4), "model_target": None,
-                               "cdf_lattice": {"step": 1, "cdf": lat}, "model_version": VERSION,
+                               "cdf_lattice": {"step": 1, "cdf": lat}, "model_version": active_model_version,
                                "mean_basis": "CONDITIONAL_ON_PLAYING", "p_start": round(p_start, 3),
                                "p_close": None if p_close is None else round(p_close, 3),
                                "minutes_mean": round(float(mins.mean()), 2), "role_share": round(float(mins.mean()) / 240.0, 6),
@@ -542,11 +562,15 @@ def main() -> int:
                     out_row["availability_published_at_utc"]=rep_by[str(r["player_id"])]["published_at"]
                 new_rows.append(out_row)
         g5 = dict(g3)
-        g5.update({"rows": new_rows, "rows_count": len(new_rows), "model_version": VERSION, "forecast_kind": "V5_SHADOW",
+        g5.update({"rows": new_rows, "rows_count": len(new_rows), "model_version": active_model_version, "forecast_kind": "V5_SHADOW",
                    "forecast_at_utc": now.isoformat(), "asof_utc": now.isoformat(), "model_simulations": a.sims,
                    "uses_v4_forecast_predictions": False,
                    "uses_v3_derived_roster_availability": True,
-                   "projection_source": "V5_GAME_SIMULATION_ONLY",
+                   "projection_source": ("V5_LEARNED_NEXT_GAME_OPPORTUNITY_PLUS_CONNECTED_SIM"
+                                         if head_enabled else "V5_GAME_SIMULATION_ONLY"),
+                   "learned_head_training_cutoff": str(head_train_before) if head_enabled else None,
+                   "learned_head_historical_examples": head.training_examples if head is not None else None,
+                   "learned_head_modified_profiles": {"home": head_home_audit, "away": head_away_audit},
                    "dependency_sensitivity_reruns": 6 if a.compute_sensitivity else 0,
                    "dependency_sensitivity_status": "OPTIONAL_RESEARCH_RERUNS" if a.compute_sensitivity else "SKIPPED_FOR_TIMELY_PREGAME_RELEASE",
                    "pace_used": pace, "official_foul_multiplier": ctx["ft_mult"], "simulation_pieces_on": switches or "defaults",
@@ -577,7 +601,7 @@ def main() -> int:
         out_games.append(g5)
         print("simulated", g3["away"], "at", g3["home"], "rows", len(new_rows), flush=True)
     doc = {k: v for k, v in v3.items() if k not in ("games", "skipped")}
-    doc.update({"games": out_games, "games_forecast": len(out_games), "skipped": skipped, "model_version": VERSION,
+    doc.update({"games": out_games, "games_forecast": len(out_games), "skipped": skipped, "model_version": active_model_version,
                 "generated_at_utc": now.isoformat(), "model_promoted": False, "v5_training_games": len(games),
                 "v5_history_through": games[-1]["date"], "v3_source_sha256": sha(Path(a.v3)),
                 "authorized_source_quality": source_audits,
@@ -585,6 +609,8 @@ def main() -> int:
                 "authorized_source_model_effect":"DIAGNOSTIC_ONLY_NOT_PROMOTED",
                 "uses_v4_forecast_predictions": False,
                 "uses_v3_derived_roster_availability": True,
+                "learned_opportunity_head_active": head_enabled,
+                "learned_opportunity_head_train_before": str(head_train_before) if head_enabled else None,
                 "note": "NBA V5: native full-game possession simulation is the final projection for every market. "
                         "No V4 mixture. V3 supplies roster/participation inputs until source decoupling; "
                         "official injury and lineup evidence can update availability. No sportsbook input."})
