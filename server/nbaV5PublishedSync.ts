@@ -21,7 +21,10 @@ export const V5_PUBLIC_RELEASE_ROOT=
  'https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks3/main';
 const READINESS_PATH='/docs/nba_v5_latest/readiness.json';
 const LATEST_PATH='/docs/nba_v5_latest/latest.json';
-const MAX_LATEST_BYTES=5_000_000;
+// Current multi-game V5 empirical releases exceed 5 MB. Keep a strict
+// bounded download, sized for complete 8+ game distributions rather than
+// rejecting valid new model generations and silently serving local V3/V4.
+const MAX_LATEST_BYTES=12_000_000;
 const MAX_ARCHIVE_BYTES=750_000;
 const MAX_DECOMPRESSED_BYTES=8_000_000;
 const MIN_PREGAME_MS=15*60_000;
