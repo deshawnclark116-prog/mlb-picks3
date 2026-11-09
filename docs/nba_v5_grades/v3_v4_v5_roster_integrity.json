@@ -1,0 +1,859 @@
+{
+  "schema": "NBA_ORIGINAL_PREGAME_ROSTER_V3_V4_V5_CROSSCHECK_V1",
+  "games": 25,
+  "selected_roster_violations": [],
+  "same_day_player_multiple_game_ids": [],
+  "game_details": [
+    {
+      "id": "401909936",
+      "game": "Orlando Magic at Phoenix Suns",
+      "date": "2026-11-05",
+      "metrics": {
+        "V3": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "19",
+            "21"
+          ]
+        },
+        "V4": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "19",
+            "21"
+          ]
+        },
+        "V5": {
+          "selected": 8,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "19",
+            "21"
+          ]
+        }
+      }
+    },
+    {
+      "id": "401909937",
+      "game": "Miami Heat at Golden State Warriors",
+      "date": "2026-11-05",
+      "metrics": {
+        "V3": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "14",
+            "9"
+          ]
+        },
+        "V4": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "14",
+            "9"
+          ]
+        },
+        "V5": {
+          "selected": 9,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "14",
+            "9"
+          ]
+        }
+      }
+    },
+    {
+      "id": "401909287",
+      "game": "Washington Wizards at Atlanta Hawks",
+      "date": "2026-11-06",
+      "metrics": {
+        "V3": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "1",
+            "27"
+          ]
+        },
+        "V4": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "1",
+            "27"
+          ]
+        },
+        "V5": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "1",
+            "27"
+          ]
+        }
+      }
+    },
+    {
+      "id": "401909288",
+      "game": "Boston Celtics at Charlotte Hornets",
+      "date": "2026-11-06",
+      "metrics": {
+        "V3": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "2",
+            "30"
+          ]
+        },
+        "V4": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "2",
+            "30"
+          ]
+        },
+        "V5": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "2",
+            "30"
+          ]
+        }
+      }
+    },
+    {
+      "id": "401909289",
+      "game": "Philadelphia 76ers at Cleveland Cavaliers",
+      "date": "2026-11-06",
+      "metrics": {
+        "V3": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "20",
+            "5"
+          ]
+        },
+        "V4": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "20",
+            "5"
+          ]
+        },
+        "V5": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "20",
+            "5"
+          ]
+        }
+      }
+    },
+    {
+      "id": "401909290",
+      "game": "Utah Jazz at Dallas Mavericks",
+      "date": "2026-11-06",
+      "metrics": {
+        "V3": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "26",
+            "6"
+          ]
+        },
+        "V4": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "26",
+            "6"
+          ]
+        },
+        "V5": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "26",
+            "6"
+          ]
+        }
+      }
+    },
+    {
+      "id": "401909291",
+      "game": "Oklahoma City Thunder at Memphis Grizzlies",
+      "date": "2026-11-06",
+      "metrics": {
+        "V3": {
+          "selected": 8,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "25",
+            "29"
+          ]
+        },
+        "V4": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "25",
+            "29"
+          ]
+        },
+        "V5": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "25",
+            "29"
+          ]
+        }
+      }
+    },
+    {
+      "id": "401909292",
+      "game": "Toronto Raptors at Milwaukee Bucks",
+      "date": "2026-11-06",
+      "metrics": {
+        "V3": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "15",
+            "28"
+          ]
+        },
+        "V4": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "15",
+            "28"
+          ]
+        },
+        "V5": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "15",
+            "28"
+          ]
+        }
+      }
+    },
+    {
+      "id": "401909293",
+      "game": "Minnesota Timberwolves at New Orleans Pelicans",
+      "date": "2026-11-06",
+      "metrics": {
+        "V3": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "16",
+            "3"
+          ]
+        },
+        "V4": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "16",
+            "3"
+          ]
+        },
+        "V5": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "16",
+            "3"
+          ]
+        }
+      }
+    },
+    {
+      "id": "401909294",
+      "game": "Portland Trail Blazers at Los Angeles Lakers",
+      "date": "2026-11-06",
+      "metrics": {
+        "V3": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "13",
+            "22"
+          ]
+        },
+        "V4": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "13",
+            "22"
+          ]
+        },
+        "V5": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "13",
+            "22"
+          ]
+        }
+      }
+    },
+    {
+      "id": "401909295",
+      "game": "San Antonio Spurs at Sacramento Kings",
+      "date": "2026-11-06",
+      "metrics": {
+        "V3": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "23",
+            "24"
+          ]
+        },
+        "V4": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "23",
+            "24"
+          ]
+        },
+        "V5": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "23",
+            "24"
+          ]
+        }
+      }
+    },
+    {
+      "id": "401909938",
+      "game": "Denver Nuggets at Indiana Pacers",
+      "date": "2026-11-07",
+      "metrics": {
+        "V3": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "11",
+            "7"
+          ]
+        },
+        "V4": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "11",
+            "7"
+          ]
+        },
+        "V5": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "11",
+            "7"
+          ]
+        }
+      }
+    },
+    {
+      "id": "401909939",
+      "game": "Brooklyn Nets at Atlanta Hawks",
+      "date": "2026-11-07",
+      "metrics": {
+        "V3": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "1",
+            "17"
+          ]
+        },
+        "V4": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "1",
+            "17"
+          ]
+        },
+        "V5": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "1",
+            "17"
+          ]
+        }
+      }
+    },
+    {
+      "id": "401909940",
+      "game": "New York Knicks at Cleveland Cavaliers",
+      "date": "2026-11-07",
+      "metrics": {
+        "V3": {
+          "selected": 7,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "18",
+            "5"
+          ]
+        },
+        "V4": {
+          "selected": 9,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "18",
+            "5"
+          ]
+        },
+        "V5": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "18",
+            "5"
+          ]
+        }
+      }
+    },
+    {
+      "id": "401909941",
+      "game": "Washington Wizards at Oklahoma City Thunder",
+      "date": "2026-11-07",
+      "metrics": {
+        "V3": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "25",
+            "27"
+          ]
+        },
+        "V4": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "25",
+            "27"
+          ]
+        },
+        "V5": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "25",
+            "27"
+          ]
+        }
+      }
+    },
+    {
+      "id": "401909942",
+      "game": "Orlando Magic at Golden State Warriors",
+      "date": "2026-11-07",
+      "metrics": {
+        "V3": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "19",
+            "9"
+          ]
+        },
+        "V4": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "19",
+            "9"
+          ]
+        },
+        "V5": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "19",
+            "9"
+          ]
+        }
+      }
+    },
+    {
+      "id": "401909943",
+      "game": "Houston Rockets at Phoenix Suns",
+      "date": "2026-11-07",
+      "metrics": {
+        "V3": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "10",
+            "21"
+          ]
+        },
+        "V4": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "10",
+            "21"
+          ]
+        },
+        "V5": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "10",
+            "21"
+          ]
+        }
+      }
+    },
+    {
+      "id": "401909944",
+      "game": "San Antonio Spurs at Portland Trail Blazers",
+      "date": "2026-11-07",
+      "metrics": {
+        "V3": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "22",
+            "24"
+          ]
+        },
+        "V4": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "22",
+            "24"
+          ]
+        },
+        "V5": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "22",
+            "24"
+          ]
+        }
+      }
+    },
+    {
+      "id": "401909945",
+      "game": "Philadelphia 76ers at Chicago Bulls",
+      "date": "2026-11-08",
+      "metrics": {
+        "V3": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "20",
+            "4"
+          ]
+        },
+        "V4": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "20",
+            "4"
+          ]
+        },
+        "V5": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "20",
+            "4"
+          ]
+        }
+      }
+    },
+    {
+      "id": "401909946",
+      "game": "Los Angeles Lakers at Detroit Pistons",
+      "date": "2026-11-08",
+      "metrics": {
+        "V3": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "13",
+            "8"
+          ]
+        },
+        "V4": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "13",
+            "8"
+          ]
+        },
+        "V5": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "13",
+            "8"
+          ]
+        }
+      }
+    },
+    {
+      "id": "401909947",
+      "game": "Utah Jazz at Minnesota Timberwolves",
+      "date": "2026-11-08",
+      "metrics": {
+        "V3": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "16",
+            "26"
+          ]
+        },
+        "V4": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "16",
+            "26"
+          ]
+        },
+        "V5": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "16",
+            "26"
+          ]
+        }
+      }
+    },
+    {
+      "id": "401909948",
+      "game": "Brooklyn Nets at Dallas Mavericks",
+      "date": "2026-11-08",
+      "metrics": {
+        "V3": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "17",
+            "6"
+          ]
+        },
+        "V4": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "17",
+            "6"
+          ]
+        },
+        "V5": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "17",
+            "6"
+          ]
+        }
+      }
+    },
+    {
+      "id": "401909949",
+      "game": "Boston Celtics at Milwaukee Bucks",
+      "date": "2026-11-08",
+      "metrics": {
+        "V3": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "15",
+            "2"
+          ]
+        },
+        "V4": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "15",
+            "2"
+          ]
+        },
+        "V5": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "15",
+            "2"
+          ]
+        }
+      }
+    },
+    {
+      "id": "401909950",
+      "game": "New Orleans Pelicans at LA Clippers",
+      "date": "2026-11-08",
+      "metrics": {
+        "V3": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "12",
+            "3"
+          ]
+        },
+        "V4": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "12",
+            "3"
+          ]
+        },
+        "V5": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "12",
+            "3"
+          ]
+        }
+      }
+    },
+    {
+      "id": "401909951",
+      "game": "Miami Heat at Sacramento Kings",
+      "date": "2026-11-08",
+      "metrics": {
+        "V3": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "14",
+            "23"
+          ]
+        },
+        "V4": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "14",
+            "23"
+          ]
+        },
+        "V5": {
+          "selected": 10,
+          "bad_team_assignments": [],
+          "selected_missing_from_original": [],
+          "teams": [
+            "14",
+            "23"
+          ]
+        }
+      }
+    }
+  ],
+  "integrity_certified": true
+}
