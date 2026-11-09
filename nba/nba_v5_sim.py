@@ -219,9 +219,33 @@ def build_profile(hist, L: League, half_life=30.0, prior_min=60.0):
     def S(k):
         return float(np.dot(w, np.array([h[k] for h in hist], float)))
     mins = S("min")
+    # Opportunity forecasting is a separate problem from shooting skill.
+    # A 30-game half-life is useful for stable shooting percentages but can
+    # miss real changes in role and usage. Anchor opportunity rates to the
+    # longer sample, then use V3-style 3/8/12-game evidence for the current
+    # role. No current-game or future-game data enters this calculation.
     pr = {}
-    for k in ("fga", "tpa", "fta", "ast", "oreb", "dreb", "stl", "blk", "tov", "pf"):
-        pr[k] = (S(k) + prior_min * L.per_min[k]) / (mins + prior_min)
+    opportunity_keys = ("fga", "tpa", "fta", "ast", "oreb", "dreb",
+                        "stl", "blk", "tov", "pf")
+    for k in opportunity_keys:
+        long_rate = (S(k) + prior_min * L.per_min[k]) / (mins + prior_min)
+        if n < 3:
+            pr[k] = long_rate
+            continue
+        def recent_rate(window):
+            rows = hist[-window:]
+            exposure = sum(max(0.0, float(h["min"])) for h in rows)
+            return sum(max(0.0, float(h[k])) for h in rows) / max(exposure, 1e-9)
+        short_rate = (0.52 * recent_rate(3) + 0.33 * recent_rate(8)
+                      + 0.15 * recent_rate(12))
+        recent_exposure = sum(max(0.0, float(h["min"])) for h in hist[-12:])
+        # A genuine recent change needs enough on-court exposure to matter.
+        # Keep the longer-history skill estimate as an uncertainty anchor.
+        role_weight = min(0.65, 0.65 * recent_exposure / (recent_exposure + 120.0))
+        pr[k] = (1.0 - role_weight) * long_rate + role_weight * short_rate
+    # Three-point attempts are a subset of field-goal attempts; keep the
+    # hierarchy valid after the independent opportunity updates.
+    pr["tpa"] = min(pr["tpa"], pr["fga"])
     fga, tpa = S("fga"), S("tpa")
     fg2a = max(0.0, fga - tpa)
     n3 = tpa + 25.0
