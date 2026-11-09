@@ -229,7 +229,7 @@ def roster_player_ids(players, side):
     return sorted({str(p["id"]) for p in players if p["side"] == side})
 
 
-def team_input(rp: Replay, g, side, d, L: League, lg_tot, avail_ids, cold_start=False):
+def team_input(rp: Replay, g, side, d, L: League, lg_tot, avail_ids, cold_start=False, verified_roster_recovery=False):
     tid = g[side]["id"]
     other = g["away" if side == "home" else "home"]["id"]
     ids, prof, pres, pplay, start = [], [], [], [], []
@@ -239,10 +239,10 @@ def team_input(rp: Replay, g, side, d, L: League, lg_tot, avail_ids, cold_start=
     for pid in tonight:
         h = [x for x in rp.hist[pid] if x["date"] < d]
         is_cold=len(h)<MIN_GAMES
-        if is_cold and (not cold_start or not h):
+        if is_cold and (not (cold_start or verified_roster_recovery) or not h):
             continue
         pr = [a for dd, a in rp.pres[pid] if dd < d][-15:]
-        if not pr and not cold_start:
+        if not pr and not (cold_start or verified_roster_recovery):
             continue
         target = float(v4.ewma([x["min"] for x in h]))
         started=float(np.mean([1.0 if x["start"] else 0.0 for x in h[-5:]]))
@@ -260,7 +260,9 @@ def team_input(rp: Replay, g, side, d, L: League, lg_tot, avail_ids, cold_start=
             target=float(np.clip(target,3.0,38.0))
             pres_vec,reason=rp.cold_start.prior(started>=.5,target)
             low_history_audit[pid]=dict(reason,prior_nba_box_games=len(h),
-                                        not_causal_role_prediction=True)
+                                        not_causal_role_prediction=True,
+                                        verified_source_roster_recovery=bool(verified_roster_recovery),
+                                        no_invented_nba_box_games=True)
         else:
             w = np.array([0.5 ** ((len(pr) - 1 - i) / 8.0) for i in range(len(pr))])
             pres_vec = np.average(np.array(pr), axis=0, weights=w)
