@@ -62,6 +62,32 @@ def trim_lattice(r):
     lat["cdf"] = c[:n]
 
 
+def finalize_unblended_research_rows(rows: list[dict]) -> list[dict]:
+    """Rank the original V5 *simulation* independently of the V4 CDF.
+
+    Caller owns a deep copy captured before blending. This helper cannot
+    estimate absent availability or reconstruct historical counterfactuals.
+    """
+    for row in rows:
+        for key in ("frontend_rank", "whole_projection", "reach_probability",
+                    "frontend_ranking_probability", "rank_by_chance_only",
+                    "reach_probabilities", "blend",
+                    "research_fixed_event_component_probabilities"):
+            row.pop(key, None)
+        if str(row.get("model_version", "")).startswith("nba-v5-"):
+            row["model_version"] = SIMULATION_ONLY_VERSION
+    rank_for_screen(rows)
+    for row in rows:
+        if row.get("mean_basis") == "CONDITIONAL_ON_PLAYING":
+            target = whole(float(row["mean"]))
+            if target >= 1:
+                row["reach_probabilities"] = reach_with_dnp(
+                    reach_prob(row["cdf_lattice"]["cdf"], target),
+                    float(row["p_active"]), target)
+        trim_lattice(row)
+    return rows
+
+
 def cdf_quantile(cdf, q):
     for i, v in enumerate(cdf):
         if v >= q:
@@ -554,25 +580,7 @@ def main() -> int:
                 if pure_sim_rows is not None:
                     pure_sim_rows.append(copy.deepcopy(out_row))
         if pure_sim_rows is not None:
-            # Same targets, same availability inputs, same rounding policy,
-            # independently ranked from the V5 simulation's own player stats.
-            for r in pure_sim_rows:
-                for key in ("frontend_rank", "whole_projection", "reach_probability",
-                            "frontend_ranking_probability", "rank_by_chance_only",
-                            "reach_probabilities", "blend",
-                            "research_fixed_event_component_probabilities"):
-                    r.pop(key, None)
-                if r.get("model_version", "").startswith("nba-v5-"):
-                    r["model_version"] = SIMULATION_ONLY_VERSION
-            rank_for_screen(pure_sim_rows)
-            for r in pure_sim_rows:
-                if r.get("mean_basis") == "CONDITIONAL_ON_PLAYING":
-                    target = whole(float(r["mean"]))
-                    if target >= 1:
-                        r["reach_probabilities"] = reach_with_dnp(
-                            reach_prob(r["cdf_lattice"]["cdf"], target),
-                            float(r["p_active"]), target)
-                trim_lattice(r)
+            pure_sim_rows = finalize_unblended_research_rows(pure_sim_rows)
             game_pure = dict(g3)
             game_pure.update({
                 "rows": pure_sim_rows,
