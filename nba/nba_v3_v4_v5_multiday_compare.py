@@ -91,6 +91,30 @@ def find_source(gid, final, index):
     return chosen, None
 
 
+def eligible_v5_slots(final, truth):
+    """Keep precisely the frozen featured ranks that exist. Older boards may
+    have fewer than ten non-turnover slots. Do not invent substitute picks."""
+    selected = sorted(
+        [r for r in final["rows"] if isinstance(r.get("frontend_rank"), int)
+         and 1 <= r["frontend_rank"] <= 10
+         and r.get("market") in prior.MARKETS],
+        key=lambda r: r["frontend_rank"])
+    ranks = [r["frontend_rank"] for r in selected]
+    if not ranks or len(set(ranks)) != len(ranks):
+        raise ValueError(f"V5 {final['game_id']}: conflicting original non-TO ranks {ranks}")
+    picks = [{
+        "player_id": str(r["player_id"]), "player": r["player"],
+        "market": r["market"], "target": int(r["whole_projection"]),
+        "mean": r["projection"],
+        "probability": (r.get("reach_probabilities") or {}).get("probability_including_dnp"),
+        "p_active": r.get("p_active"),
+    } for r in selected]
+    result = prior.grade(picks, truth, "V5", str(final["game_id"]))
+    for x, rank in zip(result, ranks):
+        x["rank"] = rank  # Original visible position, possibly with gaps.
+    return result
+
+
 def one_game(gid, final, matched):
     ref = matched["ref"]
     final_truth = {}
@@ -99,21 +123,46 @@ def one_game(gid, final, matched):
         if key in final_truth:
             raise ValueError(f"{gid}: duplicate final {key}")
         final_truth[key] = r
+
+    # The original first and last V5 scorecards are BOTH graded from the same
+    # real final box. A player omitted from late-game roster can still have a
+    # verified DNP in the first-forecast scorecard. Missing athlete outcome is
+    # not proof they scored zero: use only explicitly graded first rows.
+    first_path = Path(f"docs/nba_v5_grades/first/{gid}.json")
+    recovered = []
+    if first_path.exists():
+        older = json.loads(first_path.read_text())
+        if (str(older.get("game_id")) != gid or older.get("kind") != "first"
+            or timestamp(older["forecast_at_utc"]) > timestamp(final["forecast_at_utc"])):
+            raise ValueError(f"{gid} first-grade identity/asof mismatch")
+        for r in older["rows"]:
+            key = str(r["player_id"]), r["market"]
+            if key not in final_truth:
+                # Only verified player stats or observed DNP can be reused.
+                if r.get("played") is True and r.get("actual") is None:
+                    raise ValueError(f"{gid} first-grade played without final: {key}")
+                if not isinstance(r.get("played"), bool):
+                    continue
+                final_truth[key] = r
+                recovered.append({"id": key[0], "market": key[1],
+                                  "played": r["played"], "actual": r.get("actual")})
     cards = {}
     times = {}
     for version in ("V3", "V4"):
         doc = prior.archived(ref, f"docs/nba_{version.lower()}_latest/latest.json")
         selected, orig_game = prior.choose_pre_game(doc, gid, version, final)
-        if len(selected) != 10:
-            raise ValueError(f"{version} {gid} has {len(selected)} ranked targets, not ten")
+        if not selected:
+            raise ValueError(f"{version} {gid}: zero eligible targets")
         cards[version] = prior.grade(selected, final_truth, version, gid)
         times[version] = orig_game["forecast_at_utc"]
-    cards["V5"] = prior.select_v5(final, final_truth)
+    cards["V5"] = eligible_v5_slots(final, final_truth)
     times["V5"] = final["forecast_at_utc"]
     return {
         "id": gid, "matchup": f'{final["away"]} at {final["home"]}',
         "revision": ref, "times": times, "cards": cards,
         "hits": {k: sum(r["hit"] for r in rows) for k, rows in cards.items()},
+        "counts": {k: len(rows) for k, rows in cards.items()},
+        "recovered_first_grade_actuals": recovered,
         "v4_vs_v5_pretip_lag_minutes": round(
             (timestamp(times["V5"]) - timestamp(times["V4"])).total_seconds()/60, 2),
         "game_date_et": timestamp(matched["tip"]).astimezone(
@@ -126,10 +175,12 @@ def by_day(games):
     for g in games:
         day = g["game_date_et"]
         if day not in days:
-            days[day] = {"games": 0, "V3": 0, "V4": 0, "V5": 0}
+            days[day] = {"games": 0, "V3": 0, "V4": 0, "V5": 0,
+                         "N_V3": 0, "N_V4": 0, "N_V5": 0}
         days[day]["games"] += 1
         for v in ("V3", "V4", "V5"):
             days[day][v] += g["hits"][v]
+            days[day]["N_"+v] += g["counts"][v]
     return dict(sorted(days.items()))
 
 
@@ -140,6 +191,10 @@ def format_table(games, overall, excluded):
         "Every row is a *model-produced whole-number target*, graded at its own target.",
         "V3/V4 are reconstructed shadow cards. V5 uses frozen original featured",
         "ranks. No odds, sportsbook lines, hindsight line changes, or resimulation.",
+        "Some early models produced fewer than ten eligible ranked predictions;",
+        "those short cards are retained with their genuine denominators, not padded.",
+        "Verified outcomes missing in last V5 grade may be recovered from the",
+        "same game's separately frozen FIRST grade; that source is recorded.",
         "V3/V4 each support four stats; V5 also offers steals and blocks.",
         "V4's probability is conditional on playing; V5 includes nonparticipation.",
         "Only original model generations before the same game's V5 last-pretip",
@@ -156,9 +211,10 @@ def format_table(games, overall, excluded):
                   "| Eastern game date | Games | V3 | V4 | V5 |",
                   "|---|---:|---:|---:|---:|"])
     for d, stats in by_day(games).items():
-        denominator = stats["games"] * 10
-        lines.append(f'| {d} | {stats["games"]} | {stats["V3"]}/{denominator} | '
-                     f'{stats["V4"]}/{denominator} | {stats["V5"]}/{denominator} |')
+        lines.append(f'| {d} | {stats["games"]} | '
+                     f'{stats["V3"]}/{stats["N_V3"]} | '
+                     f'{stats["V4"]}/{stats["N_V4"]} | '
+                     f'{stats["V5"]}/{stats["N_V5"]} |')
     lines += ["", "## Market mix: model-featured targets only", "",
               "| Market | V3 | V4 | V5 |",
               "|---|---:|---:|---:|"]
@@ -173,18 +229,22 @@ def format_table(games, overall, excluded):
               "|---|---:|---:|---:|---:|"]
     for g in games:
         lines.append(f'| {g["matchup"]} ({g["game_date_et"]}) | '
-                     f'{g["hits"]["V3"]}/10 | {g["hits"]["V4"]}/10 | '
-                     f'{g["hits"]["V5"]}/10 | {g["v4_vs_v5_pretip_lag_minutes"]:.1f} min |')
+                     f'{g["hits"]["V3"]}/{g["counts"]["V3"]} | {g["hits"]["V4"]}/{g["counts"]["V4"]} | '
+                     f'{g["hits"]["V5"]}/{g["counts"]["V5"]} | {g["v4_vs_v5_pretip_lag_minutes"]:.1f} min |')
     lines += ["", "## Per-player original projected targets and actual results", ""]
     for g in games:
         lines += [f'### {g["game_date_et"]}: {g["matchup"]} ({g["id"]})', "",
                   f'Frozen V3 / V4 / V5 generations: {g["times"]["V3"]} / '
                   f'{g["times"]["V4"]} / {g["times"]["V5"]}.',
                   "", "| Rank | V3 | V4 | V5 |", "|---:|---|---|---|"]
-        for i in range(10):
-            lines.append(f'| {i+1} | ' + " | ".join(
-                prior.format_row(g["cards"][v][i])
-                for v in ("V3", "V4", "V5")) + " |")
+        by_rank = {v:{r["rank"]:r for r in g["cards"][v]}
+                   for v in ("V3", "V4", "V5")}
+        for i in range(1,11):
+            contents = [
+                prior.format_row(by_rank[v][i]) if i in by_rank[v] else "— (no ranked projection)"
+                for v in ("V3", "V4", "V5")
+            ]
+            lines.append(f'| {i} | ' + " | ".join(contents) + " |")
         lines += [""]
     lines += ["## Archived games excluded from fair matched comparison", ""]
     if excluded:
