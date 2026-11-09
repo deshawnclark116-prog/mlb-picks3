@@ -1,0 +1,42 @@
+{
+  "schema": "CROSS_SPORT_ORIGINAL_PLAYER_TARGET_SCORECARD_V1",
+  "date": "2026-11-06\\n",
+  "generated_at_utc": "2026-11-09T14:14:29.838486+00:00",
+  "nba_date_basis": "PRETIP_LAST_FORECAST_ET_DATE_PROXY",
+  "nfl_date_basis": "PREGAME_SCHEDULED_KICKOFF_ET_DATE",
+  "research_only_no_promotion": true,
+  "NBA": {
+    "games": [],
+    "summary": {
+      "n": 0,
+      "graded": 0,
+      "unverified": 0,
+      "hits": 0,
+      "misses": 0,
+      "hit_rate": null,
+      "mean_stated_probability": null,
+      "expected_hits_on_scored_rows": 0,
+      "dnps": 0,
+      "near_misses": 0
+    },
+    "markets": {},
+    "game_count": 0
+  },
+  "NFL": {
+    "games": [],
+    "summary": {
+      "n": 0,
+      "graded": 0,
+      "unverified": 0,
+      "hits": 0,
+      "misses": 0,
+      "hit_rate": null,
+      "mean_stated_probability": null,
+      "expected_hits_on_scored_rows": 0,
+      "dnps": 0,
+      "near_misses": 0
+    },
+    "markets": {},
+    "game_count": 0
+  }
+}
