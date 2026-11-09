@@ -42,6 +42,10 @@ jobs:
           const readyResponse=await fetch('https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks3/main/docs/nba_v5_latest/readiness.json',{cache:'no-store'});
           assert.equal(readyResponse.status,200);
           const ready=await readyResponse.json();
+          const {readFileSync}=await import('node:fs');
+          const checkoutReady=JSON.parse(readFileSync('docs/nba_v5_latest/readiness.json','utf8'));
+          assert.equal(ready.document_generated_at_utc,checkoutReady.document_generated_at_utc,
+            'public release does not match the newly published GitHub checkout');
           assert.equal(ready.schema,'NBA_V5_FORECAST_READINESS_V1');
           const synced=await createPublishedV5Sync()(original,asOf);
           console.log('NBA_V5_LIVE_SOURCE_DIAGNOSTIC',JSON.stringify(synced.v5_published_sync));
