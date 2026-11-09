@@ -75,10 +75,20 @@ def nba_rows(folder, day):
              if isinstance(r.get("frontend_rank"), int)
              and 1 <= r["frontend_rank"] <= 10
              and r.get("market") in NBA_MARKETS
+             # Old archives retain stale turnover ranks after the app removed TO.
+             and r.get("market") != "turnovers"
              and isinstance(r.get("whole_projection"), int)
              and r["whole_projection"] >= 1),
             key=lambda r: (r["frontend_rank"], r["player_id"], r["market"]),
         )
+        # Every featured rank must be unique. A shadow/historical ranking
+        # conflict is excluded from certified top-ten counts, not silently
+        # resolved using outcomes.
+        counts = collections.Counter(r["frontend_rank"] for r in raw)
+        conflicts = sorted(k for k,v in counts.items() if v > 1)
+        if conflicts:
+            print("NBA_FRONTEND_RANK_CONFLICT_UNRESOLVED", d["game_id"], conflicts)
+            continue
         rows = []
         for r in raw:
             target = r["whole_projection"]
@@ -194,7 +204,8 @@ def markdown(report):
         '> NBA game date uses archived last-forecast ET date because the grade files do not store tipoff;',
         '> NFL game date uses verified pretip kickoff. Frozen model targets are NEVER altered.',
         '> This reconstructs ranked cards from archives; it cannot guarantee each user saw that exact snapshot.',
-        '> Diagnostic cause flags are associations, NOT established causal explanations.',
+        '> Diagnostic cause flags are associations, NOT established causal explanations.
+> Legacy turnover rankings are excluded because they were not featured as player picks.',
         '',
     ]
     for sport in ["NBA", "NFL"]:
