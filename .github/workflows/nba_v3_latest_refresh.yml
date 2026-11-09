@@ -29,6 +29,8 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/nba_v3_latest_refresh.yml"
+      - "docs/nba_v5_latest/features.json"
+      - "nba/nba_v5_empirical_stat_engine.py"
   workflow_dispatch:
     inputs:
       force:
