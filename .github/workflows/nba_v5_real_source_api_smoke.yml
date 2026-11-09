@@ -47,6 +47,23 @@ jobs:
           const currentIds=new Set((ready.games??[]).map(g=>String(g.game_id)));
           const eligible=(ready.games??[]).filter(g=>Date.parse(g.tipoff_utc)>asOf+15*60_000);
           const shared=eligible.filter(g=>original.games.some(x=>String(x.game_id)===String(g.game_id)));
+          const fullResponse=await fetch('https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks3/main/docs/nba_v5_latest/latest.json',{cache:'no-store'});
+          assert.equal(fullResponse.status,200);
+          const full=await fullResponse.json();
+          const {validateShadowHeader,validateShadowGame}=await import('./server/nbaV3Shadow.ts');
+          try{validateShadowHeader(full);console.log('V5_DIAG_HEADER_OK');}
+          catch(e){console.log('V5_DIAG_HEADER_REJECT',String(e));}
+          for(const g of full.games??[]){
+            const old=original.games.find(x=>String(x.game_id)===String(g.game_id));
+            let validation='OK';
+            try{validateShadowGame(g,new Set());}catch(e){validation=String(e);}
+            console.log('V5_DIAG_GAME',JSON.stringify({
+              id:g.game_id,exists_in_original:!!old,validate:validation,
+              v5_date:g.forecast_at_utc,old_date:old?.forecast_at_utc,
+              tip:g.tipoff_utc,same_tip:old?.tipoff_utc===g.tipoff_utc,
+              v5_rows:g.rows_count,real_rows:g.rows?.length,model:g.rows?.[0]?.model_version
+            }));
+          }
           if(shared.length){
             const displayed=synced.games.filter(g=>currentIds.has(String(g.game_id))&&g.forecast_kind==='V5_LATEST');
             assert.ok(displayed.length>0,'current published pretip V5 projections must reach served NBA games');
