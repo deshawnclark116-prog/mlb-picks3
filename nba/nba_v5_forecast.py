@@ -495,14 +495,24 @@ def main() -> int:
                              and p.get("source_roster_recovered")), None)
                         if source_player is None:
                             continue
+                        # Recovered players have no inherited V3 row; write
+                        # the same immutable game/record contract as every
+                        # other player. Without these keys the frontend's
+                        # strict whole-game validator rejects the ENTIRE V5
+                        # release even though the new projections are valid.
                         tmpl = {
+                            "game_id": str(g3["game_id"]),
                             "player_id": str(pid), "player": source_player["name"],
                             "team_id": str(ti.team_id),
                             "reported_status": "UNKNOWN_NOT_ACTIVE_CERTIFIED",
                             "p_active": float(pa.get(pid, 0.0)),
+                            "calibrated_for_2026_27": False,
+                            "research_only": True,
+                            "not_an_official_bet": True,
                             "source_roster_recovered": True,
                             "prior_history_n": len(rp.hist[pid]),
                             "prior_box_games_at_source": source_player["prior_box_games_at_source"],
+                            "unc_reasons": ["SOURCE_VERIFIED_PLAYER_WITHOUT_V3_FORECAST"],
                         }
                     lat = empirical_lattice(samp, CDF_MAX[m])
                     nr = dict(tmpl)
