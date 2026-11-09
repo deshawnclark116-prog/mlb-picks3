@@ -126,6 +126,32 @@ def build(fixtures,rosters,receipts,games,boxes,asof,seen,
             teams[tid]=role_pool(tid,subset,team_games,first,last,roster,
                 asof_utc=asof.isoformat(),tipoff_utc=g["tipoff_utc"],
                 statuses=statuses)
+        # Preserve the as-of independently observed FULL roster. V3's
+        # projected rows omit some members with limited NBA history.
+        # This is verified membership data, never a V3 model prediction.
+        source_roster = {}
+        for tid in (g["away_id"], g["home_id"]):
+            espn_names = {str(p["player_id"]):p["player"]
+                          for p in rosters[str(tid)]}
+            nba_names = {str(x["player_id"]):x["player_name"]
+                         for x in roster_audit["added_by_team"][str(tid)]}
+            source_roster[str(tid)] = []
+            for pid in sorted(supplemental[str(tid)]):
+                history_count = sum(len(h) for (ht, hp), h in histories.items()
+                                    if str(hp) == str(pid))
+                names = [h[-1].get("player") for (ht, hp), h in histories.items()
+                         if str(hp) == str(pid) and h]
+                name = espn_names.get(str(pid)) or nba_names.get(str(pid)) or (
+                    names[-1] if names else None)
+                if not name:
+                    continue
+                source_roster[str(tid)].append({
+                    "player_id": str(pid), "player": name,
+                    "prior_box_games": history_count,
+                    "membership_source": ("ESPN_CURRENT_ROSTER"
+                                          if str(pid) in espn_names
+                                          else "NBA_OFFICIAL_DAILY_PREGAME_TEAM_LIST")
+                })
         pace=historically_observed_pace(games,boxes,(g["away_id"],g["home_id"]))
         mc=simulate_matchup(gid,teams,
                 asof_utc=asof.isoformat(),tipoff_utc=g["tipoff_utc"],
@@ -140,6 +166,8 @@ def build(fixtures,rosters,receipts,games,boxes,asof,seen,
             "roster_receipt_sha256":{
                 t:receipts[t]["sha256"] for t in (g["home_id"],g["away_id"])},
             "nba_daily_roster_bridge_audit":roster_audit,
+            "source_roster":source_roster,
+            "source_roster_snapshot_asof_utc":asof.isoformat(),
             "source_opportunity_pace":pace,
             "injury_source_is_not_active_roster_certification":True,
             **mc
