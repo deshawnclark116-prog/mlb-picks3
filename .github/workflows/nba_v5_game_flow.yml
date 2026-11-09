@@ -20,7 +20,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python -m pip install -q "numpy>=2.1,<2.5" "scipy>=1.14,<1.18" "pdfplumber>=0.11,<0.13"
+      - run: python -m pip install -q "numpy>=2.1,<2.5" "scipy>=1.14,<1.18" "pandas>=2.2,<3.0" "pdfplumber>=0.11,<0.13"
       - name: All NBA V5 simulation and source audit regressions
         run: python -m unittest discover -s tests -p "test_nba_v5*.py" -v
       - name: Paired champion versus game-flow challenger
