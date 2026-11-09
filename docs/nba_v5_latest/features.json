@@ -1,5 +1,5 @@
 {
-  "_note": "Switches for the NBA V5 simulation. A piece is on only if testing showed a clear gain and no clear harm; edit and commit to change. Evidence: docs/nba_v5/BACKTEST_RESULTS.md",
+  "_note": "Independent empirical player-game forecast promoted provisionally after substantive historical improvement over native V5; retain V3/V4 and native V5 comparative baselines. Do not equate retrospective known-roster replay with genuine pregame superiority.",
   "features": {
     "joint_availability": true,
     "team_rotation": true,
@@ -14,7 +14,8 @@
     "matchup_rotation": false,
     "rebound_zones": false,
     "tracking_opportunity_role": false,
-    "recency_play_probability": false
+    "recency_play_probability": false,
+    "empirical_game_projection": true
   },
   "evidence": {
     "joint_availability": "predicts how many regulars are out better than independent draws, 5.2 standard errors on 1,720 team-games",
@@ -30,6 +31,7 @@
     "matchup_rotation": "OFF: free prior-opponent 3PA style and verified past coach rotation profiles built, 1,171 game/25,141 player-rotation coverage. Paired 68-game test failed promotion gate (minutes MAE -0.00628, points Brier +0.000074, CIs cross zero); do not rescue tune.",
     "rebound_zones": "OFF: 96,491 strictly matched real named rebound outcomes by shot-origin zone from 1,283 verified games, 30 teams. 68-game paired rebounds Brier +0.000099, 95% CI [-0.000266,+0.000490], not reliable; no promotion/tuning on used holdout.",
     "tracking_opportunity_role": "OFF: completed-season CC BY tracking source now automatically acquired and joined to current roster; potential assists, touches, drives and rebound chances can alter V5 opportunity weights in the research arm. No untouched prospective paired validation or verified same-season player-role stability yet; never auto-promote.",
-    "recency_play_probability": "OFF until untouched forward game results: on 11 already-inspected Nov6 archived games, past-only six-game recency candidate reduced unlisted-player P(play) Brier from 0.093556 to 0.068680 (cluster 95% gain 0.007846 to 0.040955; n=232). This reused sample is exploratory, not promotion evidence. New original pretip candidate probabilities are now frozen for future unbiased grading; official injury statuses never overridden."
+    "recency_play_probability": "OFF until untouched forward game results: on 11 already-inspected Nov6 archived games, past-only six-game recency candidate reduced unlisted-player P(play) Brier from 0.093556 to 0.068680 (cluster 95% gain 0.007846 to 0.040955; n=232). This reused sample is exploratory, not promotion evidence. New original pretip candidate probabilities are now frozen for future unbiased grading; official injury statuses never overridden.",
+    "empirical_game_projection": "PROVISIONAL LIVE CHAMPION: independent empirical player-game bootstrap (not V3/V4 forecast blending). Same-game historical replay on 59 games / 1,283 player-games through 2026-11-08: points MAE 4.8182->4.4405, rebounds 1.9442->1.8299, assists 1.4310->1.3433, threes 0.9395->0.8845. All seven markets improved mean absolute error; all four core fixed-event Brier point estimates non-worse. Bootstrap uncertainty and retrospective known-roster limitation apply. Forward frozen first-seen validation remains mandatory; no claim of proven live edge."
   }
 }
