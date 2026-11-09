@@ -27,6 +27,29 @@ function withTmp(fn:(root:string)=>void){
 }
 
 
+test('recovered-roster empirical V5 rows with complete immutable source fields reach frontend, incomplete rows do not',()=>{
+ const v5Version='nba-v5-native-possession-simulation-20261109-empirical-game';
+ const valid:any=game('2026-11-04T21:30:00Z',9);
+ const recovered:any={...valid.rows[0],player_id:'10',player:'Recovered roster athlete',
+   model_version:v5Version,source_roster_recovered:true,prior_history_n:7,
+   market:'points',model_target:null,mean:12};
+ valid.rows.push(recovered);valid.rows_count=valid.rows.length;
+ const doc:any=header([valid],'2026-11-04T21:30:05Z');doc.model_version=v5Version;
+ const merged=mergeLatestRun(base(),doc,NOW,'V5_LATEST');
+ assert.equal(merged.latest_run.applied,1);
+ assert.equal(merged.games[0].forecast_kind,'V5_LATEST');
+ assert.ok(merged.games[0].rows.some((r:any)=>r.player_id==='10'&&r.mean===12));
+ const incomplete=structuredClone(doc);
+ const broken=incomplete.games[0].rows.find((r:any)=>r.player_id==='10');
+ delete broken.game_id;
+ delete broken.calibrated_for_2026_27;
+ delete broken.research_only;
+ delete broken.not_an_official_bet;
+ const rejected=mergeLatestRun(base(),incomplete,NOW,'V5_LATEST');
+ assert.equal(rejected.latest_run.applied,0);
+ assert.equal(rejected.games[0].rows[0].mean,5);
+});
+
 test('a newer, valid latest run replaces the original and keeps a pointer to it',()=>{
  const out=mergeLatestRun(base(),header([game('2026-11-04T21:30:00Z',9)],'2026-11-04T21:30:05Z'),NOW);
  assert.equal(out.latest_run.applied,1);
