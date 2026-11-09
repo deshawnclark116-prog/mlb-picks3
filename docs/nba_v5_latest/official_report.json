@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-09_06_30PM.pdf",
-  "published_at_utc": "2026-11-09T23:30:00+00:00",
-  "captured_at_utc": "2026-11-09T23:49:10.940695+00:00",
-  "source_sha256": "d2e00266effe9c4802c7801a215b90115f8c6d7a497225d9a99a5662a1ce3709",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-09_06_45PM.pdf",
+  "published_at_utc": "2026-11-09T23:45:00+00:00",
+  "captured_at_utc": "2026-11-09T23:51:47.433903+00:00",
+  "source_sha256": "8bf790d2b7e7b929f81762ec164e756a4035d2510f8d9d2e4077c400f4a713d2",
   "reports": [
     {
       "matchup": "CLE@CHA",
@@ -297,6 +297,14 @@
     {
       "matchup": "MEM@TOR",
       "team_abbr": "MEM",
+      "player": "Mashack, Jahmai",
+      "normalized_player": "jahmai mashack",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "MEM@TOR",
+      "team_abbr": "MEM",
       "player": "Pippen Jr., Scotty",
       "normalized_player": "scotty pippen",
       "status": "OUT",
@@ -395,7 +403,7 @@
       "team_abbr": "IND",
       "player": "McConnell, T.J.",
       "normalized_player": "t j mcconnell",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Hamstring Strain"
     },
     {
@@ -427,7 +435,7 @@
       "team_abbr": "DAL",
       "player": "Johnson Jr., Morez",
       "normalized_player": "morez johnson",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": ""
     },
     {
@@ -815,7 +823,7 @@
       "reason": ""
     }
   ],
-  "rows": 101,
+  "rows": 102,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
