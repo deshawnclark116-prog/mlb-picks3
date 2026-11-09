@@ -1,4 +1,4 @@
 {
- "show": true,
- "reason": "On 150 held-out games the V4+V5 blend had the smallest average miss on points, rebounds, assists and threes and the best probabilities on identical events (docs/nba_v5/BACKTEST_RESULTS.md). Set show to false to put V4 back."
+  "show": true,
+  "reason": "V5 native player-stat distributions now come directly from its full-game simulation for every stat; the former 50/50 V4 forecast mixture is removed. The established historical V3/V4 benchmarks remain research only. V5 still uses V3-derived roster inputs pending full source decoupling. Untouched forward accuracy advantage is NOT established."
 }
