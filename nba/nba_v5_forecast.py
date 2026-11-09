@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """NBA V5 native forecasts: the full-game simulation, run for tonight's games.
 
-Who is playing comes from the V3 file for the same games (same roster and injury sources): OUT players are removed and
+Who is playing comes from source-only current roster and injury evidence (NOT V3 probabilities): OUT players are removed and
 their minutes and shots go to the teammates who actually take them; everyone else plays with the probability V3 assigns.
 Each game is simulated thousands of times as one connected event (rotations, fouls, pace, shot spots, rebounds, assists,
 steals, blocks, turnovers, late-game fouling, overtime). Projections and percentages are CONDITIONAL ON PLAYING (taken
@@ -11,7 +11,7 @@ Beyond the projection every row says how likely the player is to start and to be
 range, and which teammates' availability would change the projection most (re-simulated with that teammate out).
 Nothing from after tip-off is used. No sportsbook input. Shadow only.
 
-Usage: python -m nba.nba_v5_forecast --games g.jsonl[.gz] --pbp p.jsonl --v3 latest.json --out v5.json [--sims 10000]
+Usage: python -m nba.nba_v5_forecast --games g.jsonl[.gz] --pbp p.jsonl --game-facts source.json --out v5.json [--sims 10000]
 """
 from __future__ import annotations
 import argparse
@@ -39,6 +39,7 @@ from nba.nba_v5_roster_integrity import audit_team as audit_rotation_coverage
 from nba.nba_v5_rotation_attribution import load_past_team_games, _timestamp as dated_eastern
 from nba.nba_v5_recency_pplay import estimate_unlisted
 from nba.nba_v5_sim import League, league_from, simulate_game, MARKETS
+from nba.nba_v5_source_game_facts import validate as validate_game_facts
 
 VERSION = "nba-v5-native-possession-simulation-20261109"
 # All published V5 full-game projections share at least this many joint worlds.
@@ -75,7 +76,7 @@ def quant(samples, q):
 
 
 def pseudo_game(g3, officially_available=None):
-    """A game-shaped record for tonight built from the V3 roster: everyone not OUT with a real chance of playing."""
+    """Build simulator player inputs from source-only independently observed team rosters."""
     players = []
     seen = set()
     officially_available=officially_available or set()
@@ -203,7 +204,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--games", action="append", required=True)
     ap.add_argument("--pbp", action="append", required=True)
-    ap.add_argument("--v3", required=True)
+    ap.add_argument("--game-facts", required=True, help="Timestamp-verified neutral roster/game facts; never a prior-version prediction document")
     ap.add_argument("--out", required=True)
     ap.add_argument("--sims", type=int, default=MIN_PRODUCTION_SIMS, help="Minimum 10,000 complete correlated game simulations per matchup")
     ap.add_argument("--compute-sensitivity", action="store_true", help="Optional six additional teammate-absence research re-simulations per game; OFF for fast pretip production")
@@ -237,14 +238,15 @@ def main() -> int:
     for k_, v_ in le.items():
         setattr(L, k_, v_)
     calib = json.loads(Path(a.calibration).read_text()) if a.calibration and Path(a.calibration).exists() else {}
-    v3 = json.loads(Path(a.v3).read_text())
+    factdoc = json.loads(Path(a.game_facts).read_text())
+    validate_game_facts(factdoc, dt.datetime.now(dt.timezone.utc))
     play_table = avm.PlayTable.from_grades(a.grades) if a.grades else avm.PlayTable()
     switches = json.loads(Path(a.features).read_text())["features"] if a.features and Path(a.features).exists() else {}
     receipts = json.loads(Path(a.receipt).read_text()) if a.receipt and Path(a.receipt).exists() else {}
     now = dt.datetime.now(dt.timezone.utc)
-    pregame, pregame_audit = load_pregame_many(a.pregame_evidence, now, v3.get("games", []))
+    pregame, pregame_audit = load_pregame_many(a.pregame_evidence, now, factdoc.get("games", []))
     current_roster={(str(r["team_id"]),str(r["player_id"]))
-                    for g in v3.get("games",[]) for r in g.get("rows",[])}
+                    for g in factdoc.get("games",[]) for r in g.get("rows",[])}
     licensed_profiles=[]
     source_audits=[]
     data_schemas=set()
@@ -260,7 +262,7 @@ def main() -> int:
     if switches.get("tracking_opportunity_role") and not tracking_profiles:
         raise ValueError("NBA_V5_TRACKING_ROLE_SWITCH_REQUIRES_OBSERVED_SOURCE")
     out_games, skipped = [], []
-    for g3 in v3["games"]:
+    for g3 in factdoc["games"]:
         tip = dt.datetime.fromisoformat(g3["tipoff_utc"])
         if tip <= now:
             continue
@@ -303,7 +305,7 @@ def main() -> int:
                       for ti in (th, ta) for pid in ti.ids}
         archetypes = {pid: player_archetype(rp.hist.get(pid, []), d)
                       for ti in (th, ta) for pid in ti.ids}
-        # chance each player plays: learned from graded results by reported status (and body part), not a fixed guess
+        # Chance a player plays: V5 estimates this itself from historical presence and verified official reports, never V3
         official_out={pid for pid,info in rep_by.items()
                       if info["fresh_official"] and info["status"]=="OUT"}
         pa = {}
@@ -404,7 +406,7 @@ def main() -> int:
                         continue
                     lat = empirical_lattice(samp, CDF_MAX[m])
                     nr = dict(tmpl)
-                    nr["p_active_v3"] = tmpl["p_active"]
+                    nr["source_roster_gate"] = tmpl["p_active"]
                     nr["p_active"] = round(float(pa.get(pid, tmpl["p_active"])), 4)
                     if pid in rep_by and rep_by[pid]["fresh_official"]:
                         nr["reported_status"] = rep_by[pid]["raw_status"]
@@ -481,7 +483,7 @@ def main() -> int:
         g5.update({"rows": new_rows, "rows_count": len(new_rows), "model_version": VERSION, "forecast_kind": "V5_SHADOW",
                    "forecast_at_utc": now.isoformat(), "asof_utc": now.isoformat(), "model_simulations": a.sims,
                    "uses_v4_forecast_predictions": False,
-                   "uses_v3_derived_roster_availability": True,
+                   "uses_v3_derived_roster_availability": False,
                    "projection_source": "V5_GAME_SIMULATION_ONLY",
                    "dependency_sensitivity_reruns": 6 if a.compute_sensitivity else 0,
                    "dependency_sensitivity_status": "OPTIONAL_RESEARCH_RERUNS" if a.compute_sensitivity else "SKIPPED_FOR_TIMELY_PREGAME_RELEASE",
@@ -503,18 +505,18 @@ def main() -> int:
                    "uncertainty_model_effect": "DIAGNOSTIC_ONLY; MINUTES_AND_DNP_VARIANCE_CONSERVED"})
         out_games.append(g5)
         print("simulated", g3["away"], "at", g3["home"], "rows", len(new_rows), flush=True)
-    doc = {k: v for k, v in v3.items() if k not in ("games", "skipped")}
+    doc = {k: v for k, v in factdoc.items() if k not in ("games", "skipped")}
     doc.update({"games": out_games, "games_forecast": len(out_games), "skipped": skipped, "model_version": VERSION,
                 "generated_at_utc": now.isoformat(), "model_promoted": False, "v5_training_games": len(games),
-                "v5_history_through": games[-1]["date"], "v3_source_sha256": sha(Path(a.v3)),
+                "v5_history_through": games[-1]["date"], "game_facts_source_sha256": sha(Path(a.game_facts)),
                 "authorized_source_quality": source_audits,
                 "certified_pregame_source_audit": pregame_audit,
                 "authorized_source_model_effect":"DIAGNOSTIC_ONLY_NOT_PROMOTED",
                 "uses_v4_forecast_predictions": False,
                 "uses_v3_derived_roster_availability": True,
                 "note": "NBA V5: native full-game possession simulation is the final projection for every market. "
-                        "No V4 mixture. V3 supplies roster/participation inputs until source decoupling; "
-                        "official injury and lineup evidence can update availability. No sportsbook input."})
+                        "No V4 mixture. V5 builds its own P(play), role and stat distributions from prior real games, "
+                        "verified neutral current-roster facts, and source-timestamped injury/lineup evidence. No sportsbook input."})
     Path(a.out).write_text(json.dumps(doc, separators=(",", ":")))
     if a.archive:
         for g5 in out_games:
