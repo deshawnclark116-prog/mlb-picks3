@@ -75,10 +75,18 @@ def quant(samples, q):
 
 
 def pseudo_game(g3, officially_available=None):
-    """A game-shaped record for tonight built from the V3 roster: everyone not OUT with a real chance of playing."""
+    """Construct tonight's players from observed source rosters, not just V3 output rows.
+
+    The source roster is captured pretip from ESPN/NBA membership evidence.
+    At least one earlier real NBA box is required for recovery; names alone
+    never create player performance. Legacy V3 rows stay as compatibility input.
+    """
     players = []
     seen = set()
-    officially_available=officially_available or set()
+    officially_available = set(map(str, officially_available or set()))
+    excluded = {str(r["player_id"]) for r in g3["rows"]
+                if (r["reported_status"] == "OUT" or r["p_active"] < 0.2)
+                and str(r["player_id"]) not in officially_available}
     for r in g3["rows"]:
         # A fresh game-specific official AVAILABLE report may overturn stale
         # older ESPN OUT/low-p_active evidence. It does not invent a roster
@@ -90,9 +98,40 @@ def pseudo_game(g3, officially_available=None):
             continue
         seen.add(key)
         side = "home" if r["team_id"] == g3["home_id"] else "away"
-        players.append({"id": r["player_id"], "team": r["team_id"], "side": side, "name": r["player"], "p_active": r["p_active"],
-                        "prior_minutes_estimate":r.get("conditional_minutes_mean")})
-    return {"home": {"id": g3["home_id"]}, "away": {"id": g3["away_id"]}, "players": players, "officials": g3.get("officials") or []}
+        players.append({"id": str(r["player_id"]), "team": str(r["team_id"]), "side": side,
+                        "name": r["player"], "p_active": r["p_active"]})
+    # Independently captured full team membership is strictly broader than
+    # V3's >=5-game forecasting eligibility. Preserve V3 OUT exclusions, and
+    # never infer a player with no real NBA box history to be active.
+    source = g3.get("source_roster") or {}
+    captured = g3.get("source_roster_snapshot_asof_utc")
+    if source and captured:
+        source_at = dt.datetime.fromisoformat(str(captured).replace("Z", "+00:00"))
+        tip_at = dt.datetime.fromisoformat(str(g3["tipoff_utc"]).replace("Z", "+00:00"))
+        if source_at.tzinfo is None or source_at >= tip_at:
+            raise ValueError("NBA_V5_UNVERIFIED_AFTER_TIP_ROSTER")
+        for tid in (str(g3["home_id"]), str(g3["away_id"])):
+            entries = source.get(tid, [])
+            if not isinstance(entries, list) or len(entries) > 30:
+                raise ValueError("NBA_V5_INVALID_SOURCE_ROSTER")
+            for item in entries:
+                pid = str(item["player_id"])
+                if (not pid.isdigit() or (pid, tid) in seen or
+                    pid in excluded or int(item.get("prior_box_games", 0)) < 1 or
+                    item.get("membership_source") not in
+                    ("ESPN_CURRENT_ROSTER", "NBA_OFFICIAL_DAILY_PREGAME_TEAM_LIST")):
+                    continue
+                seen.add((pid, tid))
+                players.append({
+                    "id": pid, "team": tid,
+                    "side": "home" if tid == str(g3["home_id"]) else "away",
+                    "name": str(item["player"]),
+                    "source_roster_recovered": True,
+                    "prior_box_games_at_source": int(item["prior_box_games"]),
+                    "p_active": None,
+                })
+    return {"home": {"id": g3["home_id"]}, "away": {"id": g3["away_id"]},
+            "players": players, "officials": g3.get("officials") or []}
 
 
 def choose_availability_reports(reports, now):
@@ -286,8 +325,14 @@ def main() -> int:
                               if info["fresh_official"] and info["raw_status"]=="AVAILABLE"}
         pg = pseudo_game(g3, officially_available=officially_available | confirmed_starters)
         try_cold=bool(switches.get("low_history_rotation",False))
-        th, ta = (b5.team_input(rp, pg, "home", d, L, lg_tot, None, cold_start=try_cold),
-                  b5.team_input(rp, pg, "away", d, L, lg_tot, None, cold_start=try_cold))
+        # Recover genuinely observed players omitted by V3's forecasting
+        # eligibility and by missing historical play-by-play. No zero-game
+        # invented skill profiles; the source cohort is audited separately.
+        recover_source = bool(g3.get("source_roster"))
+        th, ta = (b5.team_input(rp, pg, "home", d, L, lg_tot, None,
+                                cold_start=try_cold, verified_roster_recovery=recover_source),
+                  b5.team_input(rp, pg, "away", d, L, lg_tot, None,
+                                cold_start=try_cold, verified_roster_recovery=recover_source))
         if not th or not ta:
             skipped.append(g3["game_id"])
             continue
@@ -401,10 +446,28 @@ def main() -> int:
                     samp = sd[key][played, j]
                     tmpl = rows_by.get((pid, m)) or rows_by.get((pid, "points"))
                     if tmpl is None:
-                        continue
+                        # Verified pretip team membership + earlier real NBA
+                        # boxes may recover players with no V3 forecast row.
+                        # Do not manufacture a V3 statistical prediction.
+                        source_player = next(
+                            (p for p in pg["players"] if str(p["id"]) == str(pid)
+                             and str(p["team"]) == str(ti.team_id)
+                             and p.get("source_roster_recovered")), None)
+                        if source_player is None:
+                            continue
+                        tmpl = {
+                            "player_id": str(pid), "player": source_player["name"],
+                            "team_id": str(ti.team_id),
+                            "reported_status": "UNKNOWN_NOT_ACTIVE_CERTIFIED",
+                            "p_active": float(pa.get(pid, 0.0)),
+                            "source_roster_recovered": True,
+                            "prior_history_n": len(rp.hist[pid]),
+                            "prior_box_games_at_source": source_player["prior_box_games_at_source"],
+                        }
                     lat = empirical_lattice(samp, CDF_MAX[m])
                     nr = dict(tmpl)
-                    nr["p_active_v3"] = tmpl["p_active"]
+                    nr["p_active_v3"] = (
+                        tmpl["p_active"] if not tmpl.get("source_roster_recovered") else None)
                     nr["p_active"] = round(float(pa.get(pid, tmpl["p_active"])), 4)
                     if pid in rep_by and rep_by[pid]["fresh_official"]:
                         nr["reported_status"] = rep_by[pid]["raw_status"]
@@ -442,7 +505,8 @@ def main() -> int:
                                "uncertainty_audit": forecast_uncertainty(samp, mins, float(pa.get(pid, 1.0))),
                                "calibration": calib.get(m)})
                     new_rows.append(nr)
-        name_of = {r["player_id"]: r["player"] for r in g3["rows"]}
+        name_of = {str(r["player_id"]): r["player"] for r in g3["rows"]}
+        name_of.update({str(p["id"]):p["name"] for p in pg["players"]})
         for r in new_rows:
             for dep in r.get("depends_on", []):
                 dep["if_out_name"] = name_of.get(dep["if_out"], dep["if_out"])
@@ -487,6 +551,15 @@ def main() -> int:
                    "dependency_sensitivity_status": "OPTIONAL_RESEARCH_RERUNS" if a.compute_sensitivity else "SKIPPED_FOR_TIMELY_PREGAME_RELEASE",
                    "pace_used": pace, "official_foul_multiplier": ctx["ft_mult"], "simulation_pieces_on": switches or "defaults",
                    "roster_integrity_audit": roster_integrity,
+                   "source_roster_recovered_player_ids": sorted(
+                       str(p["id"]) for p in pg["players"]
+                       if p.get("source_roster_recovered") and
+                          str(p["id"]) in {str(pid) for ti in (th, ta) for pid in ti.ids}),
+                   "source_roster_zero_prior_boxes_not_projected": sum(
+                       int(item.get("prior_box_games", 0)) == 0
+                       for entries in (g3.get("source_roster") or {}).values()
+                       for item in entries),
+                   "roster_recovery_policy": "PRETIP_VERIFIED_MEMBERSHIP_AND_REAL_PRIOR_NBA_BOX_ONLY",
                    "role_change_audit": role_audit,
                    "archetype_role_audit": archetypes,
                     "tracking_role_audit": tracking_role_audit,
