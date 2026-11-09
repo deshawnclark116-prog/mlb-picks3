@@ -8,6 +8,12 @@ on:
   schedule:
     - cron: "40 */3 * * *"
   workflow_dispatch: {}
+  # One-time self-trigger on grader workflow repairs; ordinary grade-file
+  # publication cannot retrigger this job.
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/nba_v5_postmortem.yml"
 permissions:
   contents: write
 concurrency:
@@ -26,6 +32,7 @@ jobs:
           python-version: "3.12"
       - run: python -m pip install "numpy>=2.1,<2.5"
       - name: Grade finished games
+        id: grade_originals
         run: |
           set -euo pipefail
           test -d docs/nba_v5_archive || { echo "nothing archived yet"; exit 0; }
@@ -90,7 +97,11 @@ jobs:
               --grades docs/nba_v5_grades \
               --out docs/nba_v5_forward/lineup_challenger_latest.json
           fi
+      # A separate research comparator can correctly flag a scientific
+      # inconsistency without discarding already validated immutable final
+      # game grades. Keep the job RED, but persist the untouched grade output.
       - name: Publish grades
+        if: ${{ always() && steps.grade_originals.outcome == 'success' }}
         run: |
           set -euo pipefail
           git config user.name "nba-v5-postmortem[bot]"
