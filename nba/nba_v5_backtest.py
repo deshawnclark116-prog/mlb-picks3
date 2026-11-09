@@ -353,6 +353,19 @@ def run(args):
     chosen = set(cand[: args.sample])
     print("games", len(games), "scoring", len(chosen), "of", len(cand), flush=True)
     configs = {"full": {}}
+    learned_head = None
+    if getattr(args, "learned_head_trial", False):
+        if args.config or args.features == "ablate":
+            raise ValueError("--learned-head-trial incompatible with --config and ablation")
+        from nba.nba_v5_learned_opportunity_head import OpportunityHead
+        cutoff = dt.date.fromisoformat(args.learned_head_train_before or args.test_from)
+        if cutoff > test_from:
+            raise ValueError("LEARNED_HEAD_TRAIN_CUTOFF_AFTER_EVALUATION_START")
+        learned_head = OpportunityHead.fit_completed(games, cutoff)
+        configs["learned_opportunity_head"] = {}
+        print("LEARNED_OPPORTUNITY_HEAD_TRAINING",
+              json.dumps({"cutoff": str(cutoff), "samples": learned_head.training_examples}),
+              flush=True)
     if getattr(args,"cold_start_trial",False):
         if args.config or args.features=="ablate":
             raise ValueError("--cold-start-trial incompatible with --config and ablation")
@@ -361,7 +374,7 @@ def run(args):
         if args.config or args.features=="ablate":
             raise ValueError("--flow-trial incompatible with --config and ablation")
         configs["game_flow"]={"game_flow":True}
-    if sum(bool(getattr(args,n,False)) for n in ("lineup_trial","role_trial","style_trial","flow_trial","cold_start_trial","assist_network_trial","matchup_rotation_trial","rebound_zone_trial"))>1:
+    if sum(bool(getattr(args,n,False)) for n in ("lineup_trial","role_trial","style_trial","flow_trial","cold_start_trial","assist_network_trial","matchup_rotation_trial","rebound_zone_trial","learned_head_trial"))>1:
         raise ValueError("One experimental arm at a time")
     if getattr(args, "rebound_zone_trial", False):
         if args.config or args.features=="ablate":
@@ -437,7 +450,10 @@ def run(args):
                     adapted = (ah, aa, {e["player_id"]: e["modified"] for e in hf + af})
                 for cname, feats in configs.items():
                     cx = {"ft_mult": rp.refs.crew_mult(g.get("officials") or []), "late_ft": late_tab}
-                    if cname=="cold_start_candidate":
+                    if cname == "learned_opportunity_head":
+                        sh, head_home = learned_head.apply_team(th, rp.hist, d)
+                        sa, head_away = learned_head.apply_team(ta, rp.hist, d)
+                    elif cname=="cold_start_candidate":
                         if cold_teams is None:
                             continue
                         sh,sa=cold_teams
@@ -449,6 +465,9 @@ def run(args):
                             p = actual[pid]
                             rec = {"date": str(d), "game": g["game_id"], "player": pid, "name": p["name"], "min_actual": p["min"],
                                    "min_sim": float(sim[side]["min"][:, j].mean())}
+                            if cname == "learned_opportunity_head":
+                                rec["learned_head_audit"] = (
+                                    head_home if side == "home" else head_away).get(str(pid))
                             if cname == "role_adaptive":
                                 rec["role_trial_flags"] = (adapted[2].get(pid, []) if adapted else [])
                             if cname=="cold_start_candidate":
@@ -620,14 +639,22 @@ def main():
     ap.add_argument("--style-trial", action="store_true", help="paired shadow test of ESPN labeled shot execution, not Synergy plays")
     ap.add_argument("--flow-trial", action="store_true", help="paired shadow test of historically learned 2-minute possession distribution")
     ap.add_argument("--cold-start-trial", action="store_true", help="unpromoted 1-4 prior game player/rotation prior experiment")
+    ap.add_argument("--learned-head-trial", action="store_true",
+                    help="independent supervised next-game player-opportunity rates versus native V5 simulation")
+    ap.add_argument("--learned-head-train-before", default="",
+                    help="strict training cutoff YYYY-MM-DD; must be on or before --test-from")
     ap.add_argument("--assist-network-trial", action="store_true", help="paired unpromoted passer-to-scorer assist experiment")
     ap.add_argument("--matchup-rotation-trial", action="store_true", help="paired unpromoted opponent historical 3PA-style-conditioned rotation test")
     ap.add_argument("--rebound-zone-trial", action="store_true", help="paired unpromoted miss-location to rebounder selection from validated play-by-play")
     a = ap.parse_args()
     results, rows, v4_preds, chosen = run(a)
     if a.dump:
-        Path(a.dump).write_text(json.dumps(results if a.role_trial or a.lineup_trial or a.style_trial or a.flow_trial or a.cold_start_trial or a.assist_network_trial or a.matchup_rotation_trial or a.rebound_zone_trial else next(iter(results.values()))))
+        Path(a.dump).write_text(json.dumps(results if a.role_trial or a.lineup_trial or a.style_trial or a.flow_trial or a.cold_start_trial or a.assist_network_trial or a.matchup_rotation_trial or a.rebound_zone_trial or a.learned_head_trial else next(iter(results.values()))))
     report = {c: score(r, rows, v4_preds) for c, r in results.items() if r}
+    if a.learned_head_trial:
+        from nba.nba_v5_learned_opportunity_head_score import evaluate_native
+        report["paired_learned_opportunity_head_trial"] = evaluate_native(
+            results["full"], results["learned_opportunity_head"])
     if a.cold_start_trial:
         from nba.nba_v5_cold_start import evaluate_cold_start
         report["paired_low_history_trial"]=evaluate_cold_start(results["full"],results["cold_start_candidate"],v4_preds)
