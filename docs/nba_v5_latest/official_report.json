@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-10_11_45AM.pdf",
-  "published_at_utc": "2026-11-10T16:45:00+00:00",
-  "captured_at_utc": "2026-11-10T16:59:31.587852+00:00",
-  "source_sha256": "f0f8dc0045e3dd2a180de271dc8dfeccd8d30d0b777e2e90ce42ec2c0342aa78",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-10_01_15PM.pdf",
+  "published_at_utc": "2026-11-10T18:15:00+00:00",
+  "captured_at_utc": "2026-11-10T18:19:28.542809+00:00",
+  "source_sha256": "25b705cfed9b82d7a8ce826217c7b8576fe1d25138bea724d7eabd076516a4b0",
   "reports": [
     {
       "matchup": "MIL@NYK",
@@ -13,6 +13,14 @@
       "normalized_player": "tyler herro",
       "status": "QUESTIONABLE",
       "reason": "Injury/Illness - Right Contusion"
+    },
+    {
+      "matchup": "MIL@NYK",
+      "team_abbr": "MIL",
+      "player": "Ware, Kel'el",
+      "normalized_player": "kel el ware",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Left Ankle Sprain"
     },
     {
       "matchup": "MIL@NYK",
@@ -367,7 +375,7 @@
       "reason": "G League - Two-Way"
     }
   ],
-  "rows": 45,
+  "rows": 46,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
