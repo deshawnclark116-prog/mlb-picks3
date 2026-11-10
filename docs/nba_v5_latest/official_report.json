@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-09_07_45PM.pdf",
-  "published_at_utc": "2026-11-10T00:45:00+00:00",
-  "captured_at_utc": "2026-11-10T01:00:17.979793+00:00",
-  "source_sha256": "09f272a564ae24be8efda7b7dbf536c50346466ab43249ceef82d86971a3376b",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-09_08_00PM.pdf",
+  "published_at_utc": "2026-11-10T01:00:00+00:00",
+  "captured_at_utc": "2026-11-10T01:08:25.376274+00:00",
+  "source_sha256": "30e3de8a6db5df24f2a016859266ff52b7990732acab072553c4620348fea91d",
   "reports": [
     {
       "matchup": "CLE@CHA",
@@ -459,7 +459,7 @@
       "team_abbr": "DEN",
       "player": "Braun, Christian",
       "normalized_player": "christian braun",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -467,7 +467,7 @@
       "team_abbr": "DEN",
       "player": "DeRozan, DeMar",
       "normalized_player": "demar derozan",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Low Back Spasms"
     },
     {
@@ -475,7 +475,7 @@
       "team_abbr": "DEN",
       "player": "Gordon, Aaron",
       "normalized_player": "aaron gordon",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -483,7 +483,7 @@
       "team_abbr": "DEN",
       "player": "Johnson, Cameron",
       "normalized_player": "cameron johnson",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Ankle Sprain"
     },
     {
@@ -491,7 +491,7 @@
       "team_abbr": "DEN",
       "player": "Jokic, Nikola",
       "normalized_player": "nikola jokic",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Elbow Sprain"
     },
     {
@@ -499,7 +499,7 @@
       "team_abbr": "DEN",
       "player": "Murray, Jamal",
       "normalized_player": "jamal murray",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
