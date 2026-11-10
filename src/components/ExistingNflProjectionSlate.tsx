@@ -5,7 +5,7 @@ import NflExistingShareModal from './NflExistingShareModal';
 import NflPrecisionShareModal from './NflPrecisionShareModal';
 import {formatET,type Horizon,type Phase1View} from '../nfl/phase1';
 import {wholeStatProjection} from '../lib/wholeStatProjection';
-import {hasNflNbaMeanProjectionEvidence,rankNflPregameMeaningfulTargetsForDisplay} from '../nfl/ownProjectionRank';
+import {hasNflNbaMeanProjectionEvidence,rankNflMeaningfulTargets} from '../nfl/ownProjectionRank';
 import type {NflRoleSnapshot} from '../nfl/roleSupportedNfl';
 import {parseExistingNfl,existingMatchup,type ExistingNflSlate,type ExistingNflGame,type ExistingYardProjection} from '../nfl/existing';
 const n=(x:number)=>x.toLocaleString('en-US',{maximumFractionDigits:1});
@@ -192,7 +192,13 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
     {games.map(g=>{
       const opened=expanded===g.id;
       const started=Date.now()>=Date.parse(g.kickoff_utc);
-      const top=rankNflPregameMeaningfulTargetsForDisplay(g.shown,role,slate?.generated_at_utc||'',g.kickoff_utc,Date.now(),10);
+      // Research card shows actual frozen pregame model events even when the
+      // separate role-feed snapshot is missing or late. These are NOT
+      // role-certified wagers; per-row simulation and 65% Wilson gates remain.
+      const originalForecastBeforeKickoff=Boolean(slate&&
+        Number.isFinite(Date.parse(slate.generated_at_utc))&&
+        Date.parse(slate.generated_at_utc)<Date.parse(g.kickoff_utc));
+      const top=originalForecastBeforeKickoff?rankNflMeaningfulTargets(g.shown,10):[];
       const topKeys=new Set(top.map(p=>[p.player_id,p.player,p.team,p.market].join('|')));
       const remaining=g.shown.filter(p=>!topKeys.has([p.player_id,p.player,p.team,p.market].join('|')));
       const preview=top[0]||g.shown[0];
@@ -237,7 +243,7 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
           {g.shown.length>0?<div className="space-y-3">
             {top.length>0?<div data-testid="nfl-top10-simulation-research" className="space-y-3">
               <p className="text-xs font-bold text-[#00FF41]">TOP {top.length} MODEL PROJECTIONS</p>
-              <p className="text-[11px] text-amber-200">Ranked by the highest-probability meaningful yardage targets using the same 10,000+ simulations. The selected yardage is the hardest preset threshold with a Monte Carlo sampling lower bound of at least 65%. The model's own average remains separately visible. Historical role checks do NOT confirm today's active status or include DNP risk. These are uncalibrated research estimates, not sportsbook bets.</p>
+              <p className="text-[11px] text-amber-200">Ranked by the highest-probability meaningful yardage targets using the same 10,000+ simulations. The selected yardage is the hardest preset threshold with a Monte Carlo sampling lower bound of at least 65%. The model's own average remains separately visible. These are pregame MODEL projections, not verified betting picks. Current active/starting roles are NOT confirmed, and DNP risk is not included. These are uncalibrated research estimates, not sportsbook bets.</p>
               {top.map(p=><NflPrecisionPick key={p.player_id+'|'+p.player+'|'+p.team+'|'+p.market} p={p}/>)}
               {remaining.length>0&&<details className="rounded-xl border border-[#292929] p-3">
                 <summary className="min-h-11 cursor-pointer text-xs font-bold text-gray-300">SHOW OTHER {remaining.length} NUMERICAL MODEL PROJECTIONS ▾</summary>
