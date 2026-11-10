@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-09_07_00PM.pdf",
-  "published_at_utc": "2026-11-10T00:00:00+00:00",
-  "captured_at_utc": "2026-11-10T00:14:11.197101+00:00",
-  "source_sha256": "ff3c34c061a855774adb24ee94ba1485fedfa9bf82706dc0c3175c17cc4f2406",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-09_07_15PM.pdf",
+  "published_at_utc": "2026-11-10T00:15:00+00:00",
+  "captured_at_utc": "2026-11-10T00:20:01.744155+00:00",
+  "source_sha256": "efb5e7b49c3f32ad9be2b2f3ae10058baa72b28ed4a641012ba6012c8ef4d65b",
   "reports": [
     {
       "matchup": "CLE@CHA",
@@ -831,6 +831,62 @@
       "reason": "Injury/Illness - Right Wrist Sprain"
     },
     {
+      "matchup": "MIA@UTA",
+      "team_abbr": "UTA",
+      "player": "Alexander, Trey",
+      "normalized_player": "trey alexander",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "MIA@UTA",
+      "team_abbr": "UTA",
+      "player": "Bufkin, Kobe",
+      "normalized_player": "kobe bufkin",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "MIA@UTA",
+      "team_abbr": "UTA",
+      "player": "George, Keyonte",
+      "normalized_player": "keyonte george",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Ankle Sprain"
+    },
+    {
+      "matchup": "MIA@UTA",
+      "team_abbr": "UTA",
+      "player": "Ingram, Harrison",
+      "normalized_player": "harrison ingram",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "MIA@UTA",
+      "team_abbr": "UTA",
+      "player": "Jackson Jr., Jaren",
+      "normalized_player": "jaren jackson",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right MCL Tear"
+    },
+    {
+      "matchup": "MIA@UTA",
+      "team_abbr": "UTA",
+      "player": "Markkanen, Lauri",
+      "normalized_player": "lauri markkanen",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Right Wrist Sprain"
+    },
+    {
+      "matchup": "MIA@UTA",
+      "team_abbr": "UTA",
+      "player": "Nurkic, Jusuf",
+      "normalized_player": "jusuf nurkic",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
       "matchup": "ORL@SAC",
       "team_abbr": "ORL",
       "player": "Banchero, Paolo",
@@ -871,7 +927,7 @@
       "reason": ""
     }
   ],
-  "rows": 108,
+  "rows": 115,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
