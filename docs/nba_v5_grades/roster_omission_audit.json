@@ -1535,12 +1535,128 @@
       "played_players": 22,
       "played_players_missing_from_v5": 0,
       "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "Washington Wizards",
+      "forecast_at_utc": "2026-11-09T23:40:13.028216+00:00",
+      "forecast_player_id_count": 30,
+      "game_id": "401909954",
+      "home": "Detroit Pistons",
+      "missing_minutes_by_side": {
+        "away": 0.0,
+        "home": 0.0
+      },
+      "missing_players": [],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 0.0,
+      "played_players": 24,
+      "played_players_missing_from_v5": 0,
+      "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "Memphis Grizzlies",
+      "forecast_at_utc": "2026-11-10T00:14:56.789511+00:00",
+      "forecast_player_id_count": 26,
+      "game_id": "401909955",
+      "home": "Toronto Raptors",
+      "missing_minutes_by_side": {
+        "away": 0.0,
+        "home": 0.0
+      },
+      "missing_players": [],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 0.0,
+      "played_players": 24,
+      "played_players_missing_from_v5": 0,
+      "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "Indiana Pacers",
+      "forecast_at_utc": "2026-11-10T00:44:59.349261+00:00",
+      "forecast_player_id_count": 27,
+      "game_id": "401909956",
+      "home": "Dallas Mavericks",
+      "missing_minutes_by_side": {
+        "away": 0.0,
+        "home": 19.0
+      },
+      "missing_players": [
+        {
+          "actual_minutes": 19.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
+          "player": "Santi Aldama",
+          "player_id": "4593125",
+          "side": "home",
+          "team_id": "6"
+        }
+      ],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 19.0,
+      "played_players": 21,
+      "played_players_missing_from_v5": 1,
+      "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "Denver Nuggets",
+      "forecast_at_utc": "2026-11-10T01:10:38.582317+00:00",
+      "forecast_player_id_count": 28,
+      "game_id": "401909957",
+      "home": "Houston Rockets",
+      "missing_minutes_by_side": {
+        "away": 0.0,
+        "home": 0.0
+      },
+      "missing_players": [],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 0.0,
+      "played_players": 24,
+      "played_players_missing_from_v5": 0,
+      "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "San Antonio Spurs",
+      "forecast_at_utc": "2026-11-10T01:43:33.800044+00:00",
+      "forecast_player_id_count": 29,
+      "game_id": "401909958",
+      "home": "Phoenix Suns",
+      "missing_minutes_by_side": {
+        "away": 0.0,
+        "home": 0.0
+      },
+      "missing_players": [],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 0.0,
+      "played_players": 26,
+      "played_players_missing_from_v5": 0,
+      "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "New Orleans Pelicans",
+      "forecast_at_utc": "2026-11-10T02:39:15.698109+00:00",
+      "forecast_player_id_count": 25,
+      "game_id": "401909959",
+      "home": "Golden State Warriors",
+      "missing_minutes_by_side": {
+        "away": 0.0,
+        "home": 0.0
+      },
+      "missing_players": [],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 0.0,
+      "played_players": 24,
+      "played_players_missing_from_v5": 0,
+      "report_is_postgame_diagnostic_only": true
     }
   ],
-  "games_graded": 27,
-  "games_with_missing_played_players": 24,
+  "games_graded": 33,
+  "games_with_missing_played_players": 25,
   "purpose": "Postgame validation only; cannot supply a future pretip roster",
   "schema": "NBA_V5_POSTGAME_ROSTER_OMISSION_AUDIT_V1",
-  "total_missing_played_minutes": 1347.0,
-  "total_missing_played_players": 81
+  "total_missing_played_minutes": 1366.0,
+  "total_missing_played_players": 82
 }
