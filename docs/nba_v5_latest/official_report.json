@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-10_01_15PM.pdf",
-  "published_at_utc": "2026-11-10T18:15:00+00:00",
-  "captured_at_utc": "2026-11-10T18:19:28.542809+00:00",
-  "source_sha256": "25b705cfed9b82d7a8ce826217c7b8576fe1d25138bea724d7eabd076516a4b0",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-10_01_30PM.pdf",
+  "published_at_utc": "2026-11-10T18:30:00+00:00",
+  "captured_at_utc": "2026-11-10T18:45:42.546120+00:00",
+  "source_sha256": "405d3e43e65996919574c7b5e5403d01140a40df07f1b0faa8a93416bbda6a0c",
   "reports": [
     {
       "matchup": "MIL@NYK",
@@ -155,7 +155,7 @@
       "team_abbr": "UTA",
       "player": "Bufkin, Kobe",
       "normalized_player": "kobe bufkin",
-      "status": "OUT",
+      "status": "QUESTIONABLE",
       "reason": "G League - Two-Way"
     },
     {
@@ -171,7 +171,7 @@
       "team_abbr": "UTA",
       "player": "Ingram, Harrison",
       "normalized_player": "harrison ingram",
-      "status": "OUT",
+      "status": "QUESTIONABLE",
       "reason": "G League - Two-Way"
     },
     {
@@ -187,7 +187,7 @@
       "team_abbr": "UTA",
       "player": "Markkanen, Lauri",
       "normalized_player": "lauri markkanen",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Right Wrist Sprain"
     },
     {
