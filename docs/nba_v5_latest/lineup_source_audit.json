@@ -10,11 +10,12 @@
   ],
   "http_errors_by_date": {},
   "not_posted_teams": 8,
-  "observed_at_utc": "2026-11-10T00:28:08.512178+00:00",
+  "observed_at_utc": "2026-11-10T00:36:11.488962+00:00",
   "post_tip_inferences": 0,
   "provider": "NBA_OFFICIAL_DAILY_LINEUPS",
   "reasons": {
-    "POSITIONAL_STARTERS_NOT_CONFIRMED": 8
+    "NBA_STARTER_UNMATCHED_OR_AMBIGUOUS_ESPN_ROSTER": 1,
+    "POSITIONAL_STARTERS_NOT_CONFIRMED": 7
   },
   "source_url": "https://stats.nba.com/js/data/leaders/00_daily_lineups_20261109.json"
 }

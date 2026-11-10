@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-09_07_15PM.pdf",
-  "published_at_utc": "2026-11-10T00:15:00+00:00",
-  "captured_at_utc": "2026-11-10T00:28:04.902727+00:00",
-  "source_sha256": "efb5e7b49c3f32ad9be2b2f3ae10058baa72b28ed4a641012ba6012c8ef4d65b",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-09_07_30PM.pdf",
+  "published_at_utc": "2026-11-10T00:30:00+00:00",
+  "captured_at_utc": "2026-11-10T00:36:06.100269+00:00",
+  "source_sha256": "fc741b4e1cec2eb6903696911875b7e815dbebaeed597023d25aba964b544ee2",
   "reports": [
     {
       "matchup": "CLE@CHA",
@@ -925,9 +925,57 @@
       "normalized_player": "jalen suggs",
       "status": "OUT",
       "reason": ""
+    },
+    {
+      "matchup": "ORL@SAC",
+      "team_abbr": "SAC",
+      "player": "Mogbo, Jonathan",
+      "normalized_player": "jonathan mogbo",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "ORL@SAC",
+      "team_abbr": "SAC",
+      "player": "Murray, Keegan",
+      "normalized_player": "keegan murray",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Right Wrist Soreness"
+    },
+    {
+      "matchup": "ORL@SAC",
+      "team_abbr": "SAC",
+      "player": "Pedulla, Sean",
+      "normalized_player": "sean pedulla",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "ORL@SAC",
+      "team_abbr": "SAC",
+      "player": "Raynaud, Maxime",
+      "normalized_player": "maxime raynaud",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "ORL@SAC",
+      "team_abbr": "SAC",
+      "player": "Sabonis, Domantas",
+      "normalized_player": "domantas sabonis",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Left Knee Soreness"
+    },
+    {
+      "matchup": "ORL@SAC",
+      "team_abbr": "SAC",
+      "player": "Simmons, Ben",
+      "normalized_player": "ben simmons",
+      "status": "OUT",
+      "reason": ""
     }
   ],
-  "rows": 115,
+  "rows": 121,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
