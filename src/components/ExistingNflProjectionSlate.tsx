@@ -90,7 +90,7 @@ function Projection({p}:{p:ExistingYardProjection}){
 type Props={view:Phase1View|null;search:string;family:string;visible:boolean;horizon:Horizon;mode:string};
 export default function ExistingNflProjectionSlate({view,search,family,visible,horizon,mode}:Props){
   const [slate,setSlate]=useState<ExistingNflSlate|null>(null);
-  const [role,setRole]=useState<NflRoleSnapshot|null>(null);
+  const [,setRole]=useState<NflRoleSnapshot|null>(null);
   const [error,setError]=useState<string|null>(null);
   const [loading,setLoading]=useState(true);
   const [origin,setOrigin]=useState<string>('');
@@ -250,7 +250,7 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
                 <div className="space-y-3 pt-3">{remaining.map(p=><Projection key={p.player_id+'|'+p.player+'|'+p.team+'|'+p.market} p={p}/>)}</div>
               </details>}
             </div>:<div className="space-y-3">
-              <p className="text-[11px] text-amber-200">No meaningful yardage target cleared the simulation and pregame role-evidence gates. Original numerical mean and median projections remain visible below without invented percentages.</p>
+              <p className="text-[11px] text-amber-200">No meaningful yardage target cleared the 10,000-simulation and 65% Monte Carlo gates. Original numerical mean and median projections remain visible below without invented percentages.</p>
               {g.shown.map(p=><Projection key={p.player_id+'|'+p.player+'|'+p.team+'|'+p.market} p={p}/>)}
             </div>}
           </div>:<p className="py-2 text-xs text-gray-400">No qualifying numerical projections available for this game and filter.</p>}
