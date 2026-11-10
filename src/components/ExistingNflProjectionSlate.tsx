@@ -20,10 +20,10 @@ function NflPrecisionTile({p}:{p:ExistingYardProjection}){
   <p className="truncate text-[11px] text-gray-400">{p.team} · {label(p.market)}</p>
   <p className="mt-0.5 min-h-9 break-words text-[15px] font-bold leading-snug text-white">{p.player}</p>
   <p className="mt-2 text-[26px] font-black leading-none tabular-nums text-[#79FF48]">
-   {t.yards}+ <span className="text-[14px] font-bold">YDS</span></p>
+   {wholeStatProjection(p.projected_mean)} <span className="text-[14px] font-bold">YDS PROJECTED</span></p>
   <p className="mt-1.5 text-[13px] font-bold tabular-nums text-[#79FF48]">
-   {chance(t.probability)} <span className="text-[11px] text-gray-200">to reach {t.yards}+ yds</span></p>
-  <p className="mt-0.5 text-[11px] text-gray-400">Model average {n(p.projected_mean)} yds · uncalibrated</p>
+   <span className="text-[11px] text-gray-200">Conservative {t.yards}+ yds: </span>{chance(t.probability)}</p>
+  <p className="mt-0.5 text-[11px] text-gray-400">Model mean {n(p.projected_mean)} yds · probability uncalibrated</p>
  </div>;
 }
 function NflPrecisionPick({p}:{p:ExistingYardProjection}){
@@ -35,9 +35,9 @@ function NflPrecisionPick({p}:{p:ExistingYardProjection}){
    <span className="rounded-lg border border-[#487b54] p-2 text-[10px] font-bold text-[#00FF41]">MODEL TARGET</span>
   </div>
   <div className="grid grid-cols-2 gap-2 rounded-lg border border-[#32533d] bg-[#102418] p-3">
-   <div><p className="text-[10px] text-gray-400">HIGHEST QUALIFIED YARDAGE TARGET</p>
-    <p className="text-xl font-bold text-white">{t.yards}+ YDS</p>
-    <p className="text-[10px] text-gray-400">Model mean {n(p.projected_mean)} · Median {n(p.projected_median)}</p>
+   <div><p className="text-[10px] text-gray-400">MODEL PROJECTED YARDAGE (ROUNDED MEAN)</p>
+    <p className="text-xl font-bold text-white">{wholeStatProjection(p.projected_mean)} YDS</p>
+    <p className="text-[10px] text-gray-400">Mean {n(p.projected_mean)} · Median {n(p.projected_median)} · separate safer target {t.yards}+</p>
    </div>
    <div><p className="text-[10px] text-gray-400">CHANCE OF {t.yards}+ YDS</p>
     <p data-testid="nfl-precision-percentage" className="text-xl font-bold text-[#00FF41]">{chance(t.probability)}</p>
@@ -215,8 +215,8 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
               <p className="mt-2 text-[10px] font-bold text-gray-400">{g.projections.length} PLAYER OUTCOMES · WEEKLY MODEL</p>
               {preview&&<p data-testid="existing-nfl-preview" className="mt-2 truncate text-[11px] text-gray-300">
                 {top.length?'TOP: ':'MODEL MEDIAN: '}<span className="capitalize text-white">{preview.player}</span>
-                {' · '}<span className="font-black text-[#00FF41]">{top.length?preview.nfl_model_target?.yards:n(preview.projected_median)} {label(preview.market)}</span>
-                {top.length>0&&<span className="text-[#79FF48]"> · {chance(preview.nfl_model_target?.probability)} to reach</span>}
+                {' · '}<span className="font-black text-[#00FF41]">{top.length?wholeStatProjection(preview.projected_mean):n(preview.projected_median)} {label(preview.market)}</span>
+                {top.length>0&&<span className="text-[#79FF48]"> · safer {preview.nfl_model_target?.yards}+ at {chance(preview.nfl_model_target?.probability)} (uncalibrated)</span>}
               </p>}
               {!preview&&<p role="status" className="mt-1 text-[11px] text-amber-200">{g.projections.length===0?'No eligible player projections for this matchup':'No matching projected stats'}</p>}
               {started&&<p className="mt-1 text-[10px] text-gray-500">Kickoff passed · archived pregame projections</p>}
