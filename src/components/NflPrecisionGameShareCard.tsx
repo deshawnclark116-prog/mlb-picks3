@@ -55,13 +55,13 @@ export default function NflPrecisionGameShareCard({data,cardRef}:{
     <div style={{minWidth:0,flex:1}}>
      <div style={{fontSize:23,fontWeight:900,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{p.player}</div>
      <div style={{marginTop:4,fontSize:18,color:'#CFD9DA'}}>
-      <b style={{color:'#fff'}}>{p.projectedYards} {market(p.market)}</b>
-      <span style={{fontSize:14,color:muted}}> · MEAN {fmt(p.meanYards)}</span>
+      <b style={{color:'#fff'}}>MODEL MEAN {fmt(p.meanYards)} {market(p.market)}</b>
+      <span style={{fontSize:14,color:muted}}> · SAFER {p.projectedYards}+</span>
      </div>
     </div>
     <div style={{textAlign:'right',flexShrink:0}}>
      <strong style={{fontSize:31,color:green,fontVariantNumeric:'tabular-nums'}}>{pct(p.reach)}</strong>
-     <div style={{fontSize:12,color:muted}}>P(REACH TARGET)</div>
+     <div style={{fontSize:12,color:muted}}>P(SAFER TARGET)</div>
     </div>
    </div>)}
    {picks.length<10&&<div style={{fontSize:25,color:'#F6B8A2',padding:22,
