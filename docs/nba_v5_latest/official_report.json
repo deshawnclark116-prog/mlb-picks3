@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-09_08_30PM.pdf",
-  "published_at_utc": "2026-11-10T01:30:00+00:00",
-  "captured_at_utc": "2026-11-10T01:49:10.166471+00:00",
-  "source_sha256": "a23a2e4af5522c04fb6530c4e386c4f2fa16eb5459d0a2081634e435acc984ea",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-09_08_45PM.pdf",
+  "published_at_utc": "2026-11-10T01:45:00+00:00",
+  "captured_at_utc": "2026-11-10T01:50:39.281761+00:00",
+  "source_sha256": "66dd7a7d42eb8b427b6c67e20e62afa9cb9a6e17a8d435dfcbc5479e33a55e1b",
   "reports": [
     {
       "matchup": "CLE@CHA",
@@ -683,7 +683,7 @@
       "team_abbr": "GSW",
       "player": "Payton II, Gary",
       "normalized_player": "gary payton",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": ""
     },
     {
@@ -707,7 +707,7 @@
       "team_abbr": "GSW",
       "player": "Santos, Gui",
       "normalized_player": "gui santos",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Left Knee Tendinitis"
     },
     {
