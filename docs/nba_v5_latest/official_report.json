@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-09_06_45PM.pdf",
-  "published_at_utc": "2026-11-09T23:45:00+00:00",
-  "captured_at_utc": "2026-11-09T23:54:04.302555+00:00",
-  "source_sha256": "8bf790d2b7e7b929f81762ec164e756a4035d2510f8d9d2e4077c400f4a713d2",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-09_07_00PM.pdf",
+  "published_at_utc": "2026-11-10T00:00:00+00:00",
+  "captured_at_utc": "2026-11-10T00:03:52.982990+00:00",
+  "source_sha256": "ff3c34c061a855774adb24ee94ba1485fedfa9bf82706dc0c3175c17cc4f2406",
   "reports": [
     {
       "matchup": "CLE@CHA",
@@ -775,6 +775,54 @@
       "reason": ""
     },
     {
+      "matchup": "LAC@PHX",
+      "team_abbr": "LAC",
+      "player": "Beal, Bradley",
+      "normalized_player": "bradley beal",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "LAC@PHX",
+      "team_abbr": "LAC",
+      "player": "Christie, Cam",
+      "normalized_player": "cam christie",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Right Ankle Sprain"
+    },
+    {
+      "matchup": "LAC@PHX",
+      "team_abbr": "LAC",
+      "player": "Ingram, Brandon",
+      "normalized_player": "brandon ingram",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Heel Surgery"
+    },
+    {
+      "matchup": "LAC@PHX",
+      "team_abbr": "LAC",
+      "player": "Martinelli, Nick",
+      "normalized_player": "nick martinelli",
+      "status": "QUESTIONABLE",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "LAC@PHX",
+      "team_abbr": "LAC",
+      "player": "Miller, Jordan",
+      "normalized_player": "jordan miller",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "LAC@PHX",
+      "team_abbr": "LAC",
+      "player": "Niederhauser, Yanic Konan",
+      "normalized_player": "yanic konan niederhauser",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Lisfranc Surgery"
+    },
+    {
       "matchup": "MIA@UTA",
       "team_abbr": "MIA",
       "player": "Antetokounmpo, Giannis",
@@ -823,7 +871,7 @@
       "reason": ""
     }
   ],
-  "rows": 102,
+  "rows": 108,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
