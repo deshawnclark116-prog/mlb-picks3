@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-09_07_30PM.pdf",
-  "published_at_utc": "2026-11-10T00:30:00+00:00",
-  "captured_at_utc": "2026-11-10T00:44:14.440239+00:00",
-  "source_sha256": "fc741b4e1cec2eb6903696911875b7e815dbebaeed597023d25aba964b544ee2",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-09_07_45PM.pdf",
+  "published_at_utc": "2026-11-10T00:45:00+00:00",
+  "captured_at_utc": "2026-11-10T00:52:19.900141+00:00",
+  "source_sha256": "09f272a564ae24be8efda7b7dbf536c50346466ab43249ceef82d86971a3376b",
   "reports": [
     {
       "matchup": "CLE@CHA",
@@ -595,8 +595,16 @@
       "team_abbr": "PHX",
       "player": "Goodwin, Jordan",
       "normalized_player": "jordan goodwin",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": ""
+    },
+    {
+      "matchup": "SAS@PHX",
+      "team_abbr": "PHX",
+      "player": "Timme, Drew",
+      "normalized_player": "drew timme",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
     },
     {
       "matchup": "SAS@PHX",
@@ -660,7 +668,7 @@
       "player": "Butler III, Jimmy",
       "normalized_player": "jimmy butler",
       "status": "OUT",
-      "reason": ""
+      "reason": "Injury/Illness - Right ACL Repair /"
     },
     {
       "matchup": "NOP@GSW",
@@ -908,7 +916,7 @@
       "player": "Nelson, Izaiyah",
       "normalized_player": "izaiyah nelson",
       "status": "OUT",
-      "reason": ""
+      "reason": "Injury/Illness - Left Ankle Injury"
     },
     {
       "matchup": "ORL@SAC",
@@ -973,9 +981,89 @@
       "normalized_player": "ben simmons",
       "status": "OUT",
       "reason": ""
+    },
+    {
+      "matchup": "OKC@POR",
+      "team_abbr": "OKC",
+      "player": "Holmgren, Chet",
+      "normalized_player": "chet holmgren",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "OKC@POR",
+      "team_abbr": "OKC",
+      "player": "Sorber, Thomas",
+      "normalized_player": "thomas sorber",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Knee surgery"
+    },
+    {
+      "matchup": "OKC@POR",
+      "team_abbr": "OKC",
+      "player": "Topic, Nikola",
+      "normalized_player": "nikola topic",
+      "status": "OUT",
+      "reason": "G League - On Assignment"
+    },
+    {
+      "matchup": "OKC@POR",
+      "team_abbr": "OKC",
+      "player": "Wallace, Cason",
+      "normalized_player": "cason wallace",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Shoulder Surgery"
+    },
+    {
+      "matchup": "OKC@POR",
+      "team_abbr": "OKC",
+      "player": "Williams, Jalen",
+      "normalized_player": "jalen williams",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Ankle Surgery"
+    },
+    {
+      "matchup": "OKC@POR",
+      "team_abbr": "OKC",
+      "player": "Williams, Jaylin",
+      "normalized_player": "jaylin williams",
+      "status": "OUT",
+      "reason": "Injury/Illness - Low Back Spasms"
+    },
+    {
+      "matchup": "OKC@POR",
+      "team_abbr": "POR",
+      "player": "Krejci, Vit",
+      "normalized_player": "vit krejci",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Ankle Fracture"
+    },
+    {
+      "matchup": "OKC@POR",
+      "team_abbr": "POR",
+      "player": "Morant, Ja",
+      "normalized_player": "ja morant",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Hamstring Strain"
+    },
+    {
+      "matchup": "OKC@POR",
+      "team_abbr": "POR",
+      "player": "Sharpe, Shaedon",
+      "normalized_player": "shaedon sharpe",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "OKC@POR",
+      "team_abbr": "POR",
+      "player": "Tonje, John",
+      "normalized_player": "john tonje",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
     }
   ],
-  "rows": 121,
+  "rows": 132,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
