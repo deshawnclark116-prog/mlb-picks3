@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-10_07_00PM.pdf",
-  "published_at_utc": "2026-11-11T00:00:00+00:00",
-  "captured_at_utc": "2026-11-11T00:15:36.596025+00:00",
-  "source_sha256": "33c06fcb284b8b0c7f71159c5c5d3422cfdcd2b0da984368147a4e1c9c87e5d9",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-10_07_15PM.pdf",
+  "published_at_utc": "2026-11-11T00:15:00+00:00",
+  "captured_at_utc": "2026-11-11T00:21:16.551111+00:00",
+  "source_sha256": "59ab0912bc97b395fd13e3703190e3a2fd59d379a4db7ec5e79c5e7cc479a7d4",
   "reports": [
     {
       "matchup": "MIL@NYK",
@@ -147,7 +147,7 @@
       "team_abbr": "MIA",
       "player": "Antetokounmpo, Giannis",
       "normalized_player": "giannis antetokounmpo",
-      "status": "PROBABLE",
+      "status": "QUESTIONABLE",
       "reason": "Injury/Illness - Right Wrist Sprain"
     },
     {
