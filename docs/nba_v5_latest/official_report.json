@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-10_07_45PM.pdf",
-  "published_at_utc": "2026-11-11T00:45:00+00:00",
-  "captured_at_utc": "2026-11-11T00:53:27.976187+00:00",
-  "source_sha256": "79b5475e7c98fc39cb1a53701c8a119dbce7c262e697605ab91bc0a7762873bb",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-10_08_00PM.pdf",
+  "published_at_utc": "2026-11-11T01:00:00+00:00",
+  "captured_at_utc": "2026-11-11T01:01:37.753169+00:00",
+  "source_sha256": "40214aaa46b8e604ec84bc32a1f71f9b94aae195f1c6f740f48c9ab482ebf3ce",
   "reports": [
     {
       "matchup": "MIL@NYK",
@@ -147,7 +147,7 @@
       "team_abbr": "MIA",
       "player": "Antetokounmpo, Giannis",
       "normalized_player": "giannis antetokounmpo",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Wrist Sprain"
     },
     {
@@ -163,7 +163,7 @@
       "team_abbr": "UTA",
       "player": "Bufkin, Kobe",
       "normalized_player": "kobe bufkin",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "G League - Two-Way"
     },
     {
@@ -179,7 +179,7 @@
       "team_abbr": "UTA",
       "player": "Ingram, Harrison",
       "normalized_player": "harrison ingram",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "G League - Two-Way"
     },
     {
