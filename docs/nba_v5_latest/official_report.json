@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-11_04_45PM.pdf",
-  "published_at_utc": "2026-11-11T21:45:00+00:00",
-  "captured_at_utc": "2026-11-11T21:59:31.417385+00:00",
-  "source_sha256": "57058c98c0ba7e4f8e6f7b649e593457cc951c033eb779140bc2f31b46f796bb",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-11_05_00PM.pdf",
+  "published_at_utc": "2026-11-11T22:00:00+00:00",
+  "captured_at_utc": "2026-11-11T22:15:37.680209+00:00",
+  "source_sha256": "3bff1538baeecd82812eaa09eec8e44aaba49983b744a0d8503c914af628e7a0",
   "reports": [
     {
       "matchup": "BOS@TOR",
@@ -251,7 +251,7 @@
       "team_abbr": "BKN",
       "player": "Traore, Nolan",
       "normalized_player": "nolan traore",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": ""
     },
     {
@@ -315,7 +315,7 @@
       "team_abbr": "MEM",
       "player": "Lopez, Karim",
       "normalized_player": "karim lopez",
-      "status": "OUT",
+      "status": "AVAILABLE",
       "reason": "G League - On Assignment"
     },
     {
@@ -323,7 +323,7 @@
       "team_abbr": "MEM",
       "player": "Mashack, Jahmai",
       "normalized_player": "jahmai mashack",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "G League - Two-Way"
     },
     {
@@ -733,9 +733,145 @@
       "normalized_player": "chris youngblood",
       "status": "OUT",
       "reason": "Injury/Illness - Right Bone Bruise"
+    },
+    {
+      "matchup": "DET@WAS",
+      "team_abbr": "DET",
+      "player": "Duren, Jalen",
+      "normalized_player": "jalen duren",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Hamstring Strain"
+    },
+    {
+      "matchup": "DET@WAS",
+      "team_abbr": "DET",
+      "player": "Harkless, Elijah",
+      "normalized_player": "elijah harkless",
+      "status": "QUESTIONABLE",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "DET@WAS",
+      "team_abbr": "DET",
+      "player": "Joe, Isaiah",
+      "normalized_player": "isaiah joe",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Hip Contusion"
+    },
+    {
+      "matchup": "DET@WAS",
+      "team_abbr": "DET",
+      "player": "Jones, Isaac",
+      "normalized_player": "isaac jones",
+      "status": "QUESTIONABLE",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "DET@WAS",
+      "team_abbr": "DET",
+      "player": "Lanier, Chaz",
+      "normalized_player": "chaz lanier",
+      "status": "OUT",
+      "reason": "G League - On Assignment"
+    },
+    {
+      "matchup": "DET@WAS",
+      "team_abbr": "DET",
+      "player": "Okorie, Ebuka",
+      "normalized_player": "ebuka okorie",
+      "status": "OUT",
+      "reason": "G League - On Assignment"
+    },
+    {
+      "matchup": "DET@WAS",
+      "team_abbr": "DET",
+      "player": "Onyenso, Ugonna",
+      "normalized_player": "ugonna onyenso",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "TOR@PHI",
+      "team_abbr": "PHI",
+      "player": "Barlow, Dominick",
+      "normalized_player": "dominick barlow",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "TOR@PHI",
+      "team_abbr": "PHI",
+      "player": "Bona, Adem",
+      "normalized_player": "adem bona",
+      "status": "OUT",
+      "reason": "Injury/Illness - Cervical Spine Sprain"
+    },
+    {
+      "matchup": "TOR@PHI",
+      "team_abbr": "PHI",
+      "player": "Embiid, Joel",
+      "normalized_player": "joel embiid",
+      "status": "QUESTIONABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "TOR@PHI",
+      "team_abbr": "PHI",
+      "player": "Hukporti, Ariel",
+      "normalized_player": "ariel hukporti",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "TOR@PHI",
+      "team_abbr": "PHI",
+      "player": "James, LeBron",
+      "normalized_player": "lebron james",
+      "status": "QUESTIONABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "DAL@MIN",
+      "team_abbr": "DAL",
+      "player": "Biberovic, Tarik",
+      "normalized_player": "tarik biberovic",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Heel Bursitis"
+    },
+    {
+      "matchup": "DAL@MIN",
+      "team_abbr": "DAL",
+      "player": "de Larrea, Sergio",
+      "normalized_player": "sergio de larrea",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Knee Sprain"
+    },
+    {
+      "matchup": "DAL@MIN",
+      "team_abbr": "DAL",
+      "player": "Johnson Jr., Morez",
+      "normalized_player": "morez johnson",
+      "status": "PROBABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "DAL@MIN",
+      "team_abbr": "DAL",
+      "player": "Lively II, Dereck",
+      "normalized_player": "dereck lively",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Foot Surgery"
+    },
+    {
+      "matchup": "DAL@MIN",
+      "team_abbr": "DAL",
+      "player": "Martin, Caleb",
+      "normalized_player": "caleb martin",
+      "status": "AVAILABLE",
+      "reason": "Injury/Illness - Right Thumb Splint"
     }
   ],
-  "rows": 91,
+  "rows": 108,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
