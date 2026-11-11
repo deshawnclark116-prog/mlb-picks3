@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-11_01_45PM.pdf",
-  "published_at_utc": "2026-11-11T18:45:00+00:00",
-  "captured_at_utc": "2026-11-11T18:49:13.353275+00:00",
-  "source_sha256": "7e7a608033a5c2f7563653008505cb6b5893b9172336f774fe34946ac0217bd8",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-11_04_45PM.pdf",
+  "published_at_utc": "2026-11-11T21:45:00+00:00",
+  "captured_at_utc": "2026-11-11T21:59:31.417385+00:00",
+  "source_sha256": "57058c98c0ba7e4f8e6f7b649e593457cc951c033eb779140bc2f31b46f796bb",
   "reports": [
     {
       "matchup": "BOS@TOR",
@@ -363,7 +363,7 @@
       "team_abbr": "LAL",
       "player": "Grimes, Quentin",
       "normalized_player": "quentin grimes",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Right Finger Sprain"
     },
     {
@@ -373,6 +373,22 @@
       "normalized_player": "walker kessler",
       "status": "AVAILABLE",
       "reason": "Injury/Illness - Left Finger Splint"
+    },
+    {
+      "matchup": "LAL@MIL",
+      "team_abbr": "MIL",
+      "player": "Herro, Tyler",
+      "normalized_player": "tyler herro",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Right Knee Contusion"
+    },
+    {
+      "matchup": "LAL@MIL",
+      "team_abbr": "MIL",
+      "player": "Turner, Myles",
+      "normalized_player": "myles turner",
+      "status": "OUT",
+      "reason": "Rest"
     },
     {
       "matchup": "SAS@CHI",
@@ -455,6 +471,102 @@
       "reason": ""
     },
     {
+      "matchup": "ORL@UTA",
+      "team_abbr": "ORL",
+      "player": "Banchero, Paolo",
+      "normalized_player": "paolo banchero",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "ORL@UTA",
+      "team_abbr": "ORL",
+      "player": "Cain, Jamal",
+      "normalized_player": "jamal cain",
+      "status": "QUESTIONABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "ORL@UTA",
+      "team_abbr": "ORL",
+      "player": "da Silva, Tristan",
+      "normalized_player": "tristan da silva",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Left Calf Strain"
+    },
+    {
+      "matchup": "ORL@UTA",
+      "team_abbr": "ORL",
+      "player": "Isaac, Jonathan",
+      "normalized_player": "jonathan isaac",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "ORL@UTA",
+      "team_abbr": "ORL",
+      "player": "Nelson, Izaiyah",
+      "normalized_player": "izaiyah nelson",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "ORL@UTA",
+      "team_abbr": "ORL",
+      "player": "Penda, Noah",
+      "normalized_player": "noah penda",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "ORL@UTA",
+      "team_abbr": "ORL",
+      "player": "Suggs, Jalen",
+      "normalized_player": "jalen suggs",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "ORL@UTA",
+      "team_abbr": "UTA",
+      "player": "Alexander, Trey",
+      "normalized_player": "trey alexander",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "ORL@UTA",
+      "team_abbr": "UTA",
+      "player": "George, Keyonte",
+      "normalized_player": "keyonte george",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Right Ankle Sprain"
+    },
+    {
+      "matchup": "ORL@UTA",
+      "team_abbr": "UTA",
+      "player": "Jackson Jr., Jaren",
+      "normalized_player": "jaren jackson",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right MCL Tear"
+    },
+    {
+      "matchup": "ORL@UTA",
+      "team_abbr": "UTA",
+      "player": "Markkanen, Lauri",
+      "normalized_player": "lauri markkanen",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Hand Fracture"
+    },
+    {
+      "matchup": "ORL@UTA",
+      "team_abbr": "UTA",
+      "player": "Nurkic, Jusuf",
+      "normalized_player": "jusuf nurkic",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
       "matchup": "GSW@HOU",
       "team_abbr": "GSW",
       "player": "Butler III, Jimmy",
@@ -491,7 +603,7 @@
       "team_abbr": "GSW",
       "player": "Richard, Will",
       "normalized_player": "will richard",
-      "status": "QUESTIONABLE",
+      "status": "PROBABLE",
       "reason": "Injury/Illness - Left Thumb UCL Tear"
     },
     {
@@ -533,9 +645,97 @@
       "normalized_player": "julian phillips",
       "status": "OUT",
       "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "OKC@POR",
+      "team_abbr": "OKC",
+      "player": "Holmgren, Chet",
+      "normalized_player": "chet holmgren",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "OKC@POR",
+      "team_abbr": "OKC",
+      "player": "Mitchell, Ajay",
+      "normalized_player": "ajay mitchell",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Ankle Sprain"
+    },
+    {
+      "matchup": "OKC@POR",
+      "team_abbr": "OKC",
+      "player": "Sorber, Thomas",
+      "normalized_player": "thomas sorber",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Knee Surgery"
+    },
+    {
+      "matchup": "OKC@POR",
+      "team_abbr": "OKC",
+      "player": "Topic, Nikola",
+      "normalized_player": "nikola topic",
+      "status": "OUT",
+      "reason": "G League - On Assignment"
+    },
+    {
+      "matchup": "OKC@POR",
+      "team_abbr": "OKC",
+      "player": "Wallace, Cason",
+      "normalized_player": "cason wallace",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Shoulder Surgery"
+    },
+    {
+      "matchup": "OKC@POR",
+      "team_abbr": "OKC",
+      "player": "Williams, Jalen",
+      "normalized_player": "jalen williams",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Ankle Surgery"
+    },
+    {
+      "matchup": "OKC@POR",
+      "team_abbr": "OKC",
+      "player": "Williams, Jaylin",
+      "normalized_player": "jaylin williams",
+      "status": "OUT",
+      "reason": "Injury/Illness - Low Back Spasms"
+    },
+    {
+      "matchup": "OKC@POR",
+      "team_abbr": "POR",
+      "player": "Krejci, Vit",
+      "normalized_player": "vit krejci",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Ankle Fracture"
+    },
+    {
+      "matchup": "OKC@POR",
+      "team_abbr": "POR",
+      "player": "Morant, Ja",
+      "normalized_player": "ja morant",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Hamstring Strain"
+    },
+    {
+      "matchup": "OKC@POR",
+      "team_abbr": "POR",
+      "player": "Sharpe, Shaedon",
+      "normalized_player": "shaedon sharpe",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "OKC@POR",
+      "team_abbr": "POR",
+      "player": "Youngblood, Chris",
+      "normalized_player": "chris youngblood",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Bone Bruise"
     }
   ],
-  "rows": 66,
+  "rows": 91,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
