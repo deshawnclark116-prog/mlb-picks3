@@ -1651,12 +1651,56 @@
       "played_players": 24,
       "played_players_missing_from_v5": 0,
       "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "Milwaukee Bucks",
+      "forecast_at_utc": "2026-11-11T00:13:52.666254+00:00",
+      "forecast_player_id_count": 29,
+      "game_id": "401909960",
+      "home": "New York Knicks",
+      "missing_minutes_by_side": {
+        "away": 3.0,
+        "home": 4.0
+      },
+      "missing_players": [
+        {
+          "actual_minutes": 3.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
+          "player": "Bogoljub Markovic",
+          "player_id": "5214989",
+          "side": "away",
+          "team_id": "15"
+        },
+        {
+          "actual_minutes": 4.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
+          "player": "James Wiseman",
+          "player_id": "4432808",
+          "side": "home",
+          "team_id": "18"
+        }
+      ],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 7.0,
+      "played_players": 27,
+      "played_players_missing_from_v5": 2,
+      "report_is_postgame_diagnostic_only": true
     }
   ],
-  "games_graded": 33,
-  "games_with_missing_played_players": 25,
+  "games_graded": 34,
+  "games_with_missing_played_players": 26,
   "purpose": "Postgame validation only; cannot supply a future pretip roster",
   "schema": "NBA_V5_POSTGAME_ROSTER_OMISSION_AUDIT_V1",
-  "total_missing_played_minutes": 1366.0,
-  "total_missing_played_players": 82
+  "total_missing_played_minutes": 1373.0,
+  "total_missing_played_players": 84
 }
