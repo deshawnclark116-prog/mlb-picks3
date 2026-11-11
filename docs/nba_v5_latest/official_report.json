@@ -1,11 +1,35 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-11_12_45PM.pdf",
-  "published_at_utc": "2026-11-11T17:45:00+00:00",
-  "captured_at_utc": "2026-11-11T17:55:46.979500+00:00",
-  "source_sha256": "66810050a397feae1667464fbb170d0ddd15026a17a581ec90d064fab7ee4a01",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-11_01_45PM.pdf",
+  "published_at_utc": "2026-11-11T18:45:00+00:00",
+  "captured_at_utc": "2026-11-11T18:49:13.353275+00:00",
+  "source_sha256": "7e7a608033a5c2f7563653008505cb6b5893b9172336f774fe34946ac0217bd8",
   "reports": [
+    {
+      "matchup": "BOS@TOR",
+      "team_abbr": "BOS",
+      "player": "Carter, Devin",
+      "normalized_player": "devin carter",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "BOS@TOR",
+      "team_abbr": "BOS",
+      "player": "George, Paul",
+      "normalized_player": "paul george",
+      "status": "OUT",
+      "reason": "Injury/Illness - Illness"
+    },
+    {
+      "matchup": "BOS@TOR",
+      "team_abbr": "BOS",
+      "player": "Williams, Amari",
+      "normalized_player": "amari williams",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
     {
       "matchup": "BOS@TOR",
       "team_abbr": "TOR",
@@ -93,6 +117,22 @@
       "normalized_player": ", ernest udeh",
       "status": "OUT",
       "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "CLE@NYK",
+      "team_abbr": "NYK",
+      "player": "Hart, Josh",
+      "normalized_player": "josh hart",
+      "status": "PROBABLE",
+      "reason": "Injury/Illness - Illness"
+    },
+    {
+      "matchup": "CLE@NYK",
+      "team_abbr": "NYK",
+      "player": "Towns, Karl-Anthony",
+      "normalized_player": "karl anthony towns",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Left Sore Calf"
     },
     {
       "matchup": "WAS@IND",
@@ -251,7 +291,7 @@
       "team_abbr": "NOP",
       "player": "Pierre Jr., Jaron",
       "normalized_player": "jaron pierre",
-      "status": "DOUBTFUL",
+      "status": "PROBABLE",
       "reason": "G League - Two-Way"
     },
     {
@@ -372,14 +412,14 @@
       "player": "Vassell, Devin",
       "normalized_player": "devin vassell",
       "status": "QUESTIONABLE",
-      "reason": "Injury/Illness - Left Adductor"
+      "reason": ""
     },
     {
       "matchup": "SAS@CHI",
       "team_abbr": "CHI",
       "player": "Awaka, Tobe",
       "normalized_player": "tobe awaka",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Low Back Tightness"
     },
     {
@@ -405,6 +445,14 @@
       "normalized_player": "jaylin sellers",
       "status": "OUT",
       "reason": "G League - On Assignment"
+    },
+    {
+      "matchup": "SAS@CHI",
+      "team_abbr": "CHI",
+      "player": "Wilson, Caleb",
+      "normalized_player": "caleb wilson",
+      "status": "QUESTIONABLE",
+      "reason": ""
     },
     {
       "matchup": "GSW@HOU",
@@ -487,7 +535,7 @@
       "reason": "G League - Two-Way"
     }
   ],
-  "rows": 60,
+  "rows": 66,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
