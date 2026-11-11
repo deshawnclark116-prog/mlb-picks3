@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-11_12_00PM.pdf",
-  "published_at_utc": "2026-11-11T17:00:00+00:00",
-  "captured_at_utc": "2026-11-11T17:03:44.351346+00:00",
-  "source_sha256": "3e865f1403a0fdf4a6dcdcd30edae37d9602ee46a663a1992050d2aa921ec600",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-11_12_45PM.pdf",
+  "published_at_utc": "2026-11-11T17:45:00+00:00",
+  "captured_at_utc": "2026-11-11T17:55:46.979500+00:00",
+  "source_sha256": "66810050a397feae1667464fbb170d0ddd15026a17a581ec90d064fab7ee4a01",
   "reports": [
     {
       "matchup": "BOS@TOR",
@@ -27,7 +27,7 @@
       "team_abbr": "TOR",
       "player": "Jackson-Davis, Trayce",
       "normalized_player": "trayce jackson davis",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Illness"
     },
     {
@@ -179,7 +179,7 @@
       "team_abbr": "BKN",
       "player": "Demin, Egor",
       "normalized_player": "egor demin",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Bone Bruise"
     },
     {
