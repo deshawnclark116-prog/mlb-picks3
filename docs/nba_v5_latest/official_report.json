@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-11_05_00PM.pdf",
-  "published_at_utc": "2026-11-11T22:00:00+00:00",
-  "captured_at_utc": "2026-11-11T22:15:37.680209+00:00",
-  "source_sha256": "3bff1538baeecd82812eaa09eec8e44aaba49983b744a0d8503c914af628e7a0",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-11_05_15PM.pdf",
+  "published_at_utc": "2026-11-11T22:15:00+00:00",
+  "captured_at_utc": "2026-11-11T22:20:47.912678+00:00",
+  "source_sha256": "c1bce79db38b73507cd4afa4d90e50dedcf17c1f92aa989161d0840b52e7b691",
   "reports": [
     {
       "matchup": "BOS@TOR",
@@ -65,6 +65,14 @@
     {
       "matchup": "BOS@TOR",
       "team_abbr": "TOR",
+      "player": "McCullar Jr., Kevin",
+      "normalized_player": "kevin mccullar",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "BOS@TOR",
+      "team_abbr": "TOR",
       "player": "Murray-Boyles, Collin",
       "normalized_player": "collin murray boyles",
       "status": "QUESTIONABLE",
@@ -77,6 +85,14 @@
       "normalized_player": "immanuel quickley",
       "status": "QUESTIONABLE",
       "reason": ""
+    },
+    {
+      "matchup": "BOS@TOR",
+      "team_abbr": "TOR",
+      "player": "Smith, Malachi",
+      "normalized_player": "malachi smith",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
     },
     {
       "matchup": "CLE@NYK",
@@ -869,9 +885,33 @@
       "normalized_player": "caleb martin",
       "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Thumb Splint"
+    },
+    {
+      "matchup": "DAL@MIN",
+      "team_abbr": "MIN",
+      "player": "Beringer, Joan",
+      "normalized_player": "joan beringer",
+      "status": "AVAILABLE",
+      "reason": "Injury/Illness - Face Mask"
+    },
+    {
+      "matchup": "DAL@MIN",
+      "team_abbr": "MIN",
+      "player": "DiVincenzo, Donte",
+      "normalized_player": "donte divincenzo",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "DAL@MIN",
+      "team_abbr": "MIN",
+      "player": "Edwards, Anthony",
+      "normalized_player": "anthony edwards",
+      "status": "OUT",
+      "reason": ""
     }
   ],
-  "rows": 108,
+  "rows": 113,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
