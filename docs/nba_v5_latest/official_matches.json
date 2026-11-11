@@ -1,45 +1,4 @@
 {
-  "401909960": [
-    {
-      "matchup": "MIL@NYK",
-      "team_abbr": "MIL",
-      "player": "Ware, Kel'el",
-      "normalized_player": "kel el ware",
-      "status": "AVAILABLE",
-      "reason": "Injury/Illness - Left Ankle Sprain",
-      "player_id": "5105623",
-      "team_id": "15",
-      "published_at_utc": "2026-11-11T00:00:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-10_07_00PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "MIL@NYK",
-      "team_abbr": "MIL",
-      "player": "Herro, Tyler",
-      "normalized_player": "tyler herro",
-      "status": "OUT",
-      "reason": "Injury/Illness - Right Knee Contusion",
-      "player_id": "4395725",
-      "team_id": "15",
-      "published_at_utc": "2026-11-11T00:00:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-10_07_00PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "MIL@NYK",
-      "team_abbr": "NYK",
-      "player": "Hart, Josh",
-      "normalized_player": "josh hart",
-      "status": "OUT",
-      "reason": "Injury/Illness - Illness",
-      "player_id": "3062679",
-      "team_id": "18",
-      "published_at_utc": "2026-11-11T00:00:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-10_07_00PM.pdf",
-      "source": "official_nba_injury_report"
-    }
-  ],
   "401909961": [
     {
       "matchup": "BOS@PHI",
