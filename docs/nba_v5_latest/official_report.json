@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-12_01_45PM.pdf",
-  "published_at_utc": "2026-11-12T18:45:00+00:00",
-  "captured_at_utc": "2026-11-12T19:01:18.114122+00:00",
-  "source_sha256": "3b302d0b0482b7346f05ecd4d7f41c12d036e56405e9c6354232d48bf1004482",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-12_02_45PM.pdf",
+  "published_at_utc": "2026-11-12T19:45:00+00:00",
+  "captured_at_utc": "2026-11-12T20:01:10.836013+00:00",
+  "source_sha256": "e313c2b8567547d313c9e53870502e790ac6417796eea31eee37a03e85f67fa3",
   "reports": [
     {
       "matchup": "DET@WAS",
@@ -259,7 +259,7 @@
       "team_abbr": "CHA",
       "player": "Diabate, Moussa",
       "normalized_player": "moussa diabate",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -299,7 +299,7 @@
       "team_abbr": "CHA",
       "player": "Williams, Grant",
       "normalized_player": "grant williams",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Hamstring Strain"
     },
     {
