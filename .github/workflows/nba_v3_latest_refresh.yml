@@ -9,9 +9,11 @@ name: NBA V3 latest run (re-simulate with current injuries)
 # A V4 failure never blocks V3. It re-simulates only when the set of OUT players changed (or the file is older than 3h), so commits stay rare.
 on:
   schedule:
-    # Avoid the busiest top-of-hour scheduler boundary; the lineup poll
-    # additionally invokes this workflow through workflow_run on its own ticks.
-    - cron: "1,11,21,31,41,51 * * * *"
+    # Deliberately check at :35 for games LISTED at :00, and :05 for :30.
+    # A listed 7:00 PM game has a +10m expected ball-up buffer: target
+    # re-simulation at 6:35 PM (35m before estimated 7:10 ball-up).
+    # GitHub cron is best-effort; event-driven poll/guardian are fallbacks.
+    - cron: "5,15,25,35,45,55 * * * *"
   workflow_run:
     # Other independently scheduled model-source workflows provide redundant
     # wake-ups when GitHub drops NBA-specific cron ticks. These are only
