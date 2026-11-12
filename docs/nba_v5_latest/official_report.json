@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-11_07_15PM.pdf",
-  "published_at_utc": "2026-11-12T00:15:00+00:00",
-  "captured_at_utc": "2026-11-12T00:20:37.199497+00:00",
-  "source_sha256": "e595d01b9b5c3278502895748536ce8b4ef9b0f9e63f40e631267700c8a541cf",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-11_07_30PM.pdf",
+  "published_at_utc": "2026-11-12T00:30:00+00:00",
+  "captured_at_utc": "2026-11-12T00:38:51.740138+00:00",
+  "source_sha256": "27a1e37bb78545e0da5e7da0366e0335a1d7741de7d6d616caffb0563969bd7b",
   "reports": [
     {
       "matchup": "BOS@TOR",
@@ -395,7 +395,7 @@
       "team_abbr": "MIL",
       "player": "Herro, Tyler",
       "normalized_player": "tyler herro",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Knee Contusion"
     },
     {
@@ -491,8 +491,8 @@
       "team_abbr": "CHI",
       "player": "Wilson, Caleb",
       "normalized_player": "caleb wilson",
-      "status": "QUESTIONABLE",
-      "reason": ""
+      "status": "AVAILABLE",
+      "reason": "-"
     },
     {
       "matchup": "ORL@UTA",
@@ -524,7 +524,7 @@
       "player": "Isaac, Jonathan",
       "normalized_player": "jonathan isaac",
       "status": "OUT",
-      "reason": "Injury/Illness - Left Knee Injury"
+      "reason": ""
     },
     {
       "matchup": "ORL@UTA",
