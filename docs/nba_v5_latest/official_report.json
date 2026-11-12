@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-11_06_45PM.pdf",
-  "published_at_utc": "2026-11-11T23:45:00+00:00",
-  "captured_at_utc": "2026-11-11T23:55:47.694050+00:00",
-  "source_sha256": "cdcc48605278a4dfaef5eb90572c06c782f572328ab32cd8034b5387746e42e3",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-11_07_15PM.pdf",
+  "published_at_utc": "2026-11-12T00:15:00+00:00",
+  "captured_at_utc": "2026-11-12T00:20:37.199497+00:00",
+  "source_sha256": "e595d01b9b5c3278502895748536ce8b4ef9b0f9e63f40e631267700c8a541cf",
   "reports": [
     {
       "matchup": "BOS@TOR",
@@ -371,7 +371,7 @@
       "team_abbr": "MEM",
       "player": "Stewart, Isaiah",
       "normalized_player": "isaiah stewart",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -459,15 +459,15 @@
       "team_abbr": "CHI",
       "player": "Collins, Zach",
       "normalized_player": "zach collins",
-      "status": "QUESTIONABLE",
-      "reason": "Injury/Illness - Respiratory Illness"
+      "status": "AVAILABLE",
+      "reason": "-"
     },
     {
       "matchup": "SAS@CHI",
       "team_abbr": "CHI",
       "player": "Powell, Norman",
       "normalized_player": "norman powell",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Low Back Spasms"
     },
     {
@@ -475,15 +475,15 @@
       "team_abbr": "CHI",
       "player": "Sellers, Jaylin",
       "normalized_player": "jaylin sellers",
-      "status": "OUT",
-      "reason": "G League - On Assignment"
+      "status": "AVAILABLE",
+      "reason": "-"
     },
     {
       "matchup": "SAS@CHI",
       "team_abbr": "CHI",
       "player": "Swain, Dailyn",
       "normalized_player": "dailyn swain",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Right Disc Irritation"
     },
     {
@@ -917,9 +917,81 @@
       "normalized_player": "anthony edwards",
       "status": "OUT",
       "reason": ""
+    },
+    {
+      "matchup": "CHA@PHX",
+      "team_abbr": "CHA",
+      "player": "Ajayi, Michael",
+      "normalized_player": "michael ajayi",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "CHA@PHX",
+      "team_abbr": "CHA",
+      "player": "Boswell, Kylan",
+      "normalized_player": "kylan boswell",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "CHA@PHX",
+      "team_abbr": "CHA",
+      "player": "Diabate, Moussa",
+      "normalized_player": "moussa diabate",
+      "status": "PROBABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "CHA@PHX",
+      "team_abbr": "CHA",
+      "player": "Knueppel, Kon",
+      "normalized_player": "kon knueppel",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Hamstring Strain"
+    },
+    {
+      "matchup": "CHA@PHX",
+      "team_abbr": "CHA",
+      "player": "Miller, Brandon",
+      "normalized_player": "brandon miller",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Hip Strain"
+    },
+    {
+      "matchup": "CHA@PHX",
+      "team_abbr": "CHA",
+      "player": "Schroder, Dennis",
+      "normalized_player": "dennis schroder",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Hamstring Strain"
+    },
+    {
+      "matchup": "CHA@PHX",
+      "team_abbr": "CHA",
+      "player": "Steinbach, Hannes",
+      "normalized_player": "hannes steinbach",
+      "status": "OUT",
+      "reason": "G League - On Assignment"
+    },
+    {
+      "matchup": "CHA@PHX",
+      "team_abbr": "CHA",
+      "player": "Williams, Grant",
+      "normalized_player": "grant williams",
+      "status": "PROBABLE",
+      "reason": "Injury/Illness - Right Hamstring Strain"
+    },
+    {
+      "matchup": "CHA@PHX",
+      "team_abbr": "PHX",
+      "player": "Williams, Mark",
+      "normalized_player": "mark williams",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Shoulder Surgery"
     }
   ],
-  "rows": 114,
+  "rows": 123,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
