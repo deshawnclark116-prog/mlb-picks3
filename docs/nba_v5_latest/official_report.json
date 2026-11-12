@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-11_07_45PM.pdf",
-  "published_at_utc": "2026-11-12T00:45:00+00:00",
-  "captured_at_utc": "2026-11-12T00:48:59.279946+00:00",
-  "source_sha256": "78c907edfb85dcc1db1a940dd0a3c1e58711e24eb64045c2b2d8d51935b01949",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-11_08_15PM.pdf",
+  "published_at_utc": "2026-11-12T01:15:00+00:00",
+  "captured_at_utc": "2026-11-12T01:19:10.293327+00:00",
+  "source_sha256": "6781007d48c979f6bed4bec8a9e934d00c7bcf6ad454dfa9e126792a6fb171ca",
   "reports": [
     {
       "matchup": "BOS@TOR",
@@ -563,7 +563,7 @@
       "team_abbr": "UTA",
       "player": "George, Keyonte",
       "normalized_player": "keyonte george",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Ankle Sprain"
     },
     {
