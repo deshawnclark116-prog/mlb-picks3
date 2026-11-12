@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-12_12_30PM.pdf",
-  "published_at_utc": "2026-11-12T17:30:00+00:00",
-  "captured_at_utc": "2026-11-12T17:31:48.142898+00:00",
-  "source_sha256": "5c7cb667771a0fa57edcd57c2ace479845ef4eb367bcb3c6c498e21c07d84683",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-12_01_45PM.pdf",
+  "published_at_utc": "2026-11-12T18:45:00+00:00",
+  "captured_at_utc": "2026-11-12T19:01:18.114122+00:00",
+  "source_sha256": "3b302d0b0482b7346f05ecd4d7f41c12d036e56405e9c6354232d48bf1004482",
   "reports": [
     {
       "matchup": "DET@WAS",
@@ -63,6 +63,78 @@
       "reason": "G League - Two-Way"
     },
     {
+      "matchup": "DET@WAS",
+      "team_abbr": "WAS",
+      "player": "Beekman, Reece",
+      "normalized_player": "reece beekman",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right AC Joint Injury"
+    },
+    {
+      "matchup": "DET@WAS",
+      "team_abbr": "WAS",
+      "player": "Champagnie, Justin",
+      "normalized_player": "justin champagnie",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Foot Surgery"
+    },
+    {
+      "matchup": "DET@WAS",
+      "team_abbr": "WAS",
+      "player": "Vukcevic, Tristan",
+      "normalized_player": "tristan vukcevic",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Hip Impingement"
+    },
+    {
+      "matchup": "DET@WAS",
+      "team_abbr": "WAS",
+      "player": "Watkins, Jamir",
+      "normalized_player": "jamir watkins",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "TOR@PHI",
+      "team_abbr": "TOR",
+      "player": "Barnes, Scottie",
+      "normalized_player": "scottie barnes",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Groin Strain"
+    },
+    {
+      "matchup": "TOR@PHI",
+      "team_abbr": "TOR",
+      "player": "Bittle, Nate",
+      "normalized_player": "nate bittle",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "TOR@PHI",
+      "team_abbr": "TOR",
+      "player": "Jackson-Davis, Trayce",
+      "normalized_player": "trayce jackson davis",
+      "status": "OUT",
+      "reason": "Injury/Illness - Illness"
+    },
+    {
+      "matchup": "TOR@PHI",
+      "team_abbr": "TOR",
+      "player": "Leonard, Kawhi",
+      "normalized_player": "kawhi leonard",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "TOR@PHI",
+      "team_abbr": "TOR",
+      "player": "McCullar Jr., Kevin",
+      "normalized_player": "kevin mccullar",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
       "matchup": "TOR@PHI",
       "team_abbr": "PHI",
       "player": "Barlow, Dominick",
@@ -99,7 +171,7 @@
       "team_abbr": "PHI",
       "player": "James, LeBron",
       "normalized_player": "lebron james",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": ""
     },
     {
@@ -239,7 +311,7 @@
       "reason": "Injury/Illness - Left Shoulder Surgery"
     }
   ],
-  "rows": 29,
+  "rows": 38,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
