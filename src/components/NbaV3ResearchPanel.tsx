@@ -123,6 +123,16 @@ export function v3ProjectionPicks(g:Game):ProjectionItem[]{
  * no category quota, rerank or arbitrary preference for variety. */
 export const topProbabilityPicks=(picks:ProjectionItem[],count=4):ProjectionItem[]=>
  picks.slice(0,count);
+/** V5 featured selections are a confirmed-starter product, not a conditional
+ * projection discovery list. Never use P(start), expected minutes, a predicted
+ * lineup, or historical starts to bypass missing official game-day evidence.
+ * The entire model board remains available for research/grade integrity.
+ */
+export function v5VerifiedStarterFeaturedPicks(g:Game,ranked:ProjectionItem[]):ProjectionItem[]{
+ return g.forecast_kind==='V5_LATEST'
+  ?ranked.filter(it=>it.row.starter_evidence==='CONFIRMED_STARTER')
+  :ranked;
+}
 function V3Card({item}:{item:ProjectionItem}){
  const row=item.row;
  return <article data-testid="nba-v3-system-pick" className="rounded-xl border border-[#374239] bg-[#101912] p-3 space-y-2">
@@ -212,8 +222,11 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
   (!search||(g.home+' '+g.away+' '+g.rows.map(r=>r.player).join(' ')).toLowerCase()
     .includes(search.toLowerCase()))
  )||[],[doc,day,today,nextSlate,search]);
- const number=all.reduce((n,g)=>n+v3ProjectionPicks(g).filter(p=>
-  activeMarket==='ALL'||p.row.market===activeMarket).length,0);
+ const number=all.reduce((n,g)=>{
+  const ranked=v3ProjectionPicks(g);
+  const visible=mode==='PICKS'?v5VerifiedStarterFeaturedPicks(g,ranked):ranked;
+  return n+visible.filter(p=>activeMarket==='ALL'||p.row.market===activeMarket).length;
+ },0);
  return <section className="space-y-3" data-testid="nba-v3-primary-board">
   <div className="flex items-center justify-between gap-2">
    <strong className="text-[13px] text-[#00FF41]">{mode==='PICKS'?'System picks':'Full model board'}</strong>
@@ -262,8 +275,9 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
     {!all.length&&<p className="text-xs text-gray-400">No first-seen V3 forecasts on the selected date.
       Select another date or All upcoming. No old-model picks are substituted.</p>}
     {all.map(g=>{
-      const ranked=v3ProjectionPicks(g);  // canonical, UNFILTERED model probability ranking
-      const picks=ranked.filter(p=>
+      const ranked=v3ProjectionPicks(g);  // retain every valid statistical projection
+      const starterRanked=v5VerifiedStarterFeaturedPicks(g,ranked);
+      const picks=(mode==='PICKS'?starterRanked:ranked).filter(p=>
         activeMarket==='ALL'||p.row.market===activeMarket);
       const every=g.rows.filter(r=>activeMarket==='ALL'||r.market===activeMarket);
       const shown:ProjectionItem[]=mode==='PICKS'?picks:
@@ -301,16 +315,20 @@ export default function NbaV3ResearchPanel({search='',mode='PICKS'}:{
           </div>
           <ChevronDown className={'shrink-0 text-gray-400 '+(open?'rotate-180':'')} size={18}/>
         </button>
-        {g.forecast_kind==='V5_LATEST'&&ranked.length>0&&
+        {g.forecast_kind==='V5_LATEST'&&starterRanked.length>0&&
          <button type="button"
            aria-label={`Open NBA V5 top 10 game card for ${g.away} at ${g.home}`}
            title="NBA V5 top 10 · full game share card"
            data-testid="nba-v5-open-top10"
-           onClick={()=>setShare({game:g,ranked})}
+           onClick={()=>setShare({game:g,ranked:starterRanked})}
            className="my-3 mr-3 flex min-h-11 min-w-16 shrink-0 flex-col items-center justify-center gap-1 rounded-xl border border-[#79FF48]/40 bg-[#79FF48]/10 px-2 text-[#79FF48]">
           <Image size={18}/><span className="text-[10px] font-black">TOP 10</span>
          </button>}
         </div>
+        {mode==='PICKS'&&g.forecast_kind==='V5_LATEST'&&starterRanked.length===0&&
+          <p data-testid="nba-v5-starters-pending" className="px-3 pb-3 text-xs text-amber-200">
+           Featured picks withheld: no confirmed game-day starters. Full model projections remain in Model board.
+          </p>}
         {shown.length>0&&<div data-testid="nba-v3-tiles" className="grid grid-cols-2 gap-2 px-3 pb-3">
           {topProbabilityPicks(picks).map(({row:r,whole,prob})=><div key={r.player_id+r.market} data-testid="nba-v3-tile" className="min-w-0 rounded-xl border border-white/10 bg-[#12181b] p-3">
             <p className="truncate text-[11px] text-gray-400">{NAME[r.market]}</p>
