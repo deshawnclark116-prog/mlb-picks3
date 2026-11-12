@@ -23,7 +23,15 @@ from nba.nba_v5_official_injuries import abbr
 
 REGULAR_STATUSES={"OUT","DOUBTFUL","QUESTIONABLE","PROBABLE","DAY_TO_DAY","AVAILABLE"}
 MAX_OFFICIAL_SOURCE_AGE_H=36
-MIN_PRETIP_REFRESH_SECONDS=5*60  # late confirmed starting-five source can post inside T-20
+# NBA listings commonly precede the actual ball-up by roughly ten minutes.
+# This is a PLANNING buffer, NOT verified evidence that play has not begun.
+# For listed 19:00: expected 19:10, target launch 18:35 (35m before expected).
+# Forecasts retain the listed time as the hard no-post-tip safety boundary;
+# no extra ten minutes of live-data access is granted by this assumption.
+PLANNED_TIPOFF_BUFFER_MINUTES = 10
+TARGET_RUN_BEFORE_EXPECTED_TIP_MINUTES = 35
+TARGET_RUN_WINDOW_MINUTES = 5
+MIN_PRETIP_REFRESH_SECONDS = 15 * 60  # same original cutoff as V3 publisher
 
 
 def _time(value):
@@ -95,15 +103,31 @@ def decide(fixtures,espn,official,state,now,window_hours=9,force=False):
     previous=_time(state.get("generated_at_utc"))
     age=(now-previous).total_seconds() if previous else float("inf")
     changed=state.get("hash")!=key
-    # A lineup can be formally announced at T-30 without any injury-status
-    # change. The old 3-hour gate therefore missed it entirely. Poll the
-    # genuinely near-tipoff window on EVERY scheduled tick, including while
-    # source statuses are unchanged. Never force a run after scheduled tip.
-    near_tip_lineup_recheck=any(
-        MIN_PRETIP_REFRESH_SECONDS <= (_time(g["tipoff_utc"])-now).total_seconds() <= 90*60
-        for g in soon)
+    # Guarantee an intentionally late pregame recheck EVEN IF the injury
+    # fingerprint has not changed. 19:00 listed -> 19:10 planning estimate
+    # -> 18:35 target. GitHub cron can delay/skip, so allow five minutes
+    # and keep other event/lineup triggers as redundancy.
+    # Do NOT extend the allowed forecast window past the officially listed
+    # tip: the ten-minute estimate is never proof that the game is unstarted.
+    anchor_targets=[]
+    near_tip_lineup_recheck=False
+    for g in soon:
+        listed=_time(g["tipoff_utc"])
+        expected=listed+dt.timedelta(minutes=PLANNED_TIPOFF_BUFFER_MINUTES)
+        anchor=expected-dt.timedelta(minutes=TARGET_RUN_BEFORE_EXPECTED_TIP_MINUTES)
+        lead=(listed-now).total_seconds()
+        if anchor <= now <= anchor+dt.timedelta(minutes=TARGET_RUN_WINDOW_MINUTES) and lead >= MIN_PRETIP_REFRESH_SECONDS:
+            near_tip_lineup_recheck=True
+            anchor_targets.append({"game_id":str(g["game_id"]),
+                                   "listed_tipoff_utc":listed.isoformat(),
+                                   "planning_tipoff_utc":expected.isoformat(),
+                                   "target_run_utc":anchor.isoformat()})
     run=bool(soon) and (bool(force) or changed or age>3*3600 or near_tip_lineup_recheck)
     return {"run":run,"hash":key,"games":len(soon),
+            "planned_tipoff_buffer_minutes":PLANNED_TIPOFF_BUFFER_MINUTES,
+            "target_minutes_before_planned_tipoff":TARGET_RUN_BEFORE_EXPECTED_TIP_MINUTES,
+            "scheduled_timing_anchor_hits":anchor_targets,
+            "planning_estimate_not_certified_actual_tipoff":True,
             "official_signature":official_signature,
             "official_source_observed":official_used,
             "espn_relevant_status_count":len(statuses),

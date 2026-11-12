@@ -87,13 +87,49 @@ class RefreshDecisionTests(unittest.TestCase):
         self.assertFalse(r["run"])
         self.assertEqual(r["games"],0)
 
-    def test_lineup_confirmation_ten_minutes_before_tip_can_trigger(self):
+    def test_never_run_inside_original_fifteen_minute_cutoff(self):
+        # A hypothesized +10m ball-up must never give permission to use
+        # stats after the officially listed tipoff.
         close={**fixture()["games"][0],
                "tipoff_utc":(NOW+dt.timedelta(minutes=10)).isoformat()}
         res=decide({"games":[close]},espn(),official(),{},NOW,force=True)
-        self.assertTrue(res["run"])
-        self.assertEqual(res["games"],1)
-        self.assertIn("manual_force",res["reasons"])
+        self.assertFalse(res["run"])
+        self.assertEqual(res["games"],0)
+
+    def test_listed_7pm_targets_635pm_not_625pm(self):
+        # 2026-11-11 EST: 7 PM listed = midnight UTC, expected 7:10;
+        # the planned pretip model refresh starts at 6:35 PM EST.
+        listed=dt.datetime(2026,11,12,0,0,tzinfo=dt.timezone.utc)
+        g={**fixture()["games"][0], "tipoff_utc":listed.isoformat()}
+        f={"games":[g]}
+        early=listed-dt.timedelta(minutes=35)  # 6:25 PM EST
+        first=decide(f,espn(),official(),{},early)
+        state={"hash":first["hash"],"official_signature":first["official_signature"],
+               "generated_at_utc":early.isoformat()}
+        self.assertFalse(decide(f,espn(),official(),state,early)["run"])
+        before=decide(f,espn(),official(),state,listed-dt.timedelta(minutes=26))
+        self.assertFalse(before["run"])
+        anchor=decide(f,espn(),official(),state,listed-dt.timedelta(minutes=25))
+        self.assertTrue(anchor["run"])
+        self.assertTrue(anchor["near_tip_lineup_recheck"])
+        self.assertEqual(anchor["planned_tipoff_buffer_minutes"],10)
+        self.assertEqual(anchor["target_minutes_before_planned_tipoff"],35)
+        self.assertEqual(anchor["scheduled_timing_anchor_hits"][0]["planning_tipoff_utc"],
+                         "2026-11-12T00:10:00+00:00")
+        self.assertEqual(anchor["scheduled_timing_anchor_hits"][0]["target_run_utc"],
+                         "2026-11-11T23:35:00+00:00")
+        late=decide(f,espn(),official(),state,listed-dt.timedelta(minutes=19))
+        self.assertFalse(late["near_tip_lineup_recheck"])
+
+    def test_listed_730pm_uses_705pm_target(self):
+        listed=dt.datetime(2026,11,12,0,30,tzinfo=dt.timezone.utc)
+        g={**fixture()["games"][0], "tipoff_utc":listed.isoformat()}
+        at=listed-dt.timedelta(minutes=25)
+        out=decide({"games":[g]},espn(),official(),{},at)
+        self.assertEqual(out["scheduled_timing_anchor_hits"][0]["target_run_utc"],
+                         "2026-11-12T00:05:00+00:00")
+        self.assertEqual(out["scheduled_timing_anchor_hits"][0]["planning_tipoff_utc"],
+                         "2026-11-12T00:40:00+00:00")
 
     def test_age_force_and_no_future_handling(self):
         first=self.evaluate()

@@ -1,0 +1,28 @@
+name: NBA V5 scheduled pretip anchor regression tests
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/nba_v3_latest_refresh.yml"
+      - ".github/workflows/nba_v5_pretip_anchor_tests.yml"
+      - "nba/nba_v5_refresh_decision.py"
+      - "tests/test_nba_v5_refresh_decision.py"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/nba_v3_latest_refresh.yml"
+      - "nba/nba_v5_refresh_decision.py"
+      - "tests/test_nba_v5_refresh_decision.py"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  timing-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Regression tests for listed-minus-25 refresh and no post-tip leakage
+        run: python -m unittest discover -s tests -p "test_nba_v5_refresh_decision.py" -v
