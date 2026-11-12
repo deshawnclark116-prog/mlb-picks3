@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-12_11_00AM.pdf",
-  "published_at_utc": "2026-11-12T16:00:00+00:00",
-  "captured_at_utc": "2026-11-12T16:11:29.985355+00:00",
-  "source_sha256": "326f779c6b6f5683c7fdda96e17048cf469908c5111198308af41c5a4d6c95f8",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-12_12_30PM.pdf",
+  "published_at_utc": "2026-11-12T17:30:00+00:00",
+  "captured_at_utc": "2026-11-12T17:31:48.142898+00:00",
+  "source_sha256": "5c7cb667771a0fa57edcd57c2ace479845ef4eb367bcb3c6c498e21c07d84683",
   "reports": [
     {
       "matchup": "DET@WAS",
@@ -19,7 +19,7 @@
       "team_abbr": "DET",
       "player": "Harkless, Elijah",
       "normalized_player": "elijah harkless",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "G League - Two-Way"
     },
     {
@@ -35,7 +35,7 @@
       "team_abbr": "DET",
       "player": "Jones, Isaac",
       "normalized_player": "isaac jones",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "G League - Two-Way"
     },
     {
