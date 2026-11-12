@@ -1,20 +1,11 @@
 {
   "schema": "NBA_V5_FORECAST_READINESS_V1",
-  "checked_at_utc": "2026-11-12T02:09:54.266809+00:00",
-  "document_generated_at_utc": "2026-11-12T02:09:28.516262+00:00",
+  "checked_at_utc": "2026-11-12T02:16:16.172017+00:00",
+  "document_generated_at_utc": "2026-11-12T02:16:07.053212+00:00",
   "games": [
     {
-      "game_id": "401909974",
-      "forecast_at_utc": "2026-11-12T02:09:28.516262+00:00",
-      "tipoff_utc": "2026-11-12T02:30:00+00:00",
-      "player_stat_rows": 182,
-      "players_with_v5_rows": 26,
-      "ready": true,
-      "errors": []
-    },
-    {
       "game_id": "401909975",
-      "forecast_at_utc": "2026-11-12T02:09:28.516262+00:00",
+      "forecast_at_utc": "2026-11-12T02:16:07.053212+00:00",
       "tipoff_utc": "2026-11-12T03:00:00+00:00",
       "player_stat_rows": 168,
       "players_with_v5_rows": 24,
@@ -26,7 +17,7 @@
   "all_games_ready": true,
   "errors": [],
   "data_quality_caveats": {
-    "certified_pregame_source_connected": true,
+    "certified_pregame_source_connected": false,
     "source_audit": "VALIDATED_TEAMWISE_MERGE",
     "optical_tracking_ingested_and_validated": false,
     "forward_accuracy_validated": false,
