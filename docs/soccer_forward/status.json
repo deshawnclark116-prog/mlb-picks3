@@ -12,6 +12,6 @@
   "model3wayBrier": null,
   "baseline3wayBrier": null,
   "byLeague": {},
-  "asofDateUTC": "2026-11-11",
+  "asofDateUTC": "2026-11-12",
   "evidence": "Github earliest commit before fixture date; no same-day freeze"
 }
