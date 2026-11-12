@@ -1,5 +1,5 @@
 {
-  "confirmed_teams": 1,
+  "confirmed_teams": 2,
   "dates_requested": [
     "20261111"
   ],
@@ -9,13 +9,13 @@
     "20261111"
   ],
   "http_errors_by_date": {},
-  "not_posted_teams": 5,
-  "observed_at_utc": "2026-11-12T01:35:22.077650+00:00",
+  "not_posted_teams": 4,
+  "observed_at_utc": "2026-11-12T01:37:13.971551+00:00",
   "post_tip_inferences": 0,
   "provider": "NBA_OFFICIAL_DAILY_LINEUPS",
   "reasons": {
-    "MATCHED_FIVE_CONFIRMED_POSITIONAL_STARTERS": 1,
-    "POSITIONAL_STARTERS_NOT_CONFIRMED": 5
+    "MATCHED_FIVE_CONFIRMED_POSITIONAL_STARTERS": 2,
+    "POSITIONAL_STARTERS_NOT_CONFIRMED": 4
   },
   "source_url": "https://stats.nba.com/js/data/leaders/00_daily_lineups_20261111.json"
 }
