@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {v3ProjectionPicks,topProbabilityPicks} from '../src/components/NbaV3ResearchPanel.tsx';
+import {v3ProjectionPicks,topProbabilityPicks,v5VerifiedStarterFeaturedPicks} from '../src/components/NbaV3ResearchPanel.tsx';
 import {nbaV5GameCardData,nbaV5GameCardFilename} from '../src/nba/v5ShareCard.ts';
 
 const lattice={step:1,cdf:Array.from({length:20},(_,i)=>Math.min(1,(i+1)/20))};
@@ -9,6 +9,7 @@ const mk=(id:string,market:string,chance:number,mean:number,whole:number,props:a
   player_id:id,player:props.player||'Player '+id,team_id:'7',market,mean,
   median:mean,p10:0,p25:0,p75:3,p90:5,reported_status:'UNKNOWN_NOT_ACTIVE_CERTIFIED',
   p_active:.96,exp_opp:20,role_share:.12,unc_reasons:[],model_target:null,
+  starter_evidence:'CONFIRMED_STARTER',
   cdf_lattice:lattice,
   reach_probabilities:{
     whole_projection:whole,probability_if_playing:Math.min(1,chance/.96),
@@ -87,4 +88,29 @@ test('same athlete can appear twice for distinct eligible market projections, bu
  assert.equal(result.picks.length,2);
  assert.deepEqual(result.picks.map(x=>x.market),['steals','blocks']);
  assert.throws(()=>nbaV5GameCardData(game,[ranked[0],ranked[0]]),/DUPLICATE_PLAYER_MARKET/);
+});
+
+test('V5 top-ten and featured selection exclude nonstarters and unverified players, even with highest probability',()=>{
+ const bench=mk('bench','three_pointers_made',.95,1.5,1,
+   {player:'Bub Carrington',starter_evidence:'CONFIRMED_NONSTARTER'});
+ const missing=mk('unverified','steals',.92,1.4,1,
+   {starter_evidence:'NOT_VERIFIED'});
+ const starter=mk('starter','assists',.68,2.4,2,
+   {starter_evidence:'CONFIRMED_STARTER'});
+ const game={...base,rows:[bench,missing,starter]};
+ const ranked=v3ProjectionPicks(game as any);
+ assert.equal(ranked.length,3); // keep the complete underlying model
+ const featured=v5VerifiedStarterFeaturedPicks(game as any,ranked);
+ assert.deepEqual(featured.map(x=>x.row.player_id),['starter']);
+ const card=nbaV5GameCardData(game,ranked); // bypass from unfiltered call must still reject
+ assert.deepEqual(card.picks.map(p=>p.player_id),['starter']);
+ assert.deepEqual(nbaV5GameCardData(game,featured).picks.map(p=>p.player_id),['starter']);
+});
+test('unconfirmed V5 lineup fails closed instead of offering a fabricated top ten',()=>{
+ const rows=[mk('missing','points',.97,15,15,{starter_evidence:'NOT_VERIFIED'}),
+             mk('bench','blocks',.96,1.6,2,{starter_evidence:'CONFIRMED_NONSTARTER'})];
+ const game={...base,rows};
+ const ranked=v3ProjectionPicks(game as any);
+ assert.equal(v5VerifiedStarterFeaturedPicks(game as any,ranked).length,0);
+ assert.equal(nbaV5GameCardData(game,ranked).picks.length,0);
 });
