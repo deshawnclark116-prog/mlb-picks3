@@ -82,7 +82,10 @@ def select(game, grade_rows, *, require_confirmed=True):
             continue
         chance=row.get("reach_probabilities") or {}
         # UI displays DNP-inclusive when the matching whole projection exists.
-        if chance.get("whole_projection")==target:
+        # Otherwise it FALLS BACK to conditional, which must be tracked as a
+        # distinct high-risk data-contract gap, not silently called calibrated.
+        contract="DNP_INCLUSIVE" if chance.get("whole_projection")==target else "CONDITIONAL_FALLBACK"
+        if contract=="DNP_INCLUSIVE":
             p=chance.get("probability_including_dnp")
         else:
             p=prob_if_playing
@@ -101,7 +104,8 @@ def select(game, grade_rows, *, require_confirmed=True):
                          "p_active":float(row["p_active"]),"causes":graded.get("causes") or [],
                          "minutes_forecast":graded.get("minutes_forecast"),"minutes_actual":graded.get("minutes_actual"),
                          "model_version":row.get("model_version"),
-                         "starter_evidence":row.get("starter_evidence")})
+                         "starter_evidence":row.get("starter_evidence"),
+                         "probability_contract":contract})
     eligible.sort(key=lambda x:(-x["p"],-x["p_active"],x["player"] or "",MARKET_ORDER.index(x["market"])))
     return eligible
 
@@ -229,6 +233,9 @@ def run(archives,grades,*,kind="last"):
     for x in top4:
         by_market[x["market"]].append(x)
     causes=collections.Counter(c for x in top4 if not x["y"] for c in x["causes"])
+    contracts=collections.defaultdict(list)
+    for x in top4:
+        contracts[x["probability_contract"]].append(x)
     repeated=collections.Counter((x["player"],x["market"]) for x in top4)
     return {"schema":"NBA_V5_IMMUTABLE_EXACT_CONFIRMED_CARD_AUDIT_V1",
             "kind":kind,"games_with_archives_and_grades":len(games),
@@ -238,6 +245,7 @@ def run(archives,grades,*,kind="last"):
             "top4":paired_metrics(top4),"top10":paired_metrics(top10),
             "top4_by_market":{k:paired_metrics(v) for k,v in sorted(by_market.items())},
             "top4_miss_causes":causes.most_common(),
+            "top4_by_probability_contract":{k:paired_metrics(v) for k,v in sorted(contracts.items())},
             "repeat_selected":repeated.most_common(12),
             "shadow_candidate":score_calibrator(games),
             "production_changes":False,
