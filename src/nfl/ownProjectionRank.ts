@@ -182,49 +182,63 @@ export function rankNflPregameSnapshotForDisplay(
  * the mean projection. No sportsbook line used. The one-sided Wilson
  * bound only controls finite-MC noise; it is NOT a backtested success rate.
  */
-export function hasNflMeaningfulTargetEvidence(p:ExistingYardProjection):boolean{
- const t=p.nfl_model_target,g=p.nfl_model_target_grid;
- if(!t||!g||!Number.isFinite(p.projected_mean)||p.projected_mean<=0||
+/** Updated board selection (2026-11-12). The immutable 65% snapshots
+ * retain their originally selected target. Choose a new 60% target only
+ * from the same stored samples/grid, never reinterpret sportsbook prices.
+ * Both legacy 65% and new 60% grid publication contracts are accepted.
+ */
+export const NFL_YARDAGE_WILSON_MIN = .60;
+export function selectNflMeaningfulTarget(p:ExistingYardProjection){
+ const g=p.nfl_model_target_grid;
+ if(!g||!Number.isFinite(p.projected_mean)||p.projected_mean<=0||
     p.projection_probability_source!=='UNCALIBRATED_HISTORICAL_USAGE_BOOTSTRAP'||
     p.nfl_model_target_event!=='P_YARDS_AT_LEAST_FIXED_MEANINGFUL_THRESHOLD'||
     p.projection_simulation_n==null||p.projection_simulation_n<10_000||
     g.schema!=='nfl_meaningful_yardage_targets_v1'||
     g.simulation_n!==p.projection_simulation_n||
     g.minimum_relative_mean_fraction!==.55||
-    g.required_wilson_lower_95!==.65||g.grid_step_yards!==5||
+    (g.required_wilson_lower_95!==.65&&g.required_wilson_lower_95!==.60)||
+    g.grid_step_yards!==5||
     g.conditional_on_modeled_opportunities!==true||
     g.forward_calibrated!==false||g.official_active_status_verified!==false||
     g.minimum_absolute_yards!==(p.market==='receiving_yards'?25:30)||
-    !Number.isInteger(t.yards)||t.yards%5!==0||
-    t.yards<Math.max(g.minimum_absolute_yards,Math.ceil(.55*p.projected_mean))||
-    !Number.isFinite(t.probability)||t.probability<.65||t.probability>1||
-    !Number.isFinite(t.wilson_lower_95)||t.wilson_lower_95<.65||
-    t.wilson_lower_95>t.probability||!Array.isArray(g.grid)||
-    g.chosen_target?.yards!==t.yards||
-    g.chosen_target.probability!==t.probability||
-    g.chosen_target.wilson_lower_95!==t.wilson_lower_95)return false;
- if(g.grid.some((x,i)=>!Number.isInteger(x.yards)||x.yards%5!==0||
-    !Number.isFinite(x.probability)||!Number.isFinite(x.wilson_lower_95)||
-    x.probability<0||x.probability>1||x.wilson_lower_95<0||
-    x.wilson_lower_95>x.probability||
-    (i>0&&(g.grid[i-1].yards>=x.yards||
-       g.grid[i-1].probability<x.probability))))return false;
- const valid=g.grid.filter(x=>x.wilson_lower_95>=.65);
- return valid.length>0&&valid[valid.length-1].yards===t.yards&&
-    valid[valid.length-1].probability===t.probability&&
-    valid[valid.length-1].wilson_lower_95===t.wilson_lower_95;
+    !Array.isArray(g.grid))return null;
+ let previousYards=0,previousProb=1;
+ for(const x of g.grid){
+   if(!Number.isInteger(x.yards)||x.yards%5!==0||
+      x.yards<Math.max(g.minimum_absolute_yards,Math.ceil(.55*p.projected_mean))||
+      x.yards<=previousYards||
+      !Number.isFinite(x.probability)||x.probability<0||x.probability>1||
+      x.probability>previousProb||
+      !Number.isFinite(x.wilson_lower_95)||x.wilson_lower_95<0||
+      x.wilson_lower_95>x.probability)return null;
+   previousYards=x.yards;previousProb=x.probability;
+ }
+ // Verify published 65% / 60% selection before considering the new policy.
+ const published=g.grid.filter(x=>x.wilson_lower_95>=g.required_wilson_lower_95).at(-1)||null;
+ const claimed=g.chosen_target,outer=p.nfl_model_target;
+ const same=(a:typeof published,b:typeof published)=>a===null&&b===null||
+   !!a&&!!b&&a.yards===b.yards&&a.probability===b.probability&&
+   a.wilson_lower_95===b.wilson_lower_95;
+ if(!same(published,claimed)||!same(claimed,outer||null))return null;
+ return g.grid.filter(x=>x.wilson_lower_95>=NFL_YARDAGE_WILSON_MIN).at(-1)||null;
+}
+export function hasNflMeaningfulTargetEvidence(p:ExistingYardProjection):boolean{
+ return selectNflMeaningfulTarget(p)!==null;
 }
 export function rankNflMeaningfulTargets(
   projections:readonly ExistingYardProjection[],limit=10
 ):ExistingYardProjection[]{
  if(!Number.isInteger(limit)||limit<1||limit>24)throw new Error('invalid NFL shortlist size');
  return projections.filter(hasNflMeaningfulTargetEvidence)
-  .sort((a,b)=>b.nfl_model_target!.probability-a.nfl_model_target!.probability||
-     b.nfl_model_target!.wilson_lower_95-a.nfl_model_target!.wilson_lower_95||
-     b.nfl_model_target!.yards-a.nfl_model_target!.yards||
-     (b.games_played||0)-(a.games_played||0)||
-     a.player.localeCompare(b.player)||a.market.localeCompare(b.market))
-  .slice(0,limit);
+  .sort((a,b)=>{
+    const ta=selectNflMeaningfulTarget(a)!,tb=selectNflMeaningfulTarget(b)!;
+    return tb.probability-ta.probability||
+      tb.wilson_lower_95-ta.wilson_lower_95||
+      tb.yards-ta.yards||
+      (b.games_played||0)-(a.games_played||0)||
+      a.player.localeCompare(b.player)||a.market.localeCompare(b.market);
+  }).slice(0,limit);
 }
 export function rankNflRoleSupportedMeaningfulTargets(
   projections:readonly ExistingYardProjection[],

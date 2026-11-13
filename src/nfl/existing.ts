@@ -3,6 +3,14 @@
 import { etDate } from './phase1.ts';
 
 export type ExistingYardMarket = 'rushing_yards' | 'receiving_yards';
+export type ExistingEventMarket = 'sacks' | 'anytime_touchdowns';
+/** OVER-only event forecast. Historical UNDER classifiers are deliberately
+ * excluded from the public board, not deleted from the source/grading log. */
+export interface ExistingNflEvent {
+  player:string;player_id:string;team:string;opponent:string;
+  kickoff_utc:string;market:ExistingEventMarket;
+  probability:number;model_source:string;games_played:number|null;
+}
 export type NflMeaningfulEvent={yards:number;probability:number;wilson_lower_95:number};
 export type NflMeaningfulGrid={
   schema:'nfl_meaningful_yardage_targets_v1';
@@ -35,7 +43,8 @@ export interface ExistingYardProjection {
   nba_style_reach_probability?: number|null;
   nba_style_probability_event?: string|null;
   /** Independent of any sportsbook or the model mean: hardest meaningful
-   * fixed-grid threshold with one-sided 95% Wilson lower bound >=65%. */
+   * fixed-grid threshold; current board uses 60% one-sided Wilson bound.
+   * Historical publications may still carry their original 65% selection. */
   nfl_model_target?: NflMeaningfulEvent|null;
   nfl_model_target_event?: string|null;
   nfl_model_target_grid?: NflMeaningfulGrid|null;
@@ -44,6 +53,7 @@ export interface ExistingYardProjection {
 }
 export interface ExistingNflGame {
   id: string; kickoff_utc: string; teams: [string,string]; home?: string; away?: string; projections: ExistingYardProjection[];
+  events?:ExistingNflEvent[];
 }
 export interface ExistingNflSlate {
   season: number; week: number; generated_at_utc: string;
@@ -133,9 +143,44 @@ export function parseExistingNfl(raw:unknown,now=new Date(),expected?:{season:nu
   }
   const dedupe=new Set<string>();
   for(const row of doc.picks){
+    if(!row||typeof row!=='object'||Array.isArray(row))continue;
+    if(row.market==='sacks'||row.market==='anytime_touchdowns'){
+      // Only affirmative 0.5 outcomes are eligible for the public board.
+      // Missing, malformed or UNDER outcomes cannot become picks via a
+      // misleading high "model_prob" for NOT recording a sack.
+      if(typeof row.pick!=='string'||!/(^|\W)OVER\s+0\.5\b/i.test(row.pick))continue;
+      if(!team(row.team)||!team(row.opponent)||row.team===row.opponent||
+         !time(row.kickoff_utc)||typeof row.player!=='string'||!row.player.trim()||
+         !finite(row.prob_over)||row.prob_over<0||row.prob_over>1||
+         !finite(row.model_prob)||Math.abs(row.model_prob-row.prob_over)>.0001)
+         fail('invalid NFL scoring-event forecast');
+      if(etDate(row.kickoff_utc)<etDate(now))continue;
+      if(Date.parse(row.kickoff_utc)<generated)fail('forecast generated after its game kicked off');
+      const teams=[row.team,row.opponent].sort() as [string,string];
+      const id=new Date(row.kickoff_utc).toISOString()+'|'+teams.join('_');
+      if(Array.isArray(officialSchedule)&&!games.has(id))
+        fail('NFL event forecast does not match authoritative game schedule');
+      const identity=id+'|'+row.market+'|'+row.team+'|'+String(row.player_id||row.player).toLowerCase();
+      if(dedupe.has(identity))fail('duplicate player outcome in weekly document');
+      dedupe.add(identity);
+      const min=row.market==='anytime_touchdowns'?.30:.60;
+      if(row.prob_over<min)continue;
+      if(!games.has(id))games.set(id,{id,kickoff_utc:row.kickoff_utc,teams,projections:[],events:[]});
+      const game=games.get(id)!;
+      if(!game.events)game.events=[];
+      game.events.push({
+        player:row.player,player_id:typeof row.player_id==='string'?row.player_id:'',
+        team:row.team,opponent:row.opponent,kickoff_utc:row.kickoff_utc,
+        market:row.market as ExistingEventMarket,
+        probability:row.prob_over,
+        model_source:typeof row.model_source==='string'?row.model_source:'unlabeled_scoring_model',
+        games_played:Number.isInteger(row.games_played)&&row.games_played>0?row.games_played:null
+      });
+      continue;
+    }
     // Keep raw values dynamically validated below; the type predicate's unknown
     // index signature would otherwise erase TypeScript narrowing for fields.
-    if(!row||typeof row!=='object'||Array.isArray(row)||!markets.includes(row.market as ExistingYardMarket))continue;
+    if(!markets.includes(row.market as ExistingYardMarket))continue;
     if(!team(row.team)||!team(row.opponent)||row.team===row.opponent||
        !time(row.kickoff_utc)||typeof row.player!=='string'||!row.player.trim()||
        !finite(row.projected_median)||!finite(row.projected_mean)||!finite(row.projected_low)||!finite(row.projected_high)||
@@ -175,7 +220,10 @@ export function parseExistingNfl(raw:unknown,now=new Date(),expected?:{season:nu
     games.get(id)!.projections.push(item);
   }
   const listed=[...games.values()].sort((a,b)=>Date.parse(a.kickoff_utc)-Date.parse(b.kickoff_utc)||a.id.localeCompare(b.id));
-  for(const g of listed)g.projections.sort((a,b)=>a.market.localeCompare(b.market)||b.projected_median-a.projected_median||a.player.localeCompare(b.player));
+  for(const g of listed){
+    g.projections.sort((a,b)=>a.market.localeCompare(b.market)||b.projected_median-a.projected_median||a.player.localeCompare(b.player));
+    g.events?.sort((a,b)=>b.probability-a.probability||a.player.localeCompare(b.player));
+  }
   return {season,week,generated_at_utc,games:listed,
     projections:listed.reduce((n,g)=>n+g.projections.length,0),
     scheduledGames:Array.isArray(officialSchedule)?officialSchedule.length:listed.length,
