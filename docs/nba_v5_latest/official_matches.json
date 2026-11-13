@@ -1,59 +1,31 @@
 {
-  "401909978": [
-    {
-      "matchup": "DAL@MIN",
-      "team_abbr": "MIN",
-      "player": "Beringer, Joan",
-      "normalized_player": "joan beringer",
-      "status": "AVAILABLE",
-      "reason": "Injury/Illness - Face Mask",
-      "player_id": "5279133",
-      "team_id": "16",
-      "published_at_utc": "2026-11-13T00:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-12_07_30PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "DAL@MIN",
-      "team_abbr": "MIN",
-      "player": "DiVincenzo, Donte",
-      "normalized_player": "donte divincenzo",
-      "status": "OUT",
-      "reason": "",
-      "player_id": "3934673",
-      "team_id": "16",
-      "published_at_utc": "2026-11-13T00:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-12_07_30PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "DAL@MIN",
-      "team_abbr": "MIN",
-      "player": "Edwards, Anthony",
-      "normalized_player": "anthony edwards",
-      "status": "OUT",
-      "reason": "",
-      "player_id": "4594268",
-      "team_id": "16",
-      "published_at_utc": "2026-11-13T00:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-12_07_30PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "DAL@MIN",
-      "team_abbr": "DAL",
-      "player": "Johnson Jr., Morez",
-      "normalized_player": "morez johnson",
-      "status": "AVAILABLE",
-      "reason": "",
-      "player_id": "4873153",
-      "team_id": "6",
-      "published_at_utc": "2026-11-13T00:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-12_07_30PM.pdf",
-      "source": "official_nba_injury_report"
-    }
-  ],
   "401909979": [
+    {
+      "matchup": "CHA@PHX",
+      "team_abbr": "PHX",
+      "player": "Spencer, Pat",
+      "normalized_player": "pat spencer",
+      "status": "OUT",
+      "reason": "G League - Two-Way",
+      "player_id": "4592714",
+      "team_id": "21",
+      "published_at_utc": "2026-11-13T00:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-12_07_45PM.pdf",
+      "source": "official_nba_injury_report"
+    },
+    {
+      "matchup": "CHA@PHX",
+      "team_abbr": "PHX",
+      "player": "Timme, Drew",
+      "normalized_player": "drew timme",
+      "status": "OUT",
+      "reason": "G League - Two-Way",
+      "player_id": "4431695",
+      "team_id": "21",
+      "published_at_utc": "2026-11-13T00:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-12_07_45PM.pdf",
+      "source": "official_nba_injury_report"
+    },
     {
       "matchup": "CHA@PHX",
       "team_abbr": "CHA",
@@ -63,8 +35,8 @@
       "reason": "",
       "player_id": "4433249",
       "team_id": "30",
-      "published_at_utc": "2026-11-13T00:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-12_07_30PM.pdf",
+      "published_at_utc": "2026-11-13T00:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-12_07_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -76,8 +48,8 @@
       "reason": "Injury/Illness - Left Hamstring Strain",
       "player_id": "3032979",
       "team_id": "30",
-      "published_at_utc": "2026-11-13T00:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-12_07_30PM.pdf",
+      "published_at_utc": "2026-11-13T00:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-12_07_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -89,8 +61,8 @@
       "reason": "Injury/Illness - Right Hip Strain",
       "player_id": "4433287",
       "team_id": "30",
-      "published_at_utc": "2026-11-13T00:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-12_07_30PM.pdf",
+      "published_at_utc": "2026-11-13T00:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-12_07_45PM.pdf",
       "source": "official_nba_injury_report"
     }
   ]
