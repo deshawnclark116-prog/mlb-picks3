@@ -320,7 +320,16 @@ async function startServer() {
   // API Route - Proxy CFB Predictions
   app.get("/api/cfb-predictions", async (req, res) => {
     try {
-      const data = await fetchUpstream("/cfb/predictions");
+      const source = "https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks2/main/docs/cfb_predictions.json";
+      const response = await fetch(source + "?t=" + Date.now(), {cache:"no-store", signal:AbortSignal.timeout(15000)});
+      if (!response.ok) throw new Error("CFB published feed HTTP " + response.status);
+      const data = await response.json();
+      const generated = Date.parse(data.generated_at_utc);
+      const now = Date.now();
+      if (!Array.isArray(data.picks) || !Number.isFinite(generated) || generated > now + 300000 || now - generated > 72*3600000)
+        throw new Error("CFB published feed missing or stale");
+      data.picks = data.picks.filter((p:any) => Number.isFinite(Date.parse(p.kickoff_utc)) && Date.parse(p.kickoff_utc) > now && p.season === data.season && p.week === data.week);
+      res.setHeader("X-CFB-Forecast-Source","github-published-current");
       res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
       res.json(data);
     } catch (error: any) {
