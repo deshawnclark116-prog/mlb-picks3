@@ -136,6 +136,8 @@ def score_calibrator(game_samples, *, min_games=15):
     dates=sorted(by_day)
     if not dates:
         return {"status":"NO_ARCHIVED_GAMES"}
+    if len(dates)<2:
+        return {"status":"INSUFFICIENT_SEPARATE_PREGAME_DATES"}
     # Burn-in is fixed at the earlier 60% of distinct dates; only later dates
     # are compared. The challenger stays SHADOW even if it beats the baseline.
     holdout_start=dates[max(1,math.floor(.6*len(dates)))]
