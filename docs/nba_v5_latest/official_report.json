@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_06_30PM.pdf",
-  "published_at_utc": "2026-11-13T23:30:00+00:00",
-  "captured_at_utc": "2026-11-13T23:48:12.550156+00:00",
-  "source_sha256": "6311ea6f9d3d83d7ec0492d578a14b3b45af1ed1c9b5f5953b36383abe264295",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_06_45PM.pdf",
+  "published_at_utc": "2026-11-13T23:45:00+00:00",
+  "captured_at_utc": "2026-11-13T23:55:01.026599+00:00",
+  "source_sha256": "78e9186b8c125a9723e1271966712b223933712302b40061c67e30208d906f18",
   "reports": [
     {
       "matchup": "MIL@ORL",
@@ -339,7 +339,7 @@
       "team_abbr": "NOP",
       "player": "Mathurin, Bennedict",
       "normalized_player": "bennedict mathurin",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Thumb Sprain"
     },
     {
