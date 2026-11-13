@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_01_30PM.pdf",
-  "published_at_utc": "2026-11-13T18:30:00+00:00",
-  "captured_at_utc": "2026-11-13T18:38:21.455359+00:00",
-  "source_sha256": "8d1313184c51c4df111fe202f166f2ffed8c4750006ac6ef90185349c4669d02",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_04_15PM.pdf",
+  "published_at_utc": "2026-11-13T21:15:00+00:00",
+  "captured_at_utc": "2026-11-13T21:27:26.111905+00:00",
+  "source_sha256": "3e6786fe6c4a951cae45738fd7e812ff21f264fc31615ef296133875e32df202",
   "reports": [
     {
       "matchup": "MIL@ORL",
@@ -371,7 +371,7 @@
       "team_abbr": "NOP",
       "player": "Murray, Dejounte",
       "normalized_player": "dejounte murray",
-      "status": "DOUBTFUL",
+      "status": "OUT",
       "reason": "Injury/Illness - Left Ankle Sprain"
     },
     {
@@ -595,7 +595,7 @@
       "team_abbr": "SAC",
       "player": "Achiuwa, Precious",
       "normalized_player": "precious achiuwa",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Left Ankle Soreness"
     },
     {
