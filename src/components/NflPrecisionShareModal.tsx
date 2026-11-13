@@ -2,11 +2,12 @@ import React,{useEffect,useLayoutEffect,useMemo,useRef,useState} from 'react';
 import {createPortal} from 'react-dom';
 import NflPrecisionGameShareCard from './NflPrecisionGameShareCard';
 import {nflPrecisionPosterData,nflPrecisionPosterFilename} from '../nfl/precisionShare';
-import type {ExistingNflGame,ExistingYardProjection} from '../nfl/existing';
+import type {ExistingNflGame} from '../nfl/existing';
+import type {NflShowcasePick} from '../nfl/weeklyShowcase';
 import {EXPORT_WIDTH,EXPORT_HEIGHT,downloadBlob,renderElementToPng,shareBlob} from '../lib/exportImage';
 const control='min-h-11 rounded-xl border border-[#333] px-3 text-xs font-bold disabled:opacity-40';
 export default function NflPrecisionShareModal({game,ranked,week,forecastAtUtc,close}:{
- game:ExistingNflGame;ranked:readonly ExistingYardProjection[];
+ game:ExistingNflGame;ranked:readonly NflShowcasePick[];
  week:number;forecastAtUtc:string;close:()=>void
 }){
  const data=useMemo(()=>nflPrecisionPosterData(game,ranked,week,forecastAtUtc),[game,ranked,week,forecastAtUtc]);
@@ -57,7 +58,7 @@ export default function NflPrecisionShareModal({game,ranked,week,forecastAtUtc,c
     <p className="mt-1 text-xs text-gray-400">{game.away||game.teams[0]} at {game.home||game.teams[1]}</p></div>
    <span className="shrink-0 text-[10px] text-gray-500">{EXPORT_WIDTH} × {EXPORT_HEIGHT}</span>
   </header>
-  <p className="mt-3 text-xs text-amber-200">These {data.picks.length} NFL model-derived yardage targets are ranked by their genuine simulated chances, using a preset meaningful-yardage floor and a 65% Monte Carlo lower-bound gate. Each probability comes from the same 10,000+ simulated games. No sportsbook lines, verified active status, DNP-inclusive probability, or forward calibration are implied.</p>
+  <p className="mt-3 text-xs text-amber-200">These {data.picks.length} OVER-only NFL model outcomes are ranked by model probability. Yardage targets require a 60% Monte Carlo Wilson lower bound; touchdowns require 30% P(score), and sacks require 60% P(OVER). Scoring predictions are separate models, not 10,000 yardage simulations. No sportsbook lines, verified active status, DNP-inclusive probability, or forward calibration are implied.</p>
   <div ref={wrapper} data-testid="nfl-top10-share-preview" style={{
     width:'100%',height:EXPORT_HEIGHT*scale,position:'relative',
     overflow:'hidden',borderRadius:10,marginTop:12}}>
