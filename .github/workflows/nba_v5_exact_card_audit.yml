@@ -4,6 +4,8 @@ on:
     paths:
       - 'nba/nba_v5_exact_card_audit.py'
       - 'tests/test_nba_v5_exact_card_audit.py'
+      - 'nba/nba_v5_postmortem.py'
+      - 'tests/test_nba_v5_postmortem_contract.py'
       - '.github/workflows/nba_v5_exact_card_audit.yml'
   workflow_dispatch: {}
 permissions:
@@ -17,8 +19,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Verify strict original selection and DNP behavior
-        run: python -m unittest tests.test_nba_v5_exact_card_audit -v
+      - name: Install numerical grader dependency
+        run: python -m pip install "numpy>=2.1,<2.5"
+      - name: Verify exact original selection, DNP and future grade provenance
+        run: python -m unittest tests.test_nba_v5_exact_card_audit tests.test_nba_v5_postmortem_contract -v
       - name: Audit exact archived last pregame confirmed starter cards
         run: |
           python -m nba.nba_v5_exact_card_audit \
