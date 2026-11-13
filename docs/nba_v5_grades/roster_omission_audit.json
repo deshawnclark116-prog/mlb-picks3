@@ -1992,12 +1992,108 @@
       "played_players": 18,
       "played_players_missing_from_v5": 0,
       "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "Toronto Raptors",
+      "forecast_at_utc": "2026-11-12T23:44:36.011166+00:00",
+      "forecast_player_id_count": 25,
+      "game_id": "401909976",
+      "home": "Philadelphia 76ers",
+      "missing_minutes_by_side": {
+        "away": 0.0,
+        "home": 1.0
+      },
+      "missing_players": [
+        {
+          "actual_minutes": 1.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
+          "player": "Tacko Fall",
+          "player_id": "3904625",
+          "side": "home",
+          "team_id": "20"
+        }
+      ],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 1.0,
+      "played_players": 24,
+      "played_players_missing_from_v5": 1,
+      "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "Detroit Pistons",
+      "forecast_at_utc": "2026-11-12T23:44:36.011166+00:00",
+      "forecast_player_id_count": 29,
+      "game_id": "401909977",
+      "home": "Washington Wizards",
+      "missing_minutes_by_side": {
+        "away": 0.0,
+        "home": 0.0
+      },
+      "missing_players": [],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 0.0,
+      "played_players": 19,
+      "played_players_missing_from_v5": 0,
+      "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "Dallas Mavericks",
+      "forecast_at_utc": "2026-11-13T00:41:41.787692+00:00",
+      "forecast_player_id_count": 29,
+      "game_id": "401909978",
+      "home": "Minnesota Timberwolves",
+      "missing_minutes_by_side": {
+        "away": 10.0,
+        "home": 0.0
+      },
+      "missing_players": [
+        {
+          "actual_minutes": 10.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
+          "player": "Santi Aldama",
+          "player_id": "4593125",
+          "side": "away",
+          "team_id": "6"
+        }
+      ],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 10.0,
+      "played_players": 27,
+      "played_players_missing_from_v5": 1,
+      "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "Charlotte Hornets",
+      "forecast_at_utc": "2026-11-13T00:49:08.319272+00:00",
+      "forecast_player_id_count": 28,
+      "game_id": "401909979",
+      "home": "Phoenix Suns",
+      "missing_minutes_by_side": {
+        "away": 0.0,
+        "home": 0.0
+      },
+      "missing_players": [],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 0.0,
+      "played_players": 20,
+      "played_players_missing_from_v5": 0,
+      "report_is_postgame_diagnostic_only": true
     }
   ],
-  "games_graded": 49,
-  "games_with_missing_played_players": 29,
+  "games_graded": 53,
+  "games_with_missing_played_players": 31,
   "purpose": "Postgame validation only; cannot supply a future pretip roster",
   "schema": "NBA_V5_POSTGAME_ROSTER_OMISSION_AUDIT_V1",
-  "total_missing_played_minutes": 1407.0,
-  "total_missing_played_players": 87
+  "total_missing_played_minutes": 1418.0,
+  "total_missing_played_players": 89
 }
