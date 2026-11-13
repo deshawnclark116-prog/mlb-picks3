@@ -105,6 +105,8 @@ test('when V3 originals are missing frontend does not silently substitute V2 pic
 test('NBA featured game tiles show the four highest percentages across stat categories, never forced variety or turnovers',async({page})=>{
  const sample=(id:string,player:string,market:string,mean:number,whole:number,prob:number)=>({
   ...game.rows[0],player_id:id,player,market,mean,p_active:.95,
+  // This test exercises probability ordering of independently confirmed starters.
+  starter_evidence:'CONFIRMED_STARTER',
   model_target:null,
   reach_probabilities:{whole_projection:whole,probability_including_dnp:prob,
    probability_if_playing:Math.min(1,prob/.95),p_active:.95,forward_calibrated:false}

@@ -10,6 +10,7 @@ export type V5ShareInput={
   row:{
     player:string;player_id:string;team_id:string;market:string;
     mean:number;p_active:number;reported_status:string;
+    starter_evidence?:'CONFIRMED_STARTER'|'CONFIRMED_NONSTARTER'|'NOT_VERIFIED';
     reach_probabilities?:{
       whole_projection:number;probability_if_playing:number;
       probability_including_dnp:number;forward_calibrated:boolean;
@@ -43,7 +44,8 @@ export function nbaV5GameCardData(game:V5ShareGame,orderedUnfilteredPicks:readon
     const row=item.row,reach=row.reach_probabilities;
     // V5 share cards must NEVER borrow the conditional-on-playing CDF
     // or V3/V4 target probability as an apparently all-scenarios chance.
-    if(!ALLOWED.has(row.market)||row.reported_status==='OUT'||row.p_active<.75||
+    if(!ALLOWED.has(row.market)||row.starter_evidence!=='CONFIRMED_STARTER'||
+       row.reported_status==='OUT'||row.p_active<.75||
        !reach||reach.whole_projection!==item.whole||
        !Number.isInteger(item.whole)||item.whole<1||
        !Number.isFinite(row.mean)||row.mean<0||
