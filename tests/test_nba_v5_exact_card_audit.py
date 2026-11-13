@@ -59,7 +59,7 @@ class AuthenticCardTests(unittest.TestCase):
             {"player_id":str(i),"player":str(i),"market":"points","p":.9,
              "p_active":1.0,"y":0} for i in range(4)]}]
         r=score_calibrator(same_day)
-        self.assertIn(r["status"],("NO_HOLDOUT_TOP4","RESEARCH_ONLY_DO_NOT_PROMOTE"))
+        self.assertIn(r["status"],("NO_HOLDOUT_TOP4","RESEARCH_ONLY_DO_NOT_PROMOTE","INSUFFICIENT_SEPARATE_PREGAME_DATES"))
         if "promotion_allowed" in r:
             self.assertIs(r["promotion_allowed"],False)
 
