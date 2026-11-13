@@ -1,52 +1,54 @@
-/** NBA V5-style image card: use the SAME ranked P(reaching rounded
- * MODEL MEAN) events as the NFL tiles. Not P(within 10 yards), not the
- * median event, not a bookmaker line, not an all-scenarios DNP rate.
- */
-import type {ExistingNflGame,ExistingYardProjection} from './existing';
-import {hasNflMeaningfulTargetEvidence} from './ownProjectionRank';
-
+/** NBA-style share data for actual, OVER-only NFL research model events.
+ * Yardage comes from same-draw 60% Wilson grid; TD/sack probabilities
+ * come from their own distinct model sources. Never imply calibration. */
+import type {ExistingNflGame} from './existing';
+import {rankNflShowcase,type NflShowcasePick} from './weeklyShowcase';
 export type NflPrecisionPosterRow={
  rank:number;player:string;team:string;market:string;
- projectedYards:number;meanYards:number;
- reach:number;simulations:number;
+ targetYards?:number;meanYards?:number;wilsonLower95?:number;
+ reach:number;simulations?:number;
 };
 export type NflPrecisionPoster={
  game:Pick<ExistingNflGame,'away'|'home'|'teams'|'kickoff_utc'>;
  week:number;forecastAtUtc:string;picks:NflPrecisionPosterRow[];
- model:'WEEKLY_PLAYER_BOOTSTRAP';
+ model:'WEEKLY_PLAYER_MODELS';
  probabilityForwardCalibrated:false;
  bettingLineIncluded:false;
- roleStatus:'RECENT_ROLE_OBSERVED_NOT_ACTIVE_VERIFIED';
+ roleStatus:'NOT_ACTIVE_VERIFIED';
 };
-const valid=(n:number|null|undefined)=>typeof n==='number'&&Number.isFinite(n)&&n>=0&&n<=1;
-export function nflPrecisionPosterData(game:ExistingNflGame,ranked:readonly ExistingYardProjection[],week:number,forecastAtUtc:string):NflPrecisionPoster{
+export function nflPrecisionPosterData(game:ExistingNflGame,ranked:readonly NflShowcasePick[],week:number,forecastAtUtc:string):NflPrecisionPoster{
  const at=Date.parse(forecastAtUtc),kickoff=Date.parse(game.kickoff_utc);
  if(!Number.isFinite(at)||!Number.isFinite(kickoff)||at>=kickoff||
     !Number.isInteger(week)||week<1||week>22)
     throw Error('NFL_POSTER_REQUIRES_ORIGINAL_PREGAME_FORECAST');
+ // No caller can replace the actual modeled event with a high, fabricated
+ // percentage. Cross-check the identical source forecast and modeled target.
+ const eligible=rankNflShowcase(game,'','ALL',200);
  const seen=new Set<string>();
  const picks:NflPrecisionPosterRow[]=[];
  for(const p of ranked){
-  if(!hasNflMeaningfulTargetEvidence(p)||!valid(p.nfl_model_target?.probability)||
-     p.kickoff_utc!==game.kickoff_utc||
-     !game.teams.includes(p.team)||!game.teams.includes(p.opponent))continue;
-  const key=[p.player_id,p.team,p.market].join('|');
+  const key=[p.player_id,p.player,p.team,p.market].join('|');
   if(seen.has(key))throw Error('NFL_POSTER_DUPLICATE_OUTCOME');
+  const authentic=eligible.find(x=>x.player_id===p.player_id&&x.player===p.player&&
+   x.team===p.team&&x.market===p.market&&x.kickoff_utc===p.kickoff_utc&&
+   x.probability===p.probability&&x.targetYards===p.targetYards&&
+   x.meanYards===p.meanYards);
+  if(!authentic||p.kickoff_utc!==game.kickoff_utc||
+     !game.teams.includes(p.team)||!game.teams.includes(p.opponent))continue;
   seen.add(key);
-  picks.push({
-   rank:picks.length+1,player:p.player,team:p.team,market:p.market,
-   projectedYards:p.nfl_model_target!.yards,meanYards:p.projected_mean,
-   reach:p.nfl_model_target!.probability,simulations:p.projection_simulation_n!
-  });
+  picks.push({rank:picks.length+1,player:p.player,team:p.team,
+   market:p.market,reach:p.probability,
+   targetYards:p.targetYards,meanYards:p.meanYards,
+   wilsonLower95:p.wilsonLower95,simulations:p.simulationN});
   if(picks.length===10)break;
  }
- for(let i=1;i<picks.length;i++)
+ for(let i=1;i<picks.length;i++){
   if(picks[i].reach>picks[i-1].reach+1e-12)
-   throw Error('NFL_POSTER_REQUIRES_MEANINGFUL_TARGET_RANKED_INPUT');
- return {game,week,forecastAtUtc,picks,
-  model:'WEEKLY_PLAYER_BOOTSTRAP',
+   throw Error('NFL_POSTER_REQUIRES_RANKED_INPUT');
+ }
+ return {game,week,forecastAtUtc,picks,model:'WEEKLY_PLAYER_MODELS',
   probabilityForwardCalibrated:false,bettingLineIncluded:false,
-  roleStatus:'RECENT_ROLE_OBSERVED_NOT_ACTIVE_VERIFIED'};
+  roleStatus:'NOT_ACTIVE_VERIFIED'};
 }
 export function nflPrecisionPosterFilename(data:NflPrecisionPoster):string{
  const clean=(v:string)=>v.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'team';
