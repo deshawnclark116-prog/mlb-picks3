@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_12_30PM.pdf",
-  "published_at_utc": "2026-11-13T17:30:00+00:00",
-  "captured_at_utc": "2026-11-13T17:41:39.705648+00:00",
-  "source_sha256": "79b59a8b61b00304b1aa99762cff1c4da3178aae5aa1517775654ec691ab3081",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_01_30PM.pdf",
+  "published_at_utc": "2026-11-13T18:30:00+00:00",
+  "captured_at_utc": "2026-11-13T18:38:21.455359+00:00",
+  "source_sha256": "8d1313184c51c4df111fe202f166f2ffed8c4750006ac6ef90185349c4669d02",
   "reports": [
     {
       "matchup": "MIL@ORL",
@@ -163,7 +163,7 @@
       "team_abbr": "ATL",
       "player": "Wilson, Jalen",
       "normalized_player": "jalen wilson",
-      "status": "DOUBTFUL",
+      "status": "OUT",
       "reason": "G League - Two-Way"
     },
     {
@@ -181,6 +181,14 @@
       "normalized_player": "norman powell",
       "status": "QUESTIONABLE",
       "reason": "Injury/Illness - Low Back Spasms"
+    },
+    {
+      "matchup": "ATL@CHI",
+      "team_abbr": "CHI",
+      "player": "Sellers, Jaylin",
+      "normalized_player": "jaylin sellers",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
     },
     {
       "matchup": "ATL@CHI",
@@ -243,7 +251,7 @@
       "team_abbr": "MIA",
       "player": "Antetokounmpo, Giannis",
       "normalized_player": "giannis antetokounmpo",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Wrist Sprain"
     },
     {
@@ -259,7 +267,7 @@
       "team_abbr": "MIA",
       "player": "Larsson, Pelle",
       "normalized_player": "pelle larsson",
-      "status": "QUESTIONABLE",
+      "status": "DOUBTFUL",
       "reason": "Injury/Illness - Illness"
     },
     {
@@ -267,7 +275,7 @@
       "team_abbr": "MIA",
       "player": "Thompson, Klay",
       "normalized_player": "klay thompson",
-      "status": "QUESTIONABLE",
+      "status": "PROBABLE",
       "reason": "Injury/Illness - Left Ankle Soreness"
     },
     {
@@ -323,7 +331,7 @@
       "team_abbr": "NOP",
       "player": "Dia, Malik",
       "normalized_player": "malik dia",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "G League - Two-Way"
     },
     {
@@ -331,7 +339,7 @@
       "team_abbr": "NOP",
       "player": "Mathurin, Bennedict",
       "normalized_player": "bennedict mathurin",
-      "status": "DOUBTFUL",
+      "status": "QUESTIONABLE",
       "reason": "Injury/Illness - Right Thumb Sprain"
     },
     {
@@ -339,7 +347,7 @@
       "team_abbr": "NOP",
       "player": "McGowens, Bryce",
       "normalized_player": "bryce mcgowens",
-      "status": "DOUBTFUL",
+      "status": "OUT",
       "reason": "Injury/Illness - Left Elbow Infection"
     },
     {
@@ -347,7 +355,7 @@
       "team_abbr": "NOP",
       "player": "Missi, Yves",
       "normalized_player": "yves missi",
-      "status": "DOUBTFUL",
+      "status": "OUT",
       "reason": ""
     },
     {
@@ -355,15 +363,23 @@
       "team_abbr": "NOP",
       "player": "Murphy III, Trey",
       "normalized_player": "trey murphy",
-      "status": "DOUBTFUL",
+      "status": "OUT",
       "reason": ""
+    },
+    {
+      "matchup": "MEM@NOP",
+      "team_abbr": "NOP",
+      "player": "Murray, Dejounte",
+      "normalized_player": "dejounte murray",
+      "status": "DOUBTFUL",
+      "reason": "Injury/Illness - Left Ankle Sprain"
     },
     {
       "matchup": "MEM@NOP",
       "team_abbr": "NOP",
       "player": "Pierre Jr., Jaron",
       "normalized_player": "jaron pierre",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "G League - Two-Way"
     },
     {
@@ -719,7 +735,7 @@
       "reason": "Injury/Illness - Right Lisfranc Surgery"
     }
   ],
-  "rows": 89,
+  "rows": 91,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
