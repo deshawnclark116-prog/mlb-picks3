@@ -8,12 +8,11 @@ const et=(iso:string)=>new Intl.DateTimeFormat('en-US',{
  timeZone:'America/New_York',weekday:'short',month:'short',day:'numeric',
  hour:'numeric',minute:'2-digit',timeZoneName:'short'
 }).format(new Date(iso)).toUpperCase();
-const market=(s:string)=>s==='rushing_yards'?'RUSH YDS':'REC YDS';
+const market=(s:string)=>s==='rushing_yards'?'RUSH YDS':s==='receiving_yards'?'REC YDS':s==='anytime_touchdowns'?'ANYTIME TD':'SACK';
 
-/** NBA V5 appearance, NFL model-derived meaningful yardage threshold
- * events. Same exact target and percentage as the compact game tiles.
- * No sportsbook lines, DNP-inclusive probabilities or ±10-yard bands.
- */
+/** NBA-style share layout for model-derived OVER-only yardage and scoring
+ * events. Yardage thresholds have a 60% Wilson gate; TD and sacks use
+ * different model sources and are never mislabeled as 10k simulations. */
 export default function NflPrecisionGameShareCard({data,cardRef}:{
  data:NflPrecisionPoster;cardRef?:React.Ref<HTMLDivElement>
 }){
@@ -55,13 +54,14 @@ export default function NflPrecisionGameShareCard({data,cardRef}:{
     <div style={{minWidth:0,flex:1}}>
      <div style={{fontSize:23,fontWeight:900,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{p.player}</div>
      <div style={{marginTop:4,fontSize:18,color:'#CFD9DA'}}>
-      <b style={{color:'#fff'}}>MODEL MEAN {fmt(p.meanYards)} {market(p.market)}</b>
-      <span style={{fontSize:14,color:muted}}> · SAFER {p.projectedYards}+</span>
+      {p.targetYards!=null&&p.meanYards!=null?<><b style={{color:'#fff'}}>MODEL MEAN {fmt(p.meanYards)} {market(p.market)}</b>
+      <span style={{fontSize:14,color:muted}}> · TARGET {p.targetYards}+</span></>:
+      <b style={{color:'#fff'}}>{p.market==='anytime_touchdowns'?'SCORE 1+ TOUCHDOWN':'RECORD 1+ SACK'}</b>}
      </div>
     </div>
     <div style={{textAlign:'right',flexShrink:0}}>
      <strong style={{fontSize:31,color:green,fontVariantNumeric:'tabular-nums'}}>{pct(p.reach)}</strong>
-     <div style={{fontSize:12,color:muted}}>P(SAFER TARGET)</div>
+     <div style={{fontSize:12,color:muted}}>{p.targetYards!=null?'P(TARGET)':'P(OVER 0.5)'}</div>
     </div>
    </div>)}
    {picks.length<10&&<div style={{fontSize:25,color:'#F6B8A2',padding:22,
@@ -75,9 +75,9 @@ export default function NflPrecisionGameShareCard({data,cardRef}:{
     ORIGINAL PREGAME SNAPSHOT · {et(data.forecastAtUtc)}
    </div>
    <p style={{fontSize:15,color:muted,lineHeight:1.4,margin:'7px 0 0'}}>
-    P(reach) is the uncalibrated chance of reaching the shown meaningful yardage
-    target from the player's 10,000+ simulations, not including DNP risk.
-    No sportsbook lines; active status unverified. Same-game outcomes are correlated.
+    Uncalibrated model probabilities: yardage uses 10,000+ simulations with a 60%
+    Wilson bound; TD and sack outcomes use separate models and chance floors.
+    No sportsbook bets; active/DNP status unverified. Same-game results correlate.
    </p>
   </footer>
  </div>;
