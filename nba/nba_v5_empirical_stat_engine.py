@@ -56,7 +56,8 @@ def _round_samples(value, rng):
 
 
 def simulate_empirical_game(home, away, history, date, *, worlds, seed,
-                            expected_pace=None, historic_league_pace=None):
+                            expected_pace=None, historic_league_pace=None,
+                            three_attempts_model=False):
     """Return V5-compatible game arrays from DIRECT pregame player-box priors.
 
     All forecasts are conditional on dates < target date, never on an
@@ -79,7 +80,7 @@ def simulate_empirical_game(home, away, history, date, *, worlds, seed,
     speed = np.clip(rng.lognormal(-.5 * .055 ** 2, .055, worlds) * prior_speed, .76, 1.30)
     outputs = []
     avail = []
-    for team in teams:
+    for team_index, team in enumerate(teams):
         n = len(team.ids)
         mins = np.zeros((worlds, n))
         if (getattr(team, "avail_corr", None) is not None and
@@ -134,6 +135,29 @@ def simulate_empirical_game(home, away, history, date, *, worlds, seed,
             stats["fgm"][:, j] = np.maximum(stats["fgm"][:, j], stats["tpm"][:, j])
             stats["fga"][:, j] = np.maximum(stats["fga"][:, j], stats["fgm"][:, j])
             stats["pts"][:, j] = np.maximum(stats["pts"][:, j], 3. * stats["tpm"][:, j])
+            if three_attempts_model:
+                # Shadow-only alternative, not a new production switch. Predict
+                # opportunities (3PA) from the SAME past sampled player game,
+                # then independently model accuracy with a shrunk 3P skill.
+                # The original main RNG is untouched by this branch, so other
+                # players' game histories retain their comparable random draws.
+                if any("tpa" not in p for p in pool):
+                    raise ValueError("NBA_EMPIRICAL_3PA_RESEARCH_REQUIRES_REAL_3PA_HISTORY")
+                rr = np.random.default_rng(int(seed)+991721+104729*team_index+13007*j)
+                old_tpa = np.asarray([float(p["tpa"]) for p in pool])[draws]
+                attempts = np.floor(np.maximum(0., old_tpa*multiplier)
+                                    +rr.random(worlds)).astype(int)
+                attempts = np.minimum(attempts,stats["fga"][:,j].astype(int))
+                total_tpa=sum(float(p["tpa"]) for p in pool)
+                total_tpm=sum(float(p["tpm"]) for p in pool)
+                # Precommitted no-lookahead priors, NOT fit to evaluation games.
+                ability=np.clip((total_tpm+50.0*.36)/(total_tpa+50.0),.01,.99)
+                accuracy=rr.beta(ability*30.,(1.-ability)*30.,worlds)
+                revised=rr.binomial(attempts,accuracy).astype(float)
+                stats["tpm"][:,j]=revised
+                stats["fgm"][:,j]=np.maximum(stats["fgm"][:,j],revised)
+                stats["fga"][:,j]=np.maximum(stats["fga"][:,j],stats["fgm"][:,j])
+                stats["pts"][:,j]=np.maximum(stats["pts"][:,j],3.*revised)
         stats["min"] = mins
         outputs.append(stats)
         avail.append(playable)
@@ -150,5 +174,6 @@ def simulate_empirical_game(home, away, history, date, *, worlds, seed,
             "close_mask": np.zeros(worlds, bool),
             "empirical_head": True,
             "independent_of_v3_v4_forecasts": True,
-            "world_kind": "JOINT_PLAYER_GAME_HISTORY_WITH_SHARED_PACE",
+            "world_kind": ("RESEARCH_THREE_ATTEMPTS_SHRUNK_ACCURACY"
+                           if three_attempts_model else "JOINT_PLAYER_GAME_HISTORY_WITH_SHARED_PACE"),
             "minutes_capped_at_240_per_team": True}
