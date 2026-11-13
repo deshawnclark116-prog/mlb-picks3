@@ -15,15 +15,16 @@ const game={
  game_id:'401999938',home:'Indiana Pacers',away:'Denver Nuggets',
  tipoff_utc:tip,forecast_at_utc:forecast,rows_count:choices.length,
  forecast_kind:'V5_LATEST',
- certified_pregame_team_effect:{},
+ certified_pregame_team_effect:{'7':{applied:true,confirmed_starters:5},'8':{applied:true,confirmed_starters:5}},
  rows:choices.map(([market,mean,whole],i)=>({
-   game_id:'401999938',team_id:'7',player_id:String(51000+i),
+   game_id:'401999938',team_id:i<5?'7':'8',player_id:String(51000+i),
    player:['Nikola Jokic','Kelly Oubre Jr.','Jay Huff','Jay Huff',
     'Nikola Jokic','Christian Braun','Kelly Oubre Jr.','Quenton Jackson',
     'Christian Braun','Jalen Slawson','Rebound Candidate','Points Candidate'][i],
    market,mean,median:mean,p10:0,p25:0,p75:3,p90:5,
    p_active:.96,exp_opp:20,role_share:.1,
    reported_status:'UNKNOWN_NOT_ACTIVE_CERTIFIED',
+   starter_evidence:i<10?'CONFIRMED_STARTER':'CONFIRMED_NONSTARTER',
    unc_reasons:[],model_target:null,cdf_lattice:{step:1,cdf:uniform},
    reach_probabilities:{
      whole_projection:whole,probability_if_playing:.97-i*.02,
@@ -97,4 +98,16 @@ test('V3/V4 never get mislabeled V5 image cards',async({page})=>{
  await setup(page,{...source,games:[{...game,forecast_kind:'V4_LATEST'}]});
  await expect(page.getByTestId('nba-v5-open-top10')).toHaveCount(0);
  await expect(page.getByTestId('nba-v3-tile')).toHaveCount(4);
+});
+
+test('V5 with no confirmed lineup hides the betting-style cards instead of treating bench as a starter',async({page})=>{
+ const pending={...source,games:[{...game,
+   certified_pregame_team_effect:{},
+   rows:game.rows.map(row=>({...row,starter_evidence:'NOT_VERIFIED'}))
+ }]};
+ await setup(page,pending);
+ const host=page.getByTestId('nba-v3-game');
+ await expect(host.getByTestId('nba-v3-tile')).toHaveCount(0);
+ await expect(host.getByTestId('nba-v5-open-top10')).toHaveCount(0);
+ await expect(host.getByTestId('nba-v5-starters-pending')).toContainText('no confirmed game-day starters');
 });
