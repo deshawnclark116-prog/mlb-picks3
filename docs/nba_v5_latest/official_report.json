@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-12_06_45PM.pdf",
-  "published_at_utc": "2026-11-12T23:45:00+00:00",
-  "captured_at_utc": "2026-11-12T23:45:44.455960+00:00",
-  "source_sha256": "030834d983a312f219bf9d552f031f37ad948ec31622067cbb60e39f39d5554c",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-12_07_30PM.pdf",
+  "published_at_utc": "2026-11-13T00:30:00+00:00",
+  "captured_at_utc": "2026-11-13T00:36:14.577922+00:00",
+  "source_sha256": "6fdd393a85c9348b3a2cdd94ebcf7f0afd3d28ecef07700bf2dd3e7b73ce92c7",
   "reports": [
     {
       "matchup": "DET@WAS",
@@ -635,7 +635,7 @@
       "team_abbr": "NOP",
       "player": "Dia, Malik",
       "normalized_player": "malik dia",
-      "status": "DOUBTFUL",
+      "status": "QUESTIONABLE",
       "reason": "G League - Two-Way"
     },
     {
@@ -853,9 +853,57 @@
       "normalized_player": "devin vassell",
       "status": "QUESTIONABLE",
       "reason": ""
+    },
+    {
+      "matchup": "POR@SAC",
+      "team_abbr": "SAC",
+      "player": "Achiuwa, Precious",
+      "normalized_player": "precious achiuwa",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Left Ankle Soreness"
+    },
+    {
+      "matchup": "POR@SAC",
+      "team_abbr": "SAC",
+      "player": "Karaban, Alex",
+      "normalized_player": "alex karaban",
+      "status": "OUT",
+      "reason": "G League - On Assignment"
+    },
+    {
+      "matchup": "POR@SAC",
+      "team_abbr": "SAC",
+      "player": "Mogbo, Jonathan",
+      "normalized_player": "jonathan mogbo",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "POR@SAC",
+      "team_abbr": "SAC",
+      "player": "Pedulla, Sean",
+      "normalized_player": "sean pedulla",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "POR@SAC",
+      "team_abbr": "SAC",
+      "player": "Raynaud, Maxime",
+      "normalized_player": "maxime raynaud",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "POR@SAC",
+      "team_abbr": "SAC",
+      "player": "Simmons, Ben",
+      "normalized_player": "ben simmons",
+      "status": "OUT",
+      "reason": ""
     }
   ],
-  "rows": 106,
+  "rows": 112,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
