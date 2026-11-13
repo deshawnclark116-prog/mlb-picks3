@@ -370,6 +370,12 @@ def run(args):
         if args.config or args.features == "ablate":
             raise ValueError("--empirical-game-trial incompatible with --config and ablation")
         configs["empirical_game_head"] = {}
+    if getattr(args, "empirical_three_attempts_trial", False):
+        if args.config or args.features == "ablate":
+            raise ValueError("--empirical-three-attempts-trial incompatible with --config and ablation")
+        # One predeclared shadow challenger against today's actual live
+        # empirical game head (not the unrelated V5 possession generator).
+        configs = {"empirical_game_head": {}, "empirical_attempts_head": {}}
     if getattr(args,"cold_start_trial",False):
         if args.config or args.features=="ablate":
             raise ValueError("--cold-start-trial incompatible with --config and ablation")
@@ -378,7 +384,7 @@ def run(args):
         if args.config or args.features=="ablate":
             raise ValueError("--flow-trial incompatible with --config and ablation")
         configs["game_flow"]={"game_flow":True}
-    if sum(bool(getattr(args,n,False)) for n in ("lineup_trial","role_trial","style_trial","flow_trial","cold_start_trial","assist_network_trial","matchup_rotation_trial","rebound_zone_trial","learned_head_trial","empirical_game_trial"))>1:
+    if sum(bool(getattr(args,n,False)) for n in ("lineup_trial","role_trial","style_trial","flow_trial","cold_start_trial","assist_network_trial","matchup_rotation_trial","rebound_zone_trial","learned_head_trial","empirical_game_trial","empirical_three_attempts_trial"))>1:
         raise ValueError("One experimental arm at a time")
     if getattr(args, "rebound_zone_trial", False):
         if args.config or args.features=="ablate":
@@ -463,13 +469,14 @@ def run(args):
                         sh,sa=cold_teams
                     else:
                         sh, sa = (adapted[0], adapted[1]) if cname == "role_adaptive" else (th, ta)
-                    if cname == "empirical_game_head":
+                    if cname in ("empirical_game_head","empirical_attempts_head"):
                         from nba.nba_v5_empirical_stat_engine import simulate_empirical_game
                         sim = simulate_empirical_game(
                             sh, sa, rp.hist, d, worlds=args.sims,
                             seed=int(g["game_id"]) % 100003,
                             expected_pace=pace_for(rp, g, d),
-                            historic_league_pace=L.poss)
+                            historic_league_pace=L.poss,
+                            three_attempts_model=(cname=="empirical_attempts_head"))
                     else:
                         sim = simulate_game(sh, sa, L, tables, S=args.sims, pace=pace,
                                             seed=int(g["game_id"]) % 100003,
@@ -655,6 +662,8 @@ def main():
     ap.add_argument("--cold-start-trial", action="store_true", help="unpromoted 1-4 prior game player/rotation prior experiment")
     ap.add_argument("--empirical-game-trial", action="store_true",
                     help="compare independent per-game stat bootstrap against V5 possession generation")
+    ap.add_argument("--empirical-three-attempts-trial", action="store_true",
+                    help="one frozen 3PA-then-3PM challenger vs current empirical production head, shadow only")
     ap.add_argument("--learned-head-trial", action="store_true",
                     help="independent supervised next-game player-opportunity rates versus native V5 simulation")
     ap.add_argument("--learned-head-train-before", default="",
@@ -665,7 +674,7 @@ def main():
     a = ap.parse_args()
     results, rows, v4_preds, chosen = run(a)
     if a.dump:
-        Path(a.dump).write_text(json.dumps(results if a.role_trial or a.lineup_trial or a.style_trial or a.flow_trial or a.cold_start_trial or a.assist_network_trial or a.matchup_rotation_trial or a.rebound_zone_trial or a.learned_head_trial or a.empirical_game_trial else next(iter(results.values()))))
+        Path(a.dump).write_text(json.dumps(results if a.role_trial or a.lineup_trial or a.style_trial or a.flow_trial or a.cold_start_trial or a.assist_network_trial or a.matchup_rotation_trial or a.rebound_zone_trial or a.learned_head_trial or a.empirical_game_trial or a.empirical_three_attempts_trial else next(iter(results.values()))))
     report = {c: score(r, rows, v4_preds) for c, r in results.items() if r}
     if a.empirical_game_trial:
         from nba.nba_v5_learned_opportunity_head_score import evaluate_native
@@ -674,6 +683,14 @@ def main():
         paired["candidate"] = "Independent player-game history bootstrap with shared pace and own sampled minutes"
         paired["evaluation_limit"] = "Retrospective game roster observed; no lineup hindsight in historical box sampling"
         report["paired_empirical_game_trial"] = paired
+    if a.empirical_three_attempts_trial:
+        from nba.nba_v5_learned_opportunity_head_score import evaluate_native
+        paired=evaluate_native(results["empirical_game_head"], results["empirical_attempts_head"])
+        paired["experiment"]="NBA_V5_EMPIRICAL_3PA_BINOMIAL_V1"
+        paired["candidate"]="Past-only 3PA from sampled game, Beta-shrunk 3P skill, binomial makes"
+        paired["evaluation_limit"]="Same retrospective known roster and game, original incumbent targets, no genuine forward lineup evidence"
+        paired["model_promotion_allowed"]=False
+        report["paired_empirical_three_attempts_trial"]=paired
     if a.learned_head_trial:
         from nba.nba_v5_learned_opportunity_head_score import evaluate_native
         report["paired_learned_opportunity_head_trial"] = evaluate_native(
