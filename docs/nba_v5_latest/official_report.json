@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_05_30PM.pdf",
-  "published_at_utc": "2026-11-13T22:30:00+00:00",
-  "captured_at_utc": "2026-11-13T22:33:42.284343+00:00",
-  "source_sha256": "fa44e4c7ffa52b45496f95acc7afdf069eab3d6fc54ae8dcecac7cc9f0f0e751",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_06_15PM.pdf",
+  "published_at_utc": "2026-11-13T23:15:00+00:00",
+  "captured_at_utc": "2026-11-13T23:30:48.541292+00:00",
+  "source_sha256": "78cfba5460055375917504aad0a567d0a351a0b38c8888e87d4578d0b38f57cd",
   "reports": [
     {
       "matchup": "MIL@ORL",
@@ -83,7 +83,7 @@
       "team_abbr": "IND",
       "player": "McConnell, T.J.",
       "normalized_player": "t j mcconnell",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Hamstring Strain"
     },
     {
@@ -91,7 +91,7 @@
       "team_abbr": "IND",
       "player": "Nesmith, Aaron",
       "normalized_player": "aaron nesmith",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Knee Soreness"
     },
     {
@@ -267,7 +267,7 @@
       "team_abbr": "MIA",
       "player": "Larsson, Pelle",
       "normalized_player": "pelle larsson",
-      "status": "DOUBTFUL",
+      "status": "OUT",
       "reason": "Injury/Illness - Illness"
     },
     {
@@ -275,7 +275,7 @@
       "team_abbr": "MIA",
       "player": "Thompson, Klay",
       "normalized_player": "klay thompson",
-      "status": "PROBABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Left Ankle Soreness"
     },
     {
