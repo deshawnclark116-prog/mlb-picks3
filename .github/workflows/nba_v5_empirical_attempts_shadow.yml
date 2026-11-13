@@ -1,0 +1,41 @@
+name: NBA V5 empirical 3PA opportunity shadow
+on:
+  pull_request:
+    paths:
+      - 'nba/nba_v5_empirical_stat_engine.py'
+      - 'nba/nba_v5_backtest.py'
+      - 'tests/test_nba_v5_empirical_attempts_trial.py'
+      - '.github/workflows/nba_v5_empirical_attempts_shadow.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  paired:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install backtest numerical dependencies
+        run: python -m pip install "numpy>=2.1,<2.5" "scipy>=1.14,<1.18"
+      - name: Test unchanged original and strict past-only opportunity head
+        run: python -m unittest tests.test_nba_v5_empirical_attempts_trial -v
+      - name: Paired replay at same players, original targets, history and worlds
+        run: |
+          python -m nba.nba_v5_backtest \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz \
+            --pbp nba/data/nba_v5_pbp_2026_27.jsonl.gz \
+            --test-from 2026-03-01 --sample 120 --sims 1200 \
+            --empirical-three-attempts-trial \
+            --out /tmp/nba_v5_empirical_attempts_report.json
+          python - <<'PY'
+          import json
+          r=json.load(open('/tmp/nba_v5_empirical_attempts_report.json'))
+          p=r['paired_empirical_three_attempts_trial']
+          assert p['model_promotion_allowed'] is False
+          print('EMPIRICAL_THREE_ATTEMPTS_PAIRED_RESULT',json.dumps(p,sort_keys=True))
+          PY

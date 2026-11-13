@@ -124,6 +124,13 @@ def grade_doc(doc, ledger_reports, kind):
                              "p10": r["p10"], "p90": r["p90"], "p_active": r["p_active"], "p_start": r.get("p_start"), "frontend_rank": r.get("frontend_rank"),
                              "whole_projection": r.get("whole_projection"), "reach_probability": r.get("reach_probability"),
                              "reach_probabilities": r.get("reach_probabilities"),
+                             "starter_evidence": r.get("starter_evidence"),
+                             "reported_status": r.get("reported_status"),
+                             "model_version": r.get("model_version"),
+                             "fga_forecast": r.get("fga_mean"),
+                             "fga_actual": None if line is None else line["FGA"],
+                             "three_attempts_forecast": r.get("three_attempts_mean"),
+                             "three_attempts_actual": None if line is None else line["3PA"],
                              "role_change": r.get("role_change"), "archetype": r.get("archetype"),
                              "uncertainty_audit": r.get("uncertainty_audit"),
                              "actual": None if line is None else line[STAT_KEY[r["market"]]], "played": line is not None,
@@ -219,7 +226,11 @@ def summarize(records):
             "source_reliability": {f"{s}|{st}": dict(c) for (s, st), c in rel.items()},
             "play_by_status": {k: dict(v) for k, v in by_status.items()},
             "play_by_status_body": {k: dict(v) for k, v in by_body.items()},
-            "note": "Patterns across many games change the model. One surprising result never does."}
+            "note": ("stated_chance_vs_actual is CONDITIONAL_ON_PLAYING, excludes DNP, and is NOT the V5 UI's displayed probability. "
+                     "stated_unconditional_chance_vs_actual includes DNP and is closer to the displayed chance, "
+                     "but its frontend_top4 still does not apply the live confirmed-starter filter. "
+                     "Use exact_card_summary.json for true verified-starter Top 4/10; "
+                     "frozen original grades are never rewritten.")}
 
 
 def main() -> int:
@@ -256,6 +267,22 @@ def main() -> int:
         recs = [json.loads(p.read_text()) for p in sorted((gdir / kind).glob("*.json"))]
         summary[kind] = summarize(recs)
     (gdir / "summary.json").write_text(json.dumps(summary, indent=1))
+    # Grade the exact immutable, actual V5 confirmed-starter Top 4/10 card.
+    # This read-only step must never prevent the historical grader from
+    # saving new outcomes if a research-only audit contract later changes.
+    try:
+        from nba.nba_v5_exact_card_audit import run as exact_card_replay
+        card=exact_card_replay(Path(a.archive),gdir,kind="last")
+        (gdir / "exact_card_summary.json").write_text(json.dumps(card,indent=2))
+        print("EXACT_CONFIRMED_STARTER_CARD_GRADE",
+              json.dumps({"n":card.get("top4",{}).get("n"),
+                          "hit_rate":card.get("top4",{}).get("hit_rate"),
+                          "fully_verified_games":card.get("games_with_archives_and_grades",0)-
+                             card.get("games_without_eligible_confirmed_starters",0)}),
+              flush=True)
+    except Exception as exc:
+        print("EXACT_CONFIRMED_STARTER_CARD_AUDIT_FAILED (legacy grade retained):",
+              repr(exc),flush=True)
     print("newly graded", new, json.dumps({k: v["games_graded"] for k, v in summary.items()}))
     return 0
 

@@ -1,0 +1,39 @@
+name: NBA V5 exact pregame card replay
+on:
+  pull_request:
+    paths:
+      - 'nba/nba_v5_exact_card_audit.py'
+      - 'tests/test_nba_v5_exact_card_audit.py'
+      - 'nba/nba_v5_postmortem.py'
+      - 'tests/test_nba_v5_postmortem_contract.py'
+      - '.github/workflows/nba_v5_exact_card_audit.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install numerical grader dependency
+        run: python -m pip install "numpy>=2.1,<2.5"
+      - name: Verify exact original selection, DNP and future grade provenance
+        run: python -m unittest tests.test_nba_v5_exact_card_audit tests.test_nba_v5_postmortem_contract -v
+      - name: Audit exact archived last pregame confirmed starter cards
+        run: |
+          python -m nba.nba_v5_exact_card_audit \
+            --archive docs/nba_v5_archive \
+            --grades docs/nba_v5_grades \
+            --kind last --out /tmp/nba_v5_exact_card_audit.json
+          python - <<'PY'
+          import json
+          a=json.load(open('/tmp/nba_v5_exact_card_audit.json'))
+          assert a['post_tip_forecasts_rejected']==0, 'Pregame archive timestamp audit failed'
+          assert a['top4']['n']>0, 'Cannot evaluate NBA without real confirmed starter forecast and graded outcomes'
+          assert a['shadow_candidate'].get('promotion_allowed',False) is False, 'Do not auto-promote shadow research'
+          print('EXACT_REPLAY_VERIFIED',a['top4'],a['top10'])
+          PY
