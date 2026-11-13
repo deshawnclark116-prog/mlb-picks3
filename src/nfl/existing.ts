@@ -143,12 +143,12 @@ export function parseExistingNfl(raw:unknown,now=new Date(),expected?:{season:nu
   }
   const dedupe=new Set<string>();
   for(const row of doc.picks){
-    if(!record(row))continue;
+    if(!row||typeof row!=='object'||Array.isArray(row))continue;
     if(row.market==='sacks'||row.market==='anytime_touchdowns'){
       // Only affirmative 0.5 outcomes are eligible for the public board.
       // Missing, malformed or UNDER outcomes cannot become picks via a
       // misleading high "model_prob" for NOT recording a sack.
-      if(typeof row.pick!=='string'||!/(^|\\W)OVER\\s+0\\.5\\b/i.test(row.pick))continue;
+      if(typeof row.pick!=='string'||!/(^|\W)OVER\s+0\.5\b/i.test(row.pick))continue;
       if(!team(row.team)||!team(row.opponent)||row.team===row.opponent||
          !time(row.kickoff_utc)||typeof row.player!=='string'||!row.player.trim()||
          !finite(row.prob_over)||row.prob_over<0||row.prob_over>1||
