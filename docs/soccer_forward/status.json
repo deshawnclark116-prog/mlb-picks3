@@ -1,9 +1,9 @@
 {
   "schema": "soccer-forward-scorecard-v1",
   "status": "RESEARCH_FIRSTSEEN_NEEDS_GITHUB_COMMIT_TIME_PROOF",
-  "originallyFrozen": 99,
+  "originallyFrozen": 101,
   "graded": 0,
-  "ungraded": 99,
+  "ungraded": 101,
   "gradedTeamScores": 0,
   "modelGoalMAE": null,
   "baselineGoalMAE": null,
@@ -12,6 +12,6 @@
   "model3wayBrier": null,
   "baseline3wayBrier": null,
   "byLeague": {},
-  "asofDateUTC": "2026-11-12",
+  "asofDateUTC": "2026-11-13",
   "evidence": "Github earliest commit before fixture date; no same-day freeze"
 }
