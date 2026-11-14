@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-14_05_45PM.pdf",
-  "published_at_utc": "2026-11-14T22:45:00+00:00",
-  "captured_at_utc": "2026-11-14T23:01:00.292341+00:00",
-  "source_sha256": "0575714a796ef629ddd3f0e00a79c020ba8644c409873f9cf76201cd3d85143e",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-14_06_00PM.pdf",
+  "published_at_utc": "2026-11-14T23:00:00+00:00",
+  "captured_at_utc": "2026-11-14T23:12:52.010468+00:00",
+  "source_sha256": "e27de7716f7cd1324f15288430ab27db737d7e070f5b3130c87e96e55060096a",
   "reports": [
     {
       "matchup": "DEN@NOP",
@@ -744,6 +744,62 @@
     },
     {
       "matchup": "ATL@MIL",
+      "team_abbr": "ATL",
+      "player": "Flemings, Kingston",
+      "normalized_player": "kingston flemings",
+      "status": "OUT",
+      "reason": "Injury/Illness - Lumbar Strain"
+    },
+    {
+      "matchup": "ATL@MIL",
+      "team_abbr": "ATL",
+      "player": "Gilbert, Keshon",
+      "normalized_player": "keshon gilbert",
+      "status": "OUT",
+      "reason": "Inflammation; Non-Surgical"
+    },
+    {
+      "matchup": "ATL@MIL",
+      "team_abbr": "ATL",
+      "player": "Gueye, Mouhamed",
+      "normalized_player": "mouhamed gueye",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Foot Fracture"
+    },
+    {
+      "matchup": "ATL@MIL",
+      "team_abbr": "ATL",
+      "player": "Landale, Jock",
+      "normalized_player": "jock landale",
+      "status": "AVAILABLE",
+      "reason": "Injury/Illness - Face Mask"
+    },
+    {
+      "matchup": "ATL@MIL",
+      "team_abbr": "ATL",
+      "player": "Newell, Asa",
+      "normalized_player": "asa newell",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "ATL@MIL",
+      "team_abbr": "ATL",
+      "player": "Veesaar, Henri",
+      "normalized_player": "henri veesaar",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right ACL Tear"
+    },
+    {
+      "matchup": "ATL@MIL",
+      "team_abbr": "ATL",
+      "player": "Wilson, Jalen",
+      "normalized_player": "jalen wilson",
+      "status": "DOUBTFUL",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "ATL@MIL",
       "team_abbr": "MIL",
       "player": "Dieng, Ousmane",
       "normalized_player": "ousmane dieng",
@@ -783,7 +839,7 @@
       "reason": "G League - Two-Way"
     }
   ],
-  "rows": 97,
+  "rows": 104,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
