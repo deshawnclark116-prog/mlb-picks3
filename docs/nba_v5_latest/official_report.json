@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_09_45PM.pdf",
-  "published_at_utc": "2026-11-14T02:45:00+00:00",
-  "captured_at_utc": "2026-11-14T02:55:48.967277+00:00",
-  "source_sha256": "59ee134dd420847767ed2f46b5228c259a2e92c3a83555d639b59e76f6dad517",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_10_00PM.pdf",
+  "published_at_utc": "2026-11-14T03:00:00+00:00",
+  "captured_at_utc": "2026-11-14T03:05:47.851600+00:00",
+  "source_sha256": "3aca2630c346b34593286cb8287d28acdbda757b35c38b65f2abce287e373d5d",
   "reports": [
     {
       "matchup": "MIL@ORL",
