@@ -1,71 +1,4 @@
 {
-  "401909303": [
-    {
-      "matchup": "POR@SAC",
-      "team_abbr": "POR",
-      "player": "Krejci, Vit",
-      "normalized_player": "vit krejci",
-      "status": "OUT",
-      "reason": "Injury/Illness - Left Ankle Fracture",
-      "player_id": "4578893",
-      "team_id": "22",
-      "published_at_utc": "2026-11-14T02:15:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_09_15PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "POR@SAC",
-      "team_abbr": "SAC",
-      "player": "Mogbo, Jonathan",
-      "normalized_player": "jonathan mogbo",
-      "status": "OUT",
-      "reason": "G League - Two-Way",
-      "player_id": "5107897",
-      "team_id": "23",
-      "published_at_utc": "2026-11-14T02:15:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_09_15PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "POR@SAC",
-      "team_abbr": "SAC",
-      "player": "Pedulla, Sean",
-      "normalized_player": "sean pedulla",
-      "status": "OUT",
-      "reason": "G League - Two-Way",
-      "player_id": "4709131",
-      "team_id": "23",
-      "published_at_utc": "2026-11-14T02:15:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_09_15PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "POR@SAC",
-      "team_abbr": "SAC",
-      "player": "Achiuwa, Precious",
-      "normalized_player": "precious achiuwa",
-      "status": "OUT",
-      "reason": "Injury/Illness - Left Ankle Soreness",
-      "player_id": "4431679",
-      "team_id": "23",
-      "published_at_utc": "2026-11-14T02:15:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_09_15PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "POR@SAC",
-      "team_abbr": "SAC",
-      "player": "Raynaud, Maxime",
-      "normalized_player": "maxime raynaud",
-      "status": "OUT",
-      "reason": "",
-      "player_id": "4898371",
-      "team_id": "23",
-      "published_at_utc": "2026-11-14T02:15:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_09_15PM.pdf",
-      "source": "official_nba_injury_report"
-    }
-  ],
   "401909304": [
     {
       "matchup": "OKC@LAC",
@@ -76,8 +9,8 @@
       "reason": "Injury/Illness - Right Heel Surgery",
       "player_id": "3913176",
       "team_id": "12",
-      "published_at_utc": "2026-11-14T02:15:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_09_15PM.pdf",
+      "published_at_utc": "2026-11-14T02:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_09_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -89,21 +22,8 @@
       "reason": "",
       "player_id": "4396818",
       "team_id": "12",
-      "published_at_utc": "2026-11-14T02:15:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_09_15PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "OKC@LAC",
-      "team_abbr": "OKC",
-      "player": "Mitchell, Ajay",
-      "normalized_player": "ajay mitchell",
-      "status": "QUESTIONABLE",
-      "reason": "Injury/Illness - Left Ankle Sprain",
-      "player_id": "4900671",
-      "team_id": "25",
-      "published_at_utc": "2026-11-14T02:15:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_09_15PM.pdf",
+      "published_at_utc": "2026-11-14T02:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_09_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -115,8 +35,8 @@
       "reason": "-",
       "player_id": "5159925",
       "team_id": "25",
-      "published_at_utc": "2026-11-14T02:15:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_09_15PM.pdf",
+      "published_at_utc": "2026-11-14T02:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_09_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -128,8 +48,8 @@
       "reason": "Injury/Illness - Low Back Spasms",
       "player_id": "4432823",
       "team_id": "25",
-      "published_at_utc": "2026-11-14T02:15:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_09_15PM.pdf",
+      "published_at_utc": "2026-11-14T02:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_09_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -141,8 +61,8 @@
       "reason": "",
       "player_id": "4433255",
       "team_id": "25",
-      "published_at_utc": "2026-11-14T02:15:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_09_15PM.pdf",
+      "published_at_utc": "2026-11-14T02:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_09_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -154,8 +74,8 @@
       "reason": "Injury/Illness - Left Ankle Surgery",
       "player_id": "4593803",
       "team_id": "25",
-      "published_at_utc": "2026-11-14T02:15:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_09_15PM.pdf",
+      "published_at_utc": "2026-11-14T02:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_09_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -167,8 +87,21 @@
       "reason": "Injury/Illness - Left Shoulder Surgery",
       "player_id": "4683692",
       "team_id": "25",
-      "published_at_utc": "2026-11-14T02:15:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_09_15PM.pdf",
+      "published_at_utc": "2026-11-14T02:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_09_45PM.pdf",
+      "source": "official_nba_injury_report"
+    },
+    {
+      "matchup": "OKC@LAC",
+      "team_abbr": "OKC",
+      "player": "Mitchell, Ajay",
+      "normalized_player": "ajay mitchell",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Ankle Sprain",
+      "player_id": "4900671",
+      "team_id": "25",
+      "published_at_utc": "2026-11-14T02:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_09_45PM.pdf",
       "source": "official_nba_injury_report"
     }
   ]
