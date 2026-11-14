@@ -802,7 +802,7 @@
     "did_not_play": 1
    }
   },
-  "note": "Patterns across many games change the model. One surprising result never does."
+  "note": "stated_chance_vs_actual is CONDITIONAL_ON_PLAYING, excludes DNP, and is NOT the V5 UI's displayed probability. stated_unconditional_chance_vs_actual includes DNP and is closer to the displayed chance, but its frontend_top4 still does not apply the live confirmed-starter filter. Use exact_card_summary.json for true verified-starter Top 4/10; frozen original grades are never rewritten."
  },
  "last": {
   "games_graded": 53,
@@ -1607,6 +1607,6 @@
     "did_not_play": 1
    }
   },
-  "note": "Patterns across many games change the model. One surprising result never does."
+  "note": "stated_chance_vs_actual is CONDITIONAL_ON_PLAYING, excludes DNP, and is NOT the V5 UI's displayed probability. stated_unconditional_chance_vs_actual includes DNP and is closer to the displayed chance, but its frontend_top4 still does not apply the live confirmed-starter filter. Use exact_card_summary.json for true verified-starter Top 4/10; frozen original grades are never rewritten."
  }
 }
