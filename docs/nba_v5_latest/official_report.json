@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-14_01_00PM.pdf",
-  "published_at_utc": "2026-11-14T18:00:00+00:00",
-  "captured_at_utc": "2026-11-14T18:13:09.377591+00:00",
-  "source_sha256": "f73450afe3f936d190ac9ee3045b52309040893ee2409658530e1043bc1a5365",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-14_02_45PM.pdf",
+  "published_at_utc": "2026-11-14T19:45:00+00:00",
+  "captured_at_utc": "2026-11-14T19:58:33.970639+00:00",
+  "source_sha256": "ef5a7de0aa2aab1309fd09a529ffd580ffcdfb34c2da54f35f828ee317922dc7",
   "reports": [
     {
       "matchup": "DEN@NOP",
@@ -41,6 +41,14 @@
     {
       "matchup": "DEN@NOP",
       "team_abbr": "NOP",
+      "player": "Dia, Malik",
+      "normalized_player": "malik dia",
+      "status": "QUESTIONABLE",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "DEN@NOP",
+      "team_abbr": "NOP",
       "player": "McGowens, Bryce",
       "normalized_player": "bryce mcgowens",
       "status": "OUT",
@@ -69,6 +77,22 @@
       "normalized_player": "dejounte murray",
       "status": "OUT",
       "reason": "Injury/Illness - Left Ankle Sprain"
+    },
+    {
+      "matchup": "DEN@NOP",
+      "team_abbr": "NOP",
+      "player": "Pierre Jr., Jaron",
+      "normalized_player": "jaron pierre",
+      "status": "PROBABLE",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "DEN@NOP",
+      "team_abbr": "NOP",
+      "player": "Reese, Julian",
+      "normalized_player": "julian reese",
+      "status": "QUESTIONABLE",
+      "reason": "G League - Two-Way"
     },
     {
       "matchup": "DEN@NOP",
@@ -127,6 +151,70 @@
       "reason": "Injury/Illness - Right Thumb Splint"
     },
     {
+      "matchup": "DAL@CLE",
+      "team_abbr": "CLE",
+      "player": "Allen, Jarrett",
+      "normalized_player": "jarrett allen",
+      "status": "QUESTIONABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "DAL@CLE",
+      "team_abbr": "CLE",
+      "player": "Harden, James",
+      "normalized_player": "james harden",
+      "status": "QUESTIONABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "DAL@CLE",
+      "team_abbr": "CLE",
+      "player": "Merrill, Sam",
+      "normalized_player": "sam merrill",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "DAL@CLE",
+      "team_abbr": "CLE",
+      "player": "Mitchell, Donovan",
+      "normalized_player": "donovan mitchell",
+      "status": "QUESTIONABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "DAL@CLE",
+      "team_abbr": "CLE",
+      "player": "Mobley, Evan",
+      "normalized_player": "evan mobley",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Great Toe Sprain"
+    },
+    {
+      "matchup": "DAL@CLE",
+      "team_abbr": "CLE",
+      "player": "Tomlin, Nae'Qwan",
+      "normalized_player": "nae qwan tomlin",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "DAL@CLE",
+      "team_abbr": "CLE",
+      "player": "Udeh, Jr., Ernest",
+      "normalized_player": ", ernest udeh",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "DAL@CLE",
+      "team_abbr": "CLE",
+      "player": "Watson, Peyton",
+      "normalized_player": "peyton watson",
+      "status": "QUESTIONABLE",
+      "reason": ""
+    },
+    {
       "matchup": "BKN@MEM",
       "team_abbr": "BKN",
       "player": "Bilodeau, Tyler",
@@ -172,7 +260,55 @@
       "player": "Traore, Nolan",
       "normalized_player": "nolan traore",
       "status": "PROBABLE",
+      "reason": "Injury/Illness - Right Calf Tightness /"
+    },
+    {
+      "matchup": "BKN@MEM",
+      "team_abbr": "MEM",
+      "player": "Edey, Zach",
+      "normalized_player": "zach edey",
+      "status": "QUESTIONABLE",
       "reason": ""
+    },
+    {
+      "matchup": "BKN@MEM",
+      "team_abbr": "MEM",
+      "player": "Grant, Jerami",
+      "normalized_player": "jerami grant",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Head Injury"
+    },
+    {
+      "matchup": "BKN@MEM",
+      "team_abbr": "MEM",
+      "player": "Jerome, Ty",
+      "normalized_player": "ty jerome",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Hip Soreness"
+    },
+    {
+      "matchup": "BKN@MEM",
+      "team_abbr": "MEM",
+      "player": "Pippen Jr., Scotty",
+      "normalized_player": "scotty pippen",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "BKN@MEM",
+      "team_abbr": "MEM",
+      "player": "Post, Quinten",
+      "normalized_player": "quinten post",
+      "status": "OUT",
+      "reason": "Injury/Illness - Concussion Protocol"
+    },
+    {
+      "matchup": "BKN@MEM",
+      "team_abbr": "MEM",
+      "player": "Saunders, Richie",
+      "normalized_player": "richie saunders",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Knee Surgery"
     },
     {
       "matchup": "CHI@MIN",
@@ -343,7 +479,7 @@
       "reason": "Injury/Illness - Left Ankle Sprain"
     }
   ],
-  "rows": 42,
+  "rows": 59,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
