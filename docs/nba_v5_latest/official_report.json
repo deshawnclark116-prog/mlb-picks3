@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_08_00PM.pdf",
-  "published_at_utc": "2026-11-14T01:00:00+00:00",
-  "captured_at_utc": "2026-11-14T01:15:42.112355+00:00",
-  "source_sha256": "f15d8d6cfa16508d61b7475281dfcb56576bbb2795e6d425b3b105876127c639",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_09_15PM.pdf",
+  "published_at_utc": "2026-11-14T02:15:00+00:00",
+  "captured_at_utc": "2026-11-14T02:26:39.356438+00:00",
+  "source_sha256": "7b528b4d2551c709e9c7806b44772d0754de6ed1c037b39d14a69e244d36018f",
   "reports": [
     {
       "matchup": "MIL@ORL",
@@ -483,7 +483,7 @@
       "team_abbr": "GSW",
       "player": "Bassey, Charles",
       "normalized_player": "charles bassey",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Left Toe Soreness"
     },
     {
@@ -531,8 +531,8 @@
       "team_abbr": "SAS",
       "player": "Fox, De'Aaron",
       "normalized_player": "de aaron fox",
-      "status": "QUESTIONABLE",
-      "reason": "Injury/Illness - Left Hip Soreness"
+      "status": "AVAILABLE",
+      "reason": "-"
     },
     {
       "matchup": "GSW@SAS",
@@ -555,8 +555,8 @@
       "team_abbr": "SAS",
       "player": "Vassell, Devin",
       "normalized_player": "devin vassell",
-      "status": "QUESTIONABLE",
-      "reason": ""
+      "status": "AVAILABLE",
+      "reason": "-"
     },
     {
       "matchup": "POR@SAC",
