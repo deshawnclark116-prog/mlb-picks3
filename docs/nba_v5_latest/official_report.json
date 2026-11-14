@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-14_02_45PM.pdf",
-  "published_at_utc": "2026-11-14T19:45:00+00:00",
-  "captured_at_utc": "2026-11-14T19:58:33.970639+00:00",
-  "source_sha256": "ef5a7de0aa2aab1309fd09a529ffd580ffcdfb34c2da54f35f828ee317922dc7",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-14_03_00PM.pdf",
+  "published_at_utc": "2026-11-14T20:00:00+00:00",
+  "captured_at_utc": "2026-11-14T20:04:44.960319+00:00",
+  "source_sha256": "9723adcd51d5ad6426d5b387c2b5b7ad70dcc55aa9f65b87fbee8a04951b8560",
   "reports": [
     {
       "matchup": "DEN@NOP",
