@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-14_06_30PM.pdf",
-  "published_at_utc": "2026-11-14T23:30:00+00:00",
-  "captured_at_utc": "2026-11-14T23:43:20.466554+00:00",
-  "source_sha256": "eea1a81575842db6e71f475efb045638f6a8db37f841e655c34a22f0e5490363",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-14_06_45PM.pdf",
+  "published_at_utc": "2026-11-14T23:45:00+00:00",
+  "captured_at_utc": "2026-11-14T23:49:27.972252+00:00",
+  "source_sha256": "5baca8a2d7b7e7a2e43447a9c40b1bf0ebd99ae230d6e09bf5e50d453b8bcbba",
   "reports": [
     {
       "matchup": "DEN@NOP",
@@ -235,7 +235,7 @@
       "team_abbr": "BKN",
       "player": "Brown Jr., Mikel",
       "normalized_player": "mikel brown",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Illness"
     },
     {
@@ -275,7 +275,7 @@
       "team_abbr": "BKN",
       "player": "Traore, Nolan",
       "normalized_player": "nolan traore",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -339,7 +339,7 @@
       "team_abbr": "CHI",
       "player": "Claxton, Nic",
       "normalized_player": "nic claxton",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": ""
     },
     {
@@ -347,8 +347,8 @@
       "team_abbr": "CHI",
       "player": "Powell, Norman",
       "normalized_player": "norman powell",
-      "status": "QUESTIONABLE",
-      "reason": ""
+      "status": "AVAILABLE",
+      "reason": "-"
     },
     {
       "matchup": "CHI@MIN",
@@ -363,7 +363,7 @@
       "team_abbr": "CHI",
       "player": "Smith, Jalen",
       "normalized_player": "jalen smith",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Left Finger Sprain"
     },
     {
