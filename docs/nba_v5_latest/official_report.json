@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-14_11_30AM.pdf",
-  "published_at_utc": "2026-11-14T16:30:00+00:00",
-  "captured_at_utc": "2026-11-14T16:36:54.992061+00:00",
-  "source_sha256": "e9e2412b103ba5a2d926d037d666c61dc72c469021bd3a714c09112e2c1308df",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-14_01_00PM.pdf",
+  "published_at_utc": "2026-11-14T18:00:00+00:00",
+  "captured_at_utc": "2026-11-14T18:13:09.377591+00:00",
+  "source_sha256": "f73450afe3f936d190ac9ee3045b52309040893ee2409658530e1043bc1a5365",
   "reports": [
     {
       "matchup": "DEN@NOP",
@@ -39,6 +39,46 @@
       "reason": "G League - Two-Way"
     },
     {
+      "matchup": "DEN@NOP",
+      "team_abbr": "NOP",
+      "player": "McGowens, Bryce",
+      "normalized_player": "bryce mcgowens",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Elbow Infection"
+    },
+    {
+      "matchup": "DEN@NOP",
+      "team_abbr": "NOP",
+      "player": "Missi, Yves",
+      "normalized_player": "yves missi",
+      "status": "PROBABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "DEN@NOP",
+      "team_abbr": "NOP",
+      "player": "Murphy III, Trey",
+      "normalized_player": "trey murphy",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "DEN@NOP",
+      "team_abbr": "NOP",
+      "player": "Murray, Dejounte",
+      "normalized_player": "dejounte murray",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Ankle Sprain"
+    },
+    {
+      "matchup": "DEN@NOP",
+      "team_abbr": "NOP",
+      "player": "Watford, Trendon",
+      "normalized_player": "trendon watford",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Ankle Sprain"
+    },
+    {
       "matchup": "DAL@CLE",
       "team_abbr": "DAL",
       "player": "Biberovic, Tarik",
@@ -51,7 +91,7 @@
       "team_abbr": "DAL",
       "player": "Christie, Max",
       "normalized_player": "max christie",
-      "status": "QUESTIONABLE",
+      "status": "DOUBTFUL",
       "reason": "Injury/Illness - Left Ankle Sprain"
     },
     {
@@ -99,7 +139,7 @@
       "team_abbr": "BKN",
       "player": "Brown Jr., Mikel",
       "normalized_player": "mikel brown",
-      "status": "QUESTIONABLE",
+      "status": "PROBABLE",
       "reason": "Injury/Illness - Illness"
     },
     {
@@ -132,6 +172,62 @@
       "player": "Traore, Nolan",
       "normalized_player": "nolan traore",
       "status": "PROBABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "CHI@MIN",
+      "team_abbr": "CHI",
+      "player": "Awaka, Tobe",
+      "normalized_player": "tobe awaka",
+      "status": "OUT",
+      "reason": "Injury/Illness - Disc Irritation"
+    },
+    {
+      "matchup": "CHI@MIN",
+      "team_abbr": "CHI",
+      "player": "Claxton, Nic",
+      "normalized_player": "nic claxton",
+      "status": "QUESTIONABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "CHI@MIN",
+      "team_abbr": "CHI",
+      "player": "Powell, Norman",
+      "normalized_player": "norman powell",
+      "status": "QUESTIONABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "CHI@MIN",
+      "team_abbr": "CHI",
+      "player": "Sellers, Jaylin",
+      "normalized_player": "jaylin sellers",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "CHI@MIN",
+      "team_abbr": "CHI",
+      "player": "Smith, Jalen",
+      "normalized_player": "jalen smith",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Left Finger Sprain"
+    },
+    {
+      "matchup": "CHI@MIN",
+      "team_abbr": "CHI",
+      "player": "Swain, Dailyn",
+      "normalized_player": "dailyn swain",
+      "status": "OUT",
+      "reason": "G League - On Assignment"
+    },
+    {
+      "matchup": "CHI@MIN",
+      "team_abbr": "CHI",
+      "player": "Wilson, Caleb",
+      "normalized_player": "caleb wilson",
+      "status": "OUT",
       "reason": ""
     },
     {
@@ -171,7 +267,7 @@
       "team_abbr": "DET",
       "player": "Harkless, Elijah",
       "normalized_player": "elijah harkless",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "G League - Two-Way"
     },
     {
@@ -187,7 +283,7 @@
       "team_abbr": "DET",
       "player": "Jones, Isaac",
       "normalized_player": "isaac jones",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "G League - Two-Way"
     },
     {
@@ -213,9 +309,41 @@
       "normalized_player": "ugonna onyenso",
       "status": "OUT",
       "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "DET@MIA",
+      "team_abbr": "MIA",
+      "player": "Antetokounmpo, Giannis",
+      "normalized_player": "giannis antetokounmpo",
+      "status": "PROBABLE",
+      "reason": "Injury/Illness - Right Wrist Sprain"
+    },
+    {
+      "matchup": "DET@MIA",
+      "team_abbr": "MIA",
+      "player": "Goldin, Vladislav",
+      "normalized_player": "vladislav goldin",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "DET@MIA",
+      "team_abbr": "MIA",
+      "player": "Larsson, Pelle",
+      "normalized_player": "pelle larsson",
+      "status": "DOUBTFUL",
+      "reason": "Injury/Illness - Illness"
+    },
+    {
+      "matchup": "DET@MIA",
+      "team_abbr": "MIA",
+      "player": "Thompson, Klay",
+      "normalized_player": "klay thompson",
+      "status": "PROBABLE",
+      "reason": "Injury/Illness - Left Ankle Sprain"
     }
   ],
-  "rows": 26,
+  "rows": 42,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
