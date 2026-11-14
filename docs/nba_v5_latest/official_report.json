@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_06_45PM.pdf",
-  "published_at_utc": "2026-11-13T23:45:00+00:00",
-  "captured_at_utc": "2026-11-14T00:03:04.001542+00:00",
-  "source_sha256": "78e9186b8c125a9723e1271966712b223933712302b40061c67e30208d906f18",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-13_07_15PM.pdf",
+  "published_at_utc": "2026-11-14T00:15:00+00:00",
+  "captured_at_utc": "2026-11-14T00:19:14.177247+00:00",
+  "source_sha256": "20b9c2f9f3aed67b28e3f48557d94cc4db05cc2aef44773d324b9d4540f766b1",
   "reports": [
     {
       "matchup": "MIL@ORL",
@@ -179,8 +179,8 @@
       "team_abbr": "CHI",
       "player": "Powell, Norman",
       "normalized_player": "norman powell",
-      "status": "QUESTIONABLE",
-      "reason": "Injury/Illness - Low Back Spasms"
+      "status": "AVAILABLE",
+      "reason": "-"
     },
     {
       "matchup": "ATL@CHI",
@@ -195,7 +195,7 @@
       "team_abbr": "CHI",
       "player": "Swain, Dailyn",
       "normalized_player": "dailyn swain",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Right Disc Irritation"
     },
     {
