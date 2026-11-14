@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-14_06_00PM.pdf",
-  "published_at_utc": "2026-11-14T23:00:00+00:00",
-  "captured_at_utc": "2026-11-14T23:17:10.723591+00:00",
-  "source_sha256": "e27de7716f7cd1324f15288430ab27db737d7e070f5b3130c87e96e55060096a",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-14_06_15PM.pdf",
+  "published_at_utc": "2026-11-14T23:15:00+00:00",
+  "captured_at_utc": "2026-11-14T23:25:20.915974+00:00",
+  "source_sha256": "65930c1b0b675463bf0289c0fbc41462dc7ab048615b0ffc919a28ff7ad56e6f",
   "reports": [
     {
       "matchup": "DEN@NOP",
@@ -123,7 +123,7 @@
       "team_abbr": "DAL",
       "player": "Christie, Max",
       "normalized_player": "max christie",
-      "status": "DOUBTFUL",
+      "status": "OUT",
       "reason": "Injury/Illness - Left Ankle Sprain"
     },
     {
@@ -139,7 +139,7 @@
       "team_abbr": "DAL",
       "player": "Johnson Jr., Morez",
       "normalized_player": "morez johnson",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -253,6 +253,14 @@
       "normalized_player": "grant nelson",
       "status": "OUT",
       "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "BKN@MEM",
+      "team_abbr": "BKN",
+      "player": "Porter Jr., Michael",
+      "normalized_player": "michael porter",
+      "status": "QUESTIONABLE",
+      "reason": "Personal Reasons"
     },
     {
       "matchup": "BKN@MEM",
@@ -459,7 +467,7 @@
       "team_abbr": "MIA",
       "player": "Antetokounmpo, Giannis",
       "normalized_player": "giannis antetokounmpo",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Wrist Sprain"
     },
     {
@@ -475,7 +483,7 @@
       "team_abbr": "MIA",
       "player": "Larsson, Pelle",
       "normalized_player": "pelle larsson",
-      "status": "DOUBTFUL",
+      "status": "OUT",
       "reason": "Injury/Illness - Illness"
     },
     {
@@ -483,7 +491,7 @@
       "team_abbr": "MIA",
       "player": "Thompson, Klay",
       "normalized_player": "klay thompson",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Left Ankle Sprain"
     },
     {
@@ -839,7 +847,7 @@
       "reason": "G League - Two-Way"
     }
   ],
-  "rows": 104,
+  "rows": 105,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
