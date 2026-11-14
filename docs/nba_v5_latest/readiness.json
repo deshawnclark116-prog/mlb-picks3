@@ -1,38 +1,11 @@
 {
   "schema": "NBA_V5_FORECAST_READINESS_V1",
-  "checked_at_utc": "2026-11-14T00:46:20.449454+00:00",
-  "document_generated_at_utc": "2026-11-14T00:44:39.036863+00:00",
+  "checked_at_utc": "2026-11-14T00:52:52.782846+00:00",
+  "document_generated_at_utc": "2026-11-14T00:52:08.043865+00:00",
   "games": [
     {
-      "game_id": "401909298",
-      "forecast_at_utc": "2026-11-14T00:44:39.036863+00:00",
-      "tipoff_utc": "2026-11-14T01:00:00+00:00",
-      "player_stat_rows": 182,
-      "players_with_v5_rows": 26,
-      "ready": true,
-      "errors": []
-    },
-    {
-      "game_id": "401909299",
-      "forecast_at_utc": "2026-11-14T00:44:39.036863+00:00",
-      "tipoff_utc": "2026-11-14T01:00:00+00:00",
-      "player_stat_rows": 203,
-      "players_with_v5_rows": 29,
-      "ready": true,
-      "errors": []
-    },
-    {
-      "game_id": "401909300",
-      "forecast_at_utc": "2026-11-14T00:44:39.036863+00:00",
-      "tipoff_utc": "2026-11-14T01:00:00+00:00",
-      "player_stat_rows": 182,
-      "players_with_v5_rows": 26,
-      "ready": true,
-      "errors": []
-    },
-    {
       "game_id": "401909301",
-      "forecast_at_utc": "2026-11-14T00:44:39.036863+00:00",
+      "forecast_at_utc": "2026-11-14T00:52:08.043865+00:00",
       "tipoff_utc": "2026-11-14T01:30:00+00:00",
       "player_stat_rows": 203,
       "players_with_v5_rows": 29,
@@ -41,7 +14,7 @@
     },
     {
       "game_id": "401909302",
-      "forecast_at_utc": "2026-11-14T00:44:39.036863+00:00",
+      "forecast_at_utc": "2026-11-14T00:52:08.043865+00:00",
       "tipoff_utc": "2026-11-14T02:30:00+00:00",
       "player_stat_rows": 210,
       "players_with_v5_rows": 30,
@@ -50,7 +23,7 @@
     },
     {
       "game_id": "401909303",
-      "forecast_at_utc": "2026-11-14T00:44:39.036863+00:00",
+      "forecast_at_utc": "2026-11-14T00:52:08.043865+00:00",
       "tipoff_utc": "2026-11-14T03:00:00+00:00",
       "player_stat_rows": 196,
       "players_with_v5_rows": 28,
@@ -59,7 +32,7 @@
     },
     {
       "game_id": "401909304",
-      "forecast_at_utc": "2026-11-14T00:44:39.036863+00:00",
+      "forecast_at_utc": "2026-11-14T00:52:08.043865+00:00",
       "tipoff_utc": "2026-11-14T03:30:00+00:00",
       "player_stat_rows": 196,
       "players_with_v5_rows": 28,
@@ -71,7 +44,7 @@
   "all_games_ready": true,
   "errors": [],
   "data_quality_caveats": {
-    "certified_pregame_source_connected": true,
+    "certified_pregame_source_connected": false,
     "source_audit": "VALIDATED_TEAMWISE_MERGE",
     "optical_tracking_ingested_and_validated": false,
     "forward_accuracy_validated": false,
