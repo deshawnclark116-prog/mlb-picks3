@@ -1,0 +1,34 @@
+{
+  "schema": "soccer-forward-original-v1",
+  "id": "15a868b6dc9d607124e8f5374791cd0c",
+  "captured_at_utc": "2026-11-14T08:54:12.459Z",
+  "capture_code_sha": "f5c5724a8c04be6056bdafebe8f7b004402c66c1",
+  "source_set_sha256": "ab57af47e25f6bd95f74ad89d3c28e78399886286741c85167226f8de274a2ef",
+  "fixture_source_sha256": "f875275f835e378fc8c4e7d48c7a2f327e7d426237bd057fe652fd47f30b5a4f",
+  "source_receipts_count": 20,
+  "model_version": "soccer-v1-raw-goal-poisson-historical-walkforward-20261018",
+  "forecast": {
+    "league": "Ligue1",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "OGC Nice",
+    "away": "ES Troyes AC",
+    "expectedHomeGoals": 1.6062,
+    "expectedAwayGoals": 1.3234,
+    "baselineHomeGoals": 1.6546,
+    "baselineAwayGoals": 1.368,
+    "probabilities": {
+      "home": 0.4408,
+      "draw": 0.2436,
+      "away": 0.3155,
+      "over25": 0.5609,
+      "btts": 0.5865
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 11.1548,
+    "awayWeightedMatches": 4.1684,
+    "source": "openfootball/football.json/2026-27/fr.1.json",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  },
+  "eligibility": "FROZEN_ON_PRIOR_UTC_CALENDAR_DAY_NO_VERIFIED_KICKOFF"
+}
