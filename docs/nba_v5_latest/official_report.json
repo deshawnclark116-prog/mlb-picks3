@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-15_05_30PM.pdf",
-  "published_at_utc": "2026-11-15T22:30:00+00:00",
-  "captured_at_utc": "2026-11-15T22:48:07.415927+00:00",
-  "source_sha256": "0ff31c236dda6c0dfc750665c94f47bed83c1d7f900b678195367421b115be89",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-15_06_00PM.pdf",
+  "published_at_utc": "2026-11-15T23:00:00+00:00",
+  "captured_at_utc": "2026-11-15T23:02:50.044537+00:00",
+  "source_sha256": "4f57f0cd018af8d0f7dc68541939b32d2224b1159181aa8ebea100f753d9502d",
   "reports": [
     {
       "matchup": "IND@PHI",
@@ -547,7 +547,7 @@
       "team_abbr": "WAS",
       "player": "Okpara, Felix",
       "normalized_player": "felix okpara",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "G League - Two-Way"
     },
     {
@@ -1024,6 +1024,54 @@
     },
     {
       "matchup": "GSW@NOP",
+      "team_abbr": "GSW",
+      "player": "Butler III, Jimmy",
+      "normalized_player": "jimmy butler",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "GSW@NOP",
+      "team_abbr": "GSW",
+      "player": "Curry, Stephen",
+      "normalized_player": "stephen curry",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Oblique Tear"
+    },
+    {
+      "matchup": "GSW@NOP",
+      "team_abbr": "GSW",
+      "player": "Moody, Moses",
+      "normalized_player": "moses moody",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "GSW@NOP",
+      "team_abbr": "GSW",
+      "player": "Porzingis, Kristaps",
+      "normalized_player": "kristaps porzingis",
+      "status": "OUT",
+      "reason": "Not With Team"
+    },
+    {
+      "matchup": "GSW@NOP",
+      "team_abbr": "GSW",
+      "player": "Santos, Gui",
+      "normalized_player": "gui santos",
+      "status": "QUESTIONABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "GSW@NOP",
+      "team_abbr": "GSW",
+      "player": "Williams, Brandon",
+      "normalized_player": "brandon williams",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Hamstring Strain"
+    },
+    {
+      "matchup": "GSW@NOP",
       "team_abbr": "NOP",
       "player": "Dia, Malik",
       "normalized_player": "malik dia",
@@ -1085,9 +1133,73 @@
       "normalized_player": "trendon watford",
       "status": "OUT",
       "reason": "Injury/Illness - Right Ankle Sprain"
+    },
+    {
+      "matchup": "POR@MIN",
+      "team_abbr": "POR",
+      "player": "Krejci, Vit",
+      "normalized_player": "vit krejci",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Ankle Fracture"
+    },
+    {
+      "matchup": "POR@MIN",
+      "team_abbr": "POR",
+      "player": "Morant, Ja",
+      "normalized_player": "ja morant",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Hamstring Strain"
+    },
+    {
+      "matchup": "POR@MIN",
+      "team_abbr": "POR",
+      "player": "Sharpe, Shaedon",
+      "normalized_player": "shaedon sharpe",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Knee Surgery"
+    },
+    {
+      "matchup": "POR@MIN",
+      "team_abbr": "POR",
+      "player": "Youngblood, Chris",
+      "normalized_player": "chris youngblood",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "POR@MIN",
+      "team_abbr": "MIN",
+      "player": "Beringer, Joan",
+      "normalized_player": "joan beringer",
+      "status": "AVAILABLE",
+      "reason": "Injury/Illness - Face Mask"
+    },
+    {
+      "matchup": "POR@MIN",
+      "team_abbr": "MIN",
+      "player": "Clark, Jaylen",
+      "normalized_player": "jaylen clark",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Hamstring Strain"
+    },
+    {
+      "matchup": "POR@MIN",
+      "team_abbr": "MIN",
+      "player": "DiVincenzo, Donte",
+      "normalized_player": "donte divincenzo",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "POR@MIN",
+      "team_abbr": "MIN",
+      "player": "Edwards, Anthony",
+      "normalized_player": "anthony edwards",
+      "status": "OUT",
+      "reason": ""
     }
   ],
-  "rows": 135,
+  "rows": 149,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
