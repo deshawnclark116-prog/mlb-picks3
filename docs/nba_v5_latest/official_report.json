@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-15_12_15PM.pdf",
-  "published_at_utc": "2026-11-15T17:15:00+00:00",
-  "captured_at_utc": "2026-11-15T17:30:35.526380+00:00",
-  "source_sha256": "9332855fa6e8b2eb38aa50f6316984b92ec8e3f546a25a006ddd497ecefc4c95",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-15_12_45PM.pdf",
+  "published_at_utc": "2026-11-15T17:45:00+00:00",
+  "captured_at_utc": "2026-11-15T17:54:43.336273+00:00",
+  "source_sha256": "2a40a7d62fbbc7d3feef95f670b7576bb160a0fbee6a5b00cf5d8e8bc2a3adf6",
   "reports": [
     {
       "matchup": "IND@PHI",
@@ -201,6 +201,14 @@
     {
       "matchup": "CHA@LAC",
       "team_abbr": "LAC",
+      "player": "Martinelli, Nick",
+      "normalized_player": "nick martinelli",
+      "status": "QUESTIONABLE",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "CHA@LAC",
+      "team_abbr": "LAC",
       "player": "Miller, Jordan",
       "normalized_player": "jordan miller",
       "status": "OUT",
@@ -379,7 +387,7 @@
       "team_abbr": "HOU",
       "player": "Adams, Steven",
       "normalized_player": "steven adams",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Soleus Strain"
     },
     {
@@ -515,8 +523,8 @@
       "team_abbr": "ATL",
       "player": "Landale, Jock",
       "normalized_player": "jock landale",
-      "status": "AVAILABLE",
-      "reason": "Injury/Illness - Face Mask"
+      "status": "QUESTIONABLE",
+      "reason": ""
     },
     {
       "matchup": "ATL@MIL",
@@ -676,7 +684,7 @@
       "player": "Raynaud, Maxime",
       "normalized_player": "maxime raynaud",
       "status": "OUT",
-      "reason": "Injury/Illness - Right Patella"
+      "reason": ""
     },
     {
       "matchup": "OKC@SAC",
@@ -687,7 +695,7 @@
       "reason": ""
     }
   ],
-  "rows": 85,
+  "rows": 86,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
