@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-15_12_45PM.pdf",
-  "published_at_utc": "2026-11-15T17:45:00+00:00",
-  "captured_at_utc": "2026-11-15T17:54:43.336273+00:00",
-  "source_sha256": "2a40a7d62fbbc7d3feef95f670b7576bb160a0fbee6a5b00cf5d8e8bc2a3adf6",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-15_03_15PM.pdf",
+  "published_at_utc": "2026-11-15T20:15:00+00:00",
+  "captured_at_utc": "2026-11-15T20:22:19.212748+00:00",
+  "source_sha256": "d1aa215e326e5b60a37514f876b9b7838c8f0b7f27f1f35b34e6e6f628b63968",
   "reports": [
     {
       "matchup": "IND@PHI",
@@ -107,7 +107,7 @@
       "team_abbr": "LAL",
       "player": "James, Bronny",
       "normalized_player": "bronny james",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Illness"
     },
     {
@@ -123,7 +123,7 @@
       "team_abbr": "LAL",
       "player": "Sexton, Collin",
       "normalized_player": "collin sexton",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -131,8 +131,16 @@
       "team_abbr": "LAL",
       "player": "Thiero, Adou",
       "normalized_player": "adou thiero",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Left Ankle Sprain"
+    },
+    {
+      "matchup": "LAL@PHX",
+      "team_abbr": "PHX",
+      "player": "Timme, Drew",
+      "normalized_player": "drew timme",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
     },
     {
       "matchup": "LAL@PHX",
@@ -203,7 +211,7 @@
       "team_abbr": "LAC",
       "player": "Martinelli, Nick",
       "normalized_player": "nick martinelli",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "G League - Two-Way"
     },
     {
@@ -229,6 +237,14 @@
       "normalized_player": "maliq brown",
       "status": "OUT",
       "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "SAS@UTA",
+      "team_abbr": "SAS",
+      "player": "Fox, De'Aaron",
+      "normalized_player": "de aaron fox",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Left Hip Tightness"
     },
     {
       "matchup": "SAS@UTA",
@@ -309,6 +325,70 @@
       "normalized_player": "jusuf nurkic",
       "status": "OUT",
       "reason": ""
+    },
+    {
+      "matchup": "DAL@BOS",
+      "team_abbr": "DAL",
+      "player": "Aldama, Santi",
+      "normalized_player": "santi aldama",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Left Ankle Sprain"
+    },
+    {
+      "matchup": "DAL@BOS",
+      "team_abbr": "DAL",
+      "player": "Biberovic, Tarik",
+      "normalized_player": "tarik biberovic",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Heel Bursitis"
+    },
+    {
+      "matchup": "DAL@BOS",
+      "team_abbr": "DAL",
+      "player": "Christie, Max",
+      "normalized_player": "max christie",
+      "status": "DOUBTFUL",
+      "reason": "Injury/Illness - Left Ankle Sprain"
+    },
+    {
+      "matchup": "DAL@BOS",
+      "team_abbr": "DAL",
+      "player": "de Larrea, Sergio",
+      "normalized_player": "sergio de larrea",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Knee Sprain"
+    },
+    {
+      "matchup": "DAL@BOS",
+      "team_abbr": "DAL",
+      "player": "Gafford, Daniel",
+      "normalized_player": "daniel gafford",
+      "status": "PROBABLE",
+      "reason": "Injury/Illness - Right Shoulder Stinger"
+    },
+    {
+      "matchup": "DAL@BOS",
+      "team_abbr": "DAL",
+      "player": "Irving, Kyrie",
+      "normalized_player": "kyrie irving",
+      "status": "QUESTIONABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "DAL@BOS",
+      "team_abbr": "DAL",
+      "player": "Lively II, Dereck",
+      "normalized_player": "dereck lively",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Foot Surgery"
+    },
+    {
+      "matchup": "DAL@BOS",
+      "team_abbr": "DAL",
+      "player": "Martin, Caleb",
+      "normalized_player": "caleb martin",
+      "status": "AVAILABLE",
+      "reason": "Injury/Illness - Right Thumb Splint"
     },
     {
       "matchup": "DAL@BOS",
@@ -443,7 +523,7 @@
       "team_abbr": "WAS",
       "player": "Carrington, Bub",
       "normalized_player": "bub carrington",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -475,7 +555,7 @@
       "team_abbr": "WAS",
       "player": "Sarr, Alex",
       "normalized_player": "alex sarr",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Illness"
     },
     {
@@ -556,7 +636,7 @@
       "player": "Dieng, Ousmane",
       "normalized_player": "ousmane dieng",
       "status": "OUT",
-      "reason": "Injury/Illness - Left Finger Sprain"
+      "reason": "Injury/Illness - Left Finger Fracture"
     },
     {
       "matchup": "ATL@MIL",
@@ -667,8 +747,8 @@
       "team_abbr": "SAC",
       "player": "Murray, Keegan",
       "normalized_player": "keegan murray",
-      "status": "QUESTIONABLE",
-      "reason": "Injury/Illness - Illness"
+      "status": "AVAILABLE",
+      "reason": "-"
     },
     {
       "matchup": "OKC@SAC",
@@ -693,9 +773,41 @@
       "normalized_player": "ben simmons",
       "status": "OUT",
       "reason": ""
+    },
+    {
+      "matchup": "ORL@BOS",
+      "team_abbr": "ORL",
+      "player": "Banchero, Paolo",
+      "normalized_player": "paolo banchero",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "ORL@BOS",
+      "team_abbr": "ORL",
+      "player": "Isaac, Jonathan",
+      "normalized_player": "jonathan isaac",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "ORL@BOS",
+      "team_abbr": "ORL",
+      "player": "Nelson, Izaiyah",
+      "normalized_player": "izaiyah nelson",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "ORL@BOS",
+      "team_abbr": "ORL",
+      "player": "Penda, Noah",
+      "normalized_player": "noah penda",
+      "status": "OUT",
+      "reason": ""
     }
   ],
-  "rows": 86,
+  "rows": 100,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
