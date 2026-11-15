@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-14_07_00PM.pdf",
-  "published_at_utc": "2026-11-15T00:00:00+00:00",
-  "captured_at_utc": "2026-11-15T00:05:41.664442+00:00",
-  "source_sha256": "556084ec0d296a4632b0b7fba907ab9ad60ad2b39d32168292fdd6da8971b554",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-14_07_30PM.pdf",
+  "published_at_utc": "2026-11-15T00:30:00+00:00",
+  "captured_at_utc": "2026-11-15T00:39:08.290036+00:00",
+  "source_sha256": "17d207faf467c0dfc6385fa5370bc4568a14681d8bdacc5a0f628a91930fe807",
   "reports": [
     {
       "matchup": "DEN@NOP",
@@ -259,7 +259,7 @@
       "team_abbr": "BKN",
       "player": "Porter Jr., Michael",
       "normalized_player": "michael porter",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Personal Reasons"
     },
     {
@@ -291,7 +291,7 @@
       "team_abbr": "MEM",
       "player": "Grant, Jerami",
       "normalized_player": "jerami grant",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Head Injury"
     },
     {
@@ -567,6 +567,94 @@
       "reason": ""
     },
     {
+      "matchup": "LAL@PHX",
+      "team_abbr": "LAL",
+      "player": "Carr, Cameron",
+      "normalized_player": "cameron carr",
+      "status": "OUT",
+      "reason": "Injury/Illness - Illness"
+    },
+    {
+      "matchup": "LAL@PHX",
+      "team_abbr": "LAL",
+      "player": "Grimes, Quentin",
+      "normalized_player": "quentin grimes",
+      "status": "AVAILABLE",
+      "reason": "Injury/Illness - Right Finger Splint"
+    },
+    {
+      "matchup": "LAL@PHX",
+      "team_abbr": "LAL",
+      "player": "James, Bronny",
+      "normalized_player": "bronny james",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Illness"
+    },
+    {
+      "matchup": "LAL@PHX",
+      "team_abbr": "LAL",
+      "player": "Reaves, Austin",
+      "normalized_player": "austin reaves",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "LAL@PHX",
+      "team_abbr": "LAL",
+      "player": "Sexton, Collin",
+      "normalized_player": "collin sexton",
+      "status": "QUESTIONABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "LAL@PHX",
+      "team_abbr": "LAL",
+      "player": "Thiero, Adou",
+      "normalized_player": "adou thiero",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Left Ankle Sprain"
+    },
+    {
+      "matchup": "LAL@PHX",
+      "team_abbr": "PHX",
+      "player": "Williams, Mark",
+      "normalized_player": "mark williams",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Shoulder Surgery"
+    },
+    {
+      "matchup": "SAS@UTA",
+      "team_abbr": "SAS",
+      "player": "Brown, Maliq",
+      "normalized_player": "maliq brown",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "SAS@UTA",
+      "team_abbr": "SAS",
+      "player": "Gillespie, Ja'Kobi",
+      "normalized_player": "ja kobi gillespie",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "SAS@UTA",
+      "team_abbr": "SAS",
+      "player": "Harris, Tobias",
+      "normalized_player": "tobias harris",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Calf Strain"
+    },
+    {
+      "matchup": "SAS@UTA",
+      "team_abbr": "SAS",
+      "player": "Quaintance, Jayden",
+      "normalized_player": "jayden quaintance",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Knee Surgery"
+    },
+    {
       "matchup": "SAS@UTA",
       "team_abbr": "UTA",
       "player": "Alexander, Trey",
@@ -756,7 +844,7 @@
       "player": "Carrington, Bub",
       "normalized_player": "bub carrington",
       "status": "QUESTIONABLE",
-      "reason": "Injury/Illness - Chest / Sternum"
+      "reason": ""
     },
     {
       "matchup": "HOU@WAS",
@@ -820,7 +908,7 @@
       "player": "Gilbert, Keshon",
       "normalized_player": "keshon gilbert",
       "status": "OUT",
-      "reason": "Inflammation; Non-Surgical"
+      "reason": ""
     },
     {
       "matchup": "ATL@MIL",
@@ -903,7 +991,7 @@
       "reason": "G League - Two-Way"
     }
   ],
-  "rows": 112,
+  "rows": 123,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
