@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-14_06_45PM.pdf",
-  "published_at_utc": "2026-11-14T23:45:00+00:00",
-  "captured_at_utc": "2026-11-14T23:49:27.972252+00:00",
-  "source_sha256": "5baca8a2d7b7e7a2e43447a9c40b1bf0ebd99ae230d6e09bf5e50d453b8bcbba",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-14_07_00PM.pdf",
+  "published_at_utc": "2026-11-15T00:00:00+00:00",
+  "captured_at_utc": "2026-11-15T00:05:41.664442+00:00",
+  "source_sha256": "556084ec0d296a4632b0b7fba907ab9ad60ad2b39d32168292fdd6da8971b554",
   "reports": [
     {
       "matchup": "DEN@NOP",
@@ -567,6 +567,62 @@
       "reason": ""
     },
     {
+      "matchup": "SAS@UTA",
+      "team_abbr": "UTA",
+      "player": "Alexander, Trey",
+      "normalized_player": "trey alexander",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "SAS@UTA",
+      "team_abbr": "UTA",
+      "player": "Bufkin, Kobe",
+      "normalized_player": "kobe bufkin",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "SAS@UTA",
+      "team_abbr": "UTA",
+      "player": "Hayes, Jaxson",
+      "normalized_player": "jaxson hayes",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Knee Strain"
+    },
+    {
+      "matchup": "SAS@UTA",
+      "team_abbr": "UTA",
+      "player": "Ingram, Harrison",
+      "normalized_player": "harrison ingram",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "SAS@UTA",
+      "team_abbr": "UTA",
+      "player": "Jackson Jr., Jaren",
+      "normalized_player": "jaren jackson",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right MCL Tear"
+    },
+    {
+      "matchup": "SAS@UTA",
+      "team_abbr": "UTA",
+      "player": "Markkanen, Lauri",
+      "normalized_player": "lauri markkanen",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Hand Fracture"
+    },
+    {
+      "matchup": "SAS@UTA",
+      "team_abbr": "UTA",
+      "player": "Nurkic, Jusuf",
+      "normalized_player": "jusuf nurkic",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
       "matchup": "DAL@BOS",
       "team_abbr": "BOS",
       "player": "Carter, Devin",
@@ -700,7 +756,7 @@
       "player": "Carrington, Bub",
       "normalized_player": "bub carrington",
       "status": "QUESTIONABLE",
-      "reason": ""
+      "reason": "Injury/Illness - Chest / Sternum"
     },
     {
       "matchup": "HOU@WAS",
@@ -847,7 +903,7 @@
       "reason": "G League - Two-Way"
     }
   ],
-  "rows": 105,
+  "rows": 112,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
