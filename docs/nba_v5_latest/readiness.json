@@ -1,14 +1,68 @@
 {
   "schema": "NBA_V5_FORECAST_READINESS_V1",
-  "checked_at_utc": "2026-11-15T10:55:58.998990+00:00",
-  "document_generated_at_utc": "2026-11-15T10:55:47.220646+00:00",
+  "checked_at_utc": "2026-11-15T15:06:21.720634+00:00",
+  "document_generated_at_utc": "2026-11-15T15:05:12.166747+00:00",
   "games": [
     {
       "game_id": "401909985",
-      "forecast_at_utc": "2026-11-15T10:55:47.220646+00:00",
+      "forecast_at_utc": "2026-11-15T15:05:12.166747+00:00",
       "tipoff_utc": "2026-11-15T18:00:00+00:00",
       "player_stat_rows": 189,
       "players_with_v5_rows": 27,
+      "ready": true,
+      "errors": []
+    },
+    {
+      "game_id": "401909986",
+      "forecast_at_utc": "2026-11-15T15:05:12.166747+00:00",
+      "tipoff_utc": "2026-11-15T21:00:00+00:00",
+      "player_stat_rows": 217,
+      "players_with_v5_rows": 31,
+      "ready": true,
+      "errors": []
+    },
+    {
+      "game_id": "401909987",
+      "forecast_at_utc": "2026-11-15T15:05:12.166747+00:00",
+      "tipoff_utc": "2026-11-15T21:30:00+00:00",
+      "player_stat_rows": 210,
+      "players_with_v5_rows": 30,
+      "ready": true,
+      "errors": []
+    },
+    {
+      "game_id": "401909988",
+      "forecast_at_utc": "2026-11-15T15:05:12.166747+00:00",
+      "tipoff_utc": "2026-11-15T22:00:00+00:00",
+      "player_stat_rows": 196,
+      "players_with_v5_rows": 28,
+      "ready": true,
+      "errors": []
+    },
+    {
+      "game_id": "401909989",
+      "forecast_at_utc": "2026-11-15T15:05:12.166747+00:00",
+      "tipoff_utc": "2026-11-15T23:00:00+00:00",
+      "player_stat_rows": 203,
+      "players_with_v5_rows": 29,
+      "ready": true,
+      "errors": []
+    },
+    {
+      "game_id": "401909990",
+      "forecast_at_utc": "2026-11-15T15:05:12.166747+00:00",
+      "tipoff_utc": "2026-11-15T23:00:00+00:00",
+      "player_stat_rows": 189,
+      "players_with_v5_rows": 27,
+      "ready": true,
+      "errors": []
+    },
+    {
+      "game_id": "401909991",
+      "forecast_at_utc": "2026-11-15T15:05:12.166747+00:00",
+      "tipoff_utc": "2026-11-16T00:00:00+00:00",
+      "player_stat_rows": 196,
+      "players_with_v5_rows": 28,
       "ready": true,
       "errors": []
     }
