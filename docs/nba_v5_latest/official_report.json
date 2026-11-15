@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-15_06_00PM.pdf",
-  "published_at_utc": "2026-11-15T23:00:00+00:00",
-  "captured_at_utc": "2026-11-15T23:02:50.044537+00:00",
-  "source_sha256": "4f57f0cd018af8d0f7dc68541939b32d2224b1159181aa8ebea100f753d9502d",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-15_06_15PM.pdf",
+  "published_at_utc": "2026-11-15T23:15:00+00:00",
+  "captured_at_utc": "2026-11-15T23:19:15.583479+00:00",
+  "source_sha256": "17fbcb8d206fa2602a712977af9cdf854a7c8c898767c1d6ac8cd62ba4da3203",
   "reports": [
     {
       "matchup": "IND@PHI",
@@ -603,7 +603,7 @@
       "team_abbr": "ATL",
       "player": "Landale, Jock",
       "normalized_player": "jock landale",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": ""
     },
     {
@@ -627,7 +627,7 @@
       "team_abbr": "ATL",
       "player": "Wilson, Jalen",
       "normalized_player": "jalen wilson",
-      "status": "DOUBTFUL",
+      "status": "OUT",
       "reason": "G League - Two-Way"
     },
     {
@@ -667,7 +667,7 @@
       "team_abbr": "MIL",
       "player": "Rollins, Ryan",
       "normalized_player": "ryan rollins",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Illness"
     },
     {
