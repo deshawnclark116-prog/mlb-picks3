@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-15_11_00AM.pdf",
-  "published_at_utc": "2026-11-15T16:00:00+00:00",
-  "captured_at_utc": "2026-11-15T16:17:09.273850+00:00",
-  "source_sha256": "115182c5c4b2ea3d66b7bea868e3ddead88c1628acadb423dfcbb5c104c88251",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-15_12_15PM.pdf",
+  "published_at_utc": "2026-11-15T17:15:00+00:00",
+  "captured_at_utc": "2026-11-15T17:30:35.526380+00:00",
+  "source_sha256": "9332855fa6e8b2eb38aa50f6316984b92ec8e3f546a25a006ddd497ecefc4c95",
   "reports": [
     {
       "matchup": "IND@PHI",
@@ -27,7 +27,7 @@
       "team_abbr": "IND",
       "player": "McConnell, T.J.",
       "normalized_player": "t j mcconnell",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Hamstring Strain"
     },
     {
@@ -35,7 +35,7 @@
       "team_abbr": "IND",
       "player": "Nembhard, Andrew",
       "normalized_player": "andrew nembhard",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": ""
     },
     {
@@ -43,7 +43,7 @@
       "team_abbr": "IND",
       "player": "Nesmith, Aaron",
       "normalized_player": "aaron nesmith",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Left Hand Sprain"
     },
     {
@@ -577,6 +577,14 @@
     {
       "matchup": "ATL@MIL",
       "team_abbr": "MIL",
+      "player": "Rollins, Ryan",
+      "normalized_player": "ryan rollins",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Illness"
+    },
+    {
+      "matchup": "ATL@MIL",
+      "team_abbr": "MIL",
       "player": "Ryan, Cormac",
       "normalized_player": "cormac ryan",
       "status": "OUT",
@@ -668,7 +676,7 @@
       "player": "Raynaud, Maxime",
       "normalized_player": "maxime raynaud",
       "status": "OUT",
-      "reason": ""
+      "reason": "Injury/Illness - Right Patella"
     },
     {
       "matchup": "OKC@SAC",
@@ -679,7 +687,7 @@
       "reason": ""
     }
   ],
-  "rows": 84,
+  "rows": 85,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
