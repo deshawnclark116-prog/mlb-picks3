@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-15_03_15PM.pdf",
-  "published_at_utc": "2026-11-15T20:15:00+00:00",
-  "captured_at_utc": "2026-11-15T20:22:19.212748+00:00",
-  "source_sha256": "d1aa215e326e5b60a37514f876b9b7838c8f0b7f27f1f35b34e6e6f628b63968",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-15_03_30PM.pdf",
+  "published_at_utc": "2026-11-15T20:30:00+00:00",
+  "captured_at_utc": "2026-11-15T20:33:45.253984+00:00",
+  "source_sha256": "c17ab5a7d2128a319140492cc10eb3f729ad230c220dbacb16bbbc297d67e7db",
   "reports": [
     {
       "matchup": "IND@PHI",
@@ -243,7 +243,7 @@
       "team_abbr": "SAS",
       "player": "Fox, De'Aaron",
       "normalized_player": "de aaron fox",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Left Hip Tightness"
     },
     {
