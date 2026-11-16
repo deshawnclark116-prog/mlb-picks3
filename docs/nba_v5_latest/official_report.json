@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-16_06_30PM.pdf",
-  "published_at_utc": "2026-11-16T23:30:00+00:00",
-  "captured_at_utc": "2026-11-16T23:46:00.144506+00:00",
-  "source_sha256": "5da50ee95e8c12a559820f2543dabd3d8926ba82854fff1efd09014709c906fc",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-16_06_45PM.pdf",
+  "published_at_utc": "2026-11-16T23:45:00+00:00",
+  "captured_at_utc": "2026-11-16T23:50:29.569621+00:00",
+  "source_sha256": "01387f6b3c75073d0d369d853bc5c8c854d4f337d625acd3ab03de6d1c040e74",
   "reports": [
     {
       "matchup": "CHI@CLE",
@@ -291,7 +291,7 @@
       "team_abbr": "HOU",
       "player": "Thompson, Amen",
       "normalized_player": "amen thompson",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Left Knee Soreness"
     },
     {
