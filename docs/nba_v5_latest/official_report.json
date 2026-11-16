@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-16_01_45PM.pdf",
-  "published_at_utc": "2026-11-16T18:45:00+00:00",
-  "captured_at_utc": "2026-11-16T18:53:14.334428+00:00",
-  "source_sha256": "48c14dd56508de2dfc801663e1443f1ff7a6c009b9d06a5132300b9546e29066",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-16_04_00PM.pdf",
+  "published_at_utc": "2026-11-16T21:00:00+00:00",
+  "captured_at_utc": "2026-11-16T21:09:15.915584+00:00",
+  "source_sha256": "d872b53ca285eca670d3b9537a6d974e191dfdd23b2f34317127229a4a78c58e",
   "reports": [
     {
       "matchup": "CHI@CLE",
@@ -459,7 +459,7 @@
       "team_abbr": "NOP",
       "player": "Dia, Malik",
       "normalized_player": "malik dia",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "G League - Two-Way"
     },
     {
@@ -499,7 +499,7 @@
       "team_abbr": "NOP",
       "player": "Pierre Jr., Jaron",
       "normalized_player": "jaron pierre",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "G League - Two-Way"
     },
     {
@@ -507,7 +507,7 @@
       "team_abbr": "NOP",
       "player": "Reese, Julian",
       "normalized_player": "julian reese",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "G League - Two-Way"
     },
     {
@@ -584,6 +584,22 @@
     },
     {
       "matchup": "PHX@DEN",
+      "team_abbr": "PHX",
+      "player": "Dunn, Ryan",
+      "normalized_player": "ryan dunn",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Right Thumb Soreness"
+    },
+    {
+      "matchup": "PHX@DEN",
+      "team_abbr": "PHX",
+      "player": "Williams, Mark",
+      "normalized_player": "mark williams",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Shoulder Surgery"
+    },
+    {
+      "matchup": "PHX@DEN",
       "team_abbr": "DEN",
       "player": "Holmes II, DaRon",
       "normalized_player": "daron holmes",
@@ -615,7 +631,7 @@
       "reason": "G League - Two-Way"
     }
   ],
-  "rows": 76,
+  "rows": 78,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
