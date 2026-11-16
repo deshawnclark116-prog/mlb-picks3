@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-15_06_45PM.pdf",
-  "published_at_utc": "2026-11-15T23:45:00+00:00",
-  "captured_at_utc": "2026-11-15T23:51:23.891458+00:00",
-  "source_sha256": "24e8255930ec13900edd14ae225660d54536a7eaeebc41d4fcb4aa2c7fd533f0",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-15_07_15PM.pdf",
+  "published_at_utc": "2026-11-16T00:15:00+00:00",
+  "captured_at_utc": "2026-11-16T00:23:48.130943+00:00",
+  "source_sha256": "4b69a15952ba192f7b93e9de46c504ebc4468bdec2a41d72bfdfb2a75d381385",
   "reports": [
     {
       "matchup": "IND@PHI",
@@ -737,6 +737,14 @@
     {
       "matchup": "OKC@SAC",
       "team_abbr": "SAC",
+      "player": "Hunter, De'Andre",
+      "normalized_player": "de andre hunter",
+      "status": "QUESTIONABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "OKC@SAC",
+      "team_abbr": "SAC",
       "player": "Mogbo, Jonathan",
       "normalized_player": "jonathan mogbo",
       "status": "OUT",
@@ -812,7 +820,7 @@
       "player": "Wilson, Caleb",
       "normalized_player": "caleb wilson",
       "status": "OUT",
-      "reason": "Injury/Illness - Right Metacarpal"
+      "reason": ""
     },
     {
       "matchup": "CHI@CLE",
@@ -1197,9 +1205,41 @@
       "normalized_player": "anthony edwards",
       "status": "OUT",
       "reason": ""
+    },
+    {
+      "matchup": "PHX@DEN",
+      "team_abbr": "DEN",
+      "player": "Holmes II, DaRon",
+      "normalized_player": "daron holmes",
+      "status": "OUT",
+      "reason": "G League - On Assignment"
+    },
+    {
+      "matchup": "PHX@DEN",
+      "team_abbr": "DEN",
+      "player": "Nembhard, Ryan",
+      "normalized_player": "ryan nembhard",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "PHX@DEN",
+      "team_abbr": "DEN",
+      "player": "Strawther, Julian",
+      "normalized_player": "julian strawther",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Knee Sprain"
+    },
+    {
+      "matchup": "PHX@DEN",
+      "team_abbr": "DEN",
+      "player": "Whitmore, Cam",
+      "normalized_player": "cam whitmore",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
     }
   ],
-  "rows": 149,
+  "rows": 154,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
