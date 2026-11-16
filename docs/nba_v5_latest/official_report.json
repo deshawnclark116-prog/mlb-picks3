@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-15_07_15PM.pdf",
-  "published_at_utc": "2026-11-16T00:15:00+00:00",
-  "captured_at_utc": "2026-11-16T00:31:50.493850+00:00",
-  "source_sha256": "4b69a15952ba192f7b93e9de46c504ebc4468bdec2a41d72bfdfb2a75d381385",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-15_07_30PM.pdf",
+  "published_at_utc": "2026-11-16T00:30:00+00:00",
+  "captured_at_utc": "2026-11-16T00:39:58.259474+00:00",
+  "source_sha256": "3e42308fe9a09ba328f580a209426e103cc9244cf2141e09949edff7c3500290",
   "reports": [
     {
       "matchup": "IND@PHI",
@@ -731,7 +731,7 @@
       "team_abbr": "SAC",
       "player": "Achiuwa, Precious",
       "normalized_player": "precious achiuwa",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Left Ankle Soreness"
     },
     {
