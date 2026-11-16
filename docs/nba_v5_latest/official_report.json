@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-15_07_30PM.pdf",
-  "published_at_utc": "2026-11-16T00:30:00+00:00",
-  "captured_at_utc": "2026-11-16T00:41:15.898896+00:00",
-  "source_sha256": "3e42308fe9a09ba328f580a209426e103cc9244cf2141e09949edff7c3500290",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-15_08_00PM.pdf",
+  "published_at_utc": "2026-11-16T01:00:00+00:00",
+  "captured_at_utc": "2026-11-16T01:03:39.027158+00:00",
+  "source_sha256": "aec4b5132fdd569a9729d128d2733698fe3ed503550d2d211dca5860c5a00a1b",
   "reports": [
     {
       "matchup": "IND@PHI",
@@ -691,7 +691,7 @@
       "team_abbr": "OKC",
       "player": "Mitchell, Ajay",
       "normalized_player": "ajay mitchell",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Left Ankle Sprain"
     },
     {
@@ -741,6 +741,14 @@
       "normalized_player": "de andre hunter",
       "status": "QUESTIONABLE",
       "reason": ""
+    },
+    {
+      "matchup": "OKC@SAC",
+      "team_abbr": "SAC",
+      "player": "LaVine, Zach",
+      "normalized_player": "zach lavine",
+      "status": "OUT",
+      "reason": "Injury/Illness - Illness"
     },
     {
       "matchup": "OKC@SAC",
@@ -1239,7 +1247,7 @@
       "reason": "G League - Two-Way"
     }
   ],
-  "rows": 154,
+  "rows": 155,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
