@@ -2590,12 +2590,217 @@
       "played_players": 22,
       "played_players_missing_from_v5": 0,
       "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "Orlando Magic",
+      "forecast_at_utc": "2026-11-16T21:10:02.009691+00:00",
+      "forecast_player_id_count": 30,
+      "game_id": "401909994",
+      "home": "Boston Celtics",
+      "missing_minutes_by_side": {
+        "away": 0.0,
+        "home": 0.0
+      },
+      "missing_players": [],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 0.0,
+      "played_players": 20,
+      "played_players_missing_from_v5": 0,
+      "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "Chicago Bulls",
+      "forecast_at_utc": "2026-11-16T21:10:02.009691+00:00",
+      "forecast_player_id_count": 27,
+      "game_id": "401909995",
+      "home": "Cleveland Cavaliers",
+      "missing_minutes_by_side": {
+        "away": 2.0,
+        "home": 0.0
+      },
+      "missing_players": [
+        {
+          "actual_minutes": 2.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
+          "player": "Dailyn Swain",
+          "player_id": "4848625",
+          "side": "away",
+          "team_id": "4"
+        }
+      ],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 2.0,
+      "played_players": 23,
+      "played_players_missing_from_v5": 1,
+      "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "Memphis Grizzlies",
+      "forecast_at_utc": "2026-11-16T21:10:02.009691+00:00",
+      "forecast_player_id_count": 29,
+      "game_id": "401909996",
+      "home": "Washington Wizards",
+      "missing_minutes_by_side": {
+        "away": 1.0,
+        "home": 0.0
+      },
+      "missing_players": [
+        {
+          "actual_minutes": 1.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
+          "player": "Karim Lopez",
+          "player_id": "5231919",
+          "side": "away",
+          "team_id": "29"
+        }
+      ],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 1.0,
+      "played_players": 26,
+      "played_players_missing_from_v5": 1,
+      "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "Philadelphia 76ers",
+      "forecast_at_utc": "2026-11-16T23:51:11.982591+00:00",
+      "forecast_player_id_count": 28,
+      "game_id": "401909997",
+      "home": "Brooklyn Nets",
+      "missing_minutes_by_side": {
+        "away": 0.0,
+        "home": 0.0
+      },
+      "missing_players": [],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 0.0,
+      "played_players": 19,
+      "played_players_missing_from_v5": 0,
+      "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "Houston Rockets",
+      "forecast_at_utc": "2026-11-16T23:51:11.982591+00:00",
+      "forecast_player_id_count": 26,
+      "game_id": "401909998",
+      "home": "Miami Heat",
+      "missing_minutes_by_side": {
+        "away": 0.0,
+        "home": 3.0
+      },
+      "missing_players": [
+        {
+          "actual_minutes": 3.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
+          "player": "Tre Donaldson",
+          "player_id": "4837356",
+          "side": "home",
+          "team_id": "14"
+        }
+      ],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 3.0,
+      "played_players": 23,
+      "played_players_missing_from_v5": 1,
+      "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "Portland Trail Blazers",
+      "forecast_at_utc": "2026-11-17T00:22:27.835663+00:00",
+      "forecast_player_id_count": 27,
+      "game_id": "401909999",
+      "home": "Minnesota Timberwolves",
+      "missing_minutes_by_side": {
+        "away": 0.0,
+        "home": 0.0
+      },
+      "missing_players": [],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 0.0,
+      "played_players": 25,
+      "played_players_missing_from_v5": 0,
+      "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "Golden State Warriors",
+      "forecast_at_utc": "2026-11-17T00:22:27.835663+00:00",
+      "forecast_player_id_count": 25,
+      "game_id": "401910000",
+      "home": "New Orleans Pelicans",
+      "missing_minutes_by_side": {
+        "away": 0.0,
+        "home": 24.0
+      },
+      "missing_players": [
+        {
+          "actual_minutes": 19.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
+          "player": "Jaron Pierre Jr.",
+          "player_id": "4703115",
+          "side": "home",
+          "team_id": "3"
+        },
+        {
+          "actual_minutes": 5.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
+          "player": "Malik Dia",
+          "player_id": "4712862",
+          "side": "home",
+          "team_id": "3"
+        }
+      ],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 24.0,
+      "played_players": 25,
+      "played_players_missing_from_v5": 2,
+      "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "Phoenix Suns",
+      "forecast_at_utc": "2026-11-17T00:22:27.835663+00:00",
+      "forecast_player_id_count": 30,
+      "game_id": "401910001",
+      "home": "Denver Nuggets",
+      "missing_minutes_by_side": {
+        "away": 0.0,
+        "home": 0.0
+      },
+      "missing_players": [],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 0.0,
+      "played_players": 22,
+      "played_players_missing_from_v5": 0,
+      "report_is_postgame_diagnostic_only": true
     }
   ],
-  "games_graded": 76,
-  "games_with_missing_played_players": 38,
+  "games_graded": 84,
+  "games_with_missing_played_players": 42,
   "purpose": "Postgame validation only; cannot supply a future pretip roster",
   "schema": "NBA_V5_POSTGAME_ROSTER_OMISSION_AUDIT_V1",
-  "total_missing_played_minutes": 1476.0,
-  "total_missing_played_players": 97
+  "total_missing_played_minutes": 1506.0,
+  "total_missing_played_players": 102
 }
