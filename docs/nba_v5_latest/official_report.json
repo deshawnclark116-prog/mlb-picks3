@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-16_06_45PM.pdf",
-  "published_at_utc": "2026-11-16T23:45:00+00:00",
-  "captured_at_utc": "2026-11-16T23:50:29.569621+00:00",
-  "source_sha256": "01387f6b3c75073d0d369d853bc5c8c854d4f337d625acd3ab03de6d1c040e74",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-16_07_15PM.pdf",
+  "published_at_utc": "2026-11-17T00:15:00+00:00",
+  "captured_at_utc": "2026-11-17T00:21:51.545165+00:00",
+  "source_sha256": "bf979ca7368f0744165ed4249714342921149ac668748016862b0e2c21769f03",
   "reports": [
     {
       "matchup": "CHI@CLE",
@@ -35,8 +35,8 @@
       "team_abbr": "CHI",
       "player": "Smith, Jalen",
       "normalized_player": "jalen smith",
-      "status": "QUESTIONABLE",
-      "reason": "Injury/Illness - Left Finger Sprain"
+      "status": "AVAILABLE",
+      "reason": "-"
     },
     {
       "matchup": "CHI@CLE",
@@ -347,7 +347,7 @@
       "team_abbr": "PHI",
       "player": "Embiid, Joel",
       "normalized_player": "joel embiid",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -443,7 +443,7 @@
       "team_abbr": "GSW",
       "player": "Santos, Gui",
       "normalized_player": "gui santos",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
