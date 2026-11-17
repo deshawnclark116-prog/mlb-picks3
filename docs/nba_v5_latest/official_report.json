@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-17_12_30PM.pdf",
-  "published_at_utc": "2026-11-17T17:30:00+00:00",
-  "captured_at_utc": "2026-11-17T17:41:04.333017+00:00",
-  "source_sha256": "3e146864ea593b9ce46bc8214d020e937a2ddab97d9feeb3cba11fc147bb11fb",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-17_02_15PM.pdf",
+  "published_at_utc": "2026-11-17T19:15:00+00:00",
+  "captured_at_utc": "2026-11-17T19:23:13.357633+00:00",
+  "source_sha256": "e0929b255e6e6573665a64026c8f55e170811d622705b9a7f63888a4a5172c14",
   "reports": [
     {
       "matchup": "NYK@TOR",
@@ -67,7 +67,7 @@
       "team_abbr": "DET",
       "player": "Joe, Isaiah",
       "normalized_player": "isaiah joe",
-      "status": "DOUBTFUL",
+      "status": "OUT",
       "reason": "Injury/Illness - Right Hip Contusion"
     },
     {
@@ -133,6 +133,102 @@
       "normalized_player": "jayden quaintance",
       "status": "OUT",
       "reason": "Injury/Illness - Right Knee Surgery"
+    },
+    {
+      "matchup": "POR@MIN",
+      "team_abbr": "POR",
+      "player": "Avdija, Deni",
+      "normalized_player": "deni avdija",
+      "status": "QUESTIONABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "POR@MIN",
+      "team_abbr": "POR",
+      "player": "Carlson, Branden",
+      "normalized_player": "branden carlson",
+      "status": "AVAILABLE",
+      "reason": "Injury/Illness - Face Mask"
+    },
+    {
+      "matchup": "POR@MIN",
+      "team_abbr": "POR",
+      "player": "Krejci, Vit",
+      "normalized_player": "vit krejci",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Ankle Fracture"
+    },
+    {
+      "matchup": "POR@MIN",
+      "team_abbr": "POR",
+      "player": "Morant, Ja",
+      "normalized_player": "ja morant",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Hamstring Strain"
+    },
+    {
+      "matchup": "POR@MIN",
+      "team_abbr": "POR",
+      "player": "Sharpe, Shaedon",
+      "normalized_player": "shaedon sharpe",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "POR@MIN",
+      "team_abbr": "POR",
+      "player": "Youngblood, Chris",
+      "normalized_player": "chris youngblood",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "POR@MIN",
+      "team_abbr": "MIN",
+      "player": "Beringer, Joan",
+      "normalized_player": "joan beringer",
+      "status": "AVAILABLE",
+      "reason": "Injury/Illness - Face Mask"
+    },
+    {
+      "matchup": "POR@MIN",
+      "team_abbr": "MIN",
+      "player": "Clark, Jaylen",
+      "normalized_player": "jaylen clark",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Hamstring Strain"
+    },
+    {
+      "matchup": "POR@MIN",
+      "team_abbr": "MIN",
+      "player": "DiVincenzo, Donte",
+      "normalized_player": "donte divincenzo",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "POR@MIN",
+      "team_abbr": "MIN",
+      "player": "Edwards, Anthony",
+      "normalized_player": "anthony edwards",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "POR@MIN",
+      "team_abbr": "MIN",
+      "player": "Kuminga, Jonathan",
+      "normalized_player": "jonathan kuminga",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "POR@MIN",
+      "team_abbr": "MIN",
+      "player": "Pullin, Zyon",
+      "normalized_player": "zyon pullin",
+      "status": "OUT",
+      "reason": ""
     },
     {
       "matchup": "UTA@LAC",
@@ -279,7 +375,7 @@
       "reason": ""
     }
   ],
-  "rows": 34,
+  "rows": 46,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
