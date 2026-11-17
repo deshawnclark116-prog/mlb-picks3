@@ -1,11 +1,19 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-17_11_00AM.pdf",
-  "published_at_utc": "2026-11-17T16:00:00+00:00",
-  "captured_at_utc": "2026-11-17T16:09:52.654697+00:00",
-  "source_sha256": "a5ce82b8bf3b18262a4f66861ae031e2a0a5d4b838df2d8edefe3b2bf9cdaae0",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-17_12_30PM.pdf",
+  "published_at_utc": "2026-11-17T17:30:00+00:00",
+  "captured_at_utc": "2026-11-17T17:41:04.333017+00:00",
+  "source_sha256": "3e146864ea593b9ce46bc8214d020e937a2ddab97d9feeb3cba11fc147bb11fb",
   "reports": [
+    {
+      "matchup": "NYK@TOR",
+      "team_abbr": "TOR",
+      "player": "Barnes, Scottie",
+      "normalized_player": "scottie barnes",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Illness"
+    },
     {
       "matchup": "NYK@TOR",
       "team_abbr": "TOR",
@@ -260,7 +268,7 @@
       "player": "Kessler, Walker",
       "normalized_player": "walker kessler",
       "status": "OUT",
-      "reason": "Injury/Illness - Right Lower Leg"
+      "reason": ""
     },
     {
       "matchup": "CHA@LAL",
@@ -271,7 +279,7 @@
       "reason": ""
     }
   ],
-  "rows": 33,
+  "rows": 34,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
