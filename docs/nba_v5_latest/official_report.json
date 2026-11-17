@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-17_02_15PM.pdf",
-  "published_at_utc": "2026-11-17T19:15:00+00:00",
-  "captured_at_utc": "2026-11-17T19:23:13.357633+00:00",
-  "source_sha256": "e0929b255e6e6573665a64026c8f55e170811d622705b9a7f63888a4a5172c14",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-17_02_45PM.pdf",
+  "published_at_utc": "2026-11-17T19:45:00+00:00",
+  "captured_at_utc": "2026-11-17T19:58:26.419649+00:00",
+  "source_sha256": "bd6267a534b45880fdd3cf1f3994bf3c0a4d0e48bc26d14902bf037b5922c543",
   "reports": [
     {
       "matchup": "NYK@TOR",
