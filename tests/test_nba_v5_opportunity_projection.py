@@ -46,7 +46,12 @@ class OpportunityMathTests(unittest.TestCase):
         L = league()
         h = history(True)[:2]
         p = build_profile(h, L, prior_min=60)
-        expected = (sum(x["fga"] for x in h) + 60 * L.per_min["fga"]) / (60 + 60)
+        # build_profile uses a 30-game EWMA even with short histories.
+        # Expected exposure and shot counts must use the SAME decay weights.
+        weights = [0.5 ** ((len(h) - 1 - i) / 30.0) for i in range(len(h))]
+        weighted_attempts = sum(w * x["fga"] for w, x in zip(weights, h))
+        weighted_minutes = sum(w * x["min"] for w, x in zip(weights, h))
+        expected = (weighted_attempts + 60 * L.per_min["fga"]) / (weighted_minutes + 60)
         self.assertAlmostEqual(p["rate"]["fga"], expected)
         self.assertGreaterEqual(p["rate"]["fga"], p["rate"]["tpa"])
 

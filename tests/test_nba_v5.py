@@ -149,49 +149,33 @@ if __name__ == "__main__":
     unittest.main()
 
 
-class BlendTests(unittest.TestCase):
-    def test_blend_is_an_equal_mixture(self):
-        from nba.nba_v5_forecast import blend_rows
-        c5 = [0.1, 0.4, 0.8, 1.0]
-        c4 = [0.2, 0.6, 0.9, 1.0]
-        r5 = {"mean": 2.0, "sd": 1.0, "cdf_lattice": {"step": 1, "cdf": c5}, "market": "assists"}
-        r4 = {"mean": 3.0, "sd": 1.2, "cdf_lattice": {"step": 1, "cdf": c4}}
-        b = blend_rows(r5, r4)
-        self.assertAlmostEqual(b["mean"], 2.5)
-        self.assertEqual(b["cdf_lattice"]["cdf"], [0.15, 0.5, 0.85, 1.0])
-        self.assertEqual(b["blend"]["weights"], [0.5, 0.5])
-        c = b["research_fixed_event_component_probabilities"]
-        self.assertEqual(c["target"], 2)  # blended 2.5 rounds DOWN
-        self.assertEqual(c["conditional_reach"],
-                         {"v4_only": 0.4, "v5_only": 0.6, "blend": 0.5})
-        self.assertEqual(c["including_dnp_reach"],c["conditional_reach"])
+class NativeDistributionContracts(unittest.TestCase):
+    """Current V5 is a native full-game model, not a V4/V5 blend."""
 
-        self.assertGreater(b["sd"], 1.0)                                  # spread includes the disagreement between the models
-        self.assertTrue(all(y >= x for x, y in zip(b["cdf_lattice"]["cdf"], b["cdf_lattice"]["cdf"][1:])))
+    def test_native_empirical_lattice_uses_own_simulated_events(self):
+        from nba.nba_v5_forecast import empirical_lattice
+        import numpy as np
+        self.assertEqual(
+            empirical_lattice(np.array([0, 1, 1, 3]), 4),
+            [0.25, 0.75, 0.75, 1.0, 1.0],
+        )
 
-    def test_component_probs_use_same_pretip_dnp_risk_for_fair_comparison(self):
-        from nba.nba_v5_forecast import blend_rows
-        r5 = {"mean": 2.0, "sd": 1.0, "p_active": 0.8,
-              "cdf_lattice": {"step": 1, "cdf": [0.1, 0.4, 0.8, 1.0]}}
-        r4 = {"mean": 3.0, "sd": 1.2,
-              "cdf_lattice": {"step": 1, "cdf": [0.2, 0.6, 0.9, 1.0]}}
-        original5 = list(r5["cdf_lattice"]["cdf"])
-        original4 = list(r4["cdf_lattice"]["cdf"])
-        b = blend_rows(r5, r4)
-        c = b["research_fixed_event_component_probabilities"]
-        self.assertEqual(c["common_play_probability"],0.8)
-        self.assertEqual(c["including_dnp_reach"],
-                         {"v4_only":0.32,"v5_only":0.48,"blend":0.4})
-        self.assertEqual(r5["cdf_lattice"]["cdf"],original5)
-        self.assertEqual(r4["cdf_lattice"]["cdf"],original4)
-        self.assertEqual(b["mean"],2.5)
-        self.assertEqual(b["cdf_lattice"]["cdf"],[0.15,0.5,0.85,1.0])
+    def test_dnp_risk_applies_to_same_native_probability(self):
+        from nba.nba_v5_uncertainty import reach_with_dnp
+        p = reach_with_dnp(0.6, 0.8, 2)
+        self.assertEqual(p["probability_if_playing"], 0.6)
+        self.assertEqual(p["probability_including_dnp"], 0.48)
+        self.assertFalse(p["forward_calibrated"])
 
-    def test_blend_is_skipped_when_the_lattices_do_not_match(self):
-        from nba.nba_v5_forecast import blend_rows
-        r5 = {"mean": 2.0, "sd": 1.0, "cdf_lattice": {"step": 1, "cdf": [0.5, 1.0]}}
-        r4 = {"mean": 3.0, "sd": 1.0, "cdf_lattice": {"step": 1, "cdf": [0.5, 0.8, 1.0]}}
-        self.assertIs(blend_rows(r5, r4), r5)
+    def test_native_lattice_trimming_preserves_nontrivial_thresholds(self):
+        from nba.nba_v5_forecast import trim_lattice
+        row = {"cdf_lattice": {"step": 1, "cdf": [0.2, 0.7, 1.0, 1.0, 1.0]}}
+        trim_lattice(row)
+        self.assertEqual(row["cdf_lattice"]["cdf"], [0.2, 0.7, 1.0])
+
+    def test_retired_blend_api_cannot_be_used_for_public_predictions(self):
+        from nba import nba_v5_forecast as f
+        self.assertFalse(hasattr(f, "blend_rows"))
 
 
 class FeaturedMixTests(unittest.TestCase):
