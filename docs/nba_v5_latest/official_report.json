@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-18_11_15AM.pdf",
-  "published_at_utc": "2026-11-18T16:15:00+00:00",
-  "captured_at_utc": "2026-11-18T16:29:38.232454+00:00",
-  "source_sha256": "6631a83695822daa6973891708d58ea7b552ffe4870563af2be2da4e3de0c26e",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-18_12_45PM.pdf",
+  "published_at_utc": "2026-11-18T17:45:00+00:00",
+  "captured_at_utc": "2026-11-18T17:58:32.877261+00:00",
+  "source_sha256": "6575bf22e1217adc14496087710489494fd15d118bf880c49f58c7f9cb917d99",
   "reports": [
     {
       "matchup": "HOU@IND",
@@ -439,6 +439,54 @@
       "reason": ""
     },
     {
+      "matchup": "WAS@TOR",
+      "team_abbr": "TOR",
+      "player": "Barnes, Scottie",
+      "normalized_player": "scottie barnes",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "WAS@TOR",
+      "team_abbr": "TOR",
+      "player": "Barrett, RJ",
+      "normalized_player": "rj barrett",
+      "status": "QUESTIONABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "WAS@TOR",
+      "team_abbr": "TOR",
+      "player": "Bittle, Nate",
+      "normalized_player": "nate bittle",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "WAS@TOR",
+      "team_abbr": "TOR",
+      "player": "Leonard, Kawhi",
+      "normalized_player": "kawhi leonard",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "WAS@TOR",
+      "team_abbr": "TOR",
+      "player": "McCullar Jr., Kevin",
+      "normalized_player": "kevin mccullar",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "WAS@TOR",
+      "team_abbr": "TOR",
+      "player": "Smith, Malachi",
+      "normalized_player": "malachi smith",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
       "matchup": "ATL@OKC",
       "team_abbr": "ATL",
       "player": "Castro, Rafael",
@@ -823,7 +871,7 @@
       "reason": ""
     }
   ],
-  "rows": 102,
+  "rows": 108,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
