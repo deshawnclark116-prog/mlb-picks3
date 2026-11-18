@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-17_06_00PM.pdf",
-  "published_at_utc": "2026-11-17T23:00:00+00:00",
-  "captured_at_utc": "2026-11-17T23:09:11.063469+00:00",
-  "source_sha256": "e94d856e026f7fdba6b6dccedb85659f23aa3c2c10403cabde86e18ec850e412",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-17_07_45PM.pdf",
+  "published_at_utc": "2026-11-18T00:45:00+00:00",
+  "captured_at_utc": "2026-11-18T01:00:54.563970+00:00",
+  "source_sha256": "0383e0304562904f600ebc1a23103250b6241af17baec26543bd1b9e89890512",
   "reports": [
     {
       "matchup": "NYK@TOR",
@@ -139,7 +139,7 @@
       "team_abbr": "POR",
       "player": "Avdija, Deni",
       "normalized_player": "deni avdija",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": ""
     },
     {
@@ -1085,9 +1085,105 @@
       "normalized_player": "caleb martin",
       "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Thumb Splint"
+    },
+    {
+      "matchup": "BOS@DEN",
+      "team_abbr": "BOS",
+      "player": "Mitchell, Dillon",
+      "normalized_player": "dillon mitchell",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "BOS@DEN",
+      "team_abbr": "BOS",
+      "player": "Williams, Amari",
+      "normalized_player": "amari williams",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "BOS@DEN",
+      "team_abbr": "DEN",
+      "player": "Holmes II, DaRon",
+      "normalized_player": "daron holmes",
+      "status": "OUT",
+      "reason": "G League - On Assignment"
+    },
+    {
+      "matchup": "BOS@DEN",
+      "team_abbr": "DEN",
+      "player": "Nembhard, Ryan",
+      "normalized_player": "ryan nembhard",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "BOS@DEN",
+      "team_abbr": "DEN",
+      "player": "Strawther, Julian",
+      "normalized_player": "julian strawther",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Knee Sprain"
+    },
+    {
+      "matchup": "BOS@DEN",
+      "team_abbr": "DEN",
+      "player": "Whitmore, Cam",
+      "normalized_player": "cam whitmore",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "PHX@SAC",
+      "team_abbr": "SAC",
+      "player": "Achiuwa, Precious",
+      "normalized_player": "precious achiuwa",
+      "status": "QUESTIONABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "PHX@SAC",
+      "team_abbr": "SAC",
+      "player": "Hunter, De'Andre",
+      "normalized_player": "de andre hunter",
+      "status": "QUESTIONABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "PHX@SAC",
+      "team_abbr": "SAC",
+      "player": "Mogbo, Jonathan",
+      "normalized_player": "jonathan mogbo",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "PHX@SAC",
+      "team_abbr": "SAC",
+      "player": "Pedulla, Sean",
+      "normalized_player": "sean pedulla",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "PHX@SAC",
+      "team_abbr": "SAC",
+      "player": "Raynaud, Maxime",
+      "normalized_player": "maxime raynaud",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "PHX@SAC",
+      "team_abbr": "SAC",
+      "player": "Simmons, Ben",
+      "normalized_player": "ben simmons",
+      "status": "OUT",
+      "reason": ""
     }
   ],
-  "rows": 135,
+  "rows": 147,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,

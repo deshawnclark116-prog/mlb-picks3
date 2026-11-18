@@ -1,11 +1,8 @@
 {
- "hash": "4adc6cb3a13fe25f",
- "official_signature": "4ca6898ddf3bfec3",
- "generated_at_utc": "2026-11-17T23:09:13.842179+00:00",
+ "hash": "bbf344d95303399a",
+ "official_signature": "a33a2a21e2b2ef4a",
+ "generated_at_utc": "2026-11-18T01:00:57.920997+00:00",
  "games": [
-  "401910002",
-  "401910003",
-  "401910004",
   "401910006",
   "401910005"
  ]
