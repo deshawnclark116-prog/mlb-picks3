@@ -97,12 +97,14 @@ def evaluate_minutes(incumbent, challenger):
         if after.get("minutes_head_audit"):
             changed += 1
     result.update({
-        "experiment": "NBA_V5_FROZEN_SUPERVISED_NEXT_GAME_MINUTES_HEAD_V1",
-        "candidate": "Past-only supervised residual minutes role weights in original V5 possession simulation",
+        "experiment": "NBA_V5_EMPIRICAL_CHAMPION_VS_FROZEN_SUPERVISED_MINUTES_HEAD_V1",
+        "baseline": "Actual provisional live champion: empirical player-game bootstrap",
+        "candidate": "Same empirical player-game bootstrap and seed, but learned past-only expected minutes",
         "minutes_simulation_mae": _score_group(minute_errors),
         "fixed_target_top_card": fixed_target_top_card(incumbent, challenger),
         "players_with_minutes_head_evidence": changed,
         "grade_requires_identical_original_v5_targets": True,
+        "same_empirical_simulator_both_arms": True,
         "model_promotion_allowed": False,
         "prospective_pretip_availability_certified": False,
         "evaluation_limit": "Actual historical playing rosters known retrospectively; independent future pregame validation still required",
