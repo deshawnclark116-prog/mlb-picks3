@@ -81,6 +81,20 @@ def pseudo_game(g3, officially_available=None):
     At least one earlier real NBA box is required for recovery; names alone
     never create player performance. Legacy V3 rows stay as compatibility input.
     """
+    # A source row for a third team must never be routed to the away side.
+    # This is checked before OUT/DNP filtering: corrupt input is not valid
+    # evidence of either availability or player assignment.
+    home_id, away_id = str(g3["home_id"]), str(g3["away_id"])
+    if home_id == away_id:
+        raise ValueError("NBA_V5_SAME_TEAM_ON_BOTH_SIDES")
+    player_to_team = {}
+    for row in g3["rows"]:
+        pid, tid = str(row["player_id"]), str(row["team_id"])
+        if tid not in (home_id, away_id):
+            raise ValueError("NBA_V5_FOREIGN_TEAM_IN_GAME")
+        if pid in player_to_team and player_to_team[pid] != tid:
+            raise ValueError("NBA_V5_PLAYER_ON_BOTH_TEAMS")
+        player_to_team[pid] = tid
     players = []
     seen = set()
     officially_available = set(map(str, officially_available or set()))
@@ -93,12 +107,13 @@ def pseudo_game(g3, officially_available=None):
         # member: this player must already be in the preserved V3 player rows.
         if (r["reported_status"] == "OUT" or r["p_active"] < 0.2) and str(r["player_id"]) not in officially_available:
             continue
-        key = (r["player_id"], r["team_id"])
+        pid, tid = str(r["player_id"]), str(r["team_id"])
+        key = (pid, tid)
         if key in seen:
             continue
         seen.add(key)
-        side = "home" if r["team_id"] == g3["home_id"] else "away"
-        players.append({"id": str(r["player_id"]), "team": str(r["team_id"]), "side": side,
+        side = "home" if tid == home_id else "away"
+        players.append({"id": pid, "team": tid, "side": side,
                         "name": r["player"], "p_active": r["p_active"]})
     # Independently captured full team membership is strictly broader than
     # V3's >=5-game forecasting eligibility. Preserve V3 OUT exclusions, and
@@ -116,12 +131,15 @@ def pseudo_game(g3, officially_available=None):
                 raise ValueError("NBA_V5_INVALID_SOURCE_ROSTER")
             for item in entries:
                 pid = str(item["player_id"])
+                if pid in player_to_team and player_to_team[pid] != tid:
+                    raise ValueError("NBA_V5_SOURCE_PLAYER_ON_BOTH_TEAMS")
                 if (not pid.isdigit() or (pid, tid) in seen or
                     pid in excluded or int(item.get("prior_box_games", 0)) < 1 or
                     item.get("membership_source") not in
                     ("ESPN_CURRENT_ROSTER", "NBA_OFFICIAL_DAILY_PREGAME_TEAM_LIST")):
                     continue
                 seen.add((pid, tid))
+                player_to_team[pid] = tid
                 players.append({
                     "id": pid, "team": tid,
                     "side": "home" if tid == str(g3["home_id"]) else "away",
