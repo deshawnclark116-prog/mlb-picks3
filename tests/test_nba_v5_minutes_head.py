@@ -1,6 +1,9 @@
 """Leak-safe fixed-concept NBA minutes challenger regression contracts."""
 import datetime as dt
 import unittest
+from unittest import mock
+
+from nba import nba_v4_backtest as v4
 
 import numpy as np
 
@@ -96,6 +99,28 @@ class MinutesHeadSafety(unittest.TestCase):
         self.assertTrue(result["do_not_auto_promote"])
         self.assertGreater(result["test_player_games"], 0)
         self.assertGreater(result["minutes_metrics"]["n"], 0)
+
+
+class WalkForwardDateBoundary(unittest.TestCase):
+    def test_midmonth_cutoff_includes_only_eligible_dates(self):
+        cutoff = dt.date(2026, 11, 9)
+        rows = [{"date": dt.date(2026, 10, 15), "game": "old",
+                 "player": str(j)} for j in range(2501)]
+        rows += [
+            {"date": dt.date(2026, 11, 3), "game": "early_nov", "player": "1"},
+            {"date": dt.date(2026, 11, 10), "game": "test_nov", "player": "2"},
+            {"date": dt.date(2026, 11, 17), "game": "test_nov2", "player": "3"},
+            {"date": dt.date(2026, 12, 1), "game": "test_dec", "player": "4"},
+        ]
+        fake_models = {"stats": {key: {"alpha": 0.15} for key in v4.STATS}}
+        def fake_predictions(models, test):
+            return (np.ones(len(test)),
+                    {key: np.ones(len(test)) for key in v4.STATS})
+        with mock.patch.object(v4, "fit_models", return_value=fake_models):
+            with mock.patch.object(v4, "predict_models", side_effect=fake_predictions):
+                result = v4.walk_forward(rows, cutoff, [], [])
+        self.assertEqual(set(result), {
+            ("test_nov", "2"), ("test_nov2", "3"), ("test_dec", "4")})
 
 
 if __name__ == "__main__":
