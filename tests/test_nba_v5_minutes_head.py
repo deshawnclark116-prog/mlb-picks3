@@ -10,6 +10,7 @@ import numpy as np
 from nba.nba_v5_minutes_head import (MIN_HISTORY, MinutesHead,
                                      minute_features)
 from nba.nba_v5_minutes_head_holdout import validate
+from nba.nba_v5_minutes_head_score import fixed_target_top_card
 from nba.nba_v5_sim import TeamInput
 
 
@@ -121,6 +122,40 @@ class WalkForwardDateBoundary(unittest.TestCase):
                 result = v4.walk_forward(rows, cutoff, [], [])
         self.assertEqual(set(result), {
             ("test_nov", "2"), ("test_nov2", "3"), ("test_dec", "4")})
+
+
+class FixedCardRankingContract(unittest.TestCase):
+    def test_rank_changes_use_original_prediction_targets(self):
+        base, challenger = [], []
+        for j in range(12):
+            truth = 13 if j >= 6 else 9
+            items = {
+                "rebounds": {"mean": 0, "actual": 0, "samples_ge": {}},
+                "assists": {"mean": 0, "actual": 0, "samples_ge": {}},
+                "three_pointers_made": {"mean": 0, "actual": 0, "samples_ge": {}},
+                "steals": {"mean": 0, "actual": 0, "samples_ge": {}},
+                "blocks": {"mean": 0, "actual": 0, "samples_ge": {}},
+            }
+            original = {"game": "synthetic_game", "player": str(j)}
+            original.update(items)
+            alternate = dict(original)
+            original["points"] = {
+                "mean": 12.0, "actual": truth,
+                "samples_ge": {12: 0.95 - 0.05 * j},
+            }
+            alternate["points"] = {
+                "mean": 99.0, "actual": truth,
+                "samples_ge": {12: 0.40 + 0.045 * j},
+            }
+            base.append(original)
+            challenger.append(alternate)
+        result = fixed_target_top_card(base, challenger)
+        top4 = result["top_card_metrics"]["top4"]
+        self.assertTrue(result["all_thresholds_from_original_champion"])
+        self.assertEqual(top4["eligible_games"], 1)
+        self.assertEqual(top4["incumbent_hit_rate"], 0.0)
+        self.assertEqual(top4["candidate_hit_rate"], 1.0)
+        self.assertEqual(top4["average_event_overlap"], 0.0)
 
 
 if __name__ == "__main__":
