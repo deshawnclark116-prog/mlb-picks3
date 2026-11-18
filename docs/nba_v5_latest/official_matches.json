@@ -772,5 +772,60 @@
       "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-18_12_45PM.pdf",
       "source": "official_nba_injury_report"
     }
+  ],
+  "401910017": [],
+  "401910018": [
+    {
+      "matchup": "PHX@SAC",
+      "team_abbr": "SAC",
+      "player": "Achiuwa, Precious",
+      "normalized_player": "precious achiuwa",
+      "status": "QUESTIONABLE",
+      "reason": "",
+      "player_id": "4431679",
+      "team_id": "23",
+      "published_at_utc": "2026-11-18T17:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-18_12_45PM.pdf",
+      "source": "official_nba_injury_report"
+    },
+    {
+      "matchup": "PHX@SAC",
+      "team_abbr": "SAC",
+      "player": "Mogbo, Jonathan",
+      "normalized_player": "jonathan mogbo",
+      "status": "OUT",
+      "reason": "G League - Two-Way",
+      "player_id": "5107897",
+      "team_id": "23",
+      "published_at_utc": "2026-11-18T17:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-18_12_45PM.pdf",
+      "source": "official_nba_injury_report"
+    },
+    {
+      "matchup": "PHX@SAC",
+      "team_abbr": "SAC",
+      "player": "Pedulla, Sean",
+      "normalized_player": "sean pedulla",
+      "status": "OUT",
+      "reason": "G League - Two-Way",
+      "player_id": "4709131",
+      "team_id": "23",
+      "published_at_utc": "2026-11-18T17:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-18_12_45PM.pdf",
+      "source": "official_nba_injury_report"
+    },
+    {
+      "matchup": "PHX@SAC",
+      "team_abbr": "SAC",
+      "player": "Raynaud, Maxime",
+      "normalized_player": "maxime raynaud",
+      "status": "OUT",
+      "reason": "",
+      "player_id": "4898371",
+      "team_id": "23",
+      "published_at_utc": "2026-11-18T17:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-18_12_45PM.pdf",
+      "source": "official_nba_injury_report"
+    }
   ]
 }
