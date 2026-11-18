@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-18_12_45PM.pdf",
-  "published_at_utc": "2026-11-18T17:45:00+00:00",
-  "captured_at_utc": "2026-11-18T18:02:44.008359+00:00",
-  "source_sha256": "6575bf22e1217adc14496087710489494fd15d118bf880c49f58c7f9cb917d99",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-18_02_00PM.pdf",
+  "published_at_utc": "2026-11-18T19:00:00+00:00",
+  "captured_at_utc": "2026-11-18T19:18:48.788981+00:00",
+  "source_sha256": "ddf59e6dc40083f8c2e569b456975bf72e164b43d6e0f9981b602c50ecf96327",
   "reports": [
     {
       "matchup": "HOU@IND",
@@ -147,14 +147,14 @@
       "team_abbr": "CLE",
       "player": "Tyson, Jaylon",
       "normalized_player": "jaylon tyson",
-      "status": "DOUBTFUL",
+      "status": "OUT",
       "reason": ""
     },
     {
       "matchup": "MEM@CLE",
       "team_abbr": "CLE",
-      "player": "Udeh, Jr., Ernest",
-      "normalized_player": ", ernest udeh",
+      "player": "Udeh Jr., Ernest",
+      "normalized_player": "ernest udeh",
       "status": "OUT",
       "reason": "G League - Two-Way"
     },
@@ -163,7 +163,7 @@
       "team_abbr": "CLE",
       "player": "Watson, Peyton",
       "normalized_player": "peyton watson",
-      "status": "QUESTIONABLE",
+      "status": "DOUBTFUL",
       "reason": "Injury/Illness - Low Back Contusion"
     },
     {
@@ -201,6 +201,14 @@
     {
       "matchup": "MIL@MIA",
       "team_abbr": "MIL",
+      "player": "Rollins, Ryan",
+      "normalized_player": "ryan rollins",
+      "status": "OUT",
+      "reason": "Injury/Illness - Illness"
+    },
+    {
+      "matchup": "MIL@MIA",
+      "team_abbr": "MIL",
       "player": "Ryan, Cormac",
       "normalized_player": "cormac ryan",
       "status": "OUT",
@@ -211,7 +219,7 @@
       "team_abbr": "MIA",
       "player": "Adebayo, Bam",
       "normalized_player": "bam adebayo",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -219,7 +227,7 @@
       "team_abbr": "MIA",
       "player": "Gardner, Myron",
       "normalized_player": "myron gardner",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": ""
     },
     {
@@ -235,7 +243,7 @@
       "team_abbr": "MIA",
       "player": "Jovic, Nikola",
       "normalized_player": "nikola jovic",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Illness"
     },
     {
@@ -284,6 +292,14 @@
       "player": "Hukporti, Ariel",
       "normalized_player": "ariel hukporti",
       "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "PHI@ORL",
+      "team_abbr": "PHI",
+      "player": "Wade, Dean",
+      "normalized_player": "dean wade",
+      "status": "QUESTIONABLE",
       "reason": ""
     },
     {
@@ -348,7 +364,7 @@
       "player": "Williams, Patrick",
       "normalized_player": "patrick williams",
       "status": "PROBABLE",
-      "reason": ""
+      "reason": "Injury/Illness - Right Finger"
     },
     {
       "matchup": "CHI@BKN",
@@ -491,7 +507,7 @@
       "team_abbr": "ATL",
       "player": "Castro, Rafael",
       "normalized_player": "rafael castro",
-      "status": "DOUBTFUL",
+      "status": "OUT",
       "reason": "G League - Two-Way"
     },
     {
@@ -581,6 +597,70 @@
       "normalized_player": "jaylin williams",
       "status": "QUESTIONABLE",
       "reason": "Injury/Illness - Low Back Spasms"
+    },
+    {
+      "matchup": "DET@NOP",
+      "team_abbr": "DET",
+      "player": "Cunningham, Cade",
+      "normalized_player": "cade cunningham",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Right Knee Soreness"
+    },
+    {
+      "matchup": "DET@NOP",
+      "team_abbr": "DET",
+      "player": "Duren, Jalen",
+      "normalized_player": "jalen duren",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Hamstring Strain"
+    },
+    {
+      "matchup": "DET@NOP",
+      "team_abbr": "DET",
+      "player": "Holland II, Ronald",
+      "normalized_player": "ronald holland",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "DET@NOP",
+      "team_abbr": "DET",
+      "player": "Joe, Isaiah",
+      "normalized_player": "isaiah joe",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Right Hip Contusion"
+    },
+    {
+      "matchup": "DET@NOP",
+      "team_abbr": "DET",
+      "player": "Okorie, Ebuka",
+      "normalized_player": "ebuka okorie",
+      "status": "OUT",
+      "reason": "G League - On Assignment"
+    },
+    {
+      "matchup": "DET@NOP",
+      "team_abbr": "DET",
+      "player": "Onyenso, Ugonna",
+      "normalized_player": "ugonna onyenso",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "DET@NOP",
+      "team_abbr": "DET",
+      "player": "Prince, Taurean",
+      "normalized_player": "taurean prince",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Knee Soreness"
+    },
+    {
+      "matchup": "DET@NOP",
+      "team_abbr": "DET",
+      "player": "Robinson, Duncan",
+      "normalized_player": "duncan robinson",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Quadriceps Strain"
     },
     {
       "matchup": "DET@NOP",
@@ -684,7 +764,7 @@
       "player": "Moody, Moses",
       "normalized_player": "moses moody",
       "status": "OUT",
-      "reason": ""
+      "reason": "Injury/Illness - Left Patellar Tendon"
     },
     {
       "matchup": "GSW@DAL",
@@ -871,7 +951,7 @@
       "reason": ""
     }
   ],
-  "rows": 108,
+  "rows": 118,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
