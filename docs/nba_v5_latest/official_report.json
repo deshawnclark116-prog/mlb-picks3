@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-18_02_15PM.pdf",
-  "published_at_utc": "2026-11-18T19:15:00+00:00",
-  "captured_at_utc": "2026-11-18T19:32:59.500070+00:00",
-  "source_sha256": "079b3a8e7c9a4896c99a03f5c965aeb819ee8ddbc4d2107affb3ecc266b91395",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-18_03_30PM.pdf",
+  "published_at_utc": "2026-11-18T20:30:00+00:00",
+  "captured_at_utc": "2026-11-18T20:39:45.700604+00:00",
+  "source_sha256": "140f9e70617731b92dcd06cf4cc5f3aa593c1ba8b4d7484578fb8215a8998ea1",
   "reports": [
     {
       "matchup": "HOU@IND",
@@ -491,7 +491,7 @@
       "team_abbr": "TOR",
       "player": "McCullar Jr., Kevin",
       "normalized_player": "kevin mccullar",
-      "status": "OUT",
+      "status": "AVAILABLE",
       "reason": "G League - Two-Way"
     },
     {
@@ -499,7 +499,7 @@
       "team_abbr": "TOR",
       "player": "Smith, Malachi",
       "normalized_player": "malachi smith",
-      "status": "OUT",
+      "status": "AVAILABLE",
       "reason": "G League - Two-Way"
     },
     {
