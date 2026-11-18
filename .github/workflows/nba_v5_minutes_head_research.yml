@@ -6,6 +6,7 @@ on:
       - "nba/nba_v5_minutes_head_holdout.py"
       - "nba/nba_v5_minutes_head_score.py"
       - "nba/nba_v5_backtest.py"
+      - "nba/nba_v4_backtest.py"
       - "tests/test_nba_v5_minutes_head.py"
       - ".github/workflows/nba_v5_minutes_head_research.yml"
   workflow_dispatch: {}
@@ -62,6 +63,7 @@ jobs:
           x = json.load(open('/tmp/nba_minutes_paired_simulation.json'))['paired_minutes_head_trial']
           assert not x['model_promotion_allowed']
           print('MINUTES_FULL_GAME', x['minutes_simulation_mae'])
+          print('SAME_FROZEN_TARGET_TOP_CARD', x['fixed_target_top_card']['top_card_metrics'])
           for k, value in x['metrics'].items():
               if any(k.startswith(stat + '|') for stat in
                      ('points', 'rebounds', 'assists', 'three_pointers_made')):
