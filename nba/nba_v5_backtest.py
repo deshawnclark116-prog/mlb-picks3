@@ -375,7 +375,9 @@ def run(args):
         if cutoff > test_from:
             raise ValueError("NBA_MINUTES_HEAD_CUTOFF_AFTER_EVALUATION")
         minutes_head = MinutesHead.fit_completed(games, cutoff)
-        configs["minutes_role_head"] = {}
+        # The PROVISIONAL LIVE CHAMPION is the empirical game head,
+        # not the older native V5 possession generator.
+        configs = {"empirical_game_head": {}, "empirical_minutes_head": {}}
         print("FROZEN_MINUTES_HEAD_TRAINING",
               json.dumps({"cutoff": str(cutoff), "samples": minutes_head.training_examples,
                           "games": minutes_head.training_games}), flush=True)
@@ -476,23 +478,21 @@ def run(args):
                     if cname == "learned_opportunity_head":
                         sh, head_home = learned_head.apply_team(th, rp.hist, d)
                         sa, head_away = learned_head.apply_team(ta, rp.hist, d)
-                    elif cname == "minutes_role_head":
-                        sh, head_home = minutes_head.apply_team(th, rp.hist, d)
-                        sa, head_away = minutes_head.apply_team(ta, rp.hist, d)
                     elif cname=="cold_start_candidate":
                         if cold_teams is None:
                             continue
                         sh,sa=cold_teams
                     else:
                         sh, sa = (adapted[0], adapted[1]) if cname == "role_adaptive" else (th, ta)
-                    if cname in ("empirical_game_head","empirical_attempts_head"):
+                    if cname in ("empirical_game_head","empirical_attempts_head","empirical_minutes_head"):
                         from nba.nba_v5_empirical_stat_engine import simulate_empirical_game
                         sim = simulate_empirical_game(
                             sh, sa, rp.hist, d, worlds=args.sims,
                             seed=int(g["game_id"]) % 100003,
                             expected_pace=pace_for(rp, g, d),
                             historic_league_pace=L.poss,
-                            three_attempts_model=(cname=="empirical_attempts_head"))
+                            three_attempts_model=(cname=="empirical_attempts_head"),
+                            minutes_head=(minutes_head if cname=="empirical_minutes_head" else None))
                     else:
                         sim = simulate_game(sh, sa, L, tables, S=args.sims, pace=pace,
                                             seed=int(g["game_id"]) % 100003,
@@ -505,9 +505,10 @@ def run(args):
                             if cname == "learned_opportunity_head":
                                 rec["learned_head_audit"] = (
                                     head_home if side == "home" else head_away).get(str(pid))
-                            if cname == "minutes_role_head":
+                            if cname == "empirical_minutes_head":
+                                past = [h for h in rp.hist[pid] if h["date"] < d and h["min"] > 0]
                                 rec["minutes_head_audit"] = (
-                                    head_home if side == "home" else head_away).get(str(pid))
+                                    {"past_only": True, "n": len(past)} if len(past) >= 5 else None)
                             if cname == "role_adaptive":
                                 rec["role_trial_flags"] = (adapted[2].get(pid, []) if adapted else [])
                             if cname=="cold_start_candidate":
@@ -721,7 +722,7 @@ def main():
     if a.minutes_head_trial:
         from nba.nba_v5_minutes_head_score import evaluate_minutes
         report["paired_minutes_head_trial"] = evaluate_minutes(
-            results["full"], results["minutes_role_head"])
+            results["empirical_game_head"], results["empirical_minutes_head"])
     if a.cold_start_trial:
         from nba.nba_v5_cold_start import evaluate_cold_start
         report["paired_low_history_trial"]=evaluate_cold_start(results["full"],results["cold_start_candidate"],v4_preds)
