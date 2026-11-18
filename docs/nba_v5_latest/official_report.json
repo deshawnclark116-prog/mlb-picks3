@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-18_02_00PM.pdf",
-  "published_at_utc": "2026-11-18T19:00:00+00:00",
-  "captured_at_utc": "2026-11-18T19:18:48.788981+00:00",
-  "source_sha256": "ddf59e6dc40083f8c2e569b456975bf72e164b43d6e0f9981b602c50ecf96327",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-18_02_15PM.pdf",
+  "published_at_utc": "2026-11-18T19:15:00+00:00",
+  "captured_at_utc": "2026-11-18T19:32:59.500070+00:00",
+  "source_sha256": "079b3a8e7c9a4896c99a03f5c965aeb819ee8ddbc4d2107affb3ecc266b91395",
   "reports": [
     {
       "matchup": "HOU@IND",
