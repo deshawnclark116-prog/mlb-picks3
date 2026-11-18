@@ -366,6 +366,19 @@ def run(args):
         print("LEARNED_OPPORTUNITY_HEAD_TRAINING",
               json.dumps({"cutoff": str(cutoff), "samples": learned_head.training_examples}),
               flush=True)
+    minutes_head = None
+    if getattr(args, "minutes_head_trial", False):
+        if args.config or args.features == "ablate":
+            raise ValueError("--minutes-head-trial incompatible with --config and ablation")
+        from nba.nba_v5_minutes_head import MinutesHead
+        cutoff = dt.date.fromisoformat(args.minutes_head_train_before or args.test_from)
+        if cutoff > test_from:
+            raise ValueError("NBA_MINUTES_HEAD_CUTOFF_AFTER_EVALUATION")
+        minutes_head = MinutesHead.fit_completed(games, cutoff)
+        configs["minutes_role_head"] = {}
+        print("FROZEN_MINUTES_HEAD_TRAINING",
+              json.dumps({"cutoff": str(cutoff), "samples": minutes_head.training_examples,
+                          "games": minutes_head.training_games}), flush=True)
     if getattr(args, "empirical_game_trial", False):
         if args.config or args.features == "ablate":
             raise ValueError("--empirical-game-trial incompatible with --config and ablation")
@@ -384,7 +397,7 @@ def run(args):
         if args.config or args.features=="ablate":
             raise ValueError("--flow-trial incompatible with --config and ablation")
         configs["game_flow"]={"game_flow":True}
-    if sum(bool(getattr(args,n,False)) for n in ("lineup_trial","role_trial","style_trial","flow_trial","cold_start_trial","assist_network_trial","matchup_rotation_trial","rebound_zone_trial","learned_head_trial","empirical_game_trial","empirical_three_attempts_trial"))>1:
+    if sum(bool(getattr(args,n,False)) for n in ("lineup_trial","role_trial","style_trial","flow_trial","cold_start_trial","assist_network_trial","matchup_rotation_trial","rebound_zone_trial","learned_head_trial","minutes_head_trial","empirical_game_trial","empirical_three_attempts_trial"))>1:
         raise ValueError("One experimental arm at a time")
     if getattr(args, "rebound_zone_trial", False):
         if args.config or args.features=="ablate":
@@ -463,6 +476,9 @@ def run(args):
                     if cname == "learned_opportunity_head":
                         sh, head_home = learned_head.apply_team(th, rp.hist, d)
                         sa, head_away = learned_head.apply_team(ta, rp.hist, d)
+                    elif cname == "minutes_role_head":
+                        sh, head_home = minutes_head.apply_team(th, rp.hist, d)
+                        sa, head_away = minutes_head.apply_team(ta, rp.hist, d)
                     elif cname=="cold_start_candidate":
                         if cold_teams is None:
                             continue
@@ -488,6 +504,9 @@ def run(args):
                                    "min_sim": float(sim[side]["min"][:, j].mean())}
                             if cname == "learned_opportunity_head":
                                 rec["learned_head_audit"] = (
+                                    head_home if side == "home" else head_away).get(str(pid))
+                            if cname == "minutes_role_head":
+                                rec["minutes_head_audit"] = (
                                     head_home if side == "home" else head_away).get(str(pid))
                             if cname == "role_adaptive":
                                 rec["role_trial_flags"] = (adapted[2].get(pid, []) if adapted else [])
@@ -668,13 +687,17 @@ def main():
                     help="independent supervised next-game player-opportunity rates versus native V5 simulation")
     ap.add_argument("--learned-head-train-before", default="",
                     help="strict training cutoff YYYY-MM-DD; must be on or before --test-from")
+    ap.add_argument("--minutes-head-trial", action="store_true",
+                    help="frozen past-only conditional minutes projection head vs original V5 full-game simulator")
+    ap.add_argument("--minutes-head-train-before", default="",
+                    help="strict minutes-head training cutoff; no later than --test-from")
     ap.add_argument("--assist-network-trial", action="store_true", help="paired unpromoted passer-to-scorer assist experiment")
     ap.add_argument("--matchup-rotation-trial", action="store_true", help="paired unpromoted opponent historical 3PA-style-conditioned rotation test")
     ap.add_argument("--rebound-zone-trial", action="store_true", help="paired unpromoted miss-location to rebounder selection from validated play-by-play")
     a = ap.parse_args()
     results, rows, v4_preds, chosen = run(a)
     if a.dump:
-        Path(a.dump).write_text(json.dumps(results if a.role_trial or a.lineup_trial or a.style_trial or a.flow_trial or a.cold_start_trial or a.assist_network_trial or a.matchup_rotation_trial or a.rebound_zone_trial or a.learned_head_trial or a.empirical_game_trial or a.empirical_three_attempts_trial else next(iter(results.values()))))
+        Path(a.dump).write_text(json.dumps(results if a.role_trial or a.lineup_trial or a.style_trial or a.flow_trial or a.cold_start_trial or a.assist_network_trial or a.matchup_rotation_trial or a.rebound_zone_trial or a.learned_head_trial or a.minutes_head_trial or a.empirical_game_trial or a.empirical_three_attempts_trial else next(iter(results.values()))))
     report = {c: score(r, rows, v4_preds) for c, r in results.items() if r}
     if a.empirical_game_trial:
         from nba.nba_v5_learned_opportunity_head_score import evaluate_native
@@ -695,6 +718,10 @@ def main():
         from nba.nba_v5_learned_opportunity_head_score import evaluate_native
         report["paired_learned_opportunity_head_trial"] = evaluate_native(
             results["full"], results["learned_opportunity_head"])
+    if a.minutes_head_trial:
+        from nba.nba_v5_minutes_head_score import evaluate_minutes
+        report["paired_minutes_head_trial"] = evaluate_minutes(
+            results["full"], results["minutes_role_head"])
     if a.cold_start_trial:
         from nba.nba_v5_cold_start import evaluate_cold_start
         report["paired_low_history_trial"]=evaluate_cold_start(results["full"],results["cold_start_candidate"],v4_preds)
