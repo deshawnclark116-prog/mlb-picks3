@@ -1,26 +1,26 @@
 {
-  "all_original_four_market_stat_forecasts_accounted": 18396,
+  "all_original_four_market_stat_forecasts_accounted": 19324,
   "conditional_stat_mae": {
     "assists": {
-      "mae": 1.4229,
-      "n": 3181
+      "mae": 1.4232,
+      "n": 3279
     },
     "points": {
-      "mae": 4.9487,
-      "n": 3181
+      "mae": 4.9474,
+      "n": 3279
     },
     "rebounds": {
-      "mae": 1.9823,
-      "n": 3181
+      "mae": 1.9923,
+      "n": 3279
     },
     "three_pointers_made": {
-      "mae": 0.9367,
-      "n": 3181
+      "mae": 0.9402,
+      "n": 3279
     }
   },
   "expected_minutes_mae": {
-    "mae": 7.9643,
-    "n": 4022
+    "mae": 7.9727,
+    "n": 4149
   },
   "games": [
     {
@@ -4155,16 +4155,21 @@
     },
     {
       "away": "New York Knicks",
-      "box_verified": false,
-      "final_away_points": null,
-      "final_complete": false,
-      "final_home_points": null,
+      "box_verified": true,
+      "final_away_points": 111,
+      "final_complete": true,
+      "final_home_points": 102,
       "game_id": "401910002",
       "home": "Toronto Raptors",
       "original_player_forecasts": 26,
       "original_unmodeled_roster_players": 8,
       "player_status_counts": {
-        "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX": 26
+        "VERIFIED_DID_NOT_PLAY": 5,
+        "VERIFIED_PLAYED": 21,
+        "assists_VERIFIED": 21,
+        "points_VERIFIED": 21,
+        "rebounds_VERIFIED": 21,
+        "three_pointers_made_VERIFIED": 21
       },
       "source_error": null,
       "stat_forecasts_accounted": 104,
@@ -4172,16 +4177,21 @@
     },
     {
       "away": "Portland Trail Blazers",
-      "box_verified": false,
-      "final_away_points": null,
-      "final_complete": false,
-      "final_home_points": null,
+      "box_verified": true,
+      "final_away_points": 105,
+      "final_complete": true,
+      "final_home_points": 106,
       "game_id": "401910003",
       "home": "Minnesota Timberwolves",
       "original_player_forecasts": 25,
       "original_unmodeled_roster_players": 9,
       "player_status_counts": {
-        "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX": 25
+        "VERIFIED_DID_NOT_PLAY": 6,
+        "VERIFIED_PLAYED": 19,
+        "assists_VERIFIED": 19,
+        "points_VERIFIED": 19,
+        "rebounds_VERIFIED": 19,
+        "three_pointers_made_VERIFIED": 19
       },
       "source_error": null,
       "stat_forecasts_accounted": 100,
@@ -4189,16 +4199,21 @@
     },
     {
       "away": "Detroit Pistons",
-      "box_verified": false,
-      "final_away_points": null,
-      "final_complete": false,
-      "final_home_points": null,
+      "box_verified": true,
+      "final_away_points": 105,
+      "final_complete": true,
+      "final_home_points": 93,
       "game_id": "401910004",
       "home": "San Antonio Spurs",
       "original_player_forecasts": 22,
       "original_unmodeled_roster_players": 12,
       "player_status_counts": {
-        "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX": 22
+        "VERIFIED_DID_NOT_PLAY": 5,
+        "VERIFIED_PLAYED": 17,
+        "assists_VERIFIED": 17,
+        "points_VERIFIED": 17,
+        "rebounds_VERIFIED": 17,
+        "three_pointers_made_VERIFIED": 17
       },
       "source_error": null,
       "stat_forecasts_accounted": 88,
@@ -4206,16 +4221,21 @@
     },
     {
       "away": "Utah Jazz",
-      "box_verified": false,
-      "final_away_points": null,
-      "final_complete": false,
-      "final_home_points": null,
+      "box_verified": true,
+      "final_away_points": 132,
+      "final_complete": true,
+      "final_home_points": 107,
       "game_id": "401910006",
       "home": "LA Clippers",
       "original_player_forecasts": 26,
       "original_unmodeled_roster_players": 11,
       "player_status_counts": {
-        "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX": 26
+        "VERIFIED_DID_NOT_PLAY": 5,
+        "VERIFIED_PLAYED": 21,
+        "assists_VERIFIED": 21,
+        "points_VERIFIED": 21,
+        "rebounds_VERIFIED": 21,
+        "three_pointers_made_VERIFIED": 21
       },
       "source_error": null,
       "stat_forecasts_accounted": 104,
@@ -4223,16 +4243,21 @@
     },
     {
       "away": "Charlotte Hornets",
-      "box_verified": false,
-      "final_away_points": null,
-      "final_complete": false,
-      "final_home_points": null,
+      "box_verified": true,
+      "final_away_points": 114,
+      "final_complete": true,
+      "final_home_points": 118,
       "game_id": "401910005",
       "home": "Los Angeles Lakers",
       "original_player_forecasts": 28,
       "original_unmodeled_roster_players": 9,
       "player_status_counts": {
-        "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX": 28
+        "VERIFIED_DID_NOT_PLAY": 8,
+        "VERIFIED_PLAYED": 20,
+        "assists_VERIFIED": 20,
+        "points_VERIFIED": 20,
+        "rebounds_VERIFIED": 20,
+        "three_pointers_made_VERIFIED": 20
       },
       "source_error": null,
       "stat_forecasts_accounted": 112,
@@ -4509,22 +4534,175 @@
       "source_error": null,
       "stat_forecasts_accounted": 104,
       "tipoff_original_utc": "2026-11-20T01:00:00+00:00"
+    },
+    {
+      "away": "Charlotte Hornets",
+      "box_verified": false,
+      "final_away_points": null,
+      "final_complete": false,
+      "final_home_points": null,
+      "game_id": "401909305",
+      "home": "Atlanta Hawks",
+      "original_player_forecasts": 25,
+      "original_unmodeled_roster_players": 11,
+      "player_status_counts": {
+        "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX": 25
+      },
+      "source_error": null,
+      "stat_forecasts_accounted": 100,
+      "tipoff_original_utc": "2026-11-21T00:00:00+00:00"
+    },
+    {
+      "away": "Orlando Magic",
+      "box_verified": false,
+      "final_away_points": null,
+      "final_complete": false,
+      "final_home_points": null,
+      "game_id": "401909306",
+      "home": "Brooklyn Nets",
+      "original_player_forecasts": 27,
+      "original_unmodeled_roster_players": 8,
+      "player_status_counts": {
+        "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX": 27
+      },
+      "source_error": null,
+      "stat_forecasts_accounted": 108,
+      "tipoff_original_utc": "2026-11-21T00:30:00+00:00"
+    },
+    {
+      "away": "Indiana Pacers",
+      "box_verified": false,
+      "final_away_points": null,
+      "final_complete": false,
+      "final_home_points": null,
+      "game_id": "401909307",
+      "home": "Cleveland Cavaliers",
+      "original_player_forecasts": 26,
+      "original_unmodeled_roster_players": 8,
+      "player_status_counts": {
+        "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX": 26
+      },
+      "source_error": null,
+      "stat_forecasts_accounted": 104,
+      "tipoff_original_utc": "2026-11-21T00:30:00+00:00"
+    },
+    {
+      "away": "Toronto Raptors",
+      "box_verified": false,
+      "final_away_points": null,
+      "final_complete": false,
+      "final_home_points": null,
+      "game_id": "401909308",
+      "home": "Detroit Pistons",
+      "original_player_forecasts": 24,
+      "original_unmodeled_roster_players": 10,
+      "player_status_counts": {
+        "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX": 24
+      },
+      "source_error": null,
+      "stat_forecasts_accounted": 96,
+      "tipoff_original_utc": "2026-11-21T00:30:00+00:00"
+    },
+    {
+      "away": "Washington Wizards",
+      "box_verified": false,
+      "final_away_points": null,
+      "final_complete": false,
+      "final_home_points": null,
+      "game_id": "401909309",
+      "home": "Chicago Bulls",
+      "original_player_forecasts": 27,
+      "original_unmodeled_roster_players": 9,
+      "player_status_counts": {
+        "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX": 27
+      },
+      "source_error": null,
+      "stat_forecasts_accounted": 108,
+      "tipoff_original_utc": "2026-11-21T01:00:00+00:00"
+    },
+    {
+      "away": "New Orleans Pelicans",
+      "box_verified": false,
+      "final_away_points": null,
+      "final_complete": false,
+      "final_home_points": null,
+      "game_id": "401909310",
+      "home": "Oklahoma City Thunder",
+      "original_player_forecasts": 25,
+      "original_unmodeled_roster_players": 11,
+      "player_status_counts": {
+        "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX": 25
+      },
+      "source_error": null,
+      "stat_forecasts_accounted": 100,
+      "tipoff_original_utc": "2026-11-21T01:00:00+00:00"
+    },
+    {
+      "away": "Phoenix Suns",
+      "box_verified": false,
+      "final_away_points": null,
+      "final_complete": false,
+      "final_home_points": null,
+      "game_id": "401909311",
+      "home": "Utah Jazz",
+      "original_player_forecasts": 26,
+      "original_unmodeled_roster_players": 8,
+      "player_status_counts": {
+        "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX": 26
+      },
+      "source_error": null,
+      "stat_forecasts_accounted": 104,
+      "tipoff_original_utc": "2026-11-21T02:30:00+00:00"
+    },
+    {
+      "away": "Houston Rockets",
+      "box_verified": false,
+      "final_away_points": null,
+      "final_complete": false,
+      "final_home_points": null,
+      "game_id": "401909312",
+      "home": "Denver Nuggets",
+      "original_player_forecasts": 25,
+      "original_unmodeled_roster_players": 9,
+      "player_status_counts": {
+        "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX": 25
+      },
+      "source_error": null,
+      "stat_forecasts_accounted": 100,
+      "tipoff_original_utc": "2026-11-21T03:00:00+00:00"
+    },
+    {
+      "away": "Sacramento Kings",
+      "box_verified": false,
+      "final_away_points": null,
+      "final_complete": false,
+      "final_home_points": null,
+      "game_id": "401909313",
+      "home": "Los Angeles Lakers",
+      "original_player_forecasts": 27,
+      "original_unmodeled_roster_players": 9,
+      "player_status_counts": {
+        "WAITING_FOR_FINAL_COMPLETE_PLAYER_BOX": 27
+      },
+      "source_error": null,
+      "stat_forecasts_accounted": 108,
+      "tipoff_original_utc": "2026-11-21T03:00:00+00:00"
     }
   ],
-  "graded_at_utc": "2026-11-17T23:00:59.616641+00:00",
+  "graded_at_utc": "2026-11-18T22:39:08.693109+00:00",
   "official_bets": 0,
-  "original_player_forecasts": 4599,
-  "original_rolling_games": 209,
+  "original_player_forecasts": 4831,
+  "original_rolling_games": 218,
   "originals_immutable": true,
   "play_probability_brier": {
-    "mae": 0.154,
-    "n": 4022
+    "mae": 0.1543,
+    "n": 4149
   },
-  "player_status_unverified": 577,
-  "player_status_verified": 4022,
+  "player_status_unverified": 682,
+  "player_status_verified": 4149,
   "schema": "NBA_V2_ALL_IMMUTABLE_ROLLING_PLAYER_STATS_ACTUAL_GRADES_V1",
   "status": "ALL_ORIGINALS_ACCOUNTED_PARTIAL_ACTUAL_VERIFICATION",
-  "unverified_conditional_stats": 2308,
-  "verified_DNP_conditional_stats_not_applicable": 3364,
-  "verified_played_stat_outcomes": 12724
+  "unverified_conditional_stats": 2728,
+  "verified_DNP_conditional_stats_not_applicable": 3480,
+  "verified_played_stat_outcomes": 13116
 }
