@@ -131,13 +131,13 @@ def pseudo_game(g3, officially_available=None):
                 raise ValueError("NBA_V5_INVALID_SOURCE_ROSTER")
             for item in entries:
                 pid = str(item["player_id"])
-                if pid in player_to_team and player_to_team[pid] != tid:
-                    raise ValueError("NBA_V5_SOURCE_PLAYER_ON_BOTH_TEAMS")
                 if (not pid.isdigit() or (pid, tid) in seen or
                     pid in excluded or int(item.get("prior_box_games", 0)) < 1 or
                     item.get("membership_source") not in
                     ("ESPN_CURRENT_ROSTER", "NBA_OFFICIAL_DAILY_PREGAME_TEAM_LIST")):
                     continue
+                if pid in player_to_team and player_to_team[pid] != tid:
+                    raise ValueError("NBA_V5_SOURCE_PLAYER_ON_BOTH_TEAMS")
                 seen.add((pid, tid))
                 player_to_team[pid] = tid
                 players.append({
