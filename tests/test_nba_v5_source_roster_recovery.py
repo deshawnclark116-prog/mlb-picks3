@@ -99,5 +99,55 @@ class SourceRosterRecoveryContracts(unittest.TestCase):
                             for pid in team.ids))
 
 
+    def test_foreign_player_is_never_assigned_to_away_team(self):
+        fixture = source_case()
+        fixture["rows"].append({
+            "player_id": "999", "team_id": "3", "player": "Other Game",
+            "reported_status": "UNKNOWN_NOT_ACTIVE_CERTIFIED", "p_active": 0.9,
+        })
+        with self.assertRaisesRegex(ValueError, "NBA_V5_FOREIGN_TEAM_IN_GAME"):
+            pseudo_game(fixture)
+
+    def test_foreign_out_row_also_fails_input_integrity(self):
+        fixture = source_case()
+        fixture["rows"].append({
+            "player_id": "999", "team_id": "3", "player": "Other Game",
+            "reported_status": "OUT", "p_active": 0.0,
+        })
+        with self.assertRaisesRegex(ValueError, "NBA_V5_FOREIGN_TEAM_IN_GAME"):
+            pseudo_game(fixture)
+
+    def test_conflicting_player_membership_cannot_join_both_sides(self):
+        fixture = source_case()
+        fixture["rows"].append({
+            "player_id": "101", "team_id": "2", "player": "Veteran",
+            "reported_status": "UNKNOWN_NOT_ACTIVE_CERTIFIED", "p_active": 0.9,
+        })
+        with self.assertRaisesRegex(ValueError, "NBA_V5_PLAYER_ON_BOTH_TEAMS"):
+            pseudo_game(fixture)
+
+    def test_source_roster_cannot_resurrect_player_on_opponent(self):
+        fixture = source_case()
+        fixture["source_roster"]["2"].append({
+            "player_id": "101", "player": "Veteran",
+            "prior_box_games": 12, "membership_source": "ESPN_CURRENT_ROSTER",
+        })
+        with self.assertRaisesRegex(ValueError, "NBA_V5_SOURCE_PLAYER_ON_BOTH_TEAMS"):
+            pseudo_game(fixture)
+
+    def test_mixed_numeric_and_string_team_ids_resolve_correctly(self):
+        fixture = source_case()
+        fixture["home_id"] = 1
+        fixture["away_id"] = 2
+        fixture["rows"].append({
+            "player_id": 201, "team_id": 2, "player": "Valid Away",
+            "reported_status": "UNKNOWN_NOT_ACTIVE_CERTIFIED", "p_active": 0.95,
+        })
+        players = {p["id"]: p for p in pseudo_game(fixture)["players"]}
+        self.assertEqual(players["101"]["side"], "home")
+        self.assertEqual(players["201"]["side"], "away")
+        self.assertEqual(players["201"]["team"], "2")
+
+
 if __name__ == "__main__":
     unittest.main()
