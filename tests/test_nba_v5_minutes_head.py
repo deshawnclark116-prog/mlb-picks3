@@ -12,6 +12,8 @@ from nba.nba_v5_minutes_head import (MIN_HISTORY, MinutesHead,
 from nba.nba_v5_minutes_head_holdout import validate
 from nba.nba_v5_minutes_head_score import fixed_target_top_card
 from nba.nba_v5_sim import TeamInput
+from nba.nba_v5_empirical_stat_engine import simulate_empirical_game
+from tests.test_nba_v5_empirical_stat_engine import inputs as empirical_inputs, DAY as empirical_day
 
 
 def history(n=8, minute=24, last_date=dt.date(2026, 1, 20)):
@@ -156,6 +158,48 @@ class FixedCardRankingContract(unittest.TestCase):
         self.assertEqual(top4["incumbent_hit_rate"], 0.0)
         self.assertEqual(top4["candidate_hit_rate"], 1.0)
         self.assertEqual(top4["average_event_overlap"], 0.0)
+
+
+class LiveChampionEmpiricalMinutesContract(unittest.TestCase):
+    def test_opt_in_changes_real_empirical_game_without_changing_default(self):
+        home, away, histories = empirical_inputs()
+        baseline = simulate_empirical_game(home, away, histories, empirical_day,
+                                           worlds=240, seed=31)
+        default = simulate_empirical_game(home, away, histories, empirical_day,
+                                          worlds=240, seed=31, minutes_head=None)
+        np.testing.assert_array_equal(baseline["home"]["min"], default["home"]["min"])
+        np.testing.assert_array_equal(baseline["away"]["pts"], default["away"]["pts"])
+
+        class LowMinutes:
+            def predict_minutes(self, history, forecast_day):
+                self_check = forecast_day == empirical_day
+                assert self_check
+                return 3.0
+
+        adjusted = simulate_empirical_game(home, away, histories, empirical_day,
+                                           worlds=240, seed=31, minutes_head=LowMinutes())
+        self.assertLess(float(adjusted["home"]["min"].mean()),
+                        float(baseline["home"]["min"].mean()))
+        self.assertLess(float(adjusted["away"]["pts"].mean()),
+                        float(baseline["away"]["pts"].mean()))
+        self.assertTrue(np.all(adjusted["home"]["min"].sum(axis=1) <= 240.00001))
+
+    def test_future_results_still_ignored_in_live_empirical_trial(self):
+        import copy
+        home, away, prior = empirical_inputs()
+        class LowMinutes:
+            def predict_minutes(self, history, forecast_day):
+                return 3.0
+        good = simulate_empirical_game(home, away, prior, empirical_day,
+                                      worlds=100, seed=9, minutes_head=LowMinutes())
+        poison = copy.deepcopy(prior)
+        for hist in poison.values():
+            hist.append({**hist[-1], "date": empirical_day, "min": 44.0,
+                         "pts": 99.0, "reb": 30.0})
+        bad = simulate_empirical_game(home, away, poison, empirical_day,
+                                     worlds=100, seed=9, minutes_head=LowMinutes())
+        np.testing.assert_array_equal(good["home"]["pts"], bad["home"]["pts"])
+        np.testing.assert_array_equal(good["away"]["min"], bad["away"]["min"])
 
 
 if __name__ == "__main__":
