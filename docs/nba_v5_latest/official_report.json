@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-18_03_30PM.pdf",
-  "published_at_utc": "2026-11-18T20:30:00+00:00",
-  "captured_at_utc": "2026-11-18T20:39:45.700604+00:00",
-  "source_sha256": "140f9e70617731b92dcd06cf4cc5f3aa593c1ba8b4d7484578fb8215a8998ea1",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-18_05_30PM.pdf",
+  "published_at_utc": "2026-11-18T22:30:00+00:00",
+  "captured_at_utc": "2026-11-18T22:37:37.786119+00:00",
+  "source_sha256": "56cc96e71332d74ab76d9be9766552f03a558a8bbc738b79e5361bd344d8ad23",
   "reports": [
     {
       "matchup": "HOU@IND",
@@ -67,7 +67,7 @@
       "team_abbr": "IND",
       "player": "Nembhard, Andrew",
       "normalized_player": "andrew nembhard",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": ""
     },
     {
@@ -907,7 +907,7 @@
       "team_abbr": "SAC",
       "player": "Achiuwa, Precious",
       "normalized_player": "precious achiuwa",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -915,7 +915,7 @@
       "team_abbr": "SAC",
       "player": "Hunter, De'Andre",
       "normalized_player": "de andre hunter",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -949,9 +949,73 @@
       "normalized_player": "ben simmons",
       "status": "OUT",
       "reason": ""
+    },
+    {
+      "matchup": "UTA@LAL",
+      "team_abbr": "UTA",
+      "player": "Bufkin, Kobe",
+      "normalized_player": "kobe bufkin",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "UTA@LAL",
+      "team_abbr": "UTA",
+      "player": "Hayes, Jaxson",
+      "normalized_player": "jaxson hayes",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Left Knee Strain"
+    },
+    {
+      "matchup": "UTA@LAL",
+      "team_abbr": "UTA",
+      "player": "Ingram, Harrison",
+      "normalized_player": "harrison ingram",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "UTA@LAL",
+      "team_abbr": "UTA",
+      "player": "Jackson Jr., Jaren",
+      "normalized_player": "jaren jackson",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right MCL Tear"
+    },
+    {
+      "matchup": "UTA@LAL",
+      "team_abbr": "UTA",
+      "player": "Markkanen, Lauri",
+      "normalized_player": "lauri markkanen",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Hand Fracture"
+    },
+    {
+      "matchup": "UTA@LAL",
+      "team_abbr": "UTA",
+      "player": "Nurkic, Jusuf",
+      "normalized_player": "jusuf nurkic",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "UTA@LAL",
+      "team_abbr": "LAL",
+      "player": "Grimes, Quentin",
+      "normalized_player": "quentin grimes",
+      "status": "AVAILABLE",
+      "reason": "Injury/Illness - Right Finger Splint"
+    },
+    {
+      "matchup": "UTA@LAL",
+      "team_abbr": "LAL",
+      "player": "Reaves, Austin",
+      "normalized_player": "austin reaves",
+      "status": "OUT",
+      "reason": ""
     }
   ],
-  "rows": 118,
+  "rows": 126,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
