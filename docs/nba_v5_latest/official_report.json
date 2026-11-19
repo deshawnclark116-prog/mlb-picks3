@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-18_07_30PM.pdf",
-  "published_at_utc": "2026-11-19T00:30:00+00:00",
-  "captured_at_utc": "2026-11-19T00:45:32.000014+00:00",
-  "source_sha256": "69fee50ed0f44eea7f99f9fcbd3dc8b696a1aebf7d4d76c705ed999b245e8bc1",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-18_09_00PM.pdf",
+  "published_at_utc": "2026-11-19T02:00:00+00:00",
+  "captured_at_utc": "2026-11-19T02:05:01.262955+00:00",
+  "source_sha256": "bd6cc38fb9c1a1a36a3845842c575eaa58192ddbc08315fd9d20a95122d30df6",
   "reports": [
     {
       "matchup": "HOU@IND",
@@ -913,6 +913,30 @@
     {
       "matchup": "PHX@SAC",
       "team_abbr": "PHX",
+      "player": "Reath, Duop",
+      "normalized_player": "duop reath",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "PHX@SAC",
+      "team_abbr": "PHX",
+      "player": "Spencer, Pat",
+      "normalized_player": "pat spencer",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "PHX@SAC",
+      "team_abbr": "PHX",
+      "player": "Timme, Drew",
+      "normalized_player": "drew timme",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "PHX@SAC",
+      "team_abbr": "PHX",
       "player": "Williams, Mark",
       "normalized_player": "mark williams",
       "status": "OUT",
@@ -924,7 +948,7 @@
       "player": "Achiuwa, Precious",
       "normalized_player": "precious achiuwa",
       "status": "AVAILABLE",
-      "reason": "Injury/Illness - Left Lower Leg"
+      "reason": ""
     },
     {
       "matchup": "PHX@SAC",
@@ -979,7 +1003,7 @@
       "team_abbr": "UTA",
       "player": "Hayes, Jaxson",
       "normalized_player": "jaxson hayes",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Left Knee Strain"
     },
     {
@@ -1156,7 +1180,7 @@
       "player": "Avdija, Deni",
       "normalized_player": "deni avdija",
       "status": "QUESTIONABLE",
-      "reason": "Injury/Illness - Left Foot"
+      "reason": ""
     },
     {
       "matchup": "POR@MIL",
@@ -1215,7 +1239,7 @@
       "reason": ""
     }
   ],
-  "rows": 151,
+  "rows": 154,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
