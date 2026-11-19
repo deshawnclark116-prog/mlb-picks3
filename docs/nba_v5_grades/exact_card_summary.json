@@ -1,9 +1,9 @@
 {
   "schema": "NBA_V5_IMMUTABLE_EXACT_CONFIRMED_CARD_AUDIT_V1",
   "kind": "last",
-  "games_with_archives_and_grades": 92,
-  "games_without_eligible_confirmed_starters": 60,
-  "files_missing_final_grade": 9,
+  "games_with_archives_and_grades": 98,
+  "games_without_eligible_confirmed_starters": 66,
+  "files_missing_final_grade": 3,
   "post_tip_forecasts_rejected": 0,
   "confirmed_starters_missing_dnp_contract": 205,
   "top4": {
