@@ -1,0 +1,71 @@
+name: NBA empirical game learned opportunities - frozen paired research
+on:
+  push:
+    branches: [research/nba-empirical-opportunity-rates-20261119]
+    paths:
+      - "nba/nba_v5_empirical_opportunity.py"
+      - "nba/nba_v5_empirical_opportunity_score.py"
+      - "nba/nba_v5_empirical_stat_engine.py"
+      - "nba/nba_v5_backtest.py"
+      - "tests/test_nba_v5_empirical_opportunity.py"
+      - ".github/workflows/nba_v5_empirical_opportunity_research.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  matched-empirical-opportunities:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install "numpy>=2.1,<2.5" "scipy>=1.14,<1.18"
+      - name: Causality, source integrity, no production changes and original target tests
+        run: |
+          python -m compileall -q nba/nba_v5_empirical_opportunity.py nba/nba_v5_empirical_opportunity_score.py nba/nba_v5_empirical_stat_engine.py nba/nba_v5_backtest.py
+          python -m unittest -v tests.test_nba_v5_empirical_opportunity tests.test_nba_v5_empirical_stat_engine tests.test_nba_v5_learned_opportunity_head
+      - name: First date-frozen comparison - previous-season March games
+        run: |
+          PYTHONPATH=. python -u -m nba.nba_v5_backtest \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz \
+            --pbp nba/data/nba_v5_pbp_2026_27.jsonl.gz \
+            --test-from 2026-03-01 --sample 40 --sims 700 \
+            --empirical-opportunity-trial \
+            --empirical-opportunity-train-before 2026-03-01 \
+            --out /tmp/nba_empirical_opportunities_march.json
+      - name: Second date-frozen comparison - current-season November games
+        run: |
+          PYTHONPATH=. python -u -m nba.nba_v5_backtest \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz \
+            --pbp nba/data/nba_v5_pbp_2026_27.jsonl.gz \
+            --test-from 2026-11-01 --sample 40 --sims 700 \
+            --empirical-opportunity-trial \
+            --empirical-opportunity-train-before 2026-11-01 \
+            --out /tmp/nba_empirical_opportunities_november.json
+      - name: Report paired fixed-target results for BOTH chronological cuts
+        run: |
+          python - <<'PY'
+          import json
+          for date in ('march','november'):
+              r=json.load(open(f'/tmp/nba_empirical_opportunities_{date}.json'))['paired_empirical_opportunity_trial']
+              print('PAIRED_HOLDOUT',date)
+              print('ALL_FOUR_MAE_IMPROVED',r['all_four_core_mean_mae_improved'])
+              print('ALL_FOUR_BRIER_NO_REGRESSION',r['all_four_core_fixed_event_brier_nonregression'])
+              for markets,series in r['frozen_target_top_cards'].items():
+                  print('FIXED_ORIGINAL_TARGETS',date,markets,json.dumps(series,sort_keys=True))
+              for market in ('points','rebounds','assists','three_pointers_made'):
+                  for metric in ('native_v5_mean_mae','native_fixed_projection_brier'):
+                      print(date,market,metric,json.dumps(r['metrics'].get(market+'|'+metric,{}),sort_keys=True))
+              assert not r['model_promotion_allowed']
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-supervised-opportunity-head-matched-research
+          path: /tmp/nba_empirical_opportunities_*.json
+          retention-days: 30
