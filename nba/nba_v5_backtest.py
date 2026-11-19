@@ -719,14 +719,9 @@ def main():
         paired["evaluation_limit"] = "Retrospective game roster observed; no lineup hindsight in historical box sampling"
         report["paired_empirical_game_trial"] = paired
     if a.empirical_team_volume_trial:
-        from nba.nba_v5_learned_opportunity_head_score import evaluate_native
-        p=evaluate_native(results["empirical_game_head"],results["empirical_team_volume_head"])
-        p["experiment"]="NBA_V5_GAME_TEAM_OPPORTUNITY_AND_DEFENSE_CHALLENGER"
-        p["baseline"]="Actual provisional live empirical head"
-        p["candidate"]="Team offensive / opponent defensive shot, assist and rebound volumes in a supervised completed-game ridge model"
-        p["retrospective_game_roster_known"]=True
-        p["model_promotion_allowed"]=False
-        report["paired_empirical_team_volume_trial"]=p
+        from nba.nba_v5_team_volume_score import evaluate_team_volume
+        report["paired_empirical_team_volume_trial"]=evaluate_team_volume(
+            results["empirical_game_head"],results["empirical_team_volume_head"])
     if a.empirical_three_attempts_trial:
         from nba.nba_v5_learned_opportunity_head_score import evaluate_native
         paired=evaluate_native(results["empirical_game_head"], results["empirical_attempts_head"])
