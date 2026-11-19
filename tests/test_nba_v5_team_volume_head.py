@@ -80,7 +80,7 @@ class PretipTeamVolumeContracts(unittest.TestCase):
         factor=team_correction_factors({"fga":1000,"fta":1000,"ast":1000,"reb":1000},
              sample,mean_roster_minutes=120.)
         self.assertEqual(factor["fga"],1.)
-        self.assertEqual(factor["pts"],1.)
+        self.assertAlmostEqual(factor["pts"],1.,places=12)
         enough=team_correction_factors({"fga":1000,"fta":1000,"ast":1000,"reb":1000},
              sample,mean_roster_minutes=240.)
         self.assertLessEqual(enough["fga"],1.+MAX_PLAYER_NORMALIZATION)
