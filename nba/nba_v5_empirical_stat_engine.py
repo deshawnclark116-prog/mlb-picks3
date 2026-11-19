@@ -57,7 +57,8 @@ def _round_samples(value, rng):
 
 def simulate_empirical_game(home, away, history, date, *, worlds, seed,
                             expected_pace=None, historic_league_pace=None,
-                            three_attempts_model=False):
+                            three_attempts_model=False,
+                            opportunity_head=None):
     """Return V5-compatible game arrays from DIRECT pregame player-box priors.
 
     All forecasts are conditional on dates < target date, never on an
@@ -69,6 +70,9 @@ def simulate_empirical_game(home, away, history, date, *, worlds, seed,
         raise ValueError("WORLD_COUNT_MUST_BE_POSITIVE")
     if not isinstance(date, dt.date):
         raise ValueError("MATCHUP_DATE_REQUIRED")
+    if (opportunity_head is not None and
+            opportunity_head.training_cutoff > date):
+        raise ValueError("OPPORTUNITY_HEAD_TRAINED_AFTER_TARGET_GAME")
     rng = np.random.default_rng(int(seed) + 981123)
     teams = (home, away)
     # Game speed is COMMON across the opponents; never infer that a single
@@ -128,9 +132,16 @@ def simulate_empirical_game(home, away, history, date, *, worlds, seed,
             pool, draws = _sample_index(rng, h, team.starter[j], worlds)
             past_min = np.asarray([float(p["min"]) for p in pool])[draws]
             multiplier = np.clip(mins[:, j] / np.maximum(past_min, 1.0) * speed, 0., 3.)
+            factors = {}
+            if opportunity_head is not None:
+                # Frozen supervised rate vs exactly this bootstrapped pool.
+                # All history was filtered to dates strictly before tip.
+                from nba.nba_v5_empirical_opportunity import opportunity_factors
+                factors = opportunity_factors(opportunity_head, h, team.starter[j])
             for key in stats:
                 prior = np.asarray([float(p[key]) for p in pool])[draws]
-                stats[key][:, j] = _round_samples(prior * multiplier, rng)
+                stats[key][:, j] = _round_samples(
+                    prior * multiplier * factors.get(key, 1.0), rng)
             # Keep the player-level made-three subset physically valid.
             stats["fgm"][:, j] = np.maximum(stats["fgm"][:, j], stats["tpm"][:, j])
             stats["fga"][:, j] = np.maximum(stats["fga"][:, j], stats["fgm"][:, j])
@@ -175,5 +186,8 @@ def simulate_empirical_game(home, away, history, date, *, worlds, seed,
             "empirical_head": True,
             "independent_of_v3_v4_forecasts": True,
             "world_kind": ("RESEARCH_THREE_ATTEMPTS_SHRUNK_ACCURACY"
-                           if three_attempts_model else "JOINT_PLAYER_GAME_HISTORY_WITH_SHARED_PACE"),
+                           if three_attempts_model else
+                           "RESEARCH_SUPERVISED_OPPORTUNITY_RATES_WITH_SHARED_PACE"
+                           if opportunity_head is not None else
+                           "JOINT_PLAYER_GAME_HISTORY_WITH_SHARED_PACE"),
             "minutes_capped_at_240_per_team": True}
