@@ -57,7 +57,8 @@ def _round_samples(value, rng):
 
 def simulate_empirical_game(home, away, history, date, *, worlds, seed,
                             expected_pace=None, historic_league_pace=None,
-                            three_attempts_model=False):
+                            three_attempts_model=False,
+                            team_volume_head=None, team_volume_context=None):
     """Return V5-compatible game arrays from DIRECT pregame player-box priors.
 
     All forecasts are conditional on dates < target date, never on an
@@ -69,6 +70,11 @@ def simulate_empirical_game(home, away, history, date, *, worlds, seed,
         raise ValueError("WORLD_COUNT_MUST_BE_POSITIVE")
     if not isinstance(date, dt.date):
         raise ValueError("MATCHUP_DATE_REQUIRED")
+    if team_volume_head is not None:
+        if team_volume_context is None or len(team_volume_context) != 2:
+            raise ValueError("NBA_TEAM_VOLUME_PRIOR_SCOUTING_REQUIRED")
+        if team_volume_head.training_cutoff > date:
+            raise ValueError("NBA_TEAM_VOLUME_HEAD_TRAINED_AFTER_TARGET")
     rng = np.random.default_rng(int(seed) + 981123)
     teams = (home, away)
     # Game speed is COMMON across the opponents; never infer that a single
@@ -158,6 +164,36 @@ def simulate_empirical_game(home, away, history, date, *, worlds, seed,
                 stats["fgm"][:,j]=np.maximum(stats["fgm"][:,j],revised)
                 stats["fga"][:,j]=np.maximum(stats["fga"][:,j],stats["fgm"][:,j])
                 stats["pts"][:,j]=np.maximum(stats["pts"][:,j],3.*revised)
+        if team_volume_head is not None:
+            # A completely separate optional team opportunity architecture.
+            # No target-day box can enter the historical offense/defense scout.
+            from nba.nba_v5_team_volume_head import team_correction_factors
+            original_own, original_opp = team_volume_context[team_index]
+            own_hist = [x for x in original_own if x["date"] < date]
+            opp_hist = [x for x in original_opp if x["date"] < date]
+            projected_possessions = float(expected_pace or historic_league_pace or 99.)
+            expected_totals = team_volume_head.expected_team_counts(
+                own_hist, opp_hist, projected_possessions)
+            total_historical_pace = sum(float(x["poss"]) for x in own_hist[-20:])
+            previous_tpa = (
+                sum(float(x["own"]["tpa"]) for x in own_hist[-20:]) /
+                max(total_historical_pace, 1.) * projected_possessions
+                if own_hist else None)
+            factors = team_correction_factors(
+                expected_totals,
+                {**stats, "_expected_previous_team_tpa": previous_tpa},
+                float(mins.sum(axis=1).mean()))
+            if factors:
+                rr = np.random.default_rng(int(seed)+111101+team_index*11003)
+                for key in ("fga", "fgm", "fta", "ftm", "pts", "tpm",
+                            "reb", "ast"):
+                    stat = stats[key]
+                    stats[key] = np.floor(np.maximum(0.,stat*factors[key])+
+                                          rr.random(stat.shape))
+                stats["ftm"] = np.minimum(stats["ftm"], stats["fta"])
+                stats["fgm"] = np.maximum(stats["fgm"], stats["tpm"])
+                stats["fga"] = np.maximum(stats["fga"], stats["fgm"])
+                stats["pts"] = np.maximum(stats["pts"], 3.*stats["tpm"])
         stats["min"] = mins
         outputs.append(stats)
         avail.append(playable)
@@ -175,5 +211,8 @@ def simulate_empirical_game(home, away, history, date, *, worlds, seed,
             "empirical_head": True,
             "independent_of_v3_v4_forecasts": True,
             "world_kind": ("RESEARCH_THREE_ATTEMPTS_SHRUNK_ACCURACY"
-                           if three_attempts_model else "JOINT_PLAYER_GAME_HISTORY_WITH_SHARED_PACE"),
+                           if three_attempts_model else
+                           "RESEARCH_TEAM_OPPORTUNITY_AND_OPPONENT_DEFENSE"
+                           if team_volume_head is not None else
+                           "JOINT_PLAYER_GAME_HISTORY_WITH_SHARED_PACE"),
             "minutes_capped_at_240_per_team": True}
