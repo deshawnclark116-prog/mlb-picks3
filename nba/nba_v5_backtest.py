@@ -337,18 +337,32 @@ def reach_prob(samples, k):
     return float(np.mean(samples >= k))
 
 
+def date_bounded_game_ids(by_game, games, test_until):
+    """Do not let a later season silently enter a precommitted date holdout."""
+    if test_until is None:
+        return sorted(by_game)
+    game_dates = {str(g["game_id"]): v4.day_of(g) for g in games}
+    if any(str(gid) not in game_dates for gid in by_game):
+        raise ValueError("NBA_HOLDOUT_GAME_DATE_MISSING")
+    return sorted(gid for gid in by_game if game_dates[str(gid)] < test_until)
+
+
 def run(args):
     games = v4.load(args.games)
     pbp = load_pbp(args.pbp)
     rows = v4.build_rows(games)
     test_from = dt.date.fromisoformat(args.test_from)
+    test_until = (dt.date.fromisoformat(args.test_until)
+                  if getattr(args, "test_until", "") else None)
+    if test_until is not None and test_until <= test_from:
+        raise ValueError("NBA_HOLDOUT_END_MUST_FOLLOW_START")
     # V4 predictions for the same rows (earlier-data refits each month)
     v4_preds = v4.walk_forward(rows, test_from, list(v4.STAT_GROUPS), list(v4.FINAL_MINUTE_GROUPS))
     by_game = collections.defaultdict(list)
     for r in rows:
         if (r["game"], r["player"]) in v4_preds:
             by_game[r["game"]].append(r)
-    cand = sorted(by_game)
+    cand = date_bounded_game_ids(by_game, games, test_until)
     random.Random(11).shuffle(cand)
     chosen = set(cand[: args.sample])
     print("games", len(games), "scoring", len(chosen), "of", len(cand), flush=True)
@@ -662,6 +676,8 @@ def main():
     ap.add_argument("--pbp", action="append", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--test-from", default="2026-01-01")
+    ap.add_argument("--test-until", default="",
+                    help="exclusive end of historical holdout; prevents mixed-season test contamination")
     ap.add_argument("--sample", type=int, default=120)
     ap.add_argument("--sims", type=int, default=1500)
     ap.add_argument("--features", default="all")
