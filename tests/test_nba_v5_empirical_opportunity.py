@@ -9,6 +9,7 @@ import numpy as np
 from nba.nba_v5_empirical_stat_engine import simulate_empirical_game
 from nba.nba_v5_empirical_opportunity import opportunity_factors
 from nba.nba_v5_empirical_opportunity_score import frozen_event_top_cards
+from nba.nba_v5_backtest import date_bounded_game_ids
 from tests.test_nba_v5_empirical_stat_engine import DAY, inputs
 
 
@@ -76,6 +77,19 @@ class EmpiricalOpportunityResearchContracts(unittest.TestCase):
         for key in ("fga", "tpa", "ast", "pts", "reb", "tpm"):
             self.assertGreaterEqual(factors[key], .75)
             self.assertLessEqual(factors[key], 1.25)
+
+    def test_historical_holdout_end_is_exclusive_not_all_future_seasons(self):
+        games = [{"game_id": "a", "date": "2026-03-01"},
+                 {"game_id": "b", "date": "2026-03-21"},
+                 {"game_id": "c", "date": "2026-03-22"},
+                 {"game_id": "d", "date": "2026-11-15"}]
+        cohort = date_bounded_game_ids({x["game_id"]: [x] for x in games}, games,
+                                       dt.date(2026, 3, 22))
+        self.assertEqual(cohort, ["a", "b"])
+        self.assertEqual(len(date_bounded_game_ids(
+            {x["game_id"]: [x] for x in games}, games, None)), 4)
+        with self.assertRaisesRegex(ValueError, "DATE_MISSING"):
+            date_bounded_game_ids({"missing": [{}]}, games, dt.date(2026, 3, 22))
 
     def test_topcard_uses_only_original_fixed_target_not_easier_candidate_mean(self):
         base, alt = [], []
