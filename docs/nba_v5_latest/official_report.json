@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-19_02_30PM.pdf",
-  "published_at_utc": "2026-11-19T19:30:00+00:00",
-  "captured_at_utc": "2026-11-19T19:34:14.325596+00:00",
-  "source_sha256": "b9db5d660e75d1fe9a32b32e27d75400b65aaec36067298862e653f0ccaeff32",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-19_05_30PM.pdf",
+  "published_at_utc": "2026-11-19T22:30:00+00:00",
+  "captured_at_utc": "2026-11-19T22:41:30.818454+00:00",
+  "source_sha256": "e15a40721388fc31468a93bde6d91048a6ff7917bf97261c427a461c1022d733",
   "reports": [
     {
       "matchup": "GSW@MEM",
@@ -164,7 +164,7 @@
       "player": "Harper, Dylan",
       "normalized_player": "dylan harper",
       "status": "OUT",
-      "reason": "Injury/Illness - Left Hip Soreness"
+      "reason": ""
     },
     {
       "matchup": "LAC@SAS",
@@ -228,7 +228,7 @@
       "player": "Pullin, Zyon",
       "normalized_player": "zyon pullin",
       "status": "AVAILABLE",
-      "reason": ""
+      "reason": "Injury/Illness - Right Quadriceps"
     },
     {
       "matchup": "POR@MIL",
@@ -317,9 +317,521 @@
       "normalized_player": "myles turner",
       "status": "OUT",
       "reason": ""
+    },
+    {
+      "matchup": "CHA@ATL",
+      "team_abbr": "CHA",
+      "player": "Ajayi, Michael",
+      "normalized_player": "michael ajayi",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "CHA@ATL",
+      "team_abbr": "CHA",
+      "player": "Allen, Grayson",
+      "normalized_player": "grayson allen",
+      "status": "OUT",
+      "reason": "Concussion Protocol"
+    },
+    {
+      "matchup": "CHA@ATL",
+      "team_abbr": "CHA",
+      "player": "Boswell, Kylan",
+      "normalized_player": "kylan boswell",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "CHA@ATL",
+      "team_abbr": "CHA",
+      "player": "Knueppel, Kon",
+      "normalized_player": "kon knueppel",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Hamstring Strain"
+    },
+    {
+      "matchup": "CHA@ATL",
+      "team_abbr": "CHA",
+      "player": "Schroder, Dennis",
+      "normalized_player": "dennis schroder",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Hamstring Strain"
+    },
+    {
+      "matchup": "CHA@ATL",
+      "team_abbr": "CHA",
+      "player": "Williams, Grant",
+      "normalized_player": "grant williams",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "CHA@ATL",
+      "team_abbr": "ATL",
+      "player": "Castro, Rafael",
+      "normalized_player": "rafael castro",
+      "status": "QUESTIONABLE",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "CHA@ATL",
+      "team_abbr": "ATL",
+      "player": "Dennis, RayJ",
+      "normalized_player": "rayj dennis",
+      "status": "QUESTIONABLE",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "CHA@ATL",
+      "team_abbr": "ATL",
+      "player": "Flemings, Kingston",
+      "normalized_player": "kingston flemings",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Lumbar Strain"
+    },
+    {
+      "matchup": "CHA@ATL",
+      "team_abbr": "ATL",
+      "player": "Gueye, Mouhamed",
+      "normalized_player": "mouhamed gueye",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Foot Fracture"
+    },
+    {
+      "matchup": "CHA@ATL",
+      "team_abbr": "ATL",
+      "player": "Landale, Jock",
+      "normalized_player": "jock landale",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Great Toe Sprain"
+    },
+    {
+      "matchup": "CHA@ATL",
+      "team_abbr": "ATL",
+      "player": "McCollum, CJ",
+      "normalized_player": "cj mccollum",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Calf Strain"
+    },
+    {
+      "matchup": "CHA@ATL",
+      "team_abbr": "ATL",
+      "player": "Newell, Asa",
+      "normalized_player": "asa newell",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Great Toe Surgery"
+    },
+    {
+      "matchup": "CHA@ATL",
+      "team_abbr": "ATL",
+      "player": "Veesaar, Henri",
+      "normalized_player": "henri veesaar",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right ACL Tear"
+    },
+    {
+      "matchup": "CHA@ATL",
+      "team_abbr": "ATL",
+      "player": "Wilson, Jalen",
+      "normalized_player": "jalen wilson",
+      "status": "QUESTIONABLE",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "IND@CLE",
+      "team_abbr": "IND",
+      "player": "Furphy, Johnny",
+      "normalized_player": "johnny furphy",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "IND@CLE",
+      "team_abbr": "IND",
+      "player": "Haliburton, Tyrese",
+      "normalized_player": "tyrese haliburton",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Hamstring Strain"
+    },
+    {
+      "matchup": "IND@CLE",
+      "team_abbr": "IND",
+      "player": "McConnell, T.J.",
+      "normalized_player": "t j mcconnell",
+      "status": "PROBABLE",
+      "reason": "Injury/Illness - Right Hamstring Strain"
+    },
+    {
+      "matchup": "IND@CLE",
+      "team_abbr": "IND",
+      "player": "Nembhard, Andrew",
+      "normalized_player": "andrew nembhard",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Left Hip Sprain"
+    },
+    {
+      "matchup": "IND@CLE",
+      "team_abbr": "IND",
+      "player": "Sheppard, Ben",
+      "normalized_player": "ben sheppard",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Meniscus Surgery"
+    },
+    {
+      "matchup": "IND@CLE",
+      "team_abbr": "IND",
+      "player": "Smith, Braden",
+      "normalized_player": "braden smith",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Right Ankle Sprain"
+    },
+    {
+      "matchup": "IND@CLE",
+      "team_abbr": "CLE",
+      "player": "Diop, Khalifa",
+      "normalized_player": "khalifa diop",
+      "status": "OUT",
+      "reason": "G League - On Assignment"
+    },
+    {
+      "matchup": "IND@CLE",
+      "team_abbr": "CLE",
+      "player": "Mobley, Evan",
+      "normalized_player": "evan mobley",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Great Toe Sprain"
+    },
+    {
+      "matchup": "IND@CLE",
+      "team_abbr": "CLE",
+      "player": "Tomlin, Nae'Qwan",
+      "normalized_player": "nae qwan tomlin",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "IND@CLE",
+      "team_abbr": "CLE",
+      "player": "Tyson, Jaylon",
+      "normalized_player": "jaylon tyson",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "IND@CLE",
+      "team_abbr": "CLE",
+      "player": "Udeh Jr., Ernest",
+      "normalized_player": "ernest udeh",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "IND@CLE",
+      "team_abbr": "CLE",
+      "player": "Watson, Peyton",
+      "normalized_player": "peyton watson",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Low Back Contusion"
+    },
+    {
+      "matchup": "ORL@BKN",
+      "team_abbr": "ORL",
+      "player": "Banchero, Paolo",
+      "normalized_player": "paolo banchero",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "ORL@BKN",
+      "team_abbr": "ORL",
+      "player": "Isaac, Jonathan",
+      "normalized_player": "jonathan isaac",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "ORL@BKN",
+      "team_abbr": "ORL",
+      "player": "Nelson, Izaiyah",
+      "normalized_player": "izaiyah nelson",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "ORL@BKN",
+      "team_abbr": "ORL",
+      "player": "Penda, Noah",
+      "normalized_player": "noah penda",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "ORL@BKN",
+      "team_abbr": "BKN",
+      "player": "Nelson, Grant",
+      "normalized_player": "grant nelson",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Ankle Sprain"
+    },
+    {
+      "matchup": "TOR@DET",
+      "team_abbr": "TOR",
+      "player": "Barrett, RJ",
+      "normalized_player": "rj barrett",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Hamstring Strain"
+    },
+    {
+      "matchup": "TOR@DET",
+      "team_abbr": "TOR",
+      "player": "Bittle, Nate",
+      "normalized_player": "nate bittle",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "TOR@DET",
+      "team_abbr": "TOR",
+      "player": "Bradley, Jaden",
+      "normalized_player": "jaden bradley",
+      "status": "OUT",
+      "reason": "G League - On Assignment"
+    },
+    {
+      "matchup": "TOR@DET",
+      "team_abbr": "TOR",
+      "player": "Leonard, Kawhi",
+      "normalized_player": "kawhi leonard",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "TOR@DET",
+      "team_abbr": "TOR",
+      "player": "McCullar Jr., Kevin",
+      "normalized_player": "kevin mccullar",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "TOR@DET",
+      "team_abbr": "TOR",
+      "player": "Murray-Boyles, Collin",
+      "normalized_player": "collin murray boyles",
+      "status": "OUT",
+      "reason": "Concussion Protocol"
+    },
+    {
+      "matchup": "TOR@DET",
+      "team_abbr": "DET",
+      "player": "Cunningham, Cade",
+      "normalized_player": "cade cunningham",
+      "status": "PROBABLE",
+      "reason": "Injury/Illness - Right Knee Soreness"
+    },
+    {
+      "matchup": "TOR@DET",
+      "team_abbr": "DET",
+      "player": "Duren, Jalen",
+      "normalized_player": "jalen duren",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Hamstring Strain"
+    },
+    {
+      "matchup": "TOR@DET",
+      "team_abbr": "DET",
+      "player": "Holland II, Ronald",
+      "normalized_player": "ronald holland",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "TOR@DET",
+      "team_abbr": "DET",
+      "player": "Okorie, Ebuka",
+      "normalized_player": "ebuka okorie",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Oblique Strain"
+    },
+    {
+      "matchup": "TOR@DET",
+      "team_abbr": "DET",
+      "player": "Onyenso, Ugonna",
+      "normalized_player": "ugonna onyenso",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "TOR@DET",
+      "team_abbr": "DET",
+      "player": "Prince, Taurean",
+      "normalized_player": "taurean prince",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Knee Surgery"
+    },
+    {
+      "matchup": "TOR@DET",
+      "team_abbr": "DET",
+      "player": "Robinson, Duncan",
+      "normalized_player": "duncan robinson",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Quadriceps Strain"
+    },
+    {
+      "matchup": "NOP@OKC",
+      "team_abbr": "NOP",
+      "player": "Dia, Malik",
+      "normalized_player": "malik dia",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "NOP@OKC",
+      "team_abbr": "NOP",
+      "player": "Mathurin, Bennedict",
+      "normalized_player": "bennedict mathurin",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Plantar Fasciitis"
+    },
+    {
+      "matchup": "NOP@OKC",
+      "team_abbr": "NOP",
+      "player": "McGowens, Bryce",
+      "normalized_player": "bryce mcgowens",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Elbow Infection"
+    },
+    {
+      "matchup": "NOP@OKC",
+      "team_abbr": "NOP",
+      "player": "Murphy III, Trey",
+      "normalized_player": "trey murphy",
+      "status": "QUESTIONABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "NOP@OKC",
+      "team_abbr": "NOP",
+      "player": "Murray, Dejounte",
+      "normalized_player": "dejounte murray",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Ankle Sprain"
+    },
+    {
+      "matchup": "NOP@OKC",
+      "team_abbr": "NOP",
+      "player": "Pierre Jr., Jaron",
+      "normalized_player": "jaron pierre",
+      "status": "PROBABLE",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "NOP@OKC",
+      "team_abbr": "NOP",
+      "player": "Reese, Julian",
+      "normalized_player": "julian reese",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "NOP@OKC",
+      "team_abbr": "NOP",
+      "player": "Watford, Trendon",
+      "normalized_player": "trendon watford",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Ankle Sprain"
+    },
+    {
+      "matchup": "WAS@CHI",
+      "team_abbr": "WAS",
+      "player": "Beekman, Reece",
+      "normalized_player": "reece beekman",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "WAS@CHI",
+      "team_abbr": "WAS",
+      "player": "Champagnie, Justin",
+      "normalized_player": "justin champagnie",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Foot Surgery"
+    },
+    {
+      "matchup": "WAS@CHI",
+      "team_abbr": "WAS",
+      "player": "Okpara, Felix",
+      "normalized_player": "felix okpara",
+      "status": "QUESTIONABLE",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "WAS@CHI",
+      "team_abbr": "WAS",
+      "player": "Vukcevic, Tristan",
+      "normalized_player": "tristan vukcevic",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Hip Impingement"
+    },
+    {
+      "matchup": "WAS@CHI",
+      "team_abbr": "WAS",
+      "player": "Watkins, Jamir",
+      "normalized_player": "jamir watkins",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "WAS@CHI",
+      "team_abbr": "CHI",
+      "player": "Awaka, Tobe",
+      "normalized_player": "tobe awaka",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "WAS@CHI",
+      "team_abbr": "CHI",
+      "player": "Essengue, Noa",
+      "normalized_player": "noa essengue",
+      "status": "PROBABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "WAS@CHI",
+      "team_abbr": "CHI",
+      "player": "Robinson, Orlando",
+      "normalized_player": "orlando robinson",
+      "status": "OUT",
+      "reason": "G League - On Assignment"
+    },
+    {
+      "matchup": "WAS@CHI",
+      "team_abbr": "CHI",
+      "player": "Sellers, Jaylin",
+      "normalized_player": "jaylin sellers",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "WAS@CHI",
+      "team_abbr": "CHI",
+      "player": "Swain, Dailyn",
+      "normalized_player": "dailyn swain",
+      "status": "OUT",
+      "reason": "G League - On Assignment"
+    },
+    {
+      "matchup": "WAS@CHI",
+      "team_abbr": "CHI",
+      "player": "Wilson, Caleb",
+      "normalized_player": "caleb wilson",
+      "status": "OUT",
+      "reason": ""
     }
   ],
-  "rows": 39,
+  "rows": 103,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
