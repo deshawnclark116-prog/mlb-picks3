@@ -33,7 +33,7 @@ jobs:
             --games nba/data/nba_v4_games_2026_27.jsonl \
             --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz \
             --pbp nba/data/nba_v5_pbp_2026_27.jsonl.gz \
-            --test-from 2026-03-01 --sample 40 --sims 700 \
+            --test-from 2026-03-01 --test-until 2026-03-22 --sample 40 --sims 700 \
             --empirical-opportunity-trial \
             --empirical-opportunity-train-before 2026-03-01 \
             --out /tmp/nba_empirical_opportunities_march.json
@@ -44,7 +44,7 @@ jobs:
             --games nba/data/nba_v4_games_2026_27.jsonl \
             --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz \
             --pbp nba/data/nba_v5_pbp_2026_27.jsonl.gz \
-            --test-from 2026-11-01 --sample 40 --sims 700 \
+            --test-from 2026-11-01 --test-until 2026-11-19 --sample 40 --sims 700 \
             --empirical-opportunity-trial \
             --empirical-opportunity-train-before 2026-11-01 \
             --out /tmp/nba_empirical_opportunities_november.json
