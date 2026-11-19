@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-18_06_00PM.pdf",
-  "published_at_utc": "2026-11-18T23:00:00+00:00",
-  "captured_at_utc": "2026-11-18T23:04:11.622706+00:00",
-  "source_sha256": "a8a7c3874deea8fa9fef4c39b09b30e0f1a017ffebbc6f6c2cb804fc045b7651",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-18_07_00PM.pdf",
+  "published_at_utc": "2026-11-19T00:00:00+00:00",
+  "captured_at_utc": "2026-11-19T00:05:34.751239+00:00",
+  "source_sha256": "2b190563ccbb4b3eed0fdd04ada0b72f5a81e4ef9dc413c0ec681df7c27c7fcc",
   "reports": [
     {
       "matchup": "HOU@IND",
@@ -35,7 +35,7 @@
       "team_abbr": "HOU",
       "player": "Thompson, Amen",
       "normalized_player": "amen thompson",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Left Knee Soreness"
     },
     {
@@ -123,7 +123,7 @@
       "team_abbr": "CLE",
       "player": "Merrill, Sam",
       "normalized_player": "sam merrill",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -163,7 +163,7 @@
       "team_abbr": "CLE",
       "player": "Watson, Peyton",
       "normalized_player": "peyton watson",
-      "status": "DOUBTFUL",
+      "status": "OUT",
       "reason": "Injury/Illness - Low Back Contusion"
     },
     {
@@ -299,7 +299,7 @@
       "team_abbr": "PHI",
       "player": "Maxey, Tyrese",
       "normalized_player": "tyrese maxey",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Right Foot Soreness"
     },
     {
@@ -307,7 +307,7 @@
       "team_abbr": "PHI",
       "player": "Wade, Dean",
       "normalized_player": "dean wade",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": ""
     },
     {
@@ -443,7 +443,7 @@
       "team_abbr": "WAS",
       "player": "Okpara, Felix",
       "normalized_player": "felix okpara",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "G League - Two-Way"
     },
     {
@@ -603,7 +603,7 @@
       "team_abbr": "OKC",
       "player": "Williams, Jaylin",
       "normalized_player": "jaylin williams",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Low Back Spasms"
     },
     {
@@ -755,7 +755,7 @@
       "team_abbr": "GSW",
       "player": "Green, Draymond",
       "normalized_player": "draymond green",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -763,7 +763,7 @@
       "team_abbr": "GSW",
       "player": "Horford, Al",
       "normalized_player": "al horford",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": ""
     },
     {
@@ -795,7 +795,7 @@
       "team_abbr": "DAL",
       "player": "Aldama, Santi",
       "normalized_player": "santi aldama",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Left Ankle Sprain"
     },
     {
@@ -811,7 +811,7 @@
       "team_abbr": "DAL",
       "player": "Christie, Max",
       "normalized_player": "max christie",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Left Ankle Sprain"
     },
     {
@@ -819,7 +819,7 @@
       "team_abbr": "DAL",
       "player": "Clayton Jr., Walter",
       "normalized_player": "walter clayton",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Ankle Sprain"
     },
     {
@@ -833,9 +833,17 @@
     {
       "matchup": "GSW@DAL",
       "team_abbr": "DAL",
+      "player": "Howard, Jett",
+      "normalized_player": "jett howard",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "GSW@DAL",
+      "team_abbr": "DAL",
       "player": "Lawal, Tobi",
       "normalized_player": "tobi lawal",
-      "status": "DOUBTFUL",
+      "status": "OUT",
       "reason": "Injury/Illness - Right Groin Tightness"
     },
     {
@@ -916,7 +924,7 @@
       "player": "Achiuwa, Precious",
       "normalized_player": "precious achiuwa",
       "status": "AVAILABLE",
-      "reason": ""
+      "reason": "Injury/Illness - Left Lower Leg"
     },
     {
       "matchup": "PHX@SAC",
@@ -1148,7 +1156,7 @@
       "player": "Avdija, Deni",
       "normalized_player": "deni avdija",
       "status": "QUESTIONABLE",
-      "reason": ""
+      "reason": "Injury/Illness - Left Foot"
     },
     {
       "matchup": "POR@MIL",
@@ -1207,7 +1215,7 @@
       "reason": ""
     }
   ],
-  "rows": 150,
+  "rows": 151,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
