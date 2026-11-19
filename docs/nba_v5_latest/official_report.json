@@ -1,11 +1,115 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-19_11_30AM.pdf",
-  "published_at_utc": "2026-11-19T16:30:00+00:00",
-  "captured_at_utc": "2026-11-19T16:34:40.016686+00:00",
-  "source_sha256": "c710d563ff537bb2c36f3e27467b0e6f9f942187d46a6088fa3577f18bd4ebea",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-19_02_30PM.pdf",
+  "published_at_utc": "2026-11-19T19:30:00+00:00",
+  "captured_at_utc": "2026-11-19T19:34:14.325596+00:00",
+  "source_sha256": "b9db5d660e75d1fe9a32b32e27d75400b65aaec36067298862e653f0ccaeff32",
   "reports": [
+    {
+      "matchup": "GSW@MEM",
+      "team_abbr": "GSW",
+      "player": "Butler III, Jimmy",
+      "normalized_player": "jimmy butler",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "GSW@MEM",
+      "team_abbr": "GSW",
+      "player": "Cryer, LJ",
+      "normalized_player": "lj cryer",
+      "status": "QUESTIONABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "GSW@MEM",
+      "team_abbr": "GSW",
+      "player": "Curry, Stephen",
+      "normalized_player": "stephen curry",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Oblique Tear"
+    },
+    {
+      "matchup": "GSW@MEM",
+      "team_abbr": "GSW",
+      "player": "Green, Draymond",
+      "normalized_player": "draymond green",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "GSW@MEM",
+      "team_abbr": "GSW",
+      "player": "Moody, Moses",
+      "normalized_player": "moses moody",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "GSW@MEM",
+      "team_abbr": "GSW",
+      "player": "Porzingis, Kristaps",
+      "normalized_player": "kristaps porzingis",
+      "status": "OUT",
+      "reason": "Not With Team"
+    },
+    {
+      "matchup": "GSW@MEM",
+      "team_abbr": "GSW",
+      "player": "Williams, Brandon",
+      "normalized_player": "brandon williams",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Hamstring Strain"
+    },
+    {
+      "matchup": "GSW@MEM",
+      "team_abbr": "MEM",
+      "player": "Edey, Zach",
+      "normalized_player": "zach edey",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "GSW@MEM",
+      "team_abbr": "MEM",
+      "player": "Jackson, GG",
+      "normalized_player": "gg jackson",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "GSW@MEM",
+      "team_abbr": "MEM",
+      "player": "Jerome, Ty",
+      "normalized_player": "ty jerome",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "GSW@MEM",
+      "team_abbr": "MEM",
+      "player": "Pippen Jr., Scotty",
+      "normalized_player": "scotty pippen",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "GSW@MEM",
+      "team_abbr": "MEM",
+      "player": "Saunders, Richie",
+      "normalized_player": "richie saunders",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Knee Surgery"
+    },
+    {
+      "matchup": "GSW@MEM",
+      "team_abbr": "MEM",
+      "player": "Stewart, Isaiah",
+      "normalized_player": "isaiah stewart",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Illness"
+    },
     {
       "matchup": "LAC@SAS",
       "team_abbr": "LAC",
@@ -123,7 +227,7 @@
       "team_abbr": "MIN",
       "player": "Pullin, Zyon",
       "normalized_player": "zyon pullin",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -189,9 +293,33 @@
       "normalized_player": "chris youngblood",
       "status": "OUT",
       "reason": ""
+    },
+    {
+      "matchup": "POR@MIL",
+      "team_abbr": "MIL",
+      "player": "Dieng, Ousmane",
+      "normalized_player": "ousmane dieng",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Finger Fracture"
+    },
+    {
+      "matchup": "POR@MIL",
+      "team_abbr": "MIL",
+      "player": "Kuzma, Kyle",
+      "normalized_player": "kyle kuzma",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "POR@MIL",
+      "team_abbr": "MIL",
+      "player": "Turner, Myles",
+      "normalized_player": "myles turner",
+      "status": "OUT",
+      "reason": ""
     }
   ],
-  "rows": 23,
+  "rows": 39,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
