@@ -321,12 +321,17 @@ def predict_models(models, rows):
 def walk_forward(rows, test_from, groups_on, minutes_groups_on):
     """Returns per-row dict of predictions for rows on/after test_from."""
     out = {}
-    ms = [m for m in months(rows) if dt.date(m[0], m[1], 1) >= test_from]
+    # A mid-month --test-from must not discard the entire active month.
+    # Train on earlier calendar months, then evaluate ONLY rows dated
+    # on/after the requested boundary. The prior code compared month START
+    # to test_from and silently scored zero November games for Nov 09.
+    ms = [m for m in months(rows)
+          if dt.date(m[0] + (m[1] == 12), (m[1] % 12) + 1, 1) > test_from]
     for (y, m) in ms:
         start = dt.date(y, m, 1)
         end = dt.date(y + (m == 12), (m % 12) + 1, 1)
         train = [r for r in rows if r["date"] < start]
-        test = [r for r in rows if start <= r["date"] < end]
+        test = [r for r in rows if max(start, test_from) <= r["date"] < end]
         if len(train) < 2500 or not test:
             continue
         models = fit_models(train, groups_on, minutes_groups_on)

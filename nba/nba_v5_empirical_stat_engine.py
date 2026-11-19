@@ -57,7 +57,7 @@ def _round_samples(value, rng):
 
 def simulate_empirical_game(home, away, history, date, *, worlds, seed,
                             expected_pace=None, historic_league_pace=None,
-                            three_attempts_model=False):
+                            three_attempts_model=False, minutes_head=None):
     """Return V5-compatible game arrays from DIRECT pregame player-box priors.
 
     All forecasts are conditional on dates < target date, never on an
@@ -98,6 +98,16 @@ def simulate_empirical_game(home, away, history, date, *, worlds, seed,
                 playable[:, j] = False
                 continue
             expected, sd = _recent_minute_prior(h, team.starter[j])
+            if minutes_head is not None and len(h) >= 5:
+                # Research-only: train strictly before evaluation dates.
+                # Relative to the REAL live empirical model's minutes prior,
+                # preserve certified-starter effect and bound adjustments.
+                started = float(np.mean([bool(p["start"]) for p in h[-5:]]))
+                learned = minutes_head.predict_minutes(h, date)
+                learned += 2.0 * (float(team.starter[j]) - started)
+                expected = float(np.clip(
+                    learned, max(2.0, 0.75 * expected),
+                    min(40.0, 1.25 * expected)))
             if len(h) < 3:
                 # Still reserve genuine one/two-game teammates' minutes:
                 # lack of a deep NBA sample must not award their playing

@@ -1,0 +1,80 @@
+name: NBA V5 supervised minutes role challenger - matched out-of-sample
+on:
+  pull_request:
+    paths:
+      - "nba/nba_v5_minutes_head.py"
+      - "nba/nba_v5_minutes_head_holdout.py"
+      - "nba/nba_v5_minutes_head_score.py"
+      - "nba/nba_v5_empirical_stat_engine.py"
+      - "nba/nba_v5_backtest.py"
+      - "nba/nba_v4_backtest.py"
+      - "tests/test_nba_v5_minutes_head.py"
+      - ".github/workflows/nba_v5_minutes_head_research.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  frozen-minutes-head:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install minimal scientific environment
+        run: python -m pip install "numpy>=2.1,<2.5" "scipy>=1.14,<1.18"
+      - name: Compile and test causality, immutable champion, bounded changes
+        run: |
+          python -m compileall -q nba/nba_v5_minutes_head.py nba/nba_v5_minutes_head_holdout.py nba/nba_v5_minutes_head_score.py nba/nba_v5_backtest.py nba/nba_v5_empirical_stat_engine.py
+          python -m unittest -v tests.test_nba_v5_minutes_head tests.test_nba_v5_empirical_stat_engine
+      - name: Score prior-season independent date holdout, no target-day features
+        run: |
+          PYTHONPATH=. python -u -m nba.nba_v5_minutes_head_holdout \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --train-before 2026-03-01 --test-through 2026-03-22 \
+            --out /tmp/nba_minutes_mar2026.json
+      - name: Score recent independent date holdout, frozen coefficients
+        run: |
+          PYTHONPATH=. python -u -m nba.nba_v5_minutes_head_holdout \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --train-before 2026-11-09 --test-through 2026-11-18 \
+            --out /tmp/nba_minutes_nov2026.json
+      - name: Same-game same-seed LIVE empirical V5 champion versus learned minutes challenger
+        run: |
+          PYTHONPATH=. python -u -m nba.nba_v5_backtest \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz \
+            --pbp nba/data/nba_v5_pbp_2026_27.jsonl.gz \
+            --test-from 2026-11-09 --minutes-head-train-before 2026-11-09 \
+            --sample 38 --sims 650 --minutes-head-trial \
+            --out /tmp/nba_minutes_paired_simulation.json
+      - name: Publish observable trial metrics without pretending the trial won
+        run: |
+          python - <<'PY'
+          import json
+          for f in ('/tmp/nba_minutes_mar2026.json', '/tmp/nba_minutes_nov2026.json'):
+              report = json.load(open(f))
+              print('DATE_SPLIT', f, report['minutes_metrics'])
+              assert report['do_not_auto_promote']
+              assert not report['full_game_proven']
+          x = json.load(open('/tmp/nba_minutes_paired_simulation.json'))['paired_minutes_head_trial']
+          assert not x['model_promotion_allowed']
+          print('MINUTES_FULL_GAME', x['minutes_simulation_mae'])
+          print('SAME_FROZEN_TARGET_TOP_CARD', x['fixed_target_top_card']['top_card_metrics'])
+          for k, value in x['metrics'].items():
+              if any(k.startswith(stat + '|') for stat in
+                     ('points', 'rebounds', 'assists', 'three_pointers_made')):
+                  print('CORE_STAT', k, value)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-v5-frozen-minutes-challenger-and-matched-sim
+          path: |
+            /tmp/nba_minutes_mar2026.json
+            /tmp/nba_minutes_nov2026.json
+            /tmp/nba_minutes_paired_simulation.json
+          retention-days: 30
