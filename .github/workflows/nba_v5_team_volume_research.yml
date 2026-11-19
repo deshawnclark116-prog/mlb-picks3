@@ -1,0 +1,70 @@
+name: NBA team opportunities and opponent defense - paired historical test
+on:
+  push:
+    branches: [research/nba-v5-team-opportunity-20261119]
+    paths:
+      - "nba/nba_v5_team_volume_head.py"
+      - "nba/nba_v5_team_volume_score.py"
+      - "nba/nba_v5_empirical_stat_engine.py"
+      - "nba/nba_v5_backtest.py"
+      - "tests/test_nba_v5_team_volume_head.py"
+      - ".github/workflows/nba_v5_team_volume_research.yml"
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  team-matchup-holdout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install "numpy>=2.1,<2.5" "scipy>=1.14,<1.18"
+      - name: Unit tests for opponent, pretip dates, team-volume constraints and no-live-change
+        run: |
+          python -m compileall -q nba/nba_v5_team_volume_head.py nba/nba_v5_team_volume_score.py nba/nba_v5_empirical_stat_engine.py nba/nba_v5_backtest.py
+          python -m unittest -v tests.test_nba_v5_team_volume_head tests.test_nba_v5_empirical_stat_engine
+      - name: Frozen March 1-21 2026 team offense and opponent defensive results
+        run: |
+          PYTHONPATH=. python -u -m nba.nba_v5_backtest \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz \
+            --pbp nba/data/nba_v5_pbp_2026_27.jsonl.gz \
+            --test-from 2026-03-01 --test-until 2026-03-22 \
+            --sample 36 --sims 650 --empirical-team-volume-trial \
+            --empirical-team-volume-train-before 2026-03-01 \
+            --out /tmp/nba_team_volume_march.json
+      - name: Frozen November 1-18 2026 team offense and opponent defensive results
+        run: |
+          PYTHONPATH=. python -u -m nba.nba_v5_backtest \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz \
+            --pbp nba/data/nba_v5_pbp_2026_27.jsonl.gz \
+            --test-from 2026-11-01 --test-until 2026-11-19 \
+            --sample 36 --sims 650 --empirical-team-volume-trial \
+            --empirical-team-volume-train-before 2026-11-01 \
+            --out /tmp/nba_team_volume_november.json
+      - name: Report all core errors, fixed-event Brier and top-four/top-ten original target hits
+        run: |
+          python - <<'PY'
+          import json
+          for label in ('march','november'):
+              p=json.load(open('/tmp/nba_team_volume_'+label+'.json'))['paired_empirical_team_volume_trial']
+              print('TEAM_VOLUME_HOLDOUT',label)
+              print('CORE_MAE_IMPROVED',p['all_four_core_mean_mae_improved'])
+              print('CORE_BRIER_NONREGRESSION',p['all_four_core_fixed_event_brier_nonregression'])
+              print('FIXED_ORIGINAL_CARD',json.dumps(p['top_card_fixed_original_targets'],sort_keys=True))
+              for market in ('points','rebounds','assists','three_pointers_made'):
+                  for kind in ('native_v5_mean_mae','native_fixed_projection_brier'):
+                      print(label,market,kind,json.dumps(p['metrics'].get(market+'|'+kind,{}),sort_keys=True))
+              assert not p['model_promotion_allowed']
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-team-opp-shots-assists-rebounds-frozen-paired-tests
+          path: /tmp/nba_team_volume_*.json
+          retention-days: 30
