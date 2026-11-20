@@ -96,8 +96,9 @@ test('missing actual or missing exact original as-of count source NEVER becomes 
  const tamper={...g,actual_sog:3,played:false};
  assert.throws(()=>gradeNhlOriginalShotProbabilities([snapshot],[f],[tamper]),
    /BROKEN_DNP/);
- assert.throws(()=>gradeNhlOriginalShotProbabilities([snapshot],[f],[g,g]),
-   /DUPLICATE_VERIFIED/);
+ const copiedFinal=gradeNhlOriginalShotProbabilities([snapshot],[f],[g,g]);
+ assert.equal(copiedFinal.redundant_byte_identical_final_copies,1);
+ assert.equal(copiedFinal.verified_milestone_outcomes,5);
 });
 test('source monotonicity tampering and apparently posttip receipt are invalid',()=>{
  const source=report();
