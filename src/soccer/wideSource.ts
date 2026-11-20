@@ -41,13 +41,14 @@ export function readWideCatalog(raw:unknown):WideCatalog{
  const seen=new Set<string>();
  const leagues=x.leagues.map(l=>{
    const folder=str(l.folder);
-   if(!folderOK(folder)||seen.has(folder)||!str(l.name)||
+   const name=str((l as WideLeague & {league?:string}).league||l.name);
+   if(!folderOK(folder)||seen.has(folder)||!name||
       !count(l.results)||!count(l.fixtures)||
       !Array.isArray(l.errors)||l.errors.some(e=>typeof e!=='string')||
       !(l.latest===null||typeof l.latest==='string'&&dateOK(l.latest)))
      throw Error('SOCCER_WIDE_INVALID_OR_DUPLICATED_COMPETITION');
    seen.add(folder);
-   return {id:folder.slice(5),name:l.name,folder,
+   return {id:folder.slice(5),name,folder,
            results:l.results,fixtures:l.fixtures,latest:l.latest,errors:l.errors};
  });
  return {season:'2627',generated_at_utc:x.generated_at_utc,leagues};
