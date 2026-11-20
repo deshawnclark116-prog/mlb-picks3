@@ -2,7 +2,9 @@
  * Public-domain OpenFootball scores only. NO xG/player data or bookmaker input.
  * Research challenger is not calibrated or certified for betting.
  */
-export type League = 'EPL'|'LaLiga'|'SerieA'|'Bundesliga'|'Ligue1';
+// The original firstseen v1 remains five-league and immutable. New source-
+// validated competitions use distinct stable source-folder IDs.
+export type League = 'EPL'|'LaLiga'|'SerieA'|'Bundesliga'|'Ligue1'|(string & {});
 export type Outcome = 'H'|'D'|'A';
 export type Match = {
   league:League;season:string;date:string;home:string;away:string;
@@ -34,6 +36,8 @@ const dec=(days:number)=>Math.exp(-Math.LN2*days/150);
 const round=(x:number)=>Math.round(x*10000)/10000;
 
 export function parseOpenFootball(league:League,season:string,raw:unknown):Match[] {
+  if(!Object.prototype.hasOwnProperty.call(LEAGUES,league))
+    throw Error('SOCCER_OPENFOOTBALL_UNSUPPORTED_LEAGUE');
   if(!raw||typeof raw!=='object'||!Array.isArray((raw as {matches?:unknown}).matches))
     throw Error('SOCCER_SOURCE_MALFORMED');
   const out:Match[]=[];const ids=new Set<string>();
