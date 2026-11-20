@@ -4,7 +4,8 @@
  */
 import latest from '../../docs/soccer_wide/board.json';
 import type {Forecast} from './model';
-import {WIDE_RESEARCH_SCHEMA,type WideBoard} from './wideResearch';
+import type {WideBoard} from './wideResearch';
+const WIDE_RESEARCH_SCHEMA='soccer-worldwide-fixtures-and-original-model-research-v1';
 import {wideMatchKey} from './wideSource';
 const frozen=import.meta.glob('../../docs/soccer_wide/originals/*.json',{
  eager:true,import:'default'
