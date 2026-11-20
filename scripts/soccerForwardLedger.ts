@@ -2,6 +2,8 @@
 import {readFileSync,writeFileSync,existsSync,readdirSync,mkdirSync} from 'node:fs';
 import {join} from 'node:path';
 import {execFileSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
+import {SOURCE_ROOT,SOURCE_2627,parseAltResults,reconcileVerifiedResult,gameResultKey} from '../src/soccer/verifiedIndependentFinals';
 import {computeSoccerResearch} from '../server/soccerResearch';
 import {parseOpenFootball,LEAGUES,type League,type Match} from '../src/soccer/model';
 import {makeOriginal,gradeOriginal,validateOriginal,forwardScore,
@@ -63,29 +65,67 @@ async function main(){
    results.push(...parseOpenFootball(r.league as League,r.season,JSON.parse(content)));
  }
  const resultsByKey=new Map(results.map(m=>[matchKey(m),m]));
+ // The original OpenFootball feed can have older fixtures with no confirmed
+ // final score. Fetch a separately maintained FULL-TIME RESULTS source,
+ // but match only exact date/league/teams using reviewed bijective aliases.
+ const providerAudit:Record<string,{url:string;sha256:string;rows:number;latest:string|null}>={};
+ const independent:Match[]=[];
+ for(const league of Object.keys(LEAGUES) as League[]){
+   const url=SOURCE_ROOT+'/'+SOURCE_2627[league]+'/results_2627.csv';
+   const response=await fetch(url,{headers:{Accept:'text/csv'}});
+   if(!response.ok)throw Error('SOCCER_VERIFIED_FINAL_SOURCE_HTTP_'+league+'_'+response.status);
+   const raw=await response.text();
+   const matches=parseAltResults(league,raw);
+   if(matches.length<30)throw Error('SOCCER_VERIFIED_FINAL_TOO_FEW_'+league);
+   providerAudit[league]={url,
+     sha256:createHash('sha256').update(raw).digest('hex'),
+     rows:matches.length,
+     latest:matches.map(m=>m.date).sort().at(-1)??null};
+   independent.push(...matches);
+ }
+ const altByKey=new Map<string,Match>();
+ for(const m of independent){
+   const key=gameResultKey(m);
+   if(altByKey.has(key))throw Error('SOCCER_INDEPENDENT_DUPLICATE_SCORE');
+   altByKey.set(key,m);
+ }
+ let independentGraded=0,primaryGraded=0,conflicted=0,unresolved=0;
  let newlyGraded=0;
  for(const o of originals){
    if(o.forecast.date>=ymd)continue; // never same-day grade
    const path=join(gradesDir,o.id+'.json');
    if(existsSync(path))continue;
-   const match=resultsByKey.get(matchKey({
-     ...o.forecast,homeGoals:null,awayGoals:null
-   }));
-   if(!match||match.homeGoals===null||match.awayGoals===null)continue;
-   // No outcome match through fuzzy team identity or changed kickoff/date.
+   const identity={...o.forecast,homeGoals:null,awayGoals:null};
+   const primary=resultsByKey.get(matchKey(identity));
+   const alt=altByKey.get(gameResultKey(identity));
+   const resolution=reconcileVerifiedResult(primary,alt);
+   if(!resolution.match){
+     if(resolution.reason.includes('CONFLICT'))conflicted++;
+     else unresolved++;
+     continue;
+   }
+   // No outcome selected by score, best outcome, or fuzzy team identity.
+   const match=resolution.match;
    const grade=gradeOriginal(o,match,now);
+   if(resolution.reason==='SOURCE_VERIFIED_INDEPENDENT_FULL_TIME')
+     independentGraded++;
+   else primaryGraded++;
    writeFileSync(path,JSON.stringify(grade,null,2)+'\n',{flag:'wx'});
    newlyGraded++;
  }
  const grades=list(gradesDir).map(file=>readJson<SoccerGrade>(join(gradesDir,file)));
  const summary=forwardScore(originals,grades);
  const status=JSON.stringify({...summary,asofDateUTC:ymd,
-   evidence:'Github earliest commit before fixture date; no same-day freeze'},null,2)+'\n';
+   evidence:'Github earliest original commit BEFORE fixture date; no same-day freeze. Independent result source matches exact names/date/league and records source SHA',
+   finalSourceAudit:{providerAudit,independentGraded,primaryGraded,conflicted,unresolved,
+      independentRawSourceIsNotOriginalForecastData:true}},null,2)+'\n';
  const statusPath=join(DIR,'status.json');
  if(!existsSync(statusPath)||readFileSync(statusPath,'utf8')!==status)
    writeFileSync(statusPath,status);
  console.log('SOCCER_FORWARD_FIRSTSEEN',JSON.stringify({
-   newImmutableOriginals:made,newImmutableGrades:newlyGraded,...summary
+   newImmutableOriginals:made,newImmutableGrades:newlyGraded,
+   independentGraded,primaryGraded,conflicted,unresolved,
+   independentSources:providerAudit,...summary
  }));
 }
 main().catch(e=>{console.error('SOCCER_FORWARD_FAILED',e);process.exitCode=1});
