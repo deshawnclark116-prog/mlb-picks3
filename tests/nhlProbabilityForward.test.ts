@@ -110,3 +110,36 @@ test('source monotonicity tampering and apparently posttip receipt are invalid',
  copied.captured_at_utc=TIP;
  assert.throws(()=>verifyFirstseenShotLedger([copied]),/PRETIP/);
 });
+
+
+test('repeated legitimate original snapshots select the exact frozen pregame version, not newest',()=>{
+ const frozen=freezeSourceNhlShotProbabilities(report(),NOW);
+ const [f,g]=truth(4,true);
+ const alternative={...f,row_hash:'c'.repeat(64),
+   forecast_id:'later-version-2026020301-8478000-T24H',
+   generated_at:'2026-10-24T19:00:00Z',
+   cutoff_at:'2026-10-24T19:15:00Z',
+   expected_sog:7.0};
+ const gAlt={...g,forecast_row_hash:alternative.row_hash,
+   forecast_id:alternative.forecast_id,actual_sog:0};
+ const r=gradeNhlOriginalShotProbabilities([frozen],
+   [alternative,f,f],[gAlt,g,g],new Date('2026-10-25T13:00:00Z'));
+ assert.equal(r.verified_milestone_outcomes,5);
+ assert.equal(r.repeated_original_event_keys,1);
+ assert.equal(r.redundant_byte_identical_original_copies,1);
+ assert.equal(r.redundant_byte_identical_final_copies,1);
+ assert.deepEqual(r.predicted_vs_actual.map(x=>x.result),['HIT','HIT','HIT','HIT','MISS']);
+});
+test('unresolvable exact-source conflicts stay UNVERIFIED without choosing a winning original',()=>{
+ const frozen=freezeSourceNhlShotProbabilities(report(),NOW);
+ const [f,g]=truth(4,true);
+ const conflicting={...f,row_hash:'e'.repeat(64),forecast_id:'another-original-id'};
+ const out=gradeNhlOriginalShotProbabilities([frozen],[f,conflicting],[g]);
+ assert.equal(out.unverified_players_ambiguous_exact_source,1);
+ assert.equal(out.verified_milestone_outcomes,0);
+ assert.equal(out.unverified_milestone_outcomes,5);
+ assert.throws(()=>gradeNhlOriginalShotProbabilities([frozen],
+   [f,{...f,expected_sog:12}],[g]),/HASH_COLLISION_OR_MUTATION/);
+ assert.throws(()=>gradeNhlOriginalShotProbabilities([frozen],[f],
+   [g,{...g,actual_sog:1}]),/CONFLICTING_VERIFIED_OFFICIAL/);
+});
