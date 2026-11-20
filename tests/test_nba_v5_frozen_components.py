@@ -122,9 +122,18 @@ class FrozenCompareTests(unittest.TestCase):
                 "schema":"NBA_V5_SAME_TARGET_COMPONENT_PROBS_V1",
                 "target":0,"including_dnp_reach":{"v4_only":0.4,"v5_only":0.6,"blend":0.5}}
             archive,grades=self.put(root,"100",[p],[(p,3,True)])
-            with self.assertRaisesRegex(ValueError,"INVALID_FROZEN_TARGET"):
-                compare(archive,grades)
+            result=compare(archive,grades)
+            score=result["forward_frozen_same_target_probability"]
+            self.assertEqual(score["events"],0)
+            self.assertEqual(score["unscorable_frozen_zero_target_events"],1)
+            self.assertEqual(score["status"],"PARTIALLY_UNSCORABLE_FROZEN_ZERO_EVENTS")
+            self.assertFalse(score["production_target_probability_certified"])
             p["research_fixed_event_component_probabilities"]["target"]=2.0
+            archive,grades=self.put(root,"100",[p],[(p,3,True)])
+            score=compare(archive,grades)["forward_frozen_same_target_probability"]
+            self.assertEqual(score["events"],1)
+            self.assertEqual(score["unscorable_frozen_zero_target_events"],0)
+            p["research_fixed_event_component_probabilities"]["target"]=-1
             archive,grades=self.put(root,"100",[p],[(p,3,True)])
             with self.assertRaisesRegex(ValueError,"INVALID_FROZEN_TARGET"):
                 compare(archive,grades)
