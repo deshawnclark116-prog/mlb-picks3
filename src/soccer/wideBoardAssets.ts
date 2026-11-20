@@ -3,13 +3,14 @@
  * New snapshots never rewrite previously committed original forecasts.
  */
 import latest from '../../docs/soccer_wide/board.json';
+import activeOriginals from '../../docs/soccer_wide/active_originals.json';
 import type {Forecast} from './model';
 import type {WideBoard} from './wideResearch';
 const WIDE_RESEARCH_SCHEMA='soccer-worldwide-fixtures-and-original-model-research-v1';
 import {wideMatchKey} from './wideSource';
-const frozen=import.meta.glob('../../docs/soccer_wide/originals/*.json',{
- eager:true,import:'default'
-}) as Record<string,unknown>;
+// The growing immutable historical directory is graded server-side. Bundle
+// only this small daily active-original index on mobile.
+const frozen=activeOriginals as unknown as Original[];
 type Original={schema:string;id:string;captured_at_utc:string;
  source_results_sha256:string;source_fixtures_sha256:string;
  forecast:Forecast};
@@ -39,11 +40,10 @@ export function wideSoccerBoard(atUtc:string){
 export function wideSoccerOriginals(atUtc:string):Forecast[]{
  const out:Forecast[]=[];
  const seen=new Set<string>();
- for(const [path,raw] of Object.entries(frozen)){
-   const x=raw as Original;
+ for(const x of frozen){
    const f=x?.forecast;
    if(!x||x.schema!=='soccer-wide-original-v1'||!f||
-      !/^[a-f0-9]{32}$/.test(x.id)||!path.endsWith('/'+x.id+'.json')||
+      !/^[a-f0-9]{32}$/.test(x.id)||
       !iso(x.captured_at_utc)||!x.source_results_sha256||
       !x.source_fixtures_sha256||f.date<=x.captured_at_utc.slice(0,10)||
       f.status!=='RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET')
