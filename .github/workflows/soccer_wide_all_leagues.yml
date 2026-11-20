@@ -10,6 +10,17 @@ on:
       - scripts/soccerWideSnapshot.ts
       - tests/soccerWideAllLeagues.test.ts
       - docs/soccer_wide/board.json
+      - docs/soccer_wide/active_originals.json
+      - .github/workflows/soccer_wide_all_leagues.yml
+  push:
+    branches: [main]
+    paths:
+      - src/soccer/model.ts
+      - src/soccer/wideSource.ts
+      - src/soccer/wideResearch.ts
+      - src/soccer/wideBoardAssets.ts
+      - src/components/SoccerTodayScreen.tsx
+      - scripts/soccerWideSnapshot.ts
       - .github/workflows/soccer_wide_all_leagues.yml
   workflow_dispatch: {}
   schedule:
