@@ -3,6 +3,7 @@ import {RefreshCw,Search,SlidersHorizontal,ChevronDown,ChevronUp} from 'lucide-r
 import type {Forecast,League} from '../soccer/model';
 import {SOCCER_SCHEMA} from '../soccer/model';
 import {frozenSoccerBoard} from '../soccer/frozenBoardAssets';
+import {wideSoccerBoard,wideSoccerOriginals,wideLeagueNames,WIDE_TO_CORE} from '../soccer/wideBoardAssets';
 import {verifiedSoccerFixtures} from '../soccer/espnFixtureAssets';
 import {bestSoccerEvent} from '../soccer/topRanked';
 import {namedSoccerOutcomes} from '../soccer/matchLabels';
@@ -17,9 +18,11 @@ type MatchDoc={schema:string;status:string;asof_calendar_day_utc:string;
   official_bets:number;calibrated:boolean;verified_live_book_lines:number;
   player_prop_predictions:number}};
 type Range='48H'|'7D'|'ALL';
-const leagues:League[]=['EPL','LaLiga','SerieA','Bundesliga','Ligue1'];
-const leagueNames:Record<League,string>={EPL:'Premier League',LaLiga:'La Liga',
- SerieA:'Serie A',Bundesliga:'Bundesliga',Ligue1:'Ligue 1'};
+const coreLeagues:League[]=['EPL','LaLiga','SerieA','Bundesliga','Ligue1'];
+const wideNames=wideLeagueNames();
+const leagues:League[]=[...coreLeagues,...Object.keys(wideNames)];
+const leagueNames:Record<string,string>={EPL:'Premier League',LaLiga:'La Liga',
+ SerieA:'Serie A',Bundesliga:'Bundesliga',Ligue1:'Ligue 1',...wideNames};
 const pct=(x:number)=>(x*100).toFixed(1)+'%';
 const nextDay=(d:string,n:number)=>new Date(Date.parse(d+'T00:00:00Z')+
  n*86400000).toISOString().slice(0,10);
@@ -38,7 +41,7 @@ function validMatches(d:unknown):d is MatchDoc {
   Array.isArray(x.forecasts)&&x.forecast_count===x.forecasts.length&&
   x.guardrails?.official_bets===0&&x.guardrails?.calibrated===false&&
   x.guardrails?.verified_live_book_lines===0&&x.guardrails?.player_prop_predictions===0&&
-  x.forecasts.every(f=>leagues.includes(f.league)&&
+  x.forecasts.every(f=>coreLeagues.includes(f.league)&&
    f.status==='RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET'&&
    f.date>=x.asof_calendar_day_utc&&Number.isFinite(f.expectedHomeGoals)&&
    Number.isFinite(f.expectedAwayGoals)&&
@@ -109,7 +112,10 @@ function MatchCard({game,expanded,onToggle}:{
    {best?<div className="mt-2 flex min-w-0 items-start justify-between gap-2">
      <span className="min-w-0 break-words text-[12px] text-slate-300">{best.label}</span>
      <strong className="shrink-0 text-[16px] font-black tabular-nums text-[#79FF48]">{pct(best.modelProbability)}</strong>
-   </div>:<p className="mt-2 text-[11px] text-slate-400">Player forecasts available · Match outcome model not available</p>}
+   </div>:<p className="mt-2 text-[11px] text-slate-400">
+    {game.players.length?'Player forecasts available · Match outcome model not available':
+    'Fixture verified · Not enough reliable history for a match probability'}
+   </p>}
    <div className="mt-3 flex min-w-0 items-center justify-between gap-2 border-t border-white/[.08] pt-3">
     <span data-testid="soccer-game-projection-count" className="text-[11px] text-slate-300">
       {count} projections · {game.players.length} players
@@ -198,9 +204,23 @@ export default function SoccerTodayScreen(){
  }
  useEffect(()=>{void refresh();},[]);
  const archived=frozenSoccerBoard(asof);
+ const wide=wideSoccerBoard(asof);
  const matches=new Map<string,GameMatch>();
  for(const o of archived)matches.set(matchId(o.forecast),{
   id:o.id,forecast:o.forecast,origin:'FROZEN'});
+ // Keep the established five-league original model and verified ESPN
+ // fixtures untouched. Add all other valid leagues from immutable originals
+ // first, then source-verified current research if no original exists.
+ for(const f of wideSoccerOriginals(asof)){
+  if(WIDE_TO_CORE[f.league])continue;
+  const key=matchId(f);
+  if(!matches.has(key))matches.set(key,{id:key,forecast:f,origin:'FROZEN'});
+ }
+ for(const f of wide.forecasts){
+  if(WIDE_TO_CORE[f.league]||f.date<=today)continue;
+  const key=matchId(f);
+  if(!matches.has(key))matches.set(key,{id:key,forecast:f,origin:'LIVE'});
+ }
  for(const f of doc?.forecasts??[]){
   if(f.date>=today&&!matches.has(matchId(f)))matches.set(matchId(f),{
    id:matchId(f),forecast:f,origin:'LIVE'});
@@ -213,6 +233,23 @@ export default function SoccerTodayScreen(){
  const eligiblePlayers=soccerPlayerWindow(players,asof,range==='48H'?'48H':'7D');
  const verifiedFixtures=verifiedSoccerFixtures(asof);
  const grouped=groupSoccerGameProjections(dateMatches,eligiblePlayers,asof,verifiedFixtures);
+ // Date-only source fixture identities are useful, but their local kickoff
+ // text is NOT a UTC timestamp. Never manufacture an exact kickoff.
+ const present=new Set(grouped.map(g=>[
+  g.league,g.fixtureDate,g.home,g.away].join('|')));
+ for(const f of wide.fixtures){
+  if(WIDE_TO_CORE[f.league]||f.date<=today||
+     maxDate&&f.date>maxDate)continue;
+  const key=[f.league,f.date,f.home,f.away].join('|');
+  if(present.has(key))continue;
+  present.add(key);
+  grouped.push({id:'wide-fixture|'+key,fixtureDate:f.date,
+   league:f.league,home:f.home,away:f.away,kickoffUtc:null,
+   match:null,players:[]});
+ }
+ grouped.sort((a,b)=>a.fixtureDate.localeCompare(b.fixtureDate)||
+  (a.kickoffUtc??'').localeCompare(b.kickoffUtc??'')||
+  a.league!.localeCompare(b.league!)||a.home.localeCompare(b.home));
  const q=search.trim().toLowerCase();
  const filtered=grouped.filter(g=>
   (league==='ALL'||g.league===league)&&
@@ -257,14 +294,14 @@ export default function SoccerTodayScreen(){
       placeholder="Team or player name" className="h-10 w-full min-w-0 bg-transparent text-[12px] text-white outline-none"/>
     </div>
    </label>
-   <div className="flex flex-wrap gap-2">
-    {(['ALL',...leagues] as (League|'ALL')[]).map(l=><button type="button" key={l}
-     aria-pressed={league===l} onClick={()=>{setLeague(l);reset();}}
-     className={'min-h-9 rounded-lg px-3 text-[11px] font-semibold '+
-       (league===l?'bg-[#79FF48] text-[#122016]':'bg-white/5 text-slate-300')}>
-      {l==='ALL'?'All leagues':leagueNames[l]}
-    </button>)}
-   </div>
+   <label className="block text-[11px] text-slate-300">Competition
+    <select aria-label="Soccer competition" value={league}
+     onChange={e=>{setLeague(e.target.value as League|'ALL');reset();}}
+     className="mt-2 min-h-11 w-full rounded-lg border border-white/10 bg-[#101719] px-3 text-[12px] text-white">
+     <option value="ALL">All available leagues and competitions</option>
+     {leagues.map(l=><option key={l} value={l}>{leagueNames[l]??l}</option>)}
+    </select>
+   </label>
   </div>}
   {playerVerificationUnavailable&&<p data-testid="soccer-player-eligibility-notice"
     className="mb-3 rounded-lg border border-white/10 bg-[#1a2528] p-3 text-[11px] text-slate-300">
@@ -286,8 +323,10 @@ export default function SoccerTodayScreen(){
     className="mt-3 min-h-10 rounded-lg bg-[#79FF48] px-4 text-xs font-bold text-[#122016]">Show next 7 days</button>
   </div>}
   <p className="mt-4 text-[10px] leading-relaxed text-slate-500">
-   Games use verified ESPN kickoff and home/away identities. Match forecasts join only when both teams and the date agree.
-   Missing model coverage is labeled rather than guessed. Probabilities are uncalibrated research estimates, not official picks.
+   The original five leagues retain verified ESPN kickoffs when available. Additional competition
+   fixtures use source-reported dates; their exact kickoff times are not independently verified.
+   Every projection is uncalibrated research, not an official bet. Insufficient-history
+   matches remain visible without manufactured probabilities.
   </p>
  </div>;
 }
