@@ -7,7 +7,7 @@ import {computeWideResearch} from '../src/soccer/wideResearch';
 
 const codes=['ENG_2_championship','USA_1_mls','UEFA_1_champions-league',
  'GER_2_2-bundesliga','ARG_1_liga-profesional','AUS_1_a-league'];
-const catalog=(n=6)=>({season:'2627',generated_at_utc:'2026-11-20T12:00:00Z',
+const catalog=(n=6)=>({season:'2627',generated_utc:'2026-11-20T12:00:00Z',
  leagues:codes.slice(0,n).map((code)=>({
   league:code,folder:'data/'+code,results:60,fixtures:2,latest:'2026-10-30',errors:[]
  }))});
