@@ -1,0 +1,110 @@
+name: Worldwide soccer competition discovery and original forecast grading
+on:
+  pull_request:
+    paths:
+      - src/soccer/model.ts
+      - src/soccer/wideSource.ts
+      - src/soccer/wideResearch.ts
+      - src/soccer/wideBoardAssets.ts
+      - src/components/SoccerTodayScreen.tsx
+      - scripts/soccerWideSnapshot.ts
+      - tests/soccerWideAllLeagues.test.ts
+      - docs/soccer_wide/board.json
+      - .github/workflows/soccer_wide_all_leagues.yml
+  workflow_dispatch: {}
+  schedule:
+    - cron: '17 3,15 * * *'
+permissions:
+  contents: write
+concurrency:
+  group: wide-soccer-dataset-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  compile-and-source-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Compile real production frontend and backend
+        run: npm run build
+      - name: Original five-league model, score, strict wide-source contract tests
+        run: |
+          npm run lint
+          node --import tsx --test \
+            tests/soccerWideAllLeagues.test.ts \
+            tests/soccerModel.test.ts \
+            tests/soccerResearch.test.ts \
+            tests/soccerForwardLedger.test.ts \
+            tests/soccerGameBoard.test.ts \
+            tests/soccerFrozenBoard.test.ts
+  generate-every-source-and-grade-firstseen:
+    needs: compile-and-source-contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || 'main' }}
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Fetch full daily source catalog, all fixtures, all eligible predictions
+        run: node --import tsx scripts/soccerWideSnapshot.ts
+      - name: Verify coverage and mathematical safety
+        run: |
+          node - <<'JS'
+          const fs=require('node:fs');
+          const p='docs/soccer_wide/board.json';
+          const x=JSON.parse(fs.readFileSync(p));
+          if(x.competition_count<40 || x.competitions.length!==x.competition_count)
+            throw Error('SOCCER_WIDE_NOT_ALL_AVAILABLE_COMPETITIONS');
+          if(x.source_receipts.length<40)
+            throw Error('SOCCER_WIDE_VERIFIED_SOURCE_COVERAGE_LOW');
+          if(x.forecast_count===0||x.fixture_count<5)
+            throw Error('SOCCER_WIDE_EMPTY_MODEL_OR_FIXTURES');
+          if(x.guardrails.official_bets!==0||x.guardrails.calibrated!==false)
+            throw Error('SOCCER_WIDE_UNCERTIFIED_BETS');
+          if(x.forecasts.some(f=>f.date<=x.asof_calendar_day_utc))
+            throw Error('SOCCER_WIDE_SAME_DAY_UNVERIFIED_KICKOFF');
+          if(x.forecasts.some(f=>/CUP|UEFA|U21/.test(f.league)))
+            throw Error('SOCCER_WIDE_UNVERIFIED_CUP_REGULATION_PROBABILITY');
+          console.log('ALL_SOCCER_COMPETITIONS_AUDIT',JSON.stringify({
+            competition_count:x.competition_count,
+            sources:x.source_receipts.length,
+            fixtures:x.fixture_count,
+            forecasts:x.forecast_count,
+            eligibility:x.competitions.reduce((a,l)=>
+              (a[l.status]=(a[l.status]||0)+1,a),{})
+          }));
+          JS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: soccer-wide-verified-catalog-and-firstseen-scorecard
+          path: |
+            docs/soccer_wide/board.json
+            docs/soccer_wide/status.json
+          if-no-files-found: warn
+          retention-days: 60
+      - name: Commit fresh source outputs and only new immutable originals
+        if: github.event_name != 'pull_request'
+        run: |
+          git diff --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- docs/soccer_wide
+          if git diff --cached --quiet; then
+            echo 'No new wide soccer source data'
+            exit 0
+          fi
+          git commit -m 'Soccer wide: refresh all available leagues with original forecasts and final grades [skip ci]'
+          git push origin HEAD:main
