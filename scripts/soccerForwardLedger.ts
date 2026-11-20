@@ -70,7 +70,7 @@ async function main(){
  // but match only exact date/league/teams using reviewed bijective aliases.
  const providerAudit:Record<string,{url:string;sha256:string;rows:number;latest:string|null}>={};
  const independent:Match[]=[];
- for(const league of LEAGUES){
+ for(const league of Object.keys(LEAGUES) as League[]){
    const url=SOURCE_ROOT+'/'+SOURCE_2627[league]+'/results_2627.csv';
    const response=await fetch(url,{headers:{Accept:'text/csv'}});
    if(!response.ok)throw Error('SOCCER_VERIFIED_FINAL_SOURCE_HTTP_'+league+'_'+response.status);
