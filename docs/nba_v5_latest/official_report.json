@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-20_12_30PM.pdf",
-  "published_at_utc": "2026-11-20T17:30:00+00:00",
-  "captured_at_utc": "2026-11-20T17:44:34.170747+00:00",
-  "source_sha256": "c70924b70e3eadfedfb668da0906e331955addffb778141160b1adf039d9345f",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-20_01_45PM.pdf",
+  "published_at_utc": "2026-11-20T18:45:00+00:00",
+  "captured_at_utc": "2026-11-20T18:48:09.821876+00:00",
+  "source_sha256": "b0375d71abecfd9f4cd01d70a8d340d06a746db07d4052d94dd96d9c7d05d9e0",
   "reports": [
     {
       "matchup": "CHA@ATL",
@@ -411,7 +411,7 @@
       "team_abbr": "NOP",
       "player": "Pierre Jr., Jaron",
       "normalized_player": "jaron pierre",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "G League - Two-Way"
     },
     {
