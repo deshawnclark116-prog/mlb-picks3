@@ -129,7 +129,13 @@ async function main(){
  }
  const receipts=new Map(board.source_receipts.map(r=>[r.competition,r]));
  let newOriginals=0,gradedNow=0,pending=0;
+ // Freeze only genuine near-game pretip evidence (next two UTC dates).
+ // Twenty-one-day live forecasts remain visible, but are not mistaken
+ // for original game-day decision evidence.
+ const pretipCutoff=new Date(Date.parse(day+'T00:00:00Z')+2*86400000)
+   .toISOString().slice(0,10);
  for(const f of board.forecasts){
+   if(f.date>pretipCutoff)continue;
    const rec=receipts.get(f.league);
    if(!rec)throw Error('SOCCER_WIDE_NO_RESULT_OR_FIXTURE_SOURCE_RECEIPT');
    const id=idFor(f),file=join(odir,id+'.json');
@@ -167,7 +173,13 @@ async function main(){
    const raw=JSON.stringify(value,null,2)+'\n';
    if(!existsSync(p)||readFileSync(p,'utf8')!==raw)writeFileSync(p,raw);
  };
+ const active=originals.map(x=>x.original).filter(o=>
+   o.forecast.date>day&&o.forecast.date<=pretipCutoff)
+   .sort((a,b)=>a.forecast.date.localeCompare(b.forecast.date)||
+     a.forecast.league.localeCompare(b.forecast.league)||
+     a.id.localeCompare(b.id));
  writeUpdated(join(DIR,'board.json'),board);
+ writeUpdated(join(DIR,'active_originals.json'),active);
  writeUpdated(join(DIR,'status.json'),status);
  console.log('SOCCER_WIDE_REAL_SOURCE_FIRSTSEEN',JSON.stringify({
   competitions:board.competition_count,
@@ -176,7 +188,7 @@ async function main(){
   upcomingForecasts:board.forecast_count,
   skippedCompetitions:board.competitions.filter(c=>c.status==='SOURCE_UNAVAILABLE')
     .map(c=>({id:c.id,reason:c.reason})),
-  newOriginals,gradedNow,pending,...status
+  newOriginals,activeOriginals:active.length,gradedNow,pending,...status
  }));
 }
 main().catch(e=>{console.error('SOCCER_WIDE_FEED_FAILURE',e);process.exitCode=1});
