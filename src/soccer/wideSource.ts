@@ -58,7 +58,7 @@ export function sourceUrls(l:WideLeague){
          fixtures:WIDE_SOURCE_ROOT+l.folder+'/fixtures_2627.csv'};
 }
 function parseTable(raw:string,required:string[]){
- if(raw.length<25||raw.length>1500000)throw Error('SOCCER_WIDE_CSV_SIZE');
+ if(raw.length<15||raw.length>1500000)throw Error('SOCCER_WIDE_CSV_SIZE');
  const lines=raw.replace(/\r/g,'').trim().split('\n').filter(Boolean);
  const heads=csvFields(lines[0]);
  if(new Set(heads).size!==heads.length||required.some(k=>!heads.includes(k)))
