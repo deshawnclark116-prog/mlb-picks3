@@ -3,7 +3,7 @@ import copy
 import datetime as dt
 import unittest
 from nba.nba_independent_no_hindsight_opportunity_lab import (
-    FEATURES,make_features,dataset,result_stats)
+    FEATURES,make_features,dataset,result_stats,game_cluster_gain_ci)
 
 def fixture():
     games=[]
@@ -65,6 +65,21 @@ class ResearchIntegrity(unittest.TestCase):
         self.assertEqual(m["within_2_or_5"],1)
         with self.assertRaisesRegex(ValueError,"UNPAIRED"):
             result_stats(rows,{}, "baseline")
+
+    def test_game_cluster_paired_ci_same_rows_no_selective_omission(self):
+        rows=[]
+        predictions={}
+        for i in range(20):
+            for j in range(4):
+                k=(str(i),str(j),"points")
+                rows.append({"game":str(i),"player":str(j),"market":"points",
+                             "actual":20})
+                predictions[k]={"baseline":25,"direct":23,
+                                "minute_factorized":21}
+        self.assertEqual(game_cluster_gain_ci(
+            rows,predictions,"direct",iters=100),[2.0,2.0])
+        self.assertEqual(game_cluster_gain_ci(
+            rows,predictions,"minute_factorized",iters=100),[4.0,4.0])
 
 if __name__=="__main__":
     unittest.main()
