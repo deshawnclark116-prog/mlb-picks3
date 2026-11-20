@@ -177,6 +177,28 @@ def result_stats(rows,pred,arm):
         "within_2_or_5":round(mean(within),4) if within else None}
 
 
+def game_cluster_gain_ci(rows,pred,challenger,baseline="baseline",
+                         seed=SEED,iters=700):
+    """Pure uncertainty report; no fitted model or prediction changes."""
+    groups=collections.defaultdict(list)
+    for r in rows:
+        key=(r["game"],r["player"],r["market"])
+        p=pred[key]
+        gain=abs(float(p[baseline])-r["actual"])-abs(
+             float(p[challenger])-r["actual"])
+        groups[r["game"]].append(gain)
+    if len(groups)<12:return None
+    rng=random.Random(seed)
+    g=list(groups.values())
+    vals=[]
+    for _ in range(iters):
+        draw=[g[rng.randrange(len(g))] for _ in g]
+        vals.append(mean(x for group in draw for x in group))
+    vals.sort()
+    return [round(vals[int(.025*(iters-1))],4),
+            round(vals[int(.975*(iters-1))],4)]
+
+
 def run(files):
     games=read_game_files(files)
     rows=dataset(games)
@@ -213,6 +235,14 @@ def run(files):
             "validation":scores,
             "consulted_spring":{a:result_stats(hrows,hpred,a) for a in arms},
             "consulted_2026_27_season":{a:result_stats(nrows,npred,a) for a in arms},
+            "game_cluster_mae_gain95_over_recent5": {
+                "validation":{a:game_cluster_gain_ci(vrows,candidates,a)
+                    for a in ("direct","minute_factorized")},
+                "consulted_spring":{a:game_cluster_gain_ci(hrows,hpred,a)
+                    for a in ("direct","minute_factorized")},
+                "consulted_2026_27":{a:game_cluster_gain_ci(nrows,npred,a)
+                    for a in ("direct","minute_factorized")}
+            },
             "spring_predeclared_prior_15min_players":{a:result_stats(
                 [r for r in hrows if r["prior_playing_minutes"]>=15],hpred,a)
                 for a in arms},
