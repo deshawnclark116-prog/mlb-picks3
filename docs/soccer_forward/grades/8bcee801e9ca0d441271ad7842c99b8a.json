@@ -1,0 +1,21 @@
+{
+  "schema": "soccer-forward-final-grade-v1",
+  "id": "8bcee801e9ca0d441271ad7842c99b8a",
+  "original_captured_at_utc": "2026-11-01T00:03:21.126Z",
+  "fixture_date": "2026-11-08",
+  "league": "Ligue1",
+  "home": "Le Mans FC",
+  "away": "AS Monaco FC",
+  "final_home_goals": 1,
+  "final_away_goals": 1,
+  "model_home_goal_error": 0.6955,
+  "model_away_goal_error": 0.4855,
+  "model_goal_mae": 0.5905,
+  "baseline_goal_mae": 0.5134,
+  "exact_rounded_goals": 1,
+  "within_one_goal_count": 2,
+  "model_three_way_brier": 0.8848,
+  "baseline_three_way_brier": 0.8763,
+  "result_source": "open-matchday/fixturedl/2627/FRA_1_ligue-1",
+  "status": "RESEARCH_NOT_BOOKMAKER_VALIDATED"
+}

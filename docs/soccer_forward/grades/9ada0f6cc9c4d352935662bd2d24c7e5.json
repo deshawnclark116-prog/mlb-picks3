@@ -1,0 +1,21 @@
+{
+  "schema": "soccer-forward-final-grade-v1",
+  "id": "9ada0f6cc9c4d352935662bd2d24c7e5",
+  "original_captured_at_utc": "2026-11-01T00:03:21.126Z",
+  "fixture_date": "2026-11-08",
+  "league": "LaLiga",
+  "home": "RC Celta de Vigo",
+  "away": "Levante UD",
+  "final_home_goals": 0,
+  "final_away_goals": 0,
+  "model_home_goal_error": 1.8102,
+  "model_away_goal_error": 1.2287,
+  "model_goal_mae": 1.5194,
+  "baseline_goal_mae": 1.4543,
+  "exact_rounded_goals": 0,
+  "within_one_goal_count": 0,
+  "model_three_way_brier": 0.9197,
+  "baseline_three_way_brier": 0.8821,
+  "result_source": "open-matchday/fixturedl/2627/ESP_1_la-liga",
+  "status": "RESEARCH_NOT_BOOKMAKER_VALIDATED"
+}

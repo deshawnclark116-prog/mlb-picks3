@@ -1,0 +1,21 @@
+{
+  "schema": "soccer-forward-final-grade-v1",
+  "id": "8773cd8e67154db92003ec3495957810",
+  "original_captured_at_utc": "2026-11-01T00:03:21.126Z",
+  "fixture_date": "2026-11-07",
+  "league": "EPL",
+  "home": "Nottingham Forest FC",
+  "away": "Manchester City FC",
+  "final_home_goals": 3,
+  "final_away_goals": 1,
+  "model_home_goal_error": -1.6696,
+  "model_away_goal_error": 0.4265,
+  "model_goal_mae": 1.048,
+  "baseline_goal_mae": 0.8612,
+  "exact_rounded_goals": 1,
+  "within_one_goal_count": 1,
+  "model_three_way_brier": 0.6422,
+  "baseline_three_way_brier": 0.4729,
+  "result_source": "open-matchday/fixturedl/2627/ENG_1_premier-league",
+  "status": "RESEARCH_NOT_BOOKMAKER_VALIDATED"
+}

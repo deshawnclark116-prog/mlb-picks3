@@ -1,0 +1,21 @@
+{
+  "schema": "soccer-forward-final-grade-v1",
+  "id": "7de59859ad3a8d747c809671e2930a25",
+  "original_captured_at_utc": "2026-11-01T00:03:21.126Z",
+  "fixture_date": "2026-11-02",
+  "league": "EPL",
+  "home": "Newcastle United FC",
+  "away": "Everton FC",
+  "final_home_goals": 0,
+  "final_away_goals": 1,
+  "model_home_goal_error": 1.63,
+  "model_away_goal_error": 0.3408,
+  "model_goal_mae": 0.9854,
+  "baseline_goal_mae": 0.9833,
+  "exact_rounded_goals": 1,
+  "within_one_goal_count": 1,
+  "model_three_way_brier": 0.7229,
+  "baseline_three_way_brier": 0.7177,
+  "result_source": "open-matchday/fixturedl/2627/ENG_1_premier-league",
+  "status": "RESEARCH_NOT_BOOKMAKER_VALIDATED"
+}
