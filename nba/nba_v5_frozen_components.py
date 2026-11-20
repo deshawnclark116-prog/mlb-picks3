@@ -32,6 +32,7 @@ def _open_archived(path):
 def _paired(archive_root, grades_root):
     result = []
     target_disagreements = []
+    zero_target_excluded = []
     for path in sorted(Path(grades_root).glob("*.json")):
         grade = json.loads(path.read_text())
         if grade.get("kind") != "last":
@@ -143,10 +144,25 @@ def _probability_rows(archive_root, grades_root):
             # A mismatch to the displayed rounded mean is transparently
             # counted; such events are NOT certified production targets.
             frozen = trial["target"]
-            if type(frozen) is not int or frozen < 1:
+            try:
+                numeric = float(frozen)
+            except (TypeError, ValueError, OverflowError):
                 raise ValueError("NBA_COMPONENT_PROBABILITY_INVALID_FROZEN_TARGET")
-            k = frozen
+            if (isinstance(frozen, bool) or not math.isfinite(numeric)
+                or not numeric.is_integer() or numeric < 0):
+                raise ValueError("NBA_COMPONENT_PROBABILITY_INVALID_FROZEN_TARGET")
+            k = int(numeric)
             displayed = whole(float(original["mean"]))
+            # A pretip 0+ threshold is an impossible-to-lose event for
+            # participating players, NOT a legitimate featured target.
+            # The original 0 stays recorded, but never enters the Brier pool.
+            if k == 0:
+                zero_target_excluded.append({
+                    "game_id":gid,"player_id":key[0],"market":mk,
+                    "frozen_research_target":0,
+                    "production_rounded_mean_target":displayed
+                })
+                continue
             if k != displayed:
                 target_disagreements.append({
                     "game_id":gid,"player_id":key[0],"market":mk,
@@ -169,7 +185,7 @@ def _probability_rows(archive_root, grades_root):
                 "hit": hit, "played": active,
                 "squared_error": {arm: (float(p[arm]) - hit) ** 2 for arm in ARMS},
             })
-    return result, target_disagreements
+    return result, target_disagreements, zero_target_excluded
 
 
 def _brier_stat(rows, seed):
@@ -244,7 +260,7 @@ def _stat(rows, seed):
 
 def compare(archive_root, grades_root):
     rows = _paired(archive_root, grades_root)
-    probability_rows, nonproduction_targets = _probability_rows(archive_root, grades_root)
+    probability_rows, nonproduction_targets, zero_targets = _probability_rows(archive_root, grades_root)
     by_stat = {}
     for market in CORE:
         selected = [x for x in rows if x["market"] == market]
@@ -272,14 +288,18 @@ def compare(archive_root, grades_root):
             "Conditional MAE excludes DNP, which must be separately evaluated for displayed hit rates",
         ],
         "forward_frozen_same_target_probability": {
-            "status": ("FROZEN_RESEARCH_EVENTS_SCORED_NOT_PRODUCTION_TARGETS"
+            "status": ("PARTIALLY_UNSCORABLE_FROZEN_ZERO_EVENTS"
+                       if zero_targets else
+                       "FROZEN_RESEARCH_EVENTS_SCORED_NOT_PRODUCTION_TARGETS"
                        if nonproduction_targets else
                        "FROZEN_COMPONENTS_GRADED" if probability_rows else
                        "WAITING_FOR_NEW_PROSPECTIVE_COMPONENT_FORECASTS"),
             "events": len(probability_rows),
             "nonproduction_target_events": len(nonproduction_targets),
+            "unscorable_frozen_zero_target_events": len(zero_targets),
+            "unscorable_frozen_zero_target_examples": zero_targets[:20],
             "nonproduction_target_examples": nonproduction_targets[:20],
-            "production_target_probability_certified": not bool(nonproduction_targets) and bool(probability_rows),
+            "production_target_probability_certified": not bool(nonproduction_targets or zero_targets) and bool(probability_rows),
             "all_frozen_event_targets_preserved": True,
             "by_market": {
                 market: _brier_stat([r for r in probability_rows
