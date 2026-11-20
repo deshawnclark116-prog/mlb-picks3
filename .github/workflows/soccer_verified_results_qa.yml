@@ -1,0 +1,40 @@
+name: Soccer verified independent full-time result reconciliation (no forecast change)
+on:
+  pull_request:
+    paths:
+      - src/soccer/verifiedIndependentFinals.ts
+      - scripts/soccerForwardLedger.ts
+      - scripts/soccerIndependentResultsAudit.ts
+      - tests/soccerVerifiedIndependentFinals.test.ts
+      - .github/workflows/soccer_verified_results_qa.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  independent-final-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Typecheck and verify exact-match score source parser
+        run: |
+          npm run lint
+          node --import tsx --test tests/soccerVerifiedIndependentFinals.test.ts tests/soccerForwardLedger.test.ts tests/soccerModel.test.ts
+  independent-real-result-coverage:
+    needs: independent-final-contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Count independently verifiable actual firstseen scores without grading or modifying them
+        run: node --import tsx scripts/soccerIndependentResultsAudit.ts
