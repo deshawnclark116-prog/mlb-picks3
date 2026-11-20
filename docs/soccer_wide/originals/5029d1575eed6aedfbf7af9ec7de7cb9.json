@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "5029d1575eed6aedfbf7af9ec7de7cb9",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "e3da6df50e9a2a1f76ac7f935fc37f40f20162184a101fcc8f668bc77932004d",
+  "source_fixtures_sha256": "672f4402c522d8cf43c6653a0ca8f50214a0e917af9cede00cffa727a90267ca",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "BRA_1_serie-a",
+    "season": "2026-27",
+    "date": "2026-11-22",
+    "home": "Fluminense",
+    "away": "Mirassol",
+    "expectedHomeGoals": 1.6004,
+    "expectedAwayGoals": 1.0141,
+    "baselineHomeGoals": 1.5363,
+    "baselineAwayGoals": 1.1189,
+    "probabilities": {
+      "home": 0.5101,
+      "draw": 0.2499,
+      "away": 0.24,
+      "over25": 0.4852,
+      "btts": 0.5086
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 17.466,
+    "awayWeightedMatches": 19.0393,
+    "source": "open-matchday/fixture/BRA_1_serie-a",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

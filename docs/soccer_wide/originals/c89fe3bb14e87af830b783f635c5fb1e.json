@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "c89fe3bb14e87af830b783f635c5fb1e",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "543803ebbe61356cbf49f9a02d2d6d934e664d1029bc57bcea8174bc4a43d1d9",
+  "source_fixtures_sha256": "a65e229570215cea0157ed76636eb165ec9c613be1b788f1986db3ad34d78e4a",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ITA_1_serie-a",
+    "season": "2026-27",
+    "date": "2026-11-22",
+    "home": "Sassuolo",
+    "away": "Genoa",
+    "expectedHomeGoals": 1.6414,
+    "expectedAwayGoals": 1.5882,
+    "baselineHomeGoals": 1.5921,
+    "baselineAwayGoals": 1.4698,
+    "probabilities": {
+      "home": 0.3948,
+      "draw": 0.233,
+      "away": 0.3722,
+      "over25": 0.6263,
+      "btts": 0.6416
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 8.0418,
+    "awayWeightedMatches": 6.36,
+    "source": "open-matchday/fixture/ITA_1_serie-a",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

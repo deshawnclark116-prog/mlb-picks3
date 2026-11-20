@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "b8275568d9283c90cd53936cc1d1237a",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "7d8d1f2a1c71658c2733cc3c5a3b6bb794071467f34a864dfcbf38eb50bc0926",
+  "source_fixtures_sha256": "a77a05375565f29d5b4061ef1e7bfd7af85da2cb6bb30f3de2a01f25156232f9",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "AUT_1_bundesliga",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "Grazer AK",
+    "away": "SK Rapid",
+    "expectedHomeGoals": 1.5566,
+    "expectedAwayGoals": 1.471,
+    "baselineHomeGoals": 1.8667,
+    "baselineAwayGoals": 1.3361,
+    "probabilities": {
+      "home": 0.398,
+      "draw": 0.2415,
+      "away": 0.3605,
+      "over25": 0.583,
+      "btts": 0.6079
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 7.5365,
+    "awayWeightedMatches": 7.5443,
+    "source": "open-matchday/fixture/AUT_1_bundesliga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

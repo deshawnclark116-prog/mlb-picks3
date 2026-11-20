@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "c43036e2523916e23133fcc95a68360c",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "540646189834982e848ce65957909139bcee4f03792f80428896f20ce34adbe3",
+  "source_fixtures_sha256": "0dc58373cff04ffc74e63df1c7bd635f07f483117ef7c3fb6f887a314bc2a673",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "GER_2_2-bundesliga",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "VfL Wolfsburg",
+    "away": "Holstein Kiel",
+    "expectedHomeGoals": 1.8222,
+    "expectedAwayGoals": 1.031,
+    "baselineHomeGoals": 1.713,
+    "baselineAwayGoals": 1.1801,
+    "probabilities": {
+      "home": 0.5591,
+      "draw": 0.2288,
+      "away": 0.2121,
+      "over25": 0.5431,
+      "btts": 0.5393
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 7.6367,
+    "awayWeightedMatches": 7.511,
+    "source": "open-matchday/fixture/GER_2_2-bundesliga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

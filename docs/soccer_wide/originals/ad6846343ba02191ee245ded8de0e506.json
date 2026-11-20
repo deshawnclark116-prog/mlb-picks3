@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "ad6846343ba02191ee245ded8de0e506",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "edb918d51f1e8d33d634ebc20354d518e12e327b9f96f58f84b6b631cd961648",
+  "source_fixtures_sha256": "1b681ee03009d1d05b8c9af16eab25657c6bf38a3ce4809e7808d3a65f2ef199",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "CZE_1_chance-liga",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "Artis Brno",
+    "away": "Jablonec",
+    "expectedHomeGoals": 1.2275,
+    "expectedAwayGoals": 1.4174,
+    "baselineHomeGoals": 1.4018,
+    "baselineAwayGoals": 1.282,
+    "probabilities": {
+      "home": 0.326,
+      "draw": 0.2599,
+      "away": 0.4141,
+      "over25": 0.4928,
+      "btts": 0.5356
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 10.275,
+    "awayWeightedMatches": 8.8021,
+    "source": "open-matchday/fixture/CZE_1_chance-liga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

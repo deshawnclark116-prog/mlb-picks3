@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "d668a9d1e89c4b2f91828625396a6302",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "a4984254a254d85878569d1f905fa9be1058ca69a00a85be1a97d2827819b585",
+  "source_fixtures_sha256": "b258cad3d4695c7cab84a2b5c0e2afaa5368eed636453b9ebadd1ba31d149eb9",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "POL_1_ekstraklasa",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "Cracovia",
+    "away": "Jagiellonia",
+    "expectedHomeGoals": 1.6418,
+    "expectedAwayGoals": 1.3829,
+    "baselineHomeGoals": 1.6691,
+    "baselineAwayGoals": 1.3016,
+    "probabilities": {
+      "home": 0.4367,
+      "draw": 0.2397,
+      "away": 0.3236,
+      "over25": 0.5823,
+      "btts": 0.6041
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 9.1478,
+    "awayWeightedMatches": 7.7161,
+    "source": "open-matchday/fixture/POL_1_ekstraklasa",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

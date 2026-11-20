@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "3b9fcdd150d35116b3486236c226b97b",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "db66563d2e3a8eae2c912295f5dc2ea83cee27acd0193d4743d2101c97936c22",
+  "source_fixtures_sha256": "de8021f37c75eac85db63e732399224a3e25a01c947eaa1ead1666162df2dcde",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "SCO_1_premiership",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "Falkirk",
+    "away": "St. Johnstone",
+    "expectedHomeGoals": 1.5609,
+    "expectedAwayGoals": 1.2029,
+    "baselineHomeGoals": 1.4973,
+    "baselineAwayGoals": 1.3376,
+    "probabilities": {
+      "home": 0.4562,
+      "draw": 0.2501,
+      "away": 0.2937,
+      "over25": 0.5219,
+      "btts": 0.5528
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 9.2692,
+    "awayWeightedMatches": 9.1968,
+    "source": "open-matchday/fixture/SCO_1_premiership",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

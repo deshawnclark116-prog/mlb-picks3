@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "6a5f5c7503632cd8df0687971a80c3a7",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "153e8f2711b94aae71fe08fcd6ee351b6adc3b2592e70f158c4f0ab0f7e114e0",
+  "source_fixtures_sha256": "869249e30ffdf6aeff5b11c421ba0b9b2f00880f6bdad992f3c0a4a0ddc7b41d",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "CYP_1_first-division",
+    "season": "2026-27",
+    "date": "2026-11-22",
+    "home": "Apollon",
+    "away": "Omonia 29th May",
+    "expectedHomeGoals": 1.9434,
+    "expectedAwayGoals": 1.4883,
+    "baselineHomeGoals": 1.5821,
+    "baselineAwayGoals": 1.3224,
+    "probabilities": {
+      "home": 0.4837,
+      "draw": 0.2196,
+      "away": 0.2967,
+      "over25": 0.6663,
+      "btts": 0.6634
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 6.3829,
+    "awayWeightedMatches": 8.0706,
+    "source": "open-matchday/fixture/CYP_1_first-division",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

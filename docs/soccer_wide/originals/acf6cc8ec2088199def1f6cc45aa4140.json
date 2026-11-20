@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "acf6cc8ec2088199def1f6cc45aa4140",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "5138503bcd91a4a04f9050c1d1d237d7e2757dae57a4a168f42e7b3d27b47370",
+  "source_fixtures_sha256": "86649c33c54088ef6dfdea6df6eff79125959e9f649bec927641464e964ee5a0",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ENG_6_national-league-south",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "Braintree",
+    "away": "Torquay",
+    "expectedHomeGoals": 1.4142,
+    "expectedAwayGoals": 1.4413,
+    "baselineHomeGoals": 1.6003,
+    "baselineAwayGoals": 1.3775,
+    "probabilities": {
+      "home": 0.3689,
+      "draw": 0.2499,
+      "away": 0.3811,
+      "over25": 0.5437,
+      "btts": 0.5778
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 8.3083,
+    "awayWeightedMatches": 8.4625,
+    "source": "open-matchday/fixture/ENG_6_national-league-south",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

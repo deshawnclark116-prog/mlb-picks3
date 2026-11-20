@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "f3133e54f77cdd11733654fc00a474d5",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "89a06c97f07ad242b3ddec2f8ea7eb7d5bfa9388652d74ca4ff431aea49e1c55",
+  "source_fixtures_sha256": "2cf61fee2d920e18de3ddb5a092eb6c41f1bbcfb0fa8aa66b6d314ece671f5e8",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "BRA_2_serie-b",
+    "season": "2026-27",
+    "date": "2026-11-22",
+    "home": "Criciúma",
+    "away": "Fortaleza",
+    "expectedHomeGoals": 1.1294,
+    "expectedAwayGoals": 0.8896,
+    "baselineHomeGoals": 1.3611,
+    "baselineAwayGoals": 1.0207,
+    "probabilities": {
+      "home": 0.4105,
+      "draw": 0.3037,
+      "away": 0.2858,
+      "over25": 0.3285,
+      "btts": 0.3987
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 22.9898,
+    "awayWeightedMatches": 22.3832,
+    "source": "open-matchday/fixture/BRA_2_serie-b",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

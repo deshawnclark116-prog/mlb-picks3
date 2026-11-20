@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "5e05b593f32f39089cde0aed13cb3db7",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "668232086e00fa32335a5082bc568d0fd66f0d85459d0d01f02659e89508cc2a",
+  "source_fixtures_sha256": "ff4daca48b0691f25f1dc7332ce7ee5236fbe02f3fdc89f5711e6f5e161147d7",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "SUI_1_super-league",
+    "season": "2026-27",
+    "date": "2026-11-22",
+    "home": "Basel",
+    "away": "Luzern",
+    "expectedHomeGoals": 1.8165,
+    "expectedAwayGoals": 1.6001,
+    "baselineHomeGoals": 1.8455,
+    "baselineAwayGoals": 1.6799,
+    "probabilities": {
+      "home": 0.4325,
+      "draw": 0.2245,
+      "away": 0.3429,
+      "over25": 0.6635,
+      "btts": 0.6684
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 8.4528,
+    "awayWeightedMatches": 8.5569,
+    "source": "open-matchday/fixture/SUI_1_super-league",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

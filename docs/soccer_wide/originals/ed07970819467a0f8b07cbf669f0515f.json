@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "ed07970819467a0f8b07cbf669f0515f",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "164e64edef04c9f3c43cfd15e19efa018ee2246cce305d380182456a003340fe",
+  "source_fixtures_sha256": "ae56f5c9c3c030f84cdb249d2da8649ee47c72a28cfae509c8d590213ddd57f0",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ENG_7_northern-premier-league",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "Lancaster",
+    "away": "Ashton Utd",
+    "expectedHomeGoals": 1.6791,
+    "expectedAwayGoals": 1.4297,
+    "baselineHomeGoals": 1.7925,
+    "baselineAwayGoals": 1.3996,
+    "probabilities": {
+      "home": 0.4358,
+      "draw": 0.2362,
+      "away": 0.328,
+      "over25": 0.6007,
+      "btts": 0.6187
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 8.2882,
+    "awayWeightedMatches": 8.8354,
+    "source": "open-matchday/fixture/ENG_7_northern-premier-league",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "706cf1033bf6ea3a9a36ec068f02b805",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "e3da6df50e9a2a1f76ac7f935fc37f40f20162184a101fcc8f668bc77932004d",
+  "source_fixtures_sha256": "672f4402c522d8cf43c6653a0ca8f50214a0e917af9cede00cffa727a90267ca",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "BRA_1_serie-a",
+    "season": "2026-27",
+    "date": "2026-11-22",
+    "home": "Chapecoense",
+    "away": "Cruzeiro",
+    "expectedHomeGoals": 1.4736,
+    "expectedAwayGoals": 1.5549,
+    "baselineHomeGoals": 1.5363,
+    "baselineAwayGoals": 1.1189,
+    "probabilities": {
+      "home": 0.3615,
+      "draw": 0.2415,
+      "away": 0.397,
+      "over25": 0.5832,
+      "btts": 0.6081
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 18.3502,
+    "awayWeightedMatches": 18.422,
+    "source": "open-matchday/fixture/BRA_1_serie-a",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

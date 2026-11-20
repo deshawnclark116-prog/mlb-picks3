@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "809731ea8a82adc4e76cd3f17ad36de7",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "5db3e9c0f66d66b2e3519fc05eacd3632ee749a82cac026dbc21095590733c02",
+  "source_fixtures_sha256": "893ac535f0a171f460729f98f87591a447d0f6ebf77abff59dab3a42b7d8e322",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "WAL_3_cymru-south",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "Ynyshir Albions",
+    "away": "Llantwit Major",
+    "expectedHomeGoals": 2.1179,
+    "expectedAwayGoals": 1.5431,
+    "baselineHomeGoals": 1.803,
+    "baselineAwayGoals": 1.6341,
+    "probabilities": {
+      "home": 0.5096,
+      "draw": 0.2091,
+      "away": 0.2812,
+      "over25": 0.7079,
+      "btts": 0.6917
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 6.1982,
+    "awayWeightedMatches": 10.8145,
+    "source": "open-matchday/fixture/WAL_3_cymru-south",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

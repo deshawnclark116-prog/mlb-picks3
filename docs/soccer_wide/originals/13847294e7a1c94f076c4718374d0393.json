@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "13847294e7a1c94f076c4718374d0393",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "e25e818914aee1c2d5a94582726db0373c5299962d3484cb3dd02fca5ed0fff5",
+  "source_fixtures_sha256": "9a2946cb9a9dfd5e269eee432104d153830acd2b1be63b6f5368d9ba4d121f61",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ENG_4_league-two",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "Accrington Stanley",
+    "away": "Salford City",
+    "expectedHomeGoals": 1.607,
+    "expectedAwayGoals": 1.3525,
+    "baselineHomeGoals": 1.5616,
+    "baselineAwayGoals": 1.1362,
+    "probabilities": {
+      "home": 0.4348,
+      "draw": 0.2427,
+      "away": 0.3225,
+      "over25": 0.5677,
+      "btts": 0.5928
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 10.6543,
+    "awayWeightedMatches": 10.7653,
+    "source": "open-matchday/fixture/ENG_4_league-two",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "6f12644b659c15fb457aaf1f4e98f843",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "0fdc86fe3bd26f5ee995089f9ed15a47e94db81518d7430f6df904a2d759331e",
+  "source_fixtures_sha256": "b2dc4bc176dd095ddcb6896cc9219e0f54d546020076f9490aadb3324e445423",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ESP_2_segunda-division",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "Real Sociedad II",
+    "away": "Cádiz",
+    "expectedHomeGoals": 1.5295,
+    "expectedAwayGoals": 1.2678,
+    "baselineHomeGoals": 1.561,
+    "baselineAwayGoals": 1.1657,
+    "probabilities": {
+      "home": 0.434,
+      "draw": 0.2505,
+      "away": 0.3155,
+      "over25": 0.5299,
+      "btts": 0.5629
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 11.2167,
+    "awayWeightedMatches": 9.7515,
+    "source": "open-matchday/fixture/ESP_2_segunda-division",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

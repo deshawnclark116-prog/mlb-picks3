@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "38756d91375b418c3160ace59e664b9b",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "9a0ce7510fc40a65716c3521672011881fd52c256172728dff3ab429f46c67fc",
+  "source_fixtures_sha256": "caf906c72e2dfc70191b91038542db9ce328bcff16f6ad21c6e090c01c97bab9",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "FRA_2_ligue-2",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "Stade Lavallois MFC",
+    "away": "Montpellier Hérault SC",
+    "expectedHomeGoals": 1.255,
+    "expectedAwayGoals": 1.4315,
+    "baselineHomeGoals": 1.4092,
+    "baselineAwayGoals": 1.2764,
+    "probabilities": {
+      "home": 0.3304,
+      "draw": 0.2578,
+      "away": 0.4118,
+      "over25": 0.5031,
+      "btts": 0.5441
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 8.999,
+    "awayWeightedMatches": 8.9945,
+    "source": "open-matchday/fixture/FRA_2_ligue-2",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

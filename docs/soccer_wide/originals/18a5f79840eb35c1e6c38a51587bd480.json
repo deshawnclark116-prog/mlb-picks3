@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "18a5f79840eb35c1e6c38a51587bd480",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "543803ebbe61356cbf49f9a02d2d6d934e664d1029bc57bcea8174bc4a43d1d9",
+  "source_fixtures_sha256": "a65e229570215cea0157ed76636eb165ec9c613be1b788f1986db3ad34d78e4a",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ITA_1_serie-a",
+    "season": "2026-27",
+    "date": "2026-11-22",
+    "home": "Milan",
+    "away": "Frosinone",
+    "expectedHomeGoals": 1.8109,
+    "expectedAwayGoals": 1.492,
+    "baselineHomeGoals": 1.5921,
+    "baselineAwayGoals": 1.4698,
+    "probabilities": {
+      "home": 0.4533,
+      "draw": 0.2272,
+      "away": 0.3195,
+      "over25": 0.6412,
+      "btts": 0.6484
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 8.1288,
+    "awayWeightedMatches": 8.0539,
+    "source": "open-matchday/fixture/ITA_1_serie-a",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "bad4dffec5b2fc64fbaffa4bdb1812ce",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "3a4e413c5c5a427de81865c394024a06cce9a1b26bcafab9ca7fb6ac97aa95d6",
+  "source_fixtures_sha256": "bec7551434df6c5e5a8eb6e91282f8d1fc42dd1a4bd168b3e00845b1f17c077a",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "MEX_1_liga-mx",
+    "season": "2026-27",
+    "date": "2026-11-22",
+    "home": "Guadalajara",
+    "away": "Cruz Azul",
+    "expectedHomeGoals": 1.6471,
+    "expectedAwayGoals": 1.5247,
+    "baselineHomeGoals": 1.5568,
+    "baselineAwayGoals": 1.4211,
+    "probabilities": {
+      "home": 0.4087,
+      "draw": 0.235,
+      "away": 0.3563,
+      "over25": 0.6142,
+      "btts": 0.6316
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 11.7978,
+    "awayWeightedMatches": 12.2628,
+    "source": "open-matchday/fixture/MEX_1_liga-mx",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

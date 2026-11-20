@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "17c31e8d628f9ae7bbd14516bf936dc9",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "b8327e8bf0f1696a2f93899dc4d54834d74a45d68ff51cabb044a737856023f9",
+  "source_fixtures_sha256": "7161bbadc8a49cca6151a9525a223061d4b5e927f9850acf52f14f88c27e3591",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "GER_1_bundesliga",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "1. FC Union Berlin",
+    "away": "RB Leipzig",
+    "expectedHomeGoals": 1.9295,
+    "expectedAwayGoals": 1.2721,
+    "baselineHomeGoals": 1.9831,
+    "baselineAwayGoals": 1.3166,
+    "probabilities": {
+      "home": 0.5275,
+      "draw": 0.2214,
+      "away": 0.2511,
+      "over25": 0.6204,
+      "btts": 0.6152
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 7.9692,
+    "awayWeightedMatches": 6.4193,
+    "source": "open-matchday/fixture/GER_1_bundesliga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

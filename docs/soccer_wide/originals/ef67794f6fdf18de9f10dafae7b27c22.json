@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "ef67794f6fdf18de9f10dafae7b27c22",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "ac51e886dd3d26e61126374492e927722ae40fcda355869f46bc244d2024373a",
+  "source_fixtures_sha256": "b1f8cc8ba64545728242ce431bb75648443af67a38850efabe1bf64bb291bcfa",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "NED_1_eredivisie",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "FC Utrecht",
+    "away": "SC Cambuur",
+    "expectedHomeGoals": 1.7407,
+    "expectedAwayGoals": 2.1439,
+    "baselineHomeGoals": 1.8185,
+    "baselineAwayGoals": 1.9014,
+    "probabilities": {
+      "home": 0.3183,
+      "draw": 0.2066,
+      "away": 0.4751,
+      "over25": 0.7445,
+      "btts": 0.728
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 9.3507,
+    "awayWeightedMatches": 7.5862,
+    "source": "open-matchday/fixture/NED_1_eredivisie",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

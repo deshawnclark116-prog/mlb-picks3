@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "847158116d459295c601651db751e9cf",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "a51c8e573e71468775dd917cecc1a00f9b6f5c0fb5963c82528d2607a581bf9c",
+  "source_fixtures_sha256": "3ac12da4cc9c9743e27df7e40a96f4a646e198e4b2ab6a43aa3dbc4306add629",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "GER_3_3-liga",
+    "season": "2026-27",
+    "date": "2026-11-22",
+    "home": "VfB Stuttgart II",
+    "away": "FC Ingolstadt 04",
+    "expectedHomeGoals": 1.5391,
+    "expectedAwayGoals": 1.5153,
+    "baselineHomeGoals": 1.7141,
+    "baselineAwayGoals": 1.4542,
+    "probabilities": {
+      "home": 0.385,
+      "draw": 0.2405,
+      "away": 0.3745,
+      "over25": 0.5889,
+      "btts": 0.6128
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 9.4932,
+    "awayWeightedMatches": 9.0215,
+    "source": "open-matchday/fixture/GER_3_3-liga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

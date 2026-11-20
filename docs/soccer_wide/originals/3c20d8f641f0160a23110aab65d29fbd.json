@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "3c20d8f641f0160a23110aab65d29fbd",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "cda3239bc4e49bc4980c91f53c5838f927d34b3987811f746c83945c4e45af5b",
+  "source_fixtures_sha256": "640c0f43ae76a20cf9289b863b43cb18ef1594b00eb0f5e9f14dc508f10ae7fe",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ROU_1_liga-1",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "Dinamo Bucuresti",
+    "away": "Petrolul",
+    "expectedHomeGoals": 1.7658,
+    "expectedAwayGoals": 1.0267,
+    "baselineHomeGoals": 1.5399,
+    "baselineAwayGoals": 1.0659,
+    "probabilities": {
+      "home": 0.5471,
+      "draw": 0.2341,
+      "away": 0.2188,
+      "over25": 0.5288,
+      "btts": 0.532
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 8.9645,
+    "awayWeightedMatches": 10.5388,
+    "source": "open-matchday/fixture/ROU_1_liga-1",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

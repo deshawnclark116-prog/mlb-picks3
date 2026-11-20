@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "a3fa9690f17ad3b02c63e3a0b4525dd8",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "913b4380274baeb26913bad664d8683244f5ccd35cd7ea2df3485a4722801d30",
+  "source_fixtures_sha256": "dccdd3e1139bd2c10f975a9db518a0dcc0f89f11980b0113dd140903c8753dda",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "NOR_1_eliteserien",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "Valerenga",
+    "away": "Start",
+    "expectedHomeGoals": 2.2127,
+    "expectedAwayGoals": 1.4766,
+    "baselineHomeGoals": 1.936,
+    "baselineAwayGoals": 1.6088,
+    "probabilities": {
+      "home": 0.5431,
+      "draw": 0.2032,
+      "away": 0.2537,
+      "over25": 0.7128,
+      "btts": 0.6872
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 8.8149,
+    "awayWeightedMatches": 7.6345,
+    "source": "open-matchday/fixture/NOR_1_eliteserien",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

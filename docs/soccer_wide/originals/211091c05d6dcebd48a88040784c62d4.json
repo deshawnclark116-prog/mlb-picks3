@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "211091c05d6dcebd48a88040784c62d4",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "82a9f39c7ca970b582fc907367bddbe5d113d674402fe02908fd4c467fc522bf",
+  "source_fixtures_sha256": "cd24f776ee13d344fbd9db890172755746c7adf2277f05765fd221dfb76ae123",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ARG_2_primera-nacional",
+    "season": "2026-27",
+    "date": "2026-11-22",
+    "home": "Gimnasia y Esgrima (Jujuy)",
+    "away": "Deportivo Madryn",
+    "expectedHomeGoals": 1.2407,
+    "expectedAwayGoals": 0.925,
+    "baselineHomeGoals": 1.2167,
+    "baselineAwayGoals": 0.7851,
+    "probabilities": {
+      "home": 0.435,
+      "draw": 0.2892,
+      "away": 0.2758,
+      "over25": 0.3681,
+      "btts": 0.4289
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 21.153,
+    "awayWeightedMatches": 19.163,
+    "source": "open-matchday/fixture/ARG_2_primera-nacional",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

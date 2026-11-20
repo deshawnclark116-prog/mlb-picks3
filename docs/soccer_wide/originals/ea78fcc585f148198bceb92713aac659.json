@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "ea78fcc585f148198bceb92713aac659",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "a4984254a254d85878569d1f905fa9be1058ca69a00a85be1a97d2827819b585",
+  "source_fixtures_sha256": "b258cad3d4695c7cab84a2b5c0e2afaa5368eed636453b9ebadd1ba31d149eb9",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "POL_1_ekstraklasa",
+    "season": "2026-27",
+    "date": "2026-11-22",
+    "home": "GKS Katowice",
+    "away": "Lech Poznan",
+    "expectedHomeGoals": 1.7662,
+    "expectedAwayGoals": 1.4514,
+    "baselineHomeGoals": 1.669,
+    "baselineAwayGoals": 1.3015,
+    "probabilities": {
+      "home": 0.4515,
+      "draw": 0.2306,
+      "away": 0.3179,
+      "over25": 0.6237,
+      "btts": 0.6348
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 7.9564,
+    "awayWeightedMatches": 6.1941,
+    "source": "open-matchday/fixture/POL_1_ekstraklasa",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

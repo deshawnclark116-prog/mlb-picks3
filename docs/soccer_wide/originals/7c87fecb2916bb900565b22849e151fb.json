@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "7c87fecb2916bb900565b22849e151fb",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "9a0ce7510fc40a65716c3521672011881fd52c256172728dff3ab429f46c67fc",
+  "source_fixtures_sha256": "caf906c72e2dfc70191b91038542db9ce328bcff16f6ad21c6e090c01c97bab9",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "FRA_2_ligue-2",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "Stade DE Reims",
+    "away": "AS Saint-Étienne",
+    "expectedHomeGoals": 1.6225,
+    "expectedAwayGoals": 1.3498,
+    "baselineHomeGoals": 1.4092,
+    "baselineAwayGoals": 1.2764,
+    "probabilities": {
+      "home": 0.4391,
+      "draw": 0.2418,
+      "away": 0.319,
+      "over25": 0.5706,
+      "btts": 0.5945
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 9.0059,
+    "awayWeightedMatches": 9.0588,
+    "source": "open-matchday/fixture/FRA_2_ligue-2",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

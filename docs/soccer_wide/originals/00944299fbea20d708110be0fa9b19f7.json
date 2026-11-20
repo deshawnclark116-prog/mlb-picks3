@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "00944299fbea20d708110be0fa9b19f7",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "5dfb22e1afb3c39b73d62861ffa6194fabf052fa574115fe33962a22f7b96860",
+  "source_fixtures_sha256": "cc58da60ed4a51d46b03a02df1b90ed77c4ca9d63e03512da3e51509639206fa",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "SCO_2_championship",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "Queen's Park",
+    "away": "Livingston",
+    "expectedHomeGoals": 1.089,
+    "expectedAwayGoals": 1.1986,
+    "baselineHomeGoals": 1.3737,
+    "baselineAwayGoals": 1.0454,
+    "probabilities": {
+      "home": 0.3309,
+      "draw": 0.2841,
+      "away": 0.3851,
+      "over25": 0.4007,
+      "btts": 0.4633
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 10.7359,
+    "awayWeightedMatches": 10.9423,
+    "source": "open-matchday/fixture/SCO_2_championship",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

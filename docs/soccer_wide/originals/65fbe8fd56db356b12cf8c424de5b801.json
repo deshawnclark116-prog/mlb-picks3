@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "65fbe8fd56db356b12cf8c424de5b801",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "ffaef9b989a6fa4cd674a1eee4e1c75685b8d7f90ec99b0073399baa4cf37e08",
+  "source_fixtures_sha256": "af59f06a329a1f67b45a1b2392628211d4b5c800d2bdd740582cb5da0c8d126a",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "UKR_1_premier-league",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "Kolos Kovalivka",
+    "away": "FC Kharkiv",
+    "expectedHomeGoals": 1.3183,
+    "expectedAwayGoals": 1.1579,
+    "baselineHomeGoals": 1.3718,
+    "baselineAwayGoals": 1.032,
+    "probabilities": {
+      "home": 0.4031,
+      "draw": 0.2705,
+      "away": 0.3264,
+      "over25": 0.4501,
+      "btts": 0.5023
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 4.4381,
+    "awayWeightedMatches": 6.0162,
+    "source": "open-matchday/fixture/UKR_1_premier-league",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

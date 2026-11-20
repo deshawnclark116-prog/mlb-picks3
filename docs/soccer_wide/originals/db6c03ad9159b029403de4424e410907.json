@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "db6c03ad9159b029403de4424e410907",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "ba9e74b9d52a07cf917eac06c3f49cd66359141a710ef38e0acc291e30d91b74",
+  "source_fixtures_sha256": "74988151ed1fddc5be1dd2ae1b1b24e33e8185b3623a563ac012bfb017cc56f0",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ENG_1_premier-league",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "Aston Villa",
+    "away": "Sunderland",
+    "expectedHomeGoals": 1.6385,
+    "expectedAwayGoals": 1.2138,
+    "baselineHomeGoals": 1.5152,
+    "baselineAwayGoals": 1.1832,
+    "probabilities": {
+      "home": 0.4729,
+      "draw": 0.2439,
+      "away": 0.2832,
+      "over25": 0.5429,
+      "btts": 0.5664
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 8.036,
+    "awayWeightedMatches": 7.7407,
+    "source": "open-matchday/fixture/ENG_1_premier-league",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

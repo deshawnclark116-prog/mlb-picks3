@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "89caaf260f3ced1ec25c6cadebe97005",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "6b4f839ca2b8f78a366dbab5e7cc39cdf78ab173c13f9f86d1b8f73156b450ed",
+  "source_fixtures_sha256": "ae6c3ba1c986a191142fcdb2ce792b12641bb059a0f6f5d766e28441c7f91f54",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "SCO_4_league-two",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "Spartans",
+    "away": "Dumbarton",
+    "expectedHomeGoals": 1.8675,
+    "expectedAwayGoals": 1.4752,
+    "baselineHomeGoals": 1.7424,
+    "baselineAwayGoals": 1.474,
+    "probabilities": {
+      "home": 0.4696,
+      "draw": 0.2242,
+      "away": 0.3062,
+      "over25": 0.6491,
+      "btts": 0.6521
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 10.4596,
+    "awayWeightedMatches": 10.6462,
+    "source": "open-matchday/fixture/SCO_4_league-two",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

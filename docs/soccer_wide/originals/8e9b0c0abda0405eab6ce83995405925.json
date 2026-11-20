@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "8e9b0c0abda0405eab6ce83995405925",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "a51c8e573e71468775dd917cecc1a00f9b6f5c0fb5963c82528d2607a581bf9c",
+  "source_fixtures_sha256": "3ac12da4cc9c9743e27df7e40a96f4a646e198e4b2ab6a43aa3dbc4306add629",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "GER_3_3-liga",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "SC Verl",
+    "away": "Rot-Weiss Essen",
+    "expectedHomeGoals": 1.6718,
+    "expectedAwayGoals": 1.5814,
+    "baselineHomeGoals": 1.7143,
+    "baselineAwayGoals": 1.4544,
+    "probabilities": {
+      "home": 0.4032,
+      "draw": 0.2319,
+      "away": 0.3649,
+      "over25": 0.6311,
+      "btts": 0.6451
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 9.0564,
+    "awayWeightedMatches": 9.2321,
+    "source": "open-matchday/fixture/GER_3_3-liga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

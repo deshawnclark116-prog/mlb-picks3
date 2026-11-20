@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "a3e56fb60cd8b5a2be1e011d1dc2c660",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "fe3760fc3d768ca11f91b0753adefc0082f13929dc79496e7d96a3572e6a7c92",
+  "source_fixtures_sha256": "961a2407c543c9f6bb11591acc2dd3fdb101d6a59fc74af95903467ba6b4530b",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ENG_3_league-one",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "Burton Albion",
+    "away": "Luton Town",
+    "expectedHomeGoals": 1.6426,
+    "expectedAwayGoals": 1.4293,
+    "baselineHomeGoals": 1.5675,
+    "baselineAwayGoals": 1.2241,
+    "probabilities": {
+      "home": 0.4272,
+      "draw": 0.2383,
+      "away": 0.3345,
+      "over25": 0.5927,
+      "btts": 0.6134
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 10.6267,
+    "awayWeightedMatches": 11.0724,
+    "source": "open-matchday/fixture/ENG_3_league-one",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

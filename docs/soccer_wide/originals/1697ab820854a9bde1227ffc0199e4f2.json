@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "1697ab820854a9bde1227ffc0199e4f2",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "8b21b37081fdc6bd5b294cc0f8a4fb40c3976187f3a2ce26f92f20a6a0086be7",
+  "source_fixtures_sha256": "3e7b42af7c5cf5a85cb67149b42641f4ae45f7a434816656815ce4e24151e77d",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "POL_2_division-1",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "Polonia Warszawa",
+    "away": "Stal Mielec",
+    "expectedHomeGoals": 1.7788,
+    "expectedAwayGoals": 1.0707,
+    "baselineHomeGoals": 1.5141,
+    "baselineAwayGoals": 1.1259,
+    "probabilities": {
+      "home": 0.5396,
+      "draw": 0.2331,
+      "away": 0.2273,
+      "over25": 0.5423,
+      "btts": 0.5463
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 6.0412,
+    "awayWeightedMatches": 7.679,
+    "source": "open-matchday/fixture/POL_2_division-1",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

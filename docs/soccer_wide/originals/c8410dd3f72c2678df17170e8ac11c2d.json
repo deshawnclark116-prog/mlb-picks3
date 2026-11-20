@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "c8410dd3f72c2678df17170e8ac11c2d",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "97edf32baf16c0ff0f425e6e9b8426b02dc481f0289dfffc4793945907263198",
+  "source_fixtures_sha256": "305d7217a559ef5508de5e8265d709842d120573b7d2993639a724d27294d5f1",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ENG_5_national-league",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "Solihull Moors",
+    "away": "Altrincham",
+    "expectedHomeGoals": 1.5337,
+    "expectedAwayGoals": 1.4223,
+    "baselineHomeGoals": 1.7009,
+    "baselineAwayGoals": 1.402,
+    "probabilities": {
+      "home": 0.4023,
+      "draw": 0.2446,
+      "away": 0.353,
+      "over25": 0.5669,
+      "btts": 0.5951
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 13.58,
+    "awayWeightedMatches": 13.7503,
+    "source": "open-matchday/fixture/ENG_5_national-league",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

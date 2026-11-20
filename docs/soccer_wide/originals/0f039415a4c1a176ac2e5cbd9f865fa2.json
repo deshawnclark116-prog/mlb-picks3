@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "0f039415a4c1a176ac2e5cbd9f865fa2",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "5ef0148fa672dc5f590fcd5f9940810beb1aac1abe7f3f91c0d0cacde359f8dd",
+  "source_fixtures_sha256": "01fd0fe0b891d42308fac36bacb039d033fa853f648255073c7970ffc9f9cdbc",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "MEX_2_liga-expansion",
+    "season": "2026-27",
+    "date": "2026-11-22",
+    "home": "Club Atlético Morelia",
+    "away": "Club Atlético La Paz",
+    "expectedHomeGoals": 1.7131,
+    "expectedAwayGoals": 1.4778,
+    "baselineHomeGoals": 1.7766,
+    "baselineAwayGoals": 1.2496,
+    "probabilities": {
+      "home": 0.4338,
+      "draw": 0.233,
+      "away": 0.3333,
+      "over25": 0.6182,
+      "btts": 0.6327
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 13.6719,
+    "awayWeightedMatches": 13.8485,
+    "source": "open-matchday/fixture/MEX_2_liga-expansion",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

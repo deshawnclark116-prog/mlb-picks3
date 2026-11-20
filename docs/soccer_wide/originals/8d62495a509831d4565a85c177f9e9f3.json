@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "8d62495a509831d4565a85c177f9e9f3",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "33c9b8e4170a562dae1901e4c53b368830267e3fc80b75d697d7332eb46263be",
+  "source_fixtures_sha256": "a3c7f73bebdc7237e72bfc96fc0c42ca4f1bad62c61cfc518cfe2747ae391e1f",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "CRO_1_hnl",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "Lok. Zagreb",
+    "away": "Hajduk Split",
+    "expectedHomeGoals": 1.4685,
+    "expectedAwayGoals": 1.3431,
+    "baselineHomeGoals": 1.6395,
+    "baselineAwayGoals": 1.3052,
+    "probabilities": {
+      "home": 0.4025,
+      "draw": 0.2516,
+      "away": 0.3458,
+      "over25": 0.5333,
+      "btts": 0.5688
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 9.7241,
+    "awayWeightedMatches": 9.0414,
+    "source": "open-matchday/fixture/CRO_1_hnl",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "d4bdbbad9feae0ef88db4a26309667de",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "26ee639f0f97ccdd8f23f14b8324618be4bb376d78b79be6d42cc61af615ec14",
+  "source_fixtures_sha256": "146a8bf8040612975e73e494ce36045ecd20aafdd8d814104201192d300752ae",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "SCO_3_league-one",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "Ross County",
+    "away": "Cove Rangers",
+    "expectedHomeGoals": 2.11,
+    "expectedAwayGoals": 1.0043,
+    "baselineHomeGoals": 1.6355,
+    "baselineAwayGoals": 1.2251,
+    "probabilities": {
+      "home": 0.6274,
+      "draw": 0.2018,
+      "away": 0.1708,
+      "over25": 0.6019,
+      "btts": 0.5569
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 11.0637,
+    "awayWeightedMatches": 10.4178,
+    "source": "open-matchday/fixture/SCO_3_league-one",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

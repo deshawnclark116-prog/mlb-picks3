@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "f7d5c4fc92a7155ced52e59487c3a798",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "7d8d1f2a1c71658c2733cc3c5a3b6bb794071467f34a864dfcbf38eb50bc0926",
+  "source_fixtures_sha256": "a77a05375565f29d5b4061ef1e7bfd7af85da2cb6bb30f3de2a01f25156232f9",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "AUT_1_bundesliga",
+    "season": "2026-27",
+    "date": "2026-11-22",
+    "home": "Altach",
+    "away": "Sturm Graz",
+    "expectedHomeGoals": 1.7597,
+    "expectedAwayGoals": 1.2651,
+    "baselineHomeGoals": 1.8663,
+    "baselineAwayGoals": 1.3359,
+    "probabilities": {
+      "home": 0.4903,
+      "draw": 0.234,
+      "away": 0.2757,
+      "over25": 0.5823,
+      "btts": 0.5943
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 9.1627,
+    "awayWeightedMatches": 8.718,
+    "source": "open-matchday/fixture/AUT_1_bundesliga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

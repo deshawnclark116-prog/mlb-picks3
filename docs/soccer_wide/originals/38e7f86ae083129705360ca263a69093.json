@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "38e7f86ae083129705360ca263a69093",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "540646189834982e848ce65957909139bcee4f03792f80428896f20ce34adbe3",
+  "source_fixtures_sha256": "0dc58373cff04ffc74e63df1c7bd635f07f483117ef7c3fb6f887a314bc2a673",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "GER_2_2-bundesliga",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "1. FC Nürnberg",
+    "away": "Eintracht Braunschweig",
+    "expectedHomeGoals": 1.8949,
+    "expectedAwayGoals": 1.2162,
+    "baselineHomeGoals": 1.713,
+    "baselineAwayGoals": 1.1801,
+    "probabilities": {
+      "home": 0.5323,
+      "draw": 0.2239,
+      "away": 0.2437,
+      "over25": 0.6012,
+      "btts": 0.5979
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 9.3132,
+    "awayWeightedMatches": 7.6417,
+    "source": "open-matchday/fixture/GER_2_2-bundesliga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

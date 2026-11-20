@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "d9edb234c71cfeb83cd8b62a4a9b78ee",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "c3a9b8a8b5f3a78c4f0318f5b22e635be4c2ab93434d7fe9770c6fc3d23928cc",
+  "source_fixtures_sha256": "ce048e8ecac07bf21612e31c25832693e1b9bafbe6fdc3a6c71b73aa0875434d",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "WAL_2_cymru-north",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "Penrhyncoch",
+    "away": "Rhyl",
+    "expectedHomeGoals": 1.5245,
+    "expectedAwayGoals": 1.6425,
+    "baselineHomeGoals": 1.74,
+    "baselineAwayGoals": 1.5468,
+    "probabilities": {
+      "home": 0.3571,
+      "draw": 0.2352,
+      "away": 0.4077,
+      "over25": 0.6132,
+      "btts": 0.6309
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 8.9179,
+    "awayWeightedMatches": 10.9365,
+    "source": "open-matchday/fixture/WAL_2_cymru-north",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

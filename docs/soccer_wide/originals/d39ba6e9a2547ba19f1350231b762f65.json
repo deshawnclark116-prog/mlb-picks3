@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "d39ba6e9a2547ba19f1350231b762f65",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "5138503bcd91a4a04f9050c1d1d237d7e2757dae57a4a168f42e7b3d27b47370",
+  "source_fixtures_sha256": "86649c33c54088ef6dfdea6df6eff79125959e9f649bec927641464e964ee5a0",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ENG_6_national-league-south",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "AFC Totton",
+    "away": "Dag & Red",
+    "expectedHomeGoals": 1.3873,
+    "expectedAwayGoals": 1.188,
+    "baselineHomeGoals": 1.6003,
+    "baselineAwayGoals": 1.3775,
+    "probabilities": {
+      "home": 0.4149,
+      "draw": 0.2638,
+      "away": 0.3213,
+      "over25": 0.4754,
+      "btts": 0.5216
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 6.6913,
+    "awayWeightedMatches": 6.7454,
+    "source": "open-matchday/fixture/ENG_6_national-league-south",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

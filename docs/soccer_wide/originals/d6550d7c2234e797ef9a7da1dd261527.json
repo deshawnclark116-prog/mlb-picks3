@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "d6550d7c2234e797ef9a7da1dd261527",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "53465a95a6724acce0967c6a47699f823dbc5a3b822058833bb161b212735fac",
+  "source_fixtures_sha256": "e15ddcaad608d9eacf0f7967d7cb0697959a00fff8dc05943a5dbb033526bc45",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "POL_3_division-2",
+    "season": "2026-27",
+    "date": "2026-11-22",
+    "home": "Ol. Grudziadz",
+    "away": "Leczna",
+    "expectedHomeGoals": 1.3173,
+    "expectedAwayGoals": 1.5145,
+    "baselineHomeGoals": 1.5238,
+    "baselineAwayGoals": 1.3623,
+    "probabilities": {
+      "home": 0.3307,
+      "draw": 0.2498,
+      "away": 0.4195,
+      "over25": 0.5381,
+      "btts": 0.5711
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 3.0052,
+    "awayWeightedMatches": 9.431,
+    "source": "open-matchday/fixture/POL_3_division-2",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

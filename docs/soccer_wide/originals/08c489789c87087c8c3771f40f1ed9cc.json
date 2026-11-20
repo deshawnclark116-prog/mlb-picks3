@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "08c489789c87087c8c3771f40f1ed9cc",
+  "captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "27311f1f29ee8fa6f4763e489ca2c529268fe25e",
+  "source_results_sha256": "805345598d977ba752fb1aa52ef189e97ddf75e302ae9784f1925fc1c9443369",
+  "source_fixtures_sha256": "b01cbf7aaba566543f0ff2cdd23bee8d84afac4da69e3e249d95999897ee501e",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "SVK_1_nike-liga",
+    "season": "2026-27",
+    "date": "2026-11-21",
+    "home": "Ruzomberok",
+    "away": "Slovan Bratislava",
+    "expectedHomeGoals": 1.3335,
+    "expectedAwayGoals": 1.5776,
+    "baselineHomeGoals": 1.5688,
+    "baselineAwayGoals": 1.5688,
+    "probabilities": {
+      "home": 0.3231,
+      "draw": 0.2452,
+      "away": 0.4317,
+      "over25": 0.5566,
+      "btts": 0.5844
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 10.0372,
+    "awayWeightedMatches": 12.3224,
+    "source": "open-matchday/fixture/SVK_1_nike-liga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}
