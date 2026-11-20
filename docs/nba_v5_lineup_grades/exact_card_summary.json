@@ -1,0 +1,24 @@
+{
+  "schema": "NBA_V5_IMMUTABLE_EXACT_CONFIRMED_CARD_AUDIT_V1",
+  "kind": "last",
+  "games_with_archives_and_grades": 0,
+  "games_without_eligible_confirmed_starters": 0,
+  "files_missing_final_grade": 0,
+  "post_tip_forecasts_rejected": 0,
+  "confirmed_starters_missing_dnp_contract": 0,
+  "top4": {
+    "n": 0
+  },
+  "top10": {
+    "n": 0
+  },
+  "top4_by_market": {},
+  "top4_miss_causes": [],
+  "top4_by_probability_contract": {},
+  "repeat_selected": [],
+  "shadow_candidate": {
+    "status": "NO_ARCHIVED_GAMES"
+  },
+  "production_changes": false,
+  "immutable_source_replay": true
+}

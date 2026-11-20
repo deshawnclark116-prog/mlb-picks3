@@ -1,126 +1,374 @@
 {
   "by_market": {
     "assists": {
-      "events": 220,
+      "events": 484,
       "game_cluster_bootstrap_95pct_reduction_interval": {
         "v4_only": [
-          -0.00822,
-          0.08957
+          0.02668,
+          0.11439
         ],
         "v5_only": [
-          -0.13566,
-          -0.03603
+          -0.18784,
+          -0.0876
         ]
       },
-      "games": 11,
+      "games": 25,
       "mae": {
-        "blend": 1.62446,
-        "v4_only": 1.57983,
-        "v5_only": 1.71583
+        "blend": 1.59894,
+        "v4_only": 1.53271,
+        "v5_only": 1.73262
       },
       "mae_reduction_vs_blend_positive_better": {
-        "v4_only": 0.04463,
-        "v5_only": -0.09136
+        "v4_only": 0.06624,
+        "v5_only": -0.13367
       },
       "mean_signed_error": {
-        "blend": 0.29992,
-        "v4_only": 0.11988,
-        "v5_only": 0.47996
+        "blend": 0.36076,
+        "v4_only": 0.21056,
+        "v5_only": 0.51095
       }
     },
     "points": {
-      "events": 220,
+      "events": 484,
       "game_cluster_bootstrap_95pct_reduction_interval": {
         "v4_only": [
-          -0.00503,
-          0.45072
+          0.15947,
+          0.50792
         ],
         "v5_only": [
-          -0.64892,
-          -0.1705
+          -0.66838,
+          -0.31868
         ]
       },
-      "games": 11,
+      "games": 25,
       "mae": {
-        "blend": 5.44873,
-        "v4_only": 5.24419,
-        "v5_only": 5.83506
+        "blend": 5.25553,
+        "v4_only": 4.9244,
+        "v5_only": 5.74879
       },
       "mae_reduction_vs_blend_positive_better": {
-        "v4_only": 0.20453,
-        "v5_only": -0.38634
+        "v4_only": 0.33113,
+        "v5_only": -0.49326
       },
       "mean_signed_error": {
-        "blend": 1.58262,
-        "v4_only": 0.77169,
-        "v5_only": 2.39355
+        "blend": 1.778,
+        "v4_only": 1.02715,
+        "v5_only": 2.52885
       }
     },
     "rebounds": {
-      "events": 220,
+      "events": 484,
       "game_cluster_bootstrap_95pct_reduction_interval": {
         "v4_only": [
-          0.02742,
-          0.19378
+          0.05355,
+          0.15179
         ],
         "v5_only": [
-          -0.28473,
-          -0.11
+          -0.23037,
+          -0.11175
         ]
       },
-      "games": 11,
+      "games": 25,
       "mae": {
-        "blend": 2.08978,
-        "v4_only": 1.98401,
-        "v5_only": 2.28255
+        "blend": 2.07112,
+        "v4_only": 1.96895,
+        "v5_only": 2.23983
       },
       "mae_reduction_vs_blend_positive_better": {
-        "v4_only": 0.10577,
-        "v5_only": -0.19277
+        "v4_only": 0.10218,
+        "v5_only": -0.16871
       },
       "mean_signed_error": {
-        "blend": 0.55057,
-        "v4_only": 0.21382,
-        "v5_only": 0.88732
+        "blend": 0.48995,
+        "v4_only": 0.20383,
+        "v5_only": 0.77607
       }
     },
     "three_pointers_made": {
-      "events": 220,
+      "events": 484,
       "game_cluster_bootstrap_95pct_reduction_interval": {
         "v4_only": [
-          0.01006,
-          0.03866
+          0.02704,
+          0.0643
         ],
         "v5_only": [
-          -0.05288,
-          -0.02421
+          -0.07932,
+          -0.03799
         ]
       },
-      "games": 11,
+      "games": 25,
       "mae": {
-        "blend": 1.02644,
-        "v4_only": 1.0025,
-        "v5_only": 1.06367
+        "blend": 0.97139,
+        "v4_only": 0.92743,
+        "v5_only": 1.02787
       },
       "mae_reduction_vs_blend_positive_better": {
-        "v4_only": 0.02394,
-        "v5_only": -0.03723
+        "v4_only": 0.04396,
+        "v5_only": -0.05647
       },
       "mean_signed_error": {
-        "blend": 0.12964,
-        "v4_only": 0.03,
-        "v5_only": 0.22928
+        "blend": 0.16691,
+        "v4_only": 0.07062,
+        "v5_only": 0.26321
       }
     }
   },
   "forward_frozen_same_target_probability": {
     "DNP": "Counted as miss; no postgame adjustment",
+    "all_frozen_event_targets_preserved": true,
     "basis": "Original V4/V5 conditional CDF at the same frozen blend target; common pretip V5 availability risk",
-    "by_market": {},
-    "events": 0,
-    "status": "WAITING_FOR_NEW_PROSPECTIVE_COMPONENT_FORECASTS"
+    "by_market": {
+      "assists": {
+        "brier": {
+          "blend": 0.238473,
+          "v4_only": 0.227413,
+          "v5_only": 0.260001
+        },
+        "brier_reduction_vs_blend_positive_better": {
+          "v4_only": 0.01106,
+          "v5_only": -0.021528
+        },
+        "dnp_events_counted_as_misses": 36,
+        "game_cluster_bootstrap_95pct_reduction_interval": {
+          "v4_only": [
+            0.004722,
+            0.018145
+          ],
+          "v5_only": [
+            -0.031538,
+            -0.013089
+          ]
+        },
+        "hits": 121,
+        "n_games": 14,
+        "n_original_events_including_dnp": 297
+      },
+      "points": {
+        "brier": {
+          "blend": 0.214598,
+          "v4_only": 0.202585,
+          "v5_only": 0.240634
+        },
+        "brier_reduction_vs_blend_positive_better": {
+          "v4_only": 0.012013,
+          "v5_only": -0.026036
+        },
+        "dnp_events_counted_as_misses": 42,
+        "game_cluster_bootstrap_95pct_reduction_interval": {
+          "v4_only": [
+            0.002705,
+            0.021686
+          ],
+          "v5_only": [
+            -0.04164,
+            -0.014249
+          ]
+        },
+        "hits": 90,
+        "n_games": 14,
+        "n_original_events_including_dnp": 306
+      },
+      "rebounds": {
+        "brier": {
+          "blend": 0.241606,
+          "v4_only": 0.232546,
+          "v5_only": 0.259575
+        },
+        "brier_reduction_vs_blend_positive_better": {
+          "v4_only": 0.00906,
+          "v5_only": -0.017969
+        },
+        "dnp_events_counted_as_misses": 41,
+        "game_cluster_bootstrap_95pct_reduction_interval": {
+          "v4_only": [
+            0.002882,
+            0.015406
+          ],
+          "v5_only": [
+            -0.026149,
+            -0.010894
+          ]
+        },
+        "hits": 123,
+        "n_games": 14,
+        "n_original_events_including_dnp": 305
+      },
+      "three_pointers_made": {
+        "brier": {
+          "blend": 0.240657,
+          "v4_only": 0.233982,
+          "v5_only": 0.25179
+        },
+        "brier_reduction_vs_blend_positive_better": {
+          "v4_only": 0.006675,
+          "v5_only": -0.011133
+        },
+        "dnp_events_counted_as_misses": 26,
+        "game_cluster_bootstrap_95pct_reduction_interval": {
+          "v4_only": [
+            0.002018,
+            0.011899
+          ],
+          "v5_only": [
+            -0.017335,
+            -0.005644
+          ]
+        },
+        "hits": 112,
+        "n_games": 14,
+        "n_original_events_including_dnp": 242
+      }
+    },
+    "events": 1150,
+    "nonproduction_target_events": 0,
+    "nonproduction_target_examples": [],
+    "production_target_probability_certified": false,
+    "status": "PARTIALLY_UNSCORABLE_FROZEN_ZERO_EVENTS",
+    "unscorable_frozen_zero_target_events": 74,
+    "unscorable_frozen_zero_target_examples": [
+      {
+        "frozen_research_target": 0,
+        "game_id": "401909938",
+        "market": "three_pointers_made",
+        "player_id": "4017837",
+        "production_rounded_mean_target": 0
+      },
+      {
+        "frozen_research_target": 0,
+        "game_id": "401909938",
+        "market": "three_pointers_made",
+        "player_id": "4277848",
+        "production_rounded_mean_target": 0
+      },
+      {
+        "frozen_research_target": 0,
+        "game_id": "401909938",
+        "market": "three_pointers_made",
+        "player_id": "4431690",
+        "production_rounded_mean_target": 0
+      },
+      {
+        "frozen_research_target": 0,
+        "game_id": "401909938",
+        "market": "assists",
+        "player_id": "4433607",
+        "production_rounded_mean_target": 0
+      },
+      {
+        "frozen_research_target": 0,
+        "game_id": "401909938",
+        "market": "three_pointers_made",
+        "player_id": "4433607",
+        "production_rounded_mean_target": 0
+      },
+      {
+        "frozen_research_target": 0,
+        "game_id": "401909939",
+        "market": "three_pointers_made",
+        "player_id": "4869342",
+        "production_rounded_mean_target": 0
+      },
+      {
+        "frozen_research_target": 0,
+        "game_id": "401909939",
+        "market": "three_pointers_made",
+        "player_id": "4432194",
+        "production_rounded_mean_target": 0
+      },
+      {
+        "frozen_research_target": 0,
+        "game_id": "401909940",
+        "market": "assists",
+        "player_id": "4897943",
+        "production_rounded_mean_target": 0
+      },
+      {
+        "frozen_research_target": 0,
+        "game_id": "401909940",
+        "market": "three_pointers_made",
+        "player_id": "5211983",
+        "production_rounded_mean_target": 0
+      },
+      {
+        "frozen_research_target": 0,
+        "game_id": "401909940",
+        "market": "three_pointers_made",
+        "player_id": "6585",
+        "production_rounded_mean_target": 0
+      },
+      {
+        "frozen_research_target": 0,
+        "game_id": "401909941",
+        "market": "three_pointers_made",
+        "player_id": "4222252",
+        "production_rounded_mean_target": 0
+      },
+      {
+        "frozen_research_target": 0,
+        "game_id": "401909941",
+        "market": "three_pointers_made",
+        "player_id": "4684208",
+        "production_rounded_mean_target": 0
+      },
+      {
+        "frozen_research_target": 0,
+        "game_id": "401909941",
+        "market": "three_pointers_made",
+        "player_id": "4278129",
+        "production_rounded_mean_target": 0
+      },
+      {
+        "frozen_research_target": 0,
+        "game_id": "401909942",
+        "market": "three_pointers_made",
+        "player_id": "3134903",
+        "production_rounded_mean_target": 0
+      },
+      {
+        "frozen_research_target": 0,
+        "game_id": "401909942",
+        "market": "three_pointers_made",
+        "player_id": "4397886",
+        "production_rounded_mean_target": 0
+      },
+      {
+        "frozen_research_target": 0,
+        "game_id": "401909942",
+        "market": "three_pointers_made",
+        "player_id": "4897449",
+        "production_rounded_mean_target": 0
+      },
+      {
+        "frozen_research_target": 0,
+        "game_id": "401909942",
+        "market": "three_pointers_made",
+        "player_id": "4348700",
+        "production_rounded_mean_target": 0
+      },
+      {
+        "frozen_research_target": 0,
+        "game_id": "401909942",
+        "market": "three_pointers_made",
+        "player_id": "4593034",
+        "production_rounded_mean_target": 0
+      },
+      {
+        "frozen_research_target": 0,
+        "game_id": "401909943",
+        "market": "three_pointers_made",
+        "player_id": "4280245",
+        "production_rounded_mean_target": 0
+      },
+      {
+        "frozen_research_target": 0,
+        "game_id": "401909943",
+        "market": "three_pointers_made",
+        "player_id": "4601023",
+        "production_rounded_mean_target": 0
+      }
+    ]
   },
-  "games_evaluated": 11,
+  "games_evaluated": 25,
   "method": "same original pretip athletes, actual final numerical means, played rows only",
   "per_game_mae": {
     "401909287": {
@@ -364,9 +612,317 @@
         "v4_only": 1.16327,
         "v5_only": 1.19295
       }
+    },
+    "401909938": {
+      "assists": {
+        "blend": 1.40912,
+        "v4_only": 1.35648,
+        "v5_only": 1.71726
+      },
+      "points": {
+        "blend": 5.23638,
+        "v4_only": 5.09599,
+        "v5_only": 5.56582
+      },
+      "rebounds": {
+        "blend": 1.87257,
+        "v4_only": 1.67771,
+        "v5_only": 2.07312
+      },
+      "three_pointers_made": {
+        "blend": 0.96708,
+        "v4_only": 0.92389,
+        "v5_only": 1.01027
+      }
+    },
+    "401909939": {
+      "assists": {
+        "blend": 2.28392,
+        "v4_only": 2.30612,
+        "v5_only": 2.39807
+      },
+      "points": {
+        "blend": 4.24605,
+        "v4_only": 4.2462,
+        "v5_only": 4.38498
+      },
+      "rebounds": {
+        "blend": 2.20914,
+        "v4_only": 2.18819,
+        "v5_only": 2.23011
+      },
+      "three_pointers_made": {
+        "blend": 0.77758,
+        "v4_only": 0.78192,
+        "v5_only": 0.77326
+      }
+    },
+    "401909940": {
+      "assists": {
+        "blend": 1.30822,
+        "v4_only": 1.22154,
+        "v5_only": 1.43246
+      },
+      "points": {
+        "blend": 6.03013,
+        "v4_only": 4.94408,
+        "v5_only": 7.11619
+      },
+      "rebounds": {
+        "blend": 1.87314,
+        "v4_only": 1.49878,
+        "v5_only": 2.45298
+      },
+      "three_pointers_made": {
+        "blend": 0.81606,
+        "v4_only": 0.72829,
+        "v5_only": 0.93101
+      }
+    },
+    "401909941": {
+      "assists": {
+        "blend": 1.86144,
+        "v4_only": 1.84679,
+        "v5_only": 1.93193
+      },
+      "points": {
+        "blend": 5.62269,
+        "v4_only": 4.5344,
+        "v5_only": 6.92504
+      },
+      "rebounds": {
+        "blend": 2.31192,
+        "v4_only": 2.11473,
+        "v5_only": 2.58727
+      },
+      "three_pointers_made": {
+        "blend": 0.80243,
+        "v4_only": 0.68272,
+        "v5_only": 0.96548
+      }
+    },
+    "401909942": {
+      "assists": {
+        "blend": 1.85292,
+        "v4_only": 1.76172,
+        "v5_only": 1.97676
+      },
+      "points": {
+        "blend": 5.32376,
+        "v4_only": 5.28339,
+        "v5_only": 5.53331
+      },
+      "rebounds": {
+        "blend": 2.18034,
+        "v4_only": 2.17993,
+        "v5_only": 2.23356
+      },
+      "three_pointers_made": {
+        "blend": 1.04993,
+        "v4_only": 1.06409,
+        "v5_only": 1.04521
+      }
+    },
+    "401909943": {
+      "assists": {
+        "blend": 1.41158,
+        "v4_only": 1.45959,
+        "v5_only": 1.37874
+      },
+      "points": {
+        "blend": 3.44482,
+        "v4_only": 3.41449,
+        "v5_only": 3.64728
+      },
+      "rebounds": {
+        "blend": 1.97831,
+        "v4_only": 1.9724,
+        "v5_only": 2.02119
+      },
+      "three_pointers_made": {
+        "blend": 0.87301,
+        "v4_only": 0.81529,
+        "v5_only": 0.93071
+      }
+    },
+    "401909944": {
+      "assists": {
+        "blend": 1.51378,
+        "v4_only": 1.43812,
+        "v5_only": 1.61911
+      },
+      "points": {
+        "blend": 4.00142,
+        "v4_only": 3.35188,
+        "v5_only": 4.65095
+      },
+      "rebounds": {
+        "blend": 2.21924,
+        "v4_only": 2.11793,
+        "v5_only": 2.33585
+      },
+      "three_pointers_made": {
+        "blend": 0.91332,
+        "v4_only": 0.83816,
+        "v5_only": 0.99604
+      }
+    },
+    "401909945": {
+      "assists": {
+        "blend": 1.34336,
+        "v4_only": 1.32376,
+        "v5_only": 1.56434
+      },
+      "points": {
+        "blend": 4.02408,
+        "v4_only": 3.97405,
+        "v5_only": 4.18554
+      },
+      "rebounds": {
+        "blend": 1.71328,
+        "v4_only": 1.65344,
+        "v5_only": 1.77309
+      },
+      "three_pointers_made": {
+        "blend": 0.73596,
+        "v4_only": 0.67868,
+        "v5_only": 0.81106
+      }
+    },
+    "401909946": {
+      "assists": {
+        "blend": 1.09055,
+        "v4_only": 1.1208,
+        "v5_only": 1.20186
+      },
+      "points": {
+        "blend": 5.48818,
+        "v4_only": 5.65125,
+        "v5_only": 5.8358
+      },
+      "rebounds": {
+        "blend": 2.40757,
+        "v4_only": 2.26441,
+        "v5_only": 2.55821
+      },
+      "three_pointers_made": {
+        "blend": 1.13097,
+        "v4_only": 1.12004,
+        "v5_only": 1.14317
+      }
+    },
+    "401909947": {
+      "assists": {
+        "blend": 1.78131,
+        "v4_only": 1.39229,
+        "v5_only": 2.24851
+      },
+      "points": {
+        "blend": 6.50091,
+        "v4_only": 5.49967,
+        "v5_only": 7.62309
+      },
+      "rebounds": {
+        "blend": 1.97964,
+        "v4_only": 1.86226,
+        "v5_only": 2.34622
+      },
+      "three_pointers_made": {
+        "blend": 1.06915,
+        "v4_only": 0.96902,
+        "v5_only": 1.173
+      }
+    },
+    "401909948": {
+      "assists": {
+        "blend": 1.64567,
+        "v4_only": 1.54216,
+        "v5_only": 1.75965
+      },
+      "points": {
+        "blend": 4.72837,
+        "v4_only": 4.39942,
+        "v5_only": 5.2322
+      },
+      "rebounds": {
+        "blend": 2.19137,
+        "v4_only": 2.11501,
+        "v5_only": 2.27301
+      },
+      "three_pointers_made": {
+        "blend": 0.67002,
+        "v4_only": 0.59978,
+        "v5_only": 0.74736
+      }
+    },
+    "401909949": {
+      "assists": {
+        "blend": 1.6553,
+        "v4_only": 1.62207,
+        "v5_only": 1.75317
+      },
+      "points": {
+        "blend": 5.31996,
+        "v4_only": 5.02922,
+        "v5_only": 5.68599
+      },
+      "rebounds": {
+        "blend": 1.89841,
+        "v4_only": 1.8199,
+        "v5_only": 2.02284
+      },
+      "three_pointers_made": {
+        "blend": 1.21833,
+        "v4_only": 1.17923,
+        "v5_only": 1.26157
+      }
+    },
+    "401909950": {
+      "assists": {
+        "blend": 1.16481,
+        "v4_only": 1.15248,
+        "v5_only": 1.22329
+      },
+      "points": {
+        "blend": 4.68592,
+        "v4_only": 4.72363,
+        "v5_only": 4.7559
+      },
+      "rebounds": {
+        "blend": 1.79755,
+        "v4_only": 1.87374,
+        "v5_only": 1.72133
+      },
+      "three_pointers_made": {
+        "blend": 0.72709,
+        "v4_only": 0.7118,
+        "v5_only": 0.75857
+      }
+    },
+    "401909951": {
+      "assists": {
+        "blend": 1.82946,
+        "v4_only": 1.36009,
+        "v5_only": 2.42411
+      },
+      "points": {
+        "blend": 6.99533,
+        "v4_only": 4.95877,
+        "v5_only": 9.10829
+      },
+      "rebounds": {
+        "blend": 2.168,
+        "v4_only": 2.00369,
+        "v5_only": 2.34843
+      },
+      "three_pointers_made": {
+        "blend": 1.22386,
+        "v4_only": 0.98004,
+        "v5_only": 1.50332
+      }
     }
   },
-  "projections_evaluated": 880,
+  "projections_evaluated": 1936,
   "promoted": false,
   "rejected_claims": [
     "Older archives cannot be backfilled with native component probabilities; only future frozen same-target chances can be scored",
@@ -375,5 +931,5 @@
   ],
   "schema": "NBA_V5_FROZEN_COMPONENT_COMPARISON_V1",
   "scope": "last immutable forecast; no later resimulation, no arbitrary alternate targets",
-  "v5_and_v4_component_mean_only": true
+  "v5_and_v4_component_mean_only": false
 }
