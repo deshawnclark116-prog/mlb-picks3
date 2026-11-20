@@ -101,6 +101,7 @@ def _probability_rows(archive_root, grades_root):
     """
     from nba.nba_v5_rank import whole
     result = []
+    target_disagreements = []
     for path in sorted(Path(grades_root).glob("*.json")):
         grade = json.loads(path.read_text())
         if grade.get("kind") != "last":
