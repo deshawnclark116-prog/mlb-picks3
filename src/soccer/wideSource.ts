@@ -33,9 +33,11 @@ export const wideMatchKey=(x:Pick<Match,'league'|'date'|'home'|'away'>)=>
  JSON.stringify([x.league,x.date,x.home,x.away]);
 
 export function readWideCatalog(raw:unknown):WideCatalog{
- const x=raw as Partial<WideCatalog>|null;
- if(!x||x.season!=='2627'||typeof x.generated_at_utc!=='string'||
-   !Number.isFinite(Date.parse(x.generated_at_utc))||
+ const x=raw as (Partial<WideCatalog>&{generated_utc?:string})|null;
+ // This actual upstream catalog uses generated_utc, not generated_at_utc.
+ const generated=x?.generated_utc;
+ if(!x||x.season!=='2627'||typeof generated!=='string'||
+   !Number.isFinite(Date.parse(generated))||
    !Array.isArray(x.leagues)||x.leagues.length<5||x.leagues.length>300)
    throw Error('SOCCER_WIDE_INVALID_CATALOG');
  const seen=new Set<string>();
@@ -51,7 +53,7 @@ export function readWideCatalog(raw:unknown):WideCatalog{
    return {id:folder.slice(5),name,folder,
            results:l.results,fixtures:l.fixtures,latest:l.latest,errors:l.errors};
  });
- return {season:'2627',generated_at_utc:x.generated_at_utc,leagues};
+ return {season:'2627',generated_at_utc:generated,leagues};
 }
 
 export function sourceUrls(l:WideLeague){
