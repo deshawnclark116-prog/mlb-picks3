@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-20_05_00PM.pdf",
-  "published_at_utc": "2026-11-20T22:00:00+00:00",
-  "captured_at_utc": "2026-11-20T22:16:08.533751+00:00",
-  "source_sha256": "ed29d883f94e4a24dc79bbbed05bf4e8a72e4f4d1ff8a75cd17dc55388ccc30c",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-20_05_15PM.pdf",
+  "published_at_utc": "2026-11-20T22:15:00+00:00",
+  "captured_at_utc": "2026-11-20T22:21:39.083347+00:00",
+  "source_sha256": "bd89f597b3a984c73ac5dfbcad770ea44919f667c0b80e33488a9bc1212305f3",
   "reports": [
     {
       "matchup": "CHA@ATL",
@@ -59,7 +59,7 @@
       "team_abbr": "ATL",
       "player": "Castro, Rafael",
       "normalized_player": "rafael castro",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "G League - Two-Way"
     },
     {
@@ -67,7 +67,7 @@
       "team_abbr": "ATL",
       "player": "Dennis, RayJ",
       "normalized_player": "rayj dennis",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "G League - Two-Way"
     },
     {
@@ -75,7 +75,7 @@
       "team_abbr": "ATL",
       "player": "Flemings, Kingston",
       "normalized_player": "kingston flemings",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Lumbar Strain"
     },
     {
@@ -123,7 +123,7 @@
       "team_abbr": "ATL",
       "player": "Wilson, Jalen",
       "normalized_player": "jalen wilson",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "G League - Two-Way"
     },
     {
@@ -909,9 +909,49 @@
       "normalized_player": "jordan clarkson",
       "status": "OUT",
       "reason": "Injury/Illness - Right Plantar Fasciitis"
+    },
+    {
+      "matchup": "MEM@MIN",
+      "team_abbr": "MIN",
+      "player": "Beringer, Joan",
+      "normalized_player": "joan beringer",
+      "status": "AVAILABLE",
+      "reason": "Injury/Illness - Face Mask"
+    },
+    {
+      "matchup": "MEM@MIN",
+      "team_abbr": "MIN",
+      "player": "Clark, Jaylen",
+      "normalized_player": "jaylen clark",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Hamstring Strain"
+    },
+    {
+      "matchup": "MEM@MIN",
+      "team_abbr": "MIN",
+      "player": "DiVincenzo, Donte",
+      "normalized_player": "donte divincenzo",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "MEM@MIN",
+      "team_abbr": "MIN",
+      "player": "Edwards, Anthony",
+      "normalized_player": "anthony edwards",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "MEM@MIN",
+      "team_abbr": "MIN",
+      "player": "Zikarsky, Rocco",
+      "normalized_player": "rocco zikarsky",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
     }
   ],
-  "rows": 113,
+  "rows": 118,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
