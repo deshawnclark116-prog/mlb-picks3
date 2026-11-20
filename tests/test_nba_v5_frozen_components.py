@@ -96,7 +96,7 @@ class FrozenCompareTests(unittest.TestCase):
             self.assertAlmostEqual(pts["brier"]["v4_only"],0.26)
             self.assertAlmostEqual(pts["brier"]["v5_only"],0.26)
 
-    def test_changing_original_component_target_is_rejected(self):
+    def test_frozen_research_event_is_graded_unchanged_and_not_claimed_as_production_target(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp)
             p=pair("1","points",2.5,3,2)
@@ -104,7 +104,38 @@ class FrozenCompareTests(unittest.TestCase):
                 "schema":"NBA_V5_SAME_TARGET_COMPONENT_PROBS_V1",
                 "target":3,"including_dnp_reach":{"v4_only":0.4,"v5_only":0.6,"blend":0.5}}
             archive,grades=self.put(root,"100",[p],[(p,3,True)])
-            with self.assertRaisesRegex(ValueError,"TARGET_CHANGED"):
+            report=compare(archive,grades)
+            scored=report["forward_frozen_same_target_probability"]
+            self.assertEqual(scored["events"],1)
+            self.assertEqual(scored["by_market"]["points"]["hits"],1)
+            self.assertEqual(scored["nonproduction_target_events"],1)
+            self.assertFalse(scored["production_target_probability_certified"])
+            self.assertEqual(scored["nonproduction_target_examples"][0]["frozen_research_target"],3)
+            self.assertEqual(scored["nonproduction_target_examples"][0]["production_rounded_mean_target"],2)
+            self.assertFalse(report["promoted"])
+
+    def test_invalid_noninteger_or_zero_frozen_event_is_never_graded(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            p=pair("1","points",2.5,3,2)
+            p["research_fixed_event_component_probabilities"]={
+                "schema":"NBA_V5_SAME_TARGET_COMPONENT_PROBS_V1",
+                "target":0,"including_dnp_reach":{"v4_only":0.4,"v5_only":0.6,"blend":0.5}}
+            archive,grades=self.put(root,"100",[p],[(p,3,True)])
+            result=compare(archive,grades)
+            score=result["forward_frozen_same_target_probability"]
+            self.assertEqual(score["events"],0)
+            self.assertEqual(score["unscorable_frozen_zero_target_events"],1)
+            self.assertEqual(score["status"],"PARTIALLY_UNSCORABLE_FROZEN_ZERO_EVENTS")
+            self.assertFalse(score["production_target_probability_certified"])
+            p["research_fixed_event_component_probabilities"]["target"]=2.0
+            archive,grades=self.put(root,"100",[p],[(p,3,True)])
+            score=compare(archive,grades)["forward_frozen_same_target_probability"]
+            self.assertEqual(score["events"],1)
+            self.assertEqual(score["unscorable_frozen_zero_target_events"],0)
+            p["research_fixed_event_component_probabilities"]["target"]=-1
+            archive,grades=self.put(root,"100",[p],[(p,3,True)])
+            with self.assertRaisesRegex(ValueError,"INVALID_FROZEN_TARGET"):
                 compare(archive,grades)
 
     def test_unmatched_postgame_forecast_time_fails_closed(self):

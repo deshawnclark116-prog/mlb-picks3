@@ -137,46 +137,69 @@ export function gradeNhlOriginalShotProbabilities(
  docs:FrozenNhlShotDoc[],forecasts:OfficialNhlForecast[],
  grades:OfficialNhlGrade[],now=new Date()){
  verifyFirstseenShotLedger(docs);
- const map=new Map<string,OfficialNhlForecast>();
- const hash=new Map<string,OfficialNhlForecast>();
+ // A genuine original-ledger source can contain several pregame versions of
+ // the same player/game/horizon. Select the EXACT frozen source, not the
+ // newest version, and never select based on actual outcomes.
+ const sourceByEvent=new Map<string,OfficialNhlForecast[]>();
+ const sourceByHash=new Map<string,OfficialNhlForecast>();
+ let redundantOriginalCopies=0, redundantFinalCopies=0;
  for(const f of forecasts){
-  if(f.record_type!=='FORECAST')continue;
-  const key=originalKey(f);
-  if(map.has(key)||hash.has(f.row_hash))
-   throw Error('NHL_AMBIGUOUS_OFFICIAL_ORIGINAL_FORECAST');
-  map.set(key,f);hash.set(f.row_hash,f);
+   if(f.record_type!=='FORECAST')continue;
+   const prior=sourceByHash.get(f.row_hash);
+   if(prior){
+     if(JSON.stringify(prior)!==JSON.stringify(f))
+       throw Error('NHL_ORIGINAL_HASH_COLLISION_OR_MUTATION');
+     redundantOriginalCopies++;
+     continue;
+   }
+   sourceByHash.set(f.row_hash,f);
+   const key=originalKey(f);
+   const group=sourceByEvent.get(key)||[];
+   group.push(f);sourceByEvent.set(key,group);
  }
- const final=new Map<string,OfficialNhlGrade>();
+ const finalByHash=new Map<string,OfficialNhlGrade>();
  for(const g of grades){
-  if(g.record_type!=='GRADE')continue;
-  const orig=hash.get(g.forecast_row_hash);
-  if(!orig||orig.forecast_id!==g.forecast_id||
-     String(orig.game_id)!==String(g.game_id)||
-     String(orig.player_id)!==String(g.player_id)||
-     orig.forecast_horizon!==g.forecast_horizon)
-    throw Error('NHL_OFFICIAL_OUTCOME_NOT_LINKED_TO_ORIGINAL');
-  const key=originalKey(orig);
-  if(final.has(key))throw Error('NHL_DUPLICATE_VERIFIED_OFFICIAL_SHOTS');
-  if(!['FINAL','OFF'].includes(g.game_state)||
-     !Number.isInteger(g.actual_sog)||g.actual_sog<0||
-     typeof g.played!=='boolean'||(!g.played&&g.actual_sog!==0))
-    throw Error('NHL_NOT_OFFICIAL_FINAL_OR_BROKEN_DNP');
-  final.set(key,g);
+   if(g.record_type!=='GRADE')continue;
+   const orig=sourceByHash.get(g.forecast_row_hash);
+   if(!orig||orig.forecast_id!==g.forecast_id||
+      String(orig.game_id)!==String(g.game_id)||
+      String(orig.player_id)!==String(g.player_id)||
+      orig.forecast_horizon!==g.forecast_horizon)
+     throw Error('NHL_OFFICIAL_OUTCOME_NOT_LINKED_TO_ORIGINAL');
+   const previous=finalByHash.get(g.forecast_row_hash);
+   if(previous){
+     if(JSON.stringify(previous)!==JSON.stringify(g))
+       throw Error('NHL_CONFLICTING_VERIFIED_OFFICIAL_SHOTS');
+     redundantFinalCopies++;
+     continue;
+   }
+   if(!['FINAL','OFF'].includes(g.game_state)||
+      !Number.isInteger(g.actual_sog)||g.actual_sog<0||
+      typeof g.played!=='boolean'||(!g.played&&g.actual_sog!==0))
+     throw Error('NHL_NOT_OFFICIAL_FINAL_OR_BROKEN_DNP');
+   finalByHash.set(g.forecast_row_hash,g);
  }
+ let exactSourceAmbiguities=0, noExactSource=0, noVerifiedFinal=0;
  const rows=[];
  const byMilestone:Record<string,{n:number;hits:number;brierSum:number;
      pSum:number;bins:Array<{n:number;hits:number;pSum:number}>}>={};
  for(const k of MARKETS)byMilestone[k]={n:0,hits:0,brierSum:0,pSum:0,
    bins:Array.from({length:10},()=>({n:0,hits:0,pSum:0}))};
  for(const d of docs)for(const x of d.predictions){
-   const key=originalKey(x),f=map.get(key),g=final.get(key);
-   let actual:number|null=null;
-   // Match *exact* genuine version/horizon/as-of original numeric model.
-   if(f&&g&&f.team===x.team&&f.scheduled_start===x.scheduled_start&&
+   const key=originalKey(x);
+   const candidates=(sourceByEvent.get(key)||[]).filter(f=>
+      f.team===x.team&&f.scheduled_start===x.scheduled_start&&
       f.generated_at===x.original_source_generated_at&&
       f.cutoff_at===x.original_source_cutoff_at&&
-      Math.abs(f.expected_sog-x.model_expected_shots)<.001)
-     actual=g.actual_sog;
+      Math.abs(f.expected_sog-x.model_expected_shots)<.001);
+   let actual:number|null=null;
+   if(candidates.length>1)exactSourceAmbiguities++;
+   else if(!candidates.length)noExactSource++;
+   else {
+     const grade=finalByHash.get(candidates[0].row_hash);
+     if(!grade)noVerifiedFinal++;
+     else actual=grade.actual_sog;
+   }
    for(const k of MARKETS){
      const p=x.original_model_p_ge[k];
      const y=actual===null?null:Number(actual>=Number(k));
@@ -212,6 +235,13 @@ export function gradeNhlOriginalShotProbabilities(
    verified_milestone_outcomes:rows.filter(r=>r.actual_sog!==null).length,
    unverified_milestone_outcomes:rows.filter(r=>r.actual_sog===null).length,
    historical_market_promotion_claimed:false,
+   distinct_official_original_forecasts:sourceByHash.size,
+   repeated_original_event_keys:[...sourceByEvent.values()].filter(a=>a.length>1).length,
+   redundant_byte_identical_original_copies:redundantOriginalCopies,
+   redundant_byte_identical_final_copies:redundantFinalCopies,
+   unverified_players_no_exact_frozen_source:noExactSource,
+   unverified_players_ambiguous_exact_source:exactSourceAmbiguities,
+   unverified_players_no_independent_final:noVerifiedFinal,
    notes:'Prospective only; exact original source/horizon matched to independently verified official final. No retroactive original probability repair. Book lines not used. Forward promotion requires future preregistered reliable independent samples.',
    official_bets:0,by_milestone:report,predicted_vs_actual:rows
  };
