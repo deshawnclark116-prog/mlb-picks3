@@ -1,0 +1,50 @@
+name: Exact 7PM Charlotte Atlanta production V5 card audit Nov 20
+on:
+  pull_request:
+    paths:
+      - .github/workflows/nba_cha_atl_7pm_card_audit_20261120.yml
+permissions:
+  contents: read
+jobs:
+  exact-original-game-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read compressed game-specific NBA V5 last original; print only game projections
+        run: |
+          python - <<'PY'
+          import json,gzip
+          p='docs/nba_v5_archive/last/401909305.json.gz'
+          with gzip.open(p,'rt') as fh: obj=json.load(fh)
+          gs=obj['games']
+          assert len(gs)==1 and str(gs[0]['game_id'])=='401909305'
+          g=gs[0]
+          print('EXACT_CHA_ATL_GAME',json.dumps({
+            'game_id':g['game_id'],'matchup':g.get('away','')+' at '+g.get('home',''),
+            'tipoff_utc':g.get('tipoff_utc'),
+            'forecast_at_utc':g.get('forecast_at_utc'),
+            'model_version':g.get('model_version'),
+            'projection_source':g.get('projection_source'),
+            'rows':len(g['rows'])
+          }))
+          selected=sorted([r for r in g['rows'] if isinstance(r.get('frontend_rank'),int)],
+                           key=lambda r:r['frontend_rank'])
+          print('EXACT_CHA_ATL_TOP_20',json.dumps([{
+             'rank':r['frontend_rank'],'player':r['player'],'team':r.get('team'),
+             'market':r['market'],'stat_projection':round(float(r['mean']),2),
+             'whole_projection':r.get('whole_projection'),
+             'chance_reach_with_dnp':r.get('frontend_ranking_probability'),
+             'chance_reach_if_plays':r.get('reach_probability'),
+             'active_chance':r.get('p_active'),
+             'reported_status':r.get('reported_status'),
+             'prior_history_n':r.get('prior_history_n')
+          } for r in selected[:20]]))
+          print('EXACT_CHA_ATL_BY_MARKET',json.dumps({
+             market:[{'player':r['player'],'projection':round(float(r['mean']),2),
+                      'rounded':r.get('whole_projection'),
+                      'chance':r.get('frontend_ranking_probability')}
+                 for r in selected if r['market']==market][:5]
+             for market in ['points','rebounds','assists','three_pointers_made']
+          }))
+          PY
