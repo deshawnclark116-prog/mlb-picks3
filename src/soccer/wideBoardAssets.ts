@@ -51,7 +51,7 @@ export function wideSoccerOriginals(atUtc:string):Forecast[]{
    const key=wideMatchKey(f);
    if(seen.has(key))throw Error('SOCCER_WIDE_DUPLICATE_ARCHIVED_FIXTURE');
    seen.add(key);
-   if(x.captured_at_utc<=atUtc&&f.date>=atUtc.slice(0,10))
+   if(x.captured_at_utc<=atUtc&&f.date>atUtc.slice(0,10))
      out.push(f);
  }
  return out;
