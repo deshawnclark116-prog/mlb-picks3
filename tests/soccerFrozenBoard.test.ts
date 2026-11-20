@@ -15,7 +15,10 @@ test('REAL archived first-seen soccer match goal forecasts make a nonempty offli
  assert(cards.every(x=>x.forecast.expectedHomeGoals>0&&x.forecast.expectedAwayGoals>0));
  assert(cards.every(x=>x.capturedAtUtc<'2026-11-01T14:00:00.000Z'));
  assert(cards.every(x=>x.forecast.status==='RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET'));
- const after=selectFrozenSoccerCards(originals,'2026-12-01T00:00:00.000Z');
+ const latestFrozenFixture=Object.values(originals).map(x=>x.forecast.date).sort().at(-1);
+ assert(latestFrozenFixture);
+ const afterAllKnownFixtures=new Date(Date.parse(latestFrozenFixture+'T00:00:00Z')+86400000).toISOString();
+ const after=selectFrozenSoccerCards(originals,afterAllKnownFixtures);
  assert.equal(after.length,0,'Expired games must not remain as future picks');
 });
 test('no post-fixture snapshots, duplicate archived IDs or fabricated probabilities',()=>{
