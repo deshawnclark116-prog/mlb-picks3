@@ -122,3 +122,91 @@ an already-consulted holdout.
 - No change to served NBA/NHL forecast formulas, official publication
   gates, sportsbook lines, or displayed odds. Test success is NOT
   reported as improved model accuracy.
+
+
+## Nov 20 verified outcome addendum — after live CI, original-only
+
+### NBA independent architecture (research PR #140 merged)
+- A *separate* three-architecture tournament used only previous-date
+  boxscore features: recent-five stat average, direct boosted stat count,
+  and learned minutes multiplied by shrunk per-minute production.
+  Original V3/V4/V5 production code remained untouched.
+- Selection on Jan 1–Feb 14 2026, 6,880 actual played-player observations
+  per market: direct learned MAE best of three for pts 4.5257
+  (recent-five 4.7086); reb 1.9219 (1.9849); ast 1.3473 (1.3958);
+  3PM .9113 (.9473).
+- Separately scored already-consulted current 2026-27 NBA,
+  4,779 played-player observations per market:
+  direct pts 4.8056 vs baseline 4.9818, ast 1.3883 vs 1.4434,
+  3PM .9271 vs .9504. Rebounds direct 1.9741 vs baseline 1.9939,
+  but per-minute factorized 1.9355 was better in the already-consulted
+  diagnostic; DO NOT select new coefficients from this cohort.
+- Same-game clustered 95% confidence interval on current-season direct
+  MAE improvement vs recent-five: points [+.1175,+.2352],
+  rebounds [-.0066,+.0445] (INCLUDES zero), assists
+  [+.0382,+.0712], threes [+.0115,+.0343].
+- These are **NOT genuine original pregame daily-roster forecasts**:
+  model population came from eventual final played-player boxes,
+  and no game-day P(active) is predicted. No fair exact V4 same-cohort
+  production comparison, and no promotion.
+- CI source https://github.com/deshawnclark116-prog/mlb-picks3/actions/runs/44812767498
+- Frozen research https://github.com/deshawnclark116-prog/mlb-picks3/pull/140
+  and docs/NBA_INDEPENDENT_NO_HINDSIGHT_ARCHITECTURE_RESULTS_2026_11_20.md
+
+### NFL independent architecture (research PR #192 merged)
+- 2025 validation selected recent-five baseline over independent
+  direct-yardage ML and learned opportunity×prior-efficiency for both
+  rushing and receiving: rushing MAE 13.0181 baseline vs 13.0693
+  factorized; receiving 17.0846 baseline vs 18.2735 factorized.
+- Already-consulted 2026 conditional played-player diagnostic:
+  rushing n=1,683 factorized MAE 12.1649 vs recent-five 12.8647,
+  receiving n=2,718 direct 17.2982 vs recent-five 17.5520,
+  but selection rules forbid promotion after earlier validation fail.
+- Source https://github.com/deshawnclark116-prog/mlb-picks2/actions/runs/44812079778
+  and docs/NFL_INDEPENDENT_OPPORTUNITY_ARCHITECTURE_REAL_RESULTS_2026_11_20.md
+
+### NHL original future probability grade successfully restored
+- On actual main branch, 2,963 original player forecasts and 14,815
+  verified 1+ through 5+ shot milestone outcomes graded without duplicate
+  source ambiguity. Actual vs predicted frequencies:
+  1+ .692879 vs .704456; 2+ .409382 vs .408568;
+  3+ .213972 vs .213559; 4+ .091124 vs .105733;
+  5+ .041174 vs .050920. Higher thresholds mildly overpredicted.
+- Brier 1+ .184665; 2+ .204286; 3+ .144088;
+  4+ .074945; 5+ .037246. Game/player outcomes for different
+  thresholds are correlated, not 14,815 independent matches.
+- Main source https://github.com/deshawnclark116-prog/mlb-picks3/actions/runs/44812118262
+  from merged research PR #139. Current-season market certification
+  remains FALSE; no official bet promotion.
+
+### Soccer actual firstseen outcome grading restored
+- The original OpenFootball fixture feed had many *past* matches
+  without full-time scores, leaving 157 pregame firstseens ungraded.
+  A genuinely independent, more up-to-date football results feed now
+  validates explicit aliases for all 96 clubs in the five 2026/27
+  leagues, matches exact league/date/home/away, and quarantines score
+  conflicts, unknown identities and invalid source data.
+- Main source matched and verified **40** pregame original forecasts,
+  across 80 team-goal targets, with **0 conflicting results**.
+  117 originals remained ungraded; at least 11 past fixture records
+  remained unresolved. No score invented from a stale source.
+- On these 40 ORIGINAL saved fixture forecasts, soccer Poisson
+  model Goal MAE .8311 vs original simple baseline .8576,
+  original 3-way Brier .5949 vs baseline .6263. The model was
+  worse than the baseline on EPL and Ligue1 small per-league subsets;
+  DO NOT proclaim a production edge on only 40 outcomes.
+- Main source https://github.com/deshawnclark116-prog/mlb-picks3/actions/runs/44813754538
+  merged source fixes PR #141, status
+  docs/soccer_forward/status.json. Model and betting gates unchanged.
+
+### Research and production boundary
+
+These findings are not proof the sports engine is maximally accurate.
+They identify actual winners, failures and missing data in the existing
+information set. Continue independent modeling on each sport's own
+relevant information, but **no served-line, official wager or champion
+promotion** until a properly sourced, calibrated, original firstseen
+same-cohort future comparison beats the established live incumbent,
+with adequate coverage and game-cluster uncertainty. NBA V3/V4,
+MLB markets, CFB, tennis, and deeper soccer model training remain
+open engineering work, not silently completed.
