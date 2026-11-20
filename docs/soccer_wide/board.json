@@ -1,0 +1,25 @@
+{
+  "schema": "soccer-worldwide-fixtures-and-original-model-research-v1",
+  "asof_calendar_day_utc": "2026-11-20",
+  "generated_at_utc": "2026-11-20T00:00:00.000Z",
+  "catalog_generated_at_utc": "2026-11-20T00:00:00.000Z",
+  "source": "OPEN_MATCHDAY_2627",
+  "season": "2026-27",
+  "competition_count": 0,
+  "competitions": [],
+  "forecasts": [],
+  "fixtures": [],
+  "forecast_count": 0,
+  "fixture_count": 0,
+  "source_receipts": [],
+  "guardrails": {
+    "official_bets": 0,
+    "calibrated": false,
+    "verified_live_book_lines": 0,
+    "available_competition_discovery": true,
+    "date_only_no_verified_kickoff": true,
+    "current_season_only": true,
+    "unverified_regulation_cups_suppressed": true,
+    "original_five_model_untouched": true
+  }
+}
