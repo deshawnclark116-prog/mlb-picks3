@@ -1,0 +1,64 @@
+name: NBA independent opportunities and minutes architecture tournament (not serving)
+on:
+  pull_request:
+    paths:
+      - nba/nba_independent_no_hindsight_opportunity_lab.py
+      - tests/test_nba_independent_no_hindsight_opportunity.py
+      - .github/workflows/nba_independent_no_hindsight_opportunity_lab.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install independent model runtime
+        run: python -m pip install -q "numpy>=2.1,<2.5" "scikit-learn>=1.5,<2"
+      - name: Verify no same-day outcomes enter features
+        run: PYTHONPATH=. python -m unittest discover -s tests -p 'test_nba_independent_no_hindsight_opportunity.py' -v
+  actual-independent-model-comparison:
+    needs: contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install independent model runtime
+        run: python -m pip install -q "numpy>=2.1,<2.5" "scikit-learn>=1.5,<2"
+      - name: Run three independent architectures on real prior-date NBA games
+        run: |
+          PYTHONPATH=. python -m nba.nba_independent_no_hindsight_opportunity_lab \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --out /tmp/nba_independent_no_hindsight_architectures.json
+      - name: Enforce no retrospective claim of an actual new champion
+        run: |
+          python - <<'PY'
+          import json
+          r=json.load(open('/tmp/nba_independent_no_hindsight_architectures.json'))
+          assert r['production_changed'] is False and r['official_bets']==0
+          assert r['eligible_to_promote'] is False
+          assert r['conditional_on_actual_played_player'] is True
+          assert set(r['markets'])=={'points','rebounds','assists','three_pointers_made'}
+          for k,v in r['markets'].items():
+              assert v['validation']['baseline']['n']>=100
+              assert v['consulted_spring']['direct']['n']>=100
+              assert v['consulted_2026_27_season']['minute_factorized']['n']>=50
+              print('NBA_INDEPENDENT_ACTUAL_ACCURACY',k,'winner',v['chosen_exclusively_from_validation'],
+                    'validation',v['validation'],
+                    'consulted_new_season',v['consulted_2026_27_season'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nba-independent-no-hindsight-role-architecture-grade
+          path: /tmp/nba_independent_no_hindsight_architectures.json
+          retention-days: 90
+          if-no-files-found: warn
