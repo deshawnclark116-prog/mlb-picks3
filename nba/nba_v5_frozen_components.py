@@ -32,7 +32,6 @@ def _open_archived(path):
 def _paired(archive_root, grades_root):
     result = []
     target_disagreements = []
-    zero_target_excluded = []
     for path in sorted(Path(grades_root).glob("*.json")):
         grade = json.loads(path.read_text())
         if grade.get("kind") != "last":
@@ -103,6 +102,7 @@ def _probability_rows(archive_root, grades_root):
     from nba.nba_v5_rank import whole
     result = []
     target_disagreements = []
+    zero_target_excluded = []
     for path in sorted(Path(grades_root).glob("*.json")):
         grade = json.loads(path.read_text())
         if grade.get("kind") != "last":
