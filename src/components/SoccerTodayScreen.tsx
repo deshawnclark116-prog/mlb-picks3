@@ -249,7 +249,7 @@ export default function SoccerTodayScreen(){
  }
  grouped.sort((a,b)=>a.fixtureDate.localeCompare(b.fixtureDate)||
   (a.kickoffUtc??'').localeCompare(b.kickoffUtc??'')||
-  a.league!.localeCompare(b.league!)||a.home.localeCompare(b.home));
+  (a.league??'').localeCompare(b.league??'')||a.home.localeCompare(b.home));
  const q=search.trim().toLowerCase();
  const filtered=grouped.filter(g=>
   (league==='ALL'||g.league===league)&&
