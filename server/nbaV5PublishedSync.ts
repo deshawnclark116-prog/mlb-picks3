@@ -108,7 +108,7 @@ export function attachMissingPublishedV5Games(result:any,doc:any,now=Date.now())
  const seen=new Set<string>(),attached:any[]=[];
  for(const game of doc.games??[]){
   const id=String(game?.game_id??'');
-  if(!/^\\d{1,12}$/.test(id)||present.has(id))continue;
+  if(!/^\d{1,12}$/.test(id)||present.has(id))continue;
   try{validateShadowGame(game,seen);}catch{continue;}
   const tip=Date.parse(game.tipoff_utc);
   const at=Date.parse(game.forecast_at_utc);
