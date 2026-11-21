@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - nba/nba_independent_live_shadow.py
+      - nba/nba_independent_projection_confidence.py
       - tests/test_nba_independent_live_shadow.py
       - server/nbaIndependentShadow.ts
       - src/components/NbaIndependentLivePanel.tsx
@@ -13,6 +14,7 @@ on:
     branches: [main]
     paths:
       - nba/nba_independent_live_shadow.py
+      - nba/nba_independent_projection_confidence.py
       - tests/test_nba_independent_live_shadow.py
       - server/nbaIndependentShadow.ts
       - src/components/NbaIndependentLivePanel.tsx
@@ -59,6 +61,7 @@ jobs:
             --games nba/data/nba_v4_games_2026_27.jsonl \
             --v3 docs/nba_v3_latest/latest.json \
             --v5-roster docs/nba_v5_latest/latest.json \
+            --confidence-file docs/nba_independent_live/calibration.json \
             --out "$RUNNER_TEMP/independent-live.json" \
             --archive "$RUNNER_TEMP/independent-first"
       - name: Enforce all actual independent source and prediction constraints
@@ -73,6 +76,12 @@ jobs:
           assert d['prospective_calibration_verified'] is False
           assert d['individual_starter_certified'] is False
           assert d['no_sportsbook_probability'] is True
+          assert d['projection_accuracy_confidence_source']=='NBA_INDEPENDENT_PREDICTION_ACCURACY_VALIDATION_2026_V1'
+          assert d['projection_accuracy_forward_2026_27_calibrated'] is False
+          assert d['projection_accuracy_not_a_bookmaker_hit_probability'] is True
+          assert d['projection_accuracy_windows']=={
+            'points':5.0,'rebounds':2.0,'assists':2.0,'three_pointers_made':1.0
+          }
           assert d['source_v3_sha256'] and d['source_game_history_sha256']
           assert d['additional_pretip_v5_roster_sha256']
           assert d['v5_stat_means_not_used_in_independent_model'] is True
@@ -81,12 +90,27 @@ jobs:
               assert datetime.fromisoformat(g['forecast_at_utc']) < datetime.fromisoformat(g['tipoff_utc'])
               assert g['rows_count']==sum(len(p['predictions']) for p in g['players'])
               assert all(p['active_or_starter_certified'] is False for p in g['players'])
+              for p in g['players']:
+                  assert set(p['predictions'])==set(p['projection_accuracy_confidence'])
+                  for market,c in p['projection_accuracy_confidence'].items():
+                      assert 0 <= c['probability_within_window_if_plays'] <= 1
+                      assert c['not_over_under_probability'] is True
+                      assert c['current_season_calibration_verified'] is False
           print('NBA_INDEPENDENT_REAL_LIVE_BOARD',json.dumps({
              'games':d['games_forecast'],'players':d['players_forecast'],
              'stat_projections':d['rows_forecast'],'status':d['status'],
              'trained_through':d['trained_through_eastern_date'],
              'game_ids':[g['game_id'] for g in d['games']],
-             'official_bets':0,'not_promoted':True
+             'official_bets':0,'not_promoted':True,
+             'confidence_definition':d['projection_accuracy_definition'],
+             'most_reliable_predictions':sorted([
+               {'game':g['game_id'],'player':p['player'],
+                'market':m,'prediction':p['predictions'][m],
+                'accuracy_if_plays':c['probability_within_window_if_plays'],
+                'tolerance':c['window_plus_or_minus']}
+               for g in d['games'] for p in g['players']
+               for m,c in p['projection_accuracy_confidence'].items()
+             ],key=lambda x:-x['accuracy_if_plays'])[:8]
           }))
           PY
       - uses: actions/upload-artifact@v4
@@ -95,6 +119,7 @@ jobs:
           name: nba-independent-real-direct-pregame-model-and-originals
           path: |
             ${{ runner.temp }}/independent-live.json
+            docs/nba_independent_live/calibration.json
             ${{ runner.temp }}/independent-first/first/*.json
           if-no-files-found: warn
           retention-days: 90
