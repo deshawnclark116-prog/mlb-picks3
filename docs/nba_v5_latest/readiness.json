@@ -1,29 +1,11 @@
 {
   "schema": "NBA_V5_FORECAST_READINESS_V1",
-  "checked_at_utc": "2026-11-21T00:42:37.295719+00:00",
-  "document_generated_at_utc": "2026-11-21T00:41:56.335217+00:00",
+  "checked_at_utc": "2026-11-21T00:47:50.800611+00:00",
+  "document_generated_at_utc": "2026-11-21T00:47:07.523965+00:00",
   "games": [
     {
-      "game_id": "401909309",
-      "forecast_at_utc": "2026-11-21T00:41:56.335217+00:00",
-      "tipoff_utc": "2026-11-21T01:00:00+00:00",
-      "player_stat_rows": 210,
-      "players_with_v5_rows": 30,
-      "ready": true,
-      "errors": []
-    },
-    {
-      "game_id": "401909310",
-      "forecast_at_utc": "2026-11-21T00:41:56.335217+00:00",
-      "tipoff_utc": "2026-11-21T01:00:00+00:00",
-      "player_stat_rows": 168,
-      "players_with_v5_rows": 24,
-      "ready": true,
-      "errors": []
-    },
-    {
       "game_id": "401909311",
-      "forecast_at_utc": "2026-11-21T00:41:56.335217+00:00",
+      "forecast_at_utc": "2026-11-21T00:47:07.523965+00:00",
       "tipoff_utc": "2026-11-21T02:30:00+00:00",
       "player_stat_rows": 217,
       "players_with_v5_rows": 31,
@@ -32,7 +14,7 @@
     },
     {
       "game_id": "401909312",
-      "forecast_at_utc": "2026-11-21T00:41:56.335217+00:00",
+      "forecast_at_utc": "2026-11-21T00:47:07.523965+00:00",
       "tipoff_utc": "2026-11-21T03:00:00+00:00",
       "player_stat_rows": 203,
       "players_with_v5_rows": 29,
@@ -41,7 +23,7 @@
     },
     {
       "game_id": "401909313",
-      "forecast_at_utc": "2026-11-21T00:41:56.335217+00:00",
+      "forecast_at_utc": "2026-11-21T00:47:07.523965+00:00",
       "tipoff_utc": "2026-11-21T03:00:00+00:00",
       "player_stat_rows": 189,
       "players_with_v5_rows": 27,
@@ -53,7 +35,7 @@
   "all_games_ready": true,
   "errors": [],
   "data_quality_caveats": {
-    "certified_pregame_source_connected": true,
+    "certified_pregame_source_connected": false,
     "source_audit": "VALIDATED_TEAMWISE_MERGE",
     "optical_tracking_ingested_and_validated": false,
     "forward_accuracy_validated": false,
