@@ -140,7 +140,7 @@ export function readSupplementalESPNFixtures(raw:unknown,league:
   const h=safe(home[0].team?.displayName),a=safe(away[0].team?.displayName);
   const sourceId=safe(ev.id),time=safe(ev.date);
   const d=Date.parse(time);
-  if(!h||!a||h===a||!/^\\d{1,15}$/.test(sourceId)||
+  if(!h||!a||h===a||!/^\d{1,15}$/.test(sourceId)||
      !Number.isFinite(d)||!time.endsWith('Z'))
     throw Error('SOCCER_ESPN_INVALID_SOURCE_TIME_OR_TEAM');
   const kickoffUtc=new Date(d).toISOString();
