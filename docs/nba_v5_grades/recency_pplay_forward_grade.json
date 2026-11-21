@@ -10,22 +10,22 @@
   },
   "limitation": "Known original 11-game retrospective audit identified this underconfidence; candidate is exploratory, not an untouched forward holdout.",
   "no_production_model_weight_or_frontend_change": true,
-  "original_frozen_players_scored_all_including_DNP": 2762,
+  "original_frozen_players_scored_all_including_DNP": 2984,
   "other_statuses_unchanged": {
-    "actual_play_fraction": 0.93906,
-    "candidate_Brier": 0.046268,
-    "candidate_logloss": 0.208308,
-    "candidate_mean_P_play": 0.96264,
-    "changed": 21,
-    "games": 85,
-    "incumbent_Brier": 0.046267,
-    "incumbent_logloss": 0.208306,
-    "incumbent_mean_P_play": 0.96264,
-    "n": 361,
-    "played": 339,
+    "actual_play_fraction": 0.93931,
+    "candidate_Brier": 0.044095,
+    "candidate_logloss": 0.19888,
+    "candidate_mean_P_play": 0.96158,
+    "changed": 22,
+    "games": 91,
+    "incumbent_Brier": 0.044094,
+    "incumbent_logloss": 0.198878,
+    "incumbent_mean_P_play": 0.96158,
+    "n": 379,
+    "played": 356,
     "reasons": {
-      "KEEP_OFFICIAL_OR_REPORTED_STATUS_UNCHANGED": 95,
-      "OVERRIDDEN_BY_VERIFIED_LINEUP": 250,
+      "KEEP_OFFICIAL_OR_REPORTED_STATUS_UNCHANGED": 103,
+      "OVERRIDDEN_BY_VERIFIED_LINEUP": 260,
       "UNCHANGED_EXPLICIT_OR_UNVERIFIED_STATUS": 16
     }
   },
@@ -346,6 +346,145 @@
       "reasons": {
         "KEEP_OFFICIAL_OR_REPORTED_STATUS_UNCHANGED": 4,
         "RECENCY_SHRUNK_SAME_TEAM_PRIOR_APPEARANCES": 18
+      }
+    },
+    "401909306": {
+      "actual_play_fraction": 0.65517,
+      "candidate_Brier": 0.181379,
+      "candidate_logloss": 0.569724,
+      "candidate_mean_P_play": 0.83338,
+      "changed": 28,
+      "games": 1,
+      "incumbent_Brier": 0.156843,
+      "incumbent_logloss": 0.487134,
+      "incumbent_mean_P_play": 0.74483,
+      "n": 29,
+      "played": 19,
+      "reasons": {
+        "KEEP_OFFICIAL_OR_REPORTED_STATUS_UNCHANGED": 4,
+        "NO_CURRENT_TEAM_PRIOR_APPEARANCE": 1,
+        "RECENCY_SHRUNK_SAME_TEAM_PRIOR_APPEARANCES": 24
+      }
+    },
+    "401909307": {
+      "actual_play_fraction": 0.875,
+      "candidate_Brier": 0.095245,
+      "candidate_logloss": 0.373055,
+      "candidate_mean_P_play": 0.89838,
+      "changed": 24,
+      "games": 1,
+      "incumbent_Brier": 0.080267,
+      "incumbent_logloss": 0.301075,
+      "incumbent_mean_P_play": 0.80219,
+      "n": 24,
+      "played": 21,
+      "reasons": {
+        "KEEP_OFFICIAL_OR_REPORTED_STATUS_UNCHANGED": 6,
+        "RECENCY_SHRUNK_SAME_TEAM_PRIOR_APPEARANCES": 18
+      }
+    },
+    "401909308": {
+      "actual_play_fraction": 0.72,
+      "candidate_Brier": 0.130456,
+      "candidate_logloss": 0.376453,
+      "candidate_mean_P_play": 0.83339,
+      "changed": 24,
+      "games": 1,
+      "incumbent_Brier": 0.14731,
+      "incumbent_logloss": 0.452404,
+      "incumbent_mean_P_play": 0.73676,
+      "n": 25,
+      "played": 18,
+      "reasons": {
+        "KEEP_OFFICIAL_OR_REPORTED_STATUS_UNCHANGED": 6,
+        "RECENCY_SHRUNK_SAME_TEAM_PRIOR_APPEARANCES": 19
+      }
+    },
+    "401909309": {
+      "actual_play_fraction": 0.68966,
+      "candidate_Brier": 0.095579,
+      "candidate_logloss": 0.293177,
+      "candidate_mean_P_play": 0.78612,
+      "changed": 29,
+      "games": 1,
+      "incumbent_Brier": 0.104337,
+      "incumbent_logloss": 0.351109,
+      "incumbent_mean_P_play": 0.70137,
+      "n": 29,
+      "played": 20,
+      "reasons": {
+        "KEEP_OFFICIAL_OR_REPORTED_STATUS_UNCHANGED": 9,
+        "RECENCY_SHRUNK_SAME_TEAM_PRIOR_APPEARANCES": 20
+      }
+    },
+    "401909310": {
+      "actual_play_fraction": 0.61538,
+      "candidate_Brier": 0.128445,
+      "candidate_logloss": 0.35101,
+      "candidate_mean_P_play": 0.78089,
+      "changed": 13,
+      "games": 1,
+      "incumbent_Brier": 0.144529,
+      "incumbent_logloss": 0.43223,
+      "incumbent_mean_P_play": 0.68751,
+      "n": 13,
+      "played": 8,
+      "reasons": {
+        "KEEP_OFFICIAL_OR_REPORTED_STATUS_UNCHANGED": 5,
+        "RECENCY_SHRUNK_SAME_TEAM_PRIOR_APPEARANCES": 8
+      }
+    },
+    "401909311": {
+      "actual_play_fraction": 0.66667,
+      "candidate_Brier": 0.162076,
+      "candidate_logloss": 0.441527,
+      "candidate_mean_P_play": 0.84381,
+      "changed": 29,
+      "games": 1,
+      "incumbent_Brier": 0.159829,
+      "incumbent_logloss": 0.488477,
+      "incumbent_mean_P_play": 0.76927,
+      "n": 30,
+      "played": 20,
+      "reasons": {
+        "KEEP_OFFICIAL_OR_REPORTED_STATUS_UNCHANGED": 8,
+        "RECENCY_SHRUNK_SAME_TEAM_PRIOR_APPEARANCES": 22
+      }
+    },
+    "401909312": {
+      "actual_play_fraction": 0.67857,
+      "candidate_Brier": 0.184768,
+      "candidate_logloss": 0.584436,
+      "candidate_mean_P_play": 0.8027,
+      "changed": 24,
+      "games": 1,
+      "incumbent_Brier": 0.162933,
+      "incumbent_logloss": 0.489222,
+      "incumbent_mean_P_play": 0.72818,
+      "n": 28,
+      "played": 19,
+      "reasons": {
+        "KEEP_OFFICIAL_OR_REPORTED_STATUS_UNCHANGED": 9,
+        "NO_CURRENT_TEAM_PRIOR_APPEARANCE": 2,
+        "RECENCY_SHRUNK_SAME_TEAM_PRIOR_APPEARANCES": 17
+      }
+    },
+    "401909313": {
+      "actual_play_fraction": 0.69231,
+      "candidate_Brier": 0.18209,
+      "candidate_logloss": 0.57453,
+      "candidate_mean_P_play": 0.84274,
+      "changed": 25,
+      "games": 1,
+      "incumbent_Brier": 0.148585,
+      "incumbent_logloss": 0.466946,
+      "incumbent_mean_P_play": 0.75637,
+      "n": 26,
+      "played": 18,
+      "reasons": {
+        "KEEP_OFFICIAL_OR_REPORTED_STATUS_UNCHANGED": 10,
+        "NO_CURRENT_TEAM_PRIOR_APPEARANCE": 1,
+        "RECENCY_SHRUNK_SAME_TEAM_PRIOR_APPEARANCES": 15
       }
     },
     "401909936": {
@@ -1843,21 +1982,21 @@
   },
   "schema": "NBA_V5_UNLISTED_PPLAY_FIXED_RESEARCH_TRIAL_V1",
   "true_forward_frozen_unlisted": {
-    "actual_play_fraction": 0.79004,
-    "candidate_Brier": 0.110906,
-    "candidate_logloss": 0.355754,
-    "candidate_mean_P_play": 0.83309,
-    "changed": 2042,
-    "games": 94,
-    "incumbent_Brier": 0.118931,
-    "incumbent_logloss": 0.388185,
-    "incumbent_mean_P_play": 0.74565,
-    "n": 2148,
-    "played": 1697,
+    "actual_play_fraction": 0.78231,
+    "candidate_Brier": 0.11405,
+    "candidate_logloss": 0.364226,
+    "candidate_mean_P_play": 0.83278,
+    "changed": 2238,
+    "games": 102,
+    "incumbent_Brier": 0.12064,
+    "incumbent_logloss": 0.392338,
+    "incumbent_mean_P_play": 0.74546,
+    "n": 2352,
+    "played": 1840,
     "reasons": {
-      "KEEP_OFFICIAL_OR_REPORTED_STATUS_UNCHANGED": 512,
-      "NO_CURRENT_TEAM_PRIOR_APPEARANCE": 42,
-      "RECENCY_SHRUNK_SAME_TEAM_PRIOR_APPEARANCES": 1594
+      "KEEP_OFFICIAL_OR_REPORTED_STATUS_UNCHANGED": 569,
+      "NO_CURRENT_TEAM_PRIOR_APPEARANCE": 46,
+      "RECENCY_SHRUNK_SAME_TEAM_PRIOR_APPEARANCES": 1737
     }
   },
   "unlisted_reconstructed_old_archive": {
@@ -1878,26 +2017,26 @@
     }
   },
   "unlisted_status_challenger": {
-    "Brier_reduction_positive_better": 0.00947,
-    "actual_play_fraction": 0.80133,
-    "candidate_Brier": 0.106953,
-    "candidate_logloss": 0.346373,
-    "candidate_mean_P_play": 0.84131,
-    "changed": 2290,
+    "Brier_reduction_positive_better": 0.008062,
+    "actual_play_fraction": 0.79347,
+    "candidate_Brier": 0.110101,
+    "candidate_logloss": 0.354757,
+    "candidate_mean_P_play": 0.84038,
+    "changed": 2486,
     "game_cluster_bootstrap_95pct_interval": [
-      0.004234,
-      0.014652
+      0.003381,
+      0.012607
     ],
-    "games": 106,
-    "incumbent_Brier": 0.116423,
-    "incumbent_logloss": 0.382258,
-    "incumbent_mean_P_play": 0.74987,
-    "n": 2401,
-    "played": 1924,
+    "games": 114,
+    "incumbent_Brier": 0.118163,
+    "incumbent_logloss": 0.386472,
+    "incumbent_mean_P_play": 0.74937,
+    "n": 2605,
+    "played": 2067,
     "reasons": {
-      "KEEP_OFFICIAL_OR_REPORTED_STATUS_UNCHANGED": 512,
-      "NO_CURRENT_TEAM_PRIOR_APPEARANCE": 47,
-      "RECENCY_SHRUNK_SAME_TEAM_PRIOR_APPEARANCES": 1842
+      "KEEP_OFFICIAL_OR_REPORTED_STATUS_UNCHANGED": 569,
+      "NO_CURRENT_TEAM_PRIOR_APPEARANCE": 51,
+      "RECENCY_SHRUNK_SAME_TEAM_PRIOR_APPEARANCES": 1985
     }
   }
 }
