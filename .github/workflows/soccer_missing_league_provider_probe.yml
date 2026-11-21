@@ -53,3 +53,35 @@ jobs:
                       'status':a.get('strStatus'),'homeScore':a.get('intHomeScore'),
                       'awayScore':a.get('intAwayScore')} for a in ev[:4]]}))
           PY
+          python - <<'PY'
+          import json,urllib.request
+          def get(path):
+              url='https://www.thesportsdb.com/api/v1/json/123/'+path
+              try:
+                  with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'PropEdgeSoccerResearch/1.0'}),timeout=14) as r:
+                      return json.loads(r.read(5000000))
+              except Exception as e:return {'_error':str(e)[:220]}
+          for path in ['lookupevent.php?id=2606425','search_all_leagues.php?c=Australia&s=Soccer',
+                       'eventsday.php?d=2026-11-21&s=Soccer',
+                       'eventsday.php?d=2026-11-21&s=Soccer&l=Australian%20Championship',
+                       'eventsseason.php?id=4497&s=2026',
+                       'eventsseason.php?id=4806&s=2026-2027']:
+              v=get(path);events=v.get('events') or []
+              leagues=v.get('countries') or v.get('leagues') or []
+              print('TSDB_EXPANDED_PROBE',json.dumps({'path':path,'error':v.get('_error'),
+                'events_count':len(events),'league_count':len(leagues),
+                'matched_leagues':[{'id':x.get('idLeague'),'name':x.get('strLeague')}
+                   for x in leagues if 'Championship' in str(x.get('strLeague','')) or
+                    'A-League' in str(x.get('strLeague',''))][:15],
+                'matched_events':[{'id':a.get('idEvent'),'idLeague':a.get('idLeague'),
+                   'league':a.get('strLeague'),'date':a.get('dateEvent'),
+                   'time':a.get('strTime'),'home':a.get('strHomeTeam'),
+                   'away':a.get('strAwayTeam'),'status':a.get('strStatus')}
+                   for a in events if any(s in str(a.get('strLeague',''))
+                     for s in ('Australian Championship','Nicaragua',
+                       'Colombia','Costa-Rica','K League 2','Mexican'))][:12],
+                'first_event':{
+                  'idLeague':events[0].get('idLeague'),
+                  'league':events[0].get('strLeague'),
+                  'status':events[0].get('strStatus')} if events else None}))
+          PY
