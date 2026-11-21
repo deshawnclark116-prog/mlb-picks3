@@ -69,11 +69,15 @@ class ProjectionPercentIsAccuracyNotTarget(unittest.TestCase):
 
     def test_genuine_direct_head_predictions_receive_matching_probability_not_v5(self):
         class Dummy:
+            def __init__(self,value):
+                self.value=value
             def predict(self,X):
-                return np.array([24.1]*len(X))
+                return np.array([self.value]*len(X))
+        by_market={"points":24.1,"rebounds":6.1,"assists":5.1,
+                   "three_pointers_made":1.8}
         source=roster()
         now=dt.datetime(2026,11,20,23,0,tzinfo=dt.timezone.utc)
-        models={m:Dummy() for m in WINDOWS}
+        models={m:Dummy(by_market[m]) for m in WINDOWS}
         counts={m:{"training_player_games":1000} for m in WINDOWS}
         with patch("nba.nba_independent_live_shadow.train_direct_models",
                    return_value=(models,counts)):
@@ -86,7 +90,7 @@ class ProjectionPercentIsAccuracyNotTarget(unittest.TestCase):
         self.assertFalse(doc["projection_accuracy_forward_2026_27_calibrated"])
         for p in doc["games"][0]["players"]:
             for m,number in p["predictions"].items():
-                self.assertEqual(number,24.1)
+                self.assertEqual(number,by_market[m])
                 c=p["projection_accuracy_confidence"][m]
                 self.assertIsNotNone(c["probability_within_window_if_plays"])
                 self.assertEqual(c["metric"],
