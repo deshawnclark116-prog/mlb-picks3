@@ -2,7 +2,8 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {
  SUPPLEMENTAL_SOCCER_LEAGUES,SUPPLEMENTAL_SOCCER_SCHEMA,
- readSupplementalNextEvent,validateSupplementalSnapshot
+ readSupplementalNextEvent,readSupplementalESPNFixtures,
+ validateSupplementalSnapshot
 } from '../src/soccer/supplementalSource';
 import {supplementaryLeagueNames,supplementalUpcoming} from '../src/soccer/supplementalAssets';
 const source='2026-11-20T23:15:00.000Z';
@@ -62,4 +63,32 @@ test('supplemental sources never claim full worldwide fixture list, calibrated p
     guardrails:{...sample.guardrails,calibrated:true}}),/INVALID_SNAPSHOT/);
  assert.throws(()=>validateSupplementalSnapshot({...sample,
     fixtures:[fixtures[0],fixtures[0]]}),/DUPLICATE_EVENT/);
+});
+
+
+test('ESPN independent Colombia and Costa Rica fallback preserves home/away and exact UTC scheduled time',()=>{
+ const raw={leagues:[{name:'Colombian Primera A'}],events:[{
+   id:'701100',date:'2026-11-22T01:15Z',
+   status:{type:{name:'STATUS_SCHEDULED'}},
+   competitions:[{competitors:[
+     {homeAway:'home',team:{displayName:'Once Caldas'}},
+     {homeAway:'away',team:{displayName:'Atlético Nacional'}}
+   ]}]
+ }]};
+ const results=readSupplementalESPNFixtures(raw,'COL_1_primera-a',source);
+ assert.equal(results.length,1);
+ assert.deepEqual([results[0].home,results[0].away],
+   ['Once Caldas','Atlético Nacional']);
+ assert.equal(results[0].kickoffUtc,'2026-11-22T01:15:00.000Z');
+ assert.equal(results[0].source,'ESPN_SITE_SOCCER_SCOREBOARD');
+ assert.equal(results[0].coverage,'PARTIAL_ESPN_SCHEDULE');
+ assert.equal(readSupplementalESPNFixtures({...raw,events:[
+   {...raw.events[0],status:{type:{name:'STATUS_FINAL'}}}
+ ]},'COL_1_primera-a',source).length,0);
+ assert.throws(()=>readSupplementalESPNFixtures({...raw,events:[
+   {...raw.events[0],competitions:[{competitors:[
+     {homeAway:'home',team:{displayName:'Once Caldas'}},
+     {homeAway:'home',team:{displayName:'Atlético Nacional'}}
+   ]}]}
+ ]},'COL_1_primera-a',source),/AMBIGUOUS_HOME_AWAY/);
 });
