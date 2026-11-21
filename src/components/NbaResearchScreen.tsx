@@ -5,6 +5,7 @@ import NbaRollingPlayerPanel from './NbaRollingPlayerPanel';
 import NbaSystemPicksPanel from './NbaSystemPicksPanel';
 import NbaV3ResearchPanel from './NbaV3ResearchPanel';
 import NbaIndependentLivePanel from './NbaIndependentLivePanel';
+import NbaSpecialistPanel from './NbaSpecialistPanel';
 
 const pct = (v: number) => (v * 100).toFixed(1) + '%';
 const gameDayEastern = (iso: string) => {
@@ -32,7 +33,7 @@ export default function NbaResearchScreen() {
   const [day, setDay] = useState('ALL');
   const [search, setSearch] = useState('');
   const [showSearch,setShowSearch]=useState(false);
-  const [mode, setMode] = useState<'PICKS'|'BOARD'|'INDEPENDENT'|'EVIDENCE'|'V2'|'ROLLING'|'TEAMS'|'PLAYERS'>('PICKS');
+  const [mode, setMode] = useState<'PICKS'|'BOARD'|'INDEPENDENT'|'SPECIALIST'|'EVIDENCE'|'V2'|'ROLLING'|'TEAMS'|'PLAYERS'>('PICKS');
 
   useEffect(() => {
     let mounted = true;
@@ -83,6 +84,14 @@ export default function NbaResearchScreen() {
        'border-[#79FF48]/35 bg-[#17311f] text-[#79FF48]')}>
       NEW AI MODEL · Independent player projections
     </button>
+    <button type="button" data-testid="nba-specialist-model-tab"
+      aria-pressed={mode==='SPECIALIST'} onClick={()=>setMode('SPECIALIST')}
+      className={'min-h-11 w-full rounded-lg border px-3 text-xs font-black '+
+       (mode==='SPECIALIST'?'border-[#79FF48] bg-[#79FF48]/15 text-[#79FF48]':
+       'border-[#79FF48]/35 bg-[#17311f] text-[#79FF48]')}>
+      SPECIALIST BOARD · Points V5 · Rebounds V3 · Assists V4 · Threes V3
+    </button>
+    {mode==='SPECIALIST'&&<NbaSpecialistPanel search={search}/>}
     {(mode==='PICKS'||mode==='BOARD')&&
       <NbaV3ResearchPanel key={mode} mode={mode} search={search}/>}
     {mode==='INDEPENDENT'&&<NbaIndependentLivePanel search={search}/>}
