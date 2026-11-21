@@ -1,0 +1,144 @@
+name: NBA independent direct live pretip model and published firstseen numerical forecasts
+on:
+  pull_request:
+    paths:
+      - nba/nba_independent_live_shadow.py
+      - tests/test_nba_independent_live_shadow.py
+      - server/nbaIndependentShadow.ts
+      - src/components/NbaIndependentLivePanel.tsx
+      - src/components/NbaResearchScreen.tsx
+      - server.ts
+      - .github/workflows/nba_independent_live_shadow.yml
+  push:
+    branches: [main]
+    paths:
+      - nba/nba_independent_live_shadow.py
+      - tests/test_nba_independent_live_shadow.py
+      - server/nbaIndependentShadow.ts
+      - src/components/NbaIndependentLivePanel.tsx
+      - src/components/NbaResearchScreen.tsx
+      - server.ts
+      - .github/workflows/nba_independent_live_shadow.yml
+  workflow_run:
+    workflows: ["NBA V3 latest run (re-simulate with current injuries)"]
+    types: [completed]
+  workflow_dispatch: {}
+  schedule:
+    - cron: '7,27,47 0-5,18-23 * * *'
+permissions:
+  contents: write
+concurrency:
+  group: nba-independent-pregame-direct-live
+  cancel-in-progress: false
+jobs:
+  proven-source-and-ml-training:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || 'main' }}
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install the original research head runtime, no new formula switches
+        run: python -m pip install -q "numpy>=2.1,<2.5" "scipy>=1.14,<1.18" "scikit-learn>=1.5,<2"
+      - name: Run same-day and aftertip leakage regression tests
+        run: |
+          PYTHONPATH=. python -m unittest discover -s tests -p 'test_nba_independent_live_shadow.py' -v
+          PYTHONPATH=. python -m unittest discover -s tests -p 'test_nba_independent_no_hindsight_opportunity.py' -v
+      - name: Make current NBA source-verified independent player model forecasts
+        run: |
+          test -s docs/nba_v3_latest/latest.json
+          PYTHONPATH=. python -u -m nba.nba_independent_live_shadow \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --v3 docs/nba_v3_latest/latest.json \
+            --out "$RUNNER_TEMP/independent-live.json" \
+            --archive "$RUNNER_TEMP/independent-first"
+      - name: Enforce all actual independent source and prediction constraints
+        run: |
+          python - <<'PY'
+          import json,os
+          from datetime import datetime
+          d=json.load(open(os.path.join(os.environ['RUNNER_TEMP'],'independent-live.json')))
+          assert d['research_only'] is True and d['official_bets']==0
+          assert d['model_2025_validation_arm']=='direct'
+          assert d['model_version']=='nba-independent-direct-prior-date-head-v1'
+          assert d['prospective_calibration_verified'] is False
+          assert d['individual_starter_certified'] is False
+          assert d['no_sportsbook_probability'] is True
+          assert d['source_v3_sha256'] and d['source_game_history_sha256']
+          assert d['games_forecast']==len(d['games'])
+          for g in d['games']:
+              assert datetime.fromisoformat(g['forecast_at_utc']) < datetime.fromisoformat(g['tipoff_utc'])
+              assert g['rows_count']==sum(len(p['predictions']) for p in g['players'])
+              assert all(p['active_or_starter_certified'] is False for p in g['players'])
+          print('NBA_INDEPENDENT_REAL_LIVE_BOARD',json.dumps({
+             'games':d['games_forecast'],'players':d['players_forecast'],
+             'stat_projections':d['rows_forecast'],'status':d['status'],
+             'trained_through':d['trained_through_eastern_date'],
+             'game_ids':[g['game_id'] for g in d['games']],
+             'official_bets':0,'not_promoted':True
+          }))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nba-independent-real-direct-pregame-model-and-originals
+          path: |
+            ${{ runner.temp }}/independent-live.json
+            ${{ runner.temp }}/independent-first/first/*.json
+          if-no-files-found: warn
+          retention-days: 90
+      - name: Publish new live research projections only after all checks pass
+        if: github.event_name != 'pull_request'
+        run: |
+          set -euo pipefail
+          mkdir -p docs/nba_independent_live/first
+          cp "$RUNNER_TEMP/independent-live.json" docs/nba_independent_live/latest.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path('docs/nba_independent_live/latest.json').read_text())
+          for g in d['games']:
+              f=Path('docs/nba_independent_live/first')/(g['game_id']+'.json')
+              if f.exists():continue
+              original={**d,'games':[g],'games_forecast':1,
+                        'first_pre_tip_numerical_forecast':True}
+              f.write_text(json.dumps(original,separators=(',',':'),sort_keys=True)+'\n')
+          PY
+          git config user.name 'nba-independent-research[bot]'
+          git config user.email 'nba-independent-research[bot]@users.noreply.github.com'
+          git add -- docs/nba_independent_live
+          if git diff --cached --quiet; then
+            echo 'No updated independent forecast source'
+            exit 0
+          fi
+          git commit -m 'NBA independent direct learned: original pretip player projections [skip ci]'
+          for attempt in 1 2 3; do
+            if git pull --rebase origin main && git push origin HEAD:main; then exit 0; fi
+            git rebase --abort || true
+          done
+          echo 'Unable to publish safely; no original prediction rewritten' >&2
+          exit 1
+  production-typescript-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || 'main' }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Compile the real frontend/backend and run independent-source integrity tests
+        run: |
+          npm run build
+          npm run lint
+          node --import tsx --test tests/nbaIndependentShadow.test.ts
