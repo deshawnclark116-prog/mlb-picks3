@@ -1,0 +1,55 @@
+{
+  "schema": "supplemental-soccer-partial-fixtures-v1",
+  "generated_at_utc": "2026-11-20T00:00:00.000Z",
+  "coverage": "FIVE_EXPLICIT_MISSING_LEAGUES_PARTIAL_NEXT_EVENT_ONLY",
+  "competitions": [
+    {
+      "league": "NIC_1_primera",
+      "name": "Nicaraguan Primera División",
+      "providerLeagueId": "4806",
+      "status": "SOURCE_UNAVAILABLE",
+      "count": 0,
+      "error": "FIRST_VERIFIED_SNAPSHOT_PENDING"
+    },
+    {
+      "league": "COL_1_primera-a",
+      "name": "Colombian Primera A",
+      "providerLeagueId": "4497",
+      "status": "SOURCE_UNAVAILABLE",
+      "count": 0,
+      "error": "FIRST_VERIFIED_SNAPSHOT_PENDING"
+    },
+    {
+      "league": "CRI_1_primera",
+      "name": "Costa Rican Primera División",
+      "providerLeagueId": "4815",
+      "status": "SOURCE_UNAVAILABLE",
+      "count": 0,
+      "error": "FIRST_VERIFIED_SNAPSHOT_PENDING"
+    },
+    {
+      "league": "KOR_2_k-league",
+      "name": "South Korean K2 League",
+      "providerLeagueId": "4822",
+      "status": "SOURCE_UNAVAILABLE",
+      "count": 0,
+      "error": "FIRST_VERIFIED_SNAPSHOT_PENDING"
+    },
+    {
+      "league": "AUS_2_championship",
+      "name": "Australian Championship",
+      "providerLeagueId": "5710",
+      "status": "SOURCE_UNAVAILABLE",
+      "count": 0,
+      "error": "FIRST_VERIFIED_SNAPSHOT_PENDING"
+    }
+  ],
+  "fixtures": [],
+  "guardrails": {
+    "official_bets": 0,
+    "calibrated": false,
+    "historical_model_ready": false,
+    "exact_kickoff_independently_confirmed": false,
+    "all_league_fixtures_claimed": false
+  }
+}
