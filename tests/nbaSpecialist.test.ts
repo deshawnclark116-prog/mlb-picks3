@@ -25,7 +25,8 @@ test('Each NBA stat is owned by one model: V5 points, V3 rebounds/threes, V4 ass
  const original=v3(),before=JSON.stringify(original);
  const result=composeNbaSpecialists(original,v3(),v4(),v5(),now);
  assert.deepEqual(result.market_assignments,SPECIALIST_MARKETS);
- assert.equal(result.status,'AVAILABLE_SHADOW_ONLY');
+ assert.equal(result.status,'AVAILABLE_PRIMARY_PROJECTIONS');
+ assert.equal(result.publication_role,'PRIMARY_NBA_SYSTEM_PICKS');
  assert.equal(result.research_only,true);
  assert.equal(result.official_bets,0);
  assert.equal(result.no_ensemble_blending,true);
@@ -60,6 +61,13 @@ test('Out players are omitted and corrupted source version is rejected, never si
  const wrongTeam=v4();wrongTeam.games[0].rows[2].team_id='999';
  assert.throws(()=>composeNbaSpecialists(v3(),v3(),wrongTeam,v5(),now),
    /NBA_SPECIALIST_INVALID_OR_UNVERIFIED_SOURCE_ROW/);
+});
+test('Scheduled games stay visible even when each assigned source is unavailable',()=>{
+ const x=composeNbaSpecialists(v3(),{games:[]},{games:[]},{games:[]},now);
+ assert.equal(x.status,'NO_VERIFIED_SPECIALIST_SOURCES');
+ assert.equal(x.games.length,1);
+ assert.equal(x.games[0].rows.length,0);
+ assert.deepEqual(x.games[0].missing_markets,markets);
 });
 test('Ambiguous duplicate source games are rejected before market selection',()=>{
  const d=v3();d.games.push(d.games[0]);
