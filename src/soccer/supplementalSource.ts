@@ -82,7 +82,7 @@ export function validateSupplementalSnapshot(raw:unknown):SupplementalSnapshot{
     v.guardrails.exact_kickoff_independently_confirmed!==false||
     v.guardrails.all_league_fixtures_claimed!==false)
   throw Error('SOCCER_SUPPLEMENTAL_INVALID_SNAPSHOT');
- const names=new Set(SUPPLEMENTAL_SOCCER_LEAGUES.map(x=>x.league));
+ const names=new Set<string>(SUPPLEMENTAL_SOCCER_LEAGUES.map(x=>x.league));
  const unique=new Set<string>();
  for(const c of v.competitions){
   if(!names.has(c.league)||unique.has(c.league))
