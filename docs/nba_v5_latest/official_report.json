@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-20_08_45PM.pdf",
-  "published_at_utc": "2026-11-21T01:45:00+00:00",
-  "captured_at_utc": "2026-11-21T01:51:19.272074+00:00",
-  "source_sha256": "940e3da080e90b9dd717e015904e580aac9bdb721af435952b4eb21d7b9d231c",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-20_09_15PM.pdf",
+  "published_at_utc": "2026-11-21T02:15:00+00:00",
+  "captured_at_utc": "2026-11-21T02:25:08.115847+00:00",
+  "source_sha256": "a31775d2d058e049a60f06935945c96d9528ff909a0150f0a83edb203a453509",
   "reports": [
     {
       "matchup": "CHA@ATL",
@@ -659,7 +659,7 @@
       "team_abbr": "HOU",
       "player": "Adams, Steven",
       "normalized_player": "steven adams",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -691,7 +691,7 @@
       "team_abbr": "HOU",
       "player": "Sengun, Alperen",
       "normalized_player": "alperen sengun",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Left Eye Corneal"
     },
     {
@@ -747,8 +747,8 @@
       "team_abbr": "SAC",
       "player": "Hunter, De'Andre",
       "normalized_player": "de andre hunter",
-      "status": "QUESTIONABLE",
-      "reason": ""
+      "status": "AVAILABLE",
+      "reason": "-"
     },
     {
       "matchup": "SAC@LAL",
@@ -1076,7 +1076,7 @@
       "player": "Pippen Jr., Scotty",
       "normalized_player": "scotty pippen",
       "status": "OUT",
-      "reason": "Injury/Illness - Lumbar Disc"
+      "reason": ""
     },
     {
       "matchup": "MEM@MIN",
