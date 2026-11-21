@@ -1,0 +1,91 @@
+name: Supplemental soccer leagues and same-day fixture coverage
+on:
+  pull_request:
+    paths:
+      - src/components/SoccerTodayScreen.tsx
+      - src/soccer/supplementalSource.ts
+      - src/soccer/supplementalAssets.ts
+      - scripts/soccerSupplementalSnapshot.ts
+      - tests/soccerSupplementalSource.test.ts
+      - docs/soccer_wide/supplemental_fixtures.json
+      - .github/workflows/soccer_supplemental_leagues.yml
+  push:
+    branches: [main]
+    paths:
+      - src/components/SoccerTodayScreen.tsx
+      - src/soccer/supplementalSource.ts
+      - src/soccer/supplementalAssets.ts
+      - scripts/soccerSupplementalSnapshot.ts
+      - .github/workflows/soccer_supplemental_leagues.yml
+  workflow_dispatch: {}
+  schedule:
+    - cron: '35 12 * * *'
+permissions:
+  contents: write
+concurrency:
+  group: supplemental-soccer-fixtures-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  frontend-and-data-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Build actual frontend
+        run: npm run build
+      - name: Typecheck and immutable soccer fixture eligibility tests
+        run: |
+          npm run lint
+          node --import tsx --test \
+            tests/soccerSupplementalSource.test.ts \
+            tests/soccerWideAllLeagues.test.ts \
+            tests/soccerGameBoard.test.ts \
+            tests/soccerVerifiedIndependentFinals.test.ts
+  supplemental-real-feed-snapshot:
+    needs: frontend-and-data-contracts
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Limited 5-league source refresh (one next event per league max)
+        run: node --import tsx scripts/soccerSupplementalSnapshot.ts
+      - name: Validate no hidden unverified wagers
+        run: |
+          node - <<'JS'
+          const x=require('./docs/soccer_wide/supplemental_fixtures.json');
+          if(x.competitions.length!==5||x.guardrails.official_bets!==0||
+            x.guardrails.calibrated!==false||
+            x.guardrails.all_league_fixtures_claimed!==false)
+            throw Error('UNSUPPORTED_SUPPLEMENTAL_BET_CLAIM');
+          console.log('SOCCER_SUPPLEMENTAL_RESEARCH_COVERAGE',
+            x.competitions.map(c=>[c.league,c.status,c.count]));
+          JS
+      - name: Commit successful source-frozen fixture snapshot
+        run: |
+          git diff --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- docs/soccer_wide/supplemental_fixtures.json
+          if git diff --cached --quiet; then echo 'No new fixture source'; exit 0; fi
+          git commit -m 'Soccer: source-verified missing-league next fixtures [skip ci]'
+          for attempt in 1 2 3; do
+            if git push origin HEAD:main; then exit 0; fi
+            git fetch origin main
+            git rebase origin/main || { git rebase --abort; exit 1; }
+          done
+          exit 1
