@@ -1,0 +1,33 @@
+name: NBA specialist router — typecheck, contracts, build
+
+on:
+  pull_request:
+    paths:
+      - 'server/nbaSpecialist.ts'
+      - 'src/components/NbaSpecialistPanel.tsx'
+      - 'src/components/NbaResearchScreen.tsx'
+      - 'server.ts'
+      - 'tests/nbaSpecialist.test.ts'
+      - 'package.json'
+      - '.github/workflows/nba_specialist_contract.yml'
+  push:
+    branches:
+      - feat/nba-specialist-market-router-20261121
+
+jobs:
+  specialist-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - name: Typecheck
+        run: npm run lint
+      - name: Specialist owner and as-of safety regression
+        run: node --import tsx --test tests/nbaSpecialist.test.ts
+      - name: Production bundle builds without changing default screen
+        run: npm run build
