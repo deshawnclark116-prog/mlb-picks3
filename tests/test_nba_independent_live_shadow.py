@@ -10,7 +10,8 @@ from unittest.mock import patch
 import numpy as np
 from nba.nba_independent_live_shadow import (
     EASTERN, SCHEMA, VERSION, completed_histories,
-    eastern_day, generate_shadow, selected_live_games, to_previous_eastern_completed_games,
+    eastern_day, generate_shadow, selected_live_games, enrich_pretip_player_identities,
+    to_previous_eastern_completed_games,
     write_and_freeze
 )
 from nba.nba_independent_no_hindsight_opportunity_lab import make_features, dataset
@@ -144,6 +145,38 @@ class PredictNoFinalLeakage(unittest.TestCase):
                     "points","rebounds","assists","three_pointers_made")})):
             d=generate_shadow(latest,source,now,history_sha="a"*64,v3_sha="b"*64)
         self.assertNotIn("100",{p["player_id"] for p in d["games"][0]["players"]})
+
+
+    def test_later_pretip_roster_recovers_missing_confirmed_starter_without_using_v5_means(self):
+        now=dt.datetime(2026,11,20,23,0,tzinfo=dt.timezone.utc)
+        early=roster()
+        newer=copy.deepcopy(early)
+        newer['generated_at_utc']='2026-11-20T22:32:00Z'
+        newer['model_version']='nba-v5-native-possession-simulation'
+        for market in ("points","rebounds","assists","three_pointers_made"):
+            newer['games'][0]['rows'].append({
+                "player":"Devin Booker","player_id":"106","team_id":"1",
+                "market":market,"p_active":0.93,
+                "reported_status":"UNKNOWN_NOT_ACTIVE_CERTIFIED",
+                "mean":9999999
+            })
+        combined=enrich_pretip_player_identities(early,newer,now)
+        added=[r for r in combined['games'][0]['rows']
+               if r['player_id']=='106']
+        self.assertEqual(len(added),4)
+        self.assertTrue(all('mean' not in r for r in added))
+        self.assertEqual(combined['games'][0]['source_roster_enrichment'],
+                         'V5_PUBLISHED_PRETIP_IDENTITIES_ONLY_NO_MEANS')
+        self.assertEqual(len(early['games'][0]['rows']),48)
+        self.assertEqual(len(selected_live_games(combined,now)),1)
+        bad=copy.deepcopy(newer)
+        bad['games'][0]['tipoff_utc']='2026-11-21T01:00:00Z'
+        with self.assertRaisesRegex(ValueError,'ROSTER_MATCH_CONFLICT'):
+            enrich_pretip_player_identities(early,bad,now)
+        bad=copy.deepcopy(newer)
+        bad['generated_at_utc']='2026-11-19T12:00:00Z'
+        with self.assertRaisesRegex(ValueError,'STALE_OR_OUT_OF_ORDER'):
+            enrich_pretip_player_identities(early,bad,now)
 
     def test_original_archive_is_immutable(self):
         latest={
