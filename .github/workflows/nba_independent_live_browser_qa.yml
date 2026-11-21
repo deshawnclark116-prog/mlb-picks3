@@ -1,0 +1,35 @@
+name: NBA independent live mobile read-only acceptance
+on:
+  pull_request:
+    paths:
+      - tests/browser/nbaIndependentLive.spec.ts
+      - src/components/NbaIndependentLivePanel.tsx
+      - src/components/NbaResearchScreen.tsx
+      - server/nbaIndependentShadow.ts
+      - .github/workflows/nba_independent_live_browser_qa.yml
+  push:
+    branches: [main]
+    paths:
+      - tests/browser/nbaIndependentLive.spec.ts
+      - src/components/NbaIndependentLivePanel.tsx
+      - src/components/NbaResearchScreen.tsx
+      - server/nbaIndependentShadow.ts
+      - .github/workflows/nba_independent_live_browser_qa.yml
+permissions:
+  contents: read
+jobs:
+  android-360-nba-model-selector:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - name: Install real headless Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Show real independent model numbers on mobile and block V5 fallback
+        run: npx playwright test tests/browser/nbaIndependentLive.spec.ts
