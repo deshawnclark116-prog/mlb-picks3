@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-21_03_45PM.pdf",
-  "published_at_utc": "2026-11-21T20:45:00+00:00",
-  "captured_at_utc": "2026-11-21T20:56:39.074461+00:00",
-  "source_sha256": "d544c0a84135815da6a84a694af982ddfa1a73f05b0d7c7d4ce7c5586a912b08",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-21_04_00PM.pdf",
+  "published_at_utc": "2026-11-21T21:00:00+00:00",
+  "captured_at_utc": "2026-11-21T21:07:33.309316+00:00",
+  "source_sha256": "78ebd712dc5ca491ff6cba6b38249e8ab5096c8038474b90d80f55f75f9e0e81",
   "reports": [
     {
       "matchup": "MIL@PHI",
@@ -525,9 +525,41 @@
       "normalized_player": "keshad johnson",
       "status": "OUT",
       "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "ORL@WAS",
+      "team_abbr": "ORL",
+      "player": "Banchero, Paolo",
+      "normalized_player": "paolo banchero",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "ORL@WAS",
+      "team_abbr": "ORL",
+      "player": "Isaac, Jonathan",
+      "normalized_player": "jonathan isaac",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "ORL@WAS",
+      "team_abbr": "ORL",
+      "player": "Nelson, Izaiyah",
+      "normalized_player": "izaiyah nelson",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "ORL@WAS",
+      "team_abbr": "ORL",
+      "player": "Penda, Noah",
+      "normalized_player": "noah penda",
+      "status": "OUT",
+      "reason": ""
     }
   ],
-  "rows": 65,
+  "rows": 69,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
