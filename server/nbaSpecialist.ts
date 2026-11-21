@@ -78,6 +78,8 @@ export function composeNbaSpecialists(
       if(!selected.length){missing_markets.push(market);continue;}
       for(const r of selected){
         if(String(r.game_id)!==id||
+           (source.home_id&&source.away_id&&
+            ![String(source.home_id),String(source.away_id)].includes(String(r.team_id)))||
            typeof r.model_version!=='string'||!r.model_version.startsWith(PREFIX[owner])||
            !finite(r.mean)||r.mean<0||!finite(r.p_active)||r.p_active<0||r.p_active>1||
            r.research_only!==true||r.not_an_official_bet!==true||
