@@ -53,10 +53,12 @@ jobs:
       - name: Make current NBA source-verified independent player model forecasts
         run: |
           test -s docs/nba_v3_latest/latest.json
+          test -s docs/nba_v5_latest/latest.json
           PYTHONPATH=. python -u -m nba.nba_independent_live_shadow \
             --games nba/data/nba_v4_games_2025_26.jsonl.gz \
             --games nba/data/nba_v4_games_2026_27.jsonl \
             --v3 docs/nba_v3_latest/latest.json \
+            --v5-roster docs/nba_v5_latest/latest.json \
             --out "$RUNNER_TEMP/independent-live.json" \
             --archive "$RUNNER_TEMP/independent-first"
       - name: Enforce all actual independent source and prediction constraints
@@ -72,6 +74,8 @@ jobs:
           assert d['individual_starter_certified'] is False
           assert d['no_sportsbook_probability'] is True
           assert d['source_v3_sha256'] and d['source_game_history_sha256']
+          assert d['additional_pretip_v5_roster_sha256']
+          assert d['v5_stat_means_not_used_in_independent_model'] is True
           assert d['games_forecast']==len(d['games'])
           for g in d['games']:
               assert datetime.fromisoformat(g['forecast_at_utc']) < datetime.fromisoformat(g['tipoff_utc'])
