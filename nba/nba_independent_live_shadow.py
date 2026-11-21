@@ -171,12 +171,87 @@ def selected_live_games(v3, now):
     return games
 
 
-def generate_shadow(v3, historic_games, now, *, history_sha, v3_sha):
-    eligible_games = selected_live_games(v3, now)
+def enrich_pretip_player_identities(v3, v5, now):
+    """Use the later verified V5 fixture roster, never its stat means.
+
+    This is a *source* adapter, not a V5 formula/blend. V5 can recover
+    a confirmed starter whose earlier V3 candidate P(active) was low
+    or whose ID was absent entirely. RotoWire/other independently
+    observed lineups are NOT automatically certified by this adapter.
+    """
+    if not str(v5.get("model_version", "")).startswith("nba-v5-"):
+        raise ValueError("NBA_INDEPENDENT_NOT_A_V5_PREGAME_ROSTER")
+    observed = utc(v5["generated_at_utc"])
+    prior = utc(v3["generated_at_utc"])
+    if observed > now + dt.timedelta(minutes=2) or (
+        now - observed > dt.timedelta(hours=MAX_SOURCE_AGE_HOURS)
+    ) or observed < prior - dt.timedelta(minutes=10):
+        raise ValueError("NBA_INDEPENDENT_V5_ROSTER_STALE_OR_OUT_OF_ORDER")
+    originals = {str(g["game_id"]): g for g in v3.get("games", [])}
+    revised = {**v3, "games": [dict(g) for g in v3.get("games", [])]}
+    for g in revised["games"]:
+        matches = [v for v in v5.get("games", [])
+                   if str(v.get("game_id")) == str(g["game_id"])]
+        if not matches:
+            continue
+        if len(matches) != 1:
+            raise ValueError("NBA_INDEPENDENT_DUPLICATE_V5_FIXTURE")
+        v = matches[0]
+        if (str(v.get("home_id")) != str(g["home_id"]) or
+            str(v.get("away_id")) != str(g["away_id"]) or
+            utc(v["tipoff_utc"]) != utc(g["tipoff_utc"]) or
+            observed >= utc(g["tipoff_utc"])):
+            raise ValueError("NBA_INDEPENDENT_V5_ROSTER_MATCH_CONFLICT")
+        if utc(v.get("forecast_at_utc", v5["generated_at_utc"])) >= utc(g["tipoff_utc"]):
+            raise ValueError("NBA_INDEPENDENT_AFTER_TIP_V5_ROSTER")
+        # Build identity/availability-only replacement. Reading V5 'mean'
+        # would silently turn the new formula into the old model.
+        roster = {}
+        for r in v.get("rows", []):
+            market = r.get("market")
+            if market not in TARGET_MARKETS:
+                continue
+            tid, pid = str(r.get("team_id")), str(r.get("player_id"))
+            if tid not in (str(g["home_id"]), str(g["away_id"])) or not pid.isdecimal():
+                raise ValueError("NBA_INDEPENDENT_BAD_V5_PLAYER_ROSTER_ID")
+            pa = float(r.get("p_active", 0))
+            if not math.isfinite(pa) or pa < 0 or pa > 1:
+                raise ValueError("NBA_INDEPENDENT_INVALID_V5_PLAYER_ACTIVE_VALUE")
+            key = (tid, pid, market)
+            if key in roster:
+                raise ValueError("NBA_INDEPENDENT_DUPLICATE_V5_MARKET_ID")
+            roster[key] = {
+                "player": str(r["player"]), "player_id": pid, "team_id": tid,
+                "market": market, "p_active": pa,
+                "reported_status": str(r.get("reported_status", "UNKNOWN"))
+            }
+        if not roster:
+            continue
+        old = {}
+        for r in originals[g["game_id"]].get("rows", []):
+            market = r.get("market")
+            if market in TARGET_MARKETS:
+                old[(str(r["team_id"]),str(r["player_id"]),market)] = r
+        g["rows"] = list(roster.values()) + [
+            r for k,r in old.items() if k not in roster
+        ]
+        g["source_roster_enrichment"] = "V5_PUBLISHED_PRETIP_IDENTITIES_ONLY_NO_MEANS"
+        g["new_v5_source_roster_player_ids"] = len({
+            (tid,pid) for tid,pid,_ in roster
+        })
+    return revised
+
+
+def generate_shadow(v3, historic_games, now, *, history_sha, v3_sha, v5_roster=None, v5_roster_sha=None):
+    roster_inputs = enrich_pretip_player_identities(v3, v5_roster, now) if v5_roster else v3
+    eligible_games = selected_live_games(roster_inputs, now)
     root = {
         "schema": SCHEMA, "model_version": VERSION,
         "generated_at_utc": now.isoformat(), "source_v3_generated_at_utc": v3["generated_at_utc"],
         "source_v3_sha256": v3_sha, "source_game_history_sha256": history_sha,
+        "additional_pretip_v5_roster_sha256": v5_roster_sha,
+        "roster_source_used_for_player_identity_only": "PUBLISHED_V5_WHEN_FRESH_ELSE_V3",
+        "v5_stat_means_not_used_in_independent_model": True,
         "model_2025_validation_arm": "direct",
         "no_hindsight_history_eastern_day_barrier": True,
         "trained_through_eastern_date": None,
@@ -324,6 +399,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--games", action="append", required=True)
     ap.add_argument("--v3", required=True)
+    ap.add_argument("--v5-roster", default="", help="Fresh V5 roster identities only, never projection means")
     ap.add_argument("--out", required=True)
     ap.add_argument("--archive", default="")
     ap.add_argument("--now", default="", help="Test-only fixed asof UTC")
@@ -332,8 +408,10 @@ def main():
     historical = load(args.games)
     v3 = json.loads(Path(args.v3).read_text())
     digest = hashlib.sha256("".join(source_hash(p) for p in args.games).encode()).hexdigest()
+    v5_roster = json.loads(Path(args.v5_roster).read_text()) if args.v5_roster else None
     doc = generate_shadow(v3, historical, now, history_sha=digest,
-                          v3_sha=source_hash(args.v3))
+                          v3_sha=source_hash(args.v3), v5_roster=v5_roster,
+                          v5_roster_sha=source_hash(args.v5_roster) if args.v5_roster else None)
     frozen = write_and_freeze(doc, args.out, args.archive)
     print("NBA_INDEPENDENT_LIVE_DIRECT_PREGAME", json.dumps({
         "generated_at_utc": doc["generated_at_utc"],
