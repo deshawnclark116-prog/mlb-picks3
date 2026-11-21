@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-21_02_15PM.pdf",
-  "published_at_utc": "2026-11-21T19:15:00+00:00",
-  "captured_at_utc": "2026-11-21T19:23:50.215584+00:00",
-  "source_sha256": "e4e6c0a8b110fb8c0aa27e9b8d2ed6e966c03a642c87a534500448130a421aca",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-21_03_45PM.pdf",
+  "published_at_utc": "2026-11-21T20:45:00+00:00",
+  "captured_at_utc": "2026-11-21T20:56:39.074461+00:00",
+  "source_sha256": "d544c0a84135815da6a84a694af982ddfa1a73f05b0d7c7d4ce7c5586a912b08",
   "reports": [
     {
       "matchup": "MIL@PHI",
@@ -465,9 +465,17 @@
     {
       "matchup": "BOS@SAC",
       "team_abbr": "BOS",
+      "player": "Robinson, Mitchell",
+      "normalized_player": "mitchell robinson",
+      "status": "OUT",
+      "reason": "Injury/Illness - Illness"
+    },
+    {
+      "matchup": "BOS@SAC",
+      "team_abbr": "BOS",
       "player": "Tatum, Jayson",
       "normalized_player": "jayson tatum",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Rest"
     },
     {
@@ -475,7 +483,7 @@
       "team_abbr": "BOS",
       "player": "White, Derrick",
       "normalized_player": "derrick white",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": ""
     },
     {
@@ -485,9 +493,41 @@
       "normalized_player": "amari williams",
       "status": "OUT",
       "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "OKC@MIA",
+      "team_abbr": "MIA",
+      "player": "Antetokounmpo, Giannis",
+      "normalized_player": "giannis antetokounmpo",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Right Groin tendinitis"
+    },
+    {
+      "matchup": "OKC@MIA",
+      "team_abbr": "MIA",
+      "player": "Gardner, Myron",
+      "normalized_player": "myron gardner",
+      "status": "PROBABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "OKC@MIA",
+      "team_abbr": "MIA",
+      "player": "Goldin, Vladislav",
+      "normalized_player": "vladislav goldin",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "OKC@MIA",
+      "team_abbr": "MIA",
+      "player": "Johnson, Keshad",
+      "normalized_player": "keshad johnson",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
     }
   ],
-  "rows": 60,
+  "rows": 65,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
