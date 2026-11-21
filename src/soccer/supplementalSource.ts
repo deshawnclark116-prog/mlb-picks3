@@ -14,8 +14,11 @@ export const SUPPLEMENTAL_SOCCER_LEAGUES=[
 export type SupplementalLeague=typeof SUPPLEMENTAL_SOCCER_LEAGUES[number];
 export type SupplementalMatch={
  id:string;league:string;season:string;date:string;home:string;away:string;
- kickoffUtc:string;source:'THESPORTSDB_PUBLIC_NEXT_EVENT';
- providerStatus:'NS';coverage:'PARTIAL_NEXT_EVENT_ONLY';sourceCapturedAtUtc:string;
+ kickoffUtc:string;
+ source:'THESPORTSDB_PUBLIC_NEXT_EVENT'|'ESPN_SITE_SOCCER_SCOREBOARD';
+ providerStatus:'NS';
+ coverage:'PARTIAL_NEXT_EVENT_ONLY'|'PARTIAL_ESPN_SCHEDULE';
+ sourceCapturedAtUtc:string;
 };
 export type SupplementalStatus={
  league:string;name:string;providerLeagueId:string;
@@ -93,12 +96,61 @@ export function validateSupplementalSnapshot(raw:unknown):SupplementalSnapshot{
   throw Error('SOCCER_SUPPLEMENTAL_INCOMPLETE_LEAGUE_CATALOG');
  const fixtureIds=new Set<string>();
  for(const f of v.fixtures){
-  if(!names.has(f.league)||f.source!=='THESPORTSDB_PUBLIC_NEXT_EVENT'||
-     f.coverage!=='PARTIAL_NEXT_EVENT_ONLY'||f.providerStatus!=='NS'||
+  if(!names.has(f.league)||![
+       'THESPORTSDB_PUBLIC_NEXT_EVENT','ESPN_SITE_SOCCER_SCOREBOARD'
+     ].includes(f.source)||![
+       'PARTIAL_NEXT_EVENT_ONLY','PARTIAL_ESPN_SCHEDULE'
+     ].includes(f.coverage)||f.providerStatus!=='NS'||
      !Number.isFinite(Date.parse(f.kickoffUtc))||
      f.date!==f.kickoffUtc.slice(0,10)||fixtureIds.has(f.id))
    throw Error('SOCCER_SUPPLEMENTAL_INVALID_OR_DUPLICATE_EVENT');
   fixtureIds.add(f.id);
  }
  return v;
+}
+
+
+/** Verified ESPN fixture identity and timestamp parser for Colombian /
+ * Costa Rican scoreboards only. Scores and in-play fixtures are excluded.
+ * The scheduled kickoff is still supplied by ONE provider only.
+ */
+export function readSupplementalESPNFixtures(raw:unknown,league:
+ 'COL_1_primera-a'|'CRI_1_primera',capturedAtUtc:string):SupplementalMatch[]{
+ const v=raw as {events?:unknown;leagues?:unknown}|null;
+ if(!v||!Array.isArray(v.events)||!Array.isArray(v.leagues))
+  throw Error('SOCCER_ESPN_SUPPLEMENT_INVALID_SCHEMA');
+ if(v.events.length>200)throw Error('SOCCER_ESPN_UNEXPECTED_SIZE');
+ const out:SupplementalMatch[]=[];const seen=new Set<string>();
+ for(const e of v.events){
+  if(!e||typeof e!=='object')throw Error('SOCCER_ESPN_BAD_EVENT');
+  const ev=e as Record<string,unknown>;
+  const status=ev.status as {type?:{name?:string}}|undefined;
+  if(status?.type?.name!=='STATUS_SCHEDULED')continue;
+  const comps=ev.competitions;
+  if(!Array.isArray(comps)||comps.length!==1||
+      !Array.isArray(comps[0]?.competitors))
+    throw Error('SOCCER_ESPN_INVALID_COMPETITORS');
+  const players=comps[0].competitors as Array<{
+    homeAway?:string;team?:{displayName?:string};
+  }>;
+  const home=players.filter(x=>x.homeAway==='home');
+  const away=players.filter(x=>x.homeAway==='away');
+  if(home.length!==1||away.length!==1)
+    throw Error('SOCCER_ESPN_AMBIGUOUS_HOME_AWAY');
+  const h=safe(home[0].team?.displayName),a=safe(away[0].team?.displayName);
+  const sourceId=safe(ev.id),time=safe(ev.date);
+  const d=Date.parse(time);
+  if(!h||!a||h===a||!/^\\d{1,15}$/.test(sourceId)||
+     !Number.isFinite(d)||!time.endsWith('Z'))
+    throw Error('SOCCER_ESPN_INVALID_SOURCE_TIME_OR_TEAM');
+  const kickoffUtc=new Date(d).toISOString();
+  const id='espn:'+league+':'+sourceId;
+  if(seen.has(id))throw Error('SOCCER_ESPN_DUPLICATE_EVENT');
+  seen.add(id);
+  out.push({id,league,season:kickoffUtc.slice(0,4),
+    date:kickoffUtc.slice(0,10),home:h,away:a,kickoffUtc,
+    source:'ESPN_SITE_SOCCER_SCOREBOARD',providerStatus:'NS',
+    coverage:'PARTIAL_ESPN_SCHEDULE',sourceCapturedAtUtc:capturedAtUtc});
+ }
+ return out;
 }
