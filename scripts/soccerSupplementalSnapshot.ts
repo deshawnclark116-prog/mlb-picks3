@@ -10,7 +10,7 @@ import {SUPPLEMENTAL_SOCCER_SCHEMA,SUPPLEMENTAL_SOCCER_LEAGUES,
 } from '../src/soccer/supplementalSource';
 const now=new Date(), at=now.toISOString();
 const output='docs/soccer_wide/supplemental_fixtures.json';
-const byId=new Set(SUPPLEMENTAL_SOCCER_LEAGUES.map(c=>c.league));
+const byId=new Set<string>(SUPPLEMENTAL_SOCCER_LEAGUES.map(c=>c.league));
 const statuses:SupplementalStatus[]=[];
 const fixtures:SupplementalMatch[]=[];
 const sleep=(ms:number)=>new Promise(r=>setTimeout(r,ms));
