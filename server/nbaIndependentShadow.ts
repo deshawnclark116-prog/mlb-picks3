@@ -5,7 +5,7 @@
  */
 import {readFileSync} from 'node:fs';
 import path from 'node:path';
-import type {Request,Response} from 'express';
+import type {Request,Response as ExpressResponse} from 'express';
 
 export const INDEPENDENT_SCHEMA='NBA_INDEPENDENT_DIRECT_LIVE_PRETIP_SHADOW_V1';
 export const INDEPENDENT_VERSION='nba-independent-direct-prior-date-head-v1';
@@ -145,7 +145,7 @@ export function createIndependentLiveLoader(get:IndependentSourceGetter=fetch){
 }
 export const loadIndependentLive=createIndependentLiveLoader();
 export function nbaIndependentShadowHandler(){
- return async(_req:Request,res:Response)=>{
+ return async(_req:Request,res:ExpressResponse)=>{
    try{res.setHeader('Cache-Control','no-store');res.json(await loadIndependentLive());}
    catch(e){res.status(503).json({
      schema:INDEPENDENT_SCHEMA,research_only:true,official_bets:0,
