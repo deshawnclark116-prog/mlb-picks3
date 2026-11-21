@@ -30,6 +30,10 @@ from nba.nba_v4_backtest import load
 from nba.nba_independent_no_hindsight_opportunity_lab import (
     FEATURES, STATS, PARAMS, dataset, make_features,
 )
+from nba.nba_independent_milestone_research import (
+    VERSION as PROBABILITY_RESEARCH_VERSION, research_milestones,
+    rank_research_targets,
+)
 
 SCHEMA = "NBA_INDEPENDENT_DIRECT_LIVE_PRETIP_SHADOW_V1"
 VERSION = "nba-independent-direct-prior-date-head-v1"
@@ -259,6 +263,10 @@ def generate_shadow(v3, historic_games, now, *, history_sha, v3_sha, v5_roster=N
         "games_forecast": 0, "players_forecast": 0, "rows_forecast": 0,
         "skipped": [], "research_only": True, "official_bets": 0,
         "no_sportsbook_probability": True, "prospective_calibration_verified": False,
+        "provisional_milestone_probability_model": PROBABILITY_RESEARCH_VERSION,
+        "probabilities_are_conditional_on_playing": True,
+        "verified_bookmaker_prop_lines": 0,
+        "ranking_is_only_research_not_a_bet": True,
         "player_availability_model_source": "EXISTING_V3_PREGAME_ESPN_NO_ACTIVE_CERTIFICATION",
         "projections_conditional_on_playing": True,
         "individual_starter_certified": False,
@@ -332,6 +340,8 @@ def generate_shadow(v3, historic_games, now, *, history_sha, v3_sha, v5_roster=N
                     "historical_current_team_played_games": sum(
                         p["team"] == tid for p in history_for_player[-8:]),
                     "predictions": predicted, "prior_recent5": {},
+                    "research_event_probabilities": {},
+                    "research_distribution_variance": {},
                     "history_games": len(history_for_player)
                 }
         for market, pairs in feature_rows.items():
@@ -345,6 +355,10 @@ def generate_shadow(v3, historic_games, now, *, history_sha, v3_sha, v5_roster=N
                 entry = player_rows[(tid, pid)]
                 entry["predictions"][market] = round(float(raw), 3)
                 entry["prior_recent5"][market] = round(float(f["baseline"]), 3)
+                research = research_milestones(market,float(raw),player_hist[pid])
+                if research is not None:
+                    entry["research_event_probabilities"][market] = research["milestones"]
+                    entry["research_distribution_variance"][market] = research["variance"]
         players = sorted(player_rows.values(),
                          key=lambda p: (-p["predictions"].get("points", 0), p["player"]))
         game = {
@@ -354,6 +368,9 @@ def generate_shadow(v3, historic_games, now, *, history_sha, v3_sha, v5_roster=N
             "forecast_at_utc": now.isoformat(), "rows_count": sum(
                 len(p["predictions"]) for p in players
             ), "players": players, "players_forecast": len(players),
+            "top_research_milestone_estimates": rank_research_targets(players)[:25],
+            "research_milestone_board_only": True,
+            "research_probabilities_are_not_sportsbook_lines": True,
             "skipped_player_reasons": dict(skipped),
             "source_v3_fixture_at_utc": g.get("forecast_at_utc"),
             "unverified_starters_not_featured_as_official_picks": True,
