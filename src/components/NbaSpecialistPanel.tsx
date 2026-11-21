@@ -99,8 +99,8 @@ export default function NbaSpecialistPanel({search=''}:{search?:string}){
  ),[doc,selected,auto,search]);
  return <section data-testid="nba-specialist-board" className="space-y-3 text-gray-100">
   <div className="flex items-center justify-between gap-2">
-   <div><h2 className="text-sm font-black text-[#79FF48]">NBA SPECIALIST MODELS</h2>
-    <p className="text-[11px] text-gray-400">Each stat uses exactly one model · no projection averaging</p></div>
+   <div><h2 className="text-sm font-black text-[#79FF48]">NBA SYSTEM PICKS · SPECIALIST MODELS</h2>
+    <p className="text-[11px] text-gray-400">Primary NBA projection board · one model per stat · no averaging</p></div>
    <button type="button" onClick={()=>void refresh()} disabled={loading}
     className="min-h-10 rounded-lg border border-[#444] px-3 text-xs">Refresh</button>
   </div>
@@ -110,7 +110,7 @@ export default function NbaSpecialistPanel({search=''}:{search?:string}){
      <strong className="text-sm text-[#79FF48]">{doc?.market_assignments[m]??({points:'V5',rebounds:'V3',assists:'V4',three_pointers_made:'V3'} as const)[m]}</strong>
    </div>)}
   </div>
-  <p className="text-[11px] text-amber-200">Experimental assignments from a small comparison. Not yet proven to outperform the existing board on a new full-slate holdout. Lineups and model chances are not certified.</p>
+  <p className="text-[11px] text-amber-200">Official market assignments selected for the NBA system. Their accuracy advantage is not yet verified on a new full-slate holdout; lineup and probability estimates retain their source-specific uncertainty.</p>
   {loading&&!doc&&<p className="text-xs text-gray-400">Loading original pregame projections…</p>}
   {error&&<p role="alert" className="rounded-lg border border-red-700 p-3 text-xs text-red-200">{error}</p>}
   {doc?.status==='NO_VERIFIED_SPECIALIST_SOURCES'&&
@@ -162,6 +162,6 @@ export default function NbaSpecialistPanel({search=''}:{search?:string}){
    })}
    {!games.length&&<p className="text-xs text-amber-200">No matching saved pregame forecasts for this date.</p>}
   </>}
-  <p className="text-[11px] text-gray-400">Research only. Different models may have different information cutoffs; displayed chances are not validated betting probabilities. V2 remains a separate confirmed-lineup experiment.</p>
+  <p className="text-[11px] text-gray-400">Primary system projections, not guaranteed winning bets. Models can use different pregame information cutoffs; displayed chances are not yet calibrated. V2 remains a separate confirmed-lineup experiment.</p>
  </section>;
 }

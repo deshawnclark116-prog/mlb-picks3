@@ -51,11 +51,13 @@ async function setup(page:any,v3:any=research){
   route.fulfill(typeof v3==='function'?v3():{json:v3}));
  await page.goto('/');
  await page.locator('#tab-btn-nba').click();
+ // Legacy V3 comparison is preserved, while specialists are now the default.
+ await page.getByTestId('nba-previous-system-tab').click();
 }
-test('NBA opens V3 SYSTEM PICKS, not V2 or optional shadow view',async({page})=>{
+test('NBA previous V3 system picks remain available for comparison',async({page})=>{
  await setup(page);
  await expect(page.getByTestId('nba-research-screen')).toBeVisible();
- await expect(page.getByRole('button',{name:'SYSTEM PICKS',exact:true}))
+ await expect(page.getByTestId('nba-previous-system-tab'))
     .toHaveAttribute('aria-pressed','true');
  await expect(page.getByTestId('nba-v3-primary-board')).toBeVisible();
  await expect(page.getByRole('heading',{name:/NBA.*2026–27 model projections/})).toBeVisible();
@@ -79,8 +81,8 @@ test('NBA opens V3 SYSTEM PICKS, not V2 or optional shadow view',async({page})=>
 });
 test('NBA MODEL BOARD contains every authentic V3 stat even when system gate rejects it',async({page})=>{
  await setup(page);
- await page.getByRole('button',{name:'MODEL BOARD',exact:true}).click();
- await expect(page.getByRole('button',{name:'MODEL BOARD',exact:true}))
+ await page.getByRole('button',{name:'OTHER MODELS',exact:true}).click();
+ await expect(page.getByRole('button',{name:'OTHER MODELS',exact:true}))
    .toHaveAttribute('aria-pressed','true');
  await page.getByRole('button',{name:'All upcoming'}).click();
  await page.getByTestId('nba-v3-game').locator('button[aria-expanded]').click();
@@ -137,7 +139,7 @@ test('NBA featured game tiles show the four highest percentages across stat cate
  await expect(detail).toHaveCount(6);
  await expect(detail.nth(0)).toContainText('Top Points A');
  await expect(detail.nth(1)).toContainText('Top Points B');
- await page.getByRole('button',{name:'MODEL BOARD',exact:true}).click();
+ await page.getByRole('button',{name:'OTHER MODELS',exact:true}).click();
  await page.getByTestId('nba-v3-game').locator('button[aria-expanded]').click();
  await expect(page.getByTestId('nba-v3-stat-projection').filter({hasText:'Unbettable Turnover'})).toHaveCount(1);
 });
