@@ -15,7 +15,7 @@
  */
 import {gunzipSync} from 'node:zlib';
 import {mergeLatestRun} from './nbaV3Latest.ts';
-import {validateShadowHeader} from './nbaV3Shadow.ts';
+import {validateShadowHeader,validateShadowGame} from './nbaV3Shadow.ts';
 
 export const V5_PUBLIC_RELEASE_ROOT=
  'https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks3/main';
@@ -82,6 +82,57 @@ function verifyArchive(doc:any,id:string,tip:string,now:number){
     at>kickoff-MIN_PREGAME_MS)
   throw Error('NBA_V5_PUBLIC_ARCHIVE_AFTER_TIP_OR_FUTURE');
  return doc;
+}
+
+/** A long-running preview/server checkout may be missing tonight's ORIGINAL
+ * V3 slate even though GitHub has already published the actual V5 pretip
+ * forecasts. mergeLatestRun intentionally only replaces existing game IDs,
+ * so a missing one previously disappeared from the entire frontend.
+ *
+ * Attach *only* source-verified LIVE PRETIP games. This is not retroactive
+ * creation of an original firstseen forecast: source_attached_without_local_
+ * firstseen is explicit, and no finished/started game can be inserted.
+ */
+export function attachMissingPublishedV5Games(result:any,doc:any,now=Date.now()){
+ const existing=result.games??[];
+ if(!Array.isArray(existing)||!Number.isFinite(now))
+  throw Error('NBA_V5_INVALID_SOURCE_ATTACH_INPUT');
+ validateShadowHeader(doc);
+ if(doc.model_version?.startsWith('nba-v5-')!==true)
+  throw Error('NBA_V5_ATTACH_REQUIRES_NATIVE_V5_SOURCE');
+ const generated=Date.parse(doc.generated_at_utc);
+ if(!Number.isFinite(generated)||generated>now+60_000||
+    now-generated>10*3600_000)
+  throw Error('NBA_V5_ATTACH_REQUIRES_CURRENT_SOURCE');
+ const present=new Set(existing.map((g:any)=>String(g.game_id)));
+ const seen=new Set<string>(),attached:any[]=[];
+ for(const game of doc.games??[]){
+  const id=String(game?.game_id??'');
+  if(!/^\\d{1,12}$/.test(id)||present.has(id))continue;
+  try{validateShadowGame(game,seen);}catch{continue;}
+  const tip=Date.parse(game.tipoff_utc);
+  const at=Date.parse(game.forecast_at_utc);
+  if(!Number.isFinite(tip)||!Number.isFinite(at)||
+     tip<=now||tip>now+42*3600_000||
+     at>now+60_000||at>tip-MIN_PREGAME_MS||
+     at<generated-3*3600_000||at>generated+60_000)
+   continue;
+  // The live published numerical model is genuine, but we cannot assert
+  // that an original firstseen file exists in the stale local checkout.
+  attached.push({...game,forecast_kind:'V5_LATEST',
+    first_seen_forecast_at_utc:game.forecast_at_utc,
+    first_seen_forecast_preserved_in_archive:false,
+    source_attached_without_local_firstseen:true,
+    source_publication:'GITHUB_VERIFIED_PRETIP_V5'});
+  present.add(id);
+ }
+ if(!attached.length)return {...result,source_attached_v5_games:[]};
+ const games=[...existing,...attached].sort((a:any,b:any)=>
+  String(a.tipoff_utc).localeCompare(String(b.tipoff_utc))||
+  String(a.game_id).localeCompare(String(b.game_id)));
+ return {...result,games,upcoming_games:games.length,
+  status:'AVAILABLE_RESEARCH_ONLY',
+  source_attached_v5_games:attached.map(g=>String(g.game_id))};
 }
 
 /** Creates an independent TTL cache, injectable for deterministic CI tests.
@@ -159,6 +210,9 @@ export function createPublishedV5Sync(get:GithubSourceGetter=fetch){
   const liveGameIds=new Set<string>();
   if(latestDocument){
    for(const g of latestDocument.games??[])liveGameIds.add(String(g.game_id));
+   // Restore source-verified upcoming matchups missing from stale local
+   // firstseen archives BEFORE the existing strict newer-game overlay.
+   current=attachMissingPublishedV5Games(current,latestDocument,now);
    const merged=mergeLatestRun(current,latestDocument,now,'V5_LATEST');
    liveLatestApplied=merged.latest_run?.applied??0;
    current=merged;
@@ -190,6 +244,8 @@ export function createPublishedV5Sync(get:GithubSourceGetter=fetch){
     checked_at_utc:new Date(checkedAt).toISOString(),
     latest_generation_at_utc:readyGeneration,
     latest_applied:liveLatestApplied,
+    recovered_live_game_ids:current.source_attached_v5_games??[],
+    recovered_live_games:(current.source_attached_v5_games??[]).length,
     archived_game_ids_applied:archiveIds,
     archived_applied:archiveApplied,
     source_state:lastError?'SOURCE_UNAVAILABLE_LOCAL_FALLBACK':'SOURCE_VERIFIED',
