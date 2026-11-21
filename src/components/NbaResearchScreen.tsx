@@ -4,6 +4,7 @@ import NbaPlayerResearchPanel from './NbaPlayerResearchPanel';
 import NbaRollingPlayerPanel from './NbaRollingPlayerPanel';
 import NbaSystemPicksPanel from './NbaSystemPicksPanel';
 import NbaV3ResearchPanel from './NbaV3ResearchPanel';
+import NbaIndependentLivePanel from './NbaIndependentLivePanel';
 
 const pct = (v: number) => (v * 100).toFixed(1) + '%';
 const gameDayEastern = (iso: string) => {
@@ -31,7 +32,7 @@ export default function NbaResearchScreen() {
   const [day, setDay] = useState('ALL');
   const [search, setSearch] = useState('');
   const [showSearch,setShowSearch]=useState(false);
-  const [mode, setMode] = useState<'PICKS'|'BOARD'|'EVIDENCE'|'V2'|'ROLLING'|'TEAMS'|'PLAYERS'>('PICKS');
+  const [mode, setMode] = useState<'PICKS'|'BOARD'|'INDEPENDENT'|'EVIDENCE'|'V2'|'ROLLING'|'TEAMS'|'PLAYERS'>('PICKS');
 
   useEffect(() => {
     let mounted = true;
@@ -75,8 +76,16 @@ export default function NbaResearchScreen() {
     {showSearch&&<input aria-label="Find NBA team or player" placeholder="Search NBA picks, players or games"
       value={search} onChange={e=>setSearch(e.target.value)}
       className="w-full rounded-xl border border-[#333] bg-[#191919] px-4 py-3 text-sm text-stone-100" />}
+    <button type="button" data-testid="nba-independent-model-tab"
+      aria-pressed={mode==='INDEPENDENT'} onClick={()=>setMode('INDEPENDENT')}
+      className={'min-h-11 w-full rounded-lg border px-3 text-xs font-black '+
+       (mode==='INDEPENDENT'?'border-[#79FF48] bg-[#79FF48]/15 text-[#79FF48]':
+       'border-[#79FF48]/35 bg-[#17311f] text-[#79FF48]')}>
+      NEW AI MODEL · Independent player projections
+    </button>
     {(mode==='PICKS'||mode==='BOARD')&&
       <NbaV3ResearchPanel key={mode} mode={mode} search={search}/>}
+    {mode==='INDEPENDENT'&&<NbaIndependentLivePanel search={search}/>
     {mode==='EVIDENCE'&&<section data-testid="nba-v5-evidence" className="rounded-xl border border-[#465650] bg-[#102018] p-4 text-sm text-gray-100">
       <strong>NBA MODEL · FORECAST VALIDATION STATUS</strong>
       <p className="mt-2 text-xs">All numerical projections come from the NBA forecasting system, independently
@@ -93,7 +102,7 @@ export default function NbaResearchScreen() {
       <summary className="min-h-10 cursor-pointer py-2 font-semibold">How the NBA projection system works <span className="font-normal">· version and uncertainty</span></summary>
       <strong className="block pb-1 text-xs">EACH GAME IDENTIFIES WHICH MODEL PRODUCED ITS PROJECTIONS</strong>
       <p className="pb-2">The system may show an integrity-checked newer V5 or V4 forecast over the earlier V3.
-       It preserves the original pregame forecast separately. No V2 archive numbers are silently substituted.</p>
+       It preserves the original pregame forecast separately. The NEW AI MODEL tab is a distinct, research-only direct learned stat forecast based on pretip player candidates; it does not replace V5, claim confirmed starters, or offer calibrated sportsbook probabilities.</p>
       <p className="pb-2">V5 separates P(reach if playing) from P(reach including DNP), and grades the model's own rounded projection.
        These estimates require independent forward calibration and do not rely on sportsbook lines.</p>
     </details>
