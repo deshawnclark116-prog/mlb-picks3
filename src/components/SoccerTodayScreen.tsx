@@ -4,6 +4,7 @@ import type {Forecast,League} from '../soccer/model';
 import {SOCCER_SCHEMA} from '../soccer/model';
 import {frozenSoccerBoard} from '../soccer/frozenBoardAssets';
 import {wideSoccerBoard,wideSoccerOriginals,wideLeagueNames,WIDE_TO_CORE} from '../soccer/wideBoardAssets';
+import {supplementalUpcoming,supplementaryLeagueNames} from '../soccer/supplementalAssets';
 import {verifiedSoccerFixtures} from '../soccer/espnFixtureAssets';
 import {bestSoccerEvent} from '../soccer/topRanked';
 import {namedSoccerOutcomes} from '../soccer/matchLabels';
@@ -20,9 +21,11 @@ type MatchDoc={schema:string;status:string;asof_calendar_day_utc:string;
 type Range='48H'|'7D'|'ALL';
 const coreLeagues:League[]=['EPL','LaLiga','SerieA','Bundesliga','Ligue1'];
 const wideNames=wideLeagueNames();
-const leagues:League[]=[...coreLeagues,...Object.keys(wideNames)];
+const leagues:League[]=[...coreLeagues,...Object.keys(wideNames),
+ ...Object.keys(supplementaryLeagueNames)];
 const leagueNames:Record<string,string>={EPL:'Premier League',LaLiga:'La Liga',
- SerieA:'Serie A',Bundesliga:'Bundesliga',Ligue1:'Ligue 1',...wideNames};
+ SerieA:'Serie A',Bundesliga:'Bundesliga',Ligue1:'Ligue 1',
+ ...wideNames,...supplementaryLeagueNames};
 const pct=(x:number)=>(x*100).toFixed(1)+'%';
 const nextDay=(d:string,n:number)=>new Date(Date.parse(d+'T00:00:00Z')+
  n*86400000).toISOString().slice(0,10);
@@ -104,7 +107,9 @@ function MatchCard({game,expanded,onToggle}:{
    onClick={onToggle} className="w-full min-w-0 px-4 py-4 text-left active:bg-white/[.04]">
    <div className="flex items-center justify-between gap-2 text-[11px] text-slate-400">
     <span className="min-w-0 truncate">{game.league?leagueNames[game.league]:'Soccer'}</span>
-    <span className="shrink-0">{game.kickoffUtc?kickoffLabel(game.kickoffUtc):dateLabel(game.fixtureDate)+' · kickoff unverified'}</span>
+    <span className="shrink-0">{game.kickoffUtc?
+      kickoffLabel(game.kickoffUtc)+(game.id.startsWith('supplemental|')?' · source-listed':''):
+      dateLabel(game.fixtureDate)+' · kickoff unverified'}</span>
    </div>
    <p className="mt-3 break-words text-[15px] font-extrabold leading-snug text-white">
     {game.home} <span className="font-normal text-slate-400">vs</span> {game.away}
@@ -114,14 +119,15 @@ function MatchCard({game,expanded,onToggle}:{
      <strong className="shrink-0 text-[16px] font-black tabular-nums text-[#79FF48]">{pct(best.modelProbability)}</strong>
    </div>:<p className="mt-2 text-[11px] text-slate-400">
     {game.players.length?'Player forecasts available · Match outcome model not available':
-    'Fixture verified · Not enough reliable history for a match probability'}
+    'Fixture listed · No sufficiently validated match probability'}
    </p>}
    <div className="mt-3 flex min-w-0 items-center justify-between gap-2 border-t border-white/[.08] pt-3">
     <span data-testid="soccer-game-projection-count" className="text-[11px] text-slate-300">
       {count} projections · {game.players.length} players
     </span>
     <span className="flex shrink-0 items-center gap-1 text-[11px] font-bold text-[#79FF48]">
-     {expanded?'Hide':'View all'} projections {expanded?<ChevronUp size={14}/>:<ChevronDown size={14}/>}
+     {expanded?'Hide':count?'View all projections':'View fixture details'}
+     {expanded?<ChevronUp size={14}/>:<ChevronDown size={14}/>}
     </span>
    </div>
   </button>
@@ -139,7 +145,7 @@ function MatchCard({game,expanded,onToggle}:{
       ].sort((a,b)=>b.probability-a.probability).map(o=>
        <OutcomeRow key={o.label} label={o.label} probability={o.probability}/>)}</div>
     </section>:<p className="rounded-lg bg-white/[.04] px-3 py-2 text-[11px] text-slate-300">
-      This game has no separately verified match-outcome forecast. Player forecasts are shown without inventing win or goal percentages.
+      This match has no validated outcome forecast. Public fixture times may be unconfirmed, and no win or goal percentages have been invented.
     </p>}
     {game.players.length>0?<section data-testid="soccer-game-player-props">
       <h3 className="mb-2 text-[13px] font-extrabold text-white">Player projections ({game.players.length})</h3>
@@ -165,8 +171,8 @@ export default function SoccerTodayScreen(){
  const [range,setRange]=useState<Range>('48H');
  const [league,setLeague]=useState<League|'ALL'>('ALL');
  const [search,setSearch]=useState('');
- const [filters,setFilters]=useState(false);
- const [limit,setLimit]=useState(12);
+ const [filters,setFilters]=useState(true);
+ const [limit,setLimit]=useState(24);
  const [expanded,setExpanded]=useState<string|null>(null);
  const [asof,setAsof]=useState(()=>new Date().toISOString());
  const today=asof.slice(0,10);
@@ -238,7 +244,7 @@ export default function SoccerTodayScreen(){
  const present=new Set(grouped.map(g=>[
   g.league,g.fixtureDate,g.home,g.away].join('|')));
  for(const f of wide.fixtures){
-  if(WIDE_TO_CORE[f.league]||f.date<=today||
+  if(WIDE_TO_CORE[f.league]||f.date<today||
      maxDate&&f.date>maxDate)continue;
   const key=[f.league,f.date,f.home,f.away].join('|');
   if(present.has(key))continue;
@@ -247,16 +253,27 @@ export default function SoccerTodayScreen(){
    league:f.league,home:f.home,away:f.away,kickoffUtc:null,
    match:null,players:[]});
  }
- grouped.sort((a,b)=>a.fixtureDate.localeCompare(b.fixtureDate)||
-  (a.kickoffUtc??'').localeCompare(b.kickoffUtc??'')||
+ // Supplements carry a source-listed UTC kickoff. Show these near-term
+ // games ahead of date-only fixtures, which must not imply an exact time.
+ for(const f of supplementalUpcoming(asof)){
+  if(maxDate&&f.date>maxDate)continue;
+  const id='supplemental|'+f.id;
+  if(grouped.some(g=>g.id===id))continue;
+  grouped.push({id,fixtureDate:f.date,league:f.league,home:f.home,
+    away:f.away,kickoffUtc:f.kickoffUtc,match:null,players:[]});
+ }
+ const upcomingAt=(g:SoccerGameGroup)=>g.kickoffUtc?
+  Date.parse(g.kickoffUtc):Date.parse(g.fixtureDate+'T23:59:59Z');
+ grouped.sort((a,b)=>upcomingAt(a)-upcomingAt(b)||
   (a.league??'').localeCompare(b.league??'')||a.home.localeCompare(b.home));
  const q=search.trim().toLowerCase();
  const filtered=grouped.filter(g=>
+  (!g.kickoffUtc||Date.parse(g.kickoffUtc)>start)&&
   (league==='ALL'||g.league===league)&&
   (!cutoff||!g.kickoffUtc||Date.parse(g.kickoffUtc)<=cutoff)&&
   (!q||[g.home,g.away,g.league?leagueNames[g.league]:'',...g.players.map(p=>p.playerName)]
     .some(s=>s.toLowerCase().includes(q))));
- const reset=()=>{setExpanded(null);setLimit(12);};
+ const reset=()=>{setExpanded(null);setLimit(24);};
  return <div id="soccer-projections-screen"
    className="h-full min-h-0 min-w-0 overflow-y-auto overscroll-y-contain bg-[#0b1215] px-4 pb-24 pt-4 text-slate-100 [scrollbar-width:none]">
   <div className="mb-4 flex items-center justify-between gap-3">
@@ -279,7 +296,7 @@ export default function SoccerTodayScreen(){
     </button>)}
   </div>
   <div className="mb-3 flex items-center justify-between gap-3">
-   <p className="text-[11px] text-slate-400">{filtered.length} upcoming games · Tap one to see every available projection</p>
+   <p className="text-[11px] text-slate-400">{filtered.length} listed fixtures · Tap one to see every available projection</p>
    <button type="button" aria-expanded={filters} onClick={()=>setFilters(x=>!x)}
     className="flex min-h-10 shrink-0 items-center gap-1 rounded-lg border border-white/10 bg-[#1b2529] px-3 text-[11px] font-bold">
     <SlidersHorizontal size={14}/> Filters {filters?<ChevronUp size={14}/>:<ChevronDown size={14}/>}
@@ -323,10 +340,12 @@ export default function SoccerTodayScreen(){
     className="mt-3 min-h-10 rounded-lg bg-[#79FF48] px-4 text-xs font-bold text-[#122016]">Show next 7 days</button>
   </div>}
   <p className="mt-4 text-[10px] leading-relaxed text-slate-500">
-   The original five leagues retain verified ESPN kickoffs when available. Additional competition
-   fixtures use source-reported dates; their exact kickoff times are not independently verified.
-   Every projection is uncalibrated research, not an official bet. Insufficient-history
-   matches remain visible without manufactured probabilities.
+   The original five leagues retain verified ESPN kickoffs when available.
+   Wider-source fixtures may have dates only. Five additional competitions use
+   a rate-limited public provider that can return only the next game, so this is
+   not a complete sportsbook fixture list. Its kickoff times are source-listed,
+   not independently confirmed. All probability projections are research only,
+   and unsupported games receive no invented probabilities.
   </p>
  </div>;
 }
