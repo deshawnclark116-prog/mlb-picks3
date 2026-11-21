@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-21_05_15PM.pdf",
-  "published_at_utc": "2026-11-21T22:15:00+00:00",
-  "captured_at_utc": "2026-11-21T22:33:52.619325+00:00",
-  "source_sha256": "315ba0179ec38fc901964786c761cb5015ef2f6fd9ab8e042cb2348dbc3c28dc",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-21_06_00PM.pdf",
+  "published_at_utc": "2026-11-21T23:00:00+00:00",
+  "captured_at_utc": "2026-11-21T23:11:58.538982+00:00",
+  "source_sha256": "8d2cc70359251dc87296417bc31c05ebb72c6b3556856eacdde810d7ec7b77fd",
   "reports": [
     {
       "matchup": "MIL@PHI",
@@ -83,7 +83,7 @@
       "team_abbr": "POR",
       "player": "Avdija, Deni",
       "normalized_player": "deni avdija",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Left Foot Contusion"
     },
     {
@@ -561,6 +561,14 @@
     {
       "matchup": "DET@ATL",
       "team_abbr": "DET",
+      "player": "Jones, Isaac",
+      "normalized_player": "isaac jones",
+      "status": "QUESTIONABLE",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "DET@ATL",
+      "team_abbr": "DET",
       "player": "Okorie, Ebuka",
       "normalized_player": "ebuka okorie",
       "status": "OUT",
@@ -760,6 +768,38 @@
     },
     {
       "matchup": "DEN@CHI",
+      "team_abbr": "DEN",
+      "player": "Holmes II, DaRon",
+      "normalized_player": "daron holmes",
+      "status": "OUT",
+      "reason": "G League - On Assignment"
+    },
+    {
+      "matchup": "DEN@CHI",
+      "team_abbr": "DEN",
+      "player": "Hopkins, Bryce",
+      "normalized_player": "bryce hopkins",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "DEN@CHI",
+      "team_abbr": "DEN",
+      "player": "Strawther, Julian",
+      "normalized_player": "julian strawther",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Knee Sprain"
+    },
+    {
+      "matchup": "DEN@CHI",
+      "team_abbr": "DEN",
+      "player": "Whitmore, Cam",
+      "normalized_player": "cam whitmore",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "DEN@CHI",
       "team_abbr": "CHI",
       "player": "Awaka, Tobe",
       "normalized_player": "tobe awaka",
@@ -884,7 +924,7 @@
       "player": "Watkins, Jamir",
       "normalized_player": "jamir watkins",
       "status": "OUT",
-      "reason": ""
+      "reason": "Injury/Illness - Left ACL Repair /"
     },
     {
       "matchup": "IND@NYK",
@@ -967,7 +1007,7 @@
       "reason": "Injury/Illness - Left Hamstring Strain"
     }
   ],
-  "rows": 120,
+  "rows": 125,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
