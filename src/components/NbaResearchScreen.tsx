@@ -21,10 +21,9 @@ const tipLabel = (iso: string) =>
     timeZone: 'America/New_York', timeZoneName: 'short'
   });
 
-/**
- * The current NBA projection UI selects the newest integrity-verified V5,
- * V4 or V3 pregame forecast per game. Legacy V2 firstseen archives remain
- * separate for paired grading, never silently substituted.
+/** The primary NBA picks screen now routes each statistical category to one
+ * source-verified specialist model, without averaging. The previous V3/V4/V5
+ * selector remains accessible for comparison, never used as a hidden fallback.
  */
 export default function NbaResearchScreen() {
   const [doc, setDoc] = useState<NbaResearchDocument | null>(null);
@@ -33,7 +32,7 @@ export default function NbaResearchScreen() {
   const [day, setDay] = useState('ALL');
   const [search, setSearch] = useState('');
   const [showSearch,setShowSearch]=useState(false);
-  const [mode, setMode] = useState<'PICKS'|'BOARD'|'INDEPENDENT'|'SPECIALIST'|'EVIDENCE'|'V2'|'ROLLING'|'TEAMS'|'PLAYERS'>('PICKS');
+  const [mode, setMode] = useState<'PICKS'|'BOARD'|'INDEPENDENT'|'LEGACY'|'EVIDENCE'|'V2'|'ROLLING'|'TEAMS'|'PLAYERS'>('PICKS');
 
   useEffect(() => {
     let mounted = true;
@@ -71,7 +70,7 @@ export default function NbaResearchScreen() {
         className={'min-h-11 rounded-lg border px-1 text-[10px] font-bold '+
           (mode===m?'border-[#00FF41] bg-[#00FF41]/10 text-[#00FF41]':
                        'border-[#333] bg-[#242424] text-gray-300')}>
-        {m==='PICKS'?'SYSTEM PICKS':m==='BOARD'?'MODEL BOARD':m==='EVIDENCE'?'MODEL EVIDENCE':'V2 ARCHIVE'}
+        {m==='PICKS'?'SYSTEM PICKS':m==='BOARD'?'OTHER MODELS':m==='EVIDENCE'?'MODEL EVIDENCE':'V2 ARCHIVE'}
       </button>)}
     </div>
     {showSearch&&<input aria-label="Find NBA team or player" placeholder="Search NBA picks, players or games"
@@ -84,23 +83,20 @@ export default function NbaResearchScreen() {
        'border-[#79FF48]/35 bg-[#17311f] text-[#79FF48]')}>
       NEW AI MODEL · Independent player projections
     </button>
-    <button type="button" data-testid="nba-specialist-model-tab"
-      aria-pressed={mode==='SPECIALIST'} onClick={()=>setMode('SPECIALIST')}
-      className={'min-h-11 w-full rounded-lg border px-3 text-xs font-black '+
-       (mode==='SPECIALIST'?'border-[#79FF48] bg-[#79FF48]/15 text-[#79FF48]':
-       'border-[#79FF48]/35 bg-[#17311f] text-[#79FF48]')}>
-      SPECIALIST BOARD · Points V5 · Rebounds V3 · Assists V4 · Threes V3
+    {mode==='PICKS'&&<NbaSpecialistPanel search={search}/>}
+    {mode==='BOARD'&&<NbaV3ResearchPanel mode="BOARD" search={search}/>}
+    {mode==='LEGACY'&&<NbaV3ResearchPanel mode="PICKS" search={search}/>}
+    <button type="button" data-testid="nba-previous-system-tab"
+      aria-pressed={mode==='LEGACY'} onClick={()=>setMode('LEGACY')}
+      className={'min-h-11 w-full rounded-lg border px-3 text-xs font-bold '+
+       (mode==='LEGACY'?'border-[#79FF48] bg-[#79FF48]/15 text-[#79FF48]':
+       'border-[#444] bg-[#242424] text-gray-300')}>
+      Compare with previous NBA system picks
     </button>
-    {mode==='SPECIALIST'&&<NbaSpecialistPanel search={search}/>}
-    {(mode==='PICKS'||mode==='BOARD')&&
-      <NbaV3ResearchPanel key={mode} mode={mode} search={search}/>}
     {mode==='INDEPENDENT'&&<NbaIndependentLivePanel search={search}/>}
     {mode==='EVIDENCE'&&<section data-testid="nba-v5-evidence" className="rounded-xl border border-[#465650] bg-[#102018] p-4 text-sm text-gray-100">
       <strong>NBA MODEL · FORECAST VALIDATION STATUS</strong>
-      <p className="mt-2 text-xs">All numerical projections come from the NBA forecasting system, independently
-       of sportsbook prices. The current V5 empirical-game head projects player totals from prior completed player games and
-       uses pregame minutes and shared pace scenarios. It does not blend V3/V4 numerical forecasts.
-       The native V5 possession simulator remains a separate comparison baseline. Per-game model version is shown on each matchup.</p>
+      <p className="mt-2 text-xs">The primary NBA projection board assigns points to V5, rebounds and made threes to V3, and assists to V4. Each stat uses its assigned model's own original pregame distribution. No averaging, bookmaker input, or automatic cross-model fallback. Other models and the legacy V5 empirical-game system remain available for comparison.</p>
       <p className="mt-2 text-xs">Projection probabilities are model estimates, not yet certified by
        current-season forward calibration. Original forecasts are retained for result-by-result grading;
        new role-change signals are research-only until they improve chronological holdout performance.</p>
@@ -110,10 +106,8 @@ export default function NbaResearchScreen() {
     <details className="rounded-2xl border border-amber-700/60 bg-amber-950/20 px-3 text-[13px] leading-relaxed text-amber-200">
       <summary className="min-h-10 cursor-pointer py-2 font-semibold">How the NBA projection system works <span className="font-normal">· version and uncertainty</span></summary>
       <strong className="block pb-1 text-xs">EACH GAME IDENTIFIES WHICH MODEL PRODUCED ITS PROJECTIONS</strong>
-      <p className="pb-2">The system may show an integrity-checked newer V5 or V4 forecast over the earlier V3.
-       It preserves the original pregame forecast separately. The NEW AI MODEL tab is a distinct, research-only direct learned stat forecast based on pretip player candidates; it does not replace V5, claim confirmed starters, or offer calibrated sportsbook probabilities.</p>
-      <p className="pb-2">V5 separates P(reach if playing) from P(reach including DNP), and grades the model's own rounded projection.
-       These estimates require independent forward calibration and do not rely on sportsbook lines.</p>
+      <p className="pb-2">Official system picks now use one specialist per market: V5 for points, V3 for rebounds and made threes, V4 for assists. Missing sources remain unavailable, rather than silently switching models. Original pregame records remain separate for grading. The NEW AI MODEL tab is an independent research model, not the primary NBA system.</p>
+      <p className="pb-2">Published projection chances are model estimates, not yet independently forward-calibrated. A model-specific probability may be conditional on playing; a clearly labeled V5 chance can include DNP. The system does not use sportsbook lines.</p>
     </details>
     <details className="rounded-xl border border-[#303030] bg-[#171717] p-3 text-xs"
       open={mode==='TEAMS'||mode==='PLAYERS'}>
