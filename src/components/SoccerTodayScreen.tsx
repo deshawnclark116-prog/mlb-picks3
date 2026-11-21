@@ -262,9 +262,12 @@ export default function SoccerTodayScreen(){
   grouped.push({id,fixtureDate:f.date,league:f.league,home:f.home,
     away:f.away,kickoffUtc:f.kickoffUtc,match:null,players:[]});
  }
- const upcomingAt=(g:SoccerGameGroup)=>g.kickoffUtc?
-  Date.parse(g.kickoffUtc):Date.parse(g.fixtureDate+'T23:59:59Z');
- grouped.sort((a,b)=>upcomingAt(a)-upcomingAt(b)||
+ // Retain the established model-first mobile ordering within each day.
+ // A partial extra-source fixture must not displace a game with a genuine
+ // original match projection from the first visible cards.
+ grouped.sort((a,b)=>a.fixtureDate.localeCompare(b.fixtureDate)||
+  Number(!!b.match)-Number(!!a.match)||
+  (a.kickoffUtc??'').localeCompare(b.kickoffUtc??'')||
   (a.league??'').localeCompare(b.league??'')||a.home.localeCompare(b.home));
  const q=search.trim().toLowerCase();
  const filtered=grouped.filter(g=>
