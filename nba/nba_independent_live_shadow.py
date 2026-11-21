@@ -277,6 +277,9 @@ def generate_shadow(v3, historic_games, now, *, history_sha, v3_sha, v5_roster=N
         "individual_starter_certified": False,
         "model_is_not_the_v5_serving_champion": True,
         "projection_accuracy_confidence_source": CONFIDENCE_SCHEMA if confidence_calibration else None,
+        "projection_accuracy_calibration_sha256": hashlib.sha256(json.dumps(
+            confidence_calibration,sort_keys=True,separators=(",",":")
+        ).encode()).hexdigest() if confidence_calibration else None,
         "projection_accuracy_definition": "PROB_ACTUAL_WITHIN_PLUS_MINUS_OF_OWN_MODEL_PREDICTION_IF_PLAYS",
         "projection_accuracy_windows": WINDOWS,
         "projection_accuracy_not_a_bookmaker_hit_probability": True,
