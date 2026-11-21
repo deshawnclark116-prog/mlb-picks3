@@ -6,7 +6,7 @@ const tip='2026-11-22T01:00:00Z',asof='2026-11-21T23:00:00Z';
 const now=Date.parse('2026-11-21T23:10:00Z');
 const markets=['points','rebounds','assists','three_pointers_made'];
 function row(v:string,m:string,mean:number){
- return {game_id:'401910001',team_id:'1',player_id:'101',player:'Test Player',
+ return {game_id:'401910001',team_id:'18',player_id:'101',player:'Test Player',
   model_version:'nba-'+v.toLowerCase()+'-sample',market:m,mean,median:mean,
   p10:0,p25:0,p75:mean,p90:mean+3,p_active:.9,reported_status:'UNKNOWN',
   research_only:true,not_an_official_bet:true,
@@ -56,6 +56,9 @@ test('Out players are omitted and corrupted source version is rejected, never si
  assert.equal(res.games[0].rows.some((r:any)=>r.market==='points'),false);
  const corrupt=v4();corrupt.games[0].rows[2].model_version='nba-v5-wrong-owner';
  assert.throws(()=>composeNbaSpecialists(v3(),v3(),corrupt,v5(),now),
+   /NBA_SPECIALIST_INVALID_OR_UNVERIFIED_SOURCE_ROW/);
+ const wrongTeam=v4();wrongTeam.games[0].rows[2].team_id='999';
+ assert.throws(()=>composeNbaSpecialists(v3(),v3(),wrongTeam,v5(),now),
    /NBA_SPECIALIST_INVALID_OR_UNVERIFIED_SOURCE_ROW/);
 });
 test('Ambiguous duplicate source games are rejected before market selection',()=>{
