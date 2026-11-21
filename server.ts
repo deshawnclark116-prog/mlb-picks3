@@ -6,6 +6,7 @@ import { projectionFeedHandler } from "./server/projectionFeeds.ts";
 import { nhlCountResearchHandler } from "./server/nhlCountResearch.ts";
 import { nbaResearchHandler } from "./server/nbaResearch.ts";
 import { nbaV3ShadowHandler } from "./server/nbaV3Shadow.ts";
+import { nbaSpecialistHandler } from "./server/nbaSpecialist.ts";
 import { nbaIndependentShadowHandler } from "./server/nbaIndependentShadow.ts";
 import { nbaPlayerResearchHandler } from "./server/nbaPlayerResearch.ts";
 import { nbaRollingResearchHandler, nbaRollingGradeHandler } from "./server/nbaRollingResearch.ts";
@@ -271,6 +272,8 @@ async function startServer() {
   app.get("/api/nba-system-picks", nbaSystemPicksHandler());
   // Full original NBA V3 Phase1 player outcome distributions; NOT a promoted betting model.
   app.get("/api/nba-v3-shadow", nbaV3ShadowHandler());
+  // Experimental single-model-per-market NBA board; never replaces current production picks.
+  app.get("/api/nba-specialist", nbaSpecialistHandler());
   app.get("/api/nba-independent-shadow", nbaIndependentShadowHandler());
   app.get("/api/nba-rolling-research", nbaRollingResearchHandler());
   // Outcome grades for all original NBA rolling player stats, not betting targets.
