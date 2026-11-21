@@ -136,7 +136,12 @@ export default function NbaIndependentLivePanel({search=''}:{search?:string}){
       const conf=p.projection_accuracy_confidence?.[m];
       const prob=safeP(conf);
       const projection=p.predictions[m];
-      return prob!==null&&projection!==undefined?[{p,m,prob,
+      // Low expected counts can trivially land inside ±2 (e.g. 0.6
+      // assists): show their measured percentage in the player row but
+      // never present that as the highest-confidence useful projection.
+      // A ranking entry's tolerance must be <= half the expected stat.
+      return prob!==null&&projection!==undefined&&
+        projection>=2*conf!.window_plus_or_minus?[{p,m,prob,
         projection,window:conf!.window_plus_or_minus}]:[];
     })).sort((a,b)=>b.prob-a.prob||b.projection-a.projection);
 
@@ -165,7 +170,7 @@ export default function NbaIndependentLivePanel({search=''}:{search?:string}){
        </div>:<p className="mt-2 text-[11px] text-amber-200">
          Confidence has not yet been measured for these predictions. Numerical projections remain available.
        </p>}
-       <p className="mt-2 text-[10px] text-gray-400">Historical played-player accuracy within the stated window; different stat windows are not equivalent betting opportunities. No sportsbook thresholds involved.</p>
+       <p className="mt-2 text-[10px] text-gray-400">Historical accuracy within ± the shown window, for projections at least 2× that window. A 90% near-zero assists forecast does NOT mean a 90% chance to record 1+ assists. These percentages are NOT prop-bet win chances. No sportsbook thresholds involved.</p>
       </div>
       <div className="grid grid-cols-[minmax(0,1fr)_repeat(4,2.25rem)] gap-1.5 text-[10px] font-semibold text-gray-400">
        <span>PLAYER</span>{MARKET.map(m=><span key={m} className="text-right">{LABEL[m]}</span>)}
