@@ -1,0 +1,55 @@
+name: Soccer missing leagues public fixture-provider coverage probe
+on:
+  pull_request:
+    paths:
+      - .github/workflows/soccer_missing_league_provider_probe.yml
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  missing-leagues-source-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe ESPN soccer and TheSportsDB league fixtures
+        run: |
+          python - <<'PY'
+          import urllib.request,json,time
+          def get(url):
+              try:
+                  req=urllib.request.Request(url,headers={'User-Agent':'PropEdgeSoccerResearch/1.0','Accept':'application/json'})
+                  with urllib.request.urlopen(req,timeout=10) as r:
+                      d=r.read(1500000);return json.loads(d)
+              except Exception as e:
+                  return {'_error':str(e)[:160]}
+          league_urls={
+            'ESPN_colombia':'https://site.api.espn.com/apis/site/v2/sports/soccer/col.1/scoreboard?dates=20261120-20261122',
+            'ESPN_costa_rica':'https://site.api.espn.com/apis/site/v2/sports/soccer/crc.1/scoreboard?dates=20261120-20261122',
+            'ESPN_nicaragua':'https://site.api.espn.com/apis/site/v2/sports/soccer/nic.1/scoreboard?dates=20261120-20261122',
+            'ESPN_korean_second':'https://site.api.espn.com/apis/site/v2/sports/soccer/kor.2/scoreboard?dates=20261120-20261122',
+            'ESPN_australian_champ':'https://site.api.espn.com/apis/site/v2/sports/soccer/aus.2/scoreboard?dates=20261120-20261122',
+            'ESPN_mex':'https://site.api.espn.com/apis/site/v2/sports/soccer/mex.1/scoreboard?dates=20261120-20261122',
+            'ESPN_australia':'https://site.api.espn.com/apis/site/v2/sports/soccer/aus.1/scoreboard?dates=20261120-20261122',
+          }
+          for name,u in league_urls.items():
+              o=get(u);e=o.get('events') or []
+              print('ESPN_PROVIDER_PROBE',json.dumps({'name':name,'count':len(e),
+                'league':(o.get('leagues') or [{}])[0].get('name'),
+                'error':o.get('_error'),'sample':[{'name':x.get('name'),'date':x.get('date'),
+                  'status':x.get('status',{}).get('type',{}).get('name'),
+                  'competitors':[(c.get('team') or {}).get('displayName') for c in (x.get('competitions') or [{}])[0].get('competitors',[])]} for x in e[:4]]}))
+          ids={'nicaragua':4806,'costa_rica':4815,'korea_k2':4822,'colombia':4497,
+               'mexico':4350}
+          for name,id in ids.items():
+              for method in ('eventsnextleague.php?id=','eventspastleague.php?id='):
+                  u='https://www.thesportsdb.com/api/v1/json/123/'+method+str(id)
+                  o=get(u)
+                  ev=o.get('events') or []
+                  print('TSDB_PROVIDER_PROBE',json.dumps({'name':name,'kind':method.split('.')[0],
+                    'count':len(ev),'error':o.get('_error'),
+                    'sample':[{'date':a.get('dateEvent'),'time':a.get('strTime'),
+                      'home':a.get('strHomeTeam'),'away':a.get('strAwayTeam'),
+                      'status':a.get('strStatus'),'homeScore':a.get('intHomeScore'),
+                      'awayScore':a.get('intAwayScore')} for a in ev[:4]]}))
+          PY
