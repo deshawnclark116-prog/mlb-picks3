@@ -30,6 +30,14 @@ from nba.nba_v4_backtest import load
 from nba.nba_independent_no_hindsight_opportunity_lab import (
     FEATURES, STATS, PARAMS, dataset, make_features,
 )
+from nba.nba_independent_projection_confidence import (
+    WINDOWS, SCHEMA as CONFIDENCE_SCHEMA,
+    confidence_from_calibration, read_or_build_calibration,
+)
+from nba.nba_independent_milestone_research import (
+    VERSION as PROBABILITY_RESEARCH_VERSION, research_milestones,
+    rank_research_targets,
+)
 
 SCHEMA = "NBA_INDEPENDENT_DIRECT_LIVE_PRETIP_SHADOW_V1"
 VERSION = "nba-independent-direct-prior-date-head-v1"
@@ -242,7 +250,8 @@ def enrich_pretip_player_identities(v3, v5, now):
     return revised
 
 
-def generate_shadow(v3, historic_games, now, *, history_sha, v3_sha, v5_roster=None, v5_roster_sha=None):
+def generate_shadow(v3, historic_games, now, *, history_sha, v3_sha, v5_roster=None, v5_roster_sha=None,
+                    confidence_calibration=None):
     roster_inputs = enrich_pretip_player_identities(v3, v5_roster, now) if v5_roster else v3
     eligible_games = selected_live_games(roster_inputs, now)
     root = {
@@ -259,10 +268,22 @@ def generate_shadow(v3, historic_games, now, *, history_sha, v3_sha, v5_roster=N
         "games_forecast": 0, "players_forecast": 0, "rows_forecast": 0,
         "skipped": [], "research_only": True, "official_bets": 0,
         "no_sportsbook_probability": True, "prospective_calibration_verified": False,
+        "provisional_milestone_probability_model": PROBABILITY_RESEARCH_VERSION,
+        "probabilities_are_conditional_on_playing": True,
+        "verified_bookmaker_prop_lines": 0,
+        "ranking_is_only_research_not_a_bet": True,
         "player_availability_model_source": "EXISTING_V3_PREGAME_ESPN_NO_ACTIVE_CERTIFICATION",
         "projections_conditional_on_playing": True,
         "individual_starter_certified": False,
-        "model_is_not_the_v5_serving_champion": True
+        "model_is_not_the_v5_serving_champion": True,
+        "projection_accuracy_confidence_source": CONFIDENCE_SCHEMA if confidence_calibration else None,
+        "projection_accuracy_calibration_sha256": hashlib.sha256(json.dumps(
+            confidence_calibration,sort_keys=True,separators=(",",":")
+        ).encode()).hexdigest() if confidence_calibration else None,
+        "projection_accuracy_definition": "PROB_ACTUAL_WITHIN_PLUS_MINUS_OF_OWN_MODEL_PREDICTION_IF_PLAYS",
+        "projection_accuracy_windows": WINDOWS,
+        "projection_accuracy_not_a_bookmaker_hit_probability": True,
+        "projection_accuracy_forward_2026_27_calibrated": False
     }
     if not eligible_games:
         root["status"] = "NO_UPCOMING_PREGAME_SOURCE_GAMES"
@@ -332,6 +353,9 @@ def generate_shadow(v3, historic_games, now, *, history_sha, v3_sha, v5_roster=N
                     "historical_current_team_played_games": sum(
                         p["team"] == tid for p in history_for_player[-8:]),
                     "predictions": predicted, "prior_recent5": {},
+                    "projection_accuracy_confidence": {},
+                    "research_event_probabilities": {},
+                    "research_distribution_variance": {},
                     "history_games": len(history_for_player)
                 }
         for market, pairs in feature_rows.items():
@@ -345,6 +369,14 @@ def generate_shadow(v3, historic_games, now, *, history_sha, v3_sha, v5_roster=N
                 entry = player_rows[(tid, pid)]
                 entry["predictions"][market] = round(float(raw), 3)
                 entry["prior_recent5"][market] = round(float(f["baseline"]), 3)
+                if confidence_calibration is not None:
+                    entry["projection_accuracy_confidence"][market] = confidence_from_calibration(
+                        confidence_calibration, market, float(raw)
+                    )
+                research = research_milestones(market,float(raw),player_hist[pid])
+                if research is not None:
+                    entry["research_event_probabilities"][market] = research["milestones"]
+                    entry["research_distribution_variance"][market] = research["variance"]
         players = sorted(player_rows.values(),
                          key=lambda p: (-p["predictions"].get("points", 0), p["player"]))
         game = {
@@ -354,6 +386,9 @@ def generate_shadow(v3, historic_games, now, *, history_sha, v3_sha, v5_roster=N
             "forecast_at_utc": now.isoformat(), "rows_count": sum(
                 len(p["predictions"]) for p in players
             ), "players": players, "players_forecast": len(players),
+            "top_research_milestone_estimates": rank_research_targets(players)[:25],
+            "research_milestone_board_only": True,
+            "research_probabilities_are_not_sportsbook_lines": True,
             "skipped_player_reasons": dict(skipped),
             "source_v3_fixture_at_utc": g.get("forecast_at_utc"),
             "unverified_starters_not_featured_as_official_picks": True,
@@ -400,6 +435,7 @@ def main():
     ap.add_argument("--games", action="append", required=True)
     ap.add_argument("--v3", required=True)
     ap.add_argument("--v5-roster", default="", help="Fresh V5 roster identities only, never projection means")
+    ap.add_argument("--confidence-file", default="", help="Fixed 2025-fit / 2026-Jan-Feb measured forecast accuracy")
     ap.add_argument("--out", required=True)
     ap.add_argument("--archive", default="")
     ap.add_argument("--now", default="", help="Test-only fixed asof UTC")
@@ -409,9 +445,18 @@ def main():
     v3 = json.loads(Path(args.v3).read_text())
     digest = hashlib.sha256("".join(source_hash(p) for p in args.games).encode()).hexdigest()
     v5_roster = json.loads(Path(args.v5_roster).read_text()) if args.v5_roster else None
+    confidence = None
+    if args.confidence_file:
+        # Freeze validation evidence from 2025-fit / Jan-Feb 2026 only.
+        # Never refit on already-consulted fall 2026 games.
+        earlier = to_previous_eastern_completed_games(
+            historical, dt.date(2026, 2, 15)
+        )
+        confidence = read_or_build_calibration(args.confidence_file, earlier, save=True)
     doc = generate_shadow(v3, historical, now, history_sha=digest,
                           v3_sha=source_hash(args.v3), v5_roster=v5_roster,
-                          v5_roster_sha=source_hash(args.v5_roster) if args.v5_roster else None)
+                          v5_roster_sha=source_hash(args.v5_roster) if args.v5_roster else None,
+                          confidence_calibration=confidence)
     frozen = write_and_freeze(doc, args.out, args.archive)
     print("NBA_INDEPENDENT_LIVE_DIRECT_PREGAME", json.dumps({
         "generated_at_utc": doc["generated_at_utc"],
