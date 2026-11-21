@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {gzipSync} from 'node:zlib';
-import {createPublishedV5Sync} from '../server/nbaV5PublishedSync.ts';
+import {createPublishedV5Sync,attachMissingPublishedV5Games} from '../server/nbaV5PublishedSync.ts';
 
 const V5='nba-v5-blend-possession-simulation-20261106';
 const RELEASE_SHA='f'.repeat(40);
@@ -183,4 +183,62 @@ test('oversized or malformed public release cannot override a locally verified d
  const out=await createPublishedV5Sync(get)(local(),NOW);
  assert.equal(out.games[0].rows[0].mean,5);
  assert.equal(out.v5_published_sync.source_state,'SOURCE_UNAVAILABLE_LOCAL_FALLBACK');
+});
+
+test('a source-verified pretip 9:30 game absent from an older frontend checkout IS added, not lost',async()=>{
+ const time=Date.parse('2026-11-21T02:09:00Z'); // 9:09 PM ET
+ const gen='2026-11-21T01:51:47Z';
+ const source=header([{
+   ...game(gen,23,'401909311'),
+   tipoff_utc:'2026-11-21T02:30:00Z',
+   home:'Utah Jazz',away:'Phoenix Suns'
+ }],gen);
+ const old={games:[game('2026-11-20T23:10:00Z',6,'401909300')],
+  status:'AVAILABLE_RESEARCH_ONLY',upcoming_games:1,
+  latest_run:{applied:0,reason:'OLD_LOCAL_FIRSTSEEN'}};
+ const direct=attachMissingPublishedV5Games(old,source,time);
+ assert.equal(direct.games.length,2);
+ const add=direct.games.find((g:any)=>g.game_id==='401909311');
+ assert.ok(add);
+ assert.equal(add.forecast_kind,'V5_LATEST');
+ assert.equal(add.rows[0].mean,23);
+ assert.equal(add.source_attached_without_local_firstseen,true);
+ assert.equal(add.first_seen_forecast_preserved_in_archive,false);
+ assert.equal(old.games.length,1,'original firstseen never mutated');
+ const {get}=mock(p=>{
+   if(p.endsWith('/readiness.json'))return ready(gen);
+   if(p.endsWith('/latest.json'))return JSON.stringify(source);
+   return null;
+ });
+ const result=await createPublishedV5Sync(get)(old,time);
+ assert.deepEqual(result.v5_published_sync.recovered_live_game_ids,['401909311']);
+ assert.equal(result.games.find((g:any)=>g.game_id==='401909311').rows[0].mean,23);
+ assert.deepEqual(result.latest_run,old.latest_run);
+});
+test('source-only recovered game cannot be invented after tipoff or from an aftertip source',()=>{
+ const gen='2026-11-21T01:51:47Z';
+ const before=Date.parse('2026-11-21T02:09:00Z');
+ const base=game(gen,20,'401909311');
+ const doc=header([{...base,tipoff_utc:'2026-11-21T02:30:00Z'}],gen);
+ const empty={games:[],status:'NO_ACTIVE_UPCOMING_V3_PRETIP_SHADOWS'};
+ const afterStart=attachMissingPublishedV5Games(empty,doc,
+  Date.parse('2026-11-21T02:32:00Z'));
+ assert.equal(afterStart.games.length,0);
+ const afterTipProjection=header([{...base,tipoff_utc:'2026-11-21T02:30:00Z',
+  forecast_at_utc:'2026-11-21T02:22:00Z'}],gen);
+ assert.equal(attachMissingPublishedV5Games(empty,afterTipProjection,before).games.length,0);
+ const unverified=header([{...base,tipoff_utc:'2026-11-21T02:30:00Z',
+  rows:[{...base.rows[0],calibrated_for_2026_27:true}]}],gen);
+ assert.equal(attachMissingPublishedV5Games(empty,unverified,before).games.length,0);
+});
+test('previously displayed NBA games are never duplicated by recovery and preserve newer local forecast',()=>{
+ const gen='2026-11-21T01:51:47Z';
+ const before=Date.parse('2026-11-21T02:09:00Z');
+ const same={...game(gen,18,'401909311'),tipoff_utc:'2026-11-21T02:30:00Z'};
+ const newer={...same,rows:[{...same.rows[0],mean:24}],
+  forecast_at_utc:'2026-11-21T01:59:00Z'};
+ const out=attachMissingPublishedV5Games({games:[newer]},header([same],gen),before);
+ assert.equal(out.games.length,1);
+ assert.equal(out.games[0].rows[0].mean,24);
+ assert.deepEqual(out.source_attached_v5_games,[]);
 });
