@@ -1,8 +1,8 @@
-/** Experimental NBA specialist router. Each stat is sourced from exactly ONE
+/** Primary NBA model selector. Each stat is sourced from exactly ONE
  * genuine as-of model forecast. No ensemble averages, synthetic substitutions,
  * sportsbook lines, post-tip rebuilding, or retroactive replacement of originals.
- * Market assignments are provisional from the Nov 20/21 small paired study;
- * this route cannot authorize promotion without a larger forward comparison.
+ * Market assignments are the user's official production selection. Whether
+ * they beat the prior system remains an open empirical question.
  */
 import type {Request,Response} from 'express';
 import {loadNbaV3Shadow} from './nbaV3Shadow.ts';
@@ -98,7 +98,7 @@ export function composeNbaSpecialists(
           specialist_forecast_at_utc:source.forecast_at_utc});
       }
     }
-    if(!rows.length)continue;
+    // Keep verified fixtures visible even if every model source is missing.
     games.push({
       game_id:id,away:canonical.away,home:canonical.home,
       tipoff_utc:canonical.tipoff_utc,
@@ -110,16 +110,17 @@ export function composeNbaSpecialists(
   }
   games.sort((a,b)=>a.tipoff_utc.localeCompare(b.tipoff_utc)||a.game_id.localeCompare(b.game_id));
   return {
-    schema:NBA_SPECIALIST_SCHEMA,status:games.length?'AVAILABLE_SHADOW_ONLY':'NO_VERIFIED_SPECIALIST_SOURCES',
+    schema:NBA_SPECIALIST_SCHEMA,status:games.some(g=>g.rows.length)?'AVAILABLE_PRIMARY_PROJECTIONS':'NO_VERIFIED_SPECIALIST_SOURCES',
+    publication_role:'PRIMARY_NBA_SYSTEM_PICKS',
     market_assignments:SPECIALIST_MARKETS,
-    assignment_status:'PROVISIONAL_NEEDS_LARGER_MATCHED_FORWARD_HOLDOUT',
+    assignment_status:'OFFICIAL_MARKET_ROUTING_PENDING_FORWARD_ACCURACY_EVALUATION',
     no_ensemble_blending:true,
     no_automatic_model_fallback:true,
     no_sportsbook_lines:true,
     originals_immutable:true,
     research_only:true,official_bets:0,
     games,
-    disclaimer:'Each market is produced by its assigned original model, not an average. Different models may use different pregame information horizons. Model chance is uncalibrated.'
+    disclaimer:'Primary NBA system picks: each stat is produced by its selected source model, not an average. Accuracy has not been established on a new forward holdout; model chances are not calibrated wagering probabilities.'
   };
 }
 export function nbaSpecialistHandler(){
