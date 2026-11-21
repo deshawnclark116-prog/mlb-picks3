@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-21_06_00PM.pdf",
-  "published_at_utc": "2026-11-21T23:00:00+00:00",
-  "captured_at_utc": "2026-11-21T23:11:58.538982+00:00",
-  "source_sha256": "8d2cc70359251dc87296417bc31c05ebb72c6b3556856eacdde810d7ec7b77fd",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-21_06_15PM.pdf",
+  "published_at_utc": "2026-11-21T23:15:00+00:00",
+  "captured_at_utc": "2026-11-21T23:19:59.267031+00:00",
+  "source_sha256": "33f5ce155ec4df62301b7b6d78b50e2fe2147d78ea3e0820b4a400b5ae7ec4f4",
   "reports": [
     {
       "matchup": "MIL@PHI",
@@ -347,7 +347,7 @@
       "team_abbr": "MIN",
       "player": "Evans, Isaiah",
       "normalized_player": "isaiah evans",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Illness"
     },
     {
