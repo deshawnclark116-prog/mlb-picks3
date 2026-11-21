@@ -265,8 +265,10 @@ export default function SoccerTodayScreen(){
  // Retain the established model-first mobile ordering within each day.
  // A partial extra-source fixture must not displace a game with a genuine
  // original match projection from the first visible cards.
- grouped.sort((a,b)=>a.fixtureDate.localeCompare(b.fixtureDate)||
-  Number(!!b.match)-Number(!!a.match)||
+ // Keep genuine model predictions visible before fixture-only discovery
+ // cards. Users can select a specific competition to inspect those fixtures.
+ grouped.sort((a,b)=>Number(!!b.match)-Number(!!a.match)||
+  a.fixtureDate.localeCompare(b.fixtureDate)||
   (a.kickoffUtc??'').localeCompare(b.kickoffUtc??'')||
   (a.league??'').localeCompare(b.league??'')||a.home.localeCompare(b.home));
  const q=search.trim().toLowerCase();
