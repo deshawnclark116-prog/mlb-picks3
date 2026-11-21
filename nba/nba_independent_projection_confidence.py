@@ -86,12 +86,29 @@ def build_accuracy_calibration(games: list[dict]) -> dict:
         global_rate = overall_success / overall_n
         cells = {}
         for i in range(4):
-            success, n = hist[i]
+            own_success, own_n = hist[i]
+            success, n = own_success, own_n
+            pool = "ORIGINAL_PREDICTION_RANGE"
+            # Predeclared fallback uses only SAMPLE COVERAGE, not realized
+            # accuracy/ranking of candidate sources. At very high means
+            # (e.g., >=30 points) a 2026 validation period may contain too
+            # few players. Borrow the closest adjacent expectation group,
+            # NEVER fabricate an individualized high-mean probability.
             if n < 50:
-                raise ValueError("NBA_INDEPENDENT_SPARSE_CONFIDENCE_BIN_" + market + "_" + str(i))
+                adjacent = i-1 if i>0 else i+1
+                success += hist[adjacent][0]
+                n += hist[adjacent][1]
+                pool = "ADJACENT_PREDICTED_MEAN_POOL_LOW_N"
+            if n < 50:
+                success, n = overall_success, overall_n
+                pool = "WHOLE_MARKET_POOL_LOW_N"
+            if n < 50:
+                raise ValueError("NBA_INDEPENDENT_NOT_ENOUGH_POOLED_CALIBRATION")
             rate = (success + SHRINKAGE_N * global_rate)/(n + SHRINKAGE_N)
             cells[str(i)] = {
                 "n": n, "within_window_count": success,
+                "original_predicted_mean_bin_n": own_n,
+                "calibration_pool": pool,
                 "conditional_accuracy_estimate": round(rate, 6),
             }
         result["markets"][market] = {
@@ -130,6 +147,8 @@ def confidence_from_calibration(doc: dict, market: str, projected_mean: float) -
         "probability_within_window_if_plays": round(p, 4),
         "window_plus_or_minus": WINDOWS[market],
         "historical_validation_n_in_bin": n,
+        "calibration_pool": cell.get("calibration_pool", "ORIGINAL_PREDICTION_RANGE"),
+        "original_bin_n": cell.get("original_predicted_mean_bin_n", n),
         "metric": "PROB_ACTUAL_WITHIN_ERROR_WINDOW_OF_OWN_MODEL_PROJECTION",
         "calibration_source": SCHEMA,
         "not_over_under_probability": True,
