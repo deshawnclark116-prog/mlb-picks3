@@ -39,6 +39,22 @@ export function validateIndependentLive(doc:unknown, now:number){
  if(created>now+60_000||source>created+60_000||created-source>MAX_AGE_MS||
     now-created>MAX_AGE_MS)
    throw Error('NBA_INDEPENDENT_STALE_OR_FUTURE_SOURCE');
+ const confidencePresent=x.projection_accuracy_confidence_source!=null;
+ if(confidencePresent){
+   if(x.projection_accuracy_confidence_source!==
+        'NBA_INDEPENDENT_PREDICTION_ACCURACY_VALIDATION_2026_V1'||
+      x.projection_accuracy_definition!==
+        'PROB_ACTUAL_WITHIN_PLUS_MINUS_OF_OWN_MODEL_PREDICTION_IF_PLAYS'||
+      x.projection_accuracy_not_a_bookmaker_hit_probability!==true||
+      x.projection_accuracy_forward_2026_27_calibrated!==false||
+      !isSha(x.projection_accuracy_calibration_sha256)||
+      !x.projection_accuracy_windows||
+      x.projection_accuracy_windows.points!==5||
+      x.projection_accuracy_windows.rebounds!==2||
+      x.projection_accuracy_windows.assists!==2||
+      x.projection_accuracy_windows.three_pointers_made!==1)
+     throw Error('NBA_INDEPENDENT_FAKE_MODEL_ACCURACY_CONFIDENCE');
+ }
  if(x.games.length!==x.games_forecast)
    throw Error('NBA_INDEPENDENT_GAME_COUNT_MISMATCH');
  const ids=new Set<string>();
@@ -71,6 +87,20 @@ export function validateIndependentLive(doc:unknown, now:number){
        if(!Number.isFinite(v)||v<0||v>250)
           throw Error('NBA_INDEPENDENT_INVALID_NUMERIC_FORECAST');
        rows++;
+       if(confidencePresent){
+         const c=p.projection_accuracy_confidence?.[m];
+         if(!c||c.metric!=='PROB_ACTUAL_WITHIN_ERROR_WINDOW_OF_OWN_MODEL_PROJECTION'||
+            c.calibration_source!==x.projection_accuracy_confidence_source||
+            c.current_season_calibration_verified!==false||
+            c.not_over_under_probability!==true||
+            c.window_plus_or_minus!==x.projection_accuracy_windows[m]||
+            !Number.isFinite(c.probability_within_window_if_plays)||
+            c.probability_within_window_if_plays<0||
+            c.probability_within_window_if_plays>1||
+            !Number.isInteger(c.historical_validation_n_in_bin)||
+            c.historical_validation_n_in_bin<50)
+          throw Error('NBA_INDEPENDENT_INVALID_PROJECTION_ACCURACY_PERCENT');
+       }
      }
    }
    if(g.rows_count!==g.players.reduce((n:number,p:any)=>
