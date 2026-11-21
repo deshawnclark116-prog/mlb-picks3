@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "84443e67d2a6e33c3d714ce55b34b9a9",
+  "captured_at_utc": "2026-11-21T00:19:20.818Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "42da18612fff0ba09e358e3ad4c74cfcaf24bcd7",
+  "source_results_sha256": "287ec85b65636b58cc8a7df4343db59a3246a43b5a9cc741c162321f4fde4c11",
+  "source_fixtures_sha256": "40ceffffd2bd7384761cf7db068383eddcb34627f0c2de8721e439fc49f7a6ba",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ARG_1_liga-profesional",
+    "season": "2026-27",
+    "date": "2026-11-23",
+    "home": "Gimnasia La Plata",
+    "away": "Newell's Old Boys",
+    "expectedHomeGoals": 1.3373,
+    "expectedAwayGoals": 0.9863,
+    "baselineHomeGoals": 1.2446,
+    "baselineAwayGoals": 1.0333,
+    "probabilities": {
+      "home": 0.4476,
+      "draw": 0.2764,
+      "away": 0.2759,
+      "over25": 0.4102,
+      "btts": 0.4624
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 16.6957,
+    "awayWeightedMatches": 16.8272,
+    "source": "open-matchday/fixture/ARG_1_liga-profesional",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

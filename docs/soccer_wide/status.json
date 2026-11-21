@@ -1,13 +1,13 @@
 {
   "schema": "soccer-wide-firstseen-score-v1",
-  "asofDateUTC": "2026-11-20",
+  "asofDateUTC": "2026-11-21",
   "listedCompetitions": 75,
   "sourceVerifiedCompetitions": 75,
-  "upcomingFixtures": 1617,
-  "upcomingQuantitativeForecasts": 1392,
-  "originallyFrozen": 349,
+  "upcomingFixtures": 1519,
+  "upcomingQuantitativeForecasts": 1301,
+  "originallyFrozen": 378,
   "graded": 0,
-  "ungraded": 349,
+  "ungraded": 378,
   "modelGoalMAE": null,
   "baselineGoalMAE": null,
   "model3wayBrier": null,
@@ -83,7 +83,7 @@
       "status": "NON_REGULATION_SCORE",
       "reason": "CUP_OR_UEFA_REGULATION_SCORE_UNVERIFIED",
       "pastResults": 113,
-      "upcomingFixtures": 15
+      "upcomingFixtures": 8
     },
     {
       "league": "SCO_CUP_scottish-cup",
@@ -118,6 +118,13 @@
       "status": "INSUFFICIENT_HISTORY",
       "reason": "MINIMUM_45_LEAGUE_RESULTS_AND_FOUR_PER_TEAM",
       "pastResults": 106,
+      "upcomingFixtures": 0
+    },
+    {
+      "league": "IRE_3_national-league",
+      "status": "INSUFFICIENT_HISTORY",
+      "reason": "MINIMUM_45_LEAGUE_RESULTS_AND_FOUR_PER_TEAM",
+      "pastResults": 60,
       "upcomingFixtures": 0
     },
     {

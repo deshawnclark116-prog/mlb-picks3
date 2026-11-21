@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "0d120339d16fb29ce415b92bfcb32b80",
+  "captured_at_utc": "2026-11-21T00:19:20.818Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "42da18612fff0ba09e358e3ad4c74cfcaf24bcd7",
+  "source_results_sha256": "a6e61bcfbaef4abeb4005aaeb0542258a4827ce6efbf316c336050f6ce39e417",
+  "source_fixtures_sha256": "b5d1b182a9c90a4f8f25edc1b634ef5441625bb8149b30fec59ad61aa2f3363c",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ESP_1_la-liga",
+    "season": "2026-27",
+    "date": "2026-11-23",
+    "home": "Levante UD",
+    "away": "Elche CF",
+    "expectedHomeGoals": 1.5848,
+    "expectedAwayGoals": 1.5105,
+    "baselineHomeGoals": 1.5759,
+    "baselineAwayGoals": 1.2561,
+    "probabilities": {
+      "home": 0.3968,
+      "draw": 0.2385,
+      "away": 0.3646,
+      "over25": 0.5978,
+      "btts": 0.6195
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 7.9474,
+    "awayWeightedMatches": 8.9446,
+    "source": "open-matchday/fixture/ESP_1_la-liga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

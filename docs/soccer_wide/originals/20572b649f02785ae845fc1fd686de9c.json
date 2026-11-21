@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "20572b649f02785ae845fc1fd686de9c",
+  "captured_at_utc": "2026-11-21T00:19:20.818Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "42da18612fff0ba09e358e3ad4c74cfcaf24bcd7",
+  "source_results_sha256": "543803ebbe61356cbf49f9a02d2d6d934e664d1029bc57bcea8174bc4a43d1d9",
+  "source_fixtures_sha256": "a65e229570215cea0157ed76636eb165ec9c613be1b788f1986db3ad34d78e4a",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ITA_1_serie-a",
+    "season": "2026-27",
+    "date": "2026-11-23",
+    "home": "Monza",
+    "away": "Fiorentina",
+    "expectedHomeGoals": 1.7372,
+    "expectedAwayGoals": 1.6181,
+    "baselineHomeGoals": 1.592,
+    "baselineAwayGoals": 1.4696,
+    "probabilities": {
+      "home": 0.411,
+      "draw": 0.2277,
+      "away": 0.3613,
+      "over25": 0.6515,
+      "btts": 0.6606
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 8.1594,
+    "awayWeightedMatches": 7.937,
+    "source": "open-matchday/fixture/ITA_1_serie-a",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

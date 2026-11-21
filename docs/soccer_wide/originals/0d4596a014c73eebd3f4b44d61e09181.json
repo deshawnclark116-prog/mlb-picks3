@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "0d4596a014c73eebd3f4b44d61e09181",
+  "captured_at_utc": "2026-11-21T00:19:20.818Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "42da18612fff0ba09e358e3ad4c74cfcaf24bcd7",
+  "source_results_sha256": "3a4e413c5c5a427de81865c394024a06cce9a1b26bcafab9ca7fb6ac97aa95d6",
+  "source_fixtures_sha256": "bec7551434df6c5e5a8eb6e91282f8d1fc42dd1a4bd168b3e00845b1f17c077a",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "MEX_1_liga-mx",
+    "season": "2026-27",
+    "date": "2026-11-23",
+    "home": "Querétaro",
+    "away": "Necaxa",
+    "expectedHomeGoals": 1.4595,
+    "expectedAwayGoals": 1.3475,
+    "baselineHomeGoals": 1.5567,
+    "baselineAwayGoals": 1.421,
+    "probabilities": {
+      "home": 0.3994,
+      "draw": 0.252,
+      "away": 0.3486,
+      "over25": 0.5322,
+      "btts": 0.5681
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 12.2719,
+    "awayWeightedMatches": 10.5446,
+    "source": "open-matchday/fixture/MEX_1_liga-mx",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

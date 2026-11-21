@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "2b0275b99b0927df13972b699733e751",
+  "captured_at_utc": "2026-11-21T00:19:20.818Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "42da18612fff0ba09e358e3ad4c74cfcaf24bcd7",
+  "source_results_sha256": "0fdc86fe3bd26f5ee995089f9ed15a47e94db81518d7430f6df904a2d759331e",
+  "source_fixtures_sha256": "b2dc4bc176dd095ddcb6896cc9219e0f54d546020076f9490aadb3324e445423",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ESP_2_segunda-division",
+    "season": "2026-27",
+    "date": "2026-11-23",
+    "home": "Ceuta",
+    "away": "Almería",
+    "expectedHomeGoals": 1.248,
+    "expectedAwayGoals": 1.3133,
+    "baselineHomeGoals": 1.5609,
+    "baselineAwayGoals": 1.1657,
+    "probabilities": {
+      "home": 0.3516,
+      "draw": 0.2661,
+      "away": 0.3824,
+      "over25": 0.4718,
+      "btts": 0.5212
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 10.8396,
+    "awayWeightedMatches": 10.9724,
+    "source": "open-matchday/fixture/ESP_2_segunda-division",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

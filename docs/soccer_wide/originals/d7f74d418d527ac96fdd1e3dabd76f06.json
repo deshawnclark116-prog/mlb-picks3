@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "d7f74d418d527ac96fdd1e3dabd76f06",
+  "captured_at_utc": "2026-11-21T00:19:20.818Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "42da18612fff0ba09e358e3ad4c74cfcaf24bcd7",
+  "source_results_sha256": "72b3ad720ff8f925c93d2d5a013bdf32fb789eaf243e0e318077d5c3a962fde1",
+  "source_fixtures_sha256": "bea54b03f57a422031423fb6d182fb793596e8e5cf8469a1b2d298c6828b43b9",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "SVN_1_prva-liga",
+    "season": "2026-27",
+    "date": "2026-11-23",
+    "home": "Koper",
+    "away": "Aluminij",
+    "expectedHomeGoals": 1.4648,
+    "expectedAwayGoals": 1.1264,
+    "baselineHomeGoals": 1.4008,
+    "baselineAwayGoals": 1.1427,
+    "probabilities": {
+      "home": 0.4491,
+      "draw": 0.2599,
+      "away": 0.291,
+      "over25": 0.4794,
+      "btts": 0.5196
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 10.6459,
+    "awayWeightedMatches": 10.6456,
+    "source": "open-matchday/fixture/SVN_1_prva-liga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

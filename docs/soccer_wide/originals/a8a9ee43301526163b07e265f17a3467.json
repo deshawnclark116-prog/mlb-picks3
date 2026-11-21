@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "a8a9ee43301526163b07e265f17a3467",
+  "captured_at_utc": "2026-11-21T00:19:20.818Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "42da18612fff0ba09e358e3ad4c74cfcaf24bcd7",
+  "source_results_sha256": "33c9b8e4170a562dae1901e4c53b368830267e3fc80b75d697d7332eb46263be",
+  "source_fixtures_sha256": "a3c7f73bebdc7237e72bfc96fc0c42ca4f1bad62c61cfc518cfe2747ae391e1f",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "CRO_1_hnl",
+    "season": "2026-27",
+    "date": "2026-11-23",
+    "home": "Slaven Belupo",
+    "away": "Osijek",
+    "expectedHomeGoals": 1.6414,
+    "expectedAwayGoals": 1.5813,
+    "baselineHomeGoals": 1.6391,
+    "baselineAwayGoals": 1.3049,
+    "probabilities": {
+      "home": 0.3962,
+      "draw": 0.2332,
+      "away": 0.3706,
+      "over25": 0.6248,
+      "btts": 0.6404
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 9.0447,
+    "awayWeightedMatches": 8.3843,
+    "source": "open-matchday/fixture/CRO_1_hnl",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

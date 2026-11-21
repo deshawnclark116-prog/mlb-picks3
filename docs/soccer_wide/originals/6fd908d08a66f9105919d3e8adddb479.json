@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "6fd908d08a66f9105919d3e8adddb479",
+  "captured_at_utc": "2026-11-21T00:19:20.818Z",
+  "catalog_generated_at_utc": "2026-11-20T06:33:06Z",
+  "original_code_sha": "42da18612fff0ba09e358e3ad4c74cfcaf24bcd7",
+  "source_results_sha256": "e3da6df50e9a2a1f76ac7f935fc37f40f20162184a101fcc8f668bc77932004d",
+  "source_fixtures_sha256": "672f4402c522d8cf43c6653a0ca8f50214a0e917af9cede00cffa727a90267ca",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "BRA_1_serie-a",
+    "season": "2026-27",
+    "date": "2026-11-23",
+    "home": "Botafogo",
+    "away": "São Paulo",
+    "expectedHomeGoals": 1.5311,
+    "expectedAwayGoals": 1.0471,
+    "baselineHomeGoals": 1.5289,
+    "baselineAwayGoals": 1.1183,
+    "probabilities": {
+      "home": 0.4847,
+      "draw": 0.256,
+      "away": 0.2593,
+      "over25": 0.4761,
+      "btts": 0.5087
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 19.0559,
+    "awayWeightedMatches": 17.2134,
+    "source": "open-matchday/fixture/BRA_1_serie-a",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}
