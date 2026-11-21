@@ -45,6 +45,7 @@ async function setup(page:any,doc:any=source){
  await page.route('**/api/nba-v3-shadow**',route=>route.fulfill({json:doc}));
  await page.goto('/');
  await page.locator('#tab-btn-nba').click();
+ await page.getByTestId('nba-previous-system-tab').click();
  await expect(page.getByTestId('nba-v3-game')).toHaveCount(1);
 }
 test('NBA V5 TOP 10 is separate from existing 4 tiles; matches canonical top 10 across all categories despite filter',async({page})=>{
