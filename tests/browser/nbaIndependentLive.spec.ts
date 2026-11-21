@@ -21,6 +21,20 @@ const research={
    source_active_probability_unverified:.87,
    historical_current_team_played_games:8,history_games:50,
    predictions:{points:24.3,rebounds:11.2,assists:8.1,three_pointers_made:1.4},
+   projection_accuracy_confidence:{
+    points:{probability_within_window_if_plays:.64,window_plus_or_minus:5,
+      historical_validation_n_in_bin:400,metric:'PROB_ACTUAL_WITHIN_ERROR_WINDOW_OF_OWN_MODEL_PROJECTION',
+      not_over_under_probability:true,current_season_calibration_verified:false},
+    rebounds:{probability_within_window_if_plays:.63,window_plus_or_minus:2,
+      historical_validation_n_in_bin:400,metric:'PROB_ACTUAL_WITHIN_ERROR_WINDOW_OF_OWN_MODEL_PROJECTION',
+      not_over_under_probability:true,current_season_calibration_verified:false},
+    assists:{probability_within_window_if_plays:.71,window_plus_or_minus:2,
+      historical_validation_n_in_bin:400,metric:'PROB_ACTUAL_WITHIN_ERROR_WINDOW_OF_OWN_MODEL_PROJECTION',
+      not_over_under_probability:true,current_season_calibration_verified:false},
+    three_pointers_made:{probability_within_window_if_plays:.57,window_plus_or_minus:1,
+      historical_validation_n_in_bin:400,metric:'PROB_ACTUAL_WITHIN_ERROR_WINDOW_OF_OWN_MODEL_PROJECTION',
+      not_over_under_probability:true,current_season_calibration_verified:false}
+   },
    prior_recent5:{points:25,rebounds:10.8,assists:8.4,three_pointers_made:1.5}
   },{
    player:'Kevin Durant',player_id:'320199',team_id:'10',
@@ -59,7 +73,11 @@ test('New AI NBA forecasts render the independent real numbers in mobile NBA tab
  await expect(match).toContainText('8.1');
  await expect(match).toContainText('1.4');
  await expect(match).toContainText('Kevin Durant');
- await expect(root).toContainText('Not verified betting picks');
+ await expect(root).toContainText('Historical projection accuracy');
+ await expect(root.getByTestId('nba-independent-confidence-ranking')).toContainText('71%');
+ await expect(root.getByTestId('nba-independent-confidence-ranking')).toContainText('Nikola Jokic');
+ await expect(root.getByTestId('nba-independent-confidence-ranking')).toContainText('AST 8.1');
+ await expect(root.getByTestId('nba-independent-confidence-ranking')).toContainText('(±2)');
  await expect(root.getByText(/No sportsbook|no sportsbook/i).first()).toBeVisible();
  await expect(page.getByTestId('nba-v3-primary-board')).toHaveCount(0);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=360)).toBe(true);
