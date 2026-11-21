@@ -1,50 +1,111 @@
 {
   "schema": "supplemental-soccer-partial-fixtures-v1",
-  "generated_at_utc": "2026-11-20T00:00:00.000Z",
+  "generated_at_utc": "2026-11-21T00:19:21.079Z",
   "coverage": "FIVE_EXPLICIT_MISSING_LEAGUES_PARTIAL_NEXT_EVENT_ONLY",
   "competitions": [
     {
       "league": "NIC_1_primera",
       "name": "Nicaraguan Primera División",
       "providerLeagueId": "4806",
-      "status": "SOURCE_UNAVAILABLE",
-      "count": 0,
-      "error": "FIRST_VERIFIED_SNAPSHOT_PENDING"
+      "status": "OK_NEXT_FIXTURE",
+      "count": 1
     },
     {
       "league": "COL_1_primera-a",
       "name": "Colombian Primera A",
       "providerLeagueId": "4497",
-      "status": "SOURCE_UNAVAILABLE",
-      "count": 0,
-      "error": "FIRST_VERIFIED_SNAPSHOT_PENDING"
+      "status": "OK_NEXT_FIXTURE",
+      "count": 1
     },
     {
       "league": "CRI_1_primera",
       "name": "Costa Rican Primera División",
       "providerLeagueId": "4815",
-      "status": "SOURCE_UNAVAILABLE",
-      "count": 0,
-      "error": "FIRST_VERIFIED_SNAPSHOT_PENDING"
+      "status": "OK_NEXT_FIXTURE",
+      "count": 1
     },
     {
       "league": "KOR_2_k-league",
       "name": "South Korean K2 League",
       "providerLeagueId": "4822",
-      "status": "SOURCE_UNAVAILABLE",
-      "count": 0,
-      "error": "FIRST_VERIFIED_SNAPSHOT_PENDING"
+      "status": "OK_NEXT_FIXTURE",
+      "count": 1
     },
     {
       "league": "AUS_2_championship",
       "name": "Australian Championship",
       "providerLeagueId": "5710",
-      "status": "SOURCE_UNAVAILABLE",
-      "count": 0,
-      "error": "FIRST_VERIFIED_SNAPSHOT_PENDING"
+      "status": "OK_NEXT_FIXTURE",
+      "count": 1
     }
   ],
-  "fixtures": [],
+  "fixtures": [
+    {
+      "id": "tsdb:2630066",
+      "league": "NIC_1_primera",
+      "season": "2026",
+      "date": "2026-11-21",
+      "home": "UNAN Managua",
+      "away": "Matagalpa",
+      "kickoffUtc": "2026-11-21T23:00:00Z",
+      "source": "THESPORTSDB_PUBLIC_NEXT_EVENT",
+      "providerStatus": "NS",
+      "coverage": "PARTIAL_NEXT_EVENT_ONLY",
+      "sourceCapturedAtUtc": "2026-11-21T00:19:21.079Z"
+    },
+    {
+      "id": "tsdb:2630136",
+      "league": "COL_1_primera-a",
+      "season": "2026",
+      "date": "2026-11-21",
+      "home": "Deportivo Cali",
+      "away": "Millonarios",
+      "kickoffUtc": "2026-11-21T01:40:00Z",
+      "source": "THESPORTSDB_PUBLIC_NEXT_EVENT",
+      "providerStatus": "NS",
+      "coverage": "PARTIAL_NEXT_EVENT_ONLY",
+      "sourceCapturedAtUtc": "2026-11-21T00:19:21.079Z"
+    },
+    {
+      "id": "tsdb:2557493",
+      "league": "CRI_1_primera",
+      "season": "2026",
+      "date": "2026-11-21",
+      "home": "Escorpiones de Belén",
+      "away": "San Carlos",
+      "kickoffUtc": "2026-11-21T02:00:00Z",
+      "source": "THESPORTSDB_PUBLIC_NEXT_EVENT",
+      "providerStatus": "NS",
+      "coverage": "PARTIAL_NEXT_EVENT_ONLY",
+      "sourceCapturedAtUtc": "2026-11-21T00:19:21.079Z"
+    },
+    {
+      "id": "tsdb:2422295",
+      "league": "KOR_2_k-league",
+      "season": "2026",
+      "date": "2026-11-21",
+      "home": "Busan IPark",
+      "away": "Chungbuk Cheongju",
+      "kickoffUtc": "2026-11-21T05:00:00Z",
+      "source": "THESPORTSDB_PUBLIC_NEXT_EVENT",
+      "providerStatus": "NS",
+      "coverage": "PARTIAL_NEXT_EVENT_ONLY",
+      "sourceCapturedAtUtc": "2026-11-21T00:19:21.079Z"
+    },
+    {
+      "id": "tsdb:2606446",
+      "league": "AUS_2_championship",
+      "season": "2026",
+      "date": "2026-11-21",
+      "home": "Marconi Stallions",
+      "away": "Sydney Olympic",
+      "kickoffUtc": "2026-11-21T04:00:00Z",
+      "source": "THESPORTSDB_PUBLIC_NEXT_EVENT",
+      "providerStatus": "NS",
+      "coverage": "PARTIAL_NEXT_EVENT_ONLY",
+      "sourceCapturedAtUtc": "2026-11-21T00:19:21.079Z"
+    }
+  ],
   "guardrails": {
     "official_bets": 0,
     "calibrated": false,
