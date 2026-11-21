@@ -1,9 +1,9 @@
 {
   "schema": "NBA_V5_IMMUTABLE_EXACT_CONFIRMED_CARD_AUDIT_V1",
   "kind": "last",
-  "games_with_archives_and_grades": 105,
-  "games_without_eligible_confirmed_starters": 68,
-  "files_missing_final_grade": 0,
+  "games_with_archives_and_grades": 106,
+  "games_without_eligible_confirmed_starters": 69,
+  "files_missing_final_grade": 8,
   "post_tip_forecasts_rejected": 0,
   "confirmed_starters_missing_dnp_contract": 234,
   "top4": {
@@ -188,7 +188,7 @@
   ],
   "shadow_candidate": {
     "status": "RESEARCH_ONLY_DO_NOT_PROMOTE",
-    "distinct_dates": 15,
+    "distinct_dates": 16,
     "holdout_from": "2026-11-14",
     "holdout_games": 10,
     "baseline": {
