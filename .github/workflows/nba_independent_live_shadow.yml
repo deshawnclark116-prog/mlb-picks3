@@ -5,6 +5,7 @@ on:
       - nba/nba_independent_live_shadow.py
       - nba/nba_independent_projection_confidence.py
       - tests/test_nba_independent_live_shadow.py
+      - tests/test_nba_independent_projection_confidence.py
       - server/nbaIndependentShadow.ts
       - src/components/NbaIndependentLivePanel.tsx
       - src/components/NbaResearchScreen.tsx
@@ -16,6 +17,7 @@ on:
       - nba/nba_independent_live_shadow.py
       - nba/nba_independent_projection_confidence.py
       - tests/test_nba_independent_live_shadow.py
+      - tests/test_nba_independent_projection_confidence.py
       - server/nbaIndependentShadow.ts
       - src/components/NbaIndependentLivePanel.tsx
       - src/components/NbaResearchScreen.tsx
@@ -51,6 +53,7 @@ jobs:
       - name: Run same-day and aftertip leakage regression tests
         run: |
           PYTHONPATH=. python -m unittest discover -s tests -p 'test_nba_independent_live_shadow.py' -v
+          PYTHONPATH=. python -m unittest discover -s tests -p 'test_nba_independent_projection_confidence.py' -v
           PYTHONPATH=. python -m unittest discover -s tests -p 'test_nba_independent_no_hindsight_opportunity.py' -v
       - name: Make current NBA source-verified independent player model forecasts
         run: |
