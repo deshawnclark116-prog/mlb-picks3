@@ -171,8 +171,8 @@ export default function SoccerTodayScreen(){
  const [range,setRange]=useState<Range>('48H');
  const [league,setLeague]=useState<League|'ALL'>('ALL');
  const [search,setSearch]=useState('');
- const [filters,setFilters]=useState(true);
- const [limit,setLimit]=useState(24);
+ const [filters,setFilters]=useState(false);
+ const [limit,setLimit]=useState(12);
  const [expanded,setExpanded]=useState<string|null>(null);
  const [asof,setAsof]=useState(()=>new Date().toISOString());
  const today=asof.slice(0,10);
@@ -273,7 +273,7 @@ export default function SoccerTodayScreen(){
   (!cutoff||!g.kickoffUtc||Date.parse(g.kickoffUtc)<=cutoff)&&
   (!q||[g.home,g.away,g.league?leagueNames[g.league]:'',...g.players.map(p=>p.playerName)]
     .some(s=>s.toLowerCase().includes(q))));
- const reset=()=>{setExpanded(null);setLimit(24);};
+ const reset=()=>{setExpanded(null);setLimit(12);};
  return <div id="soccer-projections-screen"
    className="h-full min-h-0 min-w-0 overflow-y-auto overscroll-y-contain bg-[#0b1215] px-4 pb-24 pt-4 text-slate-100 [scrollbar-width:none]">
   <div className="mb-4 flex items-center justify-between gap-3">
@@ -295,6 +295,16 @@ export default function SoccerTodayScreen(){
        {label}
     </button>)}
   </div>
+  <div className="mb-3 rounded-xl border border-white/10 bg-[#182225] px-3 py-2">
+   <label className="block text-[11px] text-slate-300">Competition
+    <select aria-label="Soccer competition" value={league}
+     onChange={e=>{setLeague(e.target.value as League|'ALL');reset();}}
+     className="mt-1 min-h-11 w-full rounded-lg border border-white/10 bg-[#101719] px-3 text-[12px] text-white">
+     <option value="ALL">All available leagues and competitions</option>
+     {leagues.map(l=><option key={l} value={l}>{leagueNames[l]??l}</option>)}
+    </select>
+   </label>
+  </div>
   <div className="mb-3 flex items-center justify-between gap-3">
    <p className="text-[11px] text-slate-400">{filtered.length} listed fixtures · Tap one to see every available projection</p>
    <button type="button" aria-expanded={filters} onClick={()=>setFilters(x=>!x)}
@@ -310,14 +320,6 @@ export default function SoccerTodayScreen(){
       onChange={e=>{setSearch(e.target.value);reset();}}
       placeholder="Team or player name" className="h-10 w-full min-w-0 bg-transparent text-[12px] text-white outline-none"/>
     </div>
-   </label>
-   <label className="block text-[11px] text-slate-300">Competition
-    <select aria-label="Soccer competition" value={league}
-     onChange={e=>{setLeague(e.target.value as League|'ALL');reset();}}
-     className="mt-2 min-h-11 w-full rounded-lg border border-white/10 bg-[#101719] px-3 text-[12px] text-white">
-     <option value="ALL">All available leagues and competitions</option>
-     {leagues.map(l=><option key={l} value={l}>{leagueNames[l]??l}</option>)}
-    </select>
    </label>
   </div>}
   {playerVerificationUnavailable&&<p data-testid="soccer-player-eligibility-notice"
