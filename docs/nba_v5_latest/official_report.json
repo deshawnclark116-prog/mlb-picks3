@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-21_01_00PM.pdf",
-  "published_at_utc": "2026-11-21T18:00:00+00:00",
-  "captured_at_utc": "2026-11-21T18:08:19.656840+00:00",
-  "source_sha256": "be061ddb5212a2158aeb8974b05b2c984405f1d9953cd07d21254a26189faffd",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-21_02_15PM.pdf",
+  "published_at_utc": "2026-11-21T19:15:00+00:00",
+  "captured_at_utc": "2026-11-21T19:23:50.215584+00:00",
+  "source_sha256": "e4e6c0a8b110fb8c0aa27e9b8d2ed6e966c03a642c87a534500448130a421aca",
   "reports": [
     {
       "matchup": "MIL@PHI",
@@ -251,8 +251,8 @@
       "team_abbr": "DAL",
       "player": "Washington, P.J.",
       "normalized_player": "p j washington",
-      "status": "QUESTIONABLE",
-      "reason": ""
+      "status": "DOUBTFUL",
+      "reason": "Injury/Illness - Illness"
     },
     {
       "matchup": "MEM@MIN",
@@ -283,7 +283,7 @@
       "team_abbr": "MEM",
       "player": "Jerome, Ty",
       "normalized_player": "ty jerome",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -345,10 +345,74 @@
     {
       "matchup": "MEM@MIN",
       "team_abbr": "MIN",
+      "player": "Evans, Isaiah",
+      "normalized_player": "isaiah evans",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Illness"
+    },
+    {
+      "matchup": "MEM@MIN",
+      "team_abbr": "MIN",
       "player": "Zikarsky, Rocco",
       "normalized_player": "rocco zikarsky",
       "status": "OUT",
       "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "NOP@SAS",
+      "team_abbr": "NOP",
+      "player": "Dia, Malik",
+      "normalized_player": "malik dia",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "NOP@SAS",
+      "team_abbr": "NOP",
+      "player": "Mathurin, Bennedict",
+      "normalized_player": "bennedict mathurin",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Plantar Fasciitis"
+    },
+    {
+      "matchup": "NOP@SAS",
+      "team_abbr": "NOP",
+      "player": "McGowens, Bryce",
+      "normalized_player": "bryce mcgowens",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Elbow Infection"
+    },
+    {
+      "matchup": "NOP@SAS",
+      "team_abbr": "NOP",
+      "player": "Murphy III, Trey",
+      "normalized_player": "trey murphy",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "NOP@SAS",
+      "team_abbr": "NOP",
+      "player": "Murray, Dejounte",
+      "normalized_player": "dejounte murray",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Ankle Sprain"
+    },
+    {
+      "matchup": "NOP@SAS",
+      "team_abbr": "NOP",
+      "player": "Reese, Julian",
+      "normalized_player": "julian reese",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "NOP@SAS",
+      "team_abbr": "NOP",
+      "player": "Watford, Trendon",
+      "normalized_player": "trendon watford",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Ankle Sprain"
     },
     {
       "matchup": "NOP@SAS",
@@ -423,7 +487,7 @@
       "reason": "G League - Two-Way"
     }
   ],
-  "rows": 52,
+  "rows": 60,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
