@@ -1,0 +1,182 @@
+{
+  "schema": "NBA_INDEPENDENT_PREDICTION_ACCURACY_VALIDATION_2026_V1",
+  "trained_through": "2025-12-31",
+  "validation_from": "2026-01-01",
+  "validation_through": "2026-02-14",
+  "fixed_error_window": {
+    "points": 5.0,
+    "rebounds": 2.0,
+    "assists": 2.0,
+    "three_pointers_made": 1.0
+  },
+  "prediction_bin_boundaries": {
+    "points": [
+      10.0,
+      20.0,
+      30.0
+    ],
+    "rebounds": [
+      3.0,
+      6.0,
+      10.0
+    ],
+    "assists": [
+      2.0,
+      4.0,
+      7.0
+    ],
+    "three_pointers_made": [
+      1.0,
+      2.0,
+      3.0
+    ]
+  },
+  "conditional_on_actually_playing": true,
+  "not_an_over_under_probability": true,
+  "not_a_bookmaker_line": true,
+  "prospectively_calibrated_2026_27": false,
+  "eligible_for_official_bets": false,
+  "model_head": "nba-independent-direct-prior-date-head-v1",
+  "markets": {
+    "points": {
+      "validation_player_games": 6780,
+      "validation_within_window": 4379,
+      "played_player_overall_accuracy_rate": 0.64587,
+      "confidence_by_projected_mean_bin": {
+        "0": {
+          "n": 3629,
+          "within_window_count": 2662,
+          "original_predicted_mean_bin_n": 3629,
+          "calibration_pool": "ORIGINAL_PREDICTION_RANGE",
+          "conditional_accuracy_estimate": 0.731185
+        },
+        "1": {
+          "n": 2502,
+          "within_window_count": 1405,
+          "original_predicted_mean_bin_n": 2502,
+          "calibration_pool": "ORIGINAL_PREDICTION_RANGE",
+          "conditional_accuracy_estimate": 0.564791
+        },
+        "2": {
+          "n": 645,
+          "within_window_count": 310,
+          "original_predicted_mean_bin_n": 645,
+          "calibration_pool": "ORIGINAL_PREDICTION_RANGE",
+          "conditional_accuracy_estimate": 0.502801
+        },
+        "3": {
+          "n": 649,
+          "within_window_count": 312,
+          "original_predicted_mean_bin_n": 4,
+          "calibration_pool": "ADJACENT_PREDICTED_MEAN_POOL_LOW_N",
+          "conditional_accuracy_estimate": 0.502786
+        }
+      }
+    },
+    "rebounds": {
+      "validation_player_games": 6780,
+      "validation_within_window": 4260,
+      "played_player_overall_accuracy_rate": 0.628319,
+      "confidence_by_projected_mean_bin": {
+        "0": {
+          "n": 2414,
+          "within_window_count": 1883,
+          "original_predicted_mean_bin_n": 2414,
+          "calibration_pool": "ORIGINAL_PREDICTION_RANGE",
+          "conditional_accuracy_estimate": 0.773998
+        },
+        "1": {
+          "n": 3147,
+          "within_window_count": 1834,
+          "original_predicted_mean_bin_n": 3147,
+          "calibration_pool": "ORIGINAL_PREDICTION_RANGE",
+          "conditional_accuracy_estimate": 0.58418
+        },
+        "2": {
+          "n": 1103,
+          "within_window_count": 502,
+          "original_predicted_mean_bin_n": 1103,
+          "calibration_pool": "ORIGINAL_PREDICTION_RANGE",
+          "conditional_accuracy_estimate": 0.469519
+        },
+        "3": {
+          "n": 116,
+          "within_window_count": 41,
+          "original_predicted_mean_bin_n": 116,
+          "calibration_pool": "ORIGINAL_PREDICTION_RANGE",
+          "conditional_accuracy_estimate": 0.480703
+        }
+      }
+    },
+    "assists": {
+      "validation_player_games": 6780,
+      "validation_within_window": 5386,
+      "played_player_overall_accuracy_rate": 0.794395,
+      "confidence_by_projected_mean_bin": {
+        "0": {
+          "n": 3697,
+          "within_window_count": 3360,
+          "original_predicted_mean_bin_n": 3697,
+          "calibration_pool": "ORIGINAL_PREDICTION_RANGE",
+          "conditional_accuracy_estimate": 0.905831
+        },
+        "1": {
+          "n": 1896,
+          "within_window_count": 1381,
+          "original_predicted_mean_bin_n": 1896,
+          "calibration_pool": "ORIGINAL_PREDICTION_RANGE",
+          "conditional_accuracy_estimate": 0.731683
+        },
+        "2": {
+          "n": 1038,
+          "within_window_count": 572,
+          "original_predicted_mean_bin_n": 1038,
+          "calibration_pool": "ORIGINAL_PREDICTION_RANGE",
+          "conditional_accuracy_estimate": 0.572442
+        },
+        "3": {
+          "n": 149,
+          "within_window_count": 73,
+          "original_predicted_mean_bin_n": 149,
+          "calibration_pool": "ORIGINAL_PREDICTION_RANGE",
+          "conditional_accuracy_estimate": 0.612207
+        }
+      }
+    },
+    "three_pointers_made": {
+      "validation_player_games": 6780,
+      "validation_within_window": 4483,
+      "played_player_overall_accuracy_rate": 0.661209,
+      "confidence_by_projected_mean_bin": {
+        "0": {
+          "n": 2991,
+          "within_window_count": 2663,
+          "original_predicted_mean_bin_n": 2991,
+          "calibration_pool": "ORIGINAL_PREDICTION_RANGE",
+          "conditional_accuracy_estimate": 0.882925
+        },
+        "1": {
+          "n": 2450,
+          "within_window_count": 1270,
+          "original_predicted_mean_bin_n": 2450,
+          "calibration_pool": "ORIGINAL_PREDICTION_RANGE",
+          "conditional_accuracy_estimate": 0.523969
+        },
+        "2": {
+          "n": 1134,
+          "within_window_count": 477,
+          "original_predicted_mean_bin_n": 1134,
+          "calibration_pool": "ORIGINAL_PREDICTION_RANGE",
+          "conditional_accuracy_estimate": 0.44013
+        },
+        "3": {
+          "n": 205,
+          "within_window_count": 73,
+          "original_predicted_mean_bin_n": 205,
+          "calibration_pool": "ORIGINAL_PREDICTION_RANGE",
+          "conditional_accuracy_estimate": 0.456134
+        }
+      }
+    }
+  }
+}
