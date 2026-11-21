@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-21_11_15AM.pdf",
-  "published_at_utc": "2026-11-21T16:15:00+00:00",
-  "captured_at_utc": "2026-11-21T16:25:17.229214+00:00",
-  "source_sha256": "842c10e2a02fc386c055c3c3e05aa290d83d90c8e36340e92bbf212c6d82f394",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-21_01_00PM.pdf",
+  "published_at_utc": "2026-11-21T18:00:00+00:00",
+  "captured_at_utc": "2026-11-21T18:08:19.656840+00:00",
+  "source_sha256": "be061ddb5212a2158aeb8974b05b2c984405f1d9953cd07d21254a26189faffd",
   "reports": [
     {
       "matchup": "MIL@PHI",
@@ -35,7 +35,7 @@
       "team_abbr": "PHI",
       "player": "Barlow, Dominick",
       "normalized_player": "dominick barlow",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -67,7 +67,7 @@
       "team_abbr": "PHI",
       "player": "Maxey, Tyrese",
       "normalized_player": "tyrese maxey",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Foot Sprain"
     },
     {
