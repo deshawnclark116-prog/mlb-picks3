@@ -54,7 +54,7 @@ def build_accuracy_calibration(games: list[dict]) -> dict:
         "schema": SCHEMA, "trained_through": TRAIN_LAST,
         "validation_from": VALID_FIRST, "validation_through": VALID_LAST,
         "fixed_error_window": WINDOWS,
-        "prediction_bin_boundaries": PREDICTED_MEAN_BINS,
+        "prediction_bin_boundaries": {k: list(v) for k,v in PREDICTED_MEAN_BINS.items()},
         "conditional_on_actually_playing": True,
         "not_an_over_under_probability": True, "not_a_bookmaker_line": True,
         "prospectively_calibrated_2026_27": False,
