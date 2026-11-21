@@ -1,20 +1,20 @@
 {
   "schema": "NBA_V5_FORECAST_READINESS_V1",
-  "checked_at_utc": "2026-11-21T00:47:50.800611+00:00",
-  "document_generated_at_utc": "2026-11-21T00:47:07.523965+00:00",
+  "checked_at_utc": "2026-11-21T01:28:00.087457+00:00",
+  "document_generated_at_utc": "2026-11-21T01:27:35.581069+00:00",
   "games": [
     {
       "game_id": "401909311",
-      "forecast_at_utc": "2026-11-21T00:47:07.523965+00:00",
+      "forecast_at_utc": "2026-11-21T01:27:35.581069+00:00",
       "tipoff_utc": "2026-11-21T02:30:00+00:00",
-      "player_stat_rows": 217,
-      "players_with_v5_rows": 31,
+      "player_stat_rows": 210,
+      "players_with_v5_rows": 30,
       "ready": true,
       "errors": []
     },
     {
       "game_id": "401909312",
-      "forecast_at_utc": "2026-11-21T00:47:07.523965+00:00",
+      "forecast_at_utc": "2026-11-21T01:27:35.581069+00:00",
       "tipoff_utc": "2026-11-21T03:00:00+00:00",
       "player_stat_rows": 203,
       "players_with_v5_rows": 29,
@@ -23,7 +23,7 @@
     },
     {
       "game_id": "401909313",
-      "forecast_at_utc": "2026-11-21T00:47:07.523965+00:00",
+      "forecast_at_utc": "2026-11-21T01:27:35.581069+00:00",
       "tipoff_utc": "2026-11-21T03:00:00+00:00",
       "player_stat_rows": 189,
       "players_with_v5_rows": 27,
