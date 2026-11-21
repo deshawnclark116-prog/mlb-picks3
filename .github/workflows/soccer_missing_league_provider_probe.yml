@@ -24,13 +24,13 @@ jobs:
               except Exception as e:
                   return {'_error':str(e)[:160]}
           league_urls={
-            'ESPN_colombia':'https://site.api.espn.com/apis/site/v2/sports/soccer/col.1/scoreboard?dates=20261120-20261122',
-            'ESPN_costa_rica':'https://site.api.espn.com/apis/site/v2/sports/soccer/crc.1/scoreboard?dates=20261120-20261122',
-            'ESPN_nicaragua':'https://site.api.espn.com/apis/site/v2/sports/soccer/nic.1/scoreboard?dates=20261120-20261122',
-            'ESPN_korean_second':'https://site.api.espn.com/apis/site/v2/sports/soccer/kor.2/scoreboard?dates=20261120-20261122',
-            'ESPN_australian_champ':'https://site.api.espn.com/apis/site/v2/sports/soccer/aus.2/scoreboard?dates=20261120-20261122',
-            'ESPN_mex':'https://site.api.espn.com/apis/site/v2/sports/soccer/mex.1/scoreboard?dates=20261120-20261122',
-            'ESPN_australia':'https://site.api.espn.com/apis/site/v2/sports/soccer/aus.1/scoreboard?dates=20261120-20261122',
+            'ESPN_colombia':'https://site.api.espn.com/apis/site/v2/sports/soccer/col.1/scoreboard?dates=20261121',
+            'ESPN_costa_rica':'https://site.api.espn.com/apis/site/v2/sports/soccer/crc.1/scoreboard?dates=20261121',
+            'ESPN_nicaragua':'https://site.api.espn.com/apis/site/v2/sports/soccer/nic.1/scoreboard?dates=20261121',
+            'ESPN_korean_second':'https://site.api.espn.com/apis/site/v2/sports/soccer/kor.2/scoreboard?dates=20261121',
+            'ESPN_australian_champ':'https://site.api.espn.com/apis/site/v2/sports/soccer/aus.2/scoreboard?dates=20261121',
+            'ESPN_mex':'https://site.api.espn.com/apis/site/v2/sports/soccer/mex.1/scoreboard?dates=20261121',
+            'ESPN_australia':'https://site.api.espn.com/apis/site/v2/sports/soccer/aus.1/scoreboard?dates=20261121',
           }
           for name,u in league_urls.items():
               o=get(u);e=o.get('events') or []
