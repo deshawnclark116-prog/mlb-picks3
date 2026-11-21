@@ -1,6 +1,6 @@
 {
   "schema": "NHL_V2_PROSPECTIVE_SHOT_PROBABILITY_GRADE_V1",
-  "graded_at_utc": "2026-11-21T03:59:53.613Z",
+  "graded_at_utc": "2026-11-21T08:17:07.882Z",
   "firstseen_independent_player_forecasts": 2963,
   "original_milestone_predictions": 14815,
   "verified_milestone_outcomes": 14815,
