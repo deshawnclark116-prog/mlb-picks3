@@ -85,7 +85,7 @@ export default function NbaResearchScreen() {
     </button>
     {(mode==='PICKS'||mode==='BOARD')&&
       <NbaV3ResearchPanel key={mode} mode={mode} search={search}/>}
-    {mode==='INDEPENDENT'&&<NbaIndependentLivePanel search={search}/>
+    {mode==='INDEPENDENT'&&<NbaIndependentLivePanel search={search}/>}
     {mode==='EVIDENCE'&&<section data-testid="nba-v5-evidence" className="rounded-xl border border-[#465650] bg-[#102018] p-4 text-sm text-gray-100">
       <strong>NBA MODEL · FORECAST VALIDATION STATUS</strong>
       <p className="mt-2 text-xs">All numerical projections come from the NBA forecasting system, independently
