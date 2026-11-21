@@ -4,7 +4,7 @@
   "comparison_scope": "Frozen original NBA V5 player/stat forecasts at the CHAMPION exact rounded number",
   "injuries_and_dnp_included": true,
   "nonfeatured_predictions_included": true,
-  "matched_archived_games": 97,
+  "matched_archived_games": 102,
   "graded_paired_games": 96,
   "joined_original_player_stat_events": 12523,
   "excluded_games": {},
