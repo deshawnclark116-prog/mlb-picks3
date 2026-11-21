@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-21_04_30PM.pdf",
-  "published_at_utc": "2026-11-21T21:30:00+00:00",
-  "captured_at_utc": "2026-11-21T21:45:27.717766+00:00",
-  "source_sha256": "303d6eb754dc67233062aba307aac9eaad00fe842eb026614e6fe70a82281743",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-21_05_00PM.pdf",
+  "published_at_utc": "2026-11-21T22:00:00+00:00",
+  "captured_at_utc": "2026-11-21T22:09:44.913323+00:00",
+  "source_sha256": "7288e7f9c3a34113be7a23206afd693c180842938e3f98fc76d426323c539384",
   "reports": [
     {
       "matchup": "MIL@PHI",
@@ -131,7 +131,7 @@
       "team_abbr": "NYK",
       "player": "Anunoby, OG",
       "normalized_player": "og anunoby",
-      "status": "DOUBTFUL",
+      "status": "OUT",
       "reason": "Injury/Illness - Left Calf Tightness"
     },
     {
@@ -535,6 +535,134 @@
       "reason": ""
     },
     {
+      "matchup": "DET@ATL",
+      "team_abbr": "DET",
+      "player": "Cunningham, Cade",
+      "normalized_player": "cade cunningham",
+      "status": "PROBABLE",
+      "reason": "Injury/Illness - Right Knee Soreness"
+    },
+    {
+      "matchup": "DET@ATL",
+      "team_abbr": "DET",
+      "player": "Duren, Jalen",
+      "normalized_player": "jalen duren",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Hamstring Strain"
+    },
+    {
+      "matchup": "DET@ATL",
+      "team_abbr": "DET",
+      "player": "Holland II, Ronald",
+      "normalized_player": "ronald holland",
+      "status": "QUESTIONABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "DET@ATL",
+      "team_abbr": "DET",
+      "player": "Okorie, Ebuka",
+      "normalized_player": "ebuka okorie",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Oblique Strain"
+    },
+    {
+      "matchup": "DET@ATL",
+      "team_abbr": "DET",
+      "player": "Onyenso, Ugonna",
+      "normalized_player": "ugonna onyenso",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "DET@ATL",
+      "team_abbr": "DET",
+      "player": "Prince, Taurean",
+      "normalized_player": "taurean prince",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "DET@ATL",
+      "team_abbr": "DET",
+      "player": "Robinson, Duncan",
+      "normalized_player": "duncan robinson",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Quadriceps Strain"
+    },
+    {
+      "matchup": "DET@ATL",
+      "team_abbr": "ATL",
+      "player": "Castro, Rafael",
+      "normalized_player": "rafael castro",
+      "status": "QUESTIONABLE",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "DET@ATL",
+      "team_abbr": "ATL",
+      "player": "Dennis, RayJ",
+      "normalized_player": "rayj dennis",
+      "status": "QUESTIONABLE",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "DET@ATL",
+      "team_abbr": "ATL",
+      "player": "Flemings, Kingston",
+      "normalized_player": "kingston flemings",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Lumbar Strain"
+    },
+    {
+      "matchup": "DET@ATL",
+      "team_abbr": "ATL",
+      "player": "Gueye, Mouhamed",
+      "normalized_player": "mouhamed gueye",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Foot Fracture"
+    },
+    {
+      "matchup": "DET@ATL",
+      "team_abbr": "ATL",
+      "player": "Landale, Jock",
+      "normalized_player": "jock landale",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Great Toe Sprain"
+    },
+    {
+      "matchup": "DET@ATL",
+      "team_abbr": "ATL",
+      "player": "McCollum, CJ",
+      "normalized_player": "cj mccollum",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Calf Strain"
+    },
+    {
+      "matchup": "DET@ATL",
+      "team_abbr": "ATL",
+      "player": "Newell, Asa",
+      "normalized_player": "asa newell",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Great Toe Surgery"
+    },
+    {
+      "matchup": "DET@ATL",
+      "team_abbr": "ATL",
+      "player": "Veesaar, Henri",
+      "normalized_player": "henri veesaar",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right ACL Tear"
+    },
+    {
+      "matchup": "DET@ATL",
+      "team_abbr": "ATL",
+      "player": "Wilson, Jalen",
+      "normalized_player": "jalen wilson",
+      "status": "QUESTIONABLE",
+      "reason": "G League - Two-Way"
+    },
+    {
       "matchup": "OKC@MIA",
       "team_abbr": "MIA",
       "player": "Antetokounmpo, Giannis",
@@ -596,10 +724,50 @@
       "player": "Penda, Noah",
       "normalized_player": "noah penda",
       "status": "OUT",
-      "reason": "Injury/Illness - Right Partially torn"
+      "reason": ""
+    },
+    {
+      "matchup": "IND@NYK",
+      "team_abbr": "IND",
+      "player": "Furphy, Johnny",
+      "normalized_player": "johnny furphy",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "IND@NYK",
+      "team_abbr": "IND",
+      "player": "Haliburton, Tyrese",
+      "normalized_player": "tyrese haliburton",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Hamstring Strain"
+    },
+    {
+      "matchup": "IND@NYK",
+      "team_abbr": "IND",
+      "player": "McConnell, T.J.",
+      "normalized_player": "t j mcconnell",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Hamstring"
+    },
+    {
+      "matchup": "IND@NYK",
+      "team_abbr": "IND",
+      "player": "Sheppard, Ben",
+      "normalized_player": "ben sheppard",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Meniscus Surgery"
+    },
+    {
+      "matchup": "IND@NYK",
+      "team_abbr": "IND",
+      "player": "Siakam, Pascal",
+      "normalized_player": "pascal siakam",
+      "status": "QUESTIONABLE",
+      "reason": ""
     }
   ],
-  "rows": 74,
+  "rows": 95,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
