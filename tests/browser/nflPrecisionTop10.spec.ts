@@ -99,6 +99,6 @@ test('360px NFL UI shows NBA-style highest meaningful targets, original means an
  await cards.first().getByText('MODEL EVIDENCE',{exact:true}).click();
  await expect(cards.first()).toContainText('historical player simulations');
  await shortlist.getByText(/SHOW OTHER 1 NUMERICAL MODEL PROJECTIONS/).click();
- await expect(page.getByText('Context Projection',{exact:true})).toBeVisible();
+ await expect(shortlist.getByText('Context Projection',{exact:true})).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth <= 360)).toBe(true);
 });
