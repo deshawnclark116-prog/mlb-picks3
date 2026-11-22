@@ -13,6 +13,9 @@ const marketEvent=(player:string,market:'receiving_yards'|'rushing_yards',chance
     projected_mean:min+8,projected_median:min+7,projected_low:0,
     projected_high:100,model_source:'blended_sim',ungraded:true,confidence,
     games_played:games,projection_probability_source:'UNCALIBRATED_HISTORICAL_USAGE_BOOTSTRAP',
+    nba_style_whole_mean_projection:min+8,
+    nba_style_reach_probability:chance,
+    nba_style_probability_event:'P_YARDS_AT_LEAST_ROUNDED_PUBLISHED_MEAN',
     projection_simulation_n:10000,
     nfl_model_target_event:'P_YARDS_AT_LEAST_FIXED_MEANINGFUL_THRESHOLD',
     nfl_model_target_grid:{
@@ -57,7 +60,8 @@ test('Top4 only uses target event percentage sourced from the exact model foreca
  assert.deepEqual(ranked.map(x=>x.player),
     ['Lower grade best','Medium 2','Low 3','High 4']);
  assert.deepEqual(ranked.map(x=>x.probability),[.81,.77,.72,.66]);
- assert.deepEqual(ranked.map(x=>x.targetYards),[25,30,25,30]);
+ assert.deepEqual(ranked.map(x=>x.targetYards),[33,38,33,38]);
+ assert(ranked.every(x=>x.projectionProbabilityEvent==='P_YARDS_AT_LEAST_ROUNDED_PUBLISHED_MEAN'));
  assert(ranked.every(x=>x.targetYards!=null));
  assert(!ranked.some(x=>x.player==='Xavier Worthy'||x.player==='99 pct TD'));
  assert.deepEqual(nflPrimaryProbabilityPicks(g,2).map(x=>x.player),
@@ -70,11 +74,14 @@ test('mis-matched numeric V2 projection cannot borrow a stale bootstrap percenta
  const spoof={...v,nfl_model_target_grid:borrowed.nfl_model_target_grid,
    nfl_model_target:borrowed.nfl_model_target,
    nfl_model_target_event:borrowed.nfl_model_target_event,
-   projection_simulation_n:10000,projection_reach_probability:.93};
+   projection_simulation_n:10000,projection_reach_probability:.93,
+   nba_style_whole_mean_projection:borrowed.nba_style_whole_mean_projection,
+   nba_style_reach_probability:.93,
+   nba_style_probability_event:borrowed.nba_style_probability_event};
  assert.deepEqual(nflPrimaryProbabilityPicks(game([spoof])),[]);
  const cloned=marketEvent('Malformed chosen','receiving_yards',.85,'LOW',1);
- cloned.nfl_model_target_grid!.chosen_target={
-   yards:30,probability:.85,wilson_lower_95:.83};
+ cloned.nba_style_whole_mean_projection=30; // MODEL MEAN IS 33
+ cloned.nba_style_reach_probability=.85;
  assert.deepEqual(nflPrimaryProbabilityPicks(game([cloned])),[]);
  const stripped=marketEvent('Unmatched actual','rushing_yards',.80,'HIGH',6);
  stripped.projection_probability_source='UNAVAILABLE_V2_CONTEXT_NO_MATCHED_DISTRIBUTION';
