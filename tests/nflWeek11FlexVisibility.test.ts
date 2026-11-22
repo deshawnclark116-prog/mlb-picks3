@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {parsePhase1,groupGames,verifiedPhase1Kickoff,verifiedPhase1Cutoff} from '../src/nfl/phase1.ts';
+import {parsePhase1,groupGames} from '../src/nfl/phase1.ts';
+import {quarantineNflOfficialFlex,verifiedPhase1Kickoff,verifiedPhase1Cutoff} from '../src/nfl/flexGuard.ts';
 
 const NOW=new Date('2026-11-21T23:10:00Z');
 const FIELDS=['game_id','player','team','opp','pos','outcome','id','mean','median'];
@@ -39,11 +40,11 @@ function doc(games:any[]){
 test('Historical old kickoff T24 cannot appear beside unaffected Sunday game',()=>{
  const input=doc([phiOld(),nygOld(),bal()]);
  const unchanged=JSON.stringify(input);
- const v=parsePhase1(input,NOW);
+ const {view:v,excludedOfficialFlexGames,excludedWrongCutoffRows}=quarantineNflOfficialFlex(parsePhase1(input,NOW));
  assert.equal(v.games.length,1);
  assert.equal(v.games[0].game_id,'2026_11_BAL_CAR');
- assert.equal(v.excludedOfficialFlexGames,2);
- assert.equal(v.excludedWrongCutoffRows,0);
+ assert.equal(excludedOfficialFlexGames,2);
+ assert.equal(excludedWrongCutoffRows,0);
  assert.equal(v.rows.T24.length,1);
  assert.equal(groupGames(v,'T24').length,1);
  assert.equal(JSON.stringify(input),unchanged,'frozen original source may never be rewritten');
@@ -58,9 +59,9 @@ test('A corrected kickoff with OLD T24 cutoff remains quarantined; true T90 may 
  assert(verifiedPhase1Cutoff(phi,'T90'));
  assert(verifiedPhase1Cutoff(jax,'T90'));
  const original=doc([phi,jax]);
- const v=parsePhase1(original,NOW);
- assert.equal(v.excludedOfficialFlexGames,0);
- assert.equal(v.excludedWrongCutoffRows,2);
+ const {view:v,excludedOfficialFlexGames,excludedWrongCutoffRows}=quarantineNflOfficialFlex(parsePhase1(original,NOW));
+ assert.equal(excludedOfficialFlexGames,0);
+ assert.equal(excludedWrongCutoffRows,2);
  assert.equal(v.rows.T24.length,0);
  assert.equal(v.rows.T90.length,2);
  assert.equal(v.defaultHorizon,'T90');
@@ -69,12 +70,15 @@ test('A corrected kickoff with OLD T24 cutoff remains quarantined; true T90 may 
  assert.equal(original.forecasts.T24.length,2,'original T24 source remains intact for research');
 });
 test('Only old flex matchup: show an error, not stale pregame model outcomes',()=>{
- assert.throws(()=>parsePhase1(doc([phiOld()]),NOW),/NFL verified Week 11 flex/);
+ const {view:v,excludedOfficialFlexGames}=quarantineNflOfficialFlex(parsePhase1(doc([phiOld()]),NOW));
+ assert.equal(v.games.length,0);
+ assert.equal(v.rows.T24.length,0);
+ assert.equal(excludedOfficialFlexGames,1);
 });
 test('Conflicting third kickoff is not treated as verified for PIT-PHI',()=>{
  const unknown=game('PIT','PHI','2026-11-22T20:00:00Z','2026-11-21T20:00:00Z');
  assert(!verifiedPhase1Kickoff(unknown));
- const v=parsePhase1(doc([unknown,bal()]),NOW);
+ const {view:v,excludedOfficialFlexGames}=quarantineNflOfficialFlex(parsePhase1(doc([unknown,bal()]),NOW));
  assert.equal(v.games.length,1);
- assert.equal(v.excludedOfficialFlexGames,1);
+ assert.equal(excludedOfficialFlexGames,1);
 });
