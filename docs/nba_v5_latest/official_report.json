@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-21_07_45PM.pdf",
-  "published_at_utc": "2026-11-22T00:45:00+00:00",
-  "captured_at_utc": "2026-11-22T00:48:48.501498+00:00",
-  "source_sha256": "decb5f5e52d1bfd89c0cbe1d80f7673c8c4a9d66f7e1f957ad9541ca58430071",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-21_07_30PM.pdf",
+  "published_at_utc": "2026-11-22T00:30:00+00:00",
+  "captured_at_utc": "2026-11-22T00:49:55.972114+00:00",
+  "source_sha256": "575e58f0a79e8fed3217ac8e66ee9fa9bf644893d6e54b2aeec029e108f594fb",
   "reports": [
     {
       "matchup": "MIL@PHI",
