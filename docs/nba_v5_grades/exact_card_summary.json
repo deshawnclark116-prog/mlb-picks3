@@ -1,35 +1,35 @@
 {
   "schema": "NBA_V5_IMMUTABLE_EXACT_CONFIRMED_CARD_AUDIT_V1",
   "kind": "last",
-  "games_with_archives_and_grades": 115,
-  "games_without_eligible_confirmed_starters": 77,
-  "files_missing_final_grade": 5,
+  "games_with_archives_and_grades": 120,
+  "games_without_eligible_confirmed_starters": 79,
+  "files_missing_final_grade": 0,
   "post_tip_forecasts_rejected": 0,
-  "confirmed_starters_missing_dnp_contract": 248,
+  "confirmed_starters_missing_dnp_contract": 260,
   "top4": {
-    "n": 152,
-    "hits": 108,
-    "hit_rate": 0.7105,
-    "average_probability": 0.7187,
-    "gap": 0.0082,
-    "brier": 0.213735
+    "n": 164,
+    "hits": 117,
+    "hit_rate": 0.7134,
+    "average_probability": 0.7179,
+    "gap": 0.0045,
+    "brier": 0.210182
   },
   "top10": {
-    "n": 380,
-    "hits": 258,
-    "hit_rate": 0.6789,
-    "average_probability": 0.6607,
-    "gap": -0.0182,
-    "brier": 0.22082
+    "n": 410,
+    "hits": 278,
+    "hit_rate": 0.678,
+    "average_probability": 0.6606,
+    "gap": -0.0175,
+    "brier": 0.220129
   },
   "top4_by_market": {
     "assists": {
-      "n": 18,
-      "hits": 11,
-      "hit_rate": 0.6111,
-      "average_probability": 0.7179,
-      "gap": 0.1068,
-      "brier": 0.263193
+      "n": 20,
+      "hits": 12,
+      "hit_rate": 0.6,
+      "average_probability": 0.719,
+      "gap": 0.119,
+      "brier": 0.261545
     },
     "blocks": {
       "n": 10,
@@ -40,34 +40,34 @@
       "brier": 0.29985
     },
     "rebounds": {
-      "n": 13,
-      "hits": 11,
-      "hit_rate": 0.8462,
-      "average_probability": 0.6809,
-      "gap": -0.1653,
-      "brier": 0.15248
+      "n": 15,
+      "hits": 13,
+      "hit_rate": 0.8667,
+      "average_probability": 0.6804,
+      "gap": -0.1863,
+      "brier": 0.146363
     },
     "steals": {
-      "n": 53,
-      "hits": 40,
-      "hit_rate": 0.7547,
-      "average_probability": 0.7403,
-      "gap": -0.0144,
-      "brier": 0.1914
+      "n": 57,
+      "hits": 42,
+      "hit_rate": 0.7368,
+      "average_probability": 0.7355,
+      "gap": -0.0014,
+      "brier": 0.195962
     },
     "three_pointers_made": {
-      "n": 58,
-      "hits": 40,
-      "hit_rate": 0.6897,
-      "average_probability": 0.7136,
-      "gap": 0.024,
-      "brier": 0.217678
+      "n": 62,
+      "hits": 44,
+      "hit_rate": 0.7097,
+      "average_probability": 0.716,
+      "gap": 0.0063,
+      "brier": 0.207663
     }
   },
   "top4_miss_causes": [
     [
       "shot_volume_off",
-      12
+      13
     ],
     [
       "minutes_off_by_6_plus",
@@ -75,7 +75,7 @@
     ],
     [
       "blowout_cut_minutes",
-      7
+      8
     ],
     [
       "outside_stated_80_percent_range",
@@ -92,12 +92,12 @@
   ],
   "top4_by_probability_contract": {
     "DNP_INCLUSIVE": {
-      "n": 152,
-      "hits": 108,
-      "hit_rate": 0.7105,
-      "average_probability": 0.7187,
-      "gap": 0.0082,
-      "brier": 0.213735
+      "n": 164,
+      "hits": 117,
+      "hit_rate": 0.7134,
+      "average_probability": 0.7179,
+      "gap": 0.0045,
+      "brier": 0.210182
     }
   },
   "repeat_selected": [
@@ -106,7 +106,35 @@
         "Jeremiah Fears",
         "three_pointers_made"
       ],
-      5
+      6
+    ],
+    [
+      [
+        "Jeremiah Fears",
+        "steals"
+      ],
+      4
+    ],
+    [
+      [
+        "Jaden McDaniels",
+        "three_pointers_made"
+      ],
+      4
+    ],
+    [
+      [
+        "Jaden McDaniels",
+        "assists"
+      ],
+      4
+    ],
+    [
+      [
+        "Jonathan Kuminga",
+        "three_pointers_made"
+      ],
+      4
     ],
     [
       [
@@ -145,13 +173,6 @@
     ],
     [
       [
-        "Jeremiah Fears",
-        "steals"
-      ],
-      3
-    ],
-    [
-      [
         "Brandin Podziemski",
         "steals"
       ],
@@ -163,64 +184,43 @@
         "three_pointers_made"
       ],
       3
-    ],
-    [
-      [
-        "Cameron Johnson",
-        "steals"
-      ],
-      3
-    ],
-    [
-      [
-        "Jaden McDaniels",
-        "three_pointers_made"
-      ],
-      3
-    ],
-    [
-      [
-        "Jaden McDaniels",
-        "assists"
-      ],
-      3
     ]
   ],
   "shadow_candidate": {
     "status": "RESEARCH_ONLY_DO_NOT_PROMOTE",
     "distinct_dates": 17,
     "holdout_from": "2026-11-15",
-    "holdout_games": 8,
+    "holdout_games": 11,
     "baseline": {
-      "n": 32,
-      "hits": 24,
+      "n": 44,
+      "hits": 33,
       "hit_rate": 0.75,
-      "average_probability": 0.7034,
-      "gap": -0.0466,
-      "brier": 0.188817
+      "average_probability": 0.7047,
+      "gap": -0.0453,
+      "brier": 0.182368
     },
     "shadow": {
-      "n": 32,
-      "hits": 23,
-      "hit_rate": 0.7188,
-      "average_probability": 0.7275,
-      "gap": 0.0087,
-      "brier": 0.200571
+      "n": 44,
+      "hits": 31,
+      "hit_rate": 0.7045,
+      "average_probability": 0.7284,
+      "gap": 0.0239,
+      "brier": 0.197489
     },
-    "brier_reduction": -0.011754,
+    "brier_reduction": -0.015121,
     "brier_reduction_95pct_game_cluster_ci": [
-      -0.03734,
-      0.006411
+      -0.037871,
+      0.00447
     ],
-    "different_selection_count": 1,
+    "different_selection_count": 2,
     "by_market": {
       "assists": {
-        "n": 6,
-        "hits": 2,
-        "hit_rate": 0.3333,
-        "average_probability": 0.7372,
-        "gap": 0.4039,
-        "brier": 0.367643
+        "n": 8,
+        "hits": 3,
+        "hit_rate": 0.375,
+        "average_probability": 0.7431,
+        "gap": 0.3681,
+        "brier": 0.341355
       },
       "blocks": {
         "n": 1,
@@ -230,29 +230,37 @@
         "gap": -0.3709,
         "brier": 0.137578
       },
+      "points": {
+        "n": 1,
+        "hits": 0,
+        "hit_rate": 0.0,
+        "average_probability": 0.6482,
+        "gap": 0.6482,
+        "brier": 0.420195
+      },
       "rebounds": {
-        "n": 4,
-        "hits": 4,
+        "n": 5,
+        "hits": 5,
         "hit_rate": 1.0,
-        "average_probability": 0.7192,
-        "gap": -0.2808,
-        "brier": 0.078948
+        "average_probability": 0.7232,
+        "gap": -0.2768,
+        "brier": 0.076773
       },
       "steals": {
-        "n": 9,
-        "hits": 7,
-        "hit_rate": 0.7778,
-        "average_probability": 0.7417,
-        "gap": -0.0361,
-        "brier": 0.178403
+        "n": 13,
+        "hits": 9,
+        "hit_rate": 0.6923,
+        "average_probability": 0.7261,
+        "gap": 0.0337,
+        "brier": 0.204619
       },
       "three_pointers_made": {
-        "n": 12,
-        "hits": 9,
-        "hit_rate": 0.75,
-        "average_probability": 0.7229,
-        "gap": -0.0271,
-        "brier": 0.179452
+        "n": 16,
+        "hits": 13,
+        "hit_rate": 0.8125,
+        "average_probability": 0.7358,
+        "gap": -0.0767,
+        "brier": 0.147311
       }
     },
     "promotion_allowed": false,
