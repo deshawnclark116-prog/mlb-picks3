@@ -282,13 +282,30 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
             {qualifiedYardage.map(p=><NflPrecisionTile key={p.team+'|'+p.player_id+'|'+p.market} p={p}/>)}
             </div>
           </div>}
-        {mode==='SYSTEM PICKS'&&qualifiedYardage.length===0&&
-          <div data-testid="nfl-no-probability-ranked-top4" role="status" className="px-3 pb-3 text-[11px] text-amber-200">
-            NO VERIFIED MODEL-PROBABILITY YARDAGE TOP 4. This forecast has not published a
-            same-model probability for its yardage target. Numerical forecasts
-            remain accessible in game details, but no confidence tier, TD percentage
-            or sportsbook line can substitute for that missing probability.
+        {mode==='SYSTEM PICKS'&&qualifiedYardage.length===0&&unrankedForecasts.length>0&&
+          <div data-testid="nfl-unranked-source-preview" className="px-3 pb-3">
+            <p className="mb-1 text-[11px] font-bold text-[#79FF48]">
+              ORIGINAL YARDAGE PROJECTIONS · NOT A RANKED TOP 4
+            </p>
+            <p className="mb-2 text-[11px] text-gray-400">
+              V2 has not produced a validated probability for reaching its own
+              projected yards. These are raw model numbers in alphabetical order,
+              not highest-confidence picks.
+            </p>
+            <div data-testid="nfl-original-model-yardage" className="grid grid-cols-2 gap-2">
+              {unrankedForecasts.slice(0,4).map(p=>
+                <NflNumericalTile key={p.team+'|'+p.player_id+'|'+p.market} p={p}/>)}
+            </div>
+            {unrankedForecasts.length>4&&
+              <p className="mt-2 text-[10px] text-gray-400">
+                Showing 4 of {unrankedForecasts.length} original forecasts alphabetically.
+                Expand this matchup to review the full numerical board.
+              </p>}
           </div>}
+        {mode==='SYSTEM PICKS'&&qualifiedYardage.length===0&&unrankedForecasts.length===0&&
+          <p data-testid="nfl-no-probability-ranked-top4" role="status" className="px-3 pb-3 text-[11px] text-amber-200">
+            No numerical player projections or source-matched probability rankings available for this matchup.
+          </p>}
         {opened&&<div id={`existing-game-${g.id}`} data-testid="existing-nfl-expanded" className="space-y-3 border-t border-[#292929] p-3">
           <p className="text-[11px] text-gray-400">Original weekly numerical projections are separate from OVER-only scoring-event research. Context yardage probabilities are unavailable, not inferred from sportsbooks. {mode==='BETTABLE NOW'?'No verified book lines supplied.':''}</p>
           {unrankedForecasts.length>0&&<div data-testid="nfl-expanded-numerical-leaders" className="space-y-2">
