@@ -6,7 +6,7 @@ test('360px NFL UI shows NBA-style highest meaningful targets, original means an
  const row=(player:string,pid:string,target:number,p:number,mean=46)=>{
    const chosen={yards:target,probability:p,wilson_lower_95:Number((p-.01).toFixed(4))};
    const grid=Array.from({length:7},(_,i)=>{
-     const yards=25+i*5;
+     const yards=30+i*5; // valid fixed-grid point must be >= ceil(.55 * 46) = 26
      return {yards,probability:yards===target?p:yards<target?.96:.5,
        wilson_lower_95:yards===target?chosen.wilson_lower_95:yards<target?.95:.49};
    });
