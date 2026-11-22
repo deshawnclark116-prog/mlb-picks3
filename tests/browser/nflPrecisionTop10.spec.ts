@@ -79,9 +79,9 @@ test('360px NFL UI shows NBA-style highest meaningful targets, original means an
  const poster=page.getByTestId('nfl-top10-share-rows').getByTestId('nfl-top10-share-pick');
  await expect(poster).toHaveCount(3);
  await expect(poster.first()).toContainText('Unverified');
- await expect(poster.first()).toContainText('30 REC YDS');
+ await expect(poster.first()).toContainText('MODEL MEAN 46 REC YDS · TARGET 30+');
  await expect(poster.first()).toContainText('95.0%');
- await expect(poster.first()).toContainText('P(REACH TARGET)');
+ await expect(poster.first()).toContainText('P(TARGET)');
  await expect(page.getByRole('button',{name:'SAVE PNG'})).toBeEnabled({timeout:20000});
  const downloadPromise=page.waitForEvent('download');
  await page.getByRole('button',{name:'SAVE PNG'}).click();
