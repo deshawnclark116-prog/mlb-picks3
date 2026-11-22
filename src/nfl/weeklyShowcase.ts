@@ -10,6 +10,29 @@ export type NflShowcasePick={
  targetYards?:number;meanYards?:number;medianYards?:number;
  wilsonLower95?:number;simulationN?:number;
 };
+/**
+ * Strict, source-verified Week 11 QB-context quarantine. These teams have
+ * CURRENT official starting-QB announcements incompatible with the unchanged
+ * Phase1 QB-role assumptions: Josh Johnson (ARI), Joe Milton (PHI).
+ * The weekly player yardage/TD calculators have NOT been demonstrated to
+ * incorporate that new starting-QB context. Do not assign a confident
+ * Top-10 placement to the offense's receiving/TD outputs without a new
+ * starter-conditioned simulation. The original numbers stay on MODEL BOARD.
+ *
+ * Other teams, opponents, run-yardage and sacks are NOT suppressed.
+ * Exact team pair and kickoff identity prevent this becoming a global rule.
+ * Links: azcardinals.com/news/josh-johnson-start-confirmed-after-carson-beck-downgraded
+ * philadelphiaeagles.com/news/nick-sirianni-confirms-joe-milton-will-start-at-quarterback
+ */
+export function requiresVerifiedStarterResimulation(p:{
+  kickoff_utc:string;team:string;opponent:string;market:string
+}):boolean {
+  if(Date.parse(p.kickoff_utc)!==Date.parse('2026-11-22T18:00:00Z'))return false;
+  const affected=(p.team==='ARI'&&p.opponent==='KC')||
+    (p.team==='PHI'&&p.opponent==='PIT');
+  return affected&&(p.market==='receiving_yards'||p.market==='anytime_touchdowns');
+}
+
 export const NFL_ANYTIME_TD_MIN=.30;
 export const NFL_SACK_OVER_MIN=.60;
 export function rankNflShowcase(game:ExistingNflGame,search='',family='ALL',limit=10):NflShowcasePick[]{
@@ -22,7 +45,7 @@ export function rankNflShowcase(game:ExistingNflGame,search='',family='ALL',limi
    (family==='TD'&&p.market==='anytime_touchdowns'));
  const out:NflShowcasePick[]=[];
  for(const p of game.projections){
-  if(!match(p))continue;
+  if(!match(p)||requiresVerifiedStarterResimulation(p))continue;
   const t=selectNflMeaningfulTarget(p);
   if(!t)continue;
   out.push({player:p.player,player_id:p.player_id,team:p.team,
@@ -33,7 +56,7 @@ export function rankNflShowcase(game:ExistingNflGame,search='',family='ALL',limi
    simulationN:p.projection_simulation_n!});
  }
  for(const p of game.events||[]){
-  if(!match(p))continue;
+  if(!match(p)||requiresVerifiedStarterResimulation(p))continue;
   if(p.market==='anytime_touchdowns'&&p.probability<NFL_ANYTIME_TD_MIN)continue;
   if(p.market==='sacks'&&p.probability<NFL_SACK_OVER_MIN)continue;
   out.push({player:p.player,player_id:p.player_id,team:p.team,
