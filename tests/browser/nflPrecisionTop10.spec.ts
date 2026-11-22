@@ -15,7 +15,7 @@ test('360px NFL UI shows NBA-style highest meaningful targets, original means an
      projected_low:1,projected_high:140,model_source:'blended_sim',games_played:7,
      whole_projection:mean-5,projection_reach_probability:.502,
      projection_within_10_probability:.21,projection_simulation_n:10000,
-     nba_style_whole_mean_projection:mean,nba_style_reach_probability:.43,
+     nba_style_whole_mean_projection:mean,nba_style_reach_probability:Number((p*.45).toFixed(4)),
      nba_style_probability_event:'P_YARDS_AT_LEAST_ROUNDED_PUBLISHED_MEAN',
      nfl_model_target:chosen,nfl_model_target_event:'P_YARDS_AT_LEAST_FIXED_MEANINGFUL_THRESHOLD',
      nfl_model_target_grid:{
@@ -65,13 +65,13 @@ test('360px NFL UI shows NBA-style highest meaningful targets, original means an
  const tiles=page.getByTestId('nfl-top-projection-tiles').getByTestId('nfl-projection-tile');
  await expect(tiles).toHaveCount(3);
  await expect(tiles.first()).toContainText('Unverified');
- await expect(tiles.first()).toContainText('30+ YDS: 95.0%');
+ await expect(tiles.first()).toContainText('46+ YDS: 42.8%');
  await expect(tiles.nth(1)).toContainText('Top Target');
- await expect(tiles.nth(1)).toContainText('30+ YDS: 84.0%');
- await expect(tiles.first()).toContainText('Model mean 46 yds');
- await expect(tiles.first()).not.toContainText('43.0%');
+ await expect(tiles.nth(1)).toContainText('46+ YDS: 37.8%');
+ await expect(tiles.first()).toContainText('P(reach rounded model mean 46+)');
+ await expect(tiles.first()).not.toContainText('95.0%');
  await expect(tiles.nth(2)).toContainText('Lower Target');
- await expect(tiles.nth(2)).toContainText('35+ YDS: 73.0%');
+ await expect(tiles.nth(2)).toContainText('46+ YDS: 32.9%');
  await expect(page.getByTestId('nfl-open-top10')).toBeVisible();
  await page.getByTestId('nfl-open-top10').click();
  await expect(page.getByRole('heading',{name:'NFL · TOP 10 GAME CARD'})).toBeVisible();
