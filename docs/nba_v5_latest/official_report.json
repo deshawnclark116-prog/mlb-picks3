@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_04_00PM.pdf",
-  "published_at_utc": "2026-11-22T21:00:00+00:00",
-  "captured_at_utc": "2026-11-22T21:05:22.335570+00:00",
-  "source_sha256": "ec7dad71ca6a1211e7ee5353094b67a2ad54d5ab4aa58d17cfeca6d08badab5e",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_04_45PM.pdf",
+  "published_at_utc": "2026-11-22T21:45:00+00:00",
+  "captured_at_utc": "2026-11-22T22:02:38.179690+00:00",
+  "source_sha256": "9567f11d0faa6c4d9424ba7ac5cdb2521bd2b54e5932ce5bb7932c0a64606bfc",
   "reports": [
     {
       "matchup": "DET@ATL",
@@ -155,7 +155,7 @@
       "team_abbr": "OKC",
       "player": "Gilgeous-Alexander, Shai",
       "normalized_player": "shai gilgeous alexander",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": ""
     },
     {
@@ -219,7 +219,7 @@
       "team_abbr": "MIA",
       "player": "Gardner, Myron",
       "normalized_player": "myron gardner",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -663,6 +663,38 @@
       "reason": "Injury/Illness - Left Hamstring Strain"
     },
     {
+      "matchup": "POR@PHI",
+      "team_abbr": "POR",
+      "player": "Krejci, Vit",
+      "normalized_player": "vit krejci",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Ankle Fracture"
+    },
+    {
+      "matchup": "POR@PHI",
+      "team_abbr": "POR",
+      "player": "Morant, Ja",
+      "normalized_player": "ja morant",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Hamstring Strain"
+    },
+    {
+      "matchup": "POR@PHI",
+      "team_abbr": "POR",
+      "player": "Sharpe, Shaedon",
+      "normalized_player": "shaedon sharpe",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "POR@PHI",
+      "team_abbr": "POR",
+      "player": "Youngblood, Chris",
+      "normalized_player": "chris youngblood",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
       "matchup": "BKN@MIN",
       "team_abbr": "BKN",
       "player": "Bilodeau, Tyler",
@@ -717,6 +749,110 @@
       "normalized_player": "nolan traore",
       "status": "OUT",
       "reason": "Injury/Illness - Right Hamstring Strain"
+    },
+    {
+      "matchup": "MIL@TOR",
+      "team_abbr": "MIL",
+      "player": "Dieng, Ousmane",
+      "normalized_player": "ousmane dieng",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Left Finger Fracture"
+    },
+    {
+      "matchup": "MIL@TOR",
+      "team_abbr": "MIL",
+      "player": "Jones, Kam",
+      "normalized_player": "kam jones",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "MIL@TOR",
+      "team_abbr": "MIL",
+      "player": "Markovic, Bogoljub",
+      "normalized_player": "bogoljub markovic",
+      "status": "OUT",
+      "reason": "G League - On Assignment"
+    },
+    {
+      "matchup": "MIL@TOR",
+      "team_abbr": "TOR",
+      "player": "Barrett, RJ",
+      "normalized_player": "rj barrett",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Hamstring Strain"
+    },
+    {
+      "matchup": "MIL@TOR",
+      "team_abbr": "TOR",
+      "player": "Bittle, Nate",
+      "normalized_player": "nate bittle",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "MIL@TOR",
+      "team_abbr": "TOR",
+      "player": "Leonard, Kawhi",
+      "normalized_player": "kawhi leonard",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "MIL@TOR",
+      "team_abbr": "TOR",
+      "player": "Murray-Boyles, Collin",
+      "normalized_player": "collin murray boyles",
+      "status": "PROBABLE",
+      "reason": "Concussion Protocol"
+    },
+    {
+      "matchup": "CLE@CHI",
+      "team_abbr": "CLE",
+      "player": "Austin, Zack",
+      "normalized_player": "zack austin",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "CLE@CHI",
+      "team_abbr": "CLE",
+      "player": "Diop, Khalifa",
+      "normalized_player": "khalifa diop",
+      "status": "OUT",
+      "reason": "G League - On Assignment"
+    },
+    {
+      "matchup": "CLE@CHI",
+      "team_abbr": "CLE",
+      "player": "Mobley, Evan",
+      "normalized_player": "evan mobley",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Great Toe Sprain"
+    },
+    {
+      "matchup": "CLE@CHI",
+      "team_abbr": "CLE",
+      "player": "Tomlin, Nae'Qwan",
+      "normalized_player": "nae qwan tomlin",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "CLE@CHI",
+      "team_abbr": "CLE",
+      "player": "Tyson, Jaylon",
+      "normalized_player": "jaylon tyson",
+      "status": "PROBABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "CLE@CHI",
+      "team_abbr": "CLE",
+      "player": "Udeh Jr., Ernest",
+      "normalized_player": "ernest udeh",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
     },
     {
       "matchup": "PHX@NOP",
@@ -789,9 +925,25 @@
       "normalized_player": "zion williamson",
       "status": "PROBABLE",
       "reason": "Injury/Illness - Left Thigh Contusion"
+    },
+    {
+      "matchup": "LAC@HOU",
+      "team_abbr": "HOU",
+      "player": "Copeland, Quadir",
+      "normalized_player": "quadir copeland",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "LAC@HOU",
+      "team_abbr": "HOU",
+      "player": "Phillips, Julian",
+      "normalized_player": "julian phillips",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
     }
   ],
-  "rows": 98,
+  "rows": 117,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
