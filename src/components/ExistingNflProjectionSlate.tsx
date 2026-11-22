@@ -7,17 +7,14 @@ import {formatET,type Horizon,type Phase1View} from '../nfl/phase1';
 import {wholeStatProjection} from '../lib/wholeStatProjection';
 import {hasNflNbaMeanProjectionEvidence} from '../nfl/ownProjectionRank';
 import {rankNflShowcase,requiresVerifiedStarterResimulation,type NflShowcasePick} from '../nfl/weeklyShowcase';
-import {nflPrimaryNumericalForecasts} from '../nfl/primaryNumerical';
+import {nflPrimaryProbabilityPicks,nflUnrankedNumericalForecasts} from '../nfl/primaryNumerical';
 import type {NflRoleSnapshot} from '../nfl/roleSupportedNfl';
 import {parseExistingNfl,existingMatchup,type ExistingNflSlate,type ExistingNflGame,type ExistingYardProjection} from '../nfl/existing';
 const n=(x:number)=>x.toLocaleString('en-US',{maximumFractionDigits:1});
 const label=(m:string)=>m==='rushing_yards'?'RUSH YDS':m==='receiving_yards'?'REC YDS':m==='anytime_touchdowns'?'ANYTIME TD':'SACK';
 const chance=(n:number|null|undefined)=>n!=null&&Number.isFinite(n)?(n*100).toFixed(1)+'%':'n/a';
-/** Show the actual NFL statistical forecast FIRST, not the 30% TD fallback.
- * The context V2 model published genuine yardage means but no matched
- * simulation distribution: NO percentage should be reconstructed.
- * Historical workload stability is only a descriptive source grade, not
- * a calibrated probability that the point estimate is accurate. */
+/** Raw numerical forecast for research ONLY: no confidence rank, no
+ * manufactured probability. Validated model probabilities go into Top 4. */
 export function NflNumericalTile({p}:{p:ExistingYardProjection}){
  return <article data-testid="nfl-primary-numerical-projection" className="min-w-0 rounded-xl border border-[#79FF48]/25 bg-[#101a14] p-3">
   <p className="text-[10px] text-gray-400">{p.team} · {label(p.market)}</p>
@@ -26,8 +23,8 @@ export function NflNumericalTile({p}:{p:ExistingYardProjection}){
     {wholeStatProjection(p.projected_median)}<span className="ml-1 text-[13px]">YDS</span>
   </p>
   <p className="text-[11px] text-gray-300">Model median {n(p.projected_median)} · mean {n(p.projected_mean)}</p>
-  <p className="mt-1 text-[11px] text-gray-400">Historical workload stability: {p.confidence??'unknown'} · {p.games_played??'?'} games</p>
-  <p className="mt-1 text-[10px] text-amber-200">No matched probability for this exact projection · availability unverified</p>
+  <p className="mt-1 text-[11px] text-gray-400">Original model forecast · alphabetical browsing only</p>
+  <p className="mt-1 text-[10px] text-amber-200">UNRANKED · No matched model probability for this numerical forecast · availability unverified</p>
  </article>;
 }
 /** Honest OVER-only NFL opportunity tiles. Scoring probabilities are
@@ -217,10 +214,10 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
         Number.isFinite(Date.parse(slate.generated_at_utc))&&
         Date.parse(slate.generated_at_utc)<Date.parse(g.kickoff_utc));
       const eligibleGame={...g,projections:g.shown,events:g.shownEvents};
-      // Original V2 context published numerical medians, but omitted the
-      // distribution for their exact values. These are NOT fake 30% TD picks
-      // or a numerical accuracy ranking. Source stability is merely a tier.
-      const numericalLeaders=nflPrimaryNumericalForecasts(g.shown,10);
+      // The original V2 context median has NO source-matched model %
+      // and cannot enter Top 4 just because an old stability grade is HIGH.
+      // Show all such numbers separately, alphabetically, as unranked.
+      const unrankedForecasts=nflUnrankedNumericalForecasts(g.shown);
       const scoringOnly=(p:NflShowcasePick)=>p.targetYards==null;
       const allQualified=originalForecastBeforeKickoff?rankNflShowcase(eligibleGame,'','ALL',200):[];
       const top=allQualified.slice(0,10);
@@ -228,10 +225,13 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
       // Only same-simulation, nontrivial yards with a validated source
       // event may occupy probability-ranked TOP tiles. TD research cannot
       // fill empty yardage slots by the mere fact it clears 30%.
-      const qualifiedYardage=top.filter(p=>p.targetYards!=null);
+      // Rank yardage from its OWN original event distribution, not the
+      // mixed TD shortlist, previous stability grade, or historical games.
+      const qualifiedYardage=originalForecastBeforeKickoff?
+        nflPrimaryProbabilityPicks(eligibleGame,4):[];
       const qualifiedKeys=new Set(allQualified.map(p=>[p.player_id,p.player,p.team,p.market].join('|')));
       const remaining=g.shown.filter(p=>!qualifiedKeys.has([p.player_id,p.player,p.team,p.market].join('|')));
-      const preview=qualifiedYardage[0]||top[0],numericalPreview=qualifiedYardage.length?undefined:numericalLeaders[0],fallbackPreview=g.shown.find(p=>!requiresVerifiedStarterResimulation(p));
+      const preview=qualifiedYardage[0];
       const eventResearchOnly=top.length>0&&top.every(scoringOnly);
       return <section key={g.id} data-testid="existing-nfl-game" className="min-w-0 overflow-hidden rounded-2xl border border-[#292929] bg-[#141414]">
         <div className="flex items-center gap-1 pr-3">
@@ -244,22 +244,15 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
                 <span className="text-[11px] text-gray-500">{formatET(g.kickoff_utc)}</span>
               </div>
               <p className="mt-2 text-[10px] font-bold text-gray-400">{g.projections.length+(g.events?.length||0)} PLAYER OUTCOMES · WEEKLY MODEL</p>
-              {numericalPreview?<p data-testid="existing-nfl-preview" className="mt-2 text-[11px] text-gray-300">
-                MODEL YARDAGE: <span className="capitalize font-bold text-white">{numericalPreview.player}</span>
-                {' · '}<span className="font-black text-[#00FF41]">
-                  {n(numericalPreview.projected_median)} {label(numericalPreview.market)}
-                </span>
-                {' · '}<span className="text-amber-200">hit probability unavailable</span>
-              </p>:preview?<p data-testid="existing-nfl-preview" className="mt-2 text-[11px] text-gray-300">
+              {preview?<p data-testid="existing-nfl-preview" className="mt-2 text-[11px] text-gray-300">
                 TOP: <span className="capitalize text-white">{preview.player}</span>
                 {' · '}<span className="font-black text-[#00FF41]">{preview.targetYards!=null?
                   `${wholeStatProjection(preview.meanYards!)} ${label(preview.market)}`:
                   label(preview.market)}</span>
                 <span className="text-[#79FF48]"> · {preview.targetYards!=null?`${preview.targetYards}+ yards`:'OVER 0.5'} at {chance(preview.probability)} (uncalibrated)</span>
-              </p>:fallbackPreview?<p data-testid="existing-nfl-preview" className="mt-2 text-[11px] text-gray-300">
-                MODEL MEDIAN: <span className="capitalize text-white">{fallbackPreview.player}</span>
-                {' · '}<span className="font-black text-[#00FF41]">{n(fallbackPreview.projected_median)} {label(fallbackPreview.market)}</span>
-              </p>:<p role="status" className="mt-1 text-[11px] text-amber-200">No qualifying OVER-only model outcomes for this matchup</p>}
+              </p>:<p data-testid="existing-nfl-preview" role="status" className="mt-2 text-[11px] text-amber-200">
+                No probability-qualified yardage Top 4 · {unrankedForecasts.length} original model forecasts available to review
+              </p>}
               {started&&<p className="mt-1 text-[10px] text-gray-500">Kickoff passed · archived pregame projections</p>}
             </div>
             <ChevronDown size={16} className={`shrink-0 text-gray-500 ${opened?'rotate-180':''}`}/>
@@ -277,36 +270,31 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
           </button>}
         </div>
         {mode==='SYSTEM PICKS'&&qualifiedYardage.length>0&&
-          <div data-testid="nfl-top-projection-tiles" className="grid grid-cols-2 gap-2 px-3 pb-3">
+          <div className="px-3 pb-3">
+            <p data-testid="nfl-primary-ranked-label" className="mb-2 text-[11px] font-bold text-[#79FF48]">
+              TOP {qualifiedYardage.length} · MODEL YARDAGE TARGET PROBABILITIES
+            </p>
+            <div data-testid="nfl-top-projection-tiles" className="grid grid-cols-2 gap-2">
             {qualifiedYardage.map(p=><NflPrecisionTile key={p.team+'|'+p.player_id+'|'+p.market} p={p}/>)}
-          </div>}
-        {mode==='SYSTEM PICKS'&&qualifiedYardage.length===0&&numericalLeaders.length>0&&<div className="px-3 pb-3">
-          <p className="mb-2 text-[11px] font-bold uppercase tracking-wide text-[#79FF48]">PLAYER STAT PROJECTIONS · ORIGINAL MODEL</p>
-          <p className="mb-2 text-[10px] text-gray-400">Selected by historical workload-stability tier, then games observed—not predicted hit rate. No yardage accuracy percentage is supplied for V2 context.</p>
-          <div data-testid="nfl-top-projection-tiles" className="grid grid-cols-2 gap-2">
-            {numericalLeaders.slice(0,4).map(p=><NflNumericalTile key={p.team+'|'+p.player_id+'|'+p.market} p={p}/>)}
-          </div>
-          {numericalLeaders.length>4&&<details className="mt-2 rounded-lg border border-[#313b35] p-2">
-            <summary className="min-h-9 cursor-pointer text-[11px] font-bold text-gray-300">SHOW {numericalLeaders.length-4} MORE MODEL PROJECTIONS ▾</summary>
-            <div className="mt-2 grid grid-cols-2 gap-2">
-              {numericalLeaders.slice(4).map(p=><NflNumericalTile key={p.team+'|'+p.player_id+'|'+p.market} p={p}/>)}
             </div>
-          </details>}
-        </div>}
-        {mode==='SYSTEM PICKS'&&qualifiedYardage.length===0&&numericalLeaders.length===0&&top.length>0&&
-          <p data-testid="nfl-scoring-research-only" className="px-3 pb-3 text-xs text-amber-200">
-            No qualifying supported yardage projections to feature. Lower-probability TD forecasts are scoring research, not top model picks; expand the game to inspect them.
-          </p>}
+          </div>}
+        {mode==='SYSTEM PICKS'&&qualifiedYardage.length===0&&
+          <div data-testid="nfl-no-probability-ranked-top4" role="status" className="px-3 pb-3 text-[11px] text-amber-200">
+            NO VERIFIED MODEL-PROBABILITY YARDAGE TOP 4. This forecast has not published a
+            same-model probability for its yardage target. Numerical forecasts
+            remain accessible in game details, but no confidence tier, TD percentage
+            or sportsbook line can substitute for that missing probability.
+          </div>}
         {opened&&<div id={`existing-game-${g.id}`} data-testid="existing-nfl-expanded" className="space-y-3 border-t border-[#292929] p-3">
           <p className="text-[11px] text-gray-400">Original weekly numerical projections are separate from OVER-only scoring-event research. Context yardage probabilities are unavailable, not inferred from sportsbooks. {mode==='BETTABLE NOW'?'No verified book lines supplied.':''}</p>
-          {numericalLeaders.length>0&&<div data-testid="nfl-expanded-numerical-leaders" className="space-y-2">
-            <p className="text-xs font-bold text-[#79FF48]">MODEL YARDAGE FORECASTS · {numericalLeaders.length} SOURCE-STABILITY LEADERS</p>
-            <p className="text-[11px] text-gray-400">Numerical mean/median from the saved forecast. HIGH/MEDIUM/LOW means historical spread stability, not betting confidence; no percentage is available for V2 context.</p>
-            <div className="grid grid-cols-2 gap-2">{numericalLeaders.map(p=><NflNumericalTile key={p.team+'|'+p.player_id+'|'+p.market} p={p}/>)}</div>
+          {unrankedForecasts.length>0&&<div data-testid="nfl-expanded-numerical-leaders" className="space-y-2">
+            <p className="text-xs font-bold text-[#79FF48]">UNRANKED MODEL YARDAGE FORECASTS · {unrankedForecasts.length} ORIGINAL ESTIMATES</p>
+            <p className="text-[11px] text-gray-400">Alphabetical reference list only. These are original numerical estimates; they are NOT Top 4 picks. Without a matching same-model event probability, no hit chance is reported.</p>
+            <div className="grid grid-cols-2 gap-2">{unrankedForecasts.map(p=><NflNumericalTile key={p.team+'|'+p.player_id+'|'+p.market} p={p}/>)}</div>
           </div>}
           {(g.shown.length>0||g.shownEvents.length>0)?<div className="space-y-3">
             {top.length>0?<div data-testid="nfl-top10-simulation-research" className="space-y-3">
-              <p className="text-xs font-bold text-[#00FF41]">{eventResearchOnly?'SCORING-EVENT RESEARCH · '+top.length+' OUTCOMES':'TOP '+top.length+' MODEL PROJECTIONS'}</p>
+              <p className="text-xs font-bold text-[#00FF41]">SEPARATE OVER-ONLY EVENT RESEARCH · {top.length} OUTCOMES (NOT THE TOP 4)</p>
               <p className="text-[11px] text-amber-200">Separate scoring-event research: 30% TD probability is NOT high confidence. Yardage targets, when available, require a 60% Monte Carlo Wilson lower bound; sack OVERS 60%. None are verified bets, and game-day availability remains unverified.</p>
               {top.map(p=><NflPrecisionPick key={p.player_id+'|'+p.player+'|'+p.team+'|'+p.market} p={p}/>)}
               {otherQualified.length>0&&<details className="rounded-xl border border-[#292929] p-3">
