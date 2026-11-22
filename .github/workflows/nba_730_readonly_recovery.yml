@@ -1,0 +1,68 @@
+name: Recover 7:30 NBA frozen specialist predictions
+on:
+  push:
+    branches: [research/nba-730-pretip-20261121]
+permissions:
+  contents: read
+jobs:
+  frozen-source-readonly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Read exact pretip source bytes and print specialist forecasts
+        env:
+          SHA: bc02183b9966e1132336f8c631a5d43685cdc478
+        run: |
+          git show "$SHA:docs/nba_v3_latest/latest.json" > /tmp/nba_v3_at_709.json
+          git show "$SHA:docs/nba_v4_latest/latest.json" > /tmp/nba_v4_at_709.json
+          git show "$SHA:docs/nba_v5_archive/last/401910024.json.gz" > /tmp/nba_v5_at_709.json.gz
+          python - <<'PY'
+          import json,gzip,math,datetime
+          sources={}
+          for v,path in [('V3','/tmp/nba_v3_at_709.json'),('V4','/tmp/nba_v4_at_709.json'),('V5','/tmp/nba_v5_at_709.json.gz')]:
+              with (gzip.open(path,'rt') if path.endswith('.gz') else open(path,'r')) as f:
+                  document=json.load(f)
+              games=[g for g in document['games'] if str(g['game_id'])=='401910024']
+              print('SOURCE',v,'generated',document.get('generated_at_utc'),'matches',len(games))
+              if not games:continue
+              game=games[0]
+              print('GAME',v,game['away'],'at',game['home'],'tip',game['tipoff_utc'],'forecast',game['forecast_at_utc'],'rows',len(game['rows']))
+              sources[v]=game
+          rules={'points':'V5','rebounds':'V3','assists':'V4','three_pointers_made':'V3'}
+          floor={'points':6,'rebounds':3,'assists':2,'three_pointers_made':1}
+          items=[]
+          for market,owner in rules.items():
+              game=sources.get(owner)
+              if not game:
+                  print('MISSING_MODEL',market,owner)
+                  continue
+              for r in game['rows']:
+                  if r.get('market')!=market or r.get('reported_status')=='OUT':continue
+                  mean=r.get('mean')
+                  if not isinstance(mean,(int,float)) or not math.isfinite(mean) or mean<0:continue
+                  whole=int(mean)+(1 if mean%1>=0.6 else 0)
+                  if whole<floor[market]:continue
+                  reach=r.get('reach_probabilities') or {}
+                  if reach.get('whole_projection')==whole and isinstance(reach.get('probability_including_dnp'),(int,float)):
+                      prob=reach['probability_including_dnp']
+                      kind='INCLUDING_DNP'
+                  else:
+                      cdf=(r.get('cdf_lattice') or {}).get('cdf') or []
+                      if not cdf:continue
+                      prob=1-(cdf[whole-1] if whole-1<len(cdf) else 1)
+                      kind='CONDITIONAL'
+                  items.append({'player':r['player'],'market':market,'owner':owner,'mean':round(mean,3),
+                    'whole':whole,'prob':round(prob,4),'prob_type':kind,
+                    'p_active':r.get('p_active'),'starter':r.get('starter_evidence','UNKNOWN'),
+                    'source_at':game['forecast_at_utc']})
+          items.sort(key=lambda x:(-x['prob'],x['player'],x['market']))
+          print('TOP20_SPECIALISTS_JSON='+json.dumps(items[:20],separators=(',',':')))
+          for market in rules:
+              s=[r for r in items if r['market']==market]
+              print('MARKET_'+market.upper()+'='+json.dumps(s[:12],separators=(',',':')))
+          print('MARKET_COUNTS='+json.dumps({m:sum(x['market']==m for x in items) for m in rules}))
+          print('TOTAL='+str(len(items)))
+          PY
