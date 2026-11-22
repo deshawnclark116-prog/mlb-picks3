@@ -46,7 +46,6 @@ export type NflRoleScreenResult={
 
 const finite=(x:unknown):x is number=>typeof x==='number'&&Number.isFinite(x);
 const when=(t:unknown)=>typeof t==='string'?Date.parse(t):NaN;
-const same=(a:string,b:string)=>normalizePlayer(a)===normalizePlayer(b);
 const identifier=(p:Pick<NflRoleEvidenceRow,'player'|'team'|'market'|'opponent'>)=>
   [normalizePlayer(p.player),p.team,p.market,p.opponent].join('|');
 const OPPORTUNITY_MIN:Record<string,number>={receiving_yards:3,rushing_yards:5};
@@ -127,6 +126,8 @@ export function roleScreenedNflNumerical(
    const r=records?.length===1?records[0]:null;
    const sound=Boolean(r&&
      r.roster_status==='ROSTER_LISTED_NOT_STARTER_VERIFIED'&&
+     !['out','injured reserve','suspended','did not play','pup'].includes(
+       String(r.independent_league_injury_status||'').toLowerCase())&&
      r.role_evidence_complete_for_showcase===true&&
      r.has_verified_starting_role===false&&
      r.has_calibrated_book_bet_probability===false&&
@@ -141,7 +142,7 @@ export function roleScreenedNflNumerical(
    if(!sound){
      excluded.not_enough_recent_role_proof++;continue;
    }
-   if((r as NflRoleEvidenceRow&{role_status?:string}).role_status==='RECENT_OPPORTUNITIES_DECLINING'){
+   if(r!.role_status==='RECENT_OPPORTUNITIES_DECLINING'){
       excluded.declining_opportunities++;continue;
    }
    if(flagged.has([normalizePlayer(p.player),p.team,p.market].join('|'))){
