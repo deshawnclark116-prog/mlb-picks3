@@ -2,15 +2,15 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import {parseExistingNfl} from '../src/nfl/existing.ts';
+import {parseExistingNfl,type ExistingYardProjection,type ExistingYardMarket} from '../src/nfl/existing.ts';
 import {rankNflShowcase} from '../src/nfl/weeklyShowcase.ts';
 import {nflPrimaryNumericalForecasts} from '../src/nfl/primaryNumerical.ts';
 import {NflNumericalTile} from '../src/components/ExistingNflProjectionSlate.tsx';
 
 const KICK='2026-11-22T18:00:00Z';
 const BASE={opponent:'ARI',team:'KC',kickoff_utc:KICK,season:2026,week:11};
-const y=(name:string,team:string,opponent:string,market:string,mean:number,
-  stability:string='MEDIUM',games=8)=>({
+const y=(name:string,team:string,opponent:string,market:ExistingYardMarket,mean:number,
+  stability:NonNullable<ExistingYardProjection['confidence']>='MEDIUM',games=8):ExistingYardProjection=>({
   market,player:name,player_id:name,team,opponent,
   kickoff_utc:KICK,projected_median:mean,projected_mean:mean,
   projected_low:Math.max(0,mean*.2),projected_high:mean*2,
