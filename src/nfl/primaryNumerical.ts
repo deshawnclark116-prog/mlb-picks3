@@ -18,6 +18,7 @@ import {hasNflNbaMeanProjectionEvidence} from './ownProjectionRank';
 import {wholeStatProjection} from '../lib/wholeStatProjection';
 
 export const V2_EXACT_MEAN_SOURCE='V2_CONTEXT_2026_PREGAME_OUT_OF_SAMPLE_EMPIRICAL_ERRORS_V1';
+export const V2_LEARNED_SOURCE='V2_CONTEXT_2026_ASOF_LEARNED_EXACT_MEAN_PHEAD_V1';
 
 /** This source CDF belongs to the exact published XGBoost V2 mean.
  * Do NOT confuse its real residual sample size with 10k Monte Carlo
@@ -25,14 +26,18 @@ export const V2_EXACT_MEAN_SOURCE='V2_CONTEXT_2026_PREGAME_OUT_OF_SAMPLE_EMPIRIC
  */
 export const hasNflV2OwnMeanProbability=(p:ExistingYardProjection):boolean=>
   p.model_source==='v2_context'&&
-  p.projection_probability_source===V2_EXACT_MEAN_SOURCE&&
-  p.v2_probability_model_version===V2_EXACT_MEAN_SOURCE&&
+  (p.projection_probability_source===V2_EXACT_MEAN_SOURCE ||
+    p.projection_probability_source===V2_LEARNED_SOURCE)&&
+  p.v2_probability_model_version===p.projection_probability_source&&
   p.v2_probability_calibration==='NOT_FORWARD_CERTIFIED'&&
   p.v2_probability_active_verified===false&&
   p.v2_probability_residual_sample_n!=null&&
   Number.isSafeInteger(p.v2_probability_residual_sample_n)&&
-  p.v2_probability_residual_sample_n>=60&&
-  p.v2_probability_residual_sample_n<=160&&
+  ((p.projection_probability_source===V2_EXACT_MEAN_SOURCE&&
+    p.v2_probability_residual_sample_n>=60&&
+    p.v2_probability_residual_sample_n<=160)||
+   (p.projection_probability_source===V2_LEARNED_SOURCE&&
+    p.v2_probability_residual_sample_n>=170))&&
   p.v2_probability_total_prior_n!=null&&
   p.v2_probability_total_prior_n>=p.v2_probability_residual_sample_n&&
   p.v2_probability_reference_mean!=null&&
