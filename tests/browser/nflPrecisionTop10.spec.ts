@@ -65,13 +65,13 @@ test('360px NFL UI shows NBA-style highest meaningful targets, original means an
  const tiles=page.getByTestId('nfl-top-projection-tiles').getByTestId('nfl-projection-tile');
  await expect(tiles).toHaveCount(3);
  await expect(tiles.first()).toContainText('Unverified');
- await expect(tiles.first()).toContainText('95.0% to reach 30+ yds');
+ await expect(tiles.first()).toContainText('30+ YDS: 95.0%');
  await expect(tiles.nth(1)).toContainText('Top Target');
- await expect(tiles.nth(1)).toContainText('84.0% to reach 30+ yds');
- await expect(tiles.first()).toContainText('Model average 46 yds');
+ await expect(tiles.nth(1)).toContainText('30+ YDS: 84.0%');
+ await expect(tiles.first()).toContainText('Model mean 46 yds');
  await expect(tiles.first()).not.toContainText('43.0%');
  await expect(tiles.nth(2)).toContainText('Lower Target');
- await expect(tiles.nth(2)).toContainText('73.0% to reach 35+ yds');
+ await expect(tiles.nth(2)).toContainText('35+ YDS: 73.0%');
  await expect(page.getByTestId('nfl-open-top10')).toBeVisible();
  await page.getByTestId('nfl-open-top10').click();
  await expect(page.getByRole('heading',{name:'NFL · TOP 10 GAME CARD'})).toBeVisible();
@@ -96,8 +96,8 @@ test('360px NFL UI shows NBA-style highest meaningful targets, original means an
  await expect(cards.first()).toContainText('Unverified');
  await expect(cards.first()).toContainText('95.0%');
  await expect(cards.first()).toContainText('CHANCE OF 30+ YDS');
- await cards.first().getByText('MODEL EVIDENCE / OTHER TARGETS').click();
- await expect(cards.first().getByTestId('nfl-target-grid-details')).toContainText('40+ yds');
+ await cards.first().getByText('MODEL EVIDENCE',{exact:true}).click();
+ await expect(cards.first()).toContainText('historical player simulations');
  await shortlist.getByText(/SHOW OTHER 1 NUMERICAL MODEL PROJECTIONS/).click();
  await expect(page.getByText('Context Projection',{exact:true})).toBeVisible();
  expect(await page.evaluate(()=>document.documentElement.scrollWidth <= 360)).toBe(true);
