@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "d7a8f1b8c2228be6619eae30794aaebf",
+  "captured_at_utc": "2026-11-22T11:26:12.071Z",
+  "catalog_generated_at_utc": "2026-11-21T06:22:55Z",
+  "original_code_sha": "eab7495a62d0f0b952a88077529dd5b551c57ed0",
+  "source_results_sha256": "e3da6df50e9a2a1f76ac7f935fc37f40f20162184a101fcc8f668bc77932004d",
+  "source_fixtures_sha256": "672f4402c522d8cf43c6653a0ca8f50214a0e917af9cede00cffa727a90267ca",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "BRA_1_serie-a",
+    "season": "2026-27",
+    "date": "2026-11-24",
+    "home": "Chapecoense",
+    "away": "Palmeiras",
+    "expectedHomeGoals": 1.2172,
+    "expectedAwayGoals": 1.4665,
+    "baselineHomeGoals": 1.5289,
+    "baselineAwayGoals": 1.1184,
+    "probabilities": {
+      "home": 0.3142,
+      "draw": 0.2567,
+      "away": 0.4291,
+      "over25": 0.5024,
+      "btts": 0.5415
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 18.1814,
+    "awayWeightedMatches": 19.2224,
+    "source": "open-matchday/fixture/BRA_1_serie-a",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

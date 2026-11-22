@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "d1ba01b4d6ad40b00b70a03d8b28154f",
+  "captured_at_utc": "2026-11-22T11:26:12.071Z",
+  "catalog_generated_at_utc": "2026-11-21T06:22:55Z",
+  "original_code_sha": "eab7495a62d0f0b952a88077529dd5b551c57ed0",
+  "source_results_sha256": "164e64edef04c9f3c43cfd15e19efa018ee2246cce305d380182456a003340fe",
+  "source_fixtures_sha256": "ae56f5c9c3c030f84cdb249d2da8649ee47c72a28cfae509c8d590213ddd57f0",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ENG_7_northern-premier-league",
+    "season": "2026-27",
+    "date": "2026-11-24",
+    "home": "Leek",
+    "away": "Gainsborough",
+    "expectedHomeGoals": 1.8933,
+    "expectedAwayGoals": 1.6747,
+    "baselineHomeGoals": 1.7919,
+    "baselineAwayGoals": 1.3991,
+    "probabilities": {
+      "home": 0.4348,
+      "draw": 0.2192,
+      "away": 0.346,
+      "over25": 0.6916,
+      "btts": 0.6903
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 6.563,
+    "awayWeightedMatches": 6.8012,
+    "source": "open-matchday/fixture/ENG_7_northern-premier-league",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

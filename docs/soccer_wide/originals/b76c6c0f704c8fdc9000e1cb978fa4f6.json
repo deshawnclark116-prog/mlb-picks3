@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "b76c6c0f704c8fdc9000e1cb978fa4f6",
+  "captured_at_utc": "2026-11-22T11:26:12.071Z",
+  "catalog_generated_at_utc": "2026-11-21T06:22:55Z",
+  "original_code_sha": "eab7495a62d0f0b952a88077529dd5b551c57ed0",
+  "source_results_sha256": "247a35e09117516d847cb0eb1f49a739c5c64a712639717d49cda06c750c738f",
+  "source_fixtures_sha256": "18d208fce0cfef7c3820718008d680e0b8c54d9b8844fee19a0b23ab850453ba",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "WAL_1_cymru-premier",
+    "season": "2026-27",
+    "date": "2026-11-24",
+    "home": "Holywell",
+    "away": "Penybont",
+    "expectedHomeGoals": 1.5356,
+    "expectedAwayGoals": 2.0367,
+    "baselineHomeGoals": 1.8083,
+    "baselineAwayGoals": 1.4562,
+    "probabilities": {
+      "home": 0.2922,
+      "draw": 0.2138,
+      "away": 0.494,
+      "over25": 0.6923,
+      "btts": 0.6823
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 10.4241,
+    "awayWeightedMatches": 7.6014,
+    "source": "open-matchday/fixture/WAL_1_cymru-premier",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}
