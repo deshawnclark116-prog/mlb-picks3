@@ -1,6 +1,6 @@
 {
   "schema": "supplemental-soccer-partial-fixtures-v1",
-  "generated_at_utc": "2026-11-21T19:42:25.692Z",
+  "generated_at_utc": "2026-11-22T19:56:37.455Z",
   "coverage": "FIVE_EXPLICIT_MISSING_LEAGUES_PARTIAL_NEXT_EVENT_ONLY",
   "competitions": [
     {
@@ -35,75 +35,62 @@
       "league": "AUS_2_championship",
       "name": "Australian Championship",
       "providerLeagueId": "5710",
-      "status": "OK_NEXT_FIXTURE",
-      "count": 1
+      "status": "NO_NEXT_FIXTURE",
+      "count": 0
     }
   ],
   "fixtures": [
     {
-      "id": "tsdb:2630066",
+      "id": "tsdb:2630068",
       "league": "NIC_1_primera",
       "season": "2026",
-      "date": "2026-11-21",
-      "home": "UNAN Managua",
-      "away": "Matagalpa",
-      "kickoffUtc": "2026-11-21T23:00:00Z",
+      "date": "2026-11-22",
+      "home": "Walter Ferretti",
+      "away": "Sébaco",
+      "kickoffUtc": "2026-11-22T23:00:00Z",
       "source": "THESPORTSDB_PUBLIC_NEXT_EVENT",
       "providerStatus": "NS",
       "coverage": "PARTIAL_NEXT_EVENT_ONLY",
-      "sourceCapturedAtUtc": "2026-11-21T19:42:25.692Z"
+      "sourceCapturedAtUtc": "2026-11-22T19:56:37.455Z"
     },
     {
-      "id": "tsdb:2630137",
+      "id": "tsdb:2630138",
       "league": "COL_1_primera-a",
       "season": "2026",
-      "date": "2026-11-22",
-      "home": "Once Caldas",
-      "away": "Atlético Nacional",
-      "kickoffUtc": "2026-11-22T01:15:00Z",
+      "date": "2026-11-24",
+      "home": "Millonarios",
+      "away": "Atlético Bucaramanga",
+      "kickoffUtc": "2026-11-24T23:20:00Z",
       "source": "THESPORTSDB_PUBLIC_NEXT_EVENT",
       "providerStatus": "NS",
       "coverage": "PARTIAL_NEXT_EVENT_ONLY",
-      "sourceCapturedAtUtc": "2026-11-21T19:42:25.692Z"
+      "sourceCapturedAtUtc": "2026-11-22T19:56:37.455Z"
     },
     {
-      "id": "tsdb:2488696",
+      "id": "tsdb:2488697",
       "league": "CRI_1_primera",
       "season": "2026",
-      "date": "2026-11-21",
-      "home": "Puntarenas",
-      "away": "Herediano",
-      "kickoffUtc": "2026-11-21T23:30:00Z",
+      "date": "2026-11-22",
+      "home": "Inter de San Carlos",
+      "away": "Sporting San José",
+      "kickoffUtc": "2026-11-22T22:00:00Z",
       "source": "THESPORTSDB_PUBLIC_NEXT_EVENT",
       "providerStatus": "NS",
       "coverage": "PARTIAL_NEXT_EVENT_ONLY",
-      "sourceCapturedAtUtc": "2026-11-21T19:42:25.692Z"
+      "sourceCapturedAtUtc": "2026-11-22T19:56:37.455Z"
     },
     {
-      "id": "tsdb:2422299",
+      "id": "tsdb:2422305",
       "league": "KOR_2_k-league",
       "season": "2026",
-      "date": "2026-11-22",
-      "home": "Daegu FC",
-      "away": "Gimhae FC",
-      "kickoffUtc": "2026-11-22T05:00:00Z",
+      "date": "2026-11-28",
+      "home": "Gimhae FC",
+      "away": "Seongnam FC",
+      "kickoffUtc": "2026-11-28T05:00:00Z",
       "source": "THESPORTSDB_PUBLIC_NEXT_EVENT",
       "providerStatus": "NS",
       "coverage": "PARTIAL_NEXT_EVENT_ONLY",
-      "sourceCapturedAtUtc": "2026-11-21T19:42:25.692Z"
-    },
-    {
-      "id": "tsdb:2606448",
-      "league": "AUS_2_championship",
-      "season": "2026",
-      "date": "2026-11-22",
-      "home": "Adelaide City",
-      "away": "Broadmeadow Magic",
-      "kickoffUtc": "2026-11-22T04:00:00Z",
-      "source": "THESPORTSDB_PUBLIC_NEXT_EVENT",
-      "providerStatus": "NS",
-      "coverage": "PARTIAL_NEXT_EVENT_ONLY",
-      "sourceCapturedAtUtc": "2026-11-21T19:42:25.692Z"
+      "sourceCapturedAtUtc": "2026-11-22T19:56:37.455Z"
     }
   ],
   "guardrails": {
