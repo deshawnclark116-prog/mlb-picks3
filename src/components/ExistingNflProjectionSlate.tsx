@@ -250,8 +250,10 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
                   `${wholeStatProjection(preview.meanYards!)} ${label(preview.market)}`:
                   label(preview.market)}</span>
                 <span className="text-[#79FF48]"> · {preview.targetYards!=null?`${preview.targetYards}+ yards`:'OVER 0.5'} at {chance(preview.probability)} (uncalibrated)</span>
-              </p>:<p data-testid="existing-nfl-preview" role="status" className="mt-2 text-[11px] text-amber-200">
+              </p>:unrankedForecasts.length>0?<p data-testid="existing-nfl-preview" role="status" className="mt-2 text-[11px] text-amber-200">
                 No probability-qualified yardage Top 4 · {unrankedForecasts.length} original model forecasts available to review
+              </p>:<p role="status" className="mt-2 text-[11px] text-gray-500">
+                No original yardage projection for this matchup
               </p>}
               {started&&<p className="mt-1 text-[10px] text-gray-500">Kickoff passed · archived pregame projections</p>}
             </div>
