@@ -1,0 +1,29 @@
+name: NFL real projection first screenshot regression
+on:
+  pull_request:
+    paths:
+      - src/components/ExistingNflProjectionSlate.tsx
+      - src/nfl/primaryNumerical.ts
+      - tests/nflProjectionFirstScreenshot.test.ts
+      - .github/workflows/nfl_projection_first_ui.yml
+  push:
+    branches: [fix/nfl-projection-first-sunday-20261122]
+permissions:
+  contents: read
+jobs:
+  original-projection-priority:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: React and TypeScript typecheck
+        run: npm run lint
+      - name: Reproduce 36.8% screenshot error and verify numerical-first fix
+        run: node --import tsx --test tests/nflProjectionFirstScreenshot.test.ts tests/nflExistingCardRank.test.ts tests/nflOverOnlyBoard.test.ts
+      - name: Production build
+        run: npm run build
