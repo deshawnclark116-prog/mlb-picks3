@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "caf131bc834a8afe55ed27e60d61c3ec",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "SVK_1_nike-liga",
+  "date": "2026-11-21",
+  "match_result_source": "open-matchday/soccerway/SVK_1_nike-liga",
+  "final_home_goals": 2,
+  "final_away_goals": 0,
+  "model_goal_mae": 0.845,
+  "baseline_goal_mae": 1,
+  "model_three_way_brier": 0.45722803,
+  "baseline_three_way_brier": 0.5841587300000001
+}

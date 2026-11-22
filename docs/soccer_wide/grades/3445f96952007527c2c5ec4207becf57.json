@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "3445f96952007527c2c5ec4207becf57",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "SVN_1_prva-liga",
+  "date": "2026-11-21",
+  "match_result_source": "open-matchday/soccerway/SVN_1_prva-liga",
+  "final_home_goals": 1,
+  "final_away_goals": 0,
+  "model_goal_mae": 0.89925,
+  "baseline_goal_mae": 0.7717,
+  "model_three_way_brier": 0.40507352,
+  "baseline_three_way_brier": 0.49075165000000004
+}

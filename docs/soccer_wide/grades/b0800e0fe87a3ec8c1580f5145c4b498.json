@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "b0800e0fe87a3ec8c1580f5145c4b498",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "GER_2_2-bundesliga",
+  "date": "2026-11-21",
+  "match_result_source": "open-matchday/openligadb/GER_2_2-bundesliga",
+  "final_home_goals": 2,
+  "final_away_goals": 0,
+  "model_goal_mae": 0.8174499999999999,
+  "baseline_goal_mae": 0.7335499999999999,
+  "model_three_way_brier": 0.44199506,
+  "baseline_three_way_brier": 0.3775535000000001
+}

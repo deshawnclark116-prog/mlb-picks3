@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "a3e56fb60cd8b5a2be1e011d1dc2c660",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "ENG_3_league-one",
+  "date": "2026-11-21",
+  "match_result_source": "open-matchday/fixturedl/ENG_3_league-one",
+  "final_home_goals": 1,
+  "final_away_goals": 2,
+  "model_goal_mae": 0.60665,
+  "baseline_goal_mae": 0.6717,
+  "model_three_way_brier": 0.68217698,
+  "baseline_three_way_brier": 0.7602450199999999
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "00944299fbea20d708110be0fa9b19f7",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "SCO_2_championship",
+  "date": "2026-11-21",
+  "match_result_source": "open-matchday/espn/SCO_2_championship",
+  "final_home_goals": 1,
+  "final_away_goals": 4,
+  "model_goal_mae": 1.4452,
+  "baseline_goal_mae": 1.66415,
+  "model_three_way_brier": 0.56830963,
+  "baseline_three_way_brier": 0.7802839399999999
+}

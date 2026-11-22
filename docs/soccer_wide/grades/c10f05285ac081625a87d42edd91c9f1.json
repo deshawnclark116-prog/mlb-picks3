@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "c10f05285ac081625a87d42edd91c9f1",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "ITA_1_serie-a",
+  "date": "2026-11-21",
+  "match_result_source": "open-matchday/fixturedl/ITA_1_serie-a",
+  "final_home_goals": 1,
+  "final_away_goals": 5,
+  "model_goal_mae": 1.8362,
+  "baseline_goal_mae": 2.0611,
+  "model_three_way_brier": 0.45295286,
+  "baseline_three_way_brier": 0.6409045800000002
+}

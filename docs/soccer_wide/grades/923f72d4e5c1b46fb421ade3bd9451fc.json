@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "923f72d4e5c1b46fb421ade3bd9451fc",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "ENG_2_championship",
+  "date": "2026-11-21",
+  "match_result_source": "open-matchday/fixturedl/ENG_2_championship",
+  "final_home_goals": 0,
+  "final_away_goals": 1,
+  "model_goal_mae": 0.93885,
+  "baseline_goal_mae": 0.96765,
+  "model_three_way_brier": 0.6873871199999999,
+  "baseline_three_way_brier": 0.75748824
+}

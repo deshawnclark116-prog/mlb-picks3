@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "ee8c3fcc9b75ec366d51018e965d8f5b",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "FRA_1_ligue-1",
+  "date": "2026-11-21",
+  "match_result_source": "open-matchday/fixturedl/FRA_1_ligue-1",
+  "final_home_goals": 1,
+  "final_away_goals": 1,
+  "model_goal_mae": 0.6151,
+  "baseline_goal_mae": 0.45119999999999993,
+  "model_three_way_brier": 0.9417258199999999,
+  "baseline_three_way_brier": 0.86670654
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "809731ea8a82adc4e76cd3f17ad36de7",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "WAL_3_cymru-south",
+  "date": "2026-11-21",
+  "match_result_source": "open-matchday/soccerway/WAL_3_cymru-south",
+  "final_home_goals": 2,
+  "final_away_goals": 3,
+  "model_goal_mae": 0.7874000000000001,
+  "baseline_goal_mae": 0.78145,
+  "model_three_way_brier": 0.8200884100000001,
+  "baseline_three_way_brier": 0.64767933
+}

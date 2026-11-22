@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "84678039438c02d78ffda7e02c693de2",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "RUS_1_premier-liga",
+  "date": "2026-11-21",
+  "match_result_source": "open-matchday/soccerway/RUS_1_premier-liga",
+  "final_home_goals": 1,
+  "final_away_goals": 2,
+  "model_goal_mae": 0.7365,
+  "baseline_goal_mae": 0.5713,
+  "model_three_way_brier": 0.85994342,
+  "baseline_three_way_brier": 0.6693988100000001
+}

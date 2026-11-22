@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "8207d228cafedaa2538dcb036c0ef932",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "SCO_3_league-one",
+  "date": "2026-11-21",
+  "match_result_source": "open-matchday/soccerway/SCO_3_league-one",
+  "final_home_goals": 1,
+  "final_away_goals": 0,
+  "model_goal_mae": 0.8862,
+  "baseline_goal_mae": 0.9303,
+  "model_three_way_brier": 0.49288254000000004,
+  "baseline_three_way_brier": 0.42289361999999997
+}

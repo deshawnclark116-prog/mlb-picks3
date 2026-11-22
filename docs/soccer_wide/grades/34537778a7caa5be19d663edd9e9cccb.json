@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "34537778a7caa5be19d663edd9e9cccb",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "CZE_1_chance-liga",
+  "date": "2026-11-21",
+  "match_result_source": "open-matchday/soccerway/CZE_1_chance-liga",
+  "final_home_goals": 1,
+  "final_away_goals": 2,
+  "model_goal_mae": 0.52205,
+  "baseline_goal_mae": 0.5599,
+  "model_three_way_brier": 0.6286133399999999,
+  "baseline_three_way_brier": 0.65706242
+}

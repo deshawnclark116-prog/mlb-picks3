@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "a3fa9690f17ad3b02c63e3a0b4525dd8",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "NOR_1_eliteserien",
+  "date": "2026-11-21",
+  "match_result_source": "open-matchday/soccerway/NOR_1_eliteserien",
+  "final_home_goals": 1,
+  "final_away_goals": 2,
+  "model_goal_mae": 0.86805,
+  "baseline_goal_mae": 0.6636,
+  "model_three_way_brier": 0.8932115399999999,
+  "baseline_three_way_brier": 0.71339234
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "9fa7caea2c5cdc2ebd2edf5692ed65ca",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "BEL_1_pro-league",
+  "date": "2026-11-21",
+  "match_result_source": "open-matchday/espn/BEL_1_pro-league",
+  "final_home_goals": 3,
+  "final_away_goals": 0,
+  "model_goal_mae": 0.9922500000000001,
+  "baseline_goal_mae": 1.2462499999999999,
+  "model_three_way_brier": 0.23327258,
+  "baseline_three_way_brier": 0.38551748999999996
+}

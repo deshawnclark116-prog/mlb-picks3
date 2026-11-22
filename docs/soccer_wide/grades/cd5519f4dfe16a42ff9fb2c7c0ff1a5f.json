@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "cd5519f4dfe16a42ff9fb2c7c0ff1a5f",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "WAL_2_cymru-north",
+  "date": "2026-11-21",
+  "match_result_source": "open-matchday/soccerway/WAL_2_cymru-north",
+  "final_home_goals": 0,
+  "final_away_goals": 1,
+  "model_goal_mae": 1.1950500000000002,
+  "baseline_goal_mae": 1.1434,
+  "model_three_way_brier": 0.58761144,
+  "baseline_three_way_brier": 0.66396426
+}

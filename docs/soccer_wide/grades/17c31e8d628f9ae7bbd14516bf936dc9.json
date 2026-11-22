@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "17c31e8d628f9ae7bbd14516bf936dc9",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "GER_1_bundesliga",
+  "date": "2026-11-21",
+  "match_result_source": "open-matchday/openligadb/GER_1_bundesliga",
+  "final_home_goals": 1,
+  "final_away_goals": 5,
+  "model_goal_mae": 2.3287,
+  "baseline_goal_mae": 2.33325,
+  "model_three_way_brier": 0.88812542,
+  "baseline_three_way_brier": 0.8855607799999999
+}

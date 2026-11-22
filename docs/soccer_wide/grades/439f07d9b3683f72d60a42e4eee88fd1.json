@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "439f07d9b3683f72d60a42e4eee88fd1",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "IRE_3_national-league",
+  "date": "2026-11-21",
+  "match_result_source": "open-matchday/soccerway/IRE_3_national-league",
+  "final_home_goals": 1,
+  "final_away_goals": 2,
+  "model_goal_mae": 0.5858,
+  "baseline_goal_mae": 0.6034999999999999,
+  "model_three_way_brier": 0.64645688,
+  "baseline_three_way_brier": 0.6643519400000001
+}

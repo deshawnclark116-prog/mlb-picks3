@@ -3,22 +3,365 @@
   "asofDateUTC": "2026-11-22",
   "listedCompetitions": 75,
   "sourceVerifiedCompetitions": 75,
-  "upcomingFixtures": 1510,
-  "upcomingQuantitativeForecasts": 1299,
+  "upcomingFixtures": 1511,
+  "upcomingQuantitativeForecasts": 1300,
   "originallyFrozen": 435,
-  "graded": 3,
-  "ungraded": 432,
-  "modelGoalMAE": 0.98205,
-  "baselineGoalMAE": 0.99635,
-  "model3wayBrier": 0.71275,
-  "baseline3wayBrier": 0.75059,
+  "graded": 239,
+  "ungraded": 196,
+  "modelGoalMAE": 0.96251,
+  "baselineGoalMAE": 0.98311,
+  "model3wayBrier": 0.63532,
+  "baseline3wayBrier": 0.65522,
   "byLeague": {
-    "MEX_1_liga-mx": {
+    "ENG_4_league-two": {
+      "n": 12,
+      "modelGoalMAE": 0.90121,
+      "baselineGoalMAE": 0.90392,
+      "model3wayBrier": 0.62158,
+      "baseline3wayBrier": 0.63497
+    },
+    "SCO_2_championship": {
       "n": 3,
-      "modelGoalMAE": 0.98205,
-      "baselineGoalMAE": 0.99635,
-      "model3wayBrier": 0.71275,
-      "baseline3wayBrier": 0.75059
+      "modelGoalMAE": 0.96733,
+      "baselineGoalMAE": 1.05472,
+      "model3wayBrier": 0.59415,
+      "baseline3wayBrier": 0.67502
+    },
+    "ENG_6_national-league-north": {
+      "n": 12,
+      "modelGoalMAE": 0.88216,
+      "baselineGoalMAE": 0.8934,
+      "model3wayBrier": 0.60936,
+      "baseline3wayBrier": 0.62805
+    },
+    "GER_3_3-liga": {
+      "n": 6,
+      "modelGoalMAE": 1.0397,
+      "baselineGoalMAE": 1.08003,
+      "model3wayBrier": 0.48605,
+      "baseline3wayBrier": 0.51378
+    },
+    "ENG_3_league-one": {
+      "n": 11,
+      "modelGoalMAE": 1.02997,
+      "baselineGoalMAE": 1.02788,
+      "model3wayBrier": 0.71642,
+      "baseline3wayBrier": 0.72159
+    },
+    "ENG_7_northern-premier-league": {
+      "n": 10,
+      "modelGoalMAE": 1.0569,
+      "baselineGoalMAE": 1.07858,
+      "model3wayBrier": 0.76212,
+      "baseline3wayBrier": 0.76987
+    },
+    "USA_1_mls": {
+      "n": 3,
+      "modelGoalMAE": 1.2977,
+      "baselineGoalMAE": 1.26807,
+      "model3wayBrier": 0.55293,
+      "baseline3wayBrier": 0.53735
+    },
+    "ENG_2_championship": {
+      "n": 11,
+      "modelGoalMAE": 0.718,
+      "baselineGoalMAE": 0.7709,
+      "model3wayBrier": 0.58291,
+      "baseline3wayBrier": 0.61774
+    },
+    "TUR_1_super-lig": {
+      "n": 4,
+      "modelGoalMAE": 0.77369,
+      "baselineGoalMAE": 0.75,
+      "model3wayBrier": 0.60591,
+      "baseline3wayBrier": 0.63019
+    },
+    "ENG_5_national-league": {
+      "n": 11,
+      "modelGoalMAE": 1.00574,
+      "baselineGoalMAE": 1.0136,
+      "model3wayBrier": 0.55981,
+      "baseline3wayBrier": 0.57133
+    },
+    "SVK_1_nike-liga": {
+      "n": 4,
+      "modelGoalMAE": 0.8095,
+      "baselineGoalMAE": 0.8922,
+      "model3wayBrier": 0.57614,
+      "baseline3wayBrier": 0.65651
+    },
+    "ESP_2_segunda-division": {
+      "n": 4,
+      "modelGoalMAE": 0.91714,
+      "baselineGoalMAE": 1.05668,
+      "model3wayBrier": 0.65837,
+      "baseline3wayBrier": 0.73424
+    },
+    "ENG_1_premier-league": {
+      "n": 7,
+      "modelGoalMAE": 0.98731,
+      "baselineGoalMAE": 0.97629,
+      "model3wayBrier": 0.65311,
+      "baseline3wayBrier": 0.66674
+    },
+    "BRA_1_serie-a": {
+      "n": 2,
+      "modelGoalMAE": 0.60977,
+      "baselineGoalMAE": 0.57765,
+      "model3wayBrier": 0.86592,
+      "baseline3wayBrier": 0.83043
+    },
+    "GER_2_2-bundesliga": {
+      "n": 4,
+      "modelGoalMAE": 0.73942,
+      "baselineGoalMAE": 0.74177,
+      "model3wayBrier": 0.49771,
+      "baseline3wayBrier": 0.4953
+    },
+    "SCO_4_league-two": {
+      "n": 2,
+      "modelGoalMAE": 1.476,
+      "baselineGoalMAE": 1.5,
+      "model3wayBrier": 0.46139,
+      "baseline3wayBrier": 0.58685
+    },
+    "CZE_1_chance-liga": {
+      "n": 5,
+      "modelGoalMAE": 0.76505,
+      "baselineGoalMAE": 0.79234,
+      "model3wayBrier": 0.5331,
+      "baseline3wayBrier": 0.61282
+    },
+    "POL_2_division-1": {
+      "n": 3,
+      "modelGoalMAE": 0.84565,
+      "baselineGoalMAE": 0.73137,
+      "model3wayBrier": 0.90562,
+      "baseline3wayBrier": 0.81155
+    },
+    "GER_1_bundesliga": {
+      "n": 6,
+      "modelGoalMAE": 1.49593,
+      "baselineGoalMAE": 1.51657,
+      "model3wayBrier": 0.6628,
+      "baseline3wayBrier": 0.71313
+    },
+    "AUT_1_bundesliga": {
+      "n": 3,
+      "modelGoalMAE": 1.0037,
+      "baselineGoalMAE": 1.0338,
+      "model3wayBrier": 0.62618,
+      "baseline3wayBrier": 0.67634
+    },
+    "ITA_1_serie-a": {
+      "n": 4,
+      "modelGoalMAE": 1.23838,
+      "baselineGoalMAE": 1.3675,
+      "model3wayBrier": 0.46286,
+      "baseline3wayBrier": 0.56095
+    },
+    "WAL_2_cymru-north": {
+      "n": 8,
+      "modelGoalMAE": 1.07914,
+      "baselineGoalMAE": 1.04755,
+      "model3wayBrier": 0.72536,
+      "baseline3wayBrier": 0.73791
+    },
+    "SCO_1_premiership": {
+      "n": 5,
+      "modelGoalMAE": 1.51297,
+      "baselineGoalMAE": 1.61651,
+      "model3wayBrier": 0.52593,
+      "baseline3wayBrier": 0.61079
+    },
+    "RUS_1_premier-liga": {
+      "n": 4,
+      "modelGoalMAE": 0.99366,
+      "baselineGoalMAE": 0.91065,
+      "model3wayBrier": 0.72532,
+      "baseline3wayBrier": 0.63635
+    },
+    "JPN_1_j1-league": {
+      "n": 7,
+      "modelGoalMAE": 1.01779,
+      "baselineGoalMAE": 1.03159,
+      "model3wayBrier": 0.66138,
+      "baseline3wayBrier": 0.70582
+    },
+    "ENG_6_national-league-south": {
+      "n": 12,
+      "modelGoalMAE": 0.91575,
+      "baselineGoalMAE": 0.96287,
+      "model3wayBrier": 0.69936,
+      "baseline3wayBrier": 0.71299
+    },
+    "ROU_1_liga-1": {
+      "n": 3,
+      "modelGoalMAE": 1.41053,
+      "baselineGoalMAE": 1.41233,
+      "model3wayBrier": 0.7073,
+      "baseline3wayBrier": 0.69486
+    },
+    "MEX_1_liga-mx": {
+      "n": 5,
+      "modelGoalMAE": 0.92201,
+      "baselineGoalMAE": 0.89781,
+      "model3wayBrier": 0.69845,
+      "baseline3wayBrier": 0.68661
+    },
+    "CYP_1_first-division": {
+      "n": 3,
+      "modelGoalMAE": 0.565,
+      "baselineGoalMAE": 0.65078,
+      "model3wayBrier": 0.62937,
+      "baseline3wayBrier": 0.685
+    },
+    "FRA_1_ligue-1": {
+      "n": 5,
+      "modelGoalMAE": 0.77547,
+      "baselineGoalMAE": 0.77072,
+      "model3wayBrier": 0.80236,
+      "baseline3wayBrier": 0.79051
+    },
+    "SVN_1_prva-liga": {
+      "n": 2,
+      "modelGoalMAE": 0.69805,
+      "baselineGoalMAE": 0.70035,
+      "model3wayBrier": 0.51677,
+      "baseline3wayBrier": 0.61245
+    },
+    "FRA_2_ligue-2": {
+      "n": 2,
+      "modelGoalMAE": 0.9147,
+      "baselineGoalMAE": 0.8428,
+      "model3wayBrier": 0.69972,
+      "baseline3wayBrier": 0.60196
+    },
+    "ARG_1_liga-profesional": {
+      "n": 2,
+      "modelGoalMAE": 0.6041,
+      "baselineGoalMAE": 0.62225,
+      "model3wayBrier": 0.73783,
+      "baseline3wayBrier": 0.73043
+    },
+    "WAL_3_cymru-south": {
+      "n": 4,
+      "modelGoalMAE": 1.43502,
+      "baselineGoalMAE": 1.5,
+      "model3wayBrier": 0.57258,
+      "baseline3wayBrier": 0.57788
+    },
+    "SUI_1_super-league": {
+      "n": 3,
+      "modelGoalMAE": 0.49132,
+      "baselineGoalMAE": 0.69045,
+      "model3wayBrier": 0.42175,
+      "baseline3wayBrier": 0.50808
+    },
+    "CRO_1_hnl": {
+      "n": 2,
+      "modelGoalMAE": 0.79305,
+      "baselineGoalMAE": 0.91715,
+      "model3wayBrier": 0.63081,
+      "baseline3wayBrier": 0.74624
+    },
+    "ITA_2_serie-b": {
+      "n": 7,
+      "modelGoalMAE": 0.85343,
+      "baselineGoalMAE": 0.84926,
+      "model3wayBrier": 0.62723,
+      "baseline3wayBrier": 0.60694
+    },
+    "IRE_3_national-league": {
+      "n": 2,
+      "modelGoalMAE": 0.51945,
+      "baselineGoalMAE": 0.5,
+      "model3wayBrier": 0.58932,
+      "baseline3wayBrier": 0.57885
+    },
+    "POL_1_ekstraklasa": {
+      "n": 3,
+      "modelGoalMAE": 1.0906,
+      "baselineGoalMAE": 1.03928,
+      "model3wayBrier": 0.63871,
+      "baseline3wayBrier": 0.58514
+    },
+    "POL_3_division-2": {
+      "n": 4,
+      "modelGoalMAE": 1.57505,
+      "baselineGoalMAE": 1.625,
+      "model3wayBrier": 0.60822,
+      "baseline3wayBrier": 0.64083
+    },
+    "NOR_1_eliteserien": {
+      "n": 3,
+      "modelGoalMAE": 1.17463,
+      "baselineGoalMAE": 1.05453,
+      "model3wayBrier": 0.78645,
+      "baseline3wayBrier": 0.69533
+    },
+    "BEL_1_pro-league": {
+      "n": 4,
+      "modelGoalMAE": 0.92729,
+      "baselineGoalMAE": 1.09407,
+      "model3wayBrier": 0.67679,
+      "baseline3wayBrier": 0.75827
+    },
+    "UKR_1_premier-league": {
+      "n": 3,
+      "modelGoalMAE": 0.67652,
+      "baselineGoalMAE": 0.57797,
+      "model3wayBrier": 0.58932,
+      "baseline3wayBrier": 0.5693
+    },
+    "ESP_1_la-liga": {
+      "n": 4,
+      "modelGoalMAE": 0.54466,
+      "baselineGoalMAE": 0.6281,
+      "model3wayBrier": 0.57794,
+      "baseline3wayBrier": 0.63065
+    },
+    "SWE_1_allsvenskan": {
+      "n": 3,
+      "modelGoalMAE": 0.87812,
+      "baselineGoalMAE": 0.82818,
+      "model3wayBrier": 0.75447,
+      "baseline3wayBrier": 0.72114
+    },
+    "ARG_2_primera-nacional": {
+      "n": 2,
+      "modelGoalMAE": 0.84113,
+      "baselineGoalMAE": 0.8583,
+      "model3wayBrier": 0.79279,
+      "baseline3wayBrier": 0.82296
+    },
+    "GRE_1_super-league": {
+      "n": 1,
+      "modelGoalMAE": 0.906,
+      "baselineGoalMAE": 0.8567,
+      "model3wayBrier": 0.84857,
+      "baseline3wayBrier": 0.90724
+    },
+    "SCO_3_league-one": {
+      "n": 3,
+      "modelGoalMAE": 0.94412,
+      "baselineGoalMAE": 1.0518,
+      "model3wayBrier": 0.52549,
+      "baseline3wayBrier": 0.57336
+    },
+    "NED_1_eredivisie": {
+      "n": 5,
+      "modelGoalMAE": 0.89018,
+      "baselineGoalMAE": 0.93115,
+      "model3wayBrier": 0.5037,
+      "baseline3wayBrier": 0.53694
+    },
+    "NED_2_eerste-divisie": {
+      "n": 1,
+      "modelGoalMAE": 0.9353,
+      "baselineGoalMAE": 0.7792,
+      "model3wayBrier": 0.5211,
+      "baseline3wayBrier": 0.44992
     }
   },
   "no_market_or_profitability_promotion": true,
@@ -90,7 +433,7 @@
       "league": "POR_CUP_taca-de-portugal",
       "status": "NON_REGULATION_SCORE",
       "reason": "CUP_OR_UEFA_REGULATION_SCORE_UNVERIFIED",
-      "pastResults": 114,
+      "pastResults": 121,
       "upcomingFixtures": 0
     },
     {
@@ -129,13 +472,6 @@
       "upcomingFixtures": 0
     },
     {
-      "league": "IRE_3_national-league",
-      "status": "INSUFFICIENT_HISTORY",
-      "reason": "MINIMUM_45_LEAGUE_RESULTS_AND_FOUR_PER_TEAM",
-      "pastResults": 60,
-      "upcomingFixtures": 0
-    },
-    {
       "league": "BEL_U21_pro-league",
       "status": "NON_REGULATION_SCORE",
       "reason": "CUP_OR_UEFA_REGULATION_SCORE_UNVERIFIED",
@@ -160,7 +496,7 @@
       "league": "AUS_1_a-league",
       "status": "INSUFFICIENT_HISTORY",
       "reason": "MINIMUM_45_LEAGUE_RESULTS_AND_FOUR_PER_TEAM",
-      "pastResults": 25,
+      "pastResults": 27,
       "upcomingFixtures": 11
     },
     {

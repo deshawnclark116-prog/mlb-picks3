@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "917326a8efed9305be914528e40290b9",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "SCO_1_premiership",
+  "date": "2026-11-21",
+  "match_result_source": "open-matchday/fixturedl/SCO_1_premiership",
+  "final_home_goals": 4,
+  "final_away_goals": 1,
+  "model_goal_mae": 1.18065,
+  "baseline_goal_mae": 1.42015,
+  "model_three_way_brier": 0.34095981000000003,
+  "baseline_three_way_brier": 0.52450982
+}
