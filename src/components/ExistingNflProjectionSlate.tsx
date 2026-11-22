@@ -8,14 +8,15 @@ import {wholeStatProjection} from '../lib/wholeStatProjection';
 import {hasNflNbaMeanProjectionEvidence} from '../nfl/ownProjectionRank';
 import {rankNflShowcase,requiresVerifiedStarterResimulation,type NflShowcasePick} from '../nfl/weeklyShowcase';
 import {nflPrimaryProbabilityPicks,nflUnrankedNumericalForecasts} from '../nfl/primaryNumerical';
-import type {NflRoleSnapshot} from '../nfl/roleSupportedNfl';
+import type {NflRoleSnapshot,NflRoleEvidenceRow} from '../nfl/roleSupportedNfl';
+import {roleScreenedNflNumerical,type NflNumericGradeReport} from '../nfl/roleScreenedNumerical';
 import {parseExistingNfl,existingMatchup,type ExistingNflSlate,type ExistingNflGame,type ExistingYardProjection} from '../nfl/existing';
 const n=(x:number)=>x.toLocaleString('en-US',{maximumFractionDigits:1});
 const label=(m:string)=>m==='rushing_yards'?'RUSH YDS':m==='receiving_yards'?'REC YDS':m==='anytime_touchdowns'?'ANYTIME TD':'SACK';
 const chance=(n:number|null|undefined)=>n!=null&&Number.isFinite(n)?(n*100).toFixed(1)+'%':'n/a';
 /** Raw numerical forecast for research ONLY: no confidence rank, no
  * manufactured probability. Validated model probabilities go into Top 4. */
-export function NflNumericalTile({p}:{p:ExistingYardProjection}){
+export function NflNumericalTile({p,role}:{p:ExistingYardProjection;role?:NflRoleEvidenceRow}){
  return <article data-testid="nfl-primary-numerical-projection" className="min-w-0 rounded-xl border border-[#79FF48]/25 bg-[#101a14] p-3">
   <p className="text-[10px] text-gray-400">{p.team} · {label(p.market)}</p>
   <p className="mt-1 min-h-9 break-words text-[15px] font-bold text-white">{p.player}</p>
@@ -23,8 +24,13 @@ export function NflNumericalTile({p}:{p:ExistingYardProjection}){
     {wholeStatProjection(p.projected_median)}<span className="ml-1 text-[13px]">YDS</span>
   </p>
   <p className="text-[11px] text-gray-300">Model median {n(p.projected_median)} · mean {n(p.projected_mean)}</p>
-  <p className="mt-1 text-[11px] text-gray-400">Original model forecast · alphabetical browsing only</p>
-  <p className="mt-1 text-[10px] text-amber-200">UNRANKED · No matched model probability for this numerical forecast · availability unverified</p>
+  {role?<p className="mt-1 text-[11px] text-gray-300">
+    Observed recent usage: {n(role.recent_opportunities_per_observed_game!)} {p.market==='receiving_yards'?'targets':'carries'}/game · 3 games
+  </p>:<p className="mt-1 text-[11px] text-gray-400">Original model forecast · research list</p>}
+  <p className="mt-1 text-[10px] text-amber-200">
+    {role?'Role evidence checked · starter unverified · hit chance not validated':
+      'UNRANKED · No matched model probability for this numerical forecast · availability unverified'}
+  </p>
  </article>;
 }
 /** Honest OVER-only NFL opportunity tiles. Scoring probabilities are
@@ -105,7 +111,8 @@ function Projection({p}:{p:ExistingYardProjection}){
 type Props={view:Phase1View|null;search:string;family:string;visible:boolean;horizon:Horizon;mode:string};
 export default function ExistingNflProjectionSlate({view,search,family,visible,horizon,mode}:Props){
   const [slate,setSlate]=useState<ExistingNflSlate|null>(null);
-  const [,setRole]=useState<NflRoleSnapshot|null>(null);
+  const [role,setRole]=useState<NflRoleSnapshot|null>(null);
+  const [grade,setGrade]=useState<NflNumericGradeReport|null>(null);
   const [error,setError]=useState<string|null>(null);
   const [loading,setLoading]=useState(true);
   const [origin,setOrigin]=useState<string>('');
@@ -147,16 +154,40 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
         // The complete archived numerical ledger remains visible.
         let roleDoc:NflRoleSnapshot|null=null;
         try{
-          const roleResponse=await fetch('/api/nfl-role-snapshot?t='+Date.now(),
+          const at=Date.now();
+          const roleSources=await Promise.allSettled([
+            '/api/nfl-role-snapshot?t='+at,
+            'https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks2/main/docs/nfl_role_snapshot.json?t='+at
+          ].map(async url=>{
+            const response=await fetch(url,{cache:'no-store',signal:abort.signal});
+            if(!response.ok)throw Error('Role source unavailable');
+            return await response.json() as NflRoleSnapshot;
+          }));
+          const usable=roleSources.filter((x):x is PromiseFulfilledResult<NflRoleSnapshot>=>
+            x.status==='fulfilled').map(x=>x.value)
+            .filter(x=>Date.parse(x.forecast_generated_at_utc)===
+              Date.parse(parsed.generated_at_utc));
+          // Never use a cached earlier forecast's role data for today's
+          // newer predictions. Choose the freshest matching pregame receipt.
+          usable.sort((a,b)=>Date.parse(b.captured_at_utc)-Date.parse(a.captured_at_utc));
+          roleDoc=usable[0]||null;
+        }catch{/* No matching role source => no featured numerical board. */}
+        // Grader contains immutable ORIGINAL pregame numerical predictions
+        // matched to actuals; never confuse HIGH/MEDIUM with accuracy.
+        let gradeDoc:NflNumericGradeReport|null=null;
+        try{
+          const gradedResponse=await fetch(
+            'https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks2/main/docs/nfl_numeric_forward_grade.json?t='+Date.now(),
             {cache:'no-store',signal:abort.signal});
-          if(roleResponse.ok)roleDoc=await roleResponse.json() as NflRoleSnapshot;
-        }catch{/* Snapshot unavailable: fail closed, never invent role proof. */}
+          if(gradedResponse.ok)gradeDoc=await gradedResponse.json() as NflNumericGradeReport;
+        }catch{/* Unavailable source => no fabricated miss history. */}
         if(!cancelled){
           // A temporary CDN cache race must never roll a newer validated
           // weekly forecast back to yesterday's version.
           setSlate(previous=>previous&&Date.parse(previous.generated_at_utc)>Date.parse(parsed.generated_at_utc)?previous:parsed);
           setOrigin(source);
           setRole(roleDoc);
+          setGrade(gradeDoc);
           setError(null);
         }
       }catch(e){
@@ -220,6 +251,8 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
       // and cannot enter Top 4 just because an old stability grade is HIGH.
       // Show all such numbers separately, alphabetically, as unranked.
       const unrankedForecasts=nflUnrankedNumericalForecasts(g.shown);
+      const roleScreen=roleScreenedNflNumerical(
+        eligibleGame,slate!.generated_at_utc,role,grade,Date.now(),4);
       const scoringOnly=(p:NflShowcasePick)=>p.targetYards==null;
       const allQualified=originalForecastBeforeKickoff?rankNflShowcase(eligibleGame,'','ALL',200):[];
       const top=allQualified.slice(0,10);
@@ -252,8 +285,10 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
                   `${wholeStatProjection(preview.meanYards!)} ${label(preview.market)}`:
                   label(preview.market)}</span>
                 <span className="text-[#79FF48]"> · {preview.targetYards!=null?`${preview.targetYards}+ yards`:'OVER 0.5'} at {chance(preview.probability)} (uncalibrated)</span>
+              </p>:roleScreen.leaders.length>0?<p data-testid="existing-nfl-preview" className="mt-2 text-[11px] text-gray-300">
+                ROLE-SCREENED: {roleScreen.leaders.length} numerical forecast{roleScreen.leaders.length===1?'':'s'} · not probability-ranked
               </p>:unrankedForecasts.length>0?<p data-testid="existing-nfl-preview" role="status" className="mt-2 text-[11px] text-amber-200">
-                No probability-qualified yardage Top 4 · {unrankedForecasts.length} original model forecasts available to review
+                No role-supported featured projections · {unrankedForecasts.length} original estimates in game details
               </p>:<p role="status" className="mt-2 text-[11px] text-gray-500">
                 No original yardage projection for this matchup
               </p>}
@@ -282,29 +317,37 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
             {qualifiedYardage.map(p=><NflPrecisionTile key={p.team+'|'+p.player_id+'|'+p.market} p={p}/>)}
             </div>
           </div>}
-        {mode==='SYSTEM PICKS'&&qualifiedYardage.length===0&&unrankedForecasts.length>0&&
-          <div data-testid="nfl-unranked-source-preview" className="px-3 pb-3">
+        {mode==='SYSTEM PICKS'&&qualifiedYardage.length===0&&roleScreen.leaders.length>0&&
+          <div data-testid="nfl-role-screened-preview" className="px-3 pb-3">
             <p className="mb-1 text-[11px] font-bold text-[#79FF48]">
-              ORIGINAL YARDAGE PROJECTIONS · NOT A RANKED TOP 4
+              ROLE-SCREENED MODEL PROJECTIONS · {roleScreen.leaders.length}
             </p>
             <p className="mb-2 text-[11px] text-gray-400">
-              V2 has not produced a validated probability for reaching its own
-              projected yards. These are raw model numbers in alphabetical order,
-              not highest-confidence picks.
+              Receiving and rushing models listed by projected yards within each market,
+              not by the probability of achieving them. Every featured player
+              has three observed recent opportunity games; declining roles
+              and verified repeated overpredictions are withheld.
             </p>
-            <div data-testid="nfl-original-model-yardage" className="grid grid-cols-2 gap-2">
-              {unrankedForecasts.slice(0,4).map(p=>
-                <NflNumericalTile key={p.team+'|'+p.player_id+'|'+p.market} p={p}/>)}
+            <div data-testid="nfl-primary-role-projections" className="grid grid-cols-2 gap-2">
+              {roleScreen.leaders.map(({projection,role})=>
+                <NflNumericalTile key={projection.team+'|'+projection.player_id+'|'+projection.market}
+                  p={projection} role={role}/>)}
             </div>
-            {unrankedForecasts.length>4&&
-              <p className="mt-2 text-[10px] text-gray-400">
-                Showing 4 of {unrankedForecasts.length} original forecasts alphabetically.
-                Expand this matchup to review the full numerical board.
-              </p>}
+            <p className="mt-2 text-[10px] text-gray-400">
+              {unrankedForecasts.length} original forecasts in the complete game details,
+              including low-volume players and changing roles. No model-derived hit
+              percentage has been validated.
+            </p>
           </div>}
-        {mode==='SYSTEM PICKS'&&qualifiedYardage.length===0&&unrankedForecasts.length===0&&
-          <p data-testid="nfl-no-probability-ranked-top4" role="status" className="px-3 pb-3 text-[11px] text-amber-200">
-            No numerical player projections or source-matched probability rankings available for this matchup.
+        {mode==='SYSTEM PICKS'&&qualifiedYardage.length===0&&roleScreen.leaders.length===0&&
+          <p data-testid="nfl-no-role-screened-picks" role="status"
+            className="px-3 pb-3 text-[11px] text-amber-200">
+            No role-supported numerical forecasts.
+            {roleScreen.reason==='ROLE_EVIDENCE_MISSING_OR_MISMATCHED'
+             ?' The matching pregame role snapshot is unavailable.'
+             :' No player passed the documented opportunity and previous-miss checks.'}
+            {' '}Open this game to inspect {unrankedForecasts.length} unchanged raw projections.
+            Small backup forecasts are not high-confidence picks.
           </p>}
         {opened&&<div id={`existing-game-${g.id}`} data-testid="existing-nfl-expanded" className="space-y-3 border-t border-[#292929] p-3">
           <p className="text-[11px] text-gray-400">Original weekly numerical projections are separate from OVER-only scoring-event research. Context yardage probabilities are unavailable, not inferred from sportsbooks. {mode==='BETTABLE NOW'?'No verified book lines supplied.':''}</p>
