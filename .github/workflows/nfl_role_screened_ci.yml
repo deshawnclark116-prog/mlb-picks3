@@ -1,0 +1,28 @@
+name: NFL primary numerical role and repeated-error evidence safety
+on:
+  pull_request:
+    paths:
+      - 'src/nfl/roleScreenedNumerical.ts'
+      - 'src/nfl/roleSupportedNfl.ts'
+      - 'src/components/ExistingNflProjectionSlate.tsx'
+      - 'tests/nflRoleScreenedNumerical.test.ts'
+      - '.github/workflows/nfl_role_screened_ci.yml'
+  push:
+    branches: ['fix/nfl-role-screened-primary-board-20261122']
+permissions:
+  contents: read
+jobs:
+  no-arbitrary-nfl-features:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Reject alphabetical 5-yard and 18-yard backups, unsourced role and repeated forward overshoots
+        run: node --import tsx --test tests/nflRoleScreenedNumerical.test.ts tests/nflTop4SourceProbabilityOnly.test.ts tests/nflProjectionFirstScreenshot.test.ts
+      - name: Production TypeScript lint and build
+        run: npm run lint && npm run build
