@@ -1,205 +1,4 @@
 {
-  "401910031": [
-    {
-      "matchup": "ORL@WAS",
-      "team_abbr": "ORL",
-      "player": "Banchero, Paolo",
-      "normalized_player": "paolo banchero",
-      "status": "OUT",
-      "reason": "",
-      "player_id": "4432573",
-      "team_id": "19",
-      "published_at_utc": "2026-11-22T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "ORL@WAS",
-      "team_abbr": "ORL",
-      "player": "Penda, Noah",
-      "normalized_player": "noah penda",
-      "status": "OUT",
-      "reason": "",
-      "player_id": "5214637",
-      "team_id": "19",
-      "published_at_utc": "2026-11-22T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "ORL@WAS",
-      "team_abbr": "WAS",
-      "player": "Ayton, Deandre",
-      "normalized_player": "deandre ayton",
-      "status": "AVAILABLE",
-      "reason": "Injury/Illness - Illness",
-      "player_id": "4278129",
-      "team_id": "27",
-      "published_at_utc": "2026-11-22T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "ORL@WAS",
-      "team_abbr": "WAS",
-      "player": "Carrington, Bub",
-      "normalized_player": "bub carrington",
-      "status": "AVAILABLE",
-      "reason": "Injury/Illness - Illness",
-      "player_id": "4845374",
-      "team_id": "27",
-      "published_at_utc": "2026-11-22T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "ORL@WAS",
-      "team_abbr": "WAS",
-      "player": "Champagnie, Justin",
-      "normalized_player": "justin champagnie",
-      "status": "OUT",
-      "reason": "Injury/Illness - Right Foot Surgery",
-      "player_id": "4432907",
-      "team_id": "27",
-      "published_at_utc": "2026-11-22T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "ORL@WAS",
-      "team_abbr": "WAS",
-      "player": "Watkins, Jamir",
-      "normalized_player": "jamir watkins",
-      "status": "OUT",
-      "reason": "",
-      "player_id": "4606840",
-      "team_id": "27",
-      "published_at_utc": "2026-11-22T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
-      "source": "official_nba_injury_report"
-    }
-  ],
-  "401910032": [
-    {
-      "matchup": "DEN@CHI",
-      "team_abbr": "CHI",
-      "player": "Smith, Jalen",
-      "normalized_player": "jalen smith",
-      "status": "AVAILABLE",
-      "reason": "-",
-      "player_id": "4397189",
-      "team_id": "4",
-      "published_at_utc": "2026-11-22T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "DEN@CHI",
-      "team_abbr": "CHI",
-      "player": "Williams, Patrick",
-      "normalized_player": "patrick williams",
-      "status": "AVAILABLE",
-      "reason": "-",
-      "player_id": "4431687",
-      "team_id": "4",
-      "published_at_utc": "2026-11-22T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "DEN@CHI",
-      "team_abbr": "CHI",
-      "player": "Powell, Norman",
-      "normalized_player": "norman powell",
-      "status": "OUT",
-      "reason": "Injury/Illness - Right Hamstring Strain",
-      "player_id": "2595516",
-      "team_id": "4",
-      "published_at_utc": "2026-11-22T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "DEN@CHI",
-      "team_abbr": "CHI",
-      "player": "Wilson, Caleb",
-      "normalized_player": "caleb wilson",
-      "status": "OUT",
-      "reason": "",
-      "player_id": "5095151",
-      "team_id": "4",
-      "published_at_utc": "2026-11-22T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "DEN@CHI",
-      "team_abbr": "DEN",
-      "player": "Holmes II, DaRon",
-      "normalized_player": "daron holmes",
-      "status": "OUT",
-      "reason": "G League - On Assignment",
-      "player_id": "4433607",
-      "team_id": "7",
-      "published_at_utc": "2026-11-22T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "DEN@CHI",
-      "team_abbr": "DEN",
-      "player": "Strawther, Julian",
-      "normalized_player": "julian strawther",
-      "status": "OUT",
-      "reason": "Injury/Illness - Left Knee Sprain",
-      "player_id": "4432181",
-      "team_id": "7",
-      "published_at_utc": "2026-11-22T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
-      "source": "official_nba_injury_report"
-    }
-  ],
-  "401910033": [
-    {
-      "matchup": "DAL@UTA",
-      "team_abbr": "UTA",
-      "player": "Markkanen, Lauri",
-      "normalized_player": "lauri markkanen",
-      "status": "OUT",
-      "reason": "Injury/Illness - Right Hand Fracture",
-      "player_id": "4066336",
-      "team_id": "26",
-      "published_at_utc": "2026-11-22T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "DAL@UTA",
-      "team_abbr": "DAL",
-      "player": "Clayton Jr., Walter",
-      "normalized_player": "walter clayton",
-      "status": "AVAILABLE",
-      "reason": "Injury/Illness - Left Patellar Tendinitis",
-      "player_id": "4896372",
-      "team_id": "6",
-      "published_at_utc": "2026-11-22T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "DAL@UTA",
-      "team_abbr": "DAL",
-      "player": "Washington, P.J.",
-      "normalized_player": "p j washington",
-      "status": "OUT",
-      "reason": "Injury/Illness - Illness",
-      "player_id": "4278078",
-      "team_id": "6",
-      "published_at_utc": "2026-11-22T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
-      "source": "official_nba_injury_report"
-    }
-  ],
   "401910034": [
     {
       "matchup": "IND@NYK",
@@ -210,8 +9,8 @@
       "reason": "",
       "player_id": "3149673",
       "team_id": "11",
-      "published_at_utc": "2026-11-22T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
+      "published_at_utc": "2026-11-22T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -223,8 +22,8 @@
       "reason": "",
       "player_id": "2530530",
       "team_id": "11",
-      "published_at_utc": "2026-11-22T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
+      "published_at_utc": "2026-11-22T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -236,8 +35,8 @@
       "reason": "Injury/Illness - Left Meniscus Surgery",
       "player_id": "4433076",
       "team_id": "11",
-      "published_at_utc": "2026-11-22T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
+      "published_at_utc": "2026-11-22T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -249,8 +48,8 @@
       "reason": "Injury/Illness - Illness",
       "player_id": "3136195",
       "team_id": "18",
-      "published_at_utc": "2026-11-22T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
+      "published_at_utc": "2026-11-22T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -262,8 +61,8 @@
       "reason": "Injury/Illness - Right Plantar Fasciitis",
       "player_id": "2528426",
       "team_id": "18",
-      "published_at_utc": "2026-11-22T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
+      "published_at_utc": "2026-11-22T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -275,8 +74,8 @@
       "reason": "Injury/Illness - Left Calf Tightness",
       "player_id": "3934719",
       "team_id": "18",
-      "published_at_utc": "2026-11-22T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
+      "published_at_utc": "2026-11-22T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_45PM.pdf",
       "source": "official_nba_injury_report"
     }
   ],
@@ -290,8 +89,8 @@
       "reason": "Injury/Illness - Illness",
       "player_id": "4351852",
       "team_id": "2",
-      "published_at_utc": "2026-11-22T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
+      "published_at_utc": "2026-11-22T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -303,8 +102,8 @@
       "reason": "Not With Team",
       "player_id": "3102531",
       "team_id": "9",
-      "published_at_utc": "2026-11-22T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
+      "published_at_utc": "2026-11-22T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -316,8 +115,8 @@
       "reason": "Injury/Illness - Right Oblique Tear",
       "player_id": "3975",
       "team_id": "9",
-      "published_at_utc": "2026-11-22T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
+      "published_at_utc": "2026-11-22T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_45PM.pdf",
       "source": "official_nba_injury_report"
     }
   ]
