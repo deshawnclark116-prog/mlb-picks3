@@ -2,26 +2,6 @@
 export type Horizon = 'T24' | 'T90';
 export const HORIZONS: Horizon[] = ['T90', 'T24'];
 export const PHASE1_URL = 'https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks2/main/docs/nfl_phase1_shadow.json';
-// Exact NFL-announced Week 11 fixture revisions, shared with the serving
-// schedule reconciler upstream. These only gate RESEARCH display: do not
-// alter or relabel frozen T24/T90 forecast source, cutoff, or numerical rows.
-export const VERIFIED_NFL_FLEX_KICKOFF_UTC:Readonly<Record<string,string>>={
-  '2026_11_PIT_PHI':'2026-11-22T18:00:00Z',
-  '2026_11_JAX_NYG':'2026-11-22T21:25:00Z'
-};
-export function verifiedPhase1Kickoff(game:ForecastGame):boolean{
-  const verified=VERIFIED_NFL_FLEX_KICKOFF_UTC[game.game_id];
-  return !verified || Date.parse(game.kickoff_utc)===Date.parse(verified);
-}
-export function verifiedPhase1Cutoff(game:ForecastGame,horizon:Horizon):boolean{
-  if(!verifiedPhase1Kickoff(game))return false;
-  const verified=VERIFIED_NFL_FLEX_KICKOFF_UTC[game.game_id];
-  if(!verified)return true;
-  const metadata=game.horizons[horizon];
-  if(!metadata)return false;
-  const minutes=horizon==='T24'?1440:90;
-  return Date.parse(metadata.cutoff)===Date.parse(verified)-minutes*60_000;
-}
 export const OUTCOMES: Record<string, string> = {
   rush_yds: 'Rushing yards', rec_yds: 'Receiving yards', pass_yds: 'Passing yards', rec: 'Receptions',
   pass_td: 'Passing TDs', int: 'Interceptions thrown', rush_td: 'Rushing TDs', rec_td: 'Receiving TDs',
@@ -49,7 +29,7 @@ export interface Phase1Artifact {
 }
 export interface Phase1View {
   artifact: Phase1Artifact; rows: Record<Horizon, ForecastRow[]>; games: ForecastGame[];
-  defaultHorizon: Horizon; excludedGames: number; excludedOfficialFlexGames: number; excludedWrongCutoffRows: number; publicationMs: number;
+  defaultHorizon: Horizon; excludedGames: number; publicationMs: number;
 }
 const object = (x: unknown): x is Record<string, any> => !!x && typeof x === 'object' && !Array.isArray(x);
 const requiredText = ['game_id', 'player', 'team', 'opp', 'pos', 'outcome', 'id'];
@@ -94,9 +74,7 @@ export function parsePhase1(raw: unknown, now = new Date()): Phase1View {
     allGames.set(game.game_id, game as ForecastGame);
   }
   const today = etDate(now);
-  const todayOrLater=[...allGames.values()].filter(g=>etDate(g.kickoff_utc)>=today);
-  const games=todayOrLater.filter(verifiedPhase1Kickoff);
-  const excludedOfficialFlexGames=todayOrLater.length-games.length;
+  const games = [...allGames.values()].filter(g => etDate(g.kickoff_utc) >= today);
   const eligible = new Set(games.map(g => g.game_id));
   const rows = {} as Record<Horizon, ForecastRow[]>;
   let totalRows = 0;
@@ -113,20 +91,10 @@ export function parsePhase1(raw: unknown, now = new Date()): Phase1View {
     }
     if (!object(status.counts[horizon]) || status.counts[horizon].valid_games !== counts.size) invalid(`${horizon} game count mismatch`);
     for (const [id, count] of counts) if (allGames.get(id)!.horizons[horizon]!.n_records !== count) invalid(`${horizon} row count mismatch`);
-    // A historically frozen T24 under the 4:25 Eagles kickoff is not a
-    // pregame forecast for the NFL's later-announced 1:00 kickoff. Likewise
-    // for Jaguars/Giants. Keep archived source intact; fail closed in UI.
-    rows[horizon] = decoded.filter(r=>{
-      const g=allGames.get(r.game_id)!;
-      return eligible.has(r.game_id)&&verifiedPhase1Cutoff(g,horizon);
-    });
+    rows[horizon] = decoded.filter(r => eligible.has(r.game_id));
     totalRows += decoded.length;
   }
-  if (totalRows && !HORIZONS.some(h => rows[h].length)) {
-    if(excludedOfficialFlexGames>0)
-      throw new Error('NFL Phase 1: frozen kickoff metadata conflicts with the NFL verified Week 11 flex; original research cannot be presented as current. Await true T90 source.');
-    throw new Error('Stale NFL Phase 1 artifact: all published games are from an earlier date. Refresh required.');
-  }
+  if (totalRows && !HORIZONS.some(h => rows[h].length)) throw new Error('Stale NFL Phase 1 artifact: all published games are from an earlier date. Refresh required.');
   if (raw.default_horizon != null && !HORIZONS.includes(raw.default_horizon)) invalid('invalid default horizon');
   if (raw.alt_65 != null) {
     if (!object(raw.alt_65)) invalid('invalid alt_65 map');
@@ -134,23 +102,7 @@ export function parsePhase1(raw: unknown, now = new Date()): Phase1View {
   }
   const preferred = raw.default_horizon as Horizon | null;
   const defaultHorizon = preferred && rows[preferred].length ? preferred : rows.T90.length ? 'T90' : 'T24';
-  const excludedWrongCutoffRows=HORIZONS.reduce((n,h)=>
-    n+rowsFromOfficiallyRevisedGames(raw.forecasts[h],raw.row_fields,allGames,h,eligible),0);
-  return { artifact: raw as Phase1Artifact, rows, games, defaultHorizon,
-    excludedGames: allGames.size-games.length, excludedOfficialFlexGames,
-    excludedWrongCutoffRows, publicationMs };
-}
-
-// Count *only* rows suppressed because a fixture has the NFL-verified
-// kickoff but an OLD cutoff. Never alter the frozen original's identity.
-function rowsFromOfficiallyRevisedGames(rows:unknown[][],fields:string[],
-  games:Map<string,ForecastGame>,horizon:Horizon,eligible:Set<string>):number{
-  const idx=fields.indexOf('game_id');
-  if(idx<0)return 0;
-  return rows.filter(r=>{
-    const id=String(r[idx]),g=games.get(id);
-    return eligible.has(id)&&g!=null&&!verifiedPhase1Cutoff(g,horizon);
-  }).length;
+  return { artifact: raw as Phase1Artifact, rows, games, defaultHorizon, excludedGames: allGames.size-games.length, publicationMs };
 }
 export function groupGames(view: Phase1View, horizon: Horizon) {
   return view.games.map(game => ({ ...game, rows: view.rows[horizon].filter(r => r.game_id === game.game_id) }))
