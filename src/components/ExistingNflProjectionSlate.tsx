@@ -8,14 +8,15 @@ import {wholeStatProjection} from '../lib/wholeStatProjection';
 import {hasNflNbaMeanProjectionEvidence} from '../nfl/ownProjectionRank';
 import {rankNflShowcase,requiresVerifiedStarterResimulation,type NflShowcasePick} from '../nfl/weeklyShowcase';
 import {nflPrimaryProbabilityPicks,nflUnrankedNumericalForecasts} from '../nfl/primaryNumerical';
-import type {NflRoleSnapshot} from '../nfl/roleSupportedNfl';
+import type {NflRoleSnapshot,NflRoleEvidenceRow} from '../nfl/roleSupportedNfl';
+import {roleScreenedNflNumerical,type NflNumericGradeReport} from '../nfl/roleScreenedNumerical';
 import {parseExistingNfl,existingMatchup,type ExistingNflSlate,type ExistingNflGame,type ExistingYardProjection} from '../nfl/existing';
 const n=(x:number)=>x.toLocaleString('en-US',{maximumFractionDigits:1});
 const label=(m:string)=>m==='rushing_yards'?'RUSH YDS':m==='receiving_yards'?'REC YDS':m==='anytime_touchdowns'?'ANYTIME TD':'SACK';
 const chance=(n:number|null|undefined)=>n!=null&&Number.isFinite(n)?(n*100).toFixed(1)+'%':'n/a';
 /** Raw numerical forecast for research ONLY: no confidence rank, no
  * manufactured probability. Validated model probabilities go into Top 4. */
-export function NflNumericalTile({p}:{p:ExistingYardProjection}){
+export function NflNumericalTile({p,role}:{p:ExistingYardProjection;role?:NflRoleEvidenceRow}){
  return <article data-testid="nfl-primary-numerical-projection" className="min-w-0 rounded-xl border border-[#79FF48]/25 bg-[#101a14] p-3">
   <p className="text-[10px] text-gray-400">{p.team} · {label(p.market)}</p>
   <p className="mt-1 min-h-9 break-words text-[15px] font-bold text-white">{p.player}</p>
@@ -23,8 +24,13 @@ export function NflNumericalTile({p}:{p:ExistingYardProjection}){
     {wholeStatProjection(p.projected_median)}<span className="ml-1 text-[13px]">YDS</span>
   </p>
   <p className="text-[11px] text-gray-300">Model median {n(p.projected_median)} · mean {n(p.projected_mean)}</p>
-  <p className="mt-1 text-[11px] text-gray-400">Original model forecast · alphabetical browsing only</p>
-  <p className="mt-1 text-[10px] text-amber-200">UNRANKED · No matched model probability for this numerical forecast · availability unverified</p>
+  {role?<p className="mt-1 text-[11px] text-gray-300">
+    Observed recent usage: {n(role.recent_opportunities_per_observed_game!)} {p.market==='receiving_yards'?'targets':'carries'}/game · 3 games
+  </p>:<p className="mt-1 text-[11px] text-gray-400">Original model forecast · research list</p>}
+  <p className="mt-1 text-[10px] text-amber-200">
+    {role?'Role evidence checked · starter unverified · hit chance not validated':
+      'UNRANKED · No matched model probability for this numerical forecast · availability unverified'}
+  </p>
  </article>;
 }
 /** Honest OVER-only NFL opportunity tiles. Scoring probabilities are
@@ -105,7 +111,8 @@ function Projection({p}:{p:ExistingYardProjection}){
 type Props={view:Phase1View|null;search:string;family:string;visible:boolean;horizon:Horizon;mode:string};
 export default function ExistingNflProjectionSlate({view,search,family,visible,horizon,mode}:Props){
   const [slate,setSlate]=useState<ExistingNflSlate|null>(null);
-  const [,setRole]=useState<NflRoleSnapshot|null>(null);
+  const [role,setRole]=useState<NflRoleSnapshot|null>(null);
+  const [grade,setGrade]=useState<NflNumericGradeReport|null>(null);
   const [error,setError]=useState<string|null>(null);
   const [loading,setLoading]=useState(true);
   const [origin,setOrigin]=useState<string>('');
