@@ -54,7 +54,7 @@ test('Nov 22 screenshot regression: 36.8% TD research is NOT the primary model p
   const markup=renderToStaticMarkup(React.createElement(NflNumericalTile,{p:numerical.find(p=>p.player==='Rashee Rice')!}));
   assert.match(markup,/Rashee Rice/);
   assert.match(markup,/60/);
-  assert.match(markup,/No matched probability/);
+  assert.match(markup,/No matched model probability/);
   assert.doesNotMatch(markup,/36.8%|SCORE 1\+ TD|60% probability/);
   assert.equal(JSON.stringify(doc),original,'all frozen original predictions unchanged');
 });
