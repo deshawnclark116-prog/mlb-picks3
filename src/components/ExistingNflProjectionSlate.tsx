@@ -40,7 +40,9 @@ function NflPrecisionTile({p}:{p:NflShowcasePick}){
   <p className="mt-1.5 text-[13px] font-bold tabular-nums text-[#79FF48]">{event}: {chance(p.probability)}</p>
   <p className="mt-0.5 text-[11px] text-gray-400">{yard?
    p.projectionProbabilityEvent==='P_YARDS_AT_LEAST_ROUNDED_PUBLISHED_MEAN'?
-     `P(reach rounded model mean ${p.targetYards}+) · original source simulation · uncalibrated`:
+     (p.residualHistoricalSampleN!=null?
+       `P(reach rounded V2 forecast ${p.targetYards}+) · ${p.residualHistoricalSampleN} prior actual model predictions · not forward-certified`:
+       `P(reach rounded model mean ${p.targetYards}+) · original source simulation · uncalibrated`):
      `Model mean ${n(p.meanYards!)} yds · Wilson lower ${chance(p.wilsonLower95)}`:
    'Scoring-event model · probability uncalibrated'} · active status unverified</p>
  </div>;
@@ -216,9 +218,9 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
         Number.isFinite(Date.parse(slate.generated_at_utc))&&
         Date.parse(slate.generated_at_utc)<Date.parse(g.kickoff_utc));
       const eligibleGame={...g,projections:g.shown,events:g.shownEvents};
-      // The original V2 context median has NO source-matched model %
-      // and cannot enter Top 4 just because an old stability grade is HIGH.
-      // Show all such numbers separately, alphabetically, as unranked.
+      // V2 can now publish a matching empirical/learned prior-game
+      // probability for its exact projected mean. Only that explicit source
+      // may rank; absent coverage remains unranked, never HIGH/MEDIUM.
       const unrankedForecasts=nflUnrankedNumericalForecasts(g.shown);
       const scoringOnly=(p:NflShowcasePick)=>p.targetYards==null;
       const allQualified=originalForecastBeforeKickoff?rankNflShowcase(eligibleGame,'','ALL',200):[];
@@ -284,16 +286,17 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
           </div>}
         {mode==='SYSTEM PICKS'&&qualifiedYardage.length===0&&
           <div data-testid="nfl-no-probability-ranked-top4" role="status" className="px-3 pb-3 text-[11px] text-amber-200">
-            NO VERIFIED MODEL-PROBABILITY YARDAGE TOP 4. This forecast has not published a
-            same-model probability for its yardage target. Numerical forecasts
-            remain accessible in game details, but no confidence tier, TD percentage
-            or sportsbook line can substitute for that missing probability.
+            NO SOURCE-MATCHED MODEL PROBABILITY FOR THIS GAME. Numerical
+            forecasts remain available in game details, but historical
+            stability, touchdown odds and sportsbook lines cannot substitute.
+            Model-native probabilities appear only when validated source
+            evidence exists; missing evidence is not a zero-percent chance.
           </div>}
         {opened&&<div id={`existing-game-${g.id}`} data-testid="existing-nfl-expanded" className="space-y-3 border-t border-[#292929] p-3">
-          <p className="text-[11px] text-gray-400">Original weekly numerical projections are separate from OVER-only scoring-event research. Context yardage probabilities are unavailable, not inferred from sportsbooks. {mode==='BETTABLE NOW'?'No verified book lines supplied.':''}</p>
+          <p className="text-[11px] text-gray-400">Original numerical forecasts remain visible even when their model-probability evidence is unavailable. V2 percentages, when present, use earlier completed 2026 V2 errors, not sportsbook lines. {mode==='BETTABLE NOW'?'No verified book lines supplied.':''}</p>
           {unrankedForecasts.length>0&&<div data-testid="nfl-expanded-numerical-leaders" className="space-y-2">
             <p className="text-xs font-bold text-[#79FF48]">UNRANKED MODEL YARDAGE FORECASTS · {unrankedForecasts.length} ORIGINAL ESTIMATES</p>
-            <p className="text-[11px] text-gray-400">Alphabetical reference list only. These are original numerical estimates; they are NOT Top 4 picks. Without a matching same-model event probability, no hit chance is reported.</p>
+            <p className="text-[11px] text-gray-400">Alphabetical reference list only; the probability-ranked Top 4 above is separate. Numerical projections without source-verified event probabilities do not acquire them from historical stability grades.</p>
             <div className="grid grid-cols-2 gap-2">{unrankedForecasts.map(p=><NflNumericalTile key={p.team+'|'+p.player_id+'|'+p.market} p={p}/>)}</div>
           </div>}
           {(g.shown.length>0||g.shownEvents.length>0)?<div className="space-y-3">
