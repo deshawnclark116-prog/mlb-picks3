@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-21_07_30PM.pdf",
-  "published_at_utc": "2026-11-22T00:30:00+00:00",
-  "captured_at_utc": "2026-11-22T00:49:55.972114+00:00",
-  "source_sha256": "575e58f0a79e8fed3217ac8e66ee9fa9bf644893d6e54b2aeec029e108f594fb",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-21_08_30PM.pdf",
+  "published_at_utc": "2026-11-22T01:30:00+00:00",
+  "captured_at_utc": "2026-11-22T01:38:51.183786+00:00",
+  "source_sha256": "4e1c5bc995ca51007174e1e8895c004012cbefd6e8e45576415e121c09aa8764",
   "reports": [
     {
       "matchup": "MIL@PHI",
@@ -507,7 +507,7 @@
       "team_abbr": "SAC",
       "player": "Achiuwa, Precious",
       "normalized_player": "precious achiuwa",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
