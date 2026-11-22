@@ -5,9 +5,10 @@ on:
       - src/components/ExistingNflProjectionSlate.tsx
       - src/nfl/primaryNumerical.ts
       - tests/nflProjectionFirstScreenshot.test.ts
+      - tests/nflTop4SourceProbabilityOnly.test.ts
       - .github/workflows/nfl_projection_first_ui.yml
   push:
-    branches: [fix/nfl-projection-first-sunday-20261122]
+    branches: [fix/nfl-top4-source-probability-only-20261122]
 permissions:
   contents: read
 jobs:
@@ -23,7 +24,7 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - name: React and TypeScript typecheck
         run: npm run lint
-      - name: Reproduce 36.8% screenshot error and verify numerical-first fix
-        run: node --import tsx --test tests/nflProjectionFirstScreenshot.test.ts tests/nflExistingCardRank.test.ts tests/nflOverOnlyBoard.test.ts
+      - name: Verify Top4 source probability ranks; no Worthy stability fallback or fake TD percentage
+        run: node --import tsx --test tests/nflTop4SourceProbabilityOnly.test.ts tests/nflProjectionFirstScreenshot.test.ts tests/nflExistingCardRank.test.ts tests/nflOverOnlyBoard.test.ts
       - name: Production build
         run: npm run build
