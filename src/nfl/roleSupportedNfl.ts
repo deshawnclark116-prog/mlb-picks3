@@ -5,7 +5,8 @@ import {verifiedNflSelections,type LiveMarketResponse,type MarketSelection} from
 export type NflRoleEvidenceRow={
  player:string;team:string;opponent:string;market:string;kickoff_utc:string;
  published_model_median:number;published_model_source?:string;
- roster_status:string;observed_stat_rows:number;recent_opportunities_per_observed_game:number|null;
+ roster_status:string;role_status?:string;independent_league_injury_status?:string|null;
+ observed_stat_rows:number;recent_opportunities_per_observed_game:number|null;
  recent_team_share:number|null;role_evidence_complete_for_showcase:boolean;
  has_verified_starting_role:false;has_calibrated_book_bet_probability:false;
  warnings:string[];
