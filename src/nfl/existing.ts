@@ -50,6 +50,14 @@ export interface ExistingYardProjection {
   nfl_model_target_grid?: NflMeaningfulGrid|null;
   projection_simulation_n?: number|null;
   projection_probability_source?: string|null;
+  /** V2's source-matched empirical error distribution: ACTUAL earlier 2026
+   * completed games, not simulated draws or old bootstrap probabilities. */
+  v2_probability_residual_sample_n?:number|null;
+  v2_probability_total_prior_n?:number|null;
+  v2_probability_reference_mean?:number|null;
+  v2_probability_model_version?:string|null;
+  v2_probability_calibration?:string|null;
+  v2_probability_active_verified?:boolean|null;
 }
 export interface ExistingNflGame {
   id: string; kickoff_utc: string; teams: [string,string]; home?: string; away?: string; projections: ExistingYardProjection[];
@@ -214,7 +222,13 @@ export function parseExistingNfl(raw:unknown,now=new Date(),expected?:{season:nu
       nfl_model_target_event:typeof row.nfl_model_target_event==='string'?row.nfl_model_target_event:null,
       nfl_model_target_grid:parsedGrid(row.nfl_model_target_grid),
       projection_simulation_n:Number.isInteger(row.projection_simulation_n)&&row.projection_simulation_n>=10_000?row.projection_simulation_n:null,
-      projection_probability_source:typeof row.projection_probability_source==='string'?row.projection_probability_source:null
+      projection_probability_source:typeof row.projection_probability_source==='string'?row.projection_probability_source:null,
+      v2_probability_residual_sample_n:Number.isInteger(row.v2_probability_residual_sample_n)&&row.v2_probability_residual_sample_n>=0?row.v2_probability_residual_sample_n:null,
+      v2_probability_total_prior_n:Number.isInteger(row.v2_probability_total_prior_n)&&row.v2_probability_total_prior_n>=0?row.v2_probability_total_prior_n:null,
+      v2_probability_reference_mean:finite(row.v2_probability_reference_mean)&&row.v2_probability_reference_mean>=0?row.v2_probability_reference_mean:null,
+      v2_probability_model_version:typeof row.v2_probability_model_version==='string'?row.v2_probability_model_version:null,
+      v2_probability_calibration:typeof row.v2_probability_calibration==='string'?row.v2_probability_calibration:null,
+      v2_probability_active_verified:typeof row.v2_probability_active_verified==='boolean'?row.v2_probability_active_verified:null
     };
     if(!games.has(id))games.set(id,{id,kickoff_utc:row.kickoff_utc,teams,projections:[]});
     games.get(id)!.projections.push(item);
