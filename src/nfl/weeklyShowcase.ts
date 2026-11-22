@@ -8,7 +8,7 @@ export type NflShowcasePick={
  player:string;player_id:string;team:string;opponent:string;kickoff_utc:string;
  market:NflShowcaseMarket;probability:number;model_source:string;
  targetYards?:number;meanYards?:number;medianYards?:number;
- wilsonLower95?:number;simulationN?:number;
+ wilsonLower95?:number;simulationN?:number;residualHistoricalSampleN?:number;
  projectionProbabilityEvent?:'P_YARDS_AT_LEAST_ROUNDED_PUBLISHED_MEAN';
 };
 /**
