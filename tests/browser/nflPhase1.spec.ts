@@ -61,10 +61,10 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   await expect(page.getByRole('heading',{name:"TODAY'S BEST"})).toBeVisible();
   await expect(page.getByTestId('existing-nfl-game')).toHaveCount(3);
   await expect(page.getByTestId('existing-nfl-preview')).toHaveCount(2);
-  const originals=page.getByTestId('nfl-unranked-source-preview').first();
-  await expect(originals).toContainText('ORIGINAL YARDAGE PROJECTIONS · NOT A RANKED TOP 4');
+  const originals=page.getByTestId('nfl-role-screened-preview').first();
+  await expect(originals).toContainText('ROLE-SCREENED MODEL PROJECTIONS · 1');
   await expect(originals.getByTestId('nfl-primary-numerical-projection')).toHaveCount(1);
-  await expect(originals.getByTestId('nfl-primary-numerical-projection')).toContainText('No matched model probability');
+  await expect(originals.getByTestId('nfl-primary-numerical-projection')).toContainText('Observed recent usage');
   await expect(page.getByTestId('existing-nfl-projection')).toHaveCount(0);
   await expect(page.getByTestId('existing-nfl-expanded')).toHaveCount(0);
   await expect(page.getByTestId('existing-nfl-slate')).toContainText('PHI vs JAX');
@@ -72,8 +72,8 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   await expect(page.getByTestId('existing-nfl-slate')).toContainText('CHI vs NYJ');
   await expect(page.getByTestId('nfl-weekly-generation-receipt')).toContainText('Forecast generated: Oct 3, 7:00 PM EDT');
   await expect(page.getByTestId('nfl-frozen-separate')).toContainText('FROZEN RESEARCH');
-  await expect(page.getByTestId('existing-nfl-preview').first()).toContainText('No probability-qualified yardage Top 4');
-  await expect(page.getByTestId('existing-nfl-preview').first()).toContainText('1 original model forecasts available to review');
+  await expect(page.getByTestId('existing-nfl-preview').first()).toContainText('ROLE-SCREENED: 1 numerical forecast');
+  await expect(page.getByTestId('nfl-role-screened-preview').first()).toContainText('Early Runner');
   // Codex's per-game 1080x1350 share-image workflow is preserved for
   // the original new-engine game and now also available for missing games.
   await expect(page.getByRole('button',{name:'Create weekly model share card for PHI vs JAX'})).toBeVisible();
