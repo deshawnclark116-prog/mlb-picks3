@@ -22,3 +22,4 @@ jobs:
           git show "bc02183b9966e1132336f8c631a5d43685cdc478:docs/nba_v5_archive/last/401910024.json.gz" > /tmp/pretip_v5.json.gz
           git show "945cdb91e7ba163c8fd5a64b5f9802b21960e550:docs/nba_independent_live/latest.json" > /tmp/pretip_independent.json
           python research/nba_compare_730_originals.py
+          # Second final-status check after the initial Q4 snapshot
