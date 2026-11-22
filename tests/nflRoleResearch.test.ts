@@ -35,7 +35,7 @@ function view():Phase1View{
    status:{season:2026,week:6,r11:'UNRESOLVED',last_shadow_run_utc:'2026-10-18T01:50:00Z',
      model_versions:['test'],readiness_ready:false,counts:{T24:{valid_games:3},T90:{valid_games:0}}},
    alt_65
- },defaultHorizon:'T24',excludedGames:0,publicationMs:NOW-600_000};
+ },defaultHorizon:'T24',excludedGames:0,excludedOfficialFlexGames:0,excludedWrongCutoffRows:0,publicationMs:NOW-600_000};
 }
 function data(){
  const impact=(player:string,old:number,after:number)=>({
