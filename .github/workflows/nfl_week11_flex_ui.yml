@@ -1,0 +1,30 @@
+name: NFL verified Week 11 flex frontend quarantine
+on:
+  pull_request:
+    paths:
+      - src/nfl/phase1.ts
+      - src/components/NflTodayScreen.tsx
+      - tests/nflWeek11FlexVisibility.test.ts
+      - .github/workflows/nfl_week11_flex_ui.yml
+  push:
+    branches: [fix/nfl-week11-shadow-flex-visibility-20261121]
+permissions:
+  contents: read
+jobs:
+  preserve-frozen-research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Typecheck
+        run: npm run lint
+      - name: Reject stale flex matchup and mis-timed horizon snapshots
+        run: node --import tsx --test tests/nflWeek11FlexVisibility.test.ts
+      - name: Bundle entire frontend
+        run: npm run build

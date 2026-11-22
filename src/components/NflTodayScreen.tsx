@@ -1,5 +1,5 @@
 /** NFL model-first mobile decision board. Scientific outputs remain read-only. */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ChevronDown, RefreshCw, Image } from 'lucide-react';
 import NflShareModal from './NflShareModal';
 import ExistingNflProjectionSlate from './ExistingNflProjectionSlate';
@@ -7,6 +7,7 @@ import {wholeStatProjection} from '../lib/wholeStatProjection';
 import {exactNflCountEvent} from '../nfl/exactCount';
 import { usePhase1 } from '../nfl/usePhase1';
 import { useNflRoleResearch } from '../nfl/useNflRoleResearch';
+import {quarantineNflOfficialFlex,type NflFlexQuarantine} from '../nfl/flexGuard';
 import { teamKey, statKey, type NflRoleResearch, type RoleStat } from '../nfl/roleResearch';
 import {roleEligibleGames} from '../nfl/roleEligibleRanking';
 import { HORIZONS, OUTCOMES, altFor, formatET, groupGames, type ForecastRow, type Horizon, type Phase1View } from '../nfl/phase1';
@@ -95,8 +96,9 @@ export function SystemPickCard({pick,view,horizon,execution}:{pick:SystemPick;vi
 }
 type Mode='SYSTEM PICKS'|'BETTABLE NOW'|'MODEL BOARD';
 interface BoardProps {view:Phase1View|null;loading:boolean;error:string|null;retrievedAt:string|null;refresh:()=>Promise<void>;
-  role?:NflRoleResearch|null;roleError?:string|null;roleLoading?:boolean}
-export function NflPhase1Board({view,loading,error,retrievedAt,refresh,role=null,roleError=null,roleLoading=false}:BoardProps) {
+  role?:NflRoleResearch|null;roleError?:string|null;roleLoading?:boolean;
+  flexQuarantine?:Pick<NflFlexQuarantine,'excludedOfficialFlexGames'|'excludedWrongCutoffRows'>}
+export function NflPhase1Board({view,loading,error,retrievedAt,refresh,role=null,roleError=null,roleLoading=false,flexQuarantine}:BoardProps) {
   const [share,setShare]=useState<{view:Phase1View;gameId:string;horizon:Horizon}|null>(null);
   const [mode,setMode]=useState<Mode>('SYSTEM PICKS'),[horizon,setHorizon]=useState<Horizon>('T90');
   const [family,setFamily]=useState<Family>('ALL'),[search,setSearch]=useState(''),[outcome,setOutcome]=useState('');
@@ -168,6 +170,14 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh,role=null
       {error?<><ExistingNflProjectionSlate view={null} search={search} family={family} visible={true} horizon={selected} mode={mode}/><div role="alert" className="mt-4 rounded-xl border border-red-900 p-4 text-sm text-red-300">T24/T90 research unavailable<p className="mt-2 break-words">{error}</p><button className={`${touch} mt-3 w-full`} onClick={()=>void refresh()}>Retry research feed</button></div></>
       :!view?<><ExistingNflProjectionSlate view={null} search={search} family={family} visible={true} horizon={selected} mode={mode}/><p role="status" className="py-4 text-center text-xs text-gray-500">{loading?'Loading T24/T90 research…':empty}</p></>:<>
         <ExistingNflProjectionSlate view={view} search={search} family={family} visible={true} horizon={selected} mode={mode}/>
+        {((flexQuarantine?.excludedOfficialFlexGames||0)>0||(flexQuarantine?.excludedWrongCutoffRows||0)>0)&&<div
+          role="status" data-testid="nfl-official-flex-quarantine"
+          className="mt-3 rounded-lg border border-amber-700/60 p-3 text-xs text-amber-200">
+          NFL-confirmed Week 11 kickoff revision: {flexQuarantine?.excludedOfficialFlexGames||0} old-game fixture(s) and
+          {' '}{flexQuarantine?.excludedWrongCutoffRows||0} incorrect-cutoff original forecast row(s) withheld from the
+          research board. Existing pregame simulations were NOT relabeled; the current weekly model above
+          uses the independently reconciled NFL schedule.
+        </div>}
         <div className="mt-6 rounded-lg border border-[#383838] px-3 py-2 text-[11px] text-amber-200" data-testid="nfl-frozen-separate">T24/T90 FROZEN RESEARCH BELOW · historical snapshot probabilities, not the current weekly forecasts above.</div>
         {mode==='SYSTEM PICKS' && best.length>0 && <section className="mt-6" aria-label="Today's best">
           <h2 className="mb-3 text-sm font-black text-gray-200">TODAY'S BEST</h2>
@@ -221,6 +231,10 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh,role=null
 }
 export default function NflTodayScreen(){
   const phase=usePhase1();
-  const roles=useNflRoleResearch(phase.view);
-  return <NflPhase1Board {...phase} role={roles.data} roleError={roles.error} roleLoading={roles.loading}/>;
+  // Preserve referential identity so QB research polling never restarts on
+  // every React render or every source-independent display change.
+  const quarantined=useMemo(()=>phase.view?quarantineNflOfficialFlex(phase.view):null,[phase.view]);
+  const roles=useNflRoleResearch(quarantined?.view??null);
+  return <NflPhase1Board {...phase} view={quarantined?.view??null}
+    flexQuarantine={quarantined??undefined} role={roles.data} roleError={roles.error} roleLoading={roles.loading}/>;
 }
