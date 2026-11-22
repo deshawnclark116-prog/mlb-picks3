@@ -39,7 +39,9 @@ function NflPrecisionTile({p}:{p:NflShowcasePick}){
    {wholeStatProjection(p.meanYards!)} <span className="text-[14px] font-bold">YDS PROJECTED</span></p>}
   <p className="mt-1.5 text-[13px] font-bold tabular-nums text-[#79FF48]">{event}: {chance(p.probability)}</p>
   <p className="mt-0.5 text-[11px] text-gray-400">{yard?
-   `Model mean ${n(p.meanYards!)} yds · Wilson lower ${chance(p.wilsonLower95)}`:
+   p.projectionProbabilityEvent==='P_YARDS_AT_LEAST_ROUNDED_PUBLISHED_MEAN'?
+     `P(reach rounded model mean ${p.targetYards}+) · original source simulation · uncalibrated`:
+     `Model mean ${n(p.meanYards!)} yds · Wilson lower ${chance(p.wilsonLower95)}`:
    'Scoring-event model · probability uncalibrated'} · active status unverified</p>
  </div>;
 }
@@ -274,7 +276,7 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
         {mode==='SYSTEM PICKS'&&qualifiedYardage.length>0&&
           <div className="px-3 pb-3">
             <p data-testid="nfl-primary-ranked-label" className="mb-2 text-[11px] font-bold text-[#79FF48]">
-              TOP {qualifiedYardage.length} · MODEL YARDAGE TARGET PROBABILITIES
+              TOP {qualifiedYardage.length} · P(REACH THE MODEL'S OWN PROJECTED YARDS)
             </p>
             <div data-testid="nfl-top-projection-tiles" className="grid grid-cols-2 gap-2">
             {qualifiedYardage.map(p=><NflPrecisionTile key={p.team+'|'+p.player_id+'|'+p.market} p={p}/>)}
