@@ -7,7 +7,7 @@ import {formatET,type Horizon,type Phase1View} from '../nfl/phase1';
 import {wholeStatProjection} from '../lib/wholeStatProjection';
 import {hasNflNbaMeanProjectionEvidence} from '../nfl/ownProjectionRank';
 import {rankNflShowcase,requiresVerifiedStarterResimulation,type NflShowcasePick} from '../nfl/weeklyShowcase';
-import {rankedExistingCardProjections} from '../nfl/existingCardRank';
+import {nflPrimaryNumericalForecasts} from '../nfl/primaryNumerical';
 import type {NflRoleSnapshot} from '../nfl/roleSupportedNfl';
 import {parseExistingNfl,existingMatchup,type ExistingNflSlate,type ExistingNflGame,type ExistingYardProjection} from '../nfl/existing';
 const n=(x:number)=>x.toLocaleString('en-US',{maximumFractionDigits:1});
@@ -220,10 +220,7 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
       // Original V2 context published numerical medians, but omitted the
       // distribution for their exact values. These are NOT fake 30% TD picks
       // or a numerical accuracy ranking. Source stability is merely a tier.
-      const numericalLeaders=rankedExistingCardProjections(
-        g.shown.filter(p=>p.projected_mean>=
-          (p.market==='rushing_yards'?30:25)&&
-          !requiresVerifiedStarterResimulation(p)),10);
+      const numericalLeaders=nflPrimaryNumericalForecasts(g.shown,10);
       const scoringOnly=(p:NflShowcasePick)=>p.targetYards==null;
       const allQualified=originalForecastBeforeKickoff?rankNflShowcase(eligibleGame,'','ALL',200):[];
       const top=allQualified.slice(0,10);
