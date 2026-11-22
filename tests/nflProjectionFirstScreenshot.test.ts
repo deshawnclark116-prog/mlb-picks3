@@ -14,7 +14,7 @@ const y=(name:string,team:string,opponent:string,market:ExistingYardMarket,mean:
   market,player:name,player_id:name,team,opponent,
   kickoff_utc:KICK,projected_median:mean,projected_mean:mean,
   projected_low:Math.max(0,mean*.2),projected_high:mean*2,
-  confidence:stability,games_played:games,model_source:'v2_context',unagraded:true,
+  confidence:stability,games_played:games,model_source:'v2_context',ungraded:true,
   projection_probability_source:'UNAVAILABLE_V2_CONTEXT_NO_MATCHED_DISTRIBUTION'
 });
 const td=(name:string,prob:number)=>({
