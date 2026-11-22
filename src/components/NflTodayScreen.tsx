@@ -168,6 +168,14 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh,role=null
       {error?<><ExistingNflProjectionSlate view={null} search={search} family={family} visible={true} horizon={selected} mode={mode}/><div role="alert" className="mt-4 rounded-xl border border-red-900 p-4 text-sm text-red-300">T24/T90 research unavailable<p className="mt-2 break-words">{error}</p><button className={`${touch} mt-3 w-full`} onClick={()=>void refresh()}>Retry research feed</button></div></>
       :!view?<><ExistingNflProjectionSlate view={null} search={search} family={family} visible={true} horizon={selected} mode={mode}/><p role="status" className="py-4 text-center text-xs text-gray-500">{loading?'Loading T24/T90 research…':empty}</p></>:<>
         <ExistingNflProjectionSlate view={view} search={search} family={family} visible={true} horizon={selected} mode={mode}/>
+        {(view.excludedOfficialFlexGames>0||view.excludedWrongCutoffRows>0)&&<div
+          role="status" data-testid="nfl-official-flex-quarantine"
+          className="mt-3 rounded-lg border border-amber-700/60 p-3 text-xs text-amber-200">
+          NFL-confirmed Week 11 kickoff revision: {view.excludedOfficialFlexGames} old-game fixture(s) and
+          {' '}{view.excludedWrongCutoffRows} incorrect-cutoff original forecast row(s) withheld from the
+          research board. Existing pregame simulations were NOT relabeled; the current weekly model above
+          uses the independently reconciled NFL schedule.
+        </div>}
         <div className="mt-6 rounded-lg border border-[#383838] px-3 py-2 text-[11px] text-amber-200" data-testid="nfl-frozen-separate">T24/T90 FROZEN RESEARCH BELOW · historical snapshot probabilities, not the current weekly forecasts above.</div>
         {mode==='SYSTEM PICKS' && best.length>0 && <section className="mt-6" aria-label="Today's best">
           <h2 className="mb-3 text-sm font-black text-gray-200">TODAY'S BEST</h2>
