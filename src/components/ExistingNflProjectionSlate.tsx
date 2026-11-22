@@ -23,9 +23,9 @@ export function NflNumericalTile({p}:{p:ExistingYardProjection}){
   <p className="text-[10px] text-gray-400">{p.team} · {label(p.market)}</p>
   <p className="mt-1 min-h-9 break-words text-[15px] font-bold text-white">{p.player}</p>
   <p className="mt-2 text-[26px] font-black tabular-nums text-[#79FF48]">
-    {wholeStatProjection(p.projected_mean)}<span className="ml-1 text-[13px]">YDS</span>
+    {wholeStatProjection(p.projected_median)}<span className="ml-1 text-[13px]">YDS</span>
   </p>
-  <p className="text-[11px] text-gray-300">Model mean {n(p.projected_mean)} · median {n(p.projected_median)}</p>
+  <p className="text-[11px] text-gray-300">Model median {n(p.projected_median)} · mean {n(p.projected_mean)}</p>
   <p className="mt-1 text-[11px] text-gray-400">Historical workload stability: {p.confidence??'unknown'} · {p.games_played??'?'} games</p>
   <p className="mt-1 text-[10px] text-amber-200">No matched probability for this exact projection · availability unverified</p>
  </article>;
@@ -225,9 +225,13 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
       const allQualified=originalForecastBeforeKickoff?rankNflShowcase(eligibleGame,'','ALL',200):[];
       const top=allQualified.slice(0,10);
       const otherQualified=allQualified.slice(10);
+      // Only same-simulation, nontrivial yards with a validated source
+      // event may occupy probability-ranked TOP tiles. TD research cannot
+      // fill empty yardage slots by the mere fact it clears 30%.
+      const qualifiedYardage=top.filter(p=>p.targetYards!=null);
       const qualifiedKeys=new Set(allQualified.map(p=>[p.player_id,p.player,p.team,p.market].join('|')));
       const remaining=g.shown.filter(p=>!qualifiedKeys.has([p.player_id,p.player,p.team,p.market].join('|')));
-      const preview=top[0],numericalPreview=numericalLeaders[0],fallbackPreview=g.shown.find(p=>!requiresVerifiedStarterResimulation(p));
+      const preview=qualifiedYardage[0]||top[0],numericalPreview=qualifiedYardage.length?undefined:numericalLeaders[0],fallbackPreview=g.shown.find(p=>!requiresVerifiedStarterResimulation(p));
       const eventResearchOnly=top.length>0&&top.every(scoringOnly);
       return <section key={g.id} data-testid="existing-nfl-game" className="min-w-0 overflow-hidden rounded-2xl border border-[#292929] bg-[#141414]">
         <div className="flex items-center gap-1 pr-3">
@@ -243,7 +247,7 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
               {numericalPreview?<p data-testid="existing-nfl-preview" className="mt-2 text-[11px] text-gray-300">
                 MODEL YARDAGE: <span className="capitalize font-bold text-white">{numericalPreview.player}</span>
                 {' · '}<span className="font-black text-[#00FF41]">
-                  {n(numericalPreview.projected_mean)} {label(numericalPreview.market)}
+                  {n(numericalPreview.projected_median)} {label(numericalPreview.market)}
                 </span>
                 {' · '}<span className="text-amber-200">hit probability unavailable</span>
               </p>:preview?<p data-testid="existing-nfl-preview" className="mt-2 text-[11px] text-gray-300">
@@ -272,7 +276,11 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
             <Image size={18}/>
           </button>}
         </div>
-        {mode==='SYSTEM PICKS'&&numericalLeaders.length>0&&<div className="px-3 pb-3">
+        {mode==='SYSTEM PICKS'&&qualifiedYardage.length>0&&
+          <div data-testid="nfl-top-projection-tiles" className="grid grid-cols-2 gap-2 px-3 pb-3">
+            {qualifiedYardage.map(p=><NflPrecisionTile key={p.team+'|'+p.player_id+'|'+p.market} p={p}/>)}
+          </div>}
+        {mode==='SYSTEM PICKS'&&qualifiedYardage.length===0&&numericalLeaders.length>0&&<div className="px-3 pb-3">
           <p className="mb-2 text-[11px] font-bold uppercase tracking-wide text-[#79FF48]">PLAYER STAT PROJECTIONS · ORIGINAL MODEL</p>
           <p className="mb-2 text-[10px] text-gray-400">Selected by historical workload-stability tier, then games observed—not predicted hit rate. No yardage accuracy percentage is supplied for V2 context.</p>
           <div data-testid="nfl-top-projection-tiles" className="grid grid-cols-2 gap-2">
@@ -285,7 +293,7 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
             </div>
           </details>}
         </div>}
-        {mode==='SYSTEM PICKS'&&numericalLeaders.length===0&&top.length>0&&
+        {mode==='SYSTEM PICKS'&&qualifiedYardage.length===0&&numericalLeaders.length===0&&top.length>0&&
           <p data-testid="nfl-scoring-research-only" className="px-3 pb-3 text-xs text-amber-200">
             No qualifying supported yardage projections to feature. Lower-probability TD forecasts are scoring research, not top model picks; expand the game to inspect them.
           </p>}
@@ -298,7 +306,7 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
           </div>}
           {(g.shown.length>0||g.shownEvents.length>0)?<div className="space-y-3">
             {top.length>0?<div data-testid="nfl-top10-simulation-research" className="space-y-3">
-              <p className="text-xs font-bold text-[#00FF41]">{eventResearchOnly?'SCORING-EVENT RESEARCH':'QUALIFIED OVER-ONLY EVENT RESEARCH'} · {top.length} OUTCOMES</p>
+              <p className="text-xs font-bold text-[#00FF41]">{eventResearchOnly?'SCORING-EVENT RESEARCH · '+top.length+' OUTCOMES':'TOP '+top.length+' MODEL PROJECTIONS'}</p>
               <p className="text-[11px] text-amber-200">Separate scoring-event research: 30% TD probability is NOT high confidence. Yardage targets, when available, require a 60% Monte Carlo Wilson lower bound; sack OVERS 60%. None are verified bets, and game-day availability remains unverified.</p>
               {top.map(p=><NflPrecisionPick key={p.player_id+'|'+p.player+'|'+p.team+'|'+p.market} p={p}/>)}
               {otherQualified.length>0&&<details className="rounded-xl border border-[#292929] p-3">
