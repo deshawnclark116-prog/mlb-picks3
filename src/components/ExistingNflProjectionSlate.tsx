@@ -18,7 +18,7 @@ const chance=(n:number|null|undefined)=>n!=null&&Number.isFinite(n)?(n*100).toFi
  * simulation distribution: NO percentage should be reconstructed.
  * Historical workload stability is only a descriptive source grade, not
  * a calibrated probability that the point estimate is accurate. */
-function NflNumericalTile({p}:{p:ExistingYardProjection}){
+export function NflNumericalTile({p}:{p:ExistingYardProjection}){
  return <article data-testid="nfl-primary-numerical-projection" className="min-w-0 rounded-xl border border-[#79FF48]/25 bg-[#101a14] p-3">
   <p className="text-[10px] text-gray-400">{p.team} · {label(p.market)}</p>
   <p className="mt-1 min-h-9 break-words text-[15px] font-bold text-white">{p.player}</p>
