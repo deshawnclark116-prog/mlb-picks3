@@ -6,12 +6,30 @@ import NflPrecisionShareModal from './NflPrecisionShareModal';
 import {formatET,type Horizon,type Phase1View} from '../nfl/phase1';
 import {wholeStatProjection} from '../lib/wholeStatProjection';
 import {hasNflNbaMeanProjectionEvidence} from '../nfl/ownProjectionRank';
-import {rankNflShowcase,type NflShowcasePick} from '../nfl/weeklyShowcase';
+import {rankNflShowcase,requiresVerifiedStarterResimulation,type NflShowcasePick} from '../nfl/weeklyShowcase';
+import {nflPrimaryNumericalForecasts} from '../nfl/primaryNumerical';
 import type {NflRoleSnapshot} from '../nfl/roleSupportedNfl';
 import {parseExistingNfl,existingMatchup,type ExistingNflSlate,type ExistingNflGame,type ExistingYardProjection} from '../nfl/existing';
 const n=(x:number)=>x.toLocaleString('en-US',{maximumFractionDigits:1});
 const label=(m:string)=>m==='rushing_yards'?'RUSH YDS':m==='receiving_yards'?'REC YDS':m==='anytime_touchdowns'?'ANYTIME TD':'SACK';
 const chance=(n:number|null|undefined)=>n!=null&&Number.isFinite(n)?(n*100).toFixed(1)+'%':'n/a';
+/** Show the actual NFL statistical forecast FIRST, not the 30% TD fallback.
+ * The context V2 model published genuine yardage means but no matched
+ * simulation distribution: NO percentage should be reconstructed.
+ * Historical workload stability is only a descriptive source grade, not
+ * a calibrated probability that the point estimate is accurate. */
+export function NflNumericalTile({p}:{p:ExistingYardProjection}){
+ return <article data-testid="nfl-primary-numerical-projection" className="min-w-0 rounded-xl border border-[#79FF48]/25 bg-[#101a14] p-3">
+  <p className="text-[10px] text-gray-400">{p.team} · {label(p.market)}</p>
+  <p className="mt-1 min-h-9 break-words text-[15px] font-bold text-white">{p.player}</p>
+  <p className="mt-2 text-[26px] font-black tabular-nums text-[#79FF48]">
+    {wholeStatProjection(p.projected_median)}<span className="ml-1 text-[13px]">YDS</span>
+  </p>
+  <p className="text-[11px] text-gray-300">Model median {n(p.projected_median)} · mean {n(p.projected_mean)}</p>
+  <p className="mt-1 text-[11px] text-gray-400">Historical workload stability: {p.confidence??'unknown'} · {p.games_played??'?'} games</p>
+  <p className="mt-1 text-[10px] text-amber-200">No matched probability for this exact projection · availability unverified</p>
+ </article>;
+}
 /** Honest OVER-only NFL opportunity tiles. Scoring probabilities are
  * NOT taken from the yardage bootstrap or converted into yardage means. */
 function NflPrecisionTile({p}:{p:NflShowcasePick}){
@@ -199,12 +217,22 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
         Number.isFinite(Date.parse(slate.generated_at_utc))&&
         Date.parse(slate.generated_at_utc)<Date.parse(g.kickoff_utc));
       const eligibleGame={...g,projections:g.shown,events:g.shownEvents};
+      // Original V2 context published numerical medians, but omitted the
+      // distribution for their exact values. These are NOT fake 30% TD picks
+      // or a numerical accuracy ranking. Source stability is merely a tier.
+      const numericalLeaders=nflPrimaryNumericalForecasts(g.shown,10);
+      const scoringOnly=(p:NflShowcasePick)=>p.targetYards==null;
       const allQualified=originalForecastBeforeKickoff?rankNflShowcase(eligibleGame,'','ALL',200):[];
       const top=allQualified.slice(0,10);
       const otherQualified=allQualified.slice(10);
+      // Only same-simulation, nontrivial yards with a validated source
+      // event may occupy probability-ranked TOP tiles. TD research cannot
+      // fill empty yardage slots by the mere fact it clears 30%.
+      const qualifiedYardage=top.filter(p=>p.targetYards!=null);
       const qualifiedKeys=new Set(allQualified.map(p=>[p.player_id,p.player,p.team,p.market].join('|')));
       const remaining=g.shown.filter(p=>!qualifiedKeys.has([p.player_id,p.player,p.team,p.market].join('|')));
-      const preview=top[0],fallbackPreview=g.shown[0];
+      const preview=qualifiedYardage[0]||top[0],numericalPreview=qualifiedYardage.length?undefined:numericalLeaders[0],fallbackPreview=g.shown.find(p=>!requiresVerifiedStarterResimulation(p));
+      const eventResearchOnly=top.length>0&&top.every(scoringOnly);
       return <section key={g.id} data-testid="existing-nfl-game" className="min-w-0 overflow-hidden rounded-2xl border border-[#292929] bg-[#141414]">
         <div className="flex items-center gap-1 pr-3">
           <button type="button" data-testid="existing-nfl-toggle" aria-expanded={opened} aria-controls={`existing-game-${g.id}`}
@@ -216,7 +244,13 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
                 <span className="text-[11px] text-gray-500">{formatET(g.kickoff_utc)}</span>
               </div>
               <p className="mt-2 text-[10px] font-bold text-gray-400">{g.projections.length+(g.events?.length||0)} PLAYER OUTCOMES · WEEKLY MODEL</p>
-              {preview?<p data-testid="existing-nfl-preview" className="mt-2 text-[11px] text-gray-300">
+              {numericalPreview?<p data-testid="existing-nfl-preview" className="mt-2 text-[11px] text-gray-300">
+                MODEL YARDAGE: <span className="capitalize font-bold text-white">{numericalPreview.player}</span>
+                {' · '}<span className="font-black text-[#00FF41]">
+                  {n(numericalPreview.projected_median)} {label(numericalPreview.market)}
+                </span>
+                {' · '}<span className="text-amber-200">hit probability unavailable</span>
+              </p>:preview?<p data-testid="existing-nfl-preview" className="mt-2 text-[11px] text-gray-300">
                 TOP: <span className="capitalize text-white">{preview.player}</span>
                 {' · '}<span className="font-black text-[#00FF41]">{preview.targetYards!=null?
                   `${wholeStatProjection(preview.meanYards!)} ${label(preview.market)}`:
@@ -231,26 +265,49 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
             <ChevronDown size={16} className={`shrink-0 text-gray-500 ${opened?'rotate-180':''}`}/>
           </button>
           {top.length>0?<button type="button"
-            aria-label={`Open NFL top 10 game card for ${existingMatchup(g)}`}
-            title="NFL top 10 · game share card"
+            aria-label={eventResearchOnly?`Open NFL scoring-event research card for ${existingMatchup(g)}`:`Open NFL top 10 game card for ${existingMatchup(g)}`}
+            title={eventResearchOnly?'Scoring-event research only · these are NOT the strongest numerical projections':'NFL verified-event research card'}
             data-testid="nfl-open-top10"
             onClick={()=>setPrecisionShare({game:g,picks:top})}
             className="my-3 mr-0 flex min-h-11 min-w-16 shrink-0 flex-col items-center justify-center gap-1 rounded-xl border border-[#79FF48]/40 bg-[#79FF48]/10 px-2 text-[#79FF48]">
-            <Image size={18}/><span className="text-[10px] font-black">TOP 10</span>
+            <Image size={18}/><span className="text-[10px] font-black">{eventResearchOnly?'SCORING':'TOP 10'}</span>
           </button>:<button aria-label={`Create weekly model share card for ${existingMatchup(g)}`} onClick={()=>setShareGame(g)}
             className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-xl border border-[#333] bg-[#1B211E] text-gray-300">
             <Image size={18}/>
           </button>}
         </div>
-        {mode==='SYSTEM PICKS'&&top.length>0&&<div data-testid="nfl-top-projection-tiles" className="grid grid-cols-2 gap-2 px-3 pb-3">
-           {top.map(p=><NflPrecisionTile key={p.team+'|'+p.player_id+'|'+p.market} p={p}/>)}
+        {mode==='SYSTEM PICKS'&&qualifiedYardage.length>0&&
+          <div data-testid="nfl-top-projection-tiles" className="grid grid-cols-2 gap-2 px-3 pb-3">
+            {qualifiedYardage.map(p=><NflPrecisionTile key={p.team+'|'+p.player_id+'|'+p.market} p={p}/>)}
+          </div>}
+        {mode==='SYSTEM PICKS'&&qualifiedYardage.length===0&&numericalLeaders.length>0&&<div className="px-3 pb-3">
+          <p className="mb-2 text-[11px] font-bold uppercase tracking-wide text-[#79FF48]">PLAYER STAT PROJECTIONS · ORIGINAL MODEL</p>
+          <p className="mb-2 text-[10px] text-gray-400">Selected by historical workload-stability tier, then games observed—not predicted hit rate. No yardage accuracy percentage is supplied for V2 context.</p>
+          <div data-testid="nfl-top-projection-tiles" className="grid grid-cols-2 gap-2">
+            {numericalLeaders.slice(0,4).map(p=><NflNumericalTile key={p.team+'|'+p.player_id+'|'+p.market} p={p}/>)}
+          </div>
+          {numericalLeaders.length>4&&<details className="mt-2 rounded-lg border border-[#313b35] p-2">
+            <summary className="min-h-9 cursor-pointer text-[11px] font-bold text-gray-300">SHOW {numericalLeaders.length-4} MORE MODEL PROJECTIONS ▾</summary>
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              {numericalLeaders.slice(4).map(p=><NflNumericalTile key={p.team+'|'+p.player_id+'|'+p.market} p={p}/>)}
+            </div>
+          </details>}
         </div>}
+        {mode==='SYSTEM PICKS'&&qualifiedYardage.length===0&&numericalLeaders.length===0&&top.length>0&&
+          <p data-testid="nfl-scoring-research-only" className="px-3 pb-3 text-xs text-amber-200">
+            No qualifying supported yardage projections to feature. Lower-probability TD forecasts are scoring research, not top model picks; expand the game to inspect them.
+          </p>}
         {opened&&<div id={`existing-game-${g.id}`} data-testid="existing-nfl-expanded" className="space-y-3 border-t border-[#292929] p-3">
-          <p className="text-[11px] text-gray-400">Weekly model outcomes: 60% Wilson yardage targets, 30%+ anytime TDs, and 60%+ OVER sacks. None are verified sportsbook bets. {mode==='BETTABLE NOW'?'No verified book lines supplied.':''}</p>
+          <p className="text-[11px] text-gray-400">Original weekly numerical projections are separate from OVER-only scoring-event research. Context yardage probabilities are unavailable, not inferred from sportsbooks. {mode==='BETTABLE NOW'?'No verified book lines supplied.':''}</p>
+          {numericalLeaders.length>0&&<div data-testid="nfl-expanded-numerical-leaders" className="space-y-2">
+            <p className="text-xs font-bold text-[#79FF48]">MODEL YARDAGE FORECASTS · {numericalLeaders.length} SOURCE-STABILITY LEADERS</p>
+            <p className="text-[11px] text-gray-400">Numerical mean/median from the saved forecast. HIGH/MEDIUM/LOW means historical spread stability, not betting confidence; no percentage is available for V2 context.</p>
+            <div className="grid grid-cols-2 gap-2">{numericalLeaders.map(p=><NflNumericalTile key={p.team+'|'+p.player_id+'|'+p.market} p={p}/>)}</div>
+          </div>}
           {(g.shown.length>0||g.shownEvents.length>0)?<div className="space-y-3">
             {top.length>0?<div data-testid="nfl-top10-simulation-research" className="space-y-3">
-              <p className="text-xs font-bold text-[#00FF41]">TOP {top.length} MODEL PROJECTIONS</p>
-              <p className="text-[11px] text-amber-200">OVER-only ranking: yardage targets require a 60% one-sided Monte Carlo Wilson lower bound; anytime TD outcomes require at least 30% model chance; sack OVERS require at least 60%. The scoring models are separate from yardage simulations. These are pregame MODEL estimates, not verified sportsbook bets. Active status and DNP risk are unverified; probabilities are not forward-calibrated.</p>
+              <p className="text-xs font-bold text-[#00FF41]">{eventResearchOnly?'SCORING-EVENT RESEARCH · '+top.length+' OUTCOMES':'TOP '+top.length+' MODEL PROJECTIONS'}</p>
+              <p className="text-[11px] text-amber-200">Separate scoring-event research: 30% TD probability is NOT high confidence. Yardage targets, when available, require a 60% Monte Carlo Wilson lower bound; sack OVERS 60%. None are verified bets, and game-day availability remains unverified.</p>
               {top.map(p=><NflPrecisionPick key={p.player_id+'|'+p.player+'|'+p.team+'|'+p.market} p={p}/>)}
               {otherQualified.length>0&&<details className="rounded-xl border border-[#292929] p-3">
                 <summary className="min-h-11 cursor-pointer text-xs font-bold text-gray-300">SHOW {otherQualified.length} ADDITIONAL QUALIFYING OVER OUTCOMES ▾</summary>
