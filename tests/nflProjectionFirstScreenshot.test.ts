@@ -51,7 +51,7 @@ test('Nov 22 screenshot regression: 36.8% TD research is NOT the primary model p
   assert.deepEqual(numerical.map(p=>p.player),
    ['Josh Downs','Justin Watson','Rashee Rice','Tyler Allgeier','Xavier Worthy']);
   assert(!numerical.some(p=>p.player==='Devin Duvernay'||p.player==='Simi Fehoko'));
-  const markup=renderToStaticMarkup(React.createElement(NflNumericalTile,{p:numerical[0]}));
+  const markup=renderToStaticMarkup(React.createElement(NflNumericalTile,{p:numerical.find(p=>p.player==='Rashee Rice')!}));
   assert.match(markup,/Rashee Rice/);
   assert.match(markup,/60/);
   assert.match(markup,/No matched probability/);
