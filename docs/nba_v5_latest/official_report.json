@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-21_06_30PM.pdf",
-  "published_at_utc": "2026-11-21T23:30:00+00:00",
-  "captured_at_utc": "2026-11-21T23:36:09.345279+00:00",
-  "source_sha256": "af8863d01c9a598828f87b5da2e122c22344dd7a380565eca345bb1dcb59f6be",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-21_07_00PM.pdf",
+  "published_at_utc": "2026-11-22T00:00:00+00:00",
+  "captured_at_utc": "2026-11-22T00:08:31.856736+00:00",
+  "source_sha256": "8563c31761a6201597ddaae14a0e2d6cf6cad3c786bc47ba15ad222cf4bf51d9",
   "reports": [
     {
       "matchup": "MIL@PHI",
@@ -767,6 +767,54 @@
       "reason": "G League - Two-Way"
     },
     {
+      "matchup": "DAL@UTA",
+      "team_abbr": "UTA",
+      "player": "Aidoo, Jonas",
+      "normalized_player": "jonas aidoo",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "DAL@UTA",
+      "team_abbr": "UTA",
+      "player": "Bufkin, Kobe",
+      "normalized_player": "kobe bufkin",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "DAL@UTA",
+      "team_abbr": "UTA",
+      "player": "Ingram, Harrison",
+      "normalized_player": "harrison ingram",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "DAL@UTA",
+      "team_abbr": "UTA",
+      "player": "Jackson Jr., Jaren",
+      "normalized_player": "jaren jackson",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right MCL Tear"
+    },
+    {
+      "matchup": "DAL@UTA",
+      "team_abbr": "UTA",
+      "player": "Markkanen, Lauri",
+      "normalized_player": "lauri markkanen",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Hand Fracture"
+    },
+    {
+      "matchup": "DAL@UTA",
+      "team_abbr": "UTA",
+      "player": "Nurkic, Jusuf",
+      "normalized_player": "jusuf nurkic",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
       "matchup": "DEN@CHI",
       "team_abbr": "DEN",
       "player": "Holmes II, DaRon",
@@ -924,7 +972,7 @@
       "player": "Watkins, Jamir",
       "normalized_player": "jamir watkins",
       "status": "OUT",
-      "reason": "Injury/Illness - Left ACL Repair /"
+      "reason": ""
     },
     {
       "matchup": "IND@NYK",
@@ -1007,7 +1055,7 @@
       "reason": "Injury/Illness - Left Hamstring Strain"
     }
   ],
-  "rows": 125,
+  "rows": 131,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
