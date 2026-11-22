@@ -1,14 +1,14 @@
 {
   "schema": "NBA_V5_FORECAST_READINESS_V1",
-  "checked_at_utc": "2026-11-22T01:39:40.264212+00:00",
-  "document_generated_at_utc": "2026-11-22T01:39:30.661470+00:00",
+  "checked_at_utc": "2026-11-22T11:36:44.745078+00:00",
+  "document_generated_at_utc": "2026-11-22T11:36:31.725258+00:00",
   "games": [
     {
-      "game_id": "401910028",
-      "forecast_at_utc": "2026-11-22T01:39:30.661470+00:00",
-      "tipoff_utc": "2026-11-22T03:00:00+00:00",
-      "player_stat_rows": 189,
-      "players_with_v5_rows": 27,
+      "game_id": "401910029",
+      "forecast_at_utc": "2026-11-22T11:36:31.725258+00:00",
+      "tipoff_utc": "2026-11-22T20:30:00+00:00",
+      "player_stat_rows": 168,
+      "players_with_v5_rows": 24,
       "ready": true,
       "errors": []
     }
