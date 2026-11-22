@@ -1,5 +1,5 @@
 /** NFL model-first mobile decision board. Scientific outputs remain read-only. */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ChevronDown, RefreshCw, Image } from 'lucide-react';
 import NflShareModal from './NflShareModal';
 import ExistingNflProjectionSlate from './ExistingNflProjectionSlate';
@@ -231,7 +231,9 @@ export function NflPhase1Board({view,loading,error,retrievedAt,refresh,role=null
 }
 export default function NflTodayScreen(){
   const phase=usePhase1();
-  const quarantined=phase.view?quarantineNflOfficialFlex(phase.view):null;
+  // Preserve referential identity so QB research polling never restarts on
+  // every React render or every source-independent display change.
+  const quarantined=useMemo(()=>phase.view?quarantineNflOfficialFlex(phase.view):null,[phase.view]);
   const roles=useNflRoleResearch(quarantined?.view??null);
   return <NflPhase1Board {...phase} view={quarantined?.view??null}
     flexQuarantine={quarantined??undefined} role={roles.data} roleError={roles.error} roleLoading={roles.loading}/>;
