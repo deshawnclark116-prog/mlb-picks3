@@ -1,9 +1,9 @@
 {
   "schema": "soccer-forward-scorecard-v1",
   "status": "RESEARCH_FIRSTSEEN_NEEDS_GITHUB_COMMIT_TIME_PROOF",
-  "originallyFrozen": 185,
+  "originallyFrozen": 205,
   "graded": 42,
-  "ungraded": 143,
+  "ungraded": 163,
   "gradedTeamScores": 84,
   "modelGoalMAE": 0.8345,
   "baselineGoalMAE": 0.8538,
@@ -38,7 +38,7 @@
       "baselineGoalMAE": 0.8507
     }
   },
-  "asofDateUTC": "2026-11-21",
+  "asofDateUTC": "2026-11-22",
   "evidence": "Github earliest original commit BEFORE fixture date; no same-day freeze. Independent result source matches exact names/date/league and records source SHA",
   "finalSourceAudit": {
     "providerAudit": {
@@ -76,7 +76,7 @@
     "independentGraded": 0,
     "primaryGraded": 0,
     "conflicted": 0,
-    "unresolved": 11,
+    "unresolved": 36,
     "independentRawSourceIsNotOriginalForecastData": true
   }
 }
