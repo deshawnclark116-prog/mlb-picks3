@@ -6,6 +6,7 @@ on:
       - src/nfl/primaryNumerical.ts
       - tests/nflProjectionFirstScreenshot.test.ts
       - tests/nflTop4SourceProbabilityOnly.test.ts
+      - tests/nflV2ActualProbabilityTop4.test.ts
       - .github/workflows/nfl_projection_first_ui.yml
   push:
     branches: [fix/nfl-top4-source-probability-only-20261122]
@@ -25,6 +26,6 @@ jobs:
       - name: React and TypeScript typecheck
         run: npm run lint
       - name: Verify Top4 source probability ranks; no Worthy stability fallback or fake TD percentage
-        run: node --import tsx --test tests/nflTop4SourceProbabilityOnly.test.ts tests/nflProjectionFirstScreenshot.test.ts tests/nflExistingCardRank.test.ts tests/nflOverOnlyBoard.test.ts
+        run: node --import tsx --test tests/nflV2ActualProbabilityTop4.test.ts tests/nflTop4SourceProbabilityOnly.test.ts tests/nflProjectionFirstScreenshot.test.ts tests/nflExistingCardRank.test.ts tests/nflOverOnlyBoard.test.ts
       - name: Production build
         run: npm run build
