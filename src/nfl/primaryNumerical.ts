@@ -24,7 +24,13 @@ import {rankNflShowcase,requiresVerifiedStarterResimulation,type NflShowcasePick
 export function nflPrimaryProbabilityPicks(game:ExistingNflGame,limit=4):NflShowcasePick[]{
   if(!Number.isInteger(limit)||limit<1||limit>24)
     throw new Error('invalid NFL probability-ranked slots');
-  return rankNflShowcase({...game,events:[]},'','ALL',limit)
+  // A v2_context center cannot reuse the old bootstrap's probabilities.
+  // Whitelist only sources explicitly paired with the *same* historical
+  // usage simulation. New engines need their own published source contract.
+  const coherent=game.projections.filter(p=>
+    (p.model_source==='blended_sim'||p.model_source==='prior_season_sim')&&
+    p.projection_probability_source==='UNCALIBRATED_HISTORICAL_USAGE_BOOTSTRAP');
+  return rankNflShowcase({...game,projections:coherent,events:[]},'','ALL',limit)
     .filter(p=>p.targetYards!=null && (
       p.market==='receiving_yards'||p.market==='rushing_yards'));
 }
