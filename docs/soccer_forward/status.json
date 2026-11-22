@@ -2,40 +2,40 @@
   "schema": "soccer-forward-scorecard-v1",
   "status": "RESEARCH_FIRSTSEEN_NEEDS_GITHUB_COMMIT_TIME_PROOF",
   "originallyFrozen": 205,
-  "graded": 42,
-  "ungraded": 163,
-  "gradedTeamScores": 84,
-  "modelGoalMAE": 0.8345,
-  "baselineGoalMAE": 0.8538,
-  "exactRoundedGoalRate": 0.3452,
-  "withinOneGoalRate": 0.6548,
-  "model3wayBrier": 0.6049,
-  "baseline3wayBrier": 0.6297,
+  "graded": 64,
+  "ungraded": 141,
+  "gradedTeamScores": 128,
+  "modelGoalMAE": 0.9446,
+  "baselineGoalMAE": 0.9585,
+  "exactRoundedGoalRate": 0.3125,
+  "withinOneGoalRate": 0.6016,
+  "model3wayBrier": 0.6244,
+  "baseline3wayBrier": 0.6476,
   "byLeague": {
+    "Ligue1": {
+      "n": 15,
+      "modelGoalMAE": 0.8683,
+      "baselineGoalMAE": 0.848
+    },
     "LaLiga": {
       "n": 5,
       "modelGoalMAE": 0.984,
       "baselineGoalMAE": 1.0247
     },
     "Bundesliga": {
-      "n": 10,
-      "modelGoalMAE": 0.7055,
-      "baselineGoalMAE": 0.7552
+      "n": 16,
+      "modelGoalMAE": 1.0188,
+      "baselineGoalMAE": 1.0531
     },
     "EPL": {
-      "n": 5,
-      "modelGoalMAE": 0.8835,
-      "baselineGoalMAE": 0.8586
-    },
-    "Ligue1": {
-      "n": 10,
-      "modelGoalMAE": 0.8914,
-      "baselineGoalMAE": 0.8684
+      "n": 12,
+      "modelGoalMAE": 0.9563,
+      "baselineGoalMAE": 0.9295
     },
     "SerieA": {
-      "n": 12,
-      "modelGoalMAE": 0.8117,
-      "baselineGoalMAE": 0.8507
+      "n": 16,
+      "modelGoalMAE": 0.9208,
+      "baselineGoalMAE": 0.9687
     }
   },
   "asofDateUTC": "2026-11-22",
@@ -44,39 +44,39 @@
     "providerAudit": {
       "EPL": {
         "url": "https://raw.githubusercontent.com/oladeeayo/open-matchday/master/data/ENG_1_premier-league/results_2627.csv",
-        "sha256": "ba9e74b9d52a07cf917eac06c3f49cd66359141a710ef38e0acc291e30d91b74",
-        "rows": 100,
-        "latest": "2026-11-08"
+        "sha256": "160cfb351cc7a8c4112190b948283b94dac71f8cc6f76741bd096b2a34b52546",
+        "rows": 108,
+        "latest": "2026-11-22"
       },
       "LaLiga": {
         "url": "https://raw.githubusercontent.com/oladeeayo/open-matchday/master/data/ESP_1_la-liga/results_2627.csv",
-        "sha256": "393b14091b45b0c2d42c0ad09a00a804986ba5abaa8e4371edea1b485a2e2f02",
-        "rows": 120,
-        "latest": "2026-11-20"
+        "sha256": "fabfcde7fe778c14988e30458b20f216821c26bc7afbbd9cc401930764ce0df6",
+        "rows": 126,
+        "latest": "2026-11-22"
       },
       "SerieA": {
         "url": "https://raw.githubusercontent.com/oladeeayo/open-matchday/master/data/ITA_1_serie-a/results_2627.csv",
-        "sha256": "543803ebbe61356cbf49f9a02d2d6d934e664d1029bc57bcea8174bc4a43d1d9",
-        "rows": 110,
-        "latest": "2026-11-08"
+        "sha256": "e84e30368b944ca263f0cda5fec3e7e2fffd1b25373ff922ac82dcccdc43b2ff",
+        "rows": 117,
+        "latest": "2026-11-22"
       },
       "Bundesliga": {
         "url": "https://raw.githubusercontent.com/oladeeayo/open-matchday/master/data/GER_1_bundesliga/results_2627.csv",
-        "sha256": "47ddf1605509fd16785e9c9f6b57aa87a588e85ba28aad808985385ab54dd8c8",
-        "rows": 82,
-        "latest": "2026-11-20"
+        "sha256": "5aa49924e4215f4614ae109ae4a0fbfd9f89ebf921e834f1a10d6ad0547db191",
+        "rows": 90,
+        "latest": "2026-11-22"
       },
       "Ligue1": {
         "url": "https://raw.githubusercontent.com/oladeeayo/open-matchday/master/data/FRA_1_ligue-1/results_2627.csv",
-        "sha256": "3b20fa93d123be604453de794a3610c06fad7d86f4f8ac26c1b11cc0297da22b",
-        "rows": 91,
-        "latest": "2026-11-20"
+        "sha256": "111882da7ff7e132286e674c67f55a230d2c98f3f91816de0b595c31621d480e",
+        "rows": 97,
+        "latest": "2026-11-22"
       }
     },
-    "independentGraded": 0,
+    "independentGraded": 22,
     "primaryGraded": 0,
     "conflicted": 0,
-    "unresolved": 36,
+    "unresolved": 14,
     "independentRawSourceIsNotOriginalForecastData": true
   }
 }

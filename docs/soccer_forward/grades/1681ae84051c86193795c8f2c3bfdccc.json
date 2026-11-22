@@ -1,0 +1,21 @@
+{
+  "schema": "soccer-forward-final-grade-v1",
+  "id": "1681ae84051c86193795c8f2c3bfdccc",
+  "original_captured_at_utc": "2026-11-07T08:41:22.383Z",
+  "fixture_date": "2026-11-21",
+  "league": "Bundesliga",
+  "home": "1. FC Union Berlin",
+  "away": "RB Leipzig",
+  "final_home_goals": 1,
+  "final_away_goals": 5,
+  "model_home_goal_error": 0.8664,
+  "model_away_goal_error": -3.4646,
+  "model_goal_mae": 2.1655,
+  "baseline_goal_mae": 2.2222,
+  "exact_rounded_goals": 0,
+  "within_one_goal_count": 1,
+  "model_three_way_brier": 0.7212,
+  "baseline_three_way_brier": 0.7735,
+  "result_source": "open-matchday/openligadb/2627/GER_1_bundesliga",
+  "status": "RESEARCH_NOT_BOOKMAKER_VALIDATED"
+}
