@@ -4,7 +4,13 @@
   "source": "immutable original pregame archive + first-seen completed final grades",
   "graded_games": 120,
   "pending_or_not_final_games": [
-   "401910029"
+   "401910029",
+   "401910030",
+   "401910031",
+   "401910032",
+   "401910033",
+   "401910034",
+   "401910035"
   ],
   "original_rows": 22435,
   "gradable_rows": 15982,
