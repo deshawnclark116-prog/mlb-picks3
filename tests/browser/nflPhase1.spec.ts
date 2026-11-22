@@ -61,6 +61,10 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   await expect(page.getByRole('heading',{name:"TODAY'S BEST"})).toBeVisible();
   await expect(page.getByTestId('existing-nfl-game')).toHaveCount(3);
   await expect(page.getByTestId('existing-nfl-preview')).toHaveCount(2);
+  const originals=page.getByTestId('nfl-unranked-source-preview').first();
+  await expect(originals).toContainText('ORIGINAL YARDAGE PROJECTIONS · NOT A RANKED TOP 4');
+  await expect(originals.getByTestId('nfl-primary-numerical-projection')).toHaveCount(1);
+  await expect(originals.getByTestId('nfl-primary-numerical-projection')).toContainText('No matched model probability');
   await expect(page.getByTestId('existing-nfl-projection')).toHaveCount(0);
   await expect(page.getByTestId('existing-nfl-expanded')).toHaveCount(0);
   await expect(page.getByTestId('existing-nfl-slate')).toContainText('PHI vs JAX');
