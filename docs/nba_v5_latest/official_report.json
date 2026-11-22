@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_05_15PM.pdf",
-  "published_at_utc": "2026-11-22T22:15:00+00:00",
-  "captured_at_utc": "2026-11-22T22:25:30.503682+00:00",
-  "source_sha256": "c8cf1649373660e3cfae792e17751f8e9ad20d24fdee5019c5769ffb8e986107",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_30PM.pdf",
+  "published_at_utc": "2026-11-22T23:30:00+00:00",
+  "captured_at_utc": "2026-11-22T23:35:37.228118+00:00",
+  "source_sha256": "76cbef6343b4f57d98c4960a5f38e0ef96c32a0310637bce42653205f6ec9f4b",
   "reports": [
     {
       "matchup": "DET@ATL",
@@ -169,6 +169,14 @@
     {
       "matchup": "OKC@MIA",
       "team_abbr": "OKC",
+      "player": "Mara, Aday",
+      "normalized_player": "aday mara",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Shin Contusion"
+    },
+    {
+      "matchup": "OKC@MIA",
+      "team_abbr": "OKC",
       "player": "Sorber, Thomas",
       "normalized_player": "thomas sorber",
       "status": "OUT",
@@ -251,7 +259,7 @@
       "team_abbr": "DAL",
       "player": "Clayton Jr., Walter",
       "normalized_player": "walter clayton",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Left Patellar Tendinitis"
     },
     {
@@ -291,7 +299,7 @@
       "team_abbr": "DAL",
       "player": "Washington, P.J.",
       "normalized_player": "p j washington",
-      "status": "DOUBTFUL",
+      "status": "OUT",
       "reason": "Injury/Illness - Illness"
     },
     {
@@ -475,7 +483,7 @@
       "team_abbr": "WAS",
       "player": "Ayton, Deandre",
       "normalized_player": "deandre ayton",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Illness"
     },
     {
@@ -491,7 +499,7 @@
       "team_abbr": "WAS",
       "player": "Carrington, Bub",
       "normalized_player": "bub carrington",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Illness"
     },
     {
@@ -507,7 +515,7 @@
       "team_abbr": "WAS",
       "player": "Okpara, Felix",
       "normalized_player": "felix okpara",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "G League - Two-Way"
     },
     {
@@ -879,6 +887,46 @@
       "reason": "Injury/Illness - Right Hamstring Strain"
     },
     {
+      "matchup": "BKN@MIN",
+      "team_abbr": "MIN",
+      "player": "Beringer, Joan",
+      "normalized_player": "joan beringer",
+      "status": "AVAILABLE",
+      "reason": "Injury/Illness - Face Mask"
+    },
+    {
+      "matchup": "BKN@MIN",
+      "team_abbr": "MIN",
+      "player": "Clark, Jaylen",
+      "normalized_player": "jaylen clark",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Hamstring Strain"
+    },
+    {
+      "matchup": "BKN@MIN",
+      "team_abbr": "MIN",
+      "player": "DiVincenzo, Donte",
+      "normalized_player": "donte divincenzo",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "BKN@MIN",
+      "team_abbr": "MIN",
+      "player": "Edwards, Anthony",
+      "normalized_player": "anthony edwards",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "BKN@MIN",
+      "team_abbr": "MIN",
+      "player": "Zikarsky, Rocco",
+      "normalized_player": "rocco zikarsky",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
       "matchup": "MIL@TOR",
       "team_abbr": "MIL",
       "player": "Dieng, Ousmane",
@@ -984,6 +1032,22 @@
     },
     {
       "matchup": "PHX@NOP",
+      "team_abbr": "PHX",
+      "player": "Dunn, Ryan",
+      "normalized_player": "ryan dunn",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Right Quad Soreness"
+    },
+    {
+      "matchup": "PHX@NOP",
+      "team_abbr": "PHX",
+      "player": "Williams, Mark",
+      "normalized_player": "mark williams",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Shoulder Surgery"
+    },
+    {
+      "matchup": "PHX@NOP",
       "team_abbr": "NOP",
       "player": "Dia, Malik",
       "normalized_player": "malik dia",
@@ -1056,6 +1120,38 @@
     },
     {
       "matchup": "LAC@HOU",
+      "team_abbr": "LAC",
+      "player": "Beal, Bradley",
+      "normalized_player": "bradley beal",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "LAC@HOU",
+      "team_abbr": "LAC",
+      "player": "Christie, Cam",
+      "normalized_player": "cam christie",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "LAC@HOU",
+      "team_abbr": "LAC",
+      "player": "Martinelli, Nick",
+      "normalized_player": "nick martinelli",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "LAC@HOU",
+      "team_abbr": "LAC",
+      "player": "Miller, Jordan",
+      "normalized_player": "jordan miller",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "LAC@HOU",
       "team_abbr": "HOU",
       "player": "Copeland, Quadir",
       "normalized_player": "quadir copeland",
@@ -1069,9 +1165,41 @@
       "normalized_player": "julian phillips",
       "status": "OUT",
       "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "SAS@SAC",
+      "team_abbr": "SAC",
+      "player": "Mogbo, Jonathan",
+      "normalized_player": "jonathan mogbo",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "SAS@SAC",
+      "team_abbr": "SAC",
+      "player": "Pedulla, Sean",
+      "normalized_player": "sean pedulla",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "SAS@SAC",
+      "team_abbr": "SAC",
+      "player": "Raynaud, Maxime",
+      "normalized_player": "maxime raynaud",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Patella"
+    },
+    {
+      "matchup": "SAS@SAC",
+      "team_abbr": "SAC",
+      "player": "Simmons, Ben",
+      "normalized_player": "ben simmons",
+      "status": "OUT",
+      "reason": ""
     }
   ],
-  "rows": 133,
+  "rows": 149,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
