@@ -1,0 +1,94 @@
+name: V5 7:30 read-only exact frozen grade
+on:
+  pull_request:
+    branches: [main]
+    paths: ['.github/workflows/v5_730_frozen_grade.yml']
+permissions:
+  contents: read
+jobs:
+  freeze-compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Read 7:09 frozen V5 and compare current ESPN box
+        run: |
+          git show "bc02183b9966e1132336f8c631a5d43685cdc478:docs/nba_v5_archive/last/401910024.json.gz" > /tmp/pretip_v5.gz
+          python - <<'PY'
+          import gzip,json,urllib.request,math,datetime
+          data=json.load(gzip.open('/tmp/pretip_v5.gz','rt'))
+          games=[g for g in data['games'] if str(g['game_id'])=='401910024']
+          assert len(games)==1
+          g=games[0]
+          print('PINNED_V5', data['generated_at_utc'], g['tipoff_utc'],g['forecast_at_utc'],'rowcount',len(g['rows']))
+          m_order=['points','rebounds','assists','three_pointers_made','steals','blocks']
+          floors={'points':6,'rebounds':3,'assists':2,'three_pointers_made':1,'steals':1,'blocks':1}
+          out=[]
+          for r in g['rows']:
+            market=r.get('market')
+            if market not in m_order or r.get('reported_status')=='OUT' or r.get('p_active',0)<.75:continue
+            mean=r.get('mean')
+            if not isinstance(mean,(int,float)) or not math.isfinite(mean) or mean<0:continue
+            whole=math.floor(mean)+(1 if mean%1>=.6 else 0)
+            if whole<floors[market]:continue
+            cdf=(r.get('cdf_lattice') or {}).get('cdf')
+            if not isinstance(cdf,list) or not cdf:continue
+            prob=1-(cdf[whole-1] if whole-1<len(cdf) else 1)
+            kind='IF_PLAYING'
+            rp=r.get('reach_probabilities') or {}
+            if rp.get('whole_projection')==whole and isinstance(rp.get('probability_including_dnp'),(int,float)):
+              prob=rp['probability_including_dnp'];kind='INCLUDING_DNP'
+            out.append({'player':r['player'],'player_id':str(r['player_id']),'market':market,'mean':round(mean,4),
+              'target':whole,'p':round(prob,4),'prob_type':kind,'p_active':round(r['p_active'],4),'starter':r.get('starter_evidence','UNKNOWN')})
+          out.sort(key=lambda x:(-x['p'],-x['p_active'],x['player'],m_order.index(x['market'])))
+          print('V5_RANKED_TOP20='+json.dumps(out[:20]))
+          print('V5_QUALIFIED_SOURCE_COUNT',len(out))
+          print('V5_CONFIRMED_STARTER_ROWS',sum(z['starter']=='CONFIRMED_STARTER' for z in out))
+          url='https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=401910024'
+          try:
+            req=urllib.request.Request(url,headers={'User-Agent':'Mozilla/5.0 (read-only forecast validation)'})
+            with urllib.request.urlopen(req,timeout=15) as resp:
+              summary=json.loads(resp.read())
+            comp=(summary.get('header',{}).get('competitions') or [{}])[0]
+            status=comp.get('status',{})
+            print('ESPN_GAME_STATUS='+json.dumps(status))
+            box=summary.get('boxscore',{})
+            players={}
+            for team in box.get('players',[]):
+              for section in team.get('statistics',[]):
+                keys=section.get('names',[]) or section.get('labels',[])
+                print('ESPN_STAT_KEYS='+json.dumps(keys))
+                for a in section.get('athletes',[]):
+                  athlete=a.get('athlete',{})
+                  name=athlete.get('displayName') or athlete.get('fullName')
+                  aid=str(athlete.get('id',''))
+                  nums=a.get('stats') or []
+                  row=dict(zip(keys,nums))
+                  clean={}
+                  aliases={'points':['PTS','points'],'rebounds':['REB','rebounds'],'assists':['AST','assists'],
+                    'three_pointers_made':['3PM','3PM-A','3PT','3pt'],'steals':['STL','steals'],'blocks':['BLK','blocks']}
+                  for market,options in aliases.items():
+                    for opt in options:
+                      if opt in row:
+                        try:clean[market]=int(str(row[opt]).split('-')[0]);break
+                        except (ValueError,TypeError):pass
+                  playerrow={'name':name,'id':aid,'stats':clean,'raw':row,'did_not_play':a.get('didNotPlay',False)}
+                  players[aid]=playerrow
+                  if name:players[name.lower()]=playerrow
+            print('ESPN_PLAYERS='+str(len(players)))
+            graded=[]
+            for z in out[:20]:
+              a=players.get(z['player_id']) or players.get(z['player'].lower())
+              actual=(a or {}).get('stats',{}).get(z['market'])
+              graded.append({**z,'actual':actual,'hit':actual>=z['target'] if actual is not None else None})
+            print('V5_GRADED_TOP20='+json.dumps(graded))
+            for n in [4,10]:
+              picks=graded[:n]
+              hit=sum(v['hit']==True for v in picks)
+              nonull=sum(v['hit'] is not None for v in picks)
+              print('V5_TOP'+str(n)+'_SCORE='+str(hit)+'/'+str(nonull)+' (from '+str(n)+' picks)')
+          except Exception as e:
+            print('ESPN_FETCH_ERROR='+repr(e))
+          PY
