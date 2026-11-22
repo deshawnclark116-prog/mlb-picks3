@@ -154,10 +154,24 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
         // The complete archived numerical ledger remains visible.
         let roleDoc:NflRoleSnapshot|null=null;
         try{
-          const roleResponse=await fetch('/api/nfl-role-snapshot?t='+Date.now(),
-            {cache:'no-store',signal:abort.signal});
-          if(roleResponse.ok)roleDoc=await roleResponse.json() as NflRoleSnapshot;
-        }catch{/* Snapshot unavailable: fail closed, never invent role proof. */}
+          const at=Date.now();
+          const roleSources=await Promise.allSettled([
+            '/api/nfl-role-snapshot?t='+at,
+            'https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks2/main/docs/nfl_role_snapshot.json?t='+at
+          ].map(async url=>{
+            const response=await fetch(url,{cache:'no-store',signal:abort.signal});
+            if(!response.ok)throw Error('Role source unavailable');
+            return await response.json() as NflRoleSnapshot;
+          }));
+          const usable=roleSources.filter((x):x is PromiseFulfilledResult<NflRoleSnapshot>=>
+            x.status==='fulfilled').map(x=>x.value)
+            .filter(x=>Date.parse(x.forecast_generated_at_utc)===
+              Date.parse(parsed.generated_at_utc));
+          // Never use a cached earlier forecast's role data for today's
+          // newer predictions. Choose the freshest matching pregame receipt.
+          usable.sort((a,b)=>Date.parse(b.captured_at_utc)-Date.parse(a.captured_at_utc));
+          roleDoc=usable[0]||null;
+        }catch{/* No matching role source => no featured numerical board. */}
         // Grader contains immutable ORIGINAL pregame numerical predictions
         // matched to actuals; never confuse HIGH/MEDIUM with accuracy.
         let gradeDoc:NflNumericGradeReport|null=null;
