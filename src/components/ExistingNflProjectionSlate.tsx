@@ -303,29 +303,37 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
             {qualifiedYardage.map(p=><NflPrecisionTile key={p.team+'|'+p.player_id+'|'+p.market} p={p}/>)}
             </div>
           </div>}
-        {mode==='SYSTEM PICKS'&&qualifiedYardage.length===0&&unrankedForecasts.length>0&&
-          <div data-testid="nfl-unranked-source-preview" className="px-3 pb-3">
+        {mode==='SYSTEM PICKS'&&qualifiedYardage.length===0&&roleScreen.leaders.length>0&&
+          <div data-testid="nfl-role-screened-preview" className="px-3 pb-3">
             <p className="mb-1 text-[11px] font-bold text-[#79FF48]">
-              ORIGINAL YARDAGE PROJECTIONS · NOT A RANKED TOP 4
+              ROLE-SCREENED MODEL PROJECTIONS · {roleScreen.leaders.length}
             </p>
             <p className="mb-2 text-[11px] text-gray-400">
-              V2 has not produced a validated probability for reaching its own
-              projected yards. These are raw model numbers in alphabetical order,
-              not highest-confidence picks.
+              Receiving and rushing models listed by projected yards within each market,
+              not by the probability of achieving them. Every featured player
+              has three observed recent opportunity games; declining roles
+              and verified repeated overpredictions are withheld.
             </p>
-            <div data-testid="nfl-original-model-yardage" className="grid grid-cols-2 gap-2">
-              {unrankedForecasts.slice(0,4).map(p=>
-                <NflNumericalTile key={p.team+'|'+p.player_id+'|'+p.market} p={p}/>)}
+            <div data-testid="nfl-primary-role-projections" className="grid grid-cols-2 gap-2">
+              {roleScreen.leaders.map(({projection,role})=>
+                <NflNumericalTile key={projection.team+'|'+projection.player_id+'|'+projection.market}
+                  p={projection} role={role}/>)}
             </div>
-            {unrankedForecasts.length>4&&
-              <p className="mt-2 text-[10px] text-gray-400">
-                Showing 4 of {unrankedForecasts.length} original forecasts alphabetically.
-                Expand this matchup to review the full numerical board.
-              </p>}
+            <p className="mt-2 text-[10px] text-gray-400">
+              {unrankedForecasts.length} original forecasts in the complete game details,
+              including low-volume players and changing roles. No model-derived hit
+              percentage has been validated.
+            </p>
           </div>}
-        {mode==='SYSTEM PICKS'&&qualifiedYardage.length===0&&unrankedForecasts.length===0&&
-          <p data-testid="nfl-no-probability-ranked-top4" role="status" className="px-3 pb-3 text-[11px] text-amber-200">
-            No numerical player projections or source-matched probability rankings available for this matchup.
+        {mode==='SYSTEM PICKS'&&qualifiedYardage.length===0&&roleScreen.leaders.length===0&&
+          <p data-testid="nfl-no-role-screened-picks" role="status"
+            className="px-3 pb-3 text-[11px] text-amber-200">
+            No role-supported numerical forecasts.
+            {roleScreen.reason==='ROLE_EVIDENCE_MISSING_OR_MISMATCHED'
+             ?' The matching pregame role snapshot is unavailable.'
+             :' No player passed the documented opportunity and previous-miss checks.'}
+            {' '}Open this game to inspect {unrankedForecasts.length} unchanged raw projections.
+            Small backup forecasts are not high-confidence picks.
           </p>}
         {opened&&<div id={`existing-game-${g.id}`} data-testid="existing-nfl-expanded" className="space-y-3 border-t border-[#292929] p-3">
           <p className="text-[11px] text-gray-400">Original weekly numerical projections are separate from OVER-only scoring-event research. Context yardage probabilities are unavailable, not inferred from sportsbooks. {mode==='BETTABLE NOW'?'No verified book lines supplied.':''}</p>
