@@ -68,8 +68,8 @@ test('360x800 SYSTEM PICKS layout, collapsed games/details, Today jump, audit un
   await expect(page.getByTestId('existing-nfl-slate')).toContainText('CHI vs NYJ');
   await expect(page.getByTestId('nfl-weekly-generation-receipt')).toContainText('Forecast generated: Oct 3, 7:00 PM EDT');
   await expect(page.getByTestId('nfl-frozen-separate')).toContainText('FROZEN RESEARCH');
-  await expect(page.getByTestId('existing-nfl-preview').first()).toContainText('Early Runner');
-  await expect(page.getByTestId('existing-nfl-preview').first()).toContainText('68');
+  await expect(page.getByTestId('existing-nfl-preview').first()).toContainText('No probability-qualified yardage Top 4');
+  await expect(page.getByTestId('existing-nfl-preview').first()).toContainText('1 original model forecasts available to review');
   // Codex's per-game 1080x1350 share-image workflow is preserved for
   // the original new-engine game and now also available for missing games.
   await expect(page.getByRole('button',{name:'Create weekly model share card for PHI vs JAX'})).toBeVisible();
