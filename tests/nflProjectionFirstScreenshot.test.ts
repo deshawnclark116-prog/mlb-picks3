@@ -65,7 +65,7 @@ test('No fabricated numerical hit percentage, no role-changed ARI/PHI receiver i
     y('Starter affected ARI RB','ARI','KC','rushing_yards',53,'MEDIUM',9)
   ];
   assert.deepEqual(nflPrimaryNumericalForecasts(choices).map(p=>p.player),[
-    'Unaffected Chiefs WR','Unaffected Steelers WR','Starter affected ARI RB'
+    'Unaffected Chiefs WR','Starter affected ARI RB','Unaffected Steelers WR'
   ]);
   assert.throws(()=>nflPrimaryNumericalForecasts(choices,0),/slots/);
 });
