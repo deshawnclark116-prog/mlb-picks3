@@ -1,0 +1,24 @@
+name: NBA November 21 7:30 independent model grade
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'research/nba_compare_730_originals.py'
+      - '.github/workflows/nba_compare_730_versions.yml'
+permissions:
+  contents: read
+jobs:
+  no-edit-frozen-forecast-grade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Pin immutable 7:09 PM Eastern forecasts without any write to production files
+        run: |
+          git show "bc02183b9966e1132336f8c631a5d43685cdc478:docs/nba_v3_latest/latest.json" > /tmp/pretip_v3.json
+          git show "bc02183b9966e1132336f8c631a5d43685cdc478:docs/nba_v4_latest/latest.json" > /tmp/pretip_v4.json
+          git show "bc02183b9966e1132336f8c631a5d43685cdc478:docs/nba_v5_archive/last/401910024.json.gz" > /tmp/pretip_v5.json.gz
+          git show "945cdb91e7ba163c8fd5a64b5f9802b21960e550:docs/nba_independent_live/latest.json" > /tmp/pretip_independent.json
+          python research/nba_compare_730_originals.py
