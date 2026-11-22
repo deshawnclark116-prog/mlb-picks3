@@ -4,7 +4,7 @@ import React from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
 import {parseExistingNfl,type ExistingYardProjection,type ExistingYardMarket} from '../src/nfl/existing.ts';
 import {rankNflShowcase} from '../src/nfl/weeklyShowcase.ts';
-import {nflPrimaryNumericalForecasts} from '../src/nfl/primaryNumerical.ts';
+import {nflPrimaryProbabilityPicks,nflUnrankedNumericalForecasts} from '../src/nfl/primaryNumerical.ts';
 import {NflNumericalTile} from '../src/components/ExistingNflProjectionSlate.tsx';
 
 const KICK='2026-11-22T18:00:00Z';
@@ -43,15 +43,18 @@ test('Nov 22 screenshot regression: 36.8% TD research is NOT the primary model p
   assert.equal(oldRanking.length,4);
   assert(oldRanking.every(p=>p.market==='anytime_touchdowns'));
   assert.equal(oldRanking[0].player,'Emmett Johnson');
-  const numerical=nflPrimaryNumericalForecasts(game.projections);
+  // Real source V2 probabilities are missing, so there is NO Top4 even
+  // though old stability tiers would have ranked Xavier Worthy third.
+  const ranked=nflPrimaryProbabilityPicks(game);
+  assert.deepEqual(ranked,[]);
+  const numerical=nflUnrankedNumericalForecasts(game.projections);
   assert.deepEqual(numerical.map(p=>p.player),
-   ['Rashee Rice','Josh Downs','Xavier Worthy','Tyler Allgeier']);
-  assert(!numerical.some(p=>p.player==='Devin Duvernay'||
-    p.player==='Simi Fehoko'||p.player==='Justin Watson'));
-  const markup=renderToStaticMarkup(React.createElement(NflNumericalTile,{p:numerical[0]}));
+   ['Josh Downs','Justin Watson','Rashee Rice','Tyler Allgeier','Xavier Worthy']);
+  assert(!numerical.some(p=>p.player==='Devin Duvernay'||p.player==='Simi Fehoko'));
+  const markup=renderToStaticMarkup(React.createElement(NflNumericalTile,{p:numerical.find(p=>p.player==='Rashee Rice')!}));
   assert.match(markup,/Rashee Rice/);
   assert.match(markup,/60/);
-  assert.match(markup,/No matched probability/);
+  assert.match(markup,/No matched model probability/);
   assert.doesNotMatch(markup,/36.8%|SCORE 1\+ TD|60% probability/);
   assert.equal(JSON.stringify(doc),original,'all frozen original predictions unchanged');
 });
@@ -64,8 +67,13 @@ test('No fabricated numerical hit percentage, no role-changed ARI/PHI receiver i
     y('Tiny HIGH','KC','ARI','receiving_yards',4,'HIGH',18),
     y('Starter affected ARI RB','ARI','KC','rushing_yards',53,'MEDIUM',9)
   ];
-  assert.deepEqual(nflPrimaryNumericalForecasts(choices).map(p=>p.player),[
-    'Unaffected Chiefs WR','Starter affected ARI RB','Unaffected Steelers WR'
+  // All source estimates remain independently inspectable, including the
+  // very small projection. No HIGH/LOW grade decides their Top4 status.
+  assert.deepEqual(nflUnrankedNumericalForecasts(choices).map(p=>p.player),[
+    'Starter affected ARI RB','Tiny HIGH','Unaffected Chiefs WR','Unaffected Steelers WR'
   ]);
-  assert.throws(()=>nflPrimaryNumericalForecasts(choices,0),/slots/);
+  const game={id:'test',teams:['ARI','KC'] as [string,string],
+    kickoff_utc:KICK,projections:choices,events:[]};
+  assert.deepEqual(nflPrimaryProbabilityPicks(game),[]);
+  assert.throws(()=>nflPrimaryProbabilityPicks(game,0),/slots/);
 });

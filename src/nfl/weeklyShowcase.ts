@@ -9,6 +9,7 @@ export type NflShowcasePick={
  market:NflShowcaseMarket;probability:number;model_source:string;
  targetYards?:number;meanYards?:number;medianYards?:number;
  wilsonLower95?:number;simulationN?:number;
+ projectionProbabilityEvent?:'P_YARDS_AT_LEAST_ROUNDED_PUBLISHED_MEAN';
 };
 /**
  * Strict, source-verified Week 11 QB-context quarantine. These teams have
