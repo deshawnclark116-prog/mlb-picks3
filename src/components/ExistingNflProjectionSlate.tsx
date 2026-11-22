@@ -158,12 +158,22 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
             {cache:'no-store',signal:abort.signal});
           if(roleResponse.ok)roleDoc=await roleResponse.json() as NflRoleSnapshot;
         }catch{/* Snapshot unavailable: fail closed, never invent role proof. */}
+        // Grader contains immutable ORIGINAL pregame numerical predictions
+        // matched to actuals; never confuse HIGH/MEDIUM with accuracy.
+        let gradeDoc:NflNumericGradeReport|null=null;
+        try{
+          const gradedResponse=await fetch(
+            'https://raw.githubusercontent.com/deshawnclark116-prog/mlb-picks2/main/docs/nfl_numeric_forward_grade.json?t='+Date.now(),
+            {cache:'no-store',signal:abort.signal});
+          if(gradedResponse.ok)gradeDoc=await gradedResponse.json() as NflNumericGradeReport;
+        }catch{/* Unavailable source => no fabricated miss history. */}
         if(!cancelled){
           // A temporary CDN cache race must never roll a newer validated
           // weekly forecast back to yesterday's version.
           setSlate(previous=>previous&&Date.parse(previous.generated_at_utc)>Date.parse(parsed.generated_at_utc)?previous:parsed);
           setOrigin(source);
           setRole(roleDoc);
+          setGrade(gradeDoc);
           setError(null);
         }
       }catch(e){
@@ -227,6 +237,8 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
       // and cannot enter Top 4 just because an old stability grade is HIGH.
       // Show all such numbers separately, alphabetically, as unranked.
       const unrankedForecasts=nflUnrankedNumericalForecasts(g.shown);
+      const roleScreen=roleScreenedNflNumerical(
+        eligibleGame,slate!.generated_at_utc,role,grade,Date.now(),4);
       const scoringOnly=(p:NflShowcasePick)=>p.targetYards==null;
       const allQualified=originalForecastBeforeKickoff?rankNflShowcase(eligibleGame,'','ALL',200):[];
       const top=allQualified.slice(0,10);
@@ -259,8 +271,10 @@ export default function ExistingNflProjectionSlate({view,search,family,visible,h
                   `${wholeStatProjection(preview.meanYards!)} ${label(preview.market)}`:
                   label(preview.market)}</span>
                 <span className="text-[#79FF48]"> · {preview.targetYards!=null?`${preview.targetYards}+ yards`:'OVER 0.5'} at {chance(preview.probability)} (uncalibrated)</span>
+              </p>:roleScreen.leaders.length>0?<p data-testid="existing-nfl-preview" className="mt-2 text-[11px] text-gray-300">
+                ROLE-SCREENED: {roleScreen.leaders.length} numerical forecast{roleScreen.leaders.length===1?'':'s'} · not probability-ranked
               </p>:unrankedForecasts.length>0?<p data-testid="existing-nfl-preview" role="status" className="mt-2 text-[11px] text-amber-200">
-                No probability-qualified yardage Top 4 · {unrankedForecasts.length} original model forecasts available to review
+                No role-supported featured projections · {unrankedForecasts.length} original estimates in game details
               </p>:<p role="status" className="mt-2 text-[11px] text-gray-500">
                 No original yardage projection for this matchup
               </p>}
