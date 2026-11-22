@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_01_30PM.pdf",
-  "published_at_utc": "2026-11-22T18:30:00+00:00",
-  "captured_at_utc": "2026-11-22T18:37:05.714030+00:00",
-  "source_sha256": "7542c808d9e57ddea73335797a223b0e694aa917cb95a02eb90d8ccfffaaf1b7",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_02_30PM.pdf",
+  "published_at_utc": "2026-11-22T19:30:00+00:00",
+  "captured_at_utc": "2026-11-22T19:47:16.880332+00:00",
+  "source_sha256": "2daca9681bdcc1efe60ece9ca5cca1cd3f20db8fa0f1938b9855fbd24b5781bc",
   "reports": [
     {
       "matchup": "DET@ATL",
@@ -27,7 +27,7 @@
       "team_abbr": "DET",
       "player": "Holland II, Ronald",
       "normalized_player": "ronald holland",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -35,7 +35,7 @@
       "team_abbr": "DET",
       "player": "Jones, Isaac",
       "normalized_player": "isaac jones",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "G League - Two-Way"
     },
     {
@@ -91,7 +91,7 @@
       "team_abbr": "ATL",
       "player": "Flemings, Kingston",
       "normalized_player": "kingston flemings",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Lumbar Strain"
     },
     {
@@ -240,6 +240,62 @@
     },
     {
       "matchup": "DAL@UTA",
+      "team_abbr": "DAL",
+      "player": "Biberovic, Tarik",
+      "normalized_player": "tarik biberovic",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Heel Bursitis"
+    },
+    {
+      "matchup": "DAL@UTA",
+      "team_abbr": "DAL",
+      "player": "Clayton Jr., Walter",
+      "normalized_player": "walter clayton",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Left Patellar Tendinitis"
+    },
+    {
+      "matchup": "DAL@UTA",
+      "team_abbr": "DAL",
+      "player": "de Larrea, Sergio",
+      "normalized_player": "sergio de larrea",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Knee Sprain"
+    },
+    {
+      "matchup": "DAL@UTA",
+      "team_abbr": "DAL",
+      "player": "Lawal, Tobi",
+      "normalized_player": "tobi lawal",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Groin Strain"
+    },
+    {
+      "matchup": "DAL@UTA",
+      "team_abbr": "DAL",
+      "player": "Lively II, Dereck",
+      "normalized_player": "dereck lively",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Foot Surgery"
+    },
+    {
+      "matchup": "DAL@UTA",
+      "team_abbr": "DAL",
+      "player": "Martin, Caleb",
+      "normalized_player": "caleb martin",
+      "status": "AVAILABLE",
+      "reason": "Injury/Illness - Right Thumb Splint"
+    },
+    {
+      "matchup": "DAL@UTA",
+      "team_abbr": "DAL",
+      "player": "Washington, P.J.",
+      "normalized_player": "p j washington",
+      "status": "DOUBTFUL",
+      "reason": "Injury/Illness - Illness"
+    },
+    {
+      "matchup": "DAL@UTA",
       "team_abbr": "UTA",
       "player": "Aidoo, Jonas",
       "normalized_player": "jonas aidoo",
@@ -339,7 +395,7 @@
       "team_abbr": "CHI",
       "player": "Powell, Norman",
       "normalized_player": "norman powell",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Right Hamstring Strain"
     },
     {
@@ -404,7 +460,7 @@
       "player": "Nelson, Izaiyah",
       "normalized_player": "izaiyah nelson",
       "status": "OUT",
-      "reason": "Injury/Illness - Left Ankle injury"
+      "reason": ""
     },
     {
       "matchup": "ORL@WAS",
@@ -575,7 +631,7 @@
       "reason": "Injury/Illness - Left Hamstring Strain"
     }
   ],
-  "rows": 71,
+  "rows": 78,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
