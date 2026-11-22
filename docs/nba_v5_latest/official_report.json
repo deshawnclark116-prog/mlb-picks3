@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-21_07_00PM.pdf",
-  "published_at_utc": "2026-11-22T00:00:00+00:00",
-  "captured_at_utc": "2026-11-22T00:16:25.258771+00:00",
-  "source_sha256": "8563c31761a6201597ddaae14a0e2d6cf6cad3c786bc47ba15ad222cf4bf51d9",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-21_07_30PM.pdf",
+  "published_at_utc": "2026-11-22T00:30:00+00:00",
+  "captured_at_utc": "2026-11-22T00:32:29.432811+00:00",
+  "source_sha256": "575e58f0a79e8fed3217ac8e66ee9fa9bf644893d6e54b2aeec029e108f594fb",
   "reports": [
     {
       "matchup": "MIL@PHI",
@@ -416,6 +416,14 @@
     },
     {
       "matchup": "NOP@SAS",
+      "team_abbr": "NOP",
+      "player": "Williamson, Zion",
+      "normalized_player": "zion williamson",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Thigh Contusion"
+    },
+    {
+      "matchup": "NOP@SAS",
       "team_abbr": "SAS",
       "player": "Brown, Maliq",
       "normalized_player": "maliq brown",
@@ -524,7 +532,7 @@
       "player": "Raynaud, Maxime",
       "normalized_player": "maxime raynaud",
       "status": "OUT",
-      "reason": ""
+      "reason": "Injury/Illness - Right Patella"
     },
     {
       "matchup": "BOS@SAC",
@@ -1055,7 +1063,7 @@
       "reason": "Injury/Illness - Left Hamstring Strain"
     }
   ],
-  "rows": 131,
+  "rows": 132,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
