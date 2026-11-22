@@ -90,7 +90,7 @@ test('360px NFL UI shows NBA-style highest meaningful targets, original means an
  await page.getByRole('button',{name:'CLOSE'}).click();
  await page.getByTestId('existing-nfl-toggle').first().click();
  const shortlist=page.getByTestId('nfl-top10-simulation-research');
- await expect(shortlist).toContainText('TOP 3 MODEL PROJECTIONS');
+ await expect(shortlist).toContainText('SEPARATE OVER-ONLY EVENT RESEARCH');
  const cards=shortlist.getByTestId('nfl-precision-pick');
  await expect(cards).toHaveCount(3);
  await expect(cards.first()).toContainText('Unverified');
