@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_06_45PM.pdf",
-  "published_at_utc": "2026-11-22T23:45:00+00:00",
-  "captured_at_utc": "2026-11-22T23:51:55.991576+00:00",
-  "source_sha256": "14caeb75b526566bd6fc694637b3fd245822cb333bbdd2e115a5ae3a89a9023a",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_07_00PM.pdf",
+  "published_at_utc": "2026-11-23T00:00:00+00:00",
+  "captured_at_utc": "2026-11-23T00:08:07.102120+00:00",
+  "source_sha256": "ae28e60832006cd8b642a09d414fc003b1d7597382e3c5f15d58a816dee07b95",
   "reports": [
     {
       "matchup": "DET@ATL",
@@ -589,6 +589,14 @@
       "normalized_player": "jordan clarkson",
       "status": "OUT",
       "reason": "Injury/Illness - Right Plantar Fasciitis"
+    },
+    {
+      "matchup": "IND@NYK",
+      "team_abbr": "NYK",
+      "player": "McBride, Miles",
+      "normalized_player": "miles mcbride",
+      "status": "OUT",
+      "reason": ""
     },
     {
       "matchup": "IND@NYK",
@@ -1188,7 +1196,7 @@
       "player": "Raynaud, Maxime",
       "normalized_player": "maxime raynaud",
       "status": "OUT",
-      "reason": "Injury/Illness - Right Patella"
+      "reason": ""
     },
     {
       "matchup": "SAS@SAC",
@@ -1199,7 +1207,7 @@
       "reason": ""
     }
   ],
-  "rows": 149,
+  "rows": 150,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
