@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_07_45PM.pdf",
-  "published_at_utc": "2026-11-23T00:45:00+00:00",
-  "captured_at_utc": "2026-11-23T00:49:32.209607+00:00",
-  "source_sha256": "f071d5abd2c5a4d42b9dde44b8871bf57f87366ded6ab71fdaf7b231747f1807",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_08_00PM.pdf",
+  "published_at_utc": "2026-11-23T01:00:00+00:00",
+  "captured_at_utc": "2026-11-23T01:12:56.850168+00:00",
+  "source_sha256": "dba05569a52fea6169178e8b2d9eb12665c5db8c93134acb487d45ea0968e74f",
   "reports": [
     {
       "matchup": "DET@ATL",
