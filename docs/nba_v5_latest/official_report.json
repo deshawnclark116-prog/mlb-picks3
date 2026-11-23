@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-23_05_30PM.pdf",
-  "published_at_utc": "2026-11-23T22:30:00+00:00",
-  "captured_at_utc": "2026-11-23T22:34:11.633977+00:00",
-  "source_sha256": "396985322e31b5bc4fb6ae6a58574a74078b82fb7e909129ce34f06195f42eae",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-23_05_45PM.pdf",
+  "published_at_utc": "2026-11-23T22:45:00+00:00",
+  "captured_at_utc": "2026-11-23T22:53:03.118760+00:00",
+  "source_sha256": "be2ea11bc3f42611166f3cdce7f7af2bc39d7baf13e6335326ef3c68b4eb4833",
   "reports": [
     {
       "matchup": "MEM@CHA",
@@ -155,7 +155,7 @@
       "team_abbr": "PHI",
       "player": "Embiid, Joel",
       "normalized_player": "joel embiid",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Illness"
     },
     {
