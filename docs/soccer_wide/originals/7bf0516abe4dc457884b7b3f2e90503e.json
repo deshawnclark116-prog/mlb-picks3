@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "7bf0516abe4dc457884b7b3f2e90503e",
+  "captured_at_utc": "2026-11-23T12:41:03.457Z",
+  "catalog_generated_at_utc": "2026-11-23T06:42:12Z",
+  "original_code_sha": "da2d523e61b2a7122d71ae3746028600c54905f7",
+  "source_results_sha256": "c2325c377f58f0fa939d02e3ea580f0a04e18db213bf6b0ad69b42e65aa3077e",
+  "source_fixtures_sha256": "731893d2b2520c8bf23299aae24b67fe60409905595fadd806125c1086b44066",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "BRA_1_serie-a",
+    "season": "2026-27",
+    "date": "2026-11-25",
+    "home": "Atlético-MG",
+    "away": "Corinthians",
+    "expectedHomeGoals": 1.5522,
+    "expectedAwayGoals": 1.0469,
+    "baselineHomeGoals": 1.5233,
+    "baselineAwayGoals": 1.115,
+    "probabilities": {
+      "home": 0.4901,
+      "draw": 0.254,
+      "away": 0.2559,
+      "over25": 0.4814,
+      "btts": 0.5115
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 18.5119,
+    "awayWeightedMatches": 18.0652,
+    "source": "open-matchday/fixture/BRA_1_serie-a",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

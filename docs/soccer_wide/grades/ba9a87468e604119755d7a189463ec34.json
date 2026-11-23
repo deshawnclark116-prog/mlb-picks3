@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "ba9a87468e604119755d7a189463ec34",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "ESP_2_segunda-division",
+  "date": "2026-11-22",
+  "match_result_source": "open-matchday/espn/ESP_2_segunda-division",
+  "final_home_goals": 3,
+  "final_away_goals": 0,
+  "model_goal_mae": 1.32855,
+  "baseline_goal_mae": 1.3023500000000001,
+  "model_three_way_brier": 0.44799174,
+  "baseline_three_way_brier": 0.4305375199999999
+}

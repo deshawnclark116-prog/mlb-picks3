@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "0f039415a4c1a176ac2e5cbd9f865fa2",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "MEX_2_liga-expansion",
+  "date": "2026-11-22",
+  "match_result_source": "open-matchday/espn/MEX_2_liga-expansion",
+  "final_home_goals": 4,
+  "final_away_goals": 1,
+  "model_goal_mae": 1.3823500000000002,
+  "baseline_goal_mae": 1.2365,
+  "model_three_way_brier": 0.48596033000000005,
+  "baseline_three_way_brier": 0.37896974
+}

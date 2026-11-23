@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "d896b9da06323df2912d8a1c5f5e8cf7",
+  "captured_at_utc": "2026-11-23T12:41:03.457Z",
+  "catalog_generated_at_utc": "2026-11-23T06:42:12Z",
+  "original_code_sha": "da2d523e61b2a7122d71ae3746028600c54905f7",
+  "source_results_sha256": "ff269c8d7fc8a7ec7435e719f58e0eb46e1b899de62975f6e8a5070e90ad93c1",
+  "source_fixtures_sha256": "f57d2a2b68aaeb7ee131f06a71a0a64f140ef51e80c73097575cfa0cb1224464",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "UKR_1_premier-league",
+    "season": "2026-27",
+    "date": "2026-11-25",
+    "home": "Kryvbas",
+    "away": "FC Kharkiv",
+    "expectedHomeGoals": 1.225,
+    "expectedAwayGoals": 1.3644,
+    "baselineHomeGoals": 1.3845,
+    "baselineAwayGoals": 1.0629,
+    "probabilities": {
+      "home": 0.3354,
+      "draw": 0.2638,
+      "away": 0.4008,
+      "over25": 0.4789,
+      "btts": 0.5258
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 9.2336,
+    "awayWeightedMatches": 7.8694,
+    "source": "open-matchday/fixture/UKR_1_premier-league",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

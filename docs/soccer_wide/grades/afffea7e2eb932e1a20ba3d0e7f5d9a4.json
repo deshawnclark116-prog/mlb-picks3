@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "afffea7e2eb932e1a20ba3d0e7f5d9a4",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "USA_1_mls",
+  "date": "2026-11-22",
+  "match_result_source": "open-matchday/espn/USA_1_mls",
+  "final_home_goals": 0,
+  "final_away_goals": 1,
+  "model_goal_mae": 1.2369999999999999,
+  "baseline_goal_mae": 1.1038000000000001,
+  "model_three_way_brier": 1.00253994,
+  "baseline_three_way_brier": 0.75894776
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "5b9237b7f86343f4b49e4d81b0ea7a0c",
+  "captured_at_utc": "2026-11-23T12:41:03.457Z",
+  "catalog_generated_at_utc": "2026-11-23T06:42:12Z",
+  "original_code_sha": "da2d523e61b2a7122d71ae3746028600c54905f7",
+  "source_results_sha256": "0b470f5b80bad869f325cee6f2530b45aec653ab7b134b2c537f4cadf37eb959",
+  "source_fixtures_sha256": "2a24790c8fb4389515c8a221b6e1d4fab4d6e5aa8dea569d70f349a00459afcd",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ENG_5_national-league",
+    "season": "2026-27",
+    "date": "2026-11-25",
+    "home": "Boreham Wood",
+    "away": "Aldershot Town",
+    "expectedHomeGoals": 1.9631,
+    "expectedAwayGoals": 1.2615,
+    "baselineHomeGoals": 1.7262,
+    "baselineAwayGoals": 1.397,
+    "probabilities": {
+      "home": 0.5372,
+      "draw": 0.2189,
+      "away": 0.2439,
+      "over25": 0.6252,
+      "btts": 0.6161
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 11.9804,
+    "awayWeightedMatches": 13.5424,
+    "source": "open-matchday/fixture/ENG_5_national-league",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

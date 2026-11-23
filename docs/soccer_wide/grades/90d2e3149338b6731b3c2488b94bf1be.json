@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "90d2e3149338b6731b3c2488b94bf1be",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "ROU_1_liga-1",
+  "date": "2026-11-22",
+  "match_result_source": "open-matchday/soccerway/ROU_1_liga-1",
+  "final_home_goals": 2,
+  "final_away_goals": 6,
+  "model_goal_mae": 2.88455,
+  "baseline_goal_mae": 2.6971,
+  "model_three_way_brier": 0.7376814599999999,
+  "baseline_three_way_brier": 0.8413915500000001
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "32f8c6b4c7581a6c0598dc8f9b913484",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "SWE_1_allsvenskan",
+  "date": "2026-11-22",
+  "match_result_source": "open-matchday/soccerway/SWE_1_allsvenskan",
+  "final_home_goals": 2,
+  "final_away_goals": 1,
+  "model_goal_mae": 0.2893,
+  "baseline_goal_mae": 0.43000000000000005,
+  "model_three_way_brier": 0.4209258500000001,
+  "baseline_three_way_brier": 0.54213882
+}

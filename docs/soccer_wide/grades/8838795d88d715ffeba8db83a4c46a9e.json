@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "8838795d88d715ffeba8db83a4c46a9e",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "NED_1_eredivisie",
+  "date": "2026-11-22",
+  "match_result_source": "open-matchday/fixturedl/NED_1_eredivisie",
+  "final_home_goals": 1,
+  "final_away_goals": 5,
+  "model_goal_mae": 1.8753000000000002,
+  "baseline_goal_mae": 1.9586999999999999,
+  "model_three_way_brier": 0.47520533,
+  "baseline_three_way_brier": 0.5371723399999999
+}

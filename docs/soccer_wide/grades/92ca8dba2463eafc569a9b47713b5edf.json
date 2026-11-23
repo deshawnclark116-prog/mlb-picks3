@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "92ca8dba2463eafc569a9b47713b5edf",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "POL_2_division-1",
+  "date": "2026-11-22",
+  "match_result_source": "open-matchday/soccerway/POL_2_division-1",
+  "final_home_goals": 4,
+  "final_away_goals": 0,
+  "model_goal_mae": 1.8776,
+  "baseline_goal_mae": 1.8058999999999998,
+  "model_three_way_brier": 0.49037678000000007,
+  "baseline_three_way_brier": 0.43467854000000006
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "427bb09ad4601d733fad5b3cf20824c5",
+  "captured_at_utc": "2026-11-23T12:41:03.457Z",
+  "catalog_generated_at_utc": "2026-11-23T06:42:12Z",
+  "original_code_sha": "da2d523e61b2a7122d71ae3746028600c54905f7",
+  "source_results_sha256": "5d146af8ee2cda9c78bda348a33ad10e0654b12fb6ad80b8f32efa381c9c85e9",
+  "source_fixtures_sha256": "83046fb8d5f34edf4c3a3f11749b16422a0c90ce0e6a34b8c987a3e73a612fdd",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ITA_2_serie-b",
+    "season": "2026-27",
+    "date": "2026-11-25",
+    "home": "Cremonese",
+    "away": "US Avellino",
+    "expectedHomeGoals": 1.2906,
+    "expectedAwayGoals": 1.133,
+    "baselineHomeGoals": 1.3855,
+    "baselineAwayGoals": 1.2175,
+    "probabilities": {
+      "home": 0.401,
+      "draw": 0.274,
+      "away": 0.325,
+      "over25": 0.4364,
+      "btts": 0.4914
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 7.6819,
+    "awayWeightedMatches": 8.1168,
+    "source": "open-matchday/fixture/ITA_2_serie-b",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "906d5bbe5212f2a599ebb99b01fd06e6",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "ARG_1_liga-profesional",
+  "date": "2026-11-22",
+  "match_result_source": "open-matchday/espn/ARG_1_liga-profesional",
+  "final_home_goals": 3,
+  "final_away_goals": 1,
+  "model_goal_mae": 0.93455,
+  "baseline_goal_mae": 0.8943500000000001,
+  "model_three_way_brier": 0.56189099,
+  "baseline_three_way_brier": 0.5212305899999999
+}

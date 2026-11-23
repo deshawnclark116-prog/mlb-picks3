@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "85c931459427d790206b3d6cccd69aa4",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "CRO_1_hnl",
+  "date": "2026-11-22",
+  "match_result_source": "open-matchday/soccerway/CRO_1_hnl",
+  "final_home_goals": 2,
+  "final_away_goals": 0,
+  "model_goal_mae": 0.6264,
+  "baseline_goal_mae": 0.8329,
+  "model_three_way_brier": 0.30591584000000005,
+  "baseline_three_way_brier": 0.45115154
+}

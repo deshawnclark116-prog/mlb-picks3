@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "1c13d9daa8e633b5a2359fd01198cf2b",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "ENG_1_premier-league",
+  "date": "2026-11-22",
+  "match_result_source": "open-matchday/fixturedl/ENG_1_premier-league",
+  "final_home_goals": 2,
+  "final_away_goals": 0,
+  "model_goal_mae": 0.9350499999999999,
+  "baseline_goal_mae": 0.8340500000000001,
+  "model_three_way_brier": 0.5403612200000001,
+  "baseline_three_way_brier": 0.4561986899999999
+}

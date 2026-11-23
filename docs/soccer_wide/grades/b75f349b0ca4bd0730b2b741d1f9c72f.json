@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "b75f349b0ca4bd0730b2b741d1f9c72f",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "SUI_1_super-league",
+  "date": "2026-11-22",
+  "match_result_source": "open-matchday/soccerway/SUI_1_super-league",
+  "final_home_goals": 2,
+  "final_away_goals": 2,
+  "model_goal_mae": 0.21650000000000003,
+  "baseline_goal_mae": 0.23730000000000007,
+  "model_three_way_brier": 0.92084441,
+  "baseline_three_way_brier": 0.91207904
+}

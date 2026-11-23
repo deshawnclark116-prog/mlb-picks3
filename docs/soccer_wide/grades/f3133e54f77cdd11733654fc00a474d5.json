@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "f3133e54f77cdd11733654fc00a474d5",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "BRA_2_serie-b",
+  "date": "2026-11-22",
+  "match_result_source": "open-matchday/espn/BRA_2_serie-b",
+  "final_home_goals": 1,
+  "final_away_goals": 0,
+  "model_goal_mae": 0.5095,
+  "baseline_goal_mae": 0.6909,
+  "model_three_way_brier": 0.52142558,
+  "baseline_three_way_brier": 0.4604092800000001
+}

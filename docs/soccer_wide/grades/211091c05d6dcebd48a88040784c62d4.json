@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "211091c05d6dcebd48a88040784c62d4",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "ARG_2_primera-nacional",
+  "date": "2026-11-22",
+  "match_result_source": "open-matchday/espn/ARG_2_primera-nacional",
+  "final_home_goals": 1,
+  "final_away_goals": 0,
+  "model_goal_mae": 0.58285,
+  "baseline_goal_mae": 0.5008999999999999,
+  "model_three_way_brier": 0.4789272799999999,
+  "baseline_three_way_brier": 0.43475928999999996
+}

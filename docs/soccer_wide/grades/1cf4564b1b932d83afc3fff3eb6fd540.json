@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "1cf4564b1b932d83afc3fff3eb6fd540",
+  "original_captured_at_utc": "2026-11-20T23:24:42.151Z",
+  "league": "DEN_1_superliga",
+  "date": "2026-11-22",
+  "match_result_source": "open-matchday/soccerway/DEN_1_superliga",
+  "final_home_goals": 0,
+  "final_away_goals": 0,
+  "model_goal_mae": 1.41615,
+  "baseline_goal_mae": 1.5036,
+  "model_three_way_brier": 0.87012338,
+  "baseline_three_way_brier": 0.87143405
+}
