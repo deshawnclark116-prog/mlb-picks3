@@ -1,0 +1,21 @@
+{
+  "schema": "soccer-forward-final-grade-v1",
+  "id": "c17ebec67d1bcd599122aa1fb1d46df6",
+  "original_captured_at_utc": "2026-11-08T08:54:06.999Z",
+  "fixture_date": "2026-11-22",
+  "league": "SerieA",
+  "home": "AC Milan",
+  "away": "Frosinone Calcio",
+  "final_home_goals": 5,
+  "final_away_goals": 1,
+  "model_home_goal_error": -3.5984,
+  "model_away_goal_error": 0.2669,
+  "model_goal_mae": 1.9326,
+  "baseline_goal_mae": 1.9352,
+  "exact_rounded_goals": 1,
+  "within_one_goal_count": 1,
+  "model_three_way_brier": 0.5405,
+  "baseline_three_way_brier": 0.5414,
+  "result_source": "open-matchday/fixturedl/2627/ITA_1_serie-a",
+  "status": "RESEARCH_NOT_BOOKMAKER_VALIDATED"
+}

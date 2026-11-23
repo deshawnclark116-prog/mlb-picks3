@@ -1,0 +1,21 @@
+{
+  "schema": "soccer-forward-final-grade-v1",
+  "id": "9d9fc61c7f65ad90d1140f44ef2e2603",
+  "original_captured_at_utc": "2026-11-08T08:54:06.999Z",
+  "fixture_date": "2026-11-22",
+  "league": "Ligue1",
+  "home": "Olympique de Marseille",
+  "away": "Le Mans FC",
+  "final_home_goals": 2,
+  "final_away_goals": 3,
+  "model_home_goal_error": -0.1757,
+  "model_away_goal_error": -1.6255,
+  "model_goal_mae": 0.9006,
+  "baseline_goal_mae": 0.9881,
+  "exact_rounded_goals": 1,
+  "within_one_goal_count": 1,
+  "model_three_way_brier": 0.7871,
+  "baseline_three_way_brier": 0.7189,
+  "result_source": "open-matchday/fixturedl/2627/FRA_1_ligue-1",
+  "status": "RESEARCH_NOT_BOOKMAKER_VALIDATED"
+}

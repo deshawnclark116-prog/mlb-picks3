@@ -1,0 +1,21 @@
+{
+  "schema": "soccer-forward-final-grade-v1",
+  "id": "e5354a49b0852f2519782ed47bcf162b",
+  "original_captured_at_utc": "2026-11-08T08:54:06.999Z",
+  "fixture_date": "2026-11-22",
+  "league": "Bundesliga",
+  "home": "FC Augsburg",
+  "away": "1. FSV Mainz 05",
+  "final_home_goals": 3,
+  "final_away_goals": 1,
+  "model_home_goal_error": -1.216,
+  "model_away_goal_error": 0.604,
+  "model_goal_mae": 0.91,
+  "baseline_goal_mae": 0.778,
+  "exact_rounded_goals": 0,
+  "within_one_goal_count": 1,
+  "model_three_way_brier": 0.5046,
+  "baseline_three_way_brier": 0.4068,
+  "result_source": "open-matchday/openligadb/2627/GER_1_bundesliga",
+  "status": "RESEARCH_NOT_BOOKMAKER_VALIDATED"
+}
