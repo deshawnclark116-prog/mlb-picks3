@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-23_04_00PM.pdf",
-  "published_at_utc": "2026-11-23T21:00:00+00:00",
-  "captured_at_utc": "2026-11-23T21:14:55.786022+00:00",
-  "source_sha256": "0470a889b7d68c55467ae59d29d5465328a6e647e4416bc045669739f35a6571",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-23_05_30PM.pdf",
+  "published_at_utc": "2026-11-23T22:30:00+00:00",
+  "captured_at_utc": "2026-11-23T22:34:11.633977+00:00",
+  "source_sha256": "396985322e31b5bc4fb6ae6a58574a74078b82fb7e909129ce34f06195f42eae",
   "reports": [
     {
       "matchup": "MEM@CHA",
@@ -83,7 +83,7 @@
       "team_abbr": "CHA",
       "player": "Miller, Brandon",
       "normalized_player": "brandon miller",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -789,9 +789,169 @@
       "normalized_player": "austin reaves",
       "status": "OUT",
       "reason": ""
+    },
+    {
+      "matchup": "DET@ORL",
+      "team_abbr": "DET",
+      "player": "Cunningham, Cade",
+      "normalized_player": "cade cunningham",
+      "status": "PROBABLE",
+      "reason": "Injury/Illness - Right Knee Soreness"
+    },
+    {
+      "matchup": "DET@ORL",
+      "team_abbr": "DET",
+      "player": "Duren, Jalen",
+      "normalized_player": "jalen duren",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Hamstring Strain"
+    },
+    {
+      "matchup": "DET@ORL",
+      "team_abbr": "DET",
+      "player": "Jones, Isaac",
+      "normalized_player": "isaac jones",
+      "status": "QUESTIONABLE",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "DET@ORL",
+      "team_abbr": "DET",
+      "player": "Okorie, Ebuka",
+      "normalized_player": "ebuka okorie",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Oblique Strain"
+    },
+    {
+      "matchup": "DET@ORL",
+      "team_abbr": "DET",
+      "player": "Onyenso, Ugonna",
+      "normalized_player": "ugonna onyenso",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "DET@ORL",
+      "team_abbr": "DET",
+      "player": "Prince, Taurean",
+      "normalized_player": "taurean prince",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "DET@ORL",
+      "team_abbr": "DET",
+      "player": "Robinson, Duncan",
+      "normalized_player": "duncan robinson",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Quadriceps Strain"
+    },
+    {
+      "matchup": "DET@ORL",
+      "team_abbr": "ORL",
+      "player": "Banchero, Paolo",
+      "normalized_player": "paolo banchero",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "DET@ORL",
+      "team_abbr": "ORL",
+      "player": "Castleton, Colin",
+      "normalized_player": "colin castleton",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "DET@ORL",
+      "team_abbr": "ORL",
+      "player": "Isaac, Jonathan",
+      "normalized_player": "jonathan isaac",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "DET@ORL",
+      "team_abbr": "ORL",
+      "player": "Nelson, Izaiyah",
+      "normalized_player": "izaiyah nelson",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "DET@ORL",
+      "team_abbr": "ORL",
+      "player": "Penda, Noah",
+      "normalized_player": "noah penda",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "BOS@WAS",
+      "team_abbr": "BOS",
+      "player": "Mitchell, Dillon",
+      "normalized_player": "dillon mitchell",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "BOS@WAS",
+      "team_abbr": "BOS",
+      "player": "Robinson, Mitchell",
+      "normalized_player": "mitchell robinson",
+      "status": "OUT",
+      "reason": "Injury/Illness - Illness"
+    },
+    {
+      "matchup": "BOS@WAS",
+      "team_abbr": "BOS",
+      "player": "Williams, Amari",
+      "normalized_player": "amari williams",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "BOS@WAS",
+      "team_abbr": "WAS",
+      "player": "Beekman, Reece",
+      "normalized_player": "reece beekman",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "BOS@WAS",
+      "team_abbr": "WAS",
+      "player": "Champagnie, Justin",
+      "normalized_player": "justin champagnie",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Foot Surgery"
+    },
+    {
+      "matchup": "BOS@WAS",
+      "team_abbr": "WAS",
+      "player": "Okpara, Felix",
+      "normalized_player": "felix okpara",
+      "status": "QUESTIONABLE",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "BOS@WAS",
+      "team_abbr": "WAS",
+      "player": "Vukcevic, Tristan",
+      "normalized_player": "tristan vukcevic",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Hip Impingement"
+    },
+    {
+      "matchup": "BOS@WAS",
+      "team_abbr": "WAS",
+      "player": "Watkins, Jamir",
+      "normalized_player": "jamir watkins",
+      "status": "OUT",
+      "reason": ""
     }
   ],
-  "rows": 98,
+  "rows": 118,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
