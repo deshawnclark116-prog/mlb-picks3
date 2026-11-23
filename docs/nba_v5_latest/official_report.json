@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_07_15PM.pdf",
-  "published_at_utc": "2026-11-23T00:15:00+00:00",
-  "captured_at_utc": "2026-11-23T00:25:36.235055+00:00",
-  "source_sha256": "2f7c908e23b79e1d638081224aea6bc5bfb210580b594698441fa41d13f65343",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-22_07_30PM.pdf",
+  "published_at_utc": "2026-11-23T00:30:00+00:00",
+  "captured_at_utc": "2026-11-23T00:32:11.688980+00:00",
+  "source_sha256": "fd83425e65f895f71509125079df547a465ae8a0a1be2bececa938124a104a85",
   "reports": [
     {
       "matchup": "DET@ATL",
@@ -571,7 +571,7 @@
       "team_abbr": "IND",
       "player": "Siakam, Pascal",
       "normalized_player": "pascal siakam",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -603,7 +603,7 @@
       "team_abbr": "NYK",
       "player": "Towns, Karl-Anthony",
       "normalized_player": "karl anthony towns",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Illness"
     },
     {
