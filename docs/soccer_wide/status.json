@@ -1,17 +1,17 @@
 {
   "schema": "soccer-wide-firstseen-score-v1",
-  "asofDateUTC": "2026-11-23",
+  "asofDateUTC": "2026-11-24",
   "listedCompetitions": 75,
   "sourceVerifiedCompetitions": 75,
-  "upcomingFixtures": 1495,
-  "upcomingQuantitativeForecasts": 1285,
-  "originallyFrozen": 457,
-  "graded": 346,
+  "upcomingFixtures": 1445,
+  "upcomingQuantitativeForecasts": 1240,
+  "originallyFrozen": 460,
+  "graded": 349,
   "ungraded": 111,
-  "modelGoalMAE": 0.98693,
-  "baselineGoalMAE": 1.00834,
-  "model3wayBrier": 0.62075,
-  "baseline3wayBrier": 0.64339,
+  "modelGoalMAE": 0.98367,
+  "baselineGoalMAE": 1.00513,
+  "model3wayBrier": 0.62118,
+  "baseline3wayBrier": 0.644,
   "byLeague": {
     "ENG_4_league-two": {
       "n": 12,
@@ -118,6 +118,13 @@
       "model3wayBrier": 0.62152,
       "baseline3wayBrier": 0.61995
     },
+    "MEX_1_liga-mx": {
+      "n": 9,
+      "modelGoalMAE": 0.95088,
+      "baselineGoalMAE": 0.89399,
+      "model3wayBrier": 0.68113,
+      "baseline3wayBrier": 0.6673
+    },
     "MEX_2_liga-expansion": {
       "n": 1,
       "modelGoalMAE": 1.38235,
@@ -217,11 +224,11 @@
       "baseline3wayBrier": 0.73791
     },
     "ARG_2_primera-nacional": {
-      "n": 3,
-      "modelGoalMAE": 0.75503,
-      "baselineGoalMAE": 0.73917,
-      "model3wayBrier": 0.68817,
-      "baseline3wayBrier": 0.69356
+      "n": 4,
+      "modelGoalMAE": 0.78413,
+      "baselineGoalMAE": 0.80461,
+      "model3wayBrier": 0.68953,
+      "baseline3wayBrier": 0.71102
     },
     "SCO_1_premiership": {
       "n": 5,
@@ -250,13 +257,6 @@
       "baselineGoalMAE": 1.6474,
       "model3wayBrier": 0.73564,
       "baseline3wayBrier": 0.75659
-    },
-    "MEX_1_liga-mx": {
-      "n": 8,
-      "modelGoalMAE": 0.99517,
-      "baselineGoalMAE": 0.94185,
-      "model3wayBrier": 0.6612,
-      "baseline3wayBrier": 0.64315
     },
     "CYP_1_first-division": {
       "n": 6,
@@ -287,11 +287,11 @@
       "baseline3wayBrier": 0.65367
     },
     "ARG_1_liga-profesional": {
-      "n": 4,
-      "modelGoalMAE": 0.74612,
-      "baselineGoalMAE": 0.7583,
-      "model3wayBrier": 0.59681,
-      "baseline3wayBrier": 0.62583
+      "n": 5,
+      "modelGoalMAE": 0.668,
+      "baselineGoalMAE": 0.68551,
+      "model3wayBrier": 0.57351,
+      "baseline3wayBrier": 0.60491
     },
     "FRA_2_ligue-2": {
       "n": 2,
@@ -392,7 +392,7 @@
       "status": "NON_REGULATION_SCORE",
       "reason": "CUP_OR_UEFA_REGULATION_SCORE_UNVERIFIED",
       "pastResults": 72,
-      "upcomingFixtures": 36
+      "upcomingFixtures": 27
     },
     {
       "league": "UEFA_1_europa-league",
@@ -413,7 +413,7 @@
       "status": "NON_REGULATION_SCORE",
       "reason": "CUP_OR_UEFA_REGULATION_SCORE_UNVERIFIED",
       "pastResults": 84,
-      "upcomingFixtures": 0
+      "upcomingFixtures": 1
     },
     {
       "league": "ENG_CUP_fa-cup",
@@ -434,7 +434,7 @@
       "status": "NON_REGULATION_SCORE",
       "reason": "CUP_OR_UEFA_REGULATION_SCORE_UNVERIFIED",
       "pastResults": 28,
-      "upcomingFixtures": 3
+      "upcomingFixtures": 4
     },
     {
       "league": "GER_CUP_dfb-pokal",
@@ -455,7 +455,7 @@
       "status": "NON_REGULATION_SCORE",
       "reason": "CUP_OR_UEFA_REGULATION_SCORE_UNVERIFIED",
       "pastResults": 129,
-      "upcomingFixtures": 0
+      "upcomingFixtures": 1
     },
     {
       "league": "SCO_CUP_scottish-cup",
@@ -517,7 +517,7 @@
       "league": "MEX_1_liga-mx",
       "status": "INSUFFICIENT_HISTORY",
       "reason": "MINIMUM_45_LEAGUE_RESULTS_AND_FOUR_PER_TEAM",
-      "pastResults": 152,
+      "pastResults": 153,
       "upcomingFixtures": 0
     },
     {
@@ -525,7 +525,7 @@
       "status": "INSUFFICIENT_HISTORY",
       "reason": "MINIMUM_45_LEAGUE_RESULTS_AND_FOUR_PER_TEAM",
       "pastResults": 28,
-      "upcomingFixtures": 11
+      "upcomingFixtures": 12
     },
     {
       "league": "CHN_1_super-league",

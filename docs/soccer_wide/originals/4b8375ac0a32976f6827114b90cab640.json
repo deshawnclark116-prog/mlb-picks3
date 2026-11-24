@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "4b8375ac0a32976f6827114b90cab640",
+  "captured_at_utc": "2026-11-24T02:13:53.790Z",
+  "catalog_generated_at_utc": "2026-11-23T06:42:12Z",
+  "original_code_sha": "c29472e59cfb78b3779fe9603f47fd126e5a3222",
+  "source_results_sha256": "8f7b20b06d875769d3347859bc93b463ef05982b5249bdb74427030979d15f3b",
+  "source_fixtures_sha256": "6dc9fccd7efd19194415151896da6eb93e3aa61abeaab94def40dfacf16b5cfa",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ENG_3_league-one",
+    "season": "2026-27",
+    "date": "2026-11-26",
+    "home": "Doncaster Rovers",
+    "away": "Huddersfield Town",
+    "expectedHomeGoals": 1.2694,
+    "expectedAwayGoals": 1.3077,
+    "baselineHomeGoals": 1.5358,
+    "baselineAwayGoals": 1.2652,
+    "probabilities": {
+      "home": 0.3584,
+      "draw": 0.2652,
+      "away": 0.3764,
+      "over25": 0.4758,
+      "btts": 0.5245
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 9.0091,
+    "awayWeightedMatches": 10.4784,
+    "source": "open-matchday/fixture/ENG_3_league-one",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}
