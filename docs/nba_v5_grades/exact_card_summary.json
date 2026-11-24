@@ -1,9 +1,9 @@
 {
   "schema": "NBA_V5_IMMUTABLE_EXACT_CONFIRMED_CARD_AUDIT_V1",
   "kind": "last",
-  "games_with_archives_and_grades": 127,
-  "games_without_eligible_confirmed_starters": 81,
-  "files_missing_final_grade": 0,
+  "games_with_archives_and_grades": 129,
+  "games_without_eligible_confirmed_starters": 83,
+  "files_missing_final_grade": 8,
   "post_tip_forecasts_rejected": 0,
   "confirmed_starters_missing_dnp_contract": 284,
   "top4": {
@@ -188,47 +188,47 @@
   ],
   "shadow_candidate": {
     "status": "RESEARCH_ONLY_DO_NOT_PROMOTE",
-    "distinct_dates": 18,
-    "holdout_from": "2026-11-15",
-    "holdout_games": 16,
+    "distinct_dates": 19,
+    "holdout_from": "2026-11-16",
+    "holdout_games": 14,
     "baseline": {
-      "n": 64,
-      "hits": 44,
-      "hit_rate": 0.6875,
-      "average_probability": 0.7099,
-      "gap": 0.0224,
-      "brier": 0.207255
+      "n": 56,
+      "hits": 39,
+      "hit_rate": 0.6964,
+      "average_probability": 0.7162,
+      "gap": 0.0198,
+      "brier": 0.205242
     },
     "shadow": {
-      "n": 64,
-      "hits": 42,
-      "hit_rate": 0.6562,
-      "average_probability": 0.7309,
-      "gap": 0.0746,
-      "brier": 0.218813
+      "n": 56,
+      "hits": 37,
+      "hit_rate": 0.6607,
+      "average_probability": 0.7365,
+      "gap": 0.0758,
+      "brier": 0.217438
     },
-    "brier_reduction": -0.011558,
+    "brier_reduction": -0.012196,
     "brier_reduction_95pct_game_cluster_ci": [
-      -0.029189,
-      0.001351
+      -0.030953,
+      0.003265
     ],
     "different_selection_count": 2,
     "by_market": {
       "assists": {
-        "n": 8,
+        "n": 7,
         "hits": 3,
-        "hit_rate": 0.375,
-        "average_probability": 0.7431,
-        "gap": 0.3681,
-        "brier": 0.341355
+        "hit_rate": 0.4286,
+        "average_probability": 0.7538,
+        "gap": 0.3252,
+        "brier": 0.326286
       },
       "blocks": {
-        "n": 3,
-        "hits": 1,
-        "hit_rate": 0.3333,
-        "average_probability": 0.6659,
-        "gap": 0.3325,
-        "brier": 0.359179
+        "n": 2,
+        "hits": 0,
+        "hit_rate": 0.0,
+        "average_probability": 0.6843,
+        "gap": 0.6843,
+        "brier": 0.469979
       },
       "points": {
         "n": 1,
@@ -247,20 +247,20 @@
         "brier": 0.082825
       },
       "steals": {
-        "n": 20,
-        "hits": 13,
-        "hit_rate": 0.65,
-        "average_probability": 0.7342,
-        "gap": 0.0842,
-        "brier": 0.229603
+        "n": 17,
+        "hits": 11,
+        "hit_rate": 0.6471,
+        "average_probability": 0.7393,
+        "gap": 0.0922,
+        "brier": 0.235344
       },
       "three_pointers_made": {
-        "n": 26,
-        "hits": 19,
-        "hit_rate": 0.7308,
-        "average_probability": 0.7392,
-        "gap": 0.0085,
-        "brier": 0.180249
+        "n": 23,
+        "hits": 17,
+        "hit_rate": 0.7391,
+        "average_probability": 0.7436,
+        "gap": 0.0045,
+        "brier": 0.175417
       }
     },
     "promotion_allowed": false,
