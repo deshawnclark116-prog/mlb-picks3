@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "c76ecbd7ff28168ba1d47d3dec6256cb",
+  "original_captured_at_utc": "2026-11-21T00:19:20.818Z",
+  "league": "FRA_2_ligue-2",
+  "date": "2026-11-23",
+  "match_result_source": "open-matchday/fixturedl/FRA_2_ligue-2",
+  "final_home_goals": 2,
+  "final_away_goals": 3,
+  "model_goal_mae": 1.16265,
+  "baseline_goal_mae": 1.1572,
+  "model_three_way_brier": 0.65202696,
+  "baseline_three_way_brier": 0.66338915
+}

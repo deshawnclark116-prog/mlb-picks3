@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "c6d9e6c822d352f459f88b404eda8b60",
+  "original_captured_at_utc": "2026-11-21T00:19:20.818Z",
+  "league": "GRE_1_super-league",
+  "date": "2026-11-23",
+  "match_result_source": "open-matchday/espn/GRE_1_super-league",
+  "final_home_goals": 0,
+  "final_away_goals": 1,
+  "model_goal_mae": 0.80755,
+  "baseline_goal_mae": 0.8566,
+  "model_three_way_brier": 0.8964945299999999,
+  "baseline_three_way_brier": 0.90688323
+}

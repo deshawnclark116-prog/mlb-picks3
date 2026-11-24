@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "0c408fc25986fc298f72f70a6ae2f2d0",
+  "captured_at_utc": "2026-11-24T13:44:09.428Z",
+  "catalog_generated_at_utc": "2026-11-24T09:12:24Z",
+  "original_code_sha": "270a66428ae4bc72c13c49a2243565df217b39be",
+  "source_results_sha256": "71e54ac577f32940cf2932fbc9b0c91ae4754b8a7d930dc987618a30a08b1483",
+  "source_fixtures_sha256": "50c462629c3fc1b5f00ba4a04849c38cb6187f16310114be6da2ab900821e42a",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "MEX_1_liga-mx",
+    "season": "2026-27",
+    "date": "2026-11-26",
+    "home": "Toluca",
+    "away": "Atlas",
+    "expectedHomeGoals": 1.7797,
+    "expectedAwayGoals": 1.5349,
+    "baselineHomeGoals": 1.5412,
+    "baselineAwayGoals": 1.3993,
+    "probabilities": {
+      "home": 0.4374,
+      "draw": 0.228,
+      "away": 0.3347,
+      "over25": 0.6435,
+      "btts": 0.6522
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 11.726,
+    "awayWeightedMatches": 11.8273,
+    "source": "open-matchday/fixture/MEX_1_liga-mx",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}
