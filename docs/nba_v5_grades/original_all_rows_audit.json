@@ -3,7 +3,11 @@
   "schema": "NBA_V5_FIRST_SEEN_ALL_ROW_CALIBRATION_V1",
   "source": "immutable original pregame archive + first-seen completed final grades",
   "graded_games": 137,
-  "pending_or_not_final_games": [],
+  "pending_or_not_final_games": [
+   "401909314",
+   "401909315",
+   "401909316"
+  ],
   "original_rows": 25683,
   "gradable_rows": 18150,
   "ungradable_rows": 7533,
