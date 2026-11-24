@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-24_01_15PM.pdf",
-  "published_at_utc": "2026-11-24T18:15:00+00:00",
-  "captured_at_utc": "2026-11-24T18:23:44.745721+00:00",
-  "source_sha256": "583a37eadca089d9acab669ad0136e9d1603b0e9ce2e381bb3c1e97d6c63cff8",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-24_04_15PM.pdf",
+  "published_at_utc": "2026-11-24T21:15:00+00:00",
+  "captured_at_utc": "2026-11-24T21:26:10.711736+00:00",
+  "source_sha256": "134cb8117757ede1be9e2938b2d734f0d876b5b722cab47cac7eed524aa8ef92",
   "reports": [
     {
       "matchup": "DET@ORL",
@@ -269,9 +269,65 @@
       "normalized_player": "caleb wilson",
       "status": "OUT",
       "reason": ""
+    },
+    {
+      "matchup": "CLE@NYK",
+      "team_abbr": "CLE",
+      "player": "Austin, Zack",
+      "normalized_player": "zack austin",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "CLE@NYK",
+      "team_abbr": "CLE",
+      "player": "Diop, Khalifa",
+      "normalized_player": "khalifa diop",
+      "status": "OUT",
+      "reason": "G League - On Assignment"
+    },
+    {
+      "matchup": "CLE@NYK",
+      "team_abbr": "CLE",
+      "player": "Mobley, Evan",
+      "normalized_player": "evan mobley",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Great Toe Sprain"
+    },
+    {
+      "matchup": "CLE@NYK",
+      "team_abbr": "CLE",
+      "player": "Tomlin, Nae'Qwan",
+      "normalized_player": "nae qwan tomlin",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "CLE@NYK",
+      "team_abbr": "CLE",
+      "player": "Udeh Jr., Ernest",
+      "normalized_player": "ernest udeh",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "PHX@HOU",
+      "team_abbr": "HOU",
+      "player": "Copeland, Quadir",
+      "normalized_player": "quadir copeland",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "PHX@HOU",
+      "team_abbr": "HOU",
+      "player": "Phillips, Julian",
+      "normalized_player": "julian phillips",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
     }
   ],
-  "rows": 33,
+  "rows": 40,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
