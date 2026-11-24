@@ -73,7 +73,7 @@
         "latest": "2026-11-22"
       }
     },
-    "independentGraded": 1,
+    "independentGraded": 0,
     "primaryGraded": 0,
     "conflicted": 0,
     "unresolved": 21,
