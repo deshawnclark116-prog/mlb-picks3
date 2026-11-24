@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-24_12_45PM.pdf",
-  "published_at_utc": "2026-11-24T17:45:00+00:00",
-  "captured_at_utc": "2026-11-24T17:57:11.067589+00:00",
-  "source_sha256": "d2ed4e9dd16c47ceb71b2c753f3c44bddc430686e6b99d5bec0da8ee62854d70",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-24_01_15PM.pdf",
+  "published_at_utc": "2026-11-24T18:15:00+00:00",
+  "captured_at_utc": "2026-11-24T18:23:44.745721+00:00",
+  "source_sha256": "583a37eadca089d9acab669ad0136e9d1603b0e9ce2e381bb3c1e97d6c63cff8",
   "reports": [
     {
       "matchup": "DET@ORL",
@@ -221,9 +221,57 @@
       "normalized_player": "p j washington",
       "status": "QUESTIONABLE",
       "reason": "Injury/Illness - Illness"
+    },
+    {
+      "matchup": "CHI@CHA",
+      "team_abbr": "CHI",
+      "player": "Awaka, Tobe",
+      "normalized_player": "tobe awaka",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "CHI@CHA",
+      "team_abbr": "CHI",
+      "player": "Powell, Norman",
+      "normalized_player": "norman powell",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Hamstring Strain"
+    },
+    {
+      "matchup": "CHI@CHA",
+      "team_abbr": "CHI",
+      "player": "Robinson, Orlando",
+      "normalized_player": "orlando robinson",
+      "status": "OUT",
+      "reason": "Not With Team"
+    },
+    {
+      "matchup": "CHI@CHA",
+      "team_abbr": "CHI",
+      "player": "Sellers, Jaylin",
+      "normalized_player": "jaylin sellers",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "CHI@CHA",
+      "team_abbr": "CHI",
+      "player": "Smith, Jalen",
+      "normalized_player": "jalen smith",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Gastrointestinal Illness"
+    },
+    {
+      "matchup": "CHI@CHA",
+      "team_abbr": "CHI",
+      "player": "Wilson, Caleb",
+      "normalized_player": "caleb wilson",
+      "status": "OUT",
+      "reason": ""
     }
   ],
-  "rows": 27,
+  "rows": 33,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
