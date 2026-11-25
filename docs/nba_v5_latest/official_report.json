@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-24_06_45PM.pdf",
-  "published_at_utc": "2026-11-24T23:45:00+00:00",
-  "captured_at_utc": "2026-11-24T23:55:27.476038+00:00",
-  "source_sha256": "e324a17f8e5f58201d4d2c20dd1dedd3a196edf4c113aac44964a83732370c3e",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-24_08_45PM.pdf",
+  "published_at_utc": "2026-11-25T01:45:00+00:00",
+  "captured_at_utc": "2026-11-25T01:51:04.679100+00:00",
+  "source_sha256": "0c98111c6c2682fc4bf93b0b301e64e785ad7646d4a7934c7e7483420b4f0af8",
   "reports": [
     {
       "matchup": "DET@ORL",
@@ -147,7 +147,7 @@
       "team_abbr": "WAS",
       "player": "Mann, Tre",
       "normalized_player": "tre mann",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Illness"
     },
     {
@@ -155,7 +155,7 @@
       "team_abbr": "WAS",
       "player": "Okpara, Felix",
       "normalized_player": "felix okpara",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "G League - Two-Way"
     },
     {
@@ -688,6 +688,30 @@
     },
     {
       "matchup": "SAC@GSW",
+      "team_abbr": "SAC",
+      "player": "Mogbo, Jonathan",
+      "normalized_player": "jonathan mogbo",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "SAC@GSW",
+      "team_abbr": "SAC",
+      "player": "Raynaud, Maxime",
+      "normalized_player": "maxime raynaud",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "SAC@GSW",
+      "team_abbr": "SAC",
+      "player": "Simmons, Ben",
+      "normalized_player": "ben simmons",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "SAC@GSW",
       "team_abbr": "GSW",
       "player": "Butler III, Jimmy",
       "normalized_player": "jimmy butler",
@@ -733,9 +757,81 @@
       "normalized_player": "brandon williams",
       "status": "QUESTIONABLE",
       "reason": "Injury/Illness - Left Hamstring Strain"
+    },
+    {
+      "matchup": "SAS@POR",
+      "team_abbr": "SAS",
+      "player": "Fox, De'Aaron",
+      "normalized_player": "de aaron fox",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Right Shin Contusion"
+    },
+    {
+      "matchup": "SAS@POR",
+      "team_abbr": "SAS",
+      "player": "Harper, Dylan",
+      "normalized_player": "dylan harper",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "SAS@POR",
+      "team_abbr": "SAS",
+      "player": "Harris, Tobias",
+      "normalized_player": "tobias harris",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Calf Strain"
+    },
+    {
+      "matchup": "SAS@POR",
+      "team_abbr": "SAS",
+      "player": "Quaintance, Jayden",
+      "normalized_player": "jayden quaintance",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Knee Surgery"
+    },
+    {
+      "matchup": "SAS@POR",
+      "team_abbr": "SAS",
+      "player": "Wembanyama, Victor",
+      "normalized_player": "victor wembanyama",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Low Back Tightness"
+    },
+    {
+      "matchup": "SAS@POR",
+      "team_abbr": "POR",
+      "player": "Krejci, Vit",
+      "normalized_player": "vit krejci",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Ankle Fracture"
+    },
+    {
+      "matchup": "SAS@POR",
+      "team_abbr": "POR",
+      "player": "Morant, Ja",
+      "normalized_player": "ja morant",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Hamstring Strain"
+    },
+    {
+      "matchup": "SAS@POR",
+      "team_abbr": "POR",
+      "player": "Sharpe, Shaedon",
+      "normalized_player": "shaedon sharpe",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "SAS@POR",
+      "team_abbr": "POR",
+      "player": "Youngblood, Chris",
+      "normalized_player": "chris youngblood",
+      "status": "OUT",
+      "reason": ""
     }
   ],
-  "rows": 91,
+  "rows": 103,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,

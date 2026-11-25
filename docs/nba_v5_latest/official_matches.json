@@ -1,45 +1,4 @@
 {
-  "401909315": [
-    {
-      "matchup": "BOS@WAS",
-      "team_abbr": "BOS",
-      "player": "Robinson, Mitchell",
-      "normalized_player": "mitchell robinson",
-      "status": "OUT",
-      "reason": "Injury/Illness - Illness",
-      "player_id": "4351852",
-      "team_id": "2",
-      "published_at_utc": "2026-11-24T23:45:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-24_06_45PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "BOS@WAS",
-      "team_abbr": "WAS",
-      "player": "Champagnie, Justin",
-      "normalized_player": "justin champagnie",
-      "status": "OUT",
-      "reason": "Injury/Illness - Right Foot Surgery",
-      "player_id": "4432907",
-      "team_id": "27",
-      "published_at_utc": "2026-11-24T23:45:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-24_06_45PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "BOS@WAS",
-      "team_abbr": "WAS",
-      "player": "Watkins, Jamir",
-      "normalized_player": "jamir watkins",
-      "status": "OUT",
-      "reason": "",
-      "player_id": "4606840",
-      "team_id": "27",
-      "published_at_utc": "2026-11-24T23:45:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-24_06_45PM.pdf",
-      "source": "official_nba_injury_report"
-    }
-  ],
   "401909316": [
     {
       "matchup": "DAL@DEN",
@@ -50,8 +9,8 @@
       "reason": "Injury/Illness - Illness",
       "player_id": "4278078",
       "team_id": "6",
-      "published_at_utc": "2026-11-24T23:45:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-24_06_45PM.pdf",
+      "published_at_utc": "2026-11-25T01:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-24_08_45PM.pdf",
       "source": "official_nba_injury_report"
     }
   ]
