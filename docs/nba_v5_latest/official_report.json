@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-24_08_45PM.pdf",
-  "published_at_utc": "2026-11-25T01:45:00+00:00",
-  "captured_at_utc": "2026-11-25T01:51:04.679100+00:00",
-  "source_sha256": "0c98111c6c2682fc4bf93b0b301e64e785ad7646d4a7934c7e7483420b4f0af8",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-24_09_15PM.pdf",
+  "published_at_utc": "2026-11-25T02:15:00+00:00",
+  "captured_at_utc": "2026-11-25T02:23:16.252274+00:00",
+  "source_sha256": "60f00185f66bae958f02daad4cbc20be1e3eac4f67f703880bf718ea65b155fc",
   "reports": [
     {
       "matchup": "DET@ORL",
@@ -219,7 +219,7 @@
       "team_abbr": "DAL",
       "player": "Washington, P.J.",
       "normalized_player": "p j washington",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Illness"
     },
     {
