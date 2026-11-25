@@ -38,7 +38,7 @@
       "baselineGoalMAE": 0.9295
     }
   },
-  "asofDateUTC": "2026-11-24",
+  "asofDateUTC": "2026-11-25",
   "evidence": "Github earliest original commit BEFORE fixture date; no same-day freeze. Independent result source matches exact names/date/league and records source SHA",
   "finalSourceAudit": {
     "providerAudit": {
