@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "0d48c18fffd378f98e766b990b541fef",
+  "captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "catalog_generated_at_utc": "2026-11-25T07:50:20Z",
+  "original_code_sha": "b248e4c72ecf4ca0e679ba544f52e6d29704337a",
+  "source_results_sha256": "7c01176d22dbbb696e3a062a1648678cda3912a2adf62f1b5d9f5a3071284956",
+  "source_fixtures_sha256": "b5fd1bf6bc8cc04340a53ce09362f13e0db8627a224ab31608301e838a5c3fe0",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ENG_1_premier-league",
+    "season": "2026-27",
+    "date": "2026-11-27",
+    "home": "Nott'm Forest",
+    "away": "Chelsea",
+    "expectedHomeGoals": 1.42,
+    "expectedAwayGoals": 1.0957,
+    "baselineHomeGoals": 1.5718,
+    "baselineAwayGoals": 1.1556,
+    "probabilities": {
+      "home": 0.4443,
+      "draw": 0.2648,
+      "away": 0.2909,
+      "over25": 0.4602,
+      "btts": 0.5048
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 7.5803,
+    "awayWeightedMatches": 7.5925,
+    "source": "open-matchday/fixture/ENG_1_premier-league",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

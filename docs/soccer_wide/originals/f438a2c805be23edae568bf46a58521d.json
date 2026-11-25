@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "f438a2c805be23edae568bf46a58521d",
+  "captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "catalog_generated_at_utc": "2026-11-25T07:50:20Z",
+  "original_code_sha": "b248e4c72ecf4ca0e679ba544f52e6d29704337a",
+  "source_results_sha256": "293c597bf5ecb236c8c0e854c7adf25226103fa7dd1fb2bacf49ebc43d2517b7",
+  "source_fixtures_sha256": "6f5ffe7483a495e2b15b5931abdc2d4335a734da3433918cf7cdd016c7aff336",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "WAL_3_cymru-south",
+    "season": "2026-27",
+    "date": "2026-11-27",
+    "home": "Carmarthen Town",
+    "away": "Pure Swansea",
+    "expectedHomeGoals": 1.7997,
+    "expectedAwayGoals": 2.1018,
+    "baselineHomeGoals": 1.7972,
+    "baselineAwayGoals": 1.6316,
+    "probabilities": {
+      "home": 0.3374,
+      "draw": 0.2077,
+      "away": 0.4549,
+      "over25": 0.7471,
+      "btts": 0.7326
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 11.4762,
+    "awayWeightedMatches": 8.489,
+    "source": "open-matchday/fixture/WAL_3_cymru-south",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

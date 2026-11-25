@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "dd2868078e2f1308886bb0a246ae3671",
+  "captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "catalog_generated_at_utc": "2026-11-25T07:50:20Z",
+  "original_code_sha": "b248e4c72ecf4ca0e679ba544f52e6d29704337a",
+  "source_results_sha256": "71e54ac577f32940cf2932fbc9b0c91ae4754b8a7d930dc987618a30a08b1483",
+  "source_fixtures_sha256": "50c462629c3fc1b5f00ba4a04849c38cb6187f16310114be6da2ab900821e42a",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "MEX_1_liga-mx",
+    "season": "2026-27",
+    "date": "2026-11-27",
+    "home": "Pachuca",
+    "away": "Guadalajara",
+    "expectedHomeGoals": 1.4387,
+    "expectedAwayGoals": 1.4156,
+    "baselineHomeGoals": 1.5412,
+    "baselineAwayGoals": 1.3992,
+    "probabilities": {
+      "home": 0.3802,
+      "draw": 0.25,
+      "away": 0.3698,
+      "over25": 0.5434,
+      "btts": 0.5776
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 12.1877,
+    "awayWeightedMatches": 11.7179,
+    "source": "open-matchday/fixture/MEX_1_liga-mx",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

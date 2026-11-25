@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "d7a8f1b8c2228be6619eae30794aaebf",
+  "original_captured_at_utc": "2026-11-22T11:26:12.071Z",
+  "league": "BRA_1_serie-a",
+  "date": "2026-11-24",
+  "match_result_source": "open-matchday/espn/BRA_1_serie-a",
+  "final_home_goals": 3,
+  "final_away_goals": 0,
+  "model_goal_mae": 1.62465,
+  "baseline_goal_mae": 1.29475,
+  "model_three_way_brier": 0.7203433399999999,
+  "baseline_three_way_brier": 0.4257632599999999
+}

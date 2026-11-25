@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "2a07667df2542d9190e0a10596147376",
+  "captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "catalog_generated_at_utc": "2026-11-25T07:50:20Z",
+  "original_code_sha": "b248e4c72ecf4ca0e679ba544f52e6d29704337a",
+  "source_results_sha256": "431b27ac7234b4f62840e9d75d351f77e9c72df9e8bc30af5825edbf4dee1792",
+  "source_fixtures_sha256": "b308ffdc7bb79e923b8b2ae60f179c86af2e7e417a8f22fcbfcde52a3da30b32",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ARG_2_primera-nacional",
+    "season": "2026-27",
+    "date": "2026-11-27",
+    "home": "Atlanta",
+    "away": "Ciudad de Bolívar",
+    "expectedHomeGoals": 1.1392,
+    "expectedAwayGoals": 0.736,
+    "baselineHomeGoals": 1.2066,
+    "baselineAwayGoals": 0.7797,
+    "probabilities": {
+      "home": 0.4518,
+      "draw": 0.3115,
+      "away": 0.2367,
+      "over25": 0.2896,
+      "btts": 0.3542
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 20.0296,
+    "awayWeightedMatches": 20.6368,
+    "source": "open-matchday/fixture/ARG_2_primera-nacional",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

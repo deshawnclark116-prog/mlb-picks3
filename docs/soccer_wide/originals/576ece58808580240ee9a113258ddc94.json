@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "576ece58808580240ee9a113258ddc94",
+  "captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "catalog_generated_at_utc": "2026-11-25T07:50:20Z",
+  "original_code_sha": "b248e4c72ecf4ca0e679ba544f52e6d29704337a",
+  "source_results_sha256": "97b666f4686dbb5f541571f35d0be361914c7c1209fd9203d71b88e8a24bdf04",
+  "source_fixtures_sha256": "f6fbbf2d4dacedc84aa7905e3fb1fa1ddf570cbd0f17f2243d438323c80c2811",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "WAL_1_cymru-premier",
+    "season": "2026-27",
+    "date": "2026-11-27",
+    "home": "Cambrian United",
+    "away": "Trefelin",
+    "expectedHomeGoals": 1.9251,
+    "expectedAwayGoals": 1.4554,
+    "baselineHomeGoals": 1.7996,
+    "baselineAwayGoals": 1.4808,
+    "probabilities": {
+      "home": 0.4866,
+      "draw": 0.221,
+      "away": 0.2924,
+      "over25": 0.6565,
+      "btts": 0.6549
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 9.3459,
+    "awayWeightedMatches": 10.9751,
+    "source": "open-matchday/fixture/WAL_1_cymru-premier",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

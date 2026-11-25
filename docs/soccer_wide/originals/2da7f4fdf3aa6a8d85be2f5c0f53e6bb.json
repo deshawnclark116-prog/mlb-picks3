@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "2da7f4fdf3aa6a8d85be2f5c0f53e6bb",
+  "captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "catalog_generated_at_utc": "2026-11-25T07:50:20Z",
+  "original_code_sha": "b248e4c72ecf4ca0e679ba544f52e6d29704337a",
+  "source_results_sha256": "8dde92526b7070b3b568499583495beaa3a15001b3564f16055c582793da7645",
+  "source_fixtures_sha256": "4643c09f0c76ac52a380b3dc4cadeaaae00c0fa6cc4e96b3ac0edc0f896496fc",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "BEL_1_pro-league",
+    "season": "2026-27",
+    "date": "2026-11-27",
+    "home": "OH Leuven",
+    "away": "KV Kortrijk",
+    "expectedHomeGoals": 1.7318,
+    "expectedAwayGoals": 1.0785,
+    "baselineHomeGoals": 1.7699,
+    "baselineAwayGoals": 1.3098,
+    "probabilities": {
+      "home": 0.5267,
+      "draw": 0.2374,
+      "away": 0.236,
+      "over25": 0.533,
+      "btts": 0.5431
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 8.9507,
+    "awayWeightedMatches": 9.156,
+    "source": "open-matchday/fixture/BEL_1_pro-league",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

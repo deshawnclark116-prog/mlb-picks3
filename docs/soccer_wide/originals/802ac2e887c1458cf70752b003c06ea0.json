@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "802ac2e887c1458cf70752b003c06ea0",
+  "captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "catalog_generated_at_utc": "2026-11-25T07:50:20Z",
+  "original_code_sha": "b248e4c72ecf4ca0e679ba544f52e6d29704337a",
+  "source_results_sha256": "fbdb68ce5bb6a144f0190961530d938918eec19b506727d78ceaf4a32a5a97a0",
+  "source_fixtures_sha256": "a23ba7a82c45718e5f7d9fa4a46772b841fddc297cd47f9e3853c4009e75298c",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "POL_1_ekstraklasa",
+    "season": "2026-27",
+    "date": "2026-11-27",
+    "home": "Rakow",
+    "away": "Piast Gliwice",
+    "expectedHomeGoals": 1.5373,
+    "expectedAwayGoals": 1.4643,
+    "baselineHomeGoals": 1.6327,
+    "baselineAwayGoals": 1.2469,
+    "probabilities": {
+      "home": 0.3947,
+      "draw": 0.2428,
+      "away": 0.3626,
+      "over25": 0.5772,
+      "btts": 0.6035
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 10.8354,
+    "awayWeightedMatches": 7.9916,
+    "source": "open-matchday/fixture/POL_1_ekstraklasa",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

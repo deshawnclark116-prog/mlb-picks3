@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "be77ae1dfd2aaabf60a47fd4de374f57",
+  "original_captured_at_utc": "2026-11-22T11:26:12.071Z",
+  "league": "ITA_2_serie-b",
+  "date": "2026-11-24",
+  "match_result_source": "open-matchday/espn/ITA_2_serie-b",
+  "final_home_goals": 5,
+  "final_away_goals": 0,
+  "model_goal_mae": 2.38485,
+  "baseline_goal_mae": 2.4572000000000003,
+  "model_three_way_brier": 0.49909454,
+  "baseline_three_way_brier": 0.56506329
+}

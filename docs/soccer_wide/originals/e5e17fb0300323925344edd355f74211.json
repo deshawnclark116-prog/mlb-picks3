@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "e5e17fb0300323925344edd355f74211",
+  "captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "catalog_generated_at_utc": "2026-11-25T07:50:20Z",
+  "original_code_sha": "b248e4c72ecf4ca0e679ba544f52e6d29704337a",
+  "source_results_sha256": "945e452d996c8396085607710c43a2a476e440374e2eef2cddaca4f69903a95b",
+  "source_fixtures_sha256": "d6e568b436e2b6df2824f72a99fd9ac03c47ebe65112a09b650314794678cdb3",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "CZE_1_chance-liga",
+    "season": "2026-27",
+    "date": "2026-11-27",
+    "home": "Artis Brno",
+    "away": "Slovacko",
+    "expectedHomeGoals": 1.3946,
+    "expectedAwayGoals": 1.3206,
+    "baselineHomeGoals": 1.419,
+    "baselineAwayGoals": 1.2838,
+    "probabilities": {
+      "home": 0.3884,
+      "draw": 0.2571,
+      "away": 0.3544,
+      "over25": 0.5101,
+      "btts": 0.5513
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 10.8065,
+    "awayWeightedMatches": 10.364,
+    "source": "open-matchday/fixture/CZE_1_chance-liga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

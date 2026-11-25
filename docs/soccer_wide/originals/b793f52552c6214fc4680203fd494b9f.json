@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "b793f52552c6214fc4680203fd494b9f",
+  "captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "catalog_generated_at_utc": "2026-11-25T07:50:20Z",
+  "original_code_sha": "b248e4c72ecf4ca0e679ba544f52e6d29704337a",
+  "source_results_sha256": "94f16a8831faa420d9259713538e08297c85df8a3f66296c96a5eb2108ca6878",
+  "source_fixtures_sha256": "9e4187c4f707dbdb9c1c4461c8e22ed2467b4230b03a6d3a74ef43ccffe9085c",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "POL_3_division-2",
+    "season": "2026-27",
+    "date": "2026-11-27",
+    "home": "Tychy",
+    "away": "Chojniczanka",
+    "expectedHomeGoals": 1.4747,
+    "expectedAwayGoals": 1.2245,
+    "baselineHomeGoals": 1.6038,
+    "baselineAwayGoals": 1.3771,
+    "probabilities": {
+      "home": 0.4296,
+      "draw": 0.2559,
+      "away": 0.3146,
+      "over25": 0.5062,
+      "btts": 0.5445
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 11.0975,
+    "awayWeightedMatches": 9.7086,
+    "source": "open-matchday/fixture/POL_3_division-2",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

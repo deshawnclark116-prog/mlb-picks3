@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "78d032d8e8add44020ef2263a8b01cd8",
+  "captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "catalog_generated_at_utc": "2026-11-25T07:50:20Z",
+  "original_code_sha": "b248e4c72ecf4ca0e679ba544f52e6d29704337a",
+  "source_results_sha256": "15bbf8bc54c4998cb5a58ce8204103a7db6af4d258ebe6bd5204adf9e1d192d2",
+  "source_fixtures_sha256": "8853f95689ee57f07cb081e2576d2dfb95c347128a30289b102c0ab29e526755",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "UKR_1_premier-league",
+    "season": "2026-27",
+    "date": "2026-11-27",
+    "home": "Livyi Bereg",
+    "away": "Kolos Kovalivka",
+    "expectedHomeGoals": 1.2163,
+    "expectedAwayGoals": 1.2172,
+    "baselineHomeGoals": 1.3647,
+    "baselineAwayGoals": 1.0616,
+    "probabilities": {
+      "home": 0.3626,
+      "draw": 0.2744,
+      "away": 0.363,
+      "over25": 0.439,
+      "btts": 0.4953
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 7.7266,
+    "awayWeightedMatches": 10.4082,
+    "source": "open-matchday/fixture/UKR_1_premier-league",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

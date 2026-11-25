@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "acb76526f142692ce87233391e5b57fb",
+  "captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "catalog_generated_at_utc": "2026-11-25T07:50:20Z",
+  "original_code_sha": "b248e4c72ecf4ca0e679ba544f52e6d29704337a",
+  "source_results_sha256": "2aca66b7b7b154fec8fc1cb9b375e56c5d19db05aad525a39c0e0654ea266e65",
+  "source_fixtures_sha256": "1e887381539db03266ab9dfc720ee1314b644d77fa72f6a4551fd502191c0126",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "NED_2_eerste-divisie",
+    "season": "2026-27",
+    "date": "2026-11-27",
+    "home": "MVV Maastricht",
+    "away": "Jong PSV",
+    "expectedHomeGoals": 1.749,
+    "expectedAwayGoals": 1.5223,
+    "baselineHomeGoals": 1.8777,
+    "baselineAwayGoals": 1.528,
+    "probabilities": {
+      "home": 0.4329,
+      "draw": 0.2299,
+      "away": 0.3372,
+      "over25": 0.6348,
+      "btts": 0.6458
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 12.0668,
+    "awayWeightedMatches": 12.4472,
+    "source": "open-matchday/fixture/NED_2_eerste-divisie",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "a6d115ee5eac076fc9ff6fdea7ac4e29",
+  "captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "catalog_generated_at_utc": "2026-11-25T07:50:20Z",
+  "original_code_sha": "b248e4c72ecf4ca0e679ba544f52e6d29704337a",
+  "source_results_sha256": "2e5b28eccd8b2a32ea4be88323b615b97e462fe4f0ca3004c4d35554505f1328",
+  "source_fixtures_sha256": "0691f074be86d8996c4c633056c9694e58cfaddd679cc3c96503b892fb762f10",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "CRO_1_hnl",
+    "season": "2026-27",
+    "date": "2026-11-27",
+    "home": "Istra 1961",
+    "away": "Varazdin",
+    "expectedHomeGoals": 1.591,
+    "expectedAwayGoals": 1.3837,
+    "baselineHomeGoals": 1.6208,
+    "baselineAwayGoals": 1.2964,
+    "probabilities": {
+      "home": 0.4243,
+      "draw": 0.2428,
+      "away": 0.3329,
+      "over25": 0.5711,
+      "btts": 0.5967
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 10.1324,
+    "awayWeightedMatches": 10.8922,
+    "source": "open-matchday/fixture/CRO_1_hnl",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

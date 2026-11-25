@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "2be11a4d69e32c2d13e0e9794f356e9f",
+  "captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "catalog_generated_at_utc": "2026-11-25T07:50:20Z",
+  "original_code_sha": "b248e4c72ecf4ca0e679ba544f52e6d29704337a",
+  "source_results_sha256": "d122dfe6798738e21e9d312274694532416b7a177250e8870729f16b9315afdf",
+  "source_fixtures_sha256": "8696ad19c2c10ae5d3f766561647cecc699d4162eb7af43a4688adcdbcd573c5",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "SVN_1_prva-liga",
+    "season": "2026-27",
+    "date": "2026-11-27",
+    "home": "Radomlje",
+    "away": "Nafta",
+    "expectedHomeGoals": 1.4481,
+    "expectedAwayGoals": 1.1961,
+    "baselineHomeGoals": 1.4557,
+    "baselineAwayGoals": 1.1056,
+    "probabilities": {
+      "home": 0.429,
+      "draw": 0.2589,
+      "away": 0.3121,
+      "over25": 0.4926,
+      "btts": 0.5337
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 11.3949,
+    "awayWeightedMatches": 11.8402,
+    "source": "open-matchday/fixture/SVN_1_prva-liga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

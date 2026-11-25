@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "68f1169055e5f12a1553e160848242db",
+  "captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "catalog_generated_at_utc": "2026-11-25T07:50:20Z",
+  "original_code_sha": "b248e4c72ecf4ca0e679ba544f52e6d29704337a",
+  "source_results_sha256": "97085d6736c1f96375f0c707efe1a1a725f513e20971e52692f0f2b13343d350",
+  "source_fixtures_sha256": "9f8d2e863a08f2943bbf31b3b5bc34d4312109a637384515bfd314b0ad07f2f1",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "WAL_2_cymru-north",
+    "season": "2026-27",
+    "date": "2026-11-27",
+    "home": "Bala",
+    "away": "Caersws FC",
+    "expectedHomeGoals": 1.5805,
+    "expectedAwayGoals": 1.715,
+    "baselineHomeGoals": 1.6651,
+    "baselineAwayGoals": 1.4812,
+    "probabilities": {
+      "home": 0.3567,
+      "draw": 0.2299,
+      "away": 0.4134,
+      "over25": 0.6397,
+      "btts": 0.6512
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 8.7069,
+    "awayWeightedMatches": 8.8258,
+    "source": "open-matchday/fixture/WAL_2_cymru-north",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

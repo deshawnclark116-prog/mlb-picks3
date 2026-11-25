@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "7795732e6d1b5fb4f9b31c4d83a92ee3",
+  "original_captured_at_utc": "2026-11-22T11:26:12.071Z",
+  "league": "ENG_6_national-league-south",
+  "date": "2026-11-24",
+  "match_result_source": "open-matchday/soccerway/ENG_6_national-league-south",
+  "final_home_goals": 1,
+  "final_away_goals": 0,
+  "model_goal_mae": 1.11965,
+  "baseline_goal_mae": 0.98855,
+  "model_three_way_brier": 0.61762878,
+  "baseline_three_way_brier": 0.49475826
+}

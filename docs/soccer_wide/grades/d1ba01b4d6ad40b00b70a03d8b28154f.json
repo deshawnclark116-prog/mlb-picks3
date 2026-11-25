@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "d1ba01b4d6ad40b00b70a03d8b28154f",
+  "original_captured_at_utc": "2026-11-22T11:26:12.071Z",
+  "league": "ENG_7_northern-premier-league",
+  "date": "2026-11-24",
+  "match_result_source": "open-matchday/soccerway/ENG_7_northern-premier-league",
+  "final_home_goals": 2,
+  "final_away_goals": 2,
+  "model_goal_mae": 0.21599999999999997,
+  "baseline_goal_mae": 0.40449999999999997,
+  "model_three_way_brier": 0.9184156799999998,
+  "baseline_three_way_brier": 0.9032945
+}

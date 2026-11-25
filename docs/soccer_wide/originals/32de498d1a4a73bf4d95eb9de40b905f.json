@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "32de498d1a4a73bf4d95eb9de40b905f",
+  "captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "catalog_generated_at_utc": "2026-11-25T07:50:20Z",
+  "original_code_sha": "b248e4c72ecf4ca0e679ba544f52e6d29704337a",
+  "source_results_sha256": "d13f31ee998570fb7511d8ac3c0f67b5d99193b3d8f34e67a9526475cdf94d80",
+  "source_fixtures_sha256": "bbf962f6ba360878e8d41facef0edc0f3c594787eb0c9bcf8b3fc5873935d46e",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "FRA_1_ligue-1",
+    "season": "2026-27",
+    "date": "2026-11-27",
+    "home": "Stade Brestois 29",
+    "away": "Paris FC",
+    "expectedHomeGoals": 1.5661,
+    "expectedAwayGoals": 1.2208,
+    "baselineHomeGoals": 1.6034,
+    "baselineAwayGoals": 1.2966,
+    "probabilities": {
+      "home": 0.4535,
+      "draw": 0.2492,
+      "away": 0.2973,
+      "over25": 0.5274,
+      "btts": 0.5578
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 7.8691,
+    "awayWeightedMatches": 7.7815,
+    "source": "open-matchday/fixture/FRA_1_ligue-1",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "d4f563b513c9dfccea7310ea6447139d",
+  "captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "catalog_generated_at_utc": "2026-11-25T07:50:20Z",
+  "original_code_sha": "b248e4c72ecf4ca0e679ba544f52e6d29704337a",
+  "source_results_sha256": "de83fb610afa620ce2f50d2f13cbac2c853cd8c0c73b8a0022d99233ef4330ca",
+  "source_fixtures_sha256": "1f199c1468bcf694b0fdc25635db18783c351a401bfc2d3c0ef78116e9b9237b",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "CYP_1_first-division",
+    "season": "2026-27",
+    "date": "2026-11-27",
+    "home": "AEL Limassol",
+    "away": "Ol. Nicosia",
+    "expectedHomeGoals": 1.5408,
+    "expectedAwayGoals": 1.2303,
+    "baselineHomeGoals": 1.5387,
+    "baselineAwayGoals": 1.3181,
+    "probabilities": {
+      "home": 0.4451,
+      "draw": 0.2508,
+      "away": 0.3041,
+      "over25": 0.5236,
+      "btts": 0.5562
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 7.877,
+    "awayWeightedMatches": 6.2637,
+    "source": "open-matchday/fixture/CYP_1_first-division",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

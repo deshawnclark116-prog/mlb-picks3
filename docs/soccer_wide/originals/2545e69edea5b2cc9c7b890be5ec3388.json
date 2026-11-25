@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "2545e69edea5b2cc9c7b890be5ec3388",
+  "captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "catalog_generated_at_utc": "2026-11-25T07:50:20Z",
+  "original_code_sha": "b248e4c72ecf4ca0e679ba544f52e6d29704337a",
+  "source_results_sha256": "d4bb5dde3f527143c13408f366e125f3b787b02807801c1af2fb342e7986b3de",
+  "source_fixtures_sha256": "0a9b3147ba74f85ac087c5079a07b0dd6e14fe806915378d07d68aa609dcce60",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ROU_1_liga-1",
+    "season": "2026-27",
+    "date": "2026-11-27",
+    "home": "U. Cluj",
+    "away": "Sepsi Sf. Gheorghe",
+    "expectedHomeGoals": 1.5904,
+    "expectedAwayGoals": 1.1679,
+    "baselineHomeGoals": 1.5186,
+    "baselineAwayGoals": 1.2302,
+    "probabilities": {
+      "home": 0.4715,
+      "draw": 0.2485,
+      "away": 0.28,
+      "over25": 0.5206,
+      "btts": 0.5485
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 9.0515,
+    "awayWeightedMatches": 8.7949,
+    "source": "open-matchday/fixture/ROU_1_liga-1",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

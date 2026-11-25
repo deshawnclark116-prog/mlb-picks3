@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "dcda9514ca8d3ee1f3cb8477858a1293",
+  "captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "catalog_generated_at_utc": "2026-11-25T07:50:20Z",
+  "original_code_sha": "b248e4c72ecf4ca0e679ba544f52e6d29704337a",
+  "source_results_sha256": "293c597bf5ecb236c8c0e854c7adf25226103fa7dd1fb2bacf49ebc43d2517b7",
+  "source_fixtures_sha256": "6f5ffe7483a495e2b15b5931abdc2d4335a734da3433918cf7cdd016c7aff336",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "WAL_3_cymru-south",
+    "season": "2026-27",
+    "date": "2026-11-27",
+    "home": "Llanelli",
+    "away": "Cardiff Draconians",
+    "expectedHomeGoals": 1.6612,
+    "expectedAwayGoals": 1.575,
+    "baselineHomeGoals": 1.7972,
+    "baselineAwayGoals": 1.6316,
+    "probabilities": {
+      "home": 0.402,
+      "draw": 0.2326,
+      "away": 0.3654,
+      "over25": 0.6276,
+      "btts": 0.6424
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 10.0764,
+    "awayWeightedMatches": 5.8761,
+    "source": "open-matchday/fixture/WAL_3_cymru-south",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

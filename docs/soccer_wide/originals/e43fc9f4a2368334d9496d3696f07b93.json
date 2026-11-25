@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "e43fc9f4a2368334d9496d3696f07b93",
+  "captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "catalog_generated_at_utc": "2026-11-25T07:50:20Z",
+  "original_code_sha": "b248e4c72ecf4ca0e679ba544f52e6d29704337a",
+  "source_results_sha256": "cb773c67f75e36fa4c285f97fdd8a3ee0860b13dcc9957f51529836d05f299b7",
+  "source_fixtures_sha256": "6796e81da798dfe046969269a41c73a4f5bd3e10fa840e88ecc835452a854041",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ESP_2_segunda-division",
+    "season": "2026-27",
+    "date": "2026-11-27",
+    "home": "Leganés",
+    "away": "CD Sabadell",
+    "expectedHomeGoals": 1.4143,
+    "expectedAwayGoals": 1.0739,
+    "baselineHomeGoals": 1.532,
+    "baselineAwayGoals": 1.1738,
+    "probabilities": {
+      "home": 0.4479,
+      "draw": 0.266,
+      "away": 0.2861,
+      "over25": 0.4531,
+      "btts": 0.4983
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 11.3505,
+    "awayWeightedMatches": 12.3699,
+    "source": "open-matchday/fixture/ESP_2_segunda-division",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

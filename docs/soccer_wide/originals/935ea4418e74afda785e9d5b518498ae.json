@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "935ea4418e74afda785e9d5b518498ae",
+  "captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "catalog_generated_at_utc": "2026-11-25T07:50:20Z",
+  "original_code_sha": "b248e4c72ecf4ca0e679ba544f52e6d29704337a",
+  "source_results_sha256": "1dcae781e1482ca6847b34a2ebfd33346885021f90c83edf283a89c3d0617709",
+  "source_fixtures_sha256": "e5bf6bd976f972aed8a2c2b12e2e8f3b5eb4f4443978aec01a788e409f8cdcdc",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "DEN_1_superliga",
+    "season": "2026-27",
+    "date": "2026-11-27",
+    "home": "Sonderjyske",
+    "away": "Brondby",
+    "expectedHomeGoals": 1.6589,
+    "expectedAwayGoals": 1.4763,
+    "baselineHomeGoals": 1.6451,
+    "baselineAwayGoals": 1.348,
+    "probabilities": {
+      "home": 0.4213,
+      "draw": 0.236,
+      "away": 0.3427,
+      "over25": 0.6064,
+      "btts": 0.6247
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 11.8315,
+    "awayWeightedMatches": 10.2676,
+    "source": "open-matchday/fixture/DEN_1_superliga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}
