@@ -1,17 +1,17 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-25_02_00PM.pdf",
-  "published_at_utc": "2026-11-25T19:00:00+00:00",
-  "captured_at_utc": "2026-11-25T19:09:34.474955+00:00",
-  "source_sha256": "58c96ebf31baa0101e6b43985f6f95bacf8bd89d76dc416790f2b8e21419ba29",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-25_03_30PM.pdf",
+  "published_at_utc": "2026-11-25T20:30:00+00:00",
+  "captured_at_utc": "2026-11-25T20:33:46.976404+00:00",
+  "source_sha256": "9c089fdbebd24a6cacb58fc91ac226eca7648b9cbf577f08cdb64190be6fb791",
   "reports": [
     {
       "matchup": "MIA@PHI",
       "team_abbr": "MIA",
       "player": "Antetokounmpo, Giannis",
       "normalized_player": "giannis antetokounmpo",
-      "status": "QUESTIONABLE",
+      "status": "PROBABLE",
       "reason": "Injury/Illness - Right Groin Tendinitis"
     },
     {
@@ -43,7 +43,7 @@
       "team_abbr": "PHI",
       "player": "Embiid, Joel",
       "normalized_player": "joel embiid",
-      "status": "DOUBTFUL",
+      "status": "OUT",
       "reason": "Injury/Illness - Illness"
     },
     {
