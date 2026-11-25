@@ -1,6 +1,6 @@
 {
   "schema": "supplemental-soccer-partial-fixtures-v1",
-  "generated_at_utc": "2026-11-24T22:43:06.429Z",
+  "generated_at_utc": "2026-11-25T21:57:29.373Z",
   "coverage": "FIVE_EXPLICIT_MISSING_LEAGUES_PARTIAL_NEXT_EVENT_ONLY",
   "competitions": [
     {
@@ -41,17 +41,17 @@
   ],
   "fixtures": [
     {
-      "id": "tsdb:2630138",
+      "id": "tsdb:2630140",
       "league": "COL_1_primera-a",
       "season": "2026",
-      "date": "2026-11-24",
-      "home": "Millonarios",
-      "away": "Atlético Bucaramanga",
-      "kickoffUtc": "2026-11-24T23:20:00Z",
+      "date": "2026-11-25",
+      "home": "Independiente Santa Fe",
+      "away": "Once Caldas",
+      "kickoffUtc": "2026-11-25T23:20:00Z",
       "source": "THESPORTSDB_PUBLIC_NEXT_EVENT",
       "providerStatus": "NS",
       "coverage": "PARTIAL_NEXT_EVENT_ONLY",
-      "sourceCapturedAtUtc": "2026-11-24T22:43:06.429Z"
+      "sourceCapturedAtUtc": "2026-11-25T21:57:29.373Z"
     },
     {
       "id": "tsdb:2557494",
@@ -64,7 +64,7 @@
       "source": "THESPORTSDB_PUBLIC_NEXT_EVENT",
       "providerStatus": "NS",
       "coverage": "PARTIAL_NEXT_EVENT_ONLY",
-      "sourceCapturedAtUtc": "2026-11-24T22:43:06.429Z"
+      "sourceCapturedAtUtc": "2026-11-25T21:57:29.373Z"
     },
     {
       "id": "tsdb:2422305",
@@ -77,7 +77,7 @@
       "source": "THESPORTSDB_PUBLIC_NEXT_EVENT",
       "providerStatus": "NS",
       "coverage": "PARTIAL_NEXT_EVENT_ONLY",
-      "sourceCapturedAtUtc": "2026-11-24T22:43:06.429Z"
+      "sourceCapturedAtUtc": "2026-11-25T21:57:29.373Z"
     },
     {
       "id": "tsdb:2631042",
@@ -90,7 +90,7 @@
       "source": "THESPORTSDB_PUBLIC_NEXT_EVENT",
       "providerStatus": "NS",
       "coverage": "PARTIAL_NEXT_EVENT_ONLY",
-      "sourceCapturedAtUtc": "2026-11-24T22:43:06.429Z"
+      "sourceCapturedAtUtc": "2026-11-25T21:57:29.373Z"
     }
   ],
   "guardrails": {
