@@ -1,14 +1,14 @@
 {
   "schema": "supplemental-soccer-partial-fixtures-v1",
-  "generated_at_utc": "2026-11-25T21:57:29.373Z",
+  "generated_at_utc": "2026-11-26T21:51:43.808Z",
   "coverage": "FIVE_EXPLICIT_MISSING_LEAGUES_PARTIAL_NEXT_EVENT_ONLY",
   "competitions": [
     {
       "league": "NIC_1_primera",
       "name": "Nicaraguan Primera División",
       "providerLeagueId": "4806",
-      "status": "NO_NEXT_FIXTURE",
-      "count": 0
+      "status": "OK_NEXT_FIXTURE",
+      "count": 1
     },
     {
       "league": "COL_1_primera-a",
@@ -41,17 +41,30 @@
   ],
   "fixtures": [
     {
-      "id": "tsdb:2630140",
-      "league": "COL_1_primera-a",
+      "id": "tsdb:2631285",
+      "league": "NIC_1_primera",
       "season": "2026",
-      "date": "2026-11-25",
-      "home": "Independiente Santa Fe",
-      "away": "Once Caldas",
-      "kickoffUtc": "2026-11-25T23:20:00Z",
+      "date": "2026-11-26",
+      "home": "ART Jalapa",
+      "away": "San Marcos",
+      "kickoffUtc": "2026-11-26T22:00:00Z",
       "source": "THESPORTSDB_PUBLIC_NEXT_EVENT",
       "providerStatus": "NS",
       "coverage": "PARTIAL_NEXT_EVENT_ONLY",
-      "sourceCapturedAtUtc": "2026-11-25T21:57:29.373Z"
+      "sourceCapturedAtUtc": "2026-11-26T21:51:43.808Z"
+    },
+    {
+      "id": "tsdb:2630934",
+      "league": "COL_1_primera-a",
+      "season": "2026",
+      "date": "2026-11-27",
+      "home": "Deportivo Cali",
+      "away": "Atlético Bucaramanga",
+      "kickoffUtc": "2026-11-27T23:35:00Z",
+      "source": "THESPORTSDB_PUBLIC_NEXT_EVENT",
+      "providerStatus": "NS",
+      "coverage": "PARTIAL_NEXT_EVENT_ONLY",
+      "sourceCapturedAtUtc": "2026-11-26T21:51:43.808Z"
     },
     {
       "id": "tsdb:2557494",
@@ -64,7 +77,7 @@
       "source": "THESPORTSDB_PUBLIC_NEXT_EVENT",
       "providerStatus": "NS",
       "coverage": "PARTIAL_NEXT_EVENT_ONLY",
-      "sourceCapturedAtUtc": "2026-11-25T21:57:29.373Z"
+      "sourceCapturedAtUtc": "2026-11-26T21:51:43.808Z"
     },
     {
       "id": "tsdb:2422305",
@@ -77,20 +90,20 @@
       "source": "THESPORTSDB_PUBLIC_NEXT_EVENT",
       "providerStatus": "NS",
       "coverage": "PARTIAL_NEXT_EVENT_ONLY",
-      "sourceCapturedAtUtc": "2026-11-25T21:57:29.373Z"
+      "sourceCapturedAtUtc": "2026-11-26T21:51:43.808Z"
     },
     {
-      "id": "tsdb:2631042",
+      "id": "tsdb:2631044",
       "league": "AUS_2_championship",
       "season": "2026",
-      "date": "2026-11-26",
-      "home": "South Melbourne",
-      "away": "Oakleigh Cannons",
-      "kickoffUtc": "2026-11-26T08:30:00Z",
+      "date": "2026-11-27",
+      "home": "Broadmeadow Magic",
+      "away": "Queensland Lions",
+      "kickoffUtc": "2026-11-27T08:30:00Z",
       "source": "THESPORTSDB_PUBLIC_NEXT_EVENT",
       "providerStatus": "NS",
       "coverage": "PARTIAL_NEXT_EVENT_ONLY",
-      "sourceCapturedAtUtc": "2026-11-25T21:57:29.373Z"
+      "sourceCapturedAtUtc": "2026-11-26T21:51:43.808Z"
     }
   ],
   "guardrails": {
