@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-25_06_45PM.pdf",
-  "published_at_utc": "2026-11-25T23:45:00+00:00",
-  "captured_at_utc": "2026-11-25T23:47:37.389792+00:00",
-  "source_sha256": "ae803baf26f0affebce2e0ece59b532ff86abb35e9f0e9ee6dc53e9e8de0eaf8",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-25_08_30PM.pdf",
+  "published_at_utc": "2026-11-26T01:30:00+00:00",
+  "captured_at_utc": "2026-11-26T01:46:29.488161+00:00",
+  "source_sha256": "2d20490adee10afa8fd8ac54c359b903ac10b7ede2a88eebf6dc6cba9e270b8d",
   "reports": [
     {
       "matchup": "MIA@PHI",
@@ -203,7 +203,7 @@
       "team_abbr": "NYK",
       "player": "Brunson, Jalen",
       "normalized_player": "jalen brunson",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Illness"
     },
     {
@@ -219,7 +219,7 @@
       "team_abbr": "NYK",
       "player": "Hart, Josh",
       "normalized_player": "josh hart",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Shoulder Sprain"
     },
     {
@@ -235,7 +235,7 @@
       "team_abbr": "NYK",
       "player": "Towns, Karl-Anthony",
       "normalized_player": "karl anthony towns",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -457,6 +457,22 @@
     {
       "matchup": "PHX@HOU",
       "team_abbr": "PHX",
+      "player": "Spencer, Pat",
+      "normalized_player": "pat spencer",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "PHX@HOU",
+      "team_abbr": "PHX",
+      "player": "Timme, Drew",
+      "normalized_player": "drew timme",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "PHX@HOU",
+      "team_abbr": "PHX",
       "player": "Williams, Mark",
       "normalized_player": "mark williams",
       "status": "OUT",
@@ -531,7 +547,7 @@
       "team_abbr": "GSW",
       "player": "Lendeborg, Yaxel",
       "normalized_player": "yaxel lendeborg",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Illness"
     },
     {
@@ -631,7 +647,7 @@
       "reason": ""
     }
   ],
-  "rows": 78,
+  "rows": 80,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
