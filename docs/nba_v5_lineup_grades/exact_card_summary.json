@@ -1,9 +1,9 @@
 {
   "schema": "NBA_V5_IMMUTABLE_EXACT_CONFIRMED_CARD_AUDIT_V1",
   "kind": "last",
-  "games_with_archives_and_grades": 7,
-  "games_without_eligible_confirmed_starters": 7,
-  "files_missing_final_grade": 1,
+  "games_with_archives_and_grades": 8,
+  "games_without_eligible_confirmed_starters": 8,
+  "files_missing_final_grade": 0,
   "post_tip_forecasts_rejected": 0,
   "confirmed_starters_missing_dnp_contract": 0,
   "top4": {
@@ -17,7 +17,8 @@
   "top4_by_probability_contract": {},
   "repeat_selected": [],
   "shadow_candidate": {
-    "status": "INSUFFICIENT_SEPARATE_PREGAME_DATES"
+    "status": "NO_HOLDOUT_TOP4",
+    "holdout_start": "2026-11-25"
   },
   "production_changes": false,
   "immutable_source_replay": true

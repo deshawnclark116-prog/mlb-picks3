@@ -1,115 +1,115 @@
 {
  "first": {
-  "games_graded": 122,
+  "games_graded": 128,
   "cause_counts": {
-   "shot_volume_off": 5964,
-   "minutes_off_by_6_plus": 5789,
-   "did_not_play_as_flagged": 3661,
-   "outside_stated_80_percent_range": 1834,
-   "did_not_play": 1260,
-   "foul_trouble": 973,
+   "shot_volume_off": 6209,
+   "minutes_off_by_6_plus": 6041,
+   "did_not_play_as_flagged": 3892,
+   "outside_stated_80_percent_range": 1921,
+   "did_not_play": 1295,
+   "foul_trouble": 994,
    "blowout_cut_minutes": 679,
-   "shooting_unusually_bad": 563,
-   "shooting_unusually_good": 535,
+   "shooting_unusually_bad": 592,
+   "shooting_unusually_good": 553,
    "overtime_extra_minutes": 399,
    "role_wrong_starter_vs_bench": 133
   },
   "stated_80_percent_range_coverage": {
    "points": {
-    "n": 2574,
-    "covered": 0.801
+    "n": 2698,
+    "covered": 0.803
    },
    "rebounds": {
-    "n": 2574,
-    "covered": 0.868
+    "n": 2698,
+    "covered": 0.867
    },
    "assists": {
-    "n": 2574,
-    "covered": 0.899
+    "n": 2698,
+    "covered": 0.9
    },
    "three_pointers_made": {
-    "n": 2574,
-    "covered": 0.909
+    "n": 2698,
+    "covered": 0.91
    },
    "steals": {
-    "n": 2574,
-    "covered": 0.942
+    "n": 2698,
+    "covered": 0.94
    },
    "blocks": {
-    "n": 2574,
-    "covered": 0.939
+    "n": 2698,
+    "covered": 0.94
    },
    "turnovers": {
-    "n": 2574,
-    "covered": 0.929
+    "n": 2698,
+    "covered": 0.928
    }
   },
   "stated_chance_vs_actual": {
    "all_ranked": {
-    "n": 7718,
+    "n": 8116,
     "mean_stated": 0.554,
-    "actual_reach_rate": 0.556,
-    "brier": 0.246
+    "actual_reach_rate": 0.552,
+    "brier": 0.2467
    },
    "role_bench": {
-    "n": 7119,
-    "mean_stated": 0.553,
-    "actual_reach_rate": 0.561,
-    "brier": 0.2458
+    "n": 7517,
+    "mean_stated": 0.554,
+    "actual_reach_rate": 0.557,
+    "brier": 0.2466
    },
    "opportunity_minutes_under_28": {
-    "n": 4072,
+    "n": 4291,
     "mean_stated": 0.545,
-    "actual_reach_rate": 0.553,
-    "brier": 0.2478
+    "actual_reach_rate": 0.548,
+    "brier": 0.2484
    },
    "stat_three_pointers_made": {
-    "n": 1477,
-    "mean_stated": 0.593,
-    "actual_reach_rate": 0.599,
-    "brier": 0.2399
+    "n": 1557,
+    "mean_stated": 0.594,
+    "actual_reach_rate": 0.595,
+    "brier": 0.2421
    },
    "stat_steals": {
-    "n": 1298,
-    "mean_stated": 0.575,
-    "actual_reach_rate": 0.568,
-    "brier": 0.247
+    "n": 1361,
+    "mean_stated": 0.574,
+    "actual_reach_rate": 0.563,
+    "brier": 0.2476
    },
    "stat_points": {
-    "n": 1600,
+    "n": 1684,
     "mean_stated": 0.498,
-    "actual_reach_rate": 0.514,
-    "brier": 0.2509
+    "actual_reach_rate": 0.51,
+    "brier": 0.2515
    },
    "stat_rebounds": {
-    "n": 1515,
+    "n": 1593,
     "mean_stated": 0.549,
-    "actual_reach_rate": 0.533,
-    "brier": 0.2472
+    "actual_reach_rate": 0.532,
+    "brier": 0.2475
    },
    "stat_blocks": {
-    "n": 595,
+    "n": 621,
     "mean_stated": 0.549,
-    "actual_reach_rate": 0.531,
-    "brier": 0.254
+    "actual_reach_rate": 0.533,
+    "brier": 0.2534
    },
    "stat_assists": {
-    "n": 1233,
-    "mean_stated": 0.566,
-    "actual_reach_rate": 0.586,
-    "brier": 0.2403
+    "n": 1300,
+    "mean_stated": 0.567,
+    "actual_reach_rate": 0.579,
+    "brier": 0.2408
    },
    "opportunity_minutes_28_plus": {
-    "n": 3646,
+    "n": 3825,
     "mean_stated": 0.564,
-    "actual_reach_rate": 0.56,
-    "brier": 0.2439
+    "actual_reach_rate": 0.557,
+    "brier": 0.2447
    },
    "frontend_top4": {
-    "n": 466,
+    "n": 490,
     "mean_stated": 0.75,
-    "actual_reach_rate": 0.65,
-    "brier": 0.2395
+    "actual_reach_rate": 0.645,
+    "brier": 0.2429
    },
    "role_likely_starter": {
     "n": 599,
@@ -119,324 +119,324 @@
    }
   },
   "mean_abs_error": {
-   "points": 4.664,
-   "rebounds": 1.884,
-   "assists": 1.335,
+   "points": 4.657,
+   "rebounds": 1.887,
+   "assists": 1.331,
    "three_pointers_made": 0.927,
-   "steals": 0.696,
-   "blocks": 0.498,
-   "turnovers": 0.911
+   "steals": 0.697,
+   "blocks": 0.499,
+   "turnovers": 0.914
   },
   "mean_abs_error_by_role_change": {
    "points|NO_STRONG_CHANGE": {
-    "n": 1288,
-    "mae": 4.489
+    "n": 1361,
+    "mae": 4.51
    },
    "rebounds|NO_STRONG_CHANGE": {
-    "n": 1288,
-    "mae": 1.869
+    "n": 1361,
+    "mae": 1.876
    },
    "assists|NO_STRONG_CHANGE": {
-    "n": 1288,
-    "mae": 1.323
+    "n": 1361,
+    "mae": 1.322
    },
    "three_pointers_made|NO_STRONG_CHANGE": {
-    "n": 1288,
-    "mae": 0.89
+    "n": 1361,
+    "mae": 0.898
    },
    "steals|NO_STRONG_CHANGE": {
-    "n": 1288,
-    "mae": 0.699
+    "n": 1361,
+    "mae": 0.698
    },
    "blocks|NO_STRONG_CHANGE": {
-    "n": 1288,
-    "mae": 0.531
+    "n": 1361,
+    "mae": 0.534
    },
    "turnovers|NO_STRONG_CHANGE": {
-    "n": 1288,
-    "mae": 0.905
+    "n": 1361,
+    "mae": 0.912
    },
    "points|ROLE_CHANGE_CANDIDATE": {
-    "n": 975,
-    "mae": 5.052
+    "n": 1018,
+    "mae": 5.008
    },
    "rebounds|ROLE_CHANGE_CANDIDATE": {
-    "n": 975,
-    "mae": 1.933
+    "n": 1018,
+    "mae": 1.94
    },
    "assists|ROLE_CHANGE_CANDIDATE": {
-    "n": 975,
-    "mae": 1.422
+    "n": 1018,
+    "mae": 1.411
    },
    "three_pointers_made|ROLE_CHANGE_CANDIDATE": {
-    "n": 975,
-    "mae": 1.031
+    "n": 1018,
+    "mae": 1.022
    },
    "steals|ROLE_CHANGE_CANDIDATE": {
-    "n": 975,
-    "mae": 0.732
+    "n": 1018,
+    "mae": 0.733
    },
    "blocks|ROLE_CHANGE_CANDIDATE": {
-    "n": 975,
-    "mae": 0.495
+    "n": 1018,
+    "mae": 0.492
    },
    "turnovers|ROLE_CHANGE_CANDIDATE": {
-    "n": 975,
-    "mae": 0.938
+    "n": 1018,
+    "mae": 0.936
    },
    "points|INSUFFICIENT_HISTORY": {
-    "n": 311,
-    "mae": 4.172
+    "n": 319,
+    "mae": 4.159
    },
    "rebounds|INSUFFICIENT_HISTORY": {
-    "n": 311,
-    "mae": 1.787
+    "n": 319,
+    "mae": 1.763
    },
    "assists|INSUFFICIENT_HISTORY": {
-    "n": 311,
+    "n": 319,
     "mae": 1.115
    },
    "three_pointers_made|INSUFFICIENT_HISTORY": {
-    "n": 311,
-    "mae": 0.751
+    "n": 319,
+    "mae": 0.749
    },
    "steals|INSUFFICIENT_HISTORY": {
-    "n": 311,
-    "mae": 0.57
+    "n": 319,
+    "mae": 0.575
    },
    "blocks|INSUFFICIENT_HISTORY": {
-    "n": 311,
+    "n": 319,
     "mae": 0.367
    },
    "turnovers|INSUFFICIENT_HISTORY": {
-    "n": 311,
+    "n": 319,
     "mae": 0.852
    }
   },
   "mean_abs_error_by_archetype": {
    "points|PRIMARY_FACILITATOR": {
-    "n": 218,
-    "mae": 5.225
+    "n": 229,
+    "mae": 5.202
    },
    "rebounds|PRIMARY_FACILITATOR": {
-    "n": 218,
-    "mae": 1.677
+    "n": 229,
+    "mae": 1.722
    },
    "assists|PRIMARY_FACILITATOR": {
-    "n": 218,
-    "mae": 2.153
+    "n": 229,
+    "mae": 2.156
    },
    "three_pointers_made|PRIMARY_FACILITATOR": {
-    "n": 218,
-    "mae": 0.956
+    "n": 229,
+    "mae": 0.972
    },
    "steals|PRIMARY_FACILITATOR": {
-    "n": 218,
+    "n": 229,
     "mae": 0.794
    },
    "blocks|PRIMARY_FACILITATOR": {
-    "n": 218,
-    "mae": 0.407
+    "n": 229,
+    "mae": 0.405
    },
    "turnovers|PRIMARY_FACILITATOR": {
-    "n": 218,
-    "mae": 1.113
+    "n": 229,
+    "mae": 1.103
    },
    "points|PERIMETER_SPACER": {
-    "n": 495,
-    "mae": 4.385
+    "n": 522,
+    "mae": 4.4
    },
    "rebounds|PERIMETER_SPACER": {
-    "n": 495,
-    "mae": 1.629
+    "n": 522,
+    "mae": 1.628
    },
    "assists|PERIMETER_SPACER": {
-    "n": 495,
-    "mae": 1.14
+    "n": 522,
+    "mae": 1.134
    },
    "three_pointers_made|PERIMETER_SPACER": {
-    "n": 495,
+    "n": 522,
     "mae": 1.1
    },
    "steals|PERIMETER_SPACER": {
-    "n": 495,
-    "mae": 0.687
+    "n": 522,
+    "mae": 0.68
    },
    "blocks|PERIMETER_SPACER": {
-    "n": 495,
-    "mae": 0.378
+    "n": 522,
+    "mae": 0.381
    },
    "turnovers|PERIMETER_SPACER": {
-    "n": 495,
-    "mae": 0.789
+    "n": 522,
+    "mae": 0.791
    },
    "points|BALANCED_OR_LOW_USAGE": {
-    "n": 665,
-    "mae": 4.289
+    "n": 696,
+    "mae": 4.236
    },
    "rebounds|BALANCED_OR_LOW_USAGE": {
-    "n": 665,
-    "mae": 1.883
+    "n": 696,
+    "mae": 1.874
    },
    "assists|BALANCED_OR_LOW_USAGE": {
-    "n": 665,
-    "mae": 1.142
+    "n": 696,
+    "mae": 1.13
    },
    "three_pointers_made|BALANCED_OR_LOW_USAGE": {
-    "n": 665,
-    "mae": 0.857
+    "n": 696,
+    "mae": 0.849
    },
    "steals|BALANCED_OR_LOW_USAGE": {
-    "n": 665,
-    "mae": 0.699
+    "n": 696,
+    "mae": 0.7
    },
    "blocks|BALANCED_OR_LOW_USAGE": {
-    "n": 665,
-    "mae": 0.522
+    "n": 696,
+    "mae": 0.517
    },
    "turnovers|BALANCED_OR_LOW_USAGE": {
-    "n": 665,
-    "mae": 0.779
+    "n": 696,
+    "mae": 0.778
    },
    "points|VOLUME_SCORER": {
-    "n": 522,
-    "mae": 5.404
+    "n": 548,
+    "mae": 5.438
    },
    "rebounds|VOLUME_SCORER": {
-    "n": 522,
-    "mae": 1.878
+    "n": 548,
+    "mae": 1.897
    },
    "assists|VOLUME_SCORER": {
-    "n": 522,
-    "mae": 1.33
+    "n": 548,
+    "mae": 1.334
    },
    "three_pointers_made|VOLUME_SCORER": {
-    "n": 522,
-    "mae": 1.189
+    "n": 548,
+    "mae": 1.186
    },
    "steals|VOLUME_SCORER": {
-    "n": 522,
+    "n": 548,
     "mae": 0.673
    },
    "blocks|VOLUME_SCORER": {
-    "n": 522,
-    "mae": 0.491
+    "n": 548,
+    "mae": 0.49
    },
    "turnovers|VOLUME_SCORER": {
-    "n": 522,
-    "mae": 1.003
+    "n": 548,
+    "mae": 1.01
    },
    "points|INTERIOR_REBOUNDER": {
-    "n": 227,
-    "mae": 3.661
+    "n": 235,
+    "mae": 3.597
    },
    "rebounds|INTERIOR_REBOUNDER": {
-    "n": 227,
-    "mae": 2.761
+    "n": 235,
+    "mae": 2.772
    },
    "assists|INTERIOR_REBOUNDER": {
-    "n": 227,
-    "mae": 0.978
+    "n": 235,
+    "mae": 0.979
    },
    "three_pointers_made|INTERIOR_REBOUNDER": {
-    "n": 227,
-    "mae": 0.179
+    "n": 235,
+    "mae": 0.178
    },
    "steals|INTERIOR_REBOUNDER": {
-    "n": 227,
+    "n": 235,
     "mae": 0.581
    },
    "blocks|INTERIOR_REBOUNDER": {
-    "n": 227,
-    "mae": 0.749
+    "n": 235,
+    "mae": 0.754
    },
    "turnovers|INTERIOR_REBOUNDER": {
-    "n": 227,
-    "mae": 0.839
+    "n": 235,
+    "mae": 0.841
    },
    "points|CONNECTOR_REBOUNDER": {
-    "n": 123,
-    "mae": 3.773
+    "n": 129,
+    "mae": 3.798
    },
    "rebounds|CONNECTOR_REBOUNDER": {
-    "n": 123,
+    "n": 129,
     "mae": 2.029
    },
    "assists|CONNECTOR_REBOUNDER": {
-    "n": 123,
-    "mae": 1.315
+    "n": 129,
+    "mae": 1.351
    },
    "three_pointers_made|CONNECTOR_REBOUNDER": {
-    "n": 123,
-    "mae": 0.601
+    "n": 129,
+    "mae": 0.606
    },
    "steals|CONNECTOR_REBOUNDER": {
-    "n": 123,
-    "mae": 0.616
+    "n": 129,
+    "mae": 0.625
    },
    "blocks|CONNECTOR_REBOUNDER": {
-    "n": 123,
-    "mae": 0.589
+    "n": 129,
+    "mae": 0.608
    },
    "turnovers|CONNECTOR_REBOUNDER": {
-    "n": 123,
-    "mae": 0.991
+    "n": 129,
+    "mae": 0.987
    },
    "points|HIGH_USAGE_CREATOR": {
-    "n": 240,
-    "mae": 5.954
+    "n": 253,
+    "mae": 5.955
    },
    "rebounds|HIGH_USAGE_CREATOR": {
-    "n": 240,
-    "mae": 1.811
+    "n": 253,
+    "mae": 1.788
    },
    "assists|HIGH_USAGE_CREATOR": {
-    "n": 240,
-    "mae": 2.082
+    "n": 253,
+    "mae": 2.041
    },
    "three_pointers_made|HIGH_USAGE_CREATOR": {
-    "n": 240,
-    "mae": 1.223
+    "n": 253,
+    "mae": 1.222
    },
    "steals|HIGH_USAGE_CREATOR": {
-    "n": 240,
-    "mae": 0.886
+    "n": 253,
+    "mae": 0.899
    },
    "blocks|HIGH_USAGE_CREATOR": {
-    "n": 240,
-    "mae": 0.537
+    "n": 253,
+    "mae": 0.54
    },
    "turnovers|HIGH_USAGE_CREATOR": {
-    "n": 240,
-    "mae": 1.253
+    "n": 253,
+    "mae": 1.267
    },
    "points|RIM_PRESSURE_SCORER": {
-    "n": 36,
-    "mae": 4.556
+    "n": 38,
+    "mae": 4.5
    },
    "rebounds|RIM_PRESSURE_SCORER": {
-    "n": 36,
-    "mae": 2.035
+    "n": 38,
+    "mae": 2.029
    },
    "assists|RIM_PRESSURE_SCORER": {
-    "n": 36,
-    "mae": 0.964
+    "n": 38,
+    "mae": 0.943
    },
    "three_pointers_made|RIM_PRESSURE_SCORER": {
-    "n": 36,
-    "mae": 0.488
+    "n": 38,
+    "mae": 0.471
    },
    "steals|RIM_PRESSURE_SCORER": {
-    "n": 36,
-    "mae": 0.72
+    "n": 38,
+    "mae": 0.709
    },
    "blocks|RIM_PRESSURE_SCORER": {
-    "n": 36,
-    "mae": 0.667
+    "n": 38,
+    "mae": 0.67
    },
    "turnovers|RIM_PRESSURE_SCORER": {
-    "n": 36,
-    "mae": 0.888
+    "n": 38,
+    "mae": 0.885
    },
    "points|INSUFFICIENT_HISTORY": {
     "n": 48,
@@ -469,198 +469,198 @@
   },
   "stated_unconditional_chance_vs_actual": {
    "all_original_projections": {
-    "n": 15876,
-    "mean_stated": 0.428,
-    "actual_reach_rate": 0.468,
-    "brier": 0.2353
+    "n": 16645,
+    "mean_stated": 0.427,
+    "actual_reach_rate": 0.465,
+    "brier": 0.2349
    },
    "stat_points": {
-    "n": 3236,
-    "mean_stated": 0.369,
-    "actual_reach_rate": 0.397,
-    "brier": 0.2296
+    "n": 3396,
+    "mean_stated": 0.368,
+    "actual_reach_rate": 0.394,
+    "brier": 0.229
    },
    "archetype_PRIMARY_FACILITATOR": {
-    "n": 1386,
+    "n": 1454,
     "mean_stated": 0.424,
-    "actual_reach_rate": 0.47,
-    "brier": 0.2388
+    "actual_reach_rate": 0.473,
+    "brier": 0.2395
    },
    "opportunity_minutes_UNDER_28": {
-    "n": 10530,
-    "mean_stated": 0.407,
-    "actual_reach_rate": 0.442,
-    "brier": 0.231
+    "n": 11070,
+    "mean_stated": 0.406,
+    "actual_reach_rate": 0.439,
+    "brier": 0.2302
    },
    "participation_band_MEDIUM": {
-    "n": 5131,
-    "mean_stated": 0.392,
-    "actual_reach_rate": 0.418,
-    "brier": 0.2306
-   },
-   "role_change_NO_STRONG_CHANGE": {
-    "n": 7888,
-    "mean_stated": 0.431,
-    "actual_reach_rate": 0.478,
-    "brier": 0.239
-   },
-   "stat_rebounds": {
-    "n": 3146,
-    "mean_stated": 0.421,
-    "actual_reach_rate": 0.445,
+    "n": 5785,
+    "mean_stated": 0.398,
+    "actual_reach_rate": 0.422,
     "brier": 0.2319
    },
+   "role_change_NO_STRONG_CHANGE": {
+    "n": 8322,
+    "mean_stated": 0.431,
+    "actual_reach_rate": 0.478,
+    "brier": 0.2393
+   },
+   "stat_rebounds": {
+    "n": 3303,
+    "mean_stated": 0.42,
+    "actual_reach_rate": 0.444,
+    "brier": 0.2316
+   },
    "stat_assists": {
-    "n": 2720,
+    "n": 2854,
     "mean_stated": 0.436,
-    "actual_reach_rate": 0.491,
-    "brier": 0.2368
+    "actual_reach_rate": 0.488,
+    "brier": 0.2362
    },
    "stat_turnovers": {
-    "n": 2288,
+    "n": 2395,
     "mean_stated": 0.456,
-    "actual_reach_rate": 0.493,
-    "brier": 0.2337
+    "actual_reach_rate": 0.491,
+    "brier": 0.2331
    },
    "archetype_PERIMETER_SPACER": {
-    "n": 2873,
-    "mean_stated": 0.433,
-    "actual_reach_rate": 0.476,
-    "brier": 0.2387
+    "n": 3033,
+    "mean_stated": 0.431,
+    "actual_reach_rate": 0.472,
+    "brier": 0.2376
    },
    "participation_band_HIGH": {
-    "n": 9040,
+    "n": 9067,
     "mean_stated": 0.488,
     "actual_reach_rate": 0.537,
     "brier": 0.2478
    },
    "stat_three_pointers_made": {
-    "n": 2023,
-    "mean_stated": 0.461,
-    "actual_reach_rate": 0.524,
-    "brier": 0.2406
+    "n": 2126,
+    "mean_stated": 0.46,
+    "actual_reach_rate": 0.521,
+    "brier": 0.2409
    },
    "stat_steals": {
-    "n": 1691,
-    "mean_stated": 0.459,
-    "actual_reach_rate": 0.502,
-    "brier": 0.2411
+    "n": 1765,
+    "mean_stated": 0.458,
+    "actual_reach_rate": 0.499,
+    "brier": 0.2409
    },
    "archetype_BALANCED_OR_LOW_USAGE": {
-    "n": 4193,
+    "n": 4371,
     "mean_stated": 0.418,
-    "actual_reach_rate": 0.443,
-    "brier": 0.2291
+    "actual_reach_rate": 0.442,
+    "brier": 0.2288
    },
    "archetype_VOLUME_SCORER": {
-    "n": 3234,
-    "mean_stated": 0.449,
-    "actual_reach_rate": 0.512,
-    "brier": 0.2417
+    "n": 3392,
+    "mean_stated": 0.45,
+    "actual_reach_rate": 0.509,
+    "brier": 0.2419
    },
    "opportunity_minutes_28_PLUS": {
-    "n": 5346,
-    "mean_stated": 0.469,
+    "n": 5575,
+    "mean_stated": 0.468,
     "actual_reach_rate": 0.518,
-    "brier": 0.2436
+    "brier": 0.2441
    },
    "archetype_INTERIOR_REBOUNDER": {
-    "n": 1239,
+    "n": 1288,
     "mean_stated": 0.407,
-    "actual_reach_rate": 0.442,
-    "brier": 0.227
+    "actual_reach_rate": 0.439,
+    "brier": 0.2258
    },
    "stat_blocks": {
-    "n": 772,
-    "mean_stated": 0.436,
-    "actual_reach_rate": 0.473,
-    "brier": 0.245
+    "n": 806,
+    "mean_stated": 0.435,
+    "actual_reach_rate": 0.475,
+    "brier": 0.2451
    },
    "participation_band_LOW": {
-    "n": 1705,
+    "n": 1793,
     "mean_stated": 0.216,
-    "actual_reach_rate": 0.247,
-    "brier": 0.1828
+    "actual_reach_rate": 0.241,
+    "brier": 0.1794
    },
    "archetype_CONNECTOR_REBOUNDER": {
-    "n": 730,
-    "mean_stated": 0.437,
-    "actual_reach_rate": 0.467,
-    "brier": 0.2422
+    "n": 778,
+    "mean_stated": 0.436,
+    "actual_reach_rate": 0.458,
+    "brier": 0.2409
    },
    "role_change_ROLE_CHANGE_CANDIDATE": {
-    "n": 6048,
-    "mean_stated": 0.441,
-    "actual_reach_rate": 0.484,
-    "brier": 0.2415
+    "n": 6307,
+    "mean_stated": 0.44,
+    "actual_reach_rate": 0.482,
+    "brier": 0.2406
    },
    "role_change_INSUFFICIENT_HISTORY": {
-    "n": 1940,
-    "mean_stated": 0.375,
-    "actual_reach_rate": 0.371,
-    "brier": 0.2006
+    "n": 2016,
+    "mean_stated": 0.372,
+    "actual_reach_rate": 0.364,
+    "brier": 0.1988
    },
    "frontend_top4": {
-    "n": 488,
-    "mean_stated": 0.65,
-    "actual_reach_rate": 0.621,
-    "brier": 0.2371
+    "n": 512,
+    "mean_stated": 0.649,
+    "actual_reach_rate": 0.617,
+    "brier": 0.2383
    },
    "archetype_HIGH_USAGE_CREATOR": {
-    "n": 1625,
-    "mean_stated": 0.458,
+    "n": 1706,
+    "mean_stated": 0.456,
     "actual_reach_rate": 0.528,
     "brier": 0.2546
    },
    "archetype_RIM_PRESSURE_SCORER": {
-    "n": 210,
-    "mean_stated": 0.441,
-    "actual_reach_rate": 0.4,
-    "brier": 0.2333
+    "n": 222,
+    "mean_stated": 0.437,
+    "actual_reach_rate": 0.405,
+    "brier": 0.2323
    },
    "archetype_INSUFFICIENT_HISTORY": {
-    "n": 386,
-    "mean_stated": 0.244,
-    "actual_reach_rate": 0.153,
-    "brier": 0.1444
+    "n": 401,
+    "mean_stated": 0.241,
+    "actual_reach_rate": 0.147,
+    "brier": 0.1402
    }
   },
   "source_reliability": {
    "none|UNLISTED": {
-    "played": 2426,
-    "did_not_play": 540
+    "played": 2543,
+    "did_not_play": 576
    },
    "league_feed|OUT": {
-    "did_not_play": 516,
+    "did_not_play": 540,
     "played": 25
    },
    "game_feed|OUT": {
-    "did_not_play": 506,
+    "did_not_play": 527,
     "played": 25
    },
    "official_nba_injury_report|OUT": {
-    "did_not_play": 3685,
+    "did_not_play": 3780,
     "played": 10
    },
    "league_feed|QUESTIONABLE": {
-    "played": 146,
-    "did_not_play": 134
+    "played": 152,
+    "did_not_play": 135
    },
    "game_feed|QUESTIONABLE": {
-    "played": 142,
-    "did_not_play": 134
+    "played": 148,
+    "did_not_play": 135
    },
    "official_nba_injury_report|QUESTIONABLE": {
-    "played": 386,
-    "did_not_play": 347
+    "played": 389,
+    "did_not_play": 352
    },
    "official_nba_injury_report|AVAILABLE": {
-    "played": 395,
+    "played": 402,
     "did_not_play": 29
    },
    "official_nba_injury_report|PROBABLE": {
     "did_not_play": 16,
-    "played": 235
+    "played": 248
    },
    "official_nba_injury_report|DOUBTFUL": {
     "did_not_play": 57
@@ -668,23 +668,23 @@
   },
   "play_by_status": {
    "UNLISTED": {
-    "played": 102,
-    "did_not_play": 20
+    "played": 107,
+    "did_not_play": 21
    },
    "OUT": {
-    "did_not_play": 370,
+    "did_not_play": 391,
     "played": 13
    },
    "QUESTIONABLE": {
-    "played": 137,
-    "did_not_play": 134
+    "played": 143,
+    "did_not_play": 137
    },
    "AVAILABLE": {
-    "played": 70,
+    "played": 73,
     "did_not_play": 8
    },
    "PROBABLE": {
-    "played": 33,
+    "played": 36,
     "did_not_play": 2
    },
    "DOUBTFUL": {
@@ -693,27 +693,27 @@
   },
   "play_by_status_body": {
    "OUT|Leg": {
-    "did_not_play": 108,
+    "did_not_play": 114,
     "played": 3
    },
    "QUESTIONABLE|Leg": {
-    "played": 38,
+    "played": 39,
     "did_not_play": 32
    },
    "QUESTIONABLE|Arm": {
-    "played": 20,
+    "played": 21,
     "did_not_play": 14
    },
    "OUT|Arm": {
-    "did_not_play": 49,
+    "did_not_play": 52,
     "played": 1
    },
    "QUESTIONABLE|Other": {
-    "did_not_play": 20,
-    "played": 16
+    "did_not_play": 21,
+    "played": 17
    },
    "OUT|Other": {
-    "did_not_play": 32,
+    "did_not_play": 33,
     "played": 1
    },
    "QUESTIONABLE|Torso": {
@@ -721,29 +721,29 @@
     "did_not_play": 18
    },
    "QUESTIONABLE|Groin": {
-    "played": 1,
+    "played": 2,
     "did_not_play": 6
    },
    "OUT|Torso": {
-    "did_not_play": 44,
+    "did_not_play": 47,
     "played": 5
    },
    "OUT|Head": {
-    "did_not_play": 4,
+    "did_not_play": 5,
     "played": 1
    },
    "QUESTIONABLE|Head": {
     "played": 4,
     "did_not_play": 1
    },
+   "OUT|Groin": {
+    "did_not_play": 13,
+    "played": 1
+   },
    "OUT|Fracture": {
     "played": 1
    },
    "QUESTIONABLE|Fracture": {
-    "played": 1
-   },
-   "OUT|Groin": {
-    "did_not_play": 12,
     "played": 1
    },
    "QUESTIONABLE|Lower Body": {
@@ -753,296 +753,380 @@
   "note": "stated_chance_vs_actual is CONDITIONAL_ON_PLAYING, excludes DNP, and is NOT the V5 UI's displayed probability. stated_unconditional_chance_vs_actual includes DNP and is closer to the displayed chance, but its frontend_top4 still does not apply the live confirmed-starter filter. Use exact_card_summary.json for true verified-starter Top 4/10; frozen original grades are never rewritten."
  },
  "last": {
-  "games_graded": 7,
+  "games_graded": 8,
   "cause_counts": {
-   "minutes_off_by_6_plus": 315,
-   "shot_volume_off": 259,
-   "did_not_play_as_flagged": 168,
-   "outside_stated_80_percent_range": 98,
-   "foul_trouble": 84,
+   "minutes_off_by_6_plus": 378,
+   "shot_volume_off": 301,
+   "did_not_play_as_flagged": 238,
+   "outside_stated_80_percent_range": 104,
+   "foul_trouble": 91,
    "overtime_extra_minutes": 70,
-   "did_not_play": 49,
-   "shooting_unusually_good": 42,
-   "shooting_unusually_bad": 27,
+   "did_not_play": 56,
+   "shooting_unusually_good": 44,
+   "shooting_unusually_bad": 32,
    "blowout_cut_minutes": 14
   },
   "stated_80_percent_range_coverage": {
    "points": {
-    "n": 152,
-    "covered": 0.862
+    "n": 172,
+    "covered": 0.872
    },
    "rebounds": {
-    "n": 152,
-    "covered": 0.908
+    "n": 172,
+    "covered": 0.907
    },
    "assists": {
-    "n": 152,
-    "covered": 0.941
+    "n": 172,
+    "covered": 0.942
    },
    "three_pointers_made": {
-    "n": 152,
-    "covered": 0.875
+    "n": 172,
+    "covered": 0.884
    },
    "steals": {
-    "n": 152,
-    "covered": 0.921
+    "n": 172,
+    "covered": 0.93
    },
    "blocks": {
-    "n": 152,
-    "covered": 0.921
+    "n": 172,
+    "covered": 0.93
    },
    "turnovers": {
-    "n": 152,
-    "covered": 0.928
+    "n": 172,
+    "covered": 0.93
    }
   },
   "stated_chance_vs_actual": {
    "all_ranked": {
-    "n": 466,
+    "n": 529,
     "mean_stated": 0.556,
-    "actual_reach_rate": 0.601,
-    "brier": 0.2378
+    "actual_reach_rate": 0.592,
+    "brier": 0.2402
    },
    "role_bench": {
-    "n": 466,
+    "n": 529,
     "mean_stated": 0.556,
-    "actual_reach_rate": 0.601,
-    "brier": 0.2378
-   },
-   "opportunity_minutes_under_28": {
-    "n": 272,
-    "mean_stated": 0.542,
     "actual_reach_rate": 0.592,
-    "brier": 0.2368
-   },
-   "stat_points": {
-    "n": 97,
-    "mean_stated": 0.501,
-    "actual_reach_rate": 0.588,
-    "brier": 0.246
-   },
-   "stat_rebounds": {
-    "n": 94,
-    "mean_stated": 0.55,
-    "actual_reach_rate": 0.564,
-    "brier": 0.2417
-   },
-   "stat_three_pointers_made": {
-    "n": 89,
-    "mean_stated": 0.603,
-    "actual_reach_rate": 0.618,
-    "brier": 0.2266
+    "brier": 0.2402
    },
    "opportunity_minutes_28_plus": {
-    "n": 194,
+    "n": 230,
     "mean_stated": 0.574,
-    "actual_reach_rate": 0.613,
-    "brier": 0.2391
+    "actual_reach_rate": 0.617,
+    "brier": 0.2401
+   },
+   "stat_points": {
+    "n": 111,
+    "mean_stated": 0.503,
+    "actual_reach_rate": 0.568,
+    "brier": 0.2455
+   },
+   "stat_rebounds": {
+    "n": 105,
+    "mean_stated": 0.548,
+    "actual_reach_rate": 0.571,
+    "brier": 0.2386
    },
    "stat_assists": {
-    "n": 79,
-    "mean_stated": 0.578,
-    "actual_reach_rate": 0.696,
-    "brier": 0.2246
+    "n": 89,
+    "mean_stated": 0.575,
+    "actual_reach_rate": 0.674,
+    "brier": 0.2319
    },
-   "frontend_top4": {
-    "n": 28,
-    "mean_stated": 0.755,
-    "actual_reach_rate": 0.714,
-    "brier": 0.1925
+   "stat_three_pointers_made": {
+    "n": 104,
+    "mean_stated": 0.602,
+    "actual_reach_rate": 0.625,
+    "brier": 0.2284
    },
    "stat_steals": {
-    "n": 76,
-    "mean_stated": 0.554,
-    "actual_reach_rate": 0.553,
-    "brier": 0.251
+    "n": 86,
+    "mean_stated": 0.559,
+    "actual_reach_rate": 0.535,
+    "brier": 0.262
+   },
+   "opportunity_minutes_under_28": {
+    "n": 299,
+    "mean_stated": 0.542,
+    "actual_reach_rate": 0.572,
+    "brier": 0.2404
+   },
+   "frontend_top4": {
+    "n": 32,
+    "mean_stated": 0.76,
+    "actual_reach_rate": 0.688,
+    "brier": 0.2121
    },
    "stat_blocks": {
-    "n": 31,
-    "mean_stated": 0.555,
-    "actual_reach_rate": 0.581,
-    "brier": 0.2331
+    "n": 34,
+    "mean_stated": 0.554,
+    "actual_reach_rate": 0.559,
+    "brier": 0.2309
    }
   },
   "mean_abs_error": {
-   "points": 4.418,
-   "rebounds": 1.764,
-   "assists": 1.195,
-   "three_pointers_made": 0.991,
-   "steals": 0.735,
-   "blocks": 0.54,
-   "turnovers": 0.931
+   "points": 4.393,
+   "rebounds": 1.765,
+   "assists": 1.192,
+   "three_pointers_made": 0.963,
+   "steals": 0.731,
+   "blocks": 0.526,
+   "turnovers": 0.941
   },
   "mean_abs_error_by_role_change": {
    "points|NO_STRONG_CHANGE": {
-    "n": 87,
-    "mae": 4.189
+    "n": 100,
+    "mae": 4.31
    },
    "rebounds|NO_STRONG_CHANGE": {
-    "n": 87,
-    "mae": 1.917
+    "n": 100,
+    "mae": 1.904
    },
    "assists|NO_STRONG_CHANGE": {
-    "n": 87,
-    "mae": 1.344
+    "n": 100,
+    "mae": 1.364
    },
    "three_pointers_made|NO_STRONG_CHANGE": {
-    "n": 87,
-    "mae": 0.91
+    "n": 100,
+    "mae": 0.918
    },
    "steals|NO_STRONG_CHANGE": {
-    "n": 87,
-    "mae": 0.766
+    "n": 100,
+    "mae": 0.752
    },
    "blocks|NO_STRONG_CHANGE": {
-    "n": 87,
-    "mae": 0.584
+    "n": 100,
+    "mae": 0.564
    },
    "turnovers|NO_STRONG_CHANGE": {
-    "n": 87,
-    "mae": 1.043
+    "n": 100,
+    "mae": 1.037
    },
    "points|ROLE_CHANGE_CANDIDATE": {
-    "n": 49,
-    "mae": 5.167
+    "n": 55,
+    "mae": 4.885
    },
    "rebounds|ROLE_CHANGE_CANDIDATE": {
-    "n": 49,
-    "mae": 1.566
+    "n": 55,
+    "mae": 1.587
    },
    "assists|ROLE_CHANGE_CANDIDATE": {
-    "n": 49,
-    "mae": 0.993
+    "n": 55,
+    "mae": 0.944
    },
    "three_pointers_made|ROLE_CHANGE_CANDIDATE": {
-    "n": 49,
-    "mae": 1.139
+    "n": 55,
+    "mae": 1.043
    },
    "steals|ROLE_CHANGE_CANDIDATE": {
-    "n": 49,
-    "mae": 0.756
+    "n": 55,
+    "mae": 0.754
    },
    "blocks|ROLE_CHANGE_CANDIDATE": {
-    "n": 49,
-    "mae": 0.539
+    "n": 55,
+    "mae": 0.526
    },
    "turnovers|ROLE_CHANGE_CANDIDATE": {
-    "n": 49,
-    "mae": 0.797
+    "n": 55,
+    "mae": 0.822
    },
    "points|INSUFFICIENT_HISTORY": {
-    "n": 16,
-    "mae": 3.364
+    "n": 17,
+    "mae": 3.289
    },
    "rebounds|INSUFFICIENT_HISTORY": {
-    "n": 16,
-    "mae": 1.541
+    "n": 17,
+    "mae": 1.524
    },
    "assists|INSUFFICIENT_HISTORY": {
-    "n": 16,
-    "mae": 1.004
+    "n": 17,
+    "mae": 0.983
    },
    "three_pointers_made|INSUFFICIENT_HISTORY": {
-    "n": 16,
-    "mae": 0.979
+    "n": 17,
+    "mae": 0.972
    },
    "steals|INSUFFICIENT_HISTORY": {
-    "n": 16,
-    "mae": 0.504
+    "n": 17,
+    "mae": 0.527
    },
    "blocks|INSUFFICIENT_HISTORY": {
-    "n": 16,
-    "mae": 0.31
+    "n": 17,
+    "mae": 0.302
    },
    "turnovers|INSUFFICIENT_HISTORY": {
-    "n": 16,
-    "mae": 0.728
+    "n": 17,
+    "mae": 0.754
    }
   },
   "mean_abs_error_by_archetype": {
-   "points|PERIMETER_SPACER": {
-    "n": 27,
-    "mae": 5.929
+   "points|PRIMARY_FACILITATOR": {
+    "n": 13,
+    "mae": 5.206
    },
-   "rebounds|PERIMETER_SPACER": {
-    "n": 27,
-    "mae": 1.838
+   "rebounds|PRIMARY_FACILITATOR": {
+    "n": 13,
+    "mae": 1.466
    },
-   "assists|PERIMETER_SPACER": {
-    "n": 27,
-    "mae": 0.757
+   "assists|PRIMARY_FACILITATOR": {
+    "n": 13,
+    "mae": 2.159
    },
-   "three_pointers_made|PERIMETER_SPACER": {
-    "n": 27,
-    "mae": 1.402
+   "three_pointers_made|PRIMARY_FACILITATOR": {
+    "n": 13,
+    "mae": 1.19
    },
-   "steals|PERIMETER_SPACER": {
-    "n": 27,
-    "mae": 0.692
+   "steals|PRIMARY_FACILITATOR": {
+    "n": 13,
+    "mae": 0.812
    },
-   "blocks|PERIMETER_SPACER": {
-    "n": 27,
-    "mae": 0.448
+   "blocks|PRIMARY_FACILITATOR": {
+    "n": 13,
+    "mae": 0.332
    },
-   "turnovers|PERIMETER_SPACER": {
-    "n": 27,
-    "mae": 0.584
+   "turnovers|PRIMARY_FACILITATOR": {
+    "n": 13,
+    "mae": 1.218
    },
-   "points|HIGH_USAGE_CREATOR": {
-    "n": 14,
-    "mae": 5.832
+   "points|BALANCED_OR_LOW_USAGE": {
+    "n": 53,
+    "mae": 3.238
    },
-   "rebounds|HIGH_USAGE_CREATOR": {
-    "n": 14,
-    "mae": 1.587
+   "rebounds|BALANCED_OR_LOW_USAGE": {
+    "n": 53,
+    "mae": 1.568
    },
-   "assists|HIGH_USAGE_CREATOR": {
-    "n": 14,
-    "mae": 2.297
+   "assists|BALANCED_OR_LOW_USAGE": {
+    "n": 53,
+    "mae": 0.939
    },
-   "three_pointers_made|HIGH_USAGE_CREATOR": {
-    "n": 14,
-    "mae": 1.787
+   "three_pointers_made|BALANCED_OR_LOW_USAGE": {
+    "n": 53,
+    "mae": 0.678
    },
-   "steals|HIGH_USAGE_CREATOR": {
-    "n": 14,
-    "mae": 0.801
+   "steals|BALANCED_OR_LOW_USAGE": {
+    "n": 53,
+    "mae": 0.64
    },
-   "blocks|HIGH_USAGE_CREATOR": {
-    "n": 14,
-    "mae": 0.766
+   "blocks|BALANCED_OR_LOW_USAGE": {
+    "n": 53,
+    "mae": 0.438
    },
-   "turnovers|HIGH_USAGE_CREATOR": {
-    "n": 14,
-    "mae": 1.442
+   "turnovers|BALANCED_OR_LOW_USAGE": {
+    "n": 53,
+    "mae": 0.723
    },
    "points|VOLUME_SCORER": {
-    "n": 31,
-    "mae": 4.807
+    "n": 34,
+    "mae": 5.161
    },
    "rebounds|VOLUME_SCORER": {
-    "n": 31,
-    "mae": 1.711
+    "n": 34,
+    "mae": 1.751
    },
    "assists|VOLUME_SCORER": {
-    "n": 31,
-    "mae": 1.328
+    "n": 34,
+    "mae": 1.326
    },
    "three_pointers_made|VOLUME_SCORER": {
-    "n": 31,
-    "mae": 1.172
+    "n": 34,
+    "mae": 1.209
    },
    "steals|VOLUME_SCORER": {
-    "n": 31,
-    "mae": 0.704
+    "n": 34,
+    "mae": 0.72
    },
    "blocks|VOLUME_SCORER": {
-    "n": 31,
-    "mae": 0.593
+    "n": 34,
+    "mae": 0.578
    },
    "turnovers|VOLUME_SCORER": {
+    "n": 34,
+    "mae": 1.274
+   },
+   "points|PERIMETER_SPACER": {
     "n": 31,
-    "mae": 1.265
+    "mae": 5.686
+   },
+   "rebounds|PERIMETER_SPACER": {
+    "n": 31,
+    "mae": 1.728
+   },
+   "assists|PERIMETER_SPACER": {
+    "n": 31,
+    "mae": 0.727
+   },
+   "three_pointers_made|PERIMETER_SPACER": {
+    "n": 31,
+    "mae": 1.295
+   },
+   "steals|PERIMETER_SPACER": {
+    "n": 31,
+    "mae": 0.67
+   },
+   "blocks|PERIMETER_SPACER": {
+    "n": 31,
+    "mae": 0.423
+   },
+   "turnovers|PERIMETER_SPACER": {
+    "n": 31,
+    "mae": 0.585
+   },
+   "points|HIGH_USAGE_CREATOR": {
+    "n": 16,
+    "mae": 5.885
+   },
+   "rebounds|HIGH_USAGE_CREATOR": {
+    "n": 16,
+    "mae": 1.603
+   },
+   "assists|HIGH_USAGE_CREATOR": {
+    "n": 16,
+    "mae": 2.12
+   },
+   "three_pointers_made|HIGH_USAGE_CREATOR": {
+    "n": 16,
+    "mae": 1.631
+   },
+   "steals|HIGH_USAGE_CREATOR": {
+    "n": 16,
+    "mae": 0.785
+   },
+   "blocks|HIGH_USAGE_CREATOR": {
+    "n": 16,
+    "mae": 0.702
+   },
+   "turnovers|HIGH_USAGE_CREATOR": {
+    "n": 16,
+    "mae": 1.592
+   },
+   "points|RIM_PRESSURE_SCORER": {
+    "n": 1,
+    "mae": 0.169
+   },
+   "rebounds|RIM_PRESSURE_SCORER": {
+    "n": 1,
+    "mae": 3.625
+   },
+   "assists|RIM_PRESSURE_SCORER": {
+    "n": 1,
+    "mae": 0.653
+   },
+   "three_pointers_made|RIM_PRESSURE_SCORER": {
+    "n": 1,
+    "mae": 0.143
+   },
+   "steals|RIM_PRESSURE_SCORER": {
+    "n": 1,
+    "mae": 0.835
+   },
+   "blocks|RIM_PRESSURE_SCORER": {
+    "n": 1,
+    "mae": 0.654
+   },
+   "turnovers|RIM_PRESSURE_SCORER": {
+    "n": 1,
+    "mae": 0.784
    },
    "points|INTERIOR_REBOUNDER": {
     "n": 15,
@@ -1071,62 +1155,6 @@
    "turnovers|INTERIOR_REBOUNDER": {
     "n": 15,
     "mae": 0.829
-   },
-   "points|BALANCED_OR_LOW_USAGE": {
-    "n": 45,
-    "mae": 3.433
-   },
-   "rebounds|BALANCED_OR_LOW_USAGE": {
-    "n": 45,
-    "mae": 1.558
-   },
-   "assists|BALANCED_OR_LOW_USAGE": {
-    "n": 45,
-    "mae": 0.94
-   },
-   "three_pointers_made|BALANCED_OR_LOW_USAGE": {
-    "n": 45,
-    "mae": 0.726
-   },
-   "steals|BALANCED_OR_LOW_USAGE": {
-    "n": 45,
-    "mae": 0.627
-   },
-   "blocks|BALANCED_OR_LOW_USAGE": {
-    "n": 45,
-    "mae": 0.432
-   },
-   "turnovers|BALANCED_OR_LOW_USAGE": {
-    "n": 45,
-    "mae": 0.708
-   },
-   "points|PRIMARY_FACILITATOR": {
-    "n": 11,
-    "mae": 5.097
-   },
-   "rebounds|PRIMARY_FACILITATOR": {
-    "n": 11,
-    "mae": 1.288
-   },
-   "assists|PRIMARY_FACILITATOR": {
-    "n": 11,
-    "mae": 1.87
-   },
-   "three_pointers_made|PRIMARY_FACILITATOR": {
-    "n": 11,
-    "mae": 1.08
-   },
-   "steals|PRIMARY_FACILITATOR": {
-    "n": 11,
-    "mae": 0.84
-   },
-   "blocks|PRIMARY_FACILITATOR": {
-    "n": 11,
-    "mae": 0.298
-   },
-   "turnovers|PRIMARY_FACILITATOR": {
-    "n": 11,
-    "mae": 1.322
    },
    "points|CONNECTOR_REBOUNDER": {
     "n": 6,
@@ -1187,148 +1215,154 @@
   },
   "stated_unconditional_chance_vs_actual": {
    "all_original_projections": {
-    "n": 875,
-    "mean_stated": 0.427,
-    "actual_reach_rate": 0.517,
-    "brier": 0.2406
+    "n": 1015,
+    "mean_stated": 0.422,
+    "actual_reach_rate": 0.502,
+    "brier": 0.2385
    },
    "stat_points": {
-    "n": 180,
-    "mean_stated": 0.37,
-    "actual_reach_rate": 0.456,
-    "brier": 0.2422
-   },
-   "archetype_PERIMETER_SPACER": {
-    "n": 163,
-    "mean_stated": 0.426,
-    "actual_reach_rate": 0.521,
-    "brier": 0.2364
-   },
-   "opportunity_minutes_UNDER_28": {
-    "n": 623,
-    "mean_stated": 0.404,
-    "actual_reach_rate": 0.485,
-    "brier": 0.2371
-   },
-   "participation_band_HIGH": {
-    "n": 576,
-    "mean_stated": 0.48,
-    "actual_reach_rate": 0.557,
-    "brier": 0.2428
-   },
-   "role_change_NO_STRONG_CHANGE": {
-    "n": 503,
-    "mean_stated": 0.449,
-    "actual_reach_rate": 0.545,
-    "brier": 0.2412
-   },
-   "stat_rebounds": {
-    "n": 178,
-    "mean_stated": 0.421,
-    "actual_reach_rate": 0.489,
-    "brier": 0.2394
-   },
-   "stat_assists": {
-    "n": 156,
-    "mean_stated": 0.428,
-    "actual_reach_rate": 0.545,
-    "brier": 0.2414
-   },
-   "stat_three_pointers_made": {
-    "n": 110,
-    "mean_stated": 0.475,
-    "actual_reach_rate": 0.6,
-    "brier": 0.2464
-   },
-   "stat_turnovers": {
-    "n": 123,
-    "mean_stated": 0.459,
-    "actual_reach_rate": 0.52,
-    "brier": 0.2269
-   },
-   "archetype_HIGH_USAGE_CREATOR": {
-    "n": 88,
-    "mean_stated": 0.457,
-    "actual_reach_rate": 0.659,
-    "brier": 0.2729
-   },
-   "participation_band_MEDIUM": {
-    "n": 218,
-    "mean_stated": 0.374,
-    "actual_reach_rate": 0.523,
-    "brier": 0.2622
-   },
-   "archetype_VOLUME_SCORER": {
-    "n": 174,
-    "mean_stated": 0.459,
-    "actual_reach_rate": 0.552,
-    "brier": 0.2452
-   },
-   "opportunity_minutes_28_PLUS": {
-    "n": 252,
-    "mean_stated": 0.485,
-    "actual_reach_rate": 0.595,
-    "brier": 0.2492
-   },
-   "role_change_ROLE_CHANGE_CANDIDATE": {
-    "n": 284,
-    "mean_stated": 0.421,
-    "actual_reach_rate": 0.486,
-    "brier": 0.2413
-   },
-   "frontend_top4": {
-    "n": 28,
-    "mean_stated": 0.66,
-    "actual_reach_rate": 0.714,
-    "brier": 0.1972
-   },
-   "stat_steals": {
-    "n": 89,
-    "mean_stated": 0.448,
-    "actual_reach_rate": 0.551,
-    "brier": 0.2552
-   },
-   "stat_blocks": {
-    "n": 39,
-    "mean_stated": 0.429,
-    "actual_reach_rate": 0.487,
-    "brier": 0.2293
-   },
-   "archetype_INTERIOR_REBOUNDER": {
-    "n": 83,
-    "mean_stated": 0.405,
-    "actual_reach_rate": 0.482,
-    "brier": 0.2291
-   },
-   "archetype_BALANCED_OR_LOW_USAGE": {
-    "n": 231,
-    "mean_stated": 0.415,
-    "actual_reach_rate": 0.459,
-    "brier": 0.2361
-   },
-   "participation_band_LOW": {
-    "n": 81,
-    "mean_stated": 0.192,
-    "actual_reach_rate": 0.21,
-    "brier": 0.167
-   },
-   "role_change_INSUFFICIENT_HISTORY": {
-    "n": 88,
-    "mean_stated": 0.317,
-    "actual_reach_rate": 0.455,
-    "brier": 0.2352
+    "n": 210,
+    "mean_stated": 0.366,
+    "actual_reach_rate": 0.433,
+    "brier": 0.2366
    },
    "archetype_PRIMARY_FACILITATOR": {
-    "n": 73,
-    "mean_stated": 0.441,
-    "actual_reach_rate": 0.521,
-    "brier": 0.2364
+    "n": 85,
+    "mean_stated": 0.444,
+    "actual_reach_rate": 0.576,
+    "brier": 0.243
+   },
+   "opportunity_minutes_28_PLUS": {
+    "n": 301,
+    "mean_stated": 0.48,
+    "actual_reach_rate": 0.608,
+    "brier": 0.2552
+   },
+   "participation_band_MEDIUM": {
+    "n": 329,
+    "mean_stated": 0.395,
+    "actual_reach_rate": 0.492,
+    "brier": 0.2505
+   },
+   "role_change_NO_STRONG_CHANGE": {
+    "n": 582,
+    "mean_stated": 0.443,
+    "actual_reach_rate": 0.534,
+    "brier": 0.2446
+   },
+   "stat_rebounds": {
+    "n": 208,
+    "mean_stated": 0.415,
+    "actual_reach_rate": 0.476,
+    "brier": 0.236
+   },
+   "stat_assists": {
+    "n": 181,
+    "mean_stated": 0.426,
+    "actual_reach_rate": 0.525,
+    "brier": 0.2379
+   },
+   "stat_three_pointers_made": {
+    "n": 128,
+    "mean_stated": 0.473,
+    "actual_reach_rate": 0.594,
+    "brier": 0.2445
+   },
+   "stat_steals": {
+    "n": 102,
+    "mean_stated": 0.445,
+    "actual_reach_rate": 0.529,
+    "brier": 0.2579
+   },
+   "stat_turnovers": {
+    "n": 141,
+    "mean_stated": 0.449,
+    "actual_reach_rate": 0.511,
+    "brier": 0.2235
+   },
+   "archetype_BALANCED_OR_LOW_USAGE": {
+    "n": 284,
+    "mean_stated": 0.409,
+    "actual_reach_rate": 0.451,
+    "brier": 0.2354
+   },
+   "opportunity_minutes_UNDER_28": {
+    "n": 714,
+    "mean_stated": 0.398,
+    "actual_reach_rate": 0.458,
+    "brier": 0.2315
+   },
+   "role_change_ROLE_CHANGE_CANDIDATE": {
+    "n": 333,
+    "mean_stated": 0.415,
+    "actual_reach_rate": 0.474,
+    "brier": 0.2315
    },
    "archetype_INSUFFICIENT_HISTORY": {
-    "n": 18,
-    "mean_stated": 0.211,
-    "actual_reach_rate": 0.333,
-    "brier": 0.264
+    "n": 21,
+    "mean_stated": 0.204,
+    "actual_reach_rate": 0.286,
+    "brier": 0.2313
+   },
+   "role_change_INSUFFICIENT_HISTORY": {
+    "n": 100,
+    "mean_stated": 0.324,
+    "actual_reach_rate": 0.41,
+    "brier": 0.2266
+   },
+   "archetype_VOLUME_SCORER": {
+    "n": 196,
+    "mean_stated": 0.457,
+    "actual_reach_rate": 0.51,
+    "brier": 0.2407
+   },
+   "frontend_top4": {
+    "n": 32,
+    "mean_stated": 0.66,
+    "actual_reach_rate": 0.688,
+    "brier": 0.2084
+   },
+   "archetype_PERIMETER_SPACER": {
+    "n": 189,
+    "mean_stated": 0.423,
+    "actual_reach_rate": 0.481,
+    "brier": 0.2309
+   },
+   "archetype_HIGH_USAGE_CREATOR": {
+    "n": 103,
+    "mean_stated": 0.438,
+    "actual_reach_rate": 0.67,
+    "brier": 0.2756
+   },
+   "participation_band_LOW": {
+    "n": 106,
+    "mean_stated": 0.19,
+    "actual_reach_rate": 0.236,
+    "brier": 0.1782
+   },
+   "stat_blocks": {
+    "n": 45,
+    "mean_stated": 0.42,
+    "actual_reach_rate": 0.511,
+    "brier": 0.2474
+   },
+   "archetype_RIM_PRESSURE_SCORER": {
+    "n": 7,
+    "mean_stated": 0.434,
+    "actual_reach_rate": 0.571,
+    "brier": 0.2306
+   },
+   "archetype_INTERIOR_REBOUNDER": {
+    "n": 85,
+    "mean_stated": 0.401,
+    "actual_reach_rate": 0.471,
+    "brier": 0.225
+   },
+   "participation_band_HIGH": {
+    "n": 580,
+    "mean_stated": 0.48,
+    "actual_reach_rate": 0.557,
+    "brier": 0.2427
    },
    "archetype_CONNECTOR_REBOUNDER": {
     "n": 45,
@@ -1338,64 +1372,68 @@
    }
   },
   "source_reliability": {
+   "official_nba_injury_report|AVAILABLE": {
+    "played": 13,
+    "did_not_play": 3
+   },
    "none|UNLISTED": {
-    "played": 141,
-    "did_not_play": 28
-   },
-   "league_feed|OUT": {
-    "did_not_play": 27,
-    "played": 2
-   },
-   "game_feed|OUT": {
-    "did_not_play": 24,
-    "played": 2
-   },
-   "official_nba_injury_report|OUT": {
-    "did_not_play": 97
+    "did_not_play": 39,
+    "played": 159
    },
    "league_feed|QUESTIONABLE": {
-    "played": 8,
+    "played": 10,
     "did_not_play": 2
    },
    "game_feed|QUESTIONABLE": {
-    "played": 8,
+    "played": 10,
+    "did_not_play": 2
+   },
+   "official_nba_injury_report|QUESTIONABLE": {
+    "played": 4,
     "did_not_play": 2
    },
    "official_nba_injury_report|PROBABLE": {
-    "played": 22
+    "played": 23
    },
-   "official_nba_injury_report|AVAILABLE": {
-    "played": 11,
-    "did_not_play": 3
+   "league_feed|OUT": {
+    "did_not_play": 28,
+    "played": 2
    },
-   "official_nba_injury_report|QUESTIONABLE": {
-    "did_not_play": 2,
-    "played": 3
+   "game_feed|OUT": {
+    "did_not_play": 25,
+    "played": 2
+   },
+   "official_nba_injury_report|OUT": {
+    "did_not_play": 99
    }
   },
   "play_by_status": {
+   "AVAILABLE": {
+    "played": 4,
+    "did_not_play": 1
+   },
    "UNLISTED": {
+    "did_not_play": 1,
     "played": 7
    },
-   "OUT": {
-    "did_not_play": 19,
-    "played": 1
-   },
    "QUESTIONABLE": {
-    "played": 7,
+    "played": 9,
     "did_not_play": 3
    },
    "PROBABLE": {
-    "played": 5
+    "played": 6
    },
-   "AVAILABLE": {
-    "played": 3,
-    "did_not_play": 1
+   "OUT": {
+    "did_not_play": 21,
+    "played": 1
    }
   },
   "play_by_status_body": {
+   "QUESTIONABLE|Groin": {
+    "played": 1
+   },
    "OUT|Leg": {
-    "did_not_play": 7
+    "did_not_play": 8
    },
    "QUESTIONABLE|Leg": {
     "played": 3,
