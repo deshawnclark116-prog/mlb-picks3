@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "1c1be487ec986c16169d60fd7b42deaa",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "156c2cd68bab85dfb2aa4d71064e62771c7383888b8f4c83e455774b2bd7467c",
+  "source_fixtures_sha256": "a064dc80348f23b01e0a4ecbadf49967cf3e5b4dfa37a890ae1c794f30eeef3f",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "SVK_1_nike-liga",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "Komarno",
+    "away": "Zilina",
+    "expectedHomeGoals": 1.4102,
+    "expectedAwayGoals": 1.622,
+    "baselineHomeGoals": 1.5512,
+    "baselineAwayGoals": 1.5134,
+    "probabilities": {
+      "home": 0.3337,
+      "draw": 0.2401,
+      "away": 0.4262,
+      "over25": 0.584,
+      "btts": 0.6066
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 10.3799,
+    "awayWeightedMatches": 10.2441,
+    "source": "open-matchday/fixture/SVK_1_nike-liga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

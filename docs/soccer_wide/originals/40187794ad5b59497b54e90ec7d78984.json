@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "40187794ad5b59497b54e90ec7d78984",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "3d4918a667986cb8118f013cc3dd0f646b700ed3472ca18d9fc55a307c5f1bd6",
+  "source_fixtures_sha256": "b40362f5e9ad4368616da0371ed585abeb53701122a7d0ee57453fb2f4cfaa11",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ENG_6_national-league-north",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "Darlington",
+    "away": "Brackley Town",
+    "expectedHomeGoals": 1.6891,
+    "expectedAwayGoals": 1.1771,
+    "baselineHomeGoals": 1.6993,
+    "baselineAwayGoals": 1.2665,
+    "probabilities": {
+      "home": 0.4935,
+      "draw": 0.2404,
+      "away": 0.2661,
+      "over25": 0.5462,
+      "btts": 0.5641
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 8.5947,
+    "awayWeightedMatches": 8.4671,
+    "source": "open-matchday/fixture/ENG_6_national-league-north",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

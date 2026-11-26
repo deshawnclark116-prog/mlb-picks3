@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "d09ac8f8466af7575d03d820be9e4797",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "d13f31ee998570fb7511d8ac3c0f67b5d99193b3d8f34e67a9526475cdf94d80",
+  "source_fixtures_sha256": "bbf962f6ba360878e8d41facef0edc0f3c594787eb0c9bcf8b3fc5873935d46e",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "FRA_1_ligue-1",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "Paris Saint-Germain",
+    "away": "FC Lorient",
+    "expectedHomeGoals": 1.4115,
+    "expectedAwayGoals": 1.1328,
+    "baselineHomeGoals": 1.6033,
+    "baselineAwayGoals": 1.2965,
+    "probabilities": {
+      "home": 0.4336,
+      "draw": 0.2641,
+      "away": 0.3022,
+      "over25": 0.4675,
+      "btts": 0.5126
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 6.4773,
+    "awayWeightedMatches": 7.6082,
+    "source": "open-matchday/fixture/FRA_1_ligue-1",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

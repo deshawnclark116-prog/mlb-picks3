@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "78c14651363a09ebf4d2296cbe85275f",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "d4bb5dde3f527143c13408f366e125f3b787b02807801c1af2fb342e7986b3de",
+  "source_fixtures_sha256": "c6a085f4393532dce3d76d3c66a708cdbc6149cc17f75933737bf4c13e0a323c",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ROU_1_liga-1",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "FCSB",
+    "away": "Csikszereda M. Ciuc",
+    "expectedHomeGoals": 1.6979,
+    "expectedAwayGoals": 1.1464,
+    "baselineHomeGoals": 1.5185,
+    "baselineAwayGoals": 1.2302,
+    "probabilities": {
+      "home": 0.5027,
+      "draw": 0.24,
+      "away": 0.2573,
+      "over25": 0.5411,
+      "btts": 0.5573
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 9.0874,
+    "awayWeightedMatches": 8.6814,
+    "source": "open-matchday/fixture/ROU_1_liga-1",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

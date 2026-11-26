@@ -1,17 +1,17 @@
 {
   "schema": "soccer-wide-firstseen-score-v1",
-  "asofDateUTC": "2026-11-25",
+  "asofDateUTC": "2026-11-26",
   "listedCompetitions": 75,
   "sourceVerifiedCompetitions": 75,
-  "upcomingFixtures": 1468,
-  "upcomingQuantitativeForecasts": 1229,
-  "originallyFrozen": 522,
-  "graded": 432,
-  "ungraded": 90,
-  "modelGoalMAE": 0.99034,
-  "baselineGoalMAE": 1.00958,
-  "model3wayBrier": 0.6206,
-  "baseline3wayBrier": 0.64043,
+  "upcomingFixtures": 1453,
+  "upcomingQuantitativeForecasts": 1230,
+  "originallyFrozen": 725,
+  "graded": 454,
+  "ungraded": 271,
+  "modelGoalMAE": 0.97657,
+  "baselineGoalMAE": 0.99776,
+  "model3wayBrier": 0.62102,
+  "baseline3wayBrier": 0.64137,
   "byLeague": {
     "ENG_4_league-two": {
       "n": 14,
@@ -56,11 +56,11 @@
       "baseline3wayBrier": 0.782
     },
     "USA_1_mls": {
-      "n": 6,
-      "modelGoalMAE": 1.122,
-      "baselineGoalMAE": 1.08345,
-      "model3wayBrier": 0.62873,
-      "baseline3wayBrier": 0.59326
+      "n": 7,
+      "modelGoalMAE": 1.0206,
+      "baselineGoalMAE": 0.97314,
+      "model3wayBrier": 0.61176,
+      "baseline3wayBrier": 0.57021
     },
     "BEL_1_pro-league": {
       "n": 8,
@@ -70,18 +70,18 @@
       "baseline3wayBrier": 0.68044
     },
     "POL_3_division-2": {
-      "n": 7,
-      "modelGoalMAE": 1.33229,
-      "baselineGoalMAE": 1.36528,
-      "model3wayBrier": 0.63621,
-      "baseline3wayBrier": 0.63713
+      "n": 8,
+      "modelGoalMAE": 1.21867,
+      "baselineGoalMAE": 1.25595,
+      "model3wayBrier": 0.66206,
+      "baseline3wayBrier": 0.66579
     },
     "ENG_2_championship": {
-      "n": 20,
-      "modelGoalMAE": 0.81927,
-      "baselineGoalMAE": 0.85129,
-      "model3wayBrier": 0.62546,
-      "baseline3wayBrier": 0.64111
+      "n": 24,
+      "modelGoalMAE": 0.81144,
+      "baselineGoalMAE": 0.86112,
+      "model3wayBrier": 0.61792,
+      "baseline3wayBrier": 0.64899
     },
     "TUR_1_super-lig": {
       "n": 9,
@@ -91,11 +91,11 @@
       "baseline3wayBrier": 0.59578
     },
     "ENG_5_national-league": {
-      "n": 20,
-      "modelGoalMAE": 1.07981,
-      "baselineGoalMAE": 1.08944,
-      "model3wayBrier": 0.61666,
-      "baseline3wayBrier": 0.61995
+      "n": 23,
+      "modelGoalMAE": 1.05577,
+      "baselineGoalMAE": 1.07805,
+      "model3wayBrier": 0.58532,
+      "baseline3wayBrier": 0.59787
     },
     "SCO_1_premiership": {
       "n": 7,
@@ -147,18 +147,18 @@
       "baseline3wayBrier": 0.37897
     },
     "ITA_2_serie-b": {
-      "n": 15,
-      "modelGoalMAE": 1.05651,
-      "baselineGoalMAE": 1.05759,
-      "model3wayBrier": 0.6164,
-      "baseline3wayBrier": 0.61136
+      "n": 19,
+      "modelGoalMAE": 1.00249,
+      "baselineGoalMAE": 0.99826,
+      "model3wayBrier": 0.63523,
+      "baseline3wayBrier": 0.62565
     },
     "BRA_1_serie-a": {
-      "n": 10,
-      "modelGoalMAE": 1.03031,
-      "baselineGoalMAE": 1.01916,
-      "model3wayBrier": 0.67664,
-      "baseline3wayBrier": 0.66241
+      "n": 11,
+      "modelGoalMAE": 0.96388,
+      "baselineGoalMAE": 0.95552,
+      "model3wayBrier": 0.69351,
+      "baseline3wayBrier": 0.67943
     },
     "GER_2_2-bundesliga": {
       "n": 7,
@@ -259,11 +259,11 @@
       "baseline3wayBrier": 0.71102
     },
     "JPN_1_j1-league": {
-      "n": 7,
-      "modelGoalMAE": 1.01779,
-      "baselineGoalMAE": 1.03159,
-      "model3wayBrier": 0.66138,
-      "baseline3wayBrier": 0.70582
+      "n": 14,
+      "modelGoalMAE": 0.83007,
+      "baselineGoalMAE": 0.85944,
+      "model3wayBrier": 0.67445,
+      "baseline3wayBrier": 0.69353
     },
     "ENG_6_national-league-south": {
       "n": 22,
@@ -364,11 +364,11 @@
       "baseline3wayBrier": 0.76616
     },
     "UKR_1_premier-league": {
-      "n": 7,
-      "modelGoalMAE": 0.83261,
-      "baselineGoalMAE": 0.80086,
-      "model3wayBrier": 0.61467,
-      "baseline3wayBrier": 0.65045
+      "n": 8,
+      "modelGoalMAE": 0.84482,
+      "baselineGoalMAE": 0.84585,
+      "model3wayBrier": 0.60548,
+      "baseline3wayBrier": 0.66595
     },
     "SCO_3_league-one": {
       "n": 3,
@@ -398,7 +398,7 @@
       "league": "UEFA_1_champions-league",
       "status": "NON_REGULATION_SCORE",
       "reason": "CUP_OR_UEFA_REGULATION_SCORE_UNVERIFIED",
-      "pastResults": 81,
+      "pastResults": 90,
       "upcomingFixtures": 18
     },
     {
@@ -406,7 +406,7 @@
       "status": "NON_REGULATION_SCORE",
       "reason": "CUP_OR_UEFA_REGULATION_SCORE_UNVERIFIED",
       "pastResults": 72,
-      "upcomingFixtures": 36
+      "upcomingFixtures": 18
     },
     {
       "league": "UEFA_1_conference-league",
@@ -420,7 +420,7 @@
       "status": "NON_REGULATION_SCORE",
       "reason": "CUP_OR_UEFA_REGULATION_SCORE_UNVERIFIED",
       "pastResults": 84,
-      "upcomingFixtures": 3
+      "upcomingFixtures": 4
     },
     {
       "league": "ENG_CUP_fa-cup",
@@ -455,7 +455,7 @@
       "status": "NON_REGULATION_SCORE",
       "reason": "CUP_OR_UEFA_REGULATION_SCORE_UNVERIFIED",
       "pastResults": 95,
-      "upcomingFixtures": 16
+      "upcomingFixtures": 17
     },
     {
       "league": "POR_CUP_taca-de-portugal",

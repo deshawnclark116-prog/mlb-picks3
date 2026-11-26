@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "c8491abe2e2cbbd4bd6b71cc53122f54",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "bef73cff66615822a52f920357580d5a6f146c3cd9da442a80326b74beefe5ba",
+  "source_fixtures_sha256": "5e9c183ee2b519b840bea86c4fdcc072b5f372b2d9cdeb507be73737ff1e8a40",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "NED_1_eredivisie",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "Excelsior Rotterdam",
+    "away": "Telstar",
+    "expectedHomeGoals": 1.5278,
+    "expectedAwayGoals": 2.0303,
+    "baselineHomeGoals": 1.7852,
+    "baselineAwayGoals": 1.9536,
+    "probabilities": {
+      "home": 0.2915,
+      "draw": 0.2142,
+      "away": 0.4943,
+      "over25": 0.6898,
+      "btts": 0.6802
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 9.1348,
+    "awayWeightedMatches": 8.9441,
+    "source": "open-matchday/fixture/NED_1_eredivisie",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

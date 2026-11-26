@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "8bf9982fc6bab3d789d43ee2d05709dc",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "1a7dd0eabaafaac2e34dcace0fc52ee883d33dd8608d9ca516f5dd5696f1e745",
+  "source_fixtures_sha256": "dcfaa81f93c066519c349238044a69f81d06a1400e9bd1ab30954c6e52b1c244",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "NOR_1_eliteserien",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "Bodo/Glimt",
+    "away": "KFUM Oslo",
+    "expectedHomeGoals": 2.1206,
+    "expectedAwayGoals": 1.5413,
+    "baselineHomeGoals": 1.913,
+    "baselineAwayGoals": 1.664,
+    "probabilities": {
+      "home": 0.5106,
+      "draw": 0.209,
+      "away": 0.2805,
+      "over25": 0.708,
+      "btts": 0.6916
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 8.9277,
+    "awayWeightedMatches": 10.4969,
+    "source": "open-matchday/fixture/NOR_1_eliteserien",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

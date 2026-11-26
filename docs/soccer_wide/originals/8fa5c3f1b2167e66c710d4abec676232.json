@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "8fa5c3f1b2167e66c710d4abec676232",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "5390fec7985f618503faa47783bcc1e5271970e6d2b333141c77bd00744f9c50",
+  "source_fixtures_sha256": "648d05be60fc4e54600ea6e84aa3149a9a24a66448c253c0265093cab9a7d51f",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "RUS_1_premier-liga",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "CSKA Moscow",
+    "away": "Zenit",
+    "expectedHomeGoals": 1.4123,
+    "expectedAwayGoals": 1.2,
+    "baselineHomeGoals": 1.3746,
+    "baselineAwayGoals": 1.213,
+    "probabilities": {
+      "home": 0.4188,
+      "draw": 0.2614,
+      "away": 0.3198,
+      "over25": 0.4847,
+      "btts": 0.5286
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 9.072,
+    "awayWeightedMatches": 9.323,
+    "source": "open-matchday/fixture/RUS_1_premier-liga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "da6ac26a7eee9787a22973611d137aa2",
+  "original_captured_at_utc": "2026-11-23T12:41:03.457Z",
+  "league": "JPN_1_j1-league",
+  "date": "2026-11-25",
+  "match_result_source": "open-matchday/espn/JPN_1_j1-league",
+  "final_home_goals": 2,
+  "final_away_goals": 2,
+  "model_goal_mae": 0.50115,
+  "baseline_goal_mae": 0.61815,
+  "model_three_way_brier": 0.8795342899999999,
+  "baseline_three_way_brier": 0.8399717599999998
+}

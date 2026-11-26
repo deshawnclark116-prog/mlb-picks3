@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "6261905a340c192e579a374adb68be75",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "a8983d545c581e4eb4f2d1d2ea42134ddbee495f48ae7d70da2ca11a38066f18",
+  "source_fixtures_sha256": "376be4d409ef552ea4987589206914d65d89141ad8e538dd802c752da2a0d5de",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ENG_6_national-league-south",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "Braintree",
+    "away": "AFC Totton",
+    "expectedHomeGoals": 1.6335,
+    "expectedAwayGoals": 1.3057,
+    "baselineHomeGoals": 1.6873,
+    "baselineAwayGoals": 1.3345,
+    "probabilities": {
+      "home": 0.4513,
+      "draw": 0.2423,
+      "away": 0.3064,
+      "over25": 0.5631,
+      "btts": 0.5867
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 8.579,
+    "awayWeightedMatches": 10.2388,
+    "source": "open-matchday/fixture/ENG_6_national-league-south",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

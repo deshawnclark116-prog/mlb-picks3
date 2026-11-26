@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "c30a25f1b76ec478ced83cd78c1ff8a4",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "15c0ffedea171bd7e7ed14c659fb7ea75752f4aafb199c6cda7c7e2dff44ce66",
+  "source_fixtures_sha256": "721eb593568ff4f9da4560b35ee30ce00d75c6fc4338b6b73b3017d3d088839b",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "POR_1_primeira-liga",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "Académico",
+    "away": "FC Alverca",
+    "expectedHomeGoals": 1.3242,
+    "expectedAwayGoals": 1.3787,
+    "baselineHomeGoals": 1.2861,
+    "baselineAwayGoals": 1.3243,
+    "probabilities": {
+      "home": 0.3585,
+      "draw": 0.2579,
+      "away": 0.3836,
+      "over25": 0.5071,
+      "btts": 0.5491
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 7.3059,
+    "awayWeightedMatches": 7.2534,
+    "source": "open-matchday/fixture/POR_1_primeira-liga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

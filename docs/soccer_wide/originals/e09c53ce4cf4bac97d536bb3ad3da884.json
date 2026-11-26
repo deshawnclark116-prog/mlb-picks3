@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "e09c53ce4cf4bac97d536bb3ad3da884",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "dfe55674e08443dc311f8eb7f53251f05826cdbd9c88a1c3a4f699121489d0fc",
+  "source_fixtures_sha256": "7a9e96d979297a5d73a14fe1b795370d0d7f1225f9061169fe283644b34bc416",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "GRE_1_super-league",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "Iraklis",
+    "away": "Panetolikos",
+    "expectedHomeGoals": 1.8246,
+    "expectedAwayGoals": 0.9666,
+    "baselineHomeGoals": 1.6947,
+    "baselineAwayGoals": 1.0182,
+    "probabilities": {
+      "home": 0.5753,
+      "draw": 0.2277,
+      "away": 0.197,
+      "over25": 0.5285,
+      "btts": 0.5197
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 6.5281,
+    "awayWeightedMatches": 7.8891,
+    "source": "open-matchday/fixture/GRE_1_super-league",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "77985006a20f21f0ed4fa8b58b646ed8",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "574ad142cae3e4e2b146bd336ab50052e64d6b02c5109f3f7f8b6283a46f028f",
+  "source_fixtures_sha256": "92720c98692be2c9fd44086ac9c673086770546e00da9414ff37ac938a1f1734",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ENG_5_national-league",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "Boston United",
+    "away": "Kidderminster Harriers",
+    "expectedHomeGoals": 1.4808,
+    "expectedAwayGoals": 1.3115,
+    "baselineHomeGoals": 1.7169,
+    "baselineAwayGoals": 1.3979,
+    "probabilities": {
+      "home": 0.4123,
+      "draw": 0.2522,
+      "away": 0.3355,
+      "over25": 0.5287,
+      "btts": 0.5644
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 15.1465,
+    "awayWeightedMatches": 13.8685,
+    "source": "open-matchday/fixture/ENG_5_national-league",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

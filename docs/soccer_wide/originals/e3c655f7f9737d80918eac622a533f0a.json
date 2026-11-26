@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "e3c655f7f9737d80918eac622a533f0a",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "6c9670eff4b9e01c65cebcf08cd3b383f08164220334cebfa5f5207bbd615128",
+  "source_fixtures_sha256": "6a78c33719f7cf8b0876e6194435d38b64814ee8aa90dbb453eb28c7e9f220fc",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ITA_1_serie-a",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "Internazionale",
+    "away": "Genoa",
+    "expectedHomeGoals": 1.7981,
+    "expectedAwayGoals": 1.3251,
+    "baselineHomeGoals": 1.6637,
+    "baselineAwayGoals": 1.4535,
+    "probabilities": {
+      "home": 0.486,
+      "draw": 0.2306,
+      "away": 0.2834,
+      "over25": 0.6039,
+      "btts": 0.6126
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 9.1698,
+    "awayWeightedMatches": 8.1314,
+    "source": "open-matchday/fixture/ITA_1_serie-a",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

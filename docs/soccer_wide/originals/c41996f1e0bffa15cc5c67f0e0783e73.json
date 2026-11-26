@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "c41996f1e0bffa15cc5c67f0e0783e73",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "d13f31ee998570fb7511d8ac3c0f67b5d99193b3d8f34e67a9526475cdf94d80",
+  "source_fixtures_sha256": "bbf962f6ba360878e8d41facef0edc0f3c594787eb0c9bcf8b3fc5873935d46e",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "FRA_1_ligue-1",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "Le Mans FC",
+    "away": "LOSC Lille",
+    "expectedHomeGoals": 1.4349,
+    "expectedAwayGoals": 1.3917,
+    "baselineHomeGoals": 1.6033,
+    "baselineAwayGoals": 1.2965,
+    "probabilities": {
+      "home": 0.3841,
+      "draw": 0.2514,
+      "away": 0.3646,
+      "over25": 0.5369,
+      "btts": 0.5724
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 7.5896,
+    "awayWeightedMatches": 7.6083,
+    "source": "open-matchday/fixture/FRA_1_ligue-1",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

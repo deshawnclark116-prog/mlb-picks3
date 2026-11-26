@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "1c93c7acd2700cf585c2ef509907cb0a",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "9ff9aacc6232e5488eb0b9c061ad8daac94122b926107be3c678b2c13c17bdcf",
+  "source_fixtures_sha256": "729cad668091e1e0bdb8444e3df670210d3a7f1783745f2768dd63d7669b008a",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "GER_3_3-liga",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "SG Sonnenhof Großaspach",
+    "away": "MSV Duisburg",
+    "expectedHomeGoals": 1.5775,
+    "expectedAwayGoals": 1.6895,
+    "baselineHomeGoals": 1.7682,
+    "baselineAwayGoals": 1.4407,
+    "probabilities": {
+      "home": 0.3607,
+      "draw": 0.2312,
+      "away": 0.4081,
+      "over25": 0.6339,
+      "btts": 0.647
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 10.2964,
+    "awayWeightedMatches": 10.5763,
+    "source": "open-matchday/fixture/GER_3_3-liga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

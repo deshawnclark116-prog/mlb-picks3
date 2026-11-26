@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "c9f6377584cec05f1af26ba9f339d231",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "06ff06506f17e59cbb027926e90438cdd9bd537575bc2e4bad2ae0e3193009e5",
+  "source_fixtures_sha256": "aaea7193fd80748c6aebb4401ca9eca94d41bc173834c3e799a59278eee036bf",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ENG_3_league-one",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "Wycombe Wanderers",
+    "away": "Bradford City",
+    "expectedHomeGoals": 1.3217,
+    "expectedAwayGoals": 1.1702,
+    "baselineHomeGoals": 1.5284,
+    "baselineAwayGoals": 1.2454,
+    "probabilities": {
+      "home": 0.4013,
+      "draw": 0.2696,
+      "away": 0.3291,
+      "over25": 0.4541,
+      "btts": 0.5058
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 10.454,
+    "awayWeightedMatches": 10.3373,
+    "source": "open-matchday/fixture/ENG_3_league-one",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

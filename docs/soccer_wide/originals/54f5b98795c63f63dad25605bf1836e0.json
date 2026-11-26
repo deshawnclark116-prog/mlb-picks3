@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "54f5b98795c63f63dad25605bf1836e0",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "198971c1505db89a418984ed935a372c9a168ef427e5033ed5a35bfff2a0ad85",
+  "source_fixtures_sha256": "3a3c478a09eec6fcd3b1472681d5592c76e900f6224ef977a10f942c8a4b24a6",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ESP_1_la-liga",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "Málaga CF",
+    "away": "Athletic Club",
+    "expectedHomeGoals": 1.408,
+    "expectedAwayGoals": 1.314,
+    "baselineHomeGoals": 1.5606,
+    "baselineAwayGoals": 1.2596,
+    "probabilities": {
+      "home": 0.3933,
+      "draw": 0.2566,
+      "away": 0.3501,
+      "over25": 0.5117,
+      "btts": 0.5524
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 9.1375,
+    "awayWeightedMatches": 7.761,
+    "source": "open-matchday/fixture/ESP_1_la-liga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

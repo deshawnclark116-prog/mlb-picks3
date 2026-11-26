@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "48606367a457c14117cf6e977becb06f",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "276b1cae09699e6a7473cd6f9b2d512d4353bbff7372b0e02fa9605babeb9007",
+  "source_fixtures_sha256": "de58b958d6994ac97c374710d7f1da9c8bbba488b98b5472dd18bc8ad810587c",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "SUI_1_super-league",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "Vaduz",
+    "away": "Zurich",
+    "expectedHomeGoals": 1.9426,
+    "expectedAwayGoals": 1.7534,
+    "baselineHomeGoals": 1.8425,
+    "baselineAwayGoals": 1.6635,
+    "probabilities": {
+      "home": 0.4302,
+      "draw": 0.2153,
+      "away": 0.3546,
+      "over25": 0.7139,
+      "btts": 0.7083
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 8.7066,
+    "awayWeightedMatches": 10.0261,
+    "source": "open-matchday/fixture/SUI_1_super-league",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

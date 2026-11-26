@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "de009249af83e806926162dd196ed802",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "0c0c3ac49faa8525cad2e4dcc60d57bd5af4bee19f9ea56cefdb8b2d4421b565",
+  "source_fixtures_sha256": "bc293f107fc12dd1dbfbf5c74c84265d8afe55cfbe6e1d3b14c3e6fae7a621a9",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "POL_3_division-2",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "Leczna",
+    "away": "Swit Szczecin",
+    "expectedHomeGoals": 1.7722,
+    "expectedAwayGoals": 1.2458,
+    "baselineHomeGoals": 1.5978,
+    "baselineAwayGoals": 1.3734,
+    "probabilities": {
+      "home": 0.4976,
+      "draw": 0.2333,
+      "away": 0.2691,
+      "over25": 0.5808,
+      "btts": 0.5912
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 9.551,
+    "awayWeightedMatches": 9.8152,
+    "source": "open-matchday/fixture/POL_3_division-2",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

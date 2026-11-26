@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "0aba7e869b50ec797b9afd79dc17555d",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "97085d6736c1f96375f0c707efe1a1a725f513e20971e52692f0f2b13343d350",
+  "source_fixtures_sha256": "9f8d2e863a08f2943bbf31b3b5bc34d4312109a637384515bfd314b0ad07f2f1",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "WAL_2_cymru-north",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "Newtown",
+    "away": "Holyhead",
+    "expectedHomeGoals": 1.6541,
+    "expectedAwayGoals": 1.2292,
+    "baselineHomeGoals": 1.6649,
+    "baselineAwayGoals": 1.481,
+    "probabilities": {
+      "home": 0.4732,
+      "draw": 0.2424,
+      "away": 0.2844,
+      "over25": 0.5502,
+      "btts": 0.5722
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 9.9339,
+    "awayWeightedMatches": 7.641,
+    "source": "open-matchday/fixture/WAL_2_cymru-north",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

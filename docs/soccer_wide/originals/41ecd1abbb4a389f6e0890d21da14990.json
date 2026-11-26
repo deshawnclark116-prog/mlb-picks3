@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "41ecd1abbb4a389f6e0890d21da14990",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "6bd78f6297d951f59e9b0739a6f8c60e3b7efe8aa708088a330bcf1d7cb43e1b",
+  "source_fixtures_sha256": "a893e6935d9488bdb7feee59d1e4b4f39c1ff122be64fd320673a01ec7ad23a4",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "AUT_1_bundesliga",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "A. Lustenau",
+    "away": "SK Rapid",
+    "expectedHomeGoals": 1.5047,
+    "expectedAwayGoals": 1.5781,
+    "baselineHomeGoals": 1.7813,
+    "baselineAwayGoals": 1.3213,
+    "probabilities": {
+      "home": 0.3645,
+      "draw": 0.2391,
+      "away": 0.3964,
+      "over25": 0.5951,
+      "btts": 0.6174
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 8.6074,
+    "awayWeightedMatches": 9.2405,
+    "source": "open-matchday/fixture/AUT_1_bundesliga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

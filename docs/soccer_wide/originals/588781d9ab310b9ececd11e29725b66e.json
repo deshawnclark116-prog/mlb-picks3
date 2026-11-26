@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "588781d9ab310b9ececd11e29725b66e",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "1a7dd0eabaafaac2e34dcace0fc52ee883d33dd8608d9ca516f5dd5696f1e745",
+  "source_fixtures_sha256": "dcfaa81f93c066519c349238044a69f81d06a1400e9bd1ab30954c6e52b1c244",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "NOR_1_eliteserien",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "Rosenborg",
+    "away": "Molde",
+    "expectedHomeGoals": 2.3081,
+    "expectedAwayGoals": 1.8258,
+    "baselineHomeGoals": 1.913,
+    "baselineAwayGoals": 1.664,
+    "probabilities": {
+      "home": 0.4917,
+      "draw": 0.1984,
+      "away": 0.3099,
+      "over25": 0.7809,
+      "btts": 0.7555
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 8.5207,
+    "awayWeightedMatches": 10.2381,
+    "source": "open-matchday/fixture/NOR_1_eliteserien",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

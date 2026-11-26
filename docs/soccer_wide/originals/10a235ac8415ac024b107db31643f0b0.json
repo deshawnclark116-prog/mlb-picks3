@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "10a235ac8415ac024b107db31643f0b0",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "7c01176d22dbbb696e3a062a1648678cda3912a2adf62f1b5d9f5a3071284956",
+  "source_fixtures_sha256": "b5fd1bf6bc8cc04340a53ce09362f13e0db8627a224ab31608301e838a5c3fe0",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ENG_1_premier-league",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "Man Utd",
+    "away": "Brentford",
+    "expectedHomeGoals": 1.6435,
+    "expectedAwayGoals": 1.3295,
+    "baselineHomeGoals": 1.5717,
+    "baselineAwayGoals": 1.1556,
+    "probabilities": {
+      "home": 0.4486,
+      "draw": 0.241,
+      "away": 0.3104,
+      "over25": 0.5707,
+      "btts": 0.5932
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 7.8546,
+    "awayWeightedMatches": 7.8481,
+    "source": "open-matchday/fixture/ENG_1_premier-league",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "0dc354cedc84e0a522e25c9c774101c2",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "2a043d2d6686131c1bc6851ee2718abb11f5c3a4e52967c665e629e5ef8e6b24",
+  "source_fixtures_sha256": "7f13f6ed61e348ca39a574dff99f846c10729f73798caa89fd54596b5e020f00",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "UKR_1_premier-league",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "Dyn. Kyiv",
+    "away": "Ch. Odesa",
+    "expectedHomeGoals": 1.5477,
+    "expectedAwayGoals": 0.9785,
+    "baselineHomeGoals": 1.3495,
+    "baselineAwayGoals": 1.0722,
+    "probabilities": {
+      "home": 0.5055,
+      "draw": 0.2554,
+      "away": 0.2391,
+      "over25": 0.4629,
+      "btts": 0.4913
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 9.2549,
+    "awayWeightedMatches": 7.8705,
+    "source": "open-matchday/fixture/UKR_1_premier-league",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

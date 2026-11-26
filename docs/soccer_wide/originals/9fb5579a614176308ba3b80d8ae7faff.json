@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "9fb5579a614176308ba3b80d8ae7faff",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "015832edff749d98a22c6647cd56419d3cd4e5249a60ce79c505d7ed0bd8a15f",
+  "source_fixtures_sha256": "44edd657668865c31c5a5fd675d63932fc8166801d179b479eeab3fcad590a5d",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "IRE_3_national-league",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "Lucan Utd",
+    "away": "Home Farm",
+    "expectedHomeGoals": 1.863,
+    "expectedAwayGoals": 1.6552,
+    "baselineHomeGoals": 1.8089,
+    "baselineAwayGoals": 1.6076,
+    "probabilities": {
+      "home": 0.4319,
+      "draw": 0.221,
+      "away": 0.347,
+      "over25": 0.6825,
+      "btts": 0.6834
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 8.0992,
+    "awayWeightedMatches": 9.1987,
+    "source": "open-matchday/fixture/IRE_3_national-league",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

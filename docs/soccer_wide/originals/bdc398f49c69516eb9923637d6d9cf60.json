@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "bdc398f49c69516eb9923637d6d9cf60",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "293c597bf5ecb236c8c0e854c7adf25226103fa7dd1fb2bacf49ebc43d2517b7",
+  "source_fixtures_sha256": "6f5ffe7483a495e2b15b5931abdc2d4335a734da3433918cf7cdd016c7aff336",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "WAL_3_cymru-south",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "Trethomas Bluebirds",
+    "away": "Ynyshir Albions",
+    "expectedHomeGoals": 1.7703,
+    "expectedAwayGoals": 1.6058,
+    "baselineHomeGoals": 1.7969,
+    "baselineAwayGoals": 1.6313,
+    "probabilities": {
+      "home": 0.421,
+      "draw": 0.2266,
+      "away": 0.3525,
+      "over25": 0.6556,
+      "btts": 0.6632
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 10.0844,
+    "awayWeightedMatches": 9.8429,
+    "source": "open-matchday/fixture/WAL_3_cymru-south",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

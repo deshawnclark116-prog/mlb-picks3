@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "aa7e0a3f09824394c35ad12cde36c9ca",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "f306e54fe84e2f6248f1ef302dc0c391011d92f91eaf1d3450466a6db8e8f952",
+  "source_fixtures_sha256": "fd306ca5540e7a8f5b7097a282eb83466a29aef146c30d32a48ce6502484863f",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ENG_4_league-two",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "Colchester United",
+    "away": "York City",
+    "expectedHomeGoals": 1.5639,
+    "expectedAwayGoals": 1.0788,
+    "baselineHomeGoals": 1.5559,
+    "baselineAwayGoals": 1.1306,
+    "probabilities": {
+      "home": 0.4855,
+      "draw": 0.2525,
+      "away": 0.2621,
+      "over25": 0.4922,
+      "btts": 0.5219
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 10.7127,
+    "awayWeightedMatches": 12.4115,
+    "source": "open-matchday/fixture/ENG_4_league-two",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

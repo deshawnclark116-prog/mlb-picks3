@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "26bae297d294d82a869f5a31c8a36ac2",
+  "captured_at_utc": "2026-11-26T12:34:26.950Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "f4824ffa372addcca4a577b87d0ecadc47e3c083",
+  "source_results_sha256": "ea0bb0662cacbdc44ec0bc2842349b56e6d84f9331eac9246bb73260d362b9c0",
+  "source_fixtures_sha256": "fdfcbe4a9855fa5c8ee9e29ca7756a2ef1618880c84dcd773dbc164e7da7d188",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "SCO_1_premiership",
+    "season": "2026-27",
+    "date": "2026-11-28",
+    "home": "Aberdeen",
+    "away": "Dundee",
+    "expectedHomeGoals": 1.3427,
+    "expectedAwayGoals": 1.4009,
+    "baselineHomeGoals": 1.5227,
+    "baselineAwayGoals": 1.4903,
+    "probabilities": {
+      "home": 0.3588,
+      "draw": 0.2557,
+      "away": 0.3855,
+      "over25": 0.517,
+      "btts": 0.5568
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 10.6276,
+    "awayWeightedMatches": 10.8737,
+    "source": "open-matchday/fixture/SCO_1_premiership",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}
