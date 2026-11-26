@@ -1,7 +1,7 @@
 {
   "schema": "CROSS_SPORT_ORIGINAL_PLAYER_TARGET_SCORECARD_V1",
   "date": "2026-11-24",
-  "generated_at_utc": "2026-11-25T23:16:37.099208+00:00",
+  "generated_at_utc": "2026-11-26T23:16:42.441606+00:00",
   "nba_date_basis": "PRETIP_LAST_FORECAST_ET_DATE_PROXY",
   "nfl_date_basis": "PREGAME_SCHEDULED_KICKOFF_ET_DATE",
   "research_only_no_promotion": true,
