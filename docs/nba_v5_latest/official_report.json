@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-25_08_30PM.pdf",
-  "published_at_utc": "2026-11-26T01:30:00+00:00",
-  "captured_at_utc": "2026-11-26T01:46:29.488161+00:00",
-  "source_sha256": "2d20490adee10afa8fd8ac54c359b903ac10b7ede2a88eebf6dc6cba9e270b8d",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-25_09_15PM.pdf",
+  "published_at_utc": "2026-11-26T02:15:00+00:00",
+  "captured_at_utc": "2026-11-26T02:18:48.340227+00:00",
+  "source_sha256": "8bcf405299427e543da38e5099e0c03717db1e849ad34d7fd4904370f127a39e",
   "reports": [
     {
       "matchup": "MIA@PHI",
@@ -571,7 +571,7 @@
       "team_abbr": "GSW",
       "player": "Williams, Brandon",
       "normalized_player": "brandon williams",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Left Hamstring Strain"
     },
     {
@@ -579,7 +579,7 @@
       "team_abbr": "SAS",
       "player": "Fox, De'Aaron",
       "normalized_player": "de aaron fox",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Right Shin Contusion"
     },
     {
@@ -611,8 +611,8 @@
       "team_abbr": "SAS",
       "player": "Wembanyama, Victor",
       "normalized_player": "victor wembanyama",
-      "status": "QUESTIONABLE",
-      "reason": "Injury/Illness - Low Back Tightness"
+      "status": "AVAILABLE",
+      "reason": "-"
     },
     {
       "matchup": "SAS@POR",
