@@ -1,0 +1,33 @@
+name: NBA full architecture causal tournament
+on:
+  pull_request:
+    paths:
+      - nba/nba_full_architecture_tournament.py
+      - tests/test_nba_full_architecture_tournament.py
+      - .github/workflows/nba_full_architecture_tournament.yml
+permissions:
+  contents: read
+jobs:
+  tournament:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      OMP_NUM_THREADS: '2'
+      OPENBLAS_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install numpy scikit-learn
+      - name: Chronology and final-source contracts
+        run: PYTHONPATH=. python -m unittest discover -s tests -p test_nba_full_architecture_tournament.py -v
+      - name: Real NBA historical game and original V5 paired comparisons
+        run: |
+          PYTHONPATH=. python -u -m nba.nba_full_architecture_tournament --games nba/data/nba_v4_games_2025_26.jsonl.gz --games nba/data/nba_v4_games_2026_27.jsonl --grades docs/nba_v5_grades/last --out /tmp/nba_full_architecture.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nba-full-architecture
+          path: /tmp/nba_full_architecture.json
+          if-no-files-found: warn
