@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_05_30PM.pdf",
-  "published_at_utc": "2026-11-27T22:30:00+00:00",
-  "captured_at_utc": "2026-11-27T22:39:41.038416+00:00",
-  "source_sha256": "341ef1167a9f15c6bcc6133609596d577dbcf475169376a51ebd971dbcbca03e",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_15PM.pdf",
+  "published_at_utc": "2026-11-27T23:15:00+00:00",
+  "captured_at_utc": "2026-11-27T23:29:17.239164+00:00",
+  "source_sha256": "69fb8aa786a1400de18e0e7608a7d4b7852f455470c61c1ba9fffbfa5db7cd14",
   "reports": [
     {
       "matchup": "MIA@NYK",
@@ -147,7 +147,7 @@
       "team_abbr": "TOR",
       "player": "Martin, Alijah",
       "normalized_player": "alijah martin",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Left Knee Soreness"
     },
     {
@@ -299,7 +299,7 @@
       "team_abbr": "IND",
       "player": "McConnell, T.J.",
       "normalized_player": "t j mcconnell",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": ""
     },
     {
@@ -315,7 +315,7 @@
       "team_abbr": "IND",
       "player": "Oubre Jr., Kelly",
       "normalized_player": "kelly oubre",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Hand Laceration"
     },
     {
@@ -1103,6 +1103,62 @@
       "reason": ""
     },
     {
+      "matchup": "OKC@MIL",
+      "team_abbr": "OKC",
+      "player": "Holmgren, Chet",
+      "normalized_player": "chet holmgren",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
+      "matchup": "OKC@MIL",
+      "team_abbr": "OKC",
+      "player": "Mara, Aday",
+      "normalized_player": "aday mara",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Shin Contusion"
+    },
+    {
+      "matchup": "OKC@MIL",
+      "team_abbr": "OKC",
+      "player": "Sorber, Thomas",
+      "normalized_player": "thomas sorber",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Knee Surgery"
+    },
+    {
+      "matchup": "OKC@MIL",
+      "team_abbr": "OKC",
+      "player": "Topic, Nikola",
+      "normalized_player": "nikola topic",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Hip Strain"
+    },
+    {
+      "matchup": "OKC@MIL",
+      "team_abbr": "OKC",
+      "player": "Wallace, Cason",
+      "normalized_player": "cason wallace",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Shoulder Surgery"
+    },
+    {
+      "matchup": "OKC@MIL",
+      "team_abbr": "OKC",
+      "player": "Williams, Jalen",
+      "normalized_player": "jalen williams",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Ankle Surgery"
+    },
+    {
+      "matchup": "OKC@MIL",
+      "team_abbr": "OKC",
+      "player": "Williams, Jaylin",
+      "normalized_player": "jaylin williams",
+      "status": "OUT",
+      "reason": "Injury/Illness - Low Back Spasms"
+    },
+    {
       "matchup": "PHI@HOU",
       "team_abbr": "HOU",
       "player": "Adams, Steven",
@@ -1127,7 +1183,7 @@
       "reason": "G League - Two-Way"
     }
   ],
-  "rows": 140,
+  "rows": 147,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
