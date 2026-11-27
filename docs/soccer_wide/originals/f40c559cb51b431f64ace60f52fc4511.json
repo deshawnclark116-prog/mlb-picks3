@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "f40c559cb51b431f64ace60f52fc4511",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "0c0c3ac49faa8525cad2e4dcc60d57bd5af4bee19f9ea56cefdb8b2d4421b565",
+  "source_fixtures_sha256": "bc293f107fc12dd1dbfbf5c74c84265d8afe55cfbe6e1d3b14c3e6fae7a621a9",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "POL_3_division-2",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "Bielsko-Biala",
+    "away": "Zielona Gora",
+    "expectedHomeGoals": 1.3577,
+    "expectedAwayGoals": 1.3764,
+    "baselineHomeGoals": 1.5977,
+    "baselineAwayGoals": 1.3732,
+    "probabilities": {
+      "home": 0.3676,
+      "draw": 0.2563,
+      "away": 0.3762,
+      "over25": 0.5147,
+      "btts": 0.5552
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 9.7216,
+    "awayWeightedMatches": 9.495,
+    "source": "open-matchday/fixture/POL_3_division-2",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

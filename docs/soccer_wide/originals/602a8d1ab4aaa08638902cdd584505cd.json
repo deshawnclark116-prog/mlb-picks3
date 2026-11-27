@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "602a8d1ab4aaa08638902cdd584505cd",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "156c2cd68bab85dfb2aa4d71064e62771c7383888b8f4c83e455774b2bd7467c",
+  "source_fixtures_sha256": "a064dc80348f23b01e0a4ecbadf49967cf3e5b4dfa37a890ae1c794f30eeef3f",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "SVK_1_nike-liga",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "Skalica",
+    "away": "Michalovce",
+    "expectedHomeGoals": 1.5853,
+    "expectedAwayGoals": 1.4915,
+    "baselineHomeGoals": 1.5511,
+    "baselineAwayGoals": 1.5131,
+    "probabilities": {
+      "home": 0.4008,
+      "draw": 0.2393,
+      "away": 0.36,
+      "over25": 0.5938,
+      "btts": 0.6162
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 11.862,
+    "awayWeightedMatches": 8.6157,
+    "source": "open-matchday/fixture/SVK_1_nike-liga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "cc8847847c934d18dd53bb7a200a2656",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "945e452d996c8396085607710c43a2a476e440374e2eef2cddaca4f69903a95b",
+  "source_fixtures_sha256": "d6e568b436e2b6df2824f72a99fd9ac03c47ebe65112a09b650314794678cdb3",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "CZE_1_chance-liga",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "Zlin",
+    "away": "Sparta Prague",
+    "expectedHomeGoals": 1.0747,
+    "expectedAwayGoals": 1.311,
+    "baselineHomeGoals": 1.4191,
+    "baselineAwayGoals": 1.2836,
+    "probabilities": {
+      "home": 0.3051,
+      "draw": 0.2752,
+      "away": 0.4197,
+      "over25": 0.4266,
+      "btts": 0.4811
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 10.2903,
+    "awayWeightedMatches": 10.4756,
+    "source": "open-matchday/fixture/CZE_1_chance-liga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

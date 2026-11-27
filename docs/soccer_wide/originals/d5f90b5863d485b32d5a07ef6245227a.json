@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "d5f90b5863d485b32d5a07ef6245227a",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "0c0c3ac49faa8525cad2e4dcc60d57bd5af4bee19f9ea56cefdb8b2d4421b565",
+  "source_fixtures_sha256": "bc293f107fc12dd1dbfbf5c74c84265d8afe55cfbe6e1d3b14c3e6fae7a621a9",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "POL_3_division-2",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "Hutnik Krakow",
+    "away": "Sandecja Nowy S.",
+    "expectedHomeGoals": 1.4693,
+    "expectedAwayGoals": 1.372,
+    "baselineHomeGoals": 1.5977,
+    "baselineAwayGoals": 1.3732,
+    "probabilities": {
+      "home": 0.3967,
+      "draw": 0.2504,
+      "away": 0.3529,
+      "over25": 0.5403,
+      "btts": 0.5747
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 11.2576,
+    "awayWeightedMatches": 9.1792,
+    "source": "open-matchday/fixture/POL_3_division-2",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

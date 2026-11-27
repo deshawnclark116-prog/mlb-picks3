@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "1453403489faf47032e3092f906a0759",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "15c0ffedea171bd7e7ed14c659fb7ea75752f4aafb199c6cda7c7e2dff44ce66",
+  "source_fixtures_sha256": "721eb593568ff4f9da4560b35ee30ce00d75c6fc4338b6b73b3017d3d088839b",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "POR_1_primeira-liga",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "Gil Vicente FC",
+    "away": "Estoril Praia",
+    "expectedHomeGoals": 1.2911,
+    "expectedAwayGoals": 1.0364,
+    "baselineHomeGoals": 1.2862,
+    "baselineAwayGoals": 1.3241,
+    "probabilities": {
+      "home": 0.423,
+      "draw": 0.2788,
+      "away": 0.2982,
+      "over25": 0.4112,
+      "btts": 0.4678
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 8.7256,
+    "awayWeightedMatches": 7.2949,
+    "source": "open-matchday/fixture/POR_1_primeira-liga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

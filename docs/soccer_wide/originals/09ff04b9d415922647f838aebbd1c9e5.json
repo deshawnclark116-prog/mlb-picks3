@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "09ff04b9d415922647f838aebbd1c9e5",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "198971c1505db89a418984ed935a372c9a168ef427e5033ed5a35bfff2a0ad85",
+  "source_fixtures_sha256": "3a3c478a09eec6fcd3b1472681d5592c76e900f6224ef977a10f942c8a4b24a6",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ESP_1_la-liga",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "RC Deportivo",
+    "away": "FC Barcelona",
+    "expectedHomeGoals": 1.4278,
+    "expectedAwayGoals": 1.6057,
+    "baselineHomeGoals": 1.5605,
+    "baselineAwayGoals": 1.2596,
+    "probabilities": {
+      "home": 0.3409,
+      "draw": 0.2404,
+      "away": 0.4187,
+      "over25": 0.5843,
+      "btts": 0.6076
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 8.8157,
+    "awayWeightedMatches": 8.9247,
+    "source": "open-matchday/fixture/ESP_1_la-liga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

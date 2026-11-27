@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "a76574d0fa2e3d69562591261f27395f",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "9ff9aacc6232e5488eb0b9c061ad8daac94122b926107be3c678b2c13c17bdcf",
+  "source_fixtures_sha256": "729cad668091e1e0bdb8444e3df670210d3a7f1783745f2768dd63d7669b008a",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "GER_3_3-liga",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "Viktoria Köln",
+    "away": "Fortuna Köln",
+    "expectedHomeGoals": 1.9818,
+    "expectedAwayGoals": 1.4189,
+    "baselineHomeGoals": 1.7681,
+    "baselineAwayGoals": 1.4406,
+    "probabilities": {
+      "home": 0.5068,
+      "draw": 0.2177,
+      "away": 0.2755,
+      "over25": 0.6604,
+      "btts": 0.6535
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 10.4376,
+    "awayWeightedMatches": 10.4937,
+    "source": "open-matchday/fixture/GER_3_3-liga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

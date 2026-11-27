@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "0c408fc25986fc298f72f70a6ae2f2d0",
+  "original_captured_at_utc": "2026-11-24T13:44:09.428Z",
+  "league": "MEX_1_liga-mx",
+  "date": "2026-11-26",
+  "match_result_source": "open-matchday/espn/MEX_1_liga-mx",
+  "final_home_goals": 2,
+  "final_away_goals": 0,
+  "model_goal_mae": 0.8775999999999999,
+  "baseline_goal_mae": 0.92905,
+  "model_three_way_brier": 0.48052685000000006,
+  "baseline_three_way_brier": 0.5291892199999999
+}

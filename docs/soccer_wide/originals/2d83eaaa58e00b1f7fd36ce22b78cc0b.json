@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "2d83eaaa58e00b1f7fd36ce22b78cc0b",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "dc24f16b90776b2ec21111b7565a762b63edf1e481b837f3bdf25b6fdc472eaa",
+  "source_fixtures_sha256": "3a5daad442546ac02b3933f109bd36bc1164ac8a916006d9a28e76ccf9d98d88",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "TUR_1_super-lig",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "Fenerbahçe",
+    "away": "Erzurumspor",
+    "expectedHomeGoals": 1.8817,
+    "expectedAwayGoals": 1.2241,
+    "baselineHomeGoals": 1.6432,
+    "baselineAwayGoals": 1.3242,
+    "probabilities": {
+      "home": 0.5276,
+      "draw": 0.225,
+      "away": 0.2474,
+      "over25": 0.6001,
+      "btts": 0.5984
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 7.4521,
+    "awayWeightedMatches": 9.0167,
+    "source": "open-matchday/fixture/TUR_1_super-lig",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "99eb0ea2f67901a863dcb9b2dfc6c489",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "8dde92526b7070b3b568499583495beaa3a15001b3564f16055c582793da7645",
+  "source_fixtures_sha256": "4643c09f0c76ac52a380b3dc4cadeaaae00c0fa6cc4e96b3ac0edc0f896496fc",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "BEL_1_pro-league",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "Union St.-Gilloise",
+    "away": "KAA Gent",
+    "expectedHomeGoals": 1.715,
+    "expectedAwayGoals": 1.1466,
+    "baselineHomeGoals": 1.7695,
+    "baselineAwayGoals": 1.3096,
+    "probabilities": {
+      "home": 0.5067,
+      "draw": 0.2386,
+      "away": 0.2547,
+      "over25": 0.5451,
+      "btts": 0.5595
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 9.0448,
+    "awayWeightedMatches": 9.27,
+    "source": "open-matchday/fixture/BEL_1_pro-league",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

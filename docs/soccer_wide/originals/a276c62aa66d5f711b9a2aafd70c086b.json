@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "a276c62aa66d5f711b9a2aafd70c086b",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "a43bd1d5bee612da78fd263efce2c1cea00390d7ce0aa429d1e4ee1e086abdb5",
+  "source_fixtures_sha256": "8289da53799fa2a6bad96082195fbf841d5cbf017884cdc2f17119a373d7c63b",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "BRA_1_serie-a",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "Mirassol",
+    "away": "Athletico-PR",
+    "expectedHomeGoals": 1.4711,
+    "expectedAwayGoals": 1.2142,
+    "baselineHomeGoals": 1.5203,
+    "baselineAwayGoals": 1.131,
+    "probabilities": {
+      "home": 0.4309,
+      "draw": 0.2565,
+      "away": 0.3126,
+      "over25": 0.5028,
+      "btts": 0.5416
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 18.723,
+    "awayWeightedMatches": 19.6952,
+    "source": "open-matchday/fixture/BRA_1_serie-a",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

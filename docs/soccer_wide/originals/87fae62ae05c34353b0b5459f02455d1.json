@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "87fae62ae05c34353b0b5459f02455d1",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "1dcae781e1482ca6847b34a2ebfd33346885021f90c83edf283a89c3d0617709",
+  "source_fixtures_sha256": "e5bf6bd976f972aed8a2c2b12e2e8f3b5eb4f4443978aec01a788e409f8cdcdc",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "DEN_1_superliga",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "FC Copenhagen",
+    "away": "Midtjylland",
+    "expectedHomeGoals": 1.5099,
+    "expectedAwayGoals": 1.3089,
+    "baselineHomeGoals": 1.6448,
+    "baselineAwayGoals": 1.3477,
+    "probabilities": {
+      "home": 0.4202,
+      "draw": 0.2504,
+      "away": 0.3294,
+      "over25": 0.535,
+      "btts": 0.5686
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 10.3345,
+    "awayWeightedMatches": 11.7916,
+    "source": "open-matchday/fixture/DEN_1_superliga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

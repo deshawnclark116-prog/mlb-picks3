@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "3ff9af4b52891acf8636071a64f73a44",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "61d652c2c5fa6547ac7c8f36756589ab9f6eb81e8463e8897e98e5e38576e655",
+  "source_fixtures_sha256": "850bca21c58d8570cedafb5580168ca690b54a535960ff55ecd0e2786237b0b5",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "GER_1_bundesliga",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "Borussia Dortmund",
+    "away": "Bayer 04 Leverkusen",
+    "expectedHomeGoals": 2.0086,
+    "expectedAwayGoals": 1.272,
+    "baselineHomeGoals": 1.9368,
+    "baselineAwayGoals": 1.2835,
+    "probabilities": {
+      "home": 0.5447,
+      "draw": 0.2156,
+      "away": 0.2397,
+      "over25": 0.6367,
+      "btts": 0.6232
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 7.7824,
+    "awayWeightedMatches": 7.8059,
+    "source": "open-matchday/fixture/GER_1_bundesliga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

@@ -1,17 +1,17 @@
 {
   "schema": "soccer-wide-firstseen-score-v1",
-  "asofDateUTC": "2026-11-26",
+  "asofDateUTC": "2026-11-27",
   "listedCompetitions": 75,
   "sourceVerifiedCompetitions": 75,
-  "upcomingFixtures": 1453,
-  "upcomingQuantitativeForecasts": 1230,
-  "originallyFrozen": 725,
-  "graded": 454,
-  "ungraded": 271,
-  "modelGoalMAE": 0.97657,
-  "baselineGoalMAE": 0.99776,
-  "model3wayBrier": 0.62102,
-  "baseline3wayBrier": 0.64137,
+  "upcomingFixtures": 1430,
+  "upcomingQuantitativeForecasts": 1212,
+  "originallyFrozen": 853,
+  "graded": 457,
+  "ungraded": 396,
+  "modelGoalMAE": 0.97732,
+  "baselineGoalMAE": 0.99841,
+  "model3wayBrier": 0.62078,
+  "baseline3wayBrier": 0.64132,
   "byLeague": {
     "ENG_4_league-two": {
       "n": 14,
@@ -125,19 +125,19 @@
       "model3wayBrier": 0.59994,
       "baseline3wayBrier": 0.60358
     },
+    "MEX_1_liga-mx": {
+      "n": 11,
+      "modelGoalMAE": 1.0095,
+      "baselineGoalMAE": 0.94957,
+      "model3wayBrier": 0.6821,
+      "baseline3wayBrier": 0.67197
+    },
     "ESP_1_la-liga": {
       "n": 9,
       "modelGoalMAE": 0.75894,
       "baselineGoalMAE": 0.85248,
       "model3wayBrier": 0.56928,
       "baseline3wayBrier": 0.61153
-    },
-    "MEX_1_liga-mx": {
-      "n": 9,
-      "modelGoalMAE": 0.95088,
-      "baselineGoalMAE": 0.89399,
-      "model3wayBrier": 0.68113,
-      "baseline3wayBrier": 0.6673
     },
     "MEX_2_liga-expansion": {
       "n": 1,
@@ -244,6 +244,13 @@
       "model3wayBrier": 0.48987,
       "baseline3wayBrier": 0.55166
     },
+    "ARG_1_liga-profesional": {
+      "n": 7,
+      "modelGoalMAE": 0.84353,
+      "baselineGoalMAE": 0.88281,
+      "model3wayBrier": 0.52949,
+      "baseline3wayBrier": 0.58044
+    },
     "WAL_2_cymru-north": {
       "n": 8,
       "modelGoalMAE": 1.07914,
@@ -306,13 +313,6 @@
       "baselineGoalMAE": 0.92681,
       "model3wayBrier": 0.64109,
       "baseline3wayBrier": 0.62579
-    },
-    "ARG_1_liga-profesional": {
-      "n": 6,
-      "modelGoalMAE": 0.86303,
-      "baselineGoalMAE": 0.88143,
-      "model3wayBrier": 0.5542,
-      "baseline3wayBrier": 0.59096
     },
     "FRA_2_ligue-2": {
       "n": 4,
@@ -469,7 +469,7 @@
       "status": "NON_REGULATION_SCORE",
       "reason": "CUP_OR_UEFA_REGULATION_SCORE_UNVERIFIED",
       "pastResults": 50,
-      "upcomingFixtures": 20
+      "upcomingFixtures": 19
     },
     {
       "league": "SCO_CUP_league-cup",
@@ -504,7 +504,7 @@
       "status": "NON_REGULATION_SCORE",
       "reason": "CUP_OR_UEFA_REGULATION_SCORE_UNVERIFIED",
       "pastResults": 47,
-      "upcomingFixtures": 6
+      "upcomingFixtures": 2
     },
     {
       "league": "FIN_1_veikkausliiga",

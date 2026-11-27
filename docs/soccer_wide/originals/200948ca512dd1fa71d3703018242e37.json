@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "200948ca512dd1fa71d3703018242e37",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "cb773c67f75e36fa4c285f97fdd8a3ee0860b13dcc9957f51529836d05f299b7",
+  "source_fixtures_sha256": "399f93bde9e8939a50c099b5975cfd88f9662f24d3d2bb0cdafcfb8fe385f40c",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ESP_2_segunda-division",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "Granada",
+    "away": "Ceuta",
+    "expectedHomeGoals": 1.7893,
+    "expectedAwayGoals": 0.9758,
+    "baselineHomeGoals": 1.5319,
+    "baselineAwayGoals": 1.1738,
+    "probabilities": {
+      "home": 0.5649,
+      "draw": 0.2313,
+      "away": 0.2038,
+      "over25": 0.5222,
+      "btts": 0.519
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 9.3678,
+    "awayWeightedMatches": 10.8539,
+    "source": "open-matchday/fixture/ESP_2_segunda-division",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

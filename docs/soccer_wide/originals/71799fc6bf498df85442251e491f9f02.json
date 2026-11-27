@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "71799fc6bf498df85442251e491f9f02",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "fbdb68ce5bb6a144f0190961530d938918eec19b506727d78ceaf4a32a5a97a0",
+  "source_fixtures_sha256": "a23ba7a82c45718e5f7d9fa4a46772b841fddc297cd47f9e3853c4009e75298c",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "POL_1_ekstraklasa",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "Lech Poznan",
+    "away": "Pogon Szczecin",
+    "expectedHomeGoals": 1.8809,
+    "expectedAwayGoals": 1.1338,
+    "baselineHomeGoals": 1.6325,
+    "baselineAwayGoals": 1.2468,
+    "probabilities": {
+      "home": 0.5481,
+      "draw": 0.2246,
+      "away": 0.2273,
+      "over25": 0.5801,
+      "btts": 0.5748
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 9.3532,
+    "awayWeightedMatches": 7.9663,
+    "source": "open-matchday/fixture/POL_1_ekstraklasa",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

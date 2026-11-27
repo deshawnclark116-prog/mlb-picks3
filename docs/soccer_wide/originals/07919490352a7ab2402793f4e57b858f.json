@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "07919490352a7ab2402793f4e57b858f",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "276b1cae09699e6a7473cd6f9b2d512d4353bbff7372b0e02fa9605babeb9007",
+  "source_fixtures_sha256": "de58b958d6994ac97c374710d7f1da9c8bbba488b98b5472dd18bc8ad810587c",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "SUI_1_super-league",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "Thun",
+    "away": "St. Gallen",
+    "expectedHomeGoals": 1.7538,
+    "expectedAwayGoals": 1.8217,
+    "baselineHomeGoals": 1.8422,
+    "baselineAwayGoals": 1.6631,
+    "probabilities": {
+      "home": 0.3762,
+      "draw": 0.2201,
+      "away": 0.4037,
+      "over25": 0.6929,
+      "btts": 0.6931
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 8.8123,
+    "awayWeightedMatches": 10.3402,
+    "source": "open-matchday/fixture/SUI_1_super-league",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

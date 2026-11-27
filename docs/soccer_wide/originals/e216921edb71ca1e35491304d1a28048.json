@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "e216921edb71ca1e35491304d1a28048",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "5390fec7985f618503faa47783bcc1e5271970e6d2b333141c77bd00744f9c50",
+  "source_fixtures_sha256": "648d05be60fc4e54600ea6e84aa3149a9a24a66448c253c0265093cab9a7d51f",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "RUS_1_premier-liga",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "Krylya Sovetov",
+    "away": "Dynamo Moscow",
+    "expectedHomeGoals": 1.2857,
+    "expectedAwayGoals": 1.3654,
+    "baselineHomeGoals": 1.3746,
+    "baselineAwayGoals": 1.2129,
+    "probabilities": {
+      "home": 0.3511,
+      "draw": 0.2607,
+      "away": 0.3882,
+      "over25": 0.4943,
+      "btts": 0.5388
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 11.9637,
+    "awayWeightedMatches": 9.0608,
+    "source": "open-matchday/fixture/RUS_1_premier-liga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

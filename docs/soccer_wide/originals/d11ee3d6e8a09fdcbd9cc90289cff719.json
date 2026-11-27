@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "d11ee3d6e8a09fdcbd9cc90289cff719",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "bef73cff66615822a52f920357580d5a6f146c3cd9da442a80326b74beefe5ba",
+  "source_fixtures_sha256": "5e9c183ee2b519b840bea86c4fdcc072b5f372b2d9cdeb507be73737ff1e8a40",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "NED_1_eredivisie",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "N.E.C. Nijmegen",
+    "away": "FC Twente",
+    "expectedHomeGoals": 1.5301,
+    "expectedAwayGoals": 2.2565,
+    "baselineHomeGoals": 1.785,
+    "baselineAwayGoals": 1.9531,
+    "probabilities": {
+      "home": 0.2583,
+      "draw": 0.2009,
+      "away": 0.5408,
+      "over25": 0.7289,
+      "btts": 0.7014
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 10.6292,
+    "awayWeightedMatches": 8.908,
+    "source": "open-matchday/fixture/NED_1_eredivisie",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

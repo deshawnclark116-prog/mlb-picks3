@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "a91da1b7e8d0afd2760f845780df7fd2",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "fbdb68ce5bb6a144f0190961530d938918eec19b506727d78ceaf4a32a5a97a0",
+  "source_fixtures_sha256": "a23ba7a82c45718e5f7d9fa4a46772b841fddc297cd47f9e3853c4009e75298c",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "POL_1_ekstraklasa",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "Jagiellonia",
+    "away": "Radomiak Radom",
+    "expectedHomeGoals": 1.6068,
+    "expectedAwayGoals": 1.264,
+    "baselineHomeGoals": 1.6325,
+    "baselineAwayGoals": 1.2468,
+    "probabilities": {
+      "home": 0.4539,
+      "draw": 0.2451,
+      "away": 0.3009,
+      "over25": 0.5473,
+      "btts": 0.5736
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 7.9076,
+    "awayWeightedMatches": 7.9526,
+    "source": "open-matchday/fixture/POL_1_ekstraklasa",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "71474957fac868399c8e24ff6b3e3f25",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "afa0944d1e65bff6b631f9802a30f6583263230f003488b23308884e8d6820e3",
+  "source_fixtures_sha256": "998903df1203563a7f8a4addf1d0db95313d34d71d0aa332eac7380da289989c",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "GER_2_2-bundesliga",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "Eintracht Braunschweig",
+    "away": "VfL Wolfsburg",
+    "expectedHomeGoals": 1.6308,
+    "expectedAwayGoals": 1.3187,
+    "baselineHomeGoals": 1.6974,
+    "baselineAwayGoals": 1.1938,
+    "probabilities": {
+      "home": 0.4478,
+      "draw": 0.2421,
+      "away": 0.3101,
+      "over25": 0.5654,
+      "btts": 0.5891
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 8.9957,
+    "awayWeightedMatches": 9.013,
+    "source": "open-matchday/fixture/GER_2_2-bundesliga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "d47afc0a2c004b21ad4f2e369eae38d4",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "cb773c67f75e36fa4c285f97fdd8a3ee0860b13dcc9957f51529836d05f299b7",
+  "source_fixtures_sha256": "399f93bde9e8939a50c099b5975cfd88f9662f24d3d2bb0cdafcfb8fe385f40c",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ESP_2_segunda-division",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "Cádiz",
+    "away": "Córdoba",
+    "expectedHomeGoals": 1.6007,
+    "expectedAwayGoals": 1.2651,
+    "baselineHomeGoals": 1.5319,
+    "baselineAwayGoals": 1.1738,
+    "probabilities": {
+      "home": 0.4522,
+      "draw": 0.2455,
+      "away": 0.3022,
+      "over25": 0.5461,
+      "btts": 0.573
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 12.0139,
+    "awayWeightedMatches": 12.3575,
+    "source": "open-matchday/fixture/ESP_2_segunda-division",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

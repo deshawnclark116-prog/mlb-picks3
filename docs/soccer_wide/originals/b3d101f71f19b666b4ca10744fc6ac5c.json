@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "b3d101f71f19b666b4ca10744fc6ac5c",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "5da514a892be7b6a9dd875825f88dce5048858dd644ead610c8d8be976d17a05",
+  "source_fixtures_sha256": "5790038a67810d799a1bfb18d0b2bf4b1c4cab85106732dacabc196712019e19",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "MEX_1_liga-mx",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "América",
+    "away": "Monterrey",
+    "expectedHomeGoals": 1.5829,
+    "expectedAwayGoals": 1.3376,
+    "baselineHomeGoals": 1.5328,
+    "baselineAwayGoals": 1.3776,
+    "probabilities": {
+      "home": 0.4321,
+      "draw": 0.2447,
+      "away": 0.3232,
+      "over25": 0.5588,
+      "btts": 0.5861
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 11.9402,
+    "awayWeightedMatches": 13.9151,
+    "source": "open-matchday/fixture/MEX_1_liga-mx",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

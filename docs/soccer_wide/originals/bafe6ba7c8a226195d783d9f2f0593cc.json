@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "bafe6ba7c8a226195d783d9f2f0593cc",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "44dce671828ace157c6a99c4d4fc9699813cb1d22588ef58aac9b1a38b6dc335",
+  "source_fixtures_sha256": "b9288675e2d821c8985d190a390a5f73dd1951259e36b476ea797ea41b1e6d7f",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "SWE_1_allsvenskan",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "Halmstad",
+    "away": "Mjallby",
+    "expectedHomeGoals": 1.2625,
+    "expectedAwayGoals": 1.1014,
+    "baselineHomeGoals": 1.3431,
+    "baselineAwayGoals": 1.1879,
+    "probabilities": {
+      "home": 0.4003,
+      "draw": 0.278,
+      "away": 0.3217,
+      "over25": 0.4208,
+      "btts": 0.4787
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 7.9419,
+    "awayWeightedMatches": 9.3239,
+    "source": "open-matchday/fixture/SWE_1_allsvenskan",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

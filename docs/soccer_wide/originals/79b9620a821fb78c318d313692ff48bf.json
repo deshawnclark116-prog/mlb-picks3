@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "79b9620a821fb78c318d313692ff48bf",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "a43bd1d5bee612da78fd263efce2c1cea00390d7ce0aa429d1e4ee1e086abdb5",
+  "source_fixtures_sha256": "8289da53799fa2a6bad96082195fbf841d5cbf017884cdc2f17119a373d7c63b",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "BRA_1_serie-a",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "Corinthians",
+    "away": "Grêmio",
+    "expectedHomeGoals": 1.4546,
+    "expectedAwayGoals": 0.9957,
+    "baselineHomeGoals": 1.5203,
+    "baselineAwayGoals": 1.131,
+    "probabilities": {
+      "home": 0.4771,
+      "draw": 0.2644,
+      "away": 0.2585,
+      "over25": 0.4434,
+      "btts": 0.4833
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 18.8317,
+    "awayWeightedMatches": 19.2269,
+    "source": "open-matchday/fixture/BRA_1_serie-a",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

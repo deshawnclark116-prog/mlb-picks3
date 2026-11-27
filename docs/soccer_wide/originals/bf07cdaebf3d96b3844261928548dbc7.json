@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "bf07cdaebf3d96b3844261928548dbc7",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "2a043d2d6686131c1bc6851ee2718abb11f5c3a4e52967c665e629e5ef8e6b24",
+  "source_fixtures_sha256": "7f13f6ed61e348ca39a574dff99f846c10729f73798caa89fd54596b5e020f00",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "UKR_1_premier-league",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "Epitsentr",
+    "away": "LNZ Cherkasy",
+    "expectedHomeGoals": 1.1467,
+    "expectedAwayGoals": 1.0217,
+    "baselineHomeGoals": 1.3496,
+    "baselineAwayGoals": 1.0722,
+    "probabilities": {
+      "home": 0.3851,
+      "draw": 0.2931,
+      "away": 0.3218,
+      "over25": 0.3688,
+      "btts": 0.4367
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 9.8632,
+    "awayWeightedMatches": 10.3164,
+    "source": "open-matchday/fixture/UKR_1_premier-league",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

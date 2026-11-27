@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "1e478ec3ebc9983c7f1a75477627be6e",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "92c9433e8a901ba1474ab470addf12308b0a6c6b2406ff94bc2bc0321f6e0522",
+  "source_fixtures_sha256": "893b3409db51523fa94fc8663e1660f2b554deefce835a2d864ac32aa9253246",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ARG_1_liga-profesional",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "Instituto (Córdoba)",
+    "away": "River Plate",
+    "expectedHomeGoals": 1.2096,
+    "expectedAwayGoals": 1.0833,
+    "baselineHomeGoals": 1.2706,
+    "baselineAwayGoals": 1.0396,
+    "probabilities": {
+      "home": 0.3895,
+      "draw": 0.2835,
+      "away": 0.3271,
+      "over25": 0.4021,
+      "btts": 0.4642
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 18.1891,
+    "awayWeightedMatches": 16.3755,
+    "source": "open-matchday/fixture/ARG_1_liga-profesional",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

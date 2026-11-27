@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "4be2a486a7ace870c069ff850d09f4fe",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "1a7dd0eabaafaac2e34dcace0fc52ee883d33dd8608d9ca516f5dd5696f1e745",
+  "source_fixtures_sha256": "dcfaa81f93c066519c349238044a69f81d06a1400e9bd1ab30954c6e52b1c244",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "NOR_1_eliteserien",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "Start",
+    "away": "Sarpsborg 08",
+    "expectedHomeGoals": 1.7803,
+    "expectedAwayGoals": 1.5775,
+    "baselineHomeGoals": 1.9127,
+    "baselineAwayGoals": 1.6637,
+    "probabilities": {
+      "home": 0.4289,
+      "draw": 0.2269,
+      "away": 0.3443,
+      "over25": 0.6521,
+      "btts": 0.6597
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 10.1031,
+    "awayWeightedMatches": 8.4649,
+    "source": "open-matchday/fixture/NOR_1_eliteserien",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

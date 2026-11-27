@@ -1,7 +1,7 @@
 {
   "schema": "soccer-worldwide-fixtures-and-original-model-research-v1",
-  "asof_calendar_day_utc": "2026-11-26",
-  "generated_at_utc": "2026-11-26T23:52:46.755Z",
+  "asof_calendar_day_utc": "2026-11-27",
+  "generated_at_utc": "2026-11-27T12:20:23.730Z",
   "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
   "source": "OPEN_MATCHDAY_2627",
   "season": "2026-27",
@@ -14,8 +14,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 110,
-      "futureFixtures": 40,
-      "forecastCount": 40
+      "futureFixtures": 39,
+      "forecastCount": 39
     },
     {
       "id": "ESP_1_la-liga",
@@ -24,8 +24,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 129,
-      "futureFixtures": 33,
-      "forecastCount": 33
+      "futureFixtures": 32,
+      "forecastCount": 32
     },
     {
       "id": "GER_1_bundesliga",
@@ -44,8 +44,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 120,
-      "futureFixtures": 30,
-      "forecastCount": 30
+      "futureFixtures": 31,
+      "forecastCount": 31
     },
     {
       "id": "FRA_1_ligue-1",
@@ -54,8 +54,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 99,
-      "futureFixtures": 27,
-      "forecastCount": 27
+      "futureFixtures": 26,
+      "forecastCount": 26
     },
     {
       "id": "UEFA_1_champions-league",
@@ -164,7 +164,7 @@
       "status": "NON_REGULATION_SCORE",
       "reason": "CUP_OR_UEFA_REGULATION_SCORE_UNVERIFIED",
       "pastResults": 50,
-      "futureFixtures": 20,
+      "futureFixtures": 19,
       "forecastCount": 0
     },
     {
@@ -214,8 +214,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 179,
-      "futureFixtures": 39,
-      "forecastCount": 39
+      "futureFixtures": 40,
+      "forecastCount": 40
     },
     {
       "id": "ENG_4_league-two",
@@ -284,8 +284,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 77,
-      "futureFixtures": 13,
-      "forecastCount": 13
+      "futureFixtures": 14,
+      "forecastCount": 14
     },
     {
       "id": "SCO_3_league-one",
@@ -334,8 +334,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 98,
-      "futureFixtures": 27,
-      "forecastCount": 27
+      "futureFixtures": 26,
+      "forecastCount": 26
     },
     {
       "id": "NED_1_eredivisie",
@@ -394,8 +394,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 78,
-      "futureFixtures": 18,
-      "forecastCount": 18
+      "futureFixtures": 17,
+      "forecastCount": 17
     },
     {
       "id": "DEN_1_superliga",
@@ -404,8 +404,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 90,
-      "futureFixtures": 12,
-      "forecastCount": 12
+      "futureFixtures": 11,
+      "forecastCount": 11
     },
     {
       "id": "SWE_1_allsvenskan",
@@ -434,8 +434,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 103,
-      "futureFixtures": 24,
-      "forecastCount": 24
+      "futureFixtures": 22,
+      "forecastCount": 22
     },
     {
       "id": "RUS_1_premier-liga",
@@ -474,8 +474,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 105,
-      "futureFixtures": 29,
-      "forecastCount": 29
+      "futureFixtures": 27,
+      "forecastCount": 27
     },
     {
       "id": "POL_2_division-1",
@@ -484,8 +484,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 106,
-      "futureFixtures": 27,
-      "forecastCount": 27
+      "futureFixtures": 25,
+      "forecastCount": 25
     },
     {
       "id": "POL_3_division-2",
@@ -494,8 +494,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 110,
-      "futureFixtures": 20,
-      "forecastCount": 20
+      "futureFixtures": 18,
+      "forecastCount": 18
     },
     {
       "id": "BEL_U21_pro-league",
@@ -504,7 +504,7 @@
       "status": "NON_REGULATION_SCORE",
       "reason": "CUP_OR_UEFA_REGULATION_SCORE_UNVERIFIED",
       "pastResults": 47,
-      "futureFixtures": 6,
+      "futureFixtures": 2,
       "forecastCount": 0
     },
     {
@@ -514,8 +514,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 112,
-      "futureFixtures": 16,
-      "forecastCount": 16
+      "futureFixtures": 17,
+      "forecastCount": 17
     },
     {
       "id": "WAL_2_cymru-north",
@@ -524,8 +524,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 109,
-      "futureFixtures": 17,
-      "forecastCount": 17
+      "futureFixtures": 18,
+      "forecastCount": 18
     },
     {
       "id": "WAL_3_cymru-south",
@@ -534,8 +534,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 107,
-      "futureFixtures": 18,
-      "forecastCount": 18
+      "futureFixtures": 20,
+      "forecastCount": 20
     },
     {
       "id": "CRO_1_hnl",
@@ -544,8 +544,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 69,
-      "futureFixtures": 16,
-      "forecastCount": 16
+      "futureFixtures": 15,
+      "forecastCount": 15
     },
     {
       "id": "CZE_1_chance-liga",
@@ -554,8 +554,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 106,
-      "futureFixtures": 25,
-      "forecastCount": 25
+      "futureFixtures": 24,
+      "forecastCount": 24
     },
     {
       "id": "UKR_1_premier-league",
@@ -564,8 +564,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 98,
-      "futureFixtures": 26,
-      "forecastCount": 26
+      "futureFixtures": 25,
+      "forecastCount": 25
     },
     {
       "id": "CYP_1_first-division",
@@ -574,8 +574,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 70,
-      "futureFixtures": 28,
-      "forecastCount": 28
+      "futureFixtures": 25,
+      "forecastCount": 25
     },
     {
       "id": "SVK_1_nike-liga",
@@ -594,8 +594,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 79,
-      "futureFixtures": 11,
-      "forecastCount": 11
+      "futureFixtures": 10,
+      "forecastCount": 10
     },
     {
       "id": "FIN_1_veikkausliiga",
@@ -624,8 +624,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 162,
-      "futureFixtures": 36,
-      "forecastCount": 36
+      "futureFixtures": 35,
+      "forecastCount": 35
     },
     {
       "id": "ITA_2_serie-b",
@@ -634,8 +634,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 130,
-      "futureFixtures": 40,
-      "forecastCount": 40
+      "futureFixtures": 41,
+      "forecastCount": 41
     },
     {
       "id": "FRA_2_ligue-2",
@@ -654,8 +654,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 160,
-      "futureFixtures": 30,
-      "forecastCount": 30
+      "futureFixtures": 31,
+      "forecastCount": 31
     },
     {
       "id": "BRA_1_serie-a",
@@ -664,8 +664,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 361,
-      "futureFixtures": 18,
-      "forecastCount": 18
+      "futureFixtures": 17,
+      "forecastCount": 17
     },
     {
       "id": "BRA_2_serie-b",
@@ -674,8 +674,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 382,
-      "futureFixtures": 2,
-      "forecastCount": 2
+      "futureFixtures": 1,
+      "forecastCount": 1
     },
     {
       "id": "ARG_1_liga-profesional",
@@ -683,7 +683,7 @@
       "folder": "data/ARG_1_liga-profesional",
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
-      "pastResults": 496,
+      "pastResults": 497,
       "futureFixtures": 3,
       "forecastCount": 3
     },
@@ -694,8 +694,8 @@
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
       "pastResults": 658,
-      "futureFixtures": 4,
-      "forecastCount": 4
+      "futureFixtures": 3,
+      "forecastCount": 3
     },
     {
       "id": "MEX_1_liga-mx",
@@ -703,9 +703,9 @@
       "folder": "data/MEX_1_liga-mx",
       "status": "FORECAST_ELIGIBLE",
       "reason": "HISTORY_SUFFICIENT_CURRENT_SEASON",
-      "pastResults": 153,
-      "futureFixtures": 6,
-      "forecastCount": 6
+      "pastResults": 155,
+      "futureFixtures": 4,
+      "forecastCount": 4
     },
     {
       "id": "MEX_2_liga-expansion",
@@ -759,1386 +759,6 @@
     }
   ],
   "forecasts": [
-    {
-      "league": "ARG_2_primera-nacional",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Atlanta",
-      "away": "Ciudad de Bolívar",
-      "expectedHomeGoals": 1.1392,
-      "expectedAwayGoals": 0.736,
-      "baselineHomeGoals": 1.2066,
-      "baselineAwayGoals": 0.7797,
-      "probabilities": {
-        "home": 0.4518,
-        "draw": 0.3115,
-        "away": 0.2367,
-        "over25": 0.2896,
-        "btts": 0.3542
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 20.0296,
-      "awayWeightedMatches": 20.6368,
-      "source": "open-matchday/fixture/ARG_2_primera-nacional",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "AUT_1_bundesliga",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Grazer AK",
-      "away": "Altach",
-      "expectedHomeGoals": 1.6176,
-      "expectedAwayGoals": 1.1368,
-      "baselineHomeGoals": 1.7816,
-      "baselineAwayGoals": 1.3215,
-      "probabilities": {
-        "home": 0.4853,
-        "draw": 0.2468,
-        "away": 0.2678,
-        "over25": 0.5196,
-        "btts": 0.5444
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 9.2757,
-      "awayWeightedMatches": 8.6694,
-      "source": "open-matchday/fixture/AUT_1_bundesliga",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "BEL_1_pro-league",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "OH Leuven",
-      "away": "KV Kortrijk",
-      "expectedHomeGoals": 1.7318,
-      "expectedAwayGoals": 1.0785,
-      "baselineHomeGoals": 1.7699,
-      "baselineAwayGoals": 1.3098,
-      "probabilities": {
-        "home": 0.5267,
-        "draw": 0.2374,
-        "away": 0.236,
-        "over25": 0.533,
-        "btts": 0.5431
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 8.9507,
-      "awayWeightedMatches": 9.156,
-      "source": "open-matchday/fixture/BEL_1_pro-league",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "BRA_1_serie-a",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Fluminense",
-      "away": "Cruzeiro",
-      "expectedHomeGoals": 1.611,
-      "expectedAwayGoals": 1.2015,
-      "baselineHomeGoals": 1.5204,
-      "baselineAwayGoals": 1.131,
-      "probabilities": {
-        "home": 0.4689,
-        "draw": 0.2462,
-        "away": 0.2848,
-        "over25": 0.5335,
-        "btts": 0.5596
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 19.0214,
-      "awayWeightedMatches": 19.9556,
-      "source": "open-matchday/fixture/BRA_1_serie-a",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "BRA_2_serie-b",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Vila Nova",
-      "away": "Atlético Goianiense",
-      "expectedHomeGoals": 1.3932,
-      "expectedAwayGoals": 0.9222,
-      "baselineHomeGoals": 1.3582,
-      "baselineAwayGoals": 1.0166,
-      "probabilities": {
-        "home": 0.4785,
-        "draw": 0.2726,
-        "away": 0.2488,
-        "over25": 0.408,
-        "btts": 0.4528
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 22.5387,
-      "awayWeightedMatches": 22.5423,
-      "source": "open-matchday/fixture/BRA_2_serie-b",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "CRO_1_hnl",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Istra 1961",
-      "away": "Varazdin",
-      "expectedHomeGoals": 1.591,
-      "expectedAwayGoals": 1.3837,
-      "baselineHomeGoals": 1.6208,
-      "baselineAwayGoals": 1.2964,
-      "probabilities": {
-        "home": 0.4243,
-        "draw": 0.2428,
-        "away": 0.3329,
-        "over25": 0.5711,
-        "btts": 0.5967
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 10.1324,
-      "awayWeightedMatches": 10.8922,
-      "source": "open-matchday/fixture/CRO_1_hnl",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "CYP_1_first-division",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "AEK Larnaca",
-      "away": "Apollon",
-      "expectedHomeGoals": 1.4836,
-      "expectedAwayGoals": 1.2919,
-      "baselineHomeGoals": 1.5387,
-      "baselineAwayGoals": 1.3181,
-      "probabilities": {
-        "home": 0.4172,
-        "draw": 0.2528,
-        "away": 0.33,
-        "over25": 0.5247,
-        "btts": 0.5607
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 7.8909,
-      "awayWeightedMatches": 7.8699,
-      "source": "open-matchday/fixture/CYP_1_first-division",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "CYP_1_first-division",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "AEL Limassol",
-      "away": "Ol. Nicosia",
-      "expectedHomeGoals": 1.5408,
-      "expectedAwayGoals": 1.2303,
-      "baselineHomeGoals": 1.5387,
-      "baselineAwayGoals": 1.3181,
-      "probabilities": {
-        "home": 0.4451,
-        "draw": 0.2508,
-        "away": 0.3041,
-        "over25": 0.5236,
-        "btts": 0.5562
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 7.877,
-      "awayWeightedMatches": 6.2637,
-      "source": "open-matchday/fixture/CYP_1_first-division",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "CYP_1_first-division",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Omonia 29th May",
-      "away": "Omonia Aradippou",
-      "expectedHomeGoals": 1.4881,
-      "expectedAwayGoals": 1.146,
-      "baselineHomeGoals": 1.5387,
-      "baselineAwayGoals": 1.3181,
-      "probabilities": {
-        "home": 0.4506,
-        "draw": 0.2574,
-        "away": 0.292,
-        "over25": 0.4901,
-        "btts": 0.5281
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 6.2399,
-      "awayWeightedMatches": 7.8807,
-      "source": "open-matchday/fixture/CYP_1_first-division",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "CZE_1_chance-liga",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Artis Brno",
-      "away": "Slovacko",
-      "expectedHomeGoals": 1.3946,
-      "expectedAwayGoals": 1.3206,
-      "baselineHomeGoals": 1.419,
-      "baselineAwayGoals": 1.2838,
-      "probabilities": {
-        "home": 0.3884,
-        "draw": 0.2571,
-        "away": 0.3544,
-        "over25": 0.5101,
-        "btts": 0.5513
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 10.8065,
-      "awayWeightedMatches": 10.364,
-      "source": "open-matchday/fixture/CZE_1_chance-liga",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "DEN_1_superliga",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Sonderjyske",
-      "away": "Brondby",
-      "expectedHomeGoals": 1.6589,
-      "expectedAwayGoals": 1.4763,
-      "baselineHomeGoals": 1.6451,
-      "baselineAwayGoals": 1.348,
-      "probabilities": {
-        "home": 0.4213,
-        "draw": 0.236,
-        "away": 0.3427,
-        "over25": 0.6064,
-        "btts": 0.6247
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 11.8315,
-      "awayWeightedMatches": 10.2676,
-      "source": "open-matchday/fixture/DEN_1_superliga",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "ENG_1_premier-league",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Nott'm Forest",
-      "away": "Chelsea",
-      "expectedHomeGoals": 1.42,
-      "expectedAwayGoals": 1.0957,
-      "baselineHomeGoals": 1.5718,
-      "baselineAwayGoals": 1.1556,
-      "probabilities": {
-        "home": 0.4443,
-        "draw": 0.2648,
-        "away": 0.2909,
-        "over25": 0.4602,
-        "btts": 0.5048
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 7.5803,
-      "awayWeightedMatches": 7.5925,
-      "source": "open-matchday/fixture/ENG_1_premier-league",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "ENG_2_championship",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Southampton",
-      "away": "Middlesbrough",
-      "expectedHomeGoals": 1.7345,
-      "expectedAwayGoals": 1.1689,
-      "baselineHomeGoals": 1.6199,
-      "baselineAwayGoals": 1.256,
-      "probabilities": {
-        "home": 0.5062,
-        "draw": 0.2368,
-        "away": 0.257,
-        "over25": 0.5548,
-        "btts": 0.5676
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 12.3617,
-      "awayWeightedMatches": 12.3861,
-      "source": "open-matchday/fixture/ENG_2_championship",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "ENG_5_national-league",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Scunthorpe United",
-      "away": "Wealdstone",
-      "expectedHomeGoals": 1.5972,
-      "expectedAwayGoals": 1.3864,
-      "baselineHomeGoals": 1.717,
-      "baselineAwayGoals": 1.398,
-      "probabilities": {
-        "home": 0.4253,
-        "draw": 0.2423,
-        "away": 0.3324,
-        "over25": 0.5731,
-        "btts": 0.5982
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 12.3746,
-      "awayWeightedMatches": 15.3074,
-      "source": "open-matchday/fixture/ENG_5_national-league",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "ENG_7_northern-premier-league",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Warrington Rylands",
-      "away": "Lancaster",
-      "expectedHomeGoals": 1.978,
-      "expectedAwayGoals": 1.4285,
-      "baselineHomeGoals": 1.6952,
-      "baselineAwayGoals": 1.4874,
-      "probabilities": {
-        "home": 0.5039,
-        "draw": 0.2179,
-        "away": 0.2782,
-        "over25": 0.6615,
-        "btts": 0.6552
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 8.7314,
-      "awayWeightedMatches": 10.063,
-      "source": "open-matchday/fixture/ENG_7_northern-premier-league",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "ESP_1_la-liga",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Levante UD",
-      "away": "R. Racing Club",
-      "expectedHomeGoals": 1.9467,
-      "expectedAwayGoals": 1.3587,
-      "baselineHomeGoals": 1.5607,
-      "baselineAwayGoals": 1.2597,
-      "probabilities": {
-        "home": 0.5121,
-        "draw": 0.2202,
-        "away": 0.2677,
-        "over25": 0.6416,
-        "btts": 0.6369
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 9.7652,
-      "awayWeightedMatches": 9.0202,
-      "source": "open-matchday/fixture/ESP_1_la-liga",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "ESP_2_segunda-division",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Leganés",
-      "away": "CD Sabadell",
-      "expectedHomeGoals": 1.4143,
-      "expectedAwayGoals": 1.0739,
-      "baselineHomeGoals": 1.532,
-      "baselineAwayGoals": 1.1738,
-      "probabilities": {
-        "home": 0.4479,
-        "draw": 0.266,
-        "away": 0.2861,
-        "over25": 0.4531,
-        "btts": 0.4983
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 11.3505,
-      "awayWeightedMatches": 12.3699,
-      "source": "open-matchday/fixture/ESP_2_segunda-division",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "FRA_1_ligue-1",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Stade Brestois 29",
-      "away": "Paris FC",
-      "expectedHomeGoals": 1.5661,
-      "expectedAwayGoals": 1.2208,
-      "baselineHomeGoals": 1.6034,
-      "baselineAwayGoals": 1.2966,
-      "probabilities": {
-        "home": 0.4535,
-        "draw": 0.2492,
-        "away": 0.2973,
-        "over25": 0.5274,
-        "btts": 0.5578
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 7.8691,
-      "awayWeightedMatches": 7.7815,
-      "source": "open-matchday/fixture/FRA_1_ligue-1",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "GER_1_bundesliga",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "SV Werder Bremen",
-      "away": "Borussia Mönchengladbach",
-      "expectedHomeGoals": 2.2516,
-      "expectedAwayGoals": 1.1902,
-      "baselineHomeGoals": 1.9376,
-      "baselineAwayGoals": 1.2837,
-      "probabilities": {
-        "home": 0.613,
-        "draw": 0.1956,
-        "away": 0.1914,
-        "over25": 0.6682,
-        "btts": 0.6226
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 8.1914,
-      "awayWeightedMatches": 7.8531,
-      "source": "open-matchday/fixture/GER_1_bundesliga",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "GER_2_2-bundesliga",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "1. FC Heidenheim 1846",
-      "away": "1. FC Nürnberg",
-      "expectedHomeGoals": 1.6604,
-      "expectedAwayGoals": 1.3841,
-      "baselineHomeGoals": 1.6977,
-      "baselineAwayGoals": 1.1939,
-      "probabilities": {
-        "home": 0.4409,
-        "draw": 0.2385,
-        "away": 0.3205,
-        "over25": 0.5867,
-        "btts": 0.607
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 9.0671,
-      "awayWeightedMatches": 7.4745,
-      "source": "open-matchday/fixture/GER_2_2-bundesliga",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "GER_2_2-bundesliga",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "VfL Bochum",
-      "away": "SV Darmstadt 98",
-      "expectedHomeGoals": 1.7418,
-      "expectedAwayGoals": 1.0222,
-      "baselineHomeGoals": 1.6977,
-      "baselineAwayGoals": 1.1939,
-      "probabilities": {
-        "home": 0.5425,
-        "draw": 0.2363,
-        "away": 0.2212,
-        "over25": 0.5219,
-        "btts": 0.528
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 9.0559,
-      "awayWeightedMatches": 7.5387,
-      "source": "open-matchday/fixture/GER_2_2-bundesliga",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "GER_3_3-liga",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Hansa Rostock",
-      "away": "TSV Havelse",
-      "expectedHomeGoals": 1.8876,
-      "expectedAwayGoals": 1.2504,
-      "baselineHomeGoals": 1.7684,
-      "baselineAwayGoals": 1.4409,
-      "probabilities": {
-        "home": 0.523,
-        "draw": 0.2245,
-        "away": 0.2525,
-        "over25": 0.607,
-        "btts": 0.6055
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 9.1966,
-      "awayWeightedMatches": 9.1151,
-      "source": "open-matchday/fixture/GER_3_3-liga",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "ITA_1_serie-a",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Venezia",
-      "away": "Bologna",
-      "expectedHomeGoals": 1.3922,
-      "expectedAwayGoals": 1.572,
-      "baselineHomeGoals": 1.6638,
-      "baselineAwayGoals": 1.4537,
-      "probabilities": {
-        "home": 0.3385,
-        "draw": 0.2436,
-        "away": 0.4179,
-        "over25": 0.5688,
-        "btts": 0.5955
-      },
-      "mostLikely": "A",
-      "homeWeightedMatches": 9.3496,
-      "awayWeightedMatches": 9.6293,
-      "source": "open-matchday/fixture/ITA_1_serie-a",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "MEX_1_liga-mx",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "León",
-      "away": "Cruz Azul",
-      "expectedHomeGoals": 1.5799,
-      "expectedAwayGoals": 1.5308,
-      "baselineHomeGoals": 1.5412,
-      "baselineAwayGoals": 1.3992,
-      "probabilities": {
-        "home": 0.3916,
-        "draw": 0.238,
-        "away": 0.3704,
-        "over25": 0.6011,
-        "btts": 0.6222
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 11.6841,
-      "awayWeightedMatches": 13.9371,
-      "source": "open-matchday/fixture/MEX_1_liga-mx",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "MEX_1_liga-mx",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Pachuca",
-      "away": "Guadalajara",
-      "expectedHomeGoals": 1.4387,
-      "expectedAwayGoals": 1.4156,
-      "baselineHomeGoals": 1.5412,
-      "baselineAwayGoals": 1.3992,
-      "probabilities": {
-        "home": 0.3802,
-        "draw": 0.25,
-        "away": 0.3698,
-        "over25": 0.5434,
-        "btts": 0.5776
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 12.1877,
-      "awayWeightedMatches": 11.7179,
-      "source": "open-matchday/fixture/MEX_1_liga-mx",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "NED_1_eredivisie",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "FC Groningen",
-      "away": "Willem II",
-      "expectedHomeGoals": 2.1591,
-      "expectedAwayGoals": 1.8508,
-      "baselineHomeGoals": 1.7854,
-      "baselineAwayGoals": 1.9541,
-      "probabilities": {
-        "home": 0.4569,
-        "draw": 0.2046,
-        "away": 0.3385,
-        "over25": 0.7633,
-        "btts": 0.7456
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 10.7143,
-      "awayWeightedMatches": 11.0101,
-      "source": "open-matchday/fixture/NED_1_eredivisie",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "NED_2_eerste-divisie",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "FC Dordrecht",
-      "away": "Vitesse",
-      "expectedHomeGoals": 1.6235,
-      "expectedAwayGoals": 1.6056,
-      "baselineHomeGoals": 1.8777,
-      "baselineAwayGoals": 1.528,
-      "probabilities": {
-        "home": 0.3873,
-        "draw": 0.2331,
-        "away": 0.3797,
-        "over25": 0.6261,
-        "btts": 0.6416
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 12.3237,
-      "awayWeightedMatches": 12.3871,
-      "source": "open-matchday/fixture/NED_2_eerste-divisie",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "NED_2_eerste-divisie",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Jong Ajax",
-      "away": "Heracles Almelo",
-      "expectedHomeGoals": 1.6988,
-      "expectedAwayGoals": 1.8185,
-      "baselineHomeGoals": 1.8777,
-      "baselineAwayGoals": 1.528,
-      "probabilities": {
-        "home": 0.3646,
-        "draw": 0.2218,
-        "away": 0.4136,
-        "over25": 0.6823,
-        "btts": 0.6845
-      },
-      "mostLikely": "A",
-      "homeWeightedMatches": 12.4203,
-      "awayWeightedMatches": 12.0454,
-      "source": "open-matchday/fixture/NED_2_eerste-divisie",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "NED_2_eerste-divisie",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Jong AZ",
-      "away": "TOP Oss",
-      "expectedHomeGoals": 1.8778,
-      "expectedAwayGoals": 1.405,
-      "baselineHomeGoals": 1.8777,
-      "baselineAwayGoals": 1.528,
-      "probabilities": {
-        "home": 0.4868,
-        "draw": 0.2245,
-        "away": 0.2887,
-        "over25": 0.6371,
-        "btts": 0.6392
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 10.4122,
-      "awayWeightedMatches": 12.0982,
-      "source": "open-matchday/fixture/NED_2_eerste-divisie",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "NED_2_eerste-divisie",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Jong FC Utrecht",
-      "away": "Almere City",
-      "expectedHomeGoals": 1.6963,
-      "expectedAwayGoals": 1.826,
-      "baselineHomeGoals": 1.8777,
-      "baselineAwayGoals": 1.528,
-      "probabilities": {
-        "home": 0.3627,
-        "draw": 0.2216,
-        "away": 0.4157,
-        "over25": 0.6833,
-        "btts": 0.6851
-      },
-      "mostLikely": "A",
-      "homeWeightedMatches": 12.1696,
-      "awayWeightedMatches": 11.9118,
-      "source": "open-matchday/fixture/NED_2_eerste-divisie",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "NED_2_eerste-divisie",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "MVV Maastricht",
-      "away": "Jong PSV",
-      "expectedHomeGoals": 1.749,
-      "expectedAwayGoals": 1.5223,
-      "baselineHomeGoals": 1.8777,
-      "baselineAwayGoals": 1.528,
-      "probabilities": {
-        "home": 0.4329,
-        "draw": 0.2299,
-        "away": 0.3372,
-        "over25": 0.6348,
-        "btts": 0.6458
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 12.0668,
-      "awayWeightedMatches": 12.4472,
-      "source": "open-matchday/fixture/NED_2_eerste-divisie",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "NED_2_eerste-divisie",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "NAC Breda",
-      "away": "FC Den Bosch",
-      "expectedHomeGoals": 1.9332,
-      "expectedAwayGoals": 1.5143,
-      "baselineHomeGoals": 1.8777,
-      "baselineAwayGoals": 1.528,
-      "probabilities": {
-        "home": 0.476,
-        "draw": 0.2199,
-        "away": 0.3041,
-        "over25": 0.6693,
-        "btts": 0.6672
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 10.5911,
-      "awayWeightedMatches": 10.7814,
-      "source": "open-matchday/fixture/NED_2_eerste-divisie",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "NED_2_eerste-divisie",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "VVV-Venlo",
-      "away": "RKC Waalwijk",
-      "expectedHomeGoals": 1.9164,
-      "expectedAwayGoals": 1.4311,
-      "baselineHomeGoals": 1.8777,
-      "baselineAwayGoals": 1.528,
-      "probabilities": {
-        "home": 0.4898,
-        "draw": 0.2218,
-        "away": 0.2884,
-        "over25": 0.65,
-        "btts": 0.649
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 12.1061,
-      "awayWeightedMatches": 12.423,
-      "source": "open-matchday/fixture/NED_2_eerste-divisie",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "POL_1_ekstraklasa",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Gornik Zabrze",
-      "away": "Wisla Plock",
-      "expectedHomeGoals": 1.6843,
-      "expectedAwayGoals": 1.1473,
-      "baselineHomeGoals": 1.6327,
-      "baselineAwayGoals": 1.2469,
-      "probabilities": {
-        "home": 0.4992,
-        "draw": 0.2411,
-        "away": 0.2597,
-        "over25": 0.5381,
-        "btts": 0.5559
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 9.2191,
-      "awayWeightedMatches": 9.2466,
-      "source": "open-matchday/fixture/POL_1_ekstraklasa",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "POL_1_ekstraklasa",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Rakow",
-      "away": "Piast Gliwice",
-      "expectedHomeGoals": 1.5373,
-      "expectedAwayGoals": 1.4643,
-      "baselineHomeGoals": 1.6327,
-      "baselineAwayGoals": 1.2469,
-      "probabilities": {
-        "home": 0.3947,
-        "draw": 0.2428,
-        "away": 0.3626,
-        "over25": 0.5772,
-        "btts": 0.6035
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 10.8354,
-      "awayWeightedMatches": 7.9916,
-      "source": "open-matchday/fixture/POL_1_ekstraklasa",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "POL_2_division-1",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Chrobry Glogow",
-      "away": "Skierniewice",
-      "expectedHomeGoals": 1.3234,
-      "expectedAwayGoals": 1.2666,
-      "baselineHomeGoals": 1.5079,
-      "baselineAwayGoals": 1.1356,
-      "probabilities": {
-        "home": 0.3811,
-        "draw": 0.2644,
-        "away": 0.3545,
-        "over25": 0.479,
-        "btts": 0.527
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 10.5703,
-      "awayWeightedMatches": 9.3473,
-      "source": "open-matchday/fixture/POL_2_division-1",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "POL_2_division-1",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Warta Poznan",
-      "away": "Pogon Siedlce",
-      "expectedHomeGoals": 1.2686,
-      "expectedAwayGoals": 0.9879,
-      "baselineHomeGoals": 1.5079,
-      "baselineAwayGoals": 1.1356,
-      "probabilities": {
-        "home": 0.428,
-        "draw": 0.2833,
-        "away": 0.2887,
-        "over25": 0.3924,
-        "btts": 0.4511
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 8.0507,
-      "awayWeightedMatches": 7.9455,
-      "source": "open-matchday/fixture/POL_2_division-1",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "POL_3_division-2",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "S. Wola",
-      "away": "Legia II",
-      "expectedHomeGoals": 1.9054,
-      "expectedAwayGoals": 1.4123,
-      "baselineHomeGoals": 1.5979,
-      "baselineAwayGoals": 1.3735,
-      "probabilities": {
-        "home": 0.4914,
-        "draw": 0.2226,
-        "away": 0.286,
-        "over25": 0.6441,
-        "btts": 0.6439
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 9.7862,
-      "awayWeightedMatches": 9.6159,
-      "source": "open-matchday/fixture/POL_3_division-2",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "POL_3_division-2",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Tychy",
-      "away": "Chojniczanka",
-      "expectedHomeGoals": 1.4712,
-      "expectedAwayGoals": 1.2223,
-      "baselineHomeGoals": 1.5979,
-      "baselineAwayGoals": 1.3735,
-      "probabilities": {
-        "home": 0.4292,
-        "draw": 0.2562,
-        "away": 0.3146,
-        "over25": 0.5048,
-        "btts": 0.5434
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 11.0975,
-      "awayWeightedMatches": 9.7086,
-      "source": "open-matchday/fixture/POL_3_division-2",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "POR_1_primeira-liga",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Marítimo M.",
-      "away": "CD Nacional",
-      "expectedHomeGoals": 1.271,
-      "expectedAwayGoals": 1.3115,
-      "baselineHomeGoals": 1.286,
-      "baselineAwayGoals": 1.3244,
-      "probabilities": {
-        "home": 0.358,
-        "draw": 0.2649,
-        "away": 0.3771,
-        "over25": 0.4771,
-        "btts": 0.5256
-      },
-      "mostLikely": "A",
-      "homeWeightedMatches": 7.2136,
-      "awayWeightedMatches": 7.2381,
-      "source": "open-matchday/fixture/POR_1_primeira-liga",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "ROU_1_liga-1",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Petrolul",
-      "away": "FC Arges",
-      "expectedHomeGoals": 1.4688,
-      "expectedAwayGoals": 1.0372,
-      "baselineHomeGoals": 1.5186,
-      "baselineAwayGoals": 1.2302,
-      "probabilities": {
-        "home": 0.4709,
-        "draw": 0.2621,
-        "away": 0.267,
-        "over25": 0.4577,
-        "btts": 0.4969
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 8.7315,
-      "awayWeightedMatches": 8.7508,
-      "source": "open-matchday/fixture/ROU_1_liga-1",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "ROU_1_liga-1",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "U. Cluj",
-      "away": "Sepsi Sf. Gheorghe",
-      "expectedHomeGoals": 1.5904,
-      "expectedAwayGoals": 1.1679,
-      "baselineHomeGoals": 1.5186,
-      "baselineAwayGoals": 1.2302,
-      "probabilities": {
-        "home": 0.4715,
-        "draw": 0.2485,
-        "away": 0.28,
-        "over25": 0.5206,
-        "btts": 0.5485
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 9.0515,
-      "awayWeightedMatches": 8.7949,
-      "source": "open-matchday/fixture/ROU_1_liga-1",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "SVN_1_prva-liga",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Radomlje",
-      "away": "Nafta",
-      "expectedHomeGoals": 1.4481,
-      "expectedAwayGoals": 1.1961,
-      "baselineHomeGoals": 1.4557,
-      "baselineAwayGoals": 1.1056,
-      "probabilities": {
-        "home": 0.429,
-        "draw": 0.2589,
-        "away": 0.3121,
-        "over25": 0.4926,
-        "btts": 0.5337
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 11.3949,
-      "awayWeightedMatches": 11.8402,
-      "source": "open-matchday/fixture/SVN_1_prva-liga",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "TUR_1_super-lig",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Alanyaspor",
-      "away": "Konyaspor",
-      "expectedHomeGoals": 1.4394,
-      "expectedAwayGoals": 1.1463,
-      "baselineHomeGoals": 1.6434,
-      "baselineAwayGoals": 1.3244,
-      "probabilities": {
-        "home": 0.4379,
-        "draw": 0.2614,
-        "away": 0.3007,
-        "over25": 0.478,
-        "btts": 0.5205
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 7.8265,
-      "awayWeightedMatches": 7.5659,
-      "source": "open-matchday/fixture/TUR_1_super-lig",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "TUR_1_super-lig",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Çaykur Rizespor",
-      "away": "Kasimpasa",
-      "expectedHomeGoals": 1.4089,
-      "expectedAwayGoals": 1.4722,
-      "baselineHomeGoals": 1.6434,
-      "baselineAwayGoals": 1.3244,
-      "probabilities": {
-        "home": 0.3616,
-        "draw": 0.2485,
-        "away": 0.3899,
-        "over25": 0.5497,
-        "btts": 0.5822
-      },
-      "mostLikely": "A",
-      "homeWeightedMatches": 7.8122,
-      "awayWeightedMatches": 9.1363,
-      "source": "open-matchday/fixture/TUR_1_super-lig",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "UKR_1_premier-league",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Livyi Bereg",
-      "away": "Kolos Kovalivka",
-      "expectedHomeGoals": 1.2063,
-      "expectedAwayGoals": 1.2239,
-      "baselineHomeGoals": 1.3494,
-      "baselineAwayGoals": 1.0721,
-      "probabilities": {
-        "home": 0.3585,
-        "draw": 0.2746,
-        "away": 0.367,
-        "over25": 0.4382,
-        "btts": 0.4946
-      },
-      "mostLikely": "A",
-      "homeWeightedMatches": 7.7266,
-      "awayWeightedMatches": 10.4082,
-      "source": "open-matchday/fixture/UKR_1_premier-league",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "WAL_1_cymru-premier",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Briton Ferry",
-      "away": "Penybont",
-      "expectedHomeGoals": 1.491,
-      "expectedAwayGoals": 1.6545,
-      "baselineHomeGoals": 1.7996,
-      "baselineAwayGoals": 1.4808,
-      "probabilities": {
-        "home": 0.347,
-        "draw": 0.2357,
-        "away": 0.4173,
-        "over25": 0.6086,
-        "btts": 0.6267
-      },
-      "mostLikely": "A",
-      "homeWeightedMatches": 10.9751,
-      "awayWeightedMatches": 9.4692,
-      "source": "open-matchday/fixture/WAL_1_cymru-premier",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "WAL_1_cymru-premier",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Cambrian United",
-      "away": "Trefelin",
-      "expectedHomeGoals": 1.9251,
-      "expectedAwayGoals": 1.4554,
-      "baselineHomeGoals": 1.7996,
-      "baselineAwayGoals": 1.4808,
-      "probabilities": {
-        "home": 0.4866,
-        "draw": 0.221,
-        "away": 0.2924,
-        "over25": 0.6565,
-        "btts": 0.6549
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 9.3459,
-      "awayWeightedMatches": 10.9751,
-      "source": "open-matchday/fixture/WAL_1_cymru-premier",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "WAL_1_cymru-premier",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Cardiff Metropolitan",
-      "away": "Airbus",
-      "expectedHomeGoals": 1.7873,
-      "expectedAwayGoals": 1.7877,
-      "baselineHomeGoals": 1.7996,
-      "baselineAwayGoals": 1.4808,
-      "probabilities": {
-        "home": 0.3898,
-        "draw": 0.2202,
-        "away": 0.39,
-        "over25": 0.6928,
-        "btts": 0.6933
-      },
-      "mostLikely": "A",
-      "homeWeightedMatches": 12.2627,
-      "awayWeightedMatches": 11.9819,
-      "source": "open-matchday/fixture/WAL_1_cymru-premier",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "WAL_1_cymru-premier",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Colwyn Bay",
-      "away": "Ammanford",
-      "expectedHomeGoals": 2.1372,
-      "expectedAwayGoals": 1.215,
-      "baselineHomeGoals": 1.7996,
-      "baselineAwayGoals": 1.4808,
-      "probabilities": {
-        "home": 0.5846,
-        "draw": 0.205,
-        "away": 0.2104,
-        "over25": 0.6509,
-        "btts": 0.6203
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 10.4187,
-      "awayWeightedMatches": 10.8316,
-      "source": "open-matchday/fixture/WAL_1_cymru-premier",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "WAL_1_cymru-premier",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Flint",
-      "away": "TNS",
-      "expectedHomeGoals": 1.5228,
-      "expectedAwayGoals": 1.6507,
-      "baselineHomeGoals": 1.7996,
-      "baselineAwayGoals": 1.4808,
-      "probabilities": {
-        "home": 0.3552,
-        "draw": 0.2349,
-        "away": 0.41,
-        "over25": 0.6145,
-        "btts": 0.6318
-      },
-      "mostLikely": "A",
-      "homeWeightedMatches": 10.8021,
-      "awayWeightedMatches": 8.9161,
-      "source": "open-matchday/fixture/WAL_1_cymru-premier",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "WAL_1_cymru-premier",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Haverfordwest",
-      "away": "Connahs Q.",
-      "expectedHomeGoals": 1.4405,
-      "expectedAwayGoals": 1.5018,
-      "baselineHomeGoals": 1.7996,
-      "baselineAwayGoals": 1.4808,
-      "probabilities": {
-        "home": 0.3636,
-        "draw": 0.2456,
-        "away": 0.3908,
-        "over25": 0.5638,
-        "btts": 0.5932
-      },
-      "mostLikely": "A",
-      "homeWeightedMatches": 10.4128,
-      "awayWeightedMatches": 10.8152,
-      "source": "open-matchday/fixture/WAL_1_cymru-premier",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "WAL_2_cymru-north",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Bala",
-      "away": "Caersws FC",
-      "expectedHomeGoals": 1.5805,
-      "expectedAwayGoals": 1.715,
-      "baselineHomeGoals": 1.6651,
-      "baselineAwayGoals": 1.4812,
-      "probabilities": {
-        "home": 0.3567,
-        "draw": 0.2299,
-        "away": 0.4134,
-        "over25": 0.6397,
-        "btts": 0.6512
-      },
-      "mostLikely": "A",
-      "homeWeightedMatches": 8.7069,
-      "awayWeightedMatches": 8.8258,
-      "source": "open-matchday/fixture/WAL_2_cymru-north",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "WAL_2_cymru-north",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Bangor 1876",
-      "away": "Mold Alexandra",
-      "expectedHomeGoals": 1.9539,
-      "expectedAwayGoals": 1.8594,
-      "baselineHomeGoals": 1.6651,
-      "baselineAwayGoals": 1.4812,
-      "probabilities": {
-        "home": 0.4125,
-        "draw": 0.2123,
-        "away": 0.3752,
-        "over25": 0.7332,
-        "btts": 0.7246
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 7.223,
-      "awayWeightedMatches": 8.7991,
-      "source": "open-matchday/fixture/WAL_2_cymru-north",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "WAL_2_cymru-north",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Denbigh",
-      "away": "Brickfield",
-      "expectedHomeGoals": 1.7284,
-      "expectedAwayGoals": 1.8348,
-      "baselineHomeGoals": 1.6651,
-      "baselineAwayGoals": 1.4812,
-      "probabilities": {
-        "home": 0.3682,
-        "draw": 0.2203,
-        "away": 0.4115,
-        "over25": 0.6907,
-        "btts": 0.6911
-      },
-      "mostLikely": "A",
-      "homeWeightedMatches": 10.4358,
-      "awayWeightedMatches": 10.245,
-      "source": "open-matchday/fixture/WAL_2_cymru-north",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "WAL_3_cymru-south",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Afan Lido",
-      "away": "Caerau Ely",
-      "expectedHomeGoals": 1.8337,
-      "expectedAwayGoals": 1.7297,
-      "baselineHomeGoals": 1.7972,
-      "baselineAwayGoals": 1.6316,
-      "probabilities": {
-        "home": 0.411,
-        "draw": 0.2203,
-        "away": 0.3687,
-        "over25": 0.6907,
-        "btts": 0.6912
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 9.8593,
-      "awayWeightedMatches": 8.5651,
-      "source": "open-matchday/fixture/WAL_3_cymru-south",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "WAL_3_cymru-south",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Caerphilly",
-      "away": "Baglan Dragons",
-      "expectedHomeGoals": 1.5469,
-      "expectedAwayGoals": 1.4141,
-      "baselineHomeGoals": 1.7972,
-      "baselineAwayGoals": 1.6316,
-      "probabilities": {
-        "home": 0.4072,
-        "draw": 0.2442,
-        "away": 0.3485,
-        "over25": 0.568,
-        "btts": 0.5957
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 10.6604,
-      "awayWeightedMatches": 8.5595,
-      "source": "open-matchday/fixture/WAL_3_cymru-south",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "WAL_3_cymru-south",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Carmarthen Town",
-      "away": "Pure Swansea",
-      "expectedHomeGoals": 1.7997,
-      "expectedAwayGoals": 2.1018,
-      "baselineHomeGoals": 1.7972,
-      "baselineAwayGoals": 1.6316,
-      "probabilities": {
-        "home": 0.3374,
-        "draw": 0.2077,
-        "away": 0.4549,
-        "over25": 0.7471,
-        "btts": 0.7326
-      },
-      "mostLikely": "A",
-      "homeWeightedMatches": 11.4762,
-      "awayWeightedMatches": 8.489,
-      "source": "open-matchday/fixture/WAL_3_cymru-south",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "WAL_3_cymru-south",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Llanelli",
-      "away": "Cardiff Draconians",
-      "expectedHomeGoals": 1.6612,
-      "expectedAwayGoals": 1.575,
-      "baselineHomeGoals": 1.7972,
-      "baselineAwayGoals": 1.6316,
-      "probabilities": {
-        "home": 0.402,
-        "draw": 0.2326,
-        "away": 0.3654,
-        "over25": 0.6276,
-        "btts": 0.6424
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 10.0764,
-      "awayWeightedMatches": 5.8761,
-      "source": "open-matchday/fixture/WAL_3_cymru-south",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
-    {
-      "league": "WAL_3_cymru-south",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Newport City",
-      "away": "Pontardawe",
-      "expectedHomeGoals": 1.8328,
-      "expectedAwayGoals": 1.6551,
-      "baselineHomeGoals": 1.7972,
-      "baselineAwayGoals": 1.6316,
-      "probabilities": {
-        "home": 0.4253,
-        "draw": 0.2224,
-        "away": 0.3523,
-        "over25": 0.6769,
-        "btts": 0.6795
-      },
-      "mostLikely": "H",
-      "homeWeightedMatches": 7.2989,
-      "awayWeightedMatches": 10.1465,
-      "source": "open-matchday/fixture/WAL_3_cymru-south",
-      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    },
     {
       "league": "ARG_2_primera-nacional",
       "season": "2026-27",
@@ -6814,16 +5434,16 @@
       "date": "2026-11-29",
       "home": "Instituto (Córdoba)",
       "away": "River Plate",
-      "expectedHomeGoals": 1.2082,
-      "expectedAwayGoals": 1.0852,
-      "baselineHomeGoals": 1.2679,
-      "baselineAwayGoals": 1.0435,
+      "expectedHomeGoals": 1.2096,
+      "expectedAwayGoals": 1.0833,
+      "baselineHomeGoals": 1.2706,
+      "baselineAwayGoals": 1.0396,
       "probabilities": {
-        "home": 0.3887,
+        "home": 0.3895,
         "draw": 0.2835,
-        "away": 0.3278,
-        "over25": 0.4022,
-        "btts": 0.4643
+        "away": 0.3271,
+        "over25": 0.4021,
+        "btts": 0.4642
       },
       "mostLikely": "H",
       "homeWeightedMatches": 18.1891,
@@ -6837,16 +5457,16 @@
       "date": "2026-11-29",
       "home": "Rosario Central",
       "away": "Barracas Central",
-      "expectedHomeGoals": 1.331,
-      "expectedAwayGoals": 0.928,
-      "baselineHomeGoals": 1.2679,
-      "baselineAwayGoals": 1.0435,
+      "expectedHomeGoals": 1.3323,
+      "expectedAwayGoals": 0.9262,
+      "baselineHomeGoals": 1.2706,
+      "baselineAwayGoals": 1.0396,
       "probabilities": {
-        "home": 0.46,
+        "home": 0.4607,
         "draw": 0.2792,
-        "away": 0.2608,
-        "over25": 0.393,
-        "btts": 0.4449
+        "away": 0.2601,
+        "over25": 0.3929,
+        "btts": 0.4446
       },
       "mostLikely": "H",
       "homeWeightedMatches": 19.8403,
@@ -6860,16 +5480,16 @@
       "date": "2026-11-29",
       "home": "Vélez Sarsfield",
       "away": "Independiente",
-      "expectedHomeGoals": 1.2215,
-      "expectedAwayGoals": 1.0914,
-      "baselineHomeGoals": 1.2679,
-      "baselineAwayGoals": 1.0435,
+      "expectedHomeGoals": 1.2227,
+      "expectedAwayGoals": 1.0897,
+      "baselineHomeGoals": 1.2706,
+      "baselineAwayGoals": 1.0396,
       "probabilities": {
-        "home": 0.391,
+        "home": 0.3918,
         "draw": 0.282,
-        "away": 0.327,
-        "over25": 0.4074,
-        "btts": 0.4684
+        "away": 0.3262,
+        "over25": 0.4072,
+        "btts": 0.4683
       },
       "mostLikely": "H",
       "homeWeightedMatches": 18.8798,
@@ -8470,16 +7090,16 @@
       "date": "2026-11-29",
       "home": "América",
       "away": "Monterrey",
-      "expectedHomeGoals": 1.5875,
-      "expectedAwayGoals": 1.3495,
-      "baselineHomeGoals": 1.5411,
-      "baselineAwayGoals": 1.399,
+      "expectedHomeGoals": 1.5829,
+      "expectedAwayGoals": 1.3376,
+      "baselineHomeGoals": 1.5328,
+      "baselineAwayGoals": 1.3776,
       "probabilities": {
-        "home": 0.4307,
-        "draw": 0.2441,
-        "away": 0.3252,
-        "over25": 0.5626,
-        "btts": 0.5892
+        "home": 0.4321,
+        "draw": 0.2447,
+        "away": 0.3232,
+        "over25": 0.5588,
+        "btts": 0.5861
       },
       "mostLikely": "H",
       "homeWeightedMatches": 11.9402,
@@ -8493,16 +7113,16 @@
       "date": "2026-11-29",
       "home": "Atlas",
       "away": "Toluca",
-      "expectedHomeGoals": 1.5157,
-      "expectedAwayGoals": 1.6237,
-      "baselineHomeGoals": 1.5411,
-      "baselineAwayGoals": 1.399,
+      "expectedHomeGoals": 1.5112,
+      "expectedAwayGoals": 1.6119,
+      "baselineHomeGoals": 1.5328,
+      "baselineAwayGoals": 1.3776,
       "probabilities": {
-        "home": 0.3585,
-        "draw": 0.2365,
-        "away": 0.405,
-        "over25": 0.6073,
-        "btts": 0.6265
+        "home": 0.3597,
+        "draw": 0.2372,
+        "away": 0.4031,
+        "over25": 0.6038,
+        "btts": 0.6239
       },
       "mostLikely": "A",
       "homeWeightedMatches": 13.2704,
@@ -9919,16 +8539,16 @@
       "date": "2026-11-30",
       "home": "Cruz Azul",
       "away": "León",
-      "expectedHomeGoals": 1.6368,
-      "expectedAwayGoals": 1.4045,
-      "baselineHomeGoals": 1.541,
-      "baselineAwayGoals": 1.3989,
+      "expectedHomeGoals": 1.6321,
+      "expectedAwayGoals": 1.3924,
+      "baselineHomeGoals": 1.5328,
+      "baselineAwayGoals": 1.3775,
       "probabilities": {
-        "home": 0.431,
-        "draw": 0.2394,
-        "away": 0.3296,
-        "over25": 0.586,
-        "btts": 0.6077
+        "home": 0.4324,
+        "draw": 0.24,
+        "away": 0.3276,
+        "over25": 0.5823,
+        "btts": 0.6046
       },
       "mostLikely": "H",
       "homeWeightedMatches": 11.1293,
@@ -9942,16 +8562,16 @@
       "date": "2026-11-30",
       "home": "Guadalajara",
       "away": "Pachuca",
-      "expectedHomeGoals": 1.424,
-      "expectedAwayGoals": 1.3824,
-      "baselineHomeGoals": 1.541,
-      "baselineAwayGoals": 1.3989,
+      "expectedHomeGoals": 1.4194,
+      "expectedAwayGoals": 1.3705,
+      "baselineHomeGoals": 1.5328,
+      "baselineAwayGoals": 1.3775,
       "probabilities": {
-        "home": 0.3832,
-        "draw": 0.2524,
-        "away": 0.3644,
-        "over25": 0.5321,
-        "btts": 0.5687
+        "home": 0.3845,
+        "draw": 0.2532,
+        "away": 0.3623,
+        "over25": 0.5281,
+        "btts": 0.5656
       },
       "mostLikely": "H",
       "homeWeightedMatches": 13.2971,
@@ -29048,603 +27668,975 @@
       "awayWeightedMatches": 7.3001,
       "source": "open-matchday/fixture/POL_1_ekstraklasa",
       "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
-    }
-  ],
-  "fixtures": [
-    {
-      "league": "ARG_2_primera-nacional",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Atlanta",
-      "away": "Ciudad de Bolívar",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/ARG_2_primera-nacional"
-    },
-    {
-      "league": "AUS_1_a-league",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Macarthur FC",
-      "away": "Melbourne City FC",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/AUS_1_a-league"
-    },
-    {
-      "league": "AUT_1_bundesliga",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Grazer AK",
-      "away": "Altach",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/AUT_1_bundesliga"
     },
     {
       "league": "BEL_1_pro-league",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "OH Leuven",
-      "away": "KV Kortrijk",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/BEL_1_pro-league"
-    },
-    {
-      "league": "BEL_U21_pro-league",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Beveren U21",
-      "away": "Sp. Hasselt U21",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/BEL_U21_pro-league"
-    },
-    {
-      "league": "BEL_U21_pro-league",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Daring Brussels U21",
-      "away": "RAAL La Louviere U21",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/BEL_U21_pro-league"
-    },
-    {
-      "league": "BEL_U21_pro-league",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Kortrijk U21",
-      "away": "Seraing U21",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/BEL_U21_pro-league"
-    },
-    {
-      "league": "BEL_U21_pro-league",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Westerlo U21",
-      "away": "K. Lierse S.K. U21",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/BEL_U21_pro-league"
-    },
-    {
-      "league": "BRA_1_serie-a",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Fluminense",
-      "away": "Cruzeiro",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/BRA_1_serie-a"
-    },
-    {
-      "league": "BRA_2_serie-b",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Vila Nova",
-      "away": "Atlético Goianiense",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/BRA_2_serie-b"
-    },
-    {
-      "league": "CRO_1_hnl",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Istra 1961",
-      "away": "Varazdin",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/CRO_1_hnl"
-    },
-    {
-      "league": "CYP_1_first-division",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "AEK Larnaca",
-      "away": "Apollon",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/CYP_1_first-division"
-    },
-    {
-      "league": "CYP_1_first-division",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "AEL Limassol",
-      "away": "Ol. Nicosia",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/CYP_1_first-division"
-    },
-    {
-      "league": "CYP_1_first-division",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Omonia 29th May",
-      "away": "Omonia Aradippou",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/CYP_1_first-division"
-    },
-    {
-      "league": "CZE_1_chance-liga",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Artis Brno",
-      "away": "Slovacko",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/CZE_1_chance-liga"
-    },
-    {
-      "league": "DEN_1_superliga",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Sonderjyske",
-      "away": "Brondby",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/DEN_1_superliga"
-    },
-    {
-      "league": "ENG_1_premier-league",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Nott'm Forest",
-      "away": "Chelsea",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/ENG_1_premier-league"
+      "date": "2026-12-18",
+      "home": "Antwerp",
+      "away": "OH Leuven",
+      "expectedHomeGoals": 1.767,
+      "expectedAwayGoals": 1.3064,
+      "baselineHomeGoals": 1.7654,
+      "baselineAwayGoals": 1.3076,
+      "probabilities": {
+        "home": 0.4829,
+        "draw": 0.233,
+        "away": 0.2841,
+        "over25": 0.593,
+        "btts": 0.6046
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 7.9857,
+      "awayWeightedMatches": 8.4037,
+      "source": "open-matchday/fixture/BEL_1_pro-league",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
       "league": "ENG_2_championship",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Southampton",
-      "away": "Middlesbrough",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/ENG_2_championship"
+      "date": "2026-12-18",
+      "home": "West Bromwich Albion",
+      "away": "Sheffield United",
+      "expectedHomeGoals": 1.6088,
+      "expectedAwayGoals": 1.228,
+      "baselineHomeGoals": 1.6186,
+      "baselineAwayGoals": 1.2553,
+      "probabilities": {
+        "home": 0.4625,
+        "draw": 0.2458,
+        "away": 0.2917,
+        "over25": 0.5393,
+        "btts": 0.5656
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 11.134,
+      "awayWeightedMatches": 11.1926,
+      "source": "open-matchday/fixture/ENG_2_championship",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+    },
+    {
+      "league": "ENG_3_league-one",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Cambridge United",
+      "away": "Stevenage",
+      "expectedHomeGoals": 1.4077,
+      "expectedAwayGoals": 1.3574,
+      "baselineHomeGoals": 1.5278,
+      "baselineAwayGoals": 1.2446,
+      "probabilities": {
+        "home": 0.3842,
+        "draw": 0.2545,
+        "away": 0.3613,
+        "over25": 0.5222,
+        "btts": 0.5609
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 11.2536,
+      "awayWeightedMatches": 9.7623,
+      "source": "open-matchday/fixture/ENG_3_league-one",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
       "league": "ENG_5_national-league",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Scunthorpe United",
-      "away": "Wealdstone",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/ENG_5_national-league"
+      "date": "2026-12-18",
+      "home": "AFC Fylde",
+      "away": "Southend United",
+      "expectedHomeGoals": 1.6303,
+      "expectedAwayGoals": 1.6092,
+      "baselineHomeGoals": 1.7151,
+      "baselineAwayGoals": 1.3962,
+      "probabilities": {
+        "home": 0.3882,
+        "draw": 0.2326,
+        "away": 0.3792,
+        "over25": 0.6283,
+        "btts": 0.6433
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 12.6285,
+      "awayWeightedMatches": 13.859,
+      "source": "open-matchday/fixture/ENG_5_national-league",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
       "league": "ENG_7_northern-premier-league",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Warrington Rylands",
-      "away": "Lancaster",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/ENG_7_northern-premier-league"
-    },
-    {
-      "league": "ESP_1_la-liga",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Levante UD",
-      "away": "R. Racing Club",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/ESP_1_la-liga"
-    },
-    {
-      "league": "ESP_2_segunda-division",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Leganés",
-      "away": "CD Sabadell",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/ESP_2_segunda-division"
-    },
-    {
-      "league": "FRA_1_ligue-1",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Stade Brestois 29",
-      "away": "Paris FC",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/FRA_1_ligue-1"
+      "date": "2026-12-18",
+      "home": "Avro",
+      "away": "Warrington Rylands",
+      "expectedHomeGoals": 1.823,
+      "expectedAwayGoals": 1.6641,
+      "baselineHomeGoals": 1.6921,
+      "baselineAwayGoals": 1.4831,
+      "probabilities": {
+        "home": 0.4213,
+        "draw": 0.2226,
+        "away": 0.3561,
+        "over25": 0.6768,
+        "btts": 0.6797
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 7.7582,
+      "awayWeightedMatches": 7.7617,
+      "source": "open-matchday/fixture/ENG_7_northern-premier-league",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
       "league": "GER_1_bundesliga",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "SV Werder Bremen",
-      "away": "Borussia Mönchengladbach",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/GER_1_bundesliga"
+      "date": "2026-12-18",
+      "home": "FC Bayern München",
+      "away": "SV Werder Bremen",
+      "expectedHomeGoals": 2.2255,
+      "expectedAwayGoals": 1.2613,
+      "baselineHomeGoals": 1.9298,
+      "baselineAwayGoals": 1.2817,
+      "probabilities": {
+        "home": 0.5921,
+        "draw": 0.1993,
+        "away": 0.2086,
+        "over25": 0.6767,
+        "btts": 0.6393
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 7.3666,
+      "awayWeightedMatches": 7.1338,
+      "source": "open-matchday/fixture/GER_1_bundesliga",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
       "league": "GER_2_2-bundesliga",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "1. FC Heidenheim 1846",
-      "away": "1. FC Nürnberg",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/GER_2_2-bundesliga"
+      "date": "2026-12-18",
+      "home": "1. FC Nürnberg",
+      "away": "VfL Osnabrück",
+      "expectedHomeGoals": 1.7261,
+      "expectedAwayGoals": 1.16,
+      "baselineHomeGoals": 1.6942,
+      "baselineAwayGoals": 1.1934,
+      "probabilities": {
+        "home": 0.5063,
+        "draw": 0.2376,
+        "away": 0.2562,
+        "over25": 0.5508,
+        "btts": 0.5643
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 9.9862,
+      "awayWeightedMatches": 8.4827,
+      "source": "open-matchday/fixture/GER_2_2-bundesliga",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
       "league": "GER_2_2-bundesliga",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "VfL Bochum",
-      "away": "SV Darmstadt 98",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/GER_2_2-bundesliga"
+      "date": "2026-12-18",
+      "home": "Energie Cottbus",
+      "away": "Holstein Kiel",
+      "expectedHomeGoals": 1.6299,
+      "expectedAwayGoals": 1.1646,
+      "baselineHomeGoals": 1.6942,
+      "baselineAwayGoals": 1.1934,
+      "probabilities": {
+        "home": 0.482,
+        "draw": 0.2454,
+        "away": 0.2726,
+        "over25": 0.5292,
+        "btts": 0.5531
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 8.4781,
+      "awayWeightedMatches": 8.3954,
+      "source": "open-matchday/fixture/GER_2_2-bundesliga",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
       "league": "GER_3_3-liga",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Hansa Rostock",
-      "away": "TSV Havelse",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/GER_3_3-liga"
+      "date": "2026-12-18",
+      "home": "Viktoria Köln",
+      "away": "SV Waldhof Mannheim",
+      "expectedHomeGoals": 2.0904,
+      "expectedAwayGoals": 1.5154,
+      "baselineHomeGoals": 1.7648,
+      "baselineAwayGoals": 1.4376,
+      "probabilities": {
+        "home": 0.5096,
+        "draw": 0.2108,
+        "away": 0.2796,
+        "over25": 0.6983,
+        "btts": 0.6838
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 9.5603,
+      "awayWeightedMatches": 9.9448,
+      "source": "open-matchday/fixture/GER_3_3-liga",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
       "league": "ITA_1_serie-a",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Venezia",
-      "away": "Bologna",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/ITA_1_serie-a"
+      "date": "2026-12-18",
+      "home": "Frosinone",
+      "away": "Lazio",
+      "expectedHomeGoals": 1.6535,
+      "expectedAwayGoals": 1.5401,
+      "baselineHomeGoals": 1.6612,
+      "baselineAwayGoals": 1.4499,
+      "probabilities": {
+        "home": 0.4072,
+        "draw": 0.2341,
+        "away": 0.3587,
+        "over25": 0.6187,
+        "btts": 0.6353
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 8.4247,
+      "awayWeightedMatches": 8.482,
+      "source": "open-matchday/fixture/ITA_1_serie-a",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
-      "league": "MEX_1_liga-mx",
+      "league": "ITA_1_serie-a",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "León",
-      "away": "Cruz Azul",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/MEX_1_liga-mx"
+      "date": "2026-12-18",
+      "home": "Lecce",
+      "away": "Internazionale",
+      "expectedHomeGoals": 1.5723,
+      "expectedAwayGoals": 1.7307,
+      "baselineHomeGoals": 1.6612,
+      "baselineAwayGoals": 1.4499,
+      "probabilities": {
+        "home": 0.352,
+        "draw": 0.2294,
+        "away": 0.4186,
+        "over25": 0.6412,
+        "btts": 0.652
+      },
+      "mostLikely": "A",
+      "homeWeightedMatches": 7.1206,
+      "awayWeightedMatches": 8.9801,
+      "source": "open-matchday/fixture/ITA_1_serie-a",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
-      "league": "MEX_1_liga-mx",
+      "league": "ITA_2_serie-b",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Pachuca",
-      "away": "Guadalajara",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/MEX_1_liga-mx"
+      "date": "2026-12-18",
+      "home": "Hellas Verona",
+      "away": "Cremonese",
+      "expectedHomeGoals": 1.4684,
+      "expectedAwayGoals": 1.2211,
+      "baselineHomeGoals": 1.453,
+      "baselineAwayGoals": 1.2071,
+      "probabilities": {
+        "home": 0.4287,
+        "draw": 0.2565,
+        "away": 0.3148,
+        "over25": 0.5038,
+        "btts": 0.5427
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 10.1529,
+      "awayWeightedMatches": 10.3933,
+      "source": "open-matchday/fixture/ITA_2_serie-b",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
       "league": "NED_1_eredivisie",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "FC Groningen",
+      "date": "2026-12-18",
+      "home": "Telstar",
       "away": "Willem II",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/NED_1_eredivisie"
+      "expectedHomeGoals": 2.1341,
+      "expectedAwayGoals": 1.8982,
+      "baselineHomeGoals": 1.781,
+      "baselineAwayGoals": 1.9433,
+      "probabilities": {
+        "home": 0.4428,
+        "draw": 0.2049,
+        "away": 0.3523,
+        "over25": 0.7666,
+        "btts": 0.7496
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 9.9003,
+      "awayWeightedMatches": 9.9919,
+      "source": "open-matchday/fixture/NED_1_eredivisie",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
       "league": "NED_2_eerste-divisie",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "FC Dordrecht",
-      "away": "Vitesse",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/NED_2_eerste-divisie"
-    },
-    {
-      "league": "NED_2_eerste-divisie",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Jong Ajax",
+      "date": "2026-12-18",
+      "home": "De Graafschap",
       "away": "Heracles Almelo",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/NED_2_eerste-divisie"
+      "expectedHomeGoals": 1.6903,
+      "expectedAwayGoals": 1.8005,
+      "baselineHomeGoals": 1.8734,
+      "baselineAwayGoals": 1.5242,
+      "probabilities": {
+        "home": 0.366,
+        "draw": 0.2228,
+        "away": 0.4112,
+        "over25": 0.6774,
+        "btts": 0.6808
+      },
+      "mostLikely": "A",
+      "homeWeightedMatches": 11.4829,
+      "awayWeightedMatches": 10.9314,
+      "source": "open-matchday/fixture/NED_2_eerste-divisie",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
       "league": "NED_2_eerste-divisie",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Jong AZ",
-      "away": "TOP Oss",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/NED_2_eerste-divisie"
-    },
-    {
-      "league": "NED_2_eerste-divisie",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Jong FC Utrecht",
-      "away": "Almere City",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/NED_2_eerste-divisie"
-    },
-    {
-      "league": "NED_2_eerste-divisie",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "MVV Maastricht",
-      "away": "Jong PSV",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/NED_2_eerste-divisie"
-    },
-    {
-      "league": "NED_2_eerste-divisie",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "NAC Breda",
+      "date": "2026-12-18",
+      "home": "FC Dordrecht",
       "away": "FC Den Bosch",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/NED_2_eerste-divisie"
+      "expectedHomeGoals": 1.7473,
+      "expectedAwayGoals": 1.6444,
+      "baselineHomeGoals": 1.8734,
+      "baselineAwayGoals": 1.5242,
+      "probabilities": {
+        "home": 0.4082,
+        "draw": 0.2264,
+        "away": 0.3654,
+        "over25": 0.6587,
+        "btts": 0.6663
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 11.184,
+      "awayWeightedMatches": 9.7843,
+      "source": "open-matchday/fixture/NED_2_eerste-divisie",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
       "league": "NED_2_eerste-divisie",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "VVV-Venlo",
-      "away": "RKC Waalwijk",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/NED_2_eerste-divisie"
+      "date": "2026-12-18",
+      "home": "FC Volendam",
+      "away": "FC Emmen",
+      "expectedHomeGoals": 2.1076,
+      "expectedAwayGoals": 1.5065,
+      "baselineHomeGoals": 1.8734,
+      "baselineAwayGoals": 1.5242,
+      "probabilities": {
+        "home": 0.5151,
+        "draw": 0.2097,
+        "away": 0.2751,
+        "over25": 0.6997,
+        "btts": 0.6837
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 11.304,
+      "awayWeightedMatches": 11.5148,
+      "source": "open-matchday/fixture/NED_2_eerste-divisie",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
-      "league": "POL_1_ekstraklasa",
+      "league": "NED_2_eerste-divisie",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Gornik Zabrze",
-      "away": "Wisla Plock",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/POL_1_ekstraklasa"
+      "date": "2026-12-18",
+      "home": "Helmond Sport",
+      "away": "Jong AZ",
+      "expectedHomeGoals": 2.086,
+      "expectedAwayGoals": 1.7597,
+      "baselineHomeGoals": 1.8734,
+      "baselineAwayGoals": 1.5242,
+      "probabilities": {
+        "home": 0.4594,
+        "draw": 0.209,
+        "away": 0.3316,
+        "over25": 0.7384,
+        "btts": 0.7251
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 12.6438,
+      "awayWeightedMatches": 12.7134,
+      "source": "open-matchday/fixture/NED_2_eerste-divisie",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
-      "league": "POL_1_ekstraklasa",
+      "league": "NED_2_eerste-divisie",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Rakow",
-      "away": "Piast Gliwice",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/POL_1_ekstraklasa"
+      "date": "2026-12-18",
+      "home": "Jong PSV",
+      "away": "FC Eindhoven",
+      "expectedHomeGoals": 1.8633,
+      "expectedAwayGoals": 1.4422,
+      "baselineHomeGoals": 1.8734,
+      "baselineAwayGoals": 1.5242,
+      "probabilities": {
+        "home": 0.4756,
+        "draw": 0.225,
+        "away": 0.2995,
+        "over25": 0.6417,
+        "btts": 0.6451
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 10.9278,
+      "awayWeightedMatches": 9.6133,
+      "source": "open-matchday/fixture/NED_2_eerste-divisie",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
-      "league": "POL_2_division-1",
+      "league": "NED_2_eerste-divisie",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Chrobry Glogow",
-      "away": "Skierniewice",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/POL_2_division-1"
+      "date": "2026-12-18",
+      "home": "MVV Maastricht",
+      "away": "TOP Oss",
+      "expectedHomeGoals": 1.7374,
+      "expectedAwayGoals": 1.3916,
+      "baselineHomeGoals": 1.8734,
+      "baselineAwayGoals": 1.5242,
+      "probabilities": {
+        "home": 0.4575,
+        "draw": 0.2336,
+        "away": 0.3089,
+        "over25": 0.6051,
+        "btts": 0.6191
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 10.9509,
+      "awayWeightedMatches": 10.9793,
+      "source": "open-matchday/fixture/NED_2_eerste-divisie",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
-      "league": "POL_2_division-1",
+      "league": "NED_2_eerste-divisie",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Warta Poznan",
-      "away": "Pogon Siedlce",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/POL_2_division-1"
+      "date": "2026-12-18",
+      "home": "NAC Breda",
+      "away": "Roda JC Kerkrade",
+      "expectedHomeGoals": 1.8634,
+      "expectedAwayGoals": 1.41,
+      "baselineHomeGoals": 1.8734,
+      "baselineAwayGoals": 1.5242,
+      "probabilities": {
+        "home": 0.4825,
+        "draw": 0.2253,
+        "away": 0.2922,
+        "over25": 0.6352,
+        "btts": 0.6386
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 9.6116,
+      "awayWeightedMatches": 12.6701,
+      "source": "open-matchday/fixture/NED_2_eerste-divisie",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
-      "league": "POL_3_division-2",
+      "league": "NED_2_eerste-divisie",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "S. Wola",
-      "away": "Legia II",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/POL_3_division-2"
+      "date": "2026-12-18",
+      "home": "RKC Waalwijk",
+      "away": "Jong Ajax",
+      "expectedHomeGoals": 2.0265,
+      "expectedAwayGoals": 1.5428,
+      "baselineHomeGoals": 1.8734,
+      "baselineAwayGoals": 1.5242,
+      "probabilities": {
+        "home": 0.4904,
+        "draw": 0.2143,
+        "away": 0.2953,
+        "over25": 0.6918,
+        "btts": 0.6826
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 11.0742,
+      "awayWeightedMatches": 10.9186,
+      "source": "open-matchday/fixture/NED_2_eerste-divisie",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
-      "league": "POL_3_division-2",
+      "league": "SCO_2_championship",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Tychy",
-      "away": "Chojniczanka",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/POL_3_division-2"
-    },
-    {
-      "league": "POR_1_primeira-liga",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Marítimo M.",
-      "away": "CD Nacional",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/POR_1_primeira-liga"
-    },
-    {
-      "league": "ROU_1_liga-1",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Petrolul",
-      "away": "FC Arges",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/ROU_1_liga-1"
-    },
-    {
-      "league": "ROU_1_liga-1",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "U. Cluj",
-      "away": "Sepsi Sf. Gheorghe",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/ROU_1_liga-1"
-    },
-    {
-      "league": "SCO_CUP_scottish-cup",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Largs Thistle",
-      "away": "Ayr",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/SCO_CUP_scottish-cup"
-    },
-    {
-      "league": "SVN_1_prva-liga",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Radomlje",
-      "away": "Nafta",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/SVN_1_prva-liga"
+      "date": "2026-12-18",
+      "home": "Queen's Park",
+      "away": "Raith Rovers",
+      "expectedHomeGoals": 1.1334,
+      "expectedAwayGoals": 1.3231,
+      "baselineHomeGoals": 1.3433,
+      "baselineAwayGoals": 1.0851,
+      "probabilities": {
+        "home": 0.3189,
+        "draw": 0.2713,
+        "away": 0.4098,
+        "over25": 0.445,
+        "btts": 0.4975
+      },
+      "mostLikely": "A",
+      "homeWeightedMatches": 11.242,
+      "awayWeightedMatches": 11.0559,
+      "source": "open-matchday/fixture/SCO_2_championship",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
       "league": "TUR_1_super-lig",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Alanyaspor",
-      "away": "Konyaspor",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/TUR_1_super-lig"
+      "date": "2026-12-18",
+      "home": "Amedspor",
+      "away": "Göztepe",
+      "expectedHomeGoals": 1.7373,
+      "expectedAwayGoals": 1.3967,
+      "baselineHomeGoals": 1.6408,
+      "baselineAwayGoals": 1.3221,
+      "probabilities": {
+        "home": 0.4564,
+        "draw": 0.2335,
+        "away": 0.3101,
+        "over25": 0.6061,
+        "btts": 0.6201
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 9.822,
+      "awayWeightedMatches": 9.9598,
+      "source": "open-matchday/fixture/TUR_1_super-lig",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
       "league": "TUR_1_super-lig",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Çaykur Rizespor",
-      "away": "Kasimpasa",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/TUR_1_super-lig"
-    },
-    {
-      "league": "UKR_1_premier-league",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Livyi Bereg",
-      "away": "Kolos Kovalivka",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/UKR_1_premier-league"
+      "date": "2026-12-18",
+      "home": "Kasimpasa",
+      "away": "Fenerbahçe",
+      "expectedHomeGoals": 1.5305,
+      "expectedAwayGoals": 1.4396,
+      "baselineHomeGoals": 1.6408,
+      "baselineAwayGoals": 1.3221,
+      "probabilities": {
+        "home": 0.398,
+        "draw": 0.2441,
+        "away": 0.3579,
+        "over25": 0.5701,
+        "btts": 0.5978
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 8.5703,
+      "awayWeightedMatches": 10.0623,
+      "source": "open-matchday/fixture/TUR_1_super-lig",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
       "league": "WAL_1_cymru-premier",
       "season": "2026-27",
-      "date": "2026-11-27",
+      "date": "2026-12-18",
+      "home": "Airbus",
+      "away": "Llandudno",
+      "expectedHomeGoals": 2.1997,
+      "expectedAwayGoals": 1.4206,
+      "baselineHomeGoals": 1.7948,
+      "baselineAwayGoals": 1.4763,
+      "probabilities": {
+        "home": 0.5523,
+        "draw": 0.2035,
+        "away": 0.2441,
+        "over25": 0.7008,
+        "btts": 0.6744
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 8.5534,
+      "awayWeightedMatches": 9.4625,
+      "source": "open-matchday/fixture/WAL_1_cymru-premier",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+    },
+    {
+      "league": "WAL_1_cymru-premier",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Ammanford",
+      "away": "Barry",
+      "expectedHomeGoals": 1.6467,
+      "expectedAwayGoals": 1.7724,
+      "baselineHomeGoals": 1.7948,
+      "baselineAwayGoals": 1.4763,
+      "probabilities": {
+        "home": 0.3613,
+        "draw": 0.2253,
+        "away": 0.4134,
+        "over25": 0.6639,
+        "btts": 0.6701
+      },
+      "mostLikely": "A",
+      "homeWeightedMatches": 9.6026,
+      "awayWeightedMatches": 11.1723,
+      "source": "open-matchday/fixture/WAL_1_cymru-premier",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+    },
+    {
+      "league": "WAL_1_cymru-premier",
+      "season": "2026-27",
+      "date": "2026-12-18",
       "home": "Briton Ferry",
-      "away": "Penybont",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/WAL_1_cymru-premier"
+      "away": "Caernarfon",
+      "expectedHomeGoals": 1.6313,
+      "expectedAwayGoals": 1.5576,
+      "baselineHomeGoals": 1.7948,
+      "baselineAwayGoals": 1.4763,
+      "probabilities": {
+        "home": 0.3985,
+        "draw": 0.2346,
+        "away": 0.367,
+        "over25": 0.6178,
+        "btts": 0.6349
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 9.9601,
+      "awayWeightedMatches": 10.965,
+      "source": "open-matchday/fixture/WAL_1_cymru-premier",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
       "league": "WAL_1_cymru-premier",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Cambrian United",
-      "away": "Trefelin",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/WAL_1_cymru-premier"
-    },
-    {
-      "league": "WAL_1_cymru-premier",
-      "season": "2026-27",
-      "date": "2026-11-27",
+      "date": "2026-12-18",
       "home": "Cardiff Metropolitan",
-      "away": "Airbus",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/WAL_1_cymru-premier"
-    },
-    {
-      "league": "WAL_1_cymru-premier",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Colwyn Bay",
-      "away": "Ammanford",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/WAL_1_cymru-premier"
-    },
-    {
-      "league": "WAL_1_cymru-premier",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Flint",
-      "away": "TNS",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/WAL_1_cymru-premier"
-    },
-    {
-      "league": "WAL_1_cymru-premier",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Haverfordwest",
       "away": "Connahs Q.",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/WAL_1_cymru-premier"
+      "expectedHomeGoals": 1.5825,
+      "expectedAwayGoals": 1.654,
+      "baselineHomeGoals": 1.7948,
+      "baselineAwayGoals": 1.4763,
+      "probabilities": {
+        "home": 0.3685,
+        "draw": 0.2326,
+        "away": 0.3989,
+        "over25": 0.6277,
+        "btts": 0.6426
+      },
+      "mostLikely": "A",
+      "homeWeightedMatches": 11.1286,
+      "awayWeightedMatches": 9.815,
+      "source": "open-matchday/fixture/WAL_1_cymru-premier",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+    },
+    {
+      "league": "WAL_1_cymru-premier",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Colwyn Bay",
+      "away": "TNS",
+      "expectedHomeGoals": 1.6477,
+      "expectedAwayGoals": 1.5795,
+      "baselineHomeGoals": 1.7948,
+      "baselineAwayGoals": 1.4763,
+      "probabilities": {
+        "home": 0.398,
+        "draw": 0.233,
+        "away": 0.369,
+        "over25": 0.6258,
+        "btts": 0.6411
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 9.4552,
+      "awayWeightedMatches": 8.0916,
+      "source": "open-matchday/fixture/WAL_1_cymru-premier",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+    },
+    {
+      "league": "WAL_1_cymru-premier",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Flint",
+      "away": "Trefelin",
+      "expectedHomeGoals": 1.7862,
+      "expectedAwayGoals": 1.2581,
+      "baselineHomeGoals": 1.7948,
+      "baselineAwayGoals": 1.4763,
+      "probabilities": {
+        "home": 0.4981,
+        "draw": 0.2321,
+        "away": 0.2698,
+        "over25": 0.5867,
+        "btts": 0.5958
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 9.8031,
+      "awayWeightedMatches": 9.9601,
+      "source": "open-matchday/fixture/WAL_1_cymru-premier",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+    },
+    {
+      "league": "WAL_1_cymru-premier",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Penybont",
+      "away": "Holywell",
+      "expectedHomeGoals": 2.008,
+      "expectedAwayGoals": 1.1636,
+      "baselineHomeGoals": 1.7948,
+      "baselineAwayGoals": 1.4763,
+      "probabilities": {
+        "home": 0.5691,
+        "draw": 0.2144,
+        "away": 0.2165,
+        "over25": 0.6142,
+        "btts": 0.5953
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 11.0928,
+      "awayWeightedMatches": 8.5534,
+      "source": "open-matchday/fixture/WAL_1_cymru-premier",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
       "league": "WAL_2_cymru-north",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Bala",
-      "away": "Caersws FC",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/WAL_2_cymru-north"
-    },
-    {
-      "league": "WAL_2_cymru-north",
-      "season": "2026-27",
-      "date": "2026-11-27",
+      "date": "2026-12-18",
       "home": "Bangor 1876",
-      "away": "Mold Alexandra",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/WAL_2_cymru-north"
+      "away": "Holyhead",
+      "expectedHomeGoals": 1.9781,
+      "expectedAwayGoals": 1.5247,
+      "baselineHomeGoals": 1.6621,
+      "baselineAwayGoals": 1.4766,
+      "probabilities": {
+        "home": 0.4837,
+        "draw": 0.2173,
+        "away": 0.2991,
+        "over25": 0.6797,
+        "btts": 0.6741
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 6.5551,
+      "awayWeightedMatches": 6.9665,
+      "source": "open-matchday/fixture/WAL_2_cymru-north",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
       "league": "WAL_2_cymru-north",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Denbigh",
+      "date": "2026-12-18",
+      "home": "Buckley",
+      "away": "Caersws FC",
+      "expectedHomeGoals": 1.596,
+      "expectedAwayGoals": 1.682,
+      "baselineHomeGoals": 1.6621,
+      "baselineAwayGoals": 1.4766,
+      "probabilities": {
+        "home": 0.3664,
+        "draw": 0.2309,
+        "away": 0.4027,
+        "over25": 0.6361,
+        "btts": 0.649
+      },
+      "mostLikely": "A",
+      "homeWeightedMatches": 8.1649,
+      "awayWeightedMatches": 8.0096,
+      "source": "open-matchday/fixture/WAL_2_cymru-north",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+    },
+    {
+      "league": "WAL_2_cymru-north",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Newtown",
+      "away": "Mold Alexandra",
+      "expectedHomeGoals": 1.6174,
+      "expectedAwayGoals": 1.4935,
+      "baselineHomeGoals": 1.6621,
+      "baselineAwayGoals": 1.4766,
+      "probabilities": {
+        "home": 0.408,
+        "draw": 0.2376,
+        "away": 0.3544,
+        "over25": 0.6012,
+        "btts": 0.6216
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 9.057,
+      "awayWeightedMatches": 7.9853,
+      "source": "open-matchday/fixture/WAL_2_cymru-north",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+    },
+    {
+      "league": "WAL_2_cymru-north",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Ruthin",
       "away": "Brickfield",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/WAL_2_cymru-north"
+      "expectedHomeGoals": 1.3701,
+      "expectedAwayGoals": 1.6944,
+      "baselineHomeGoals": 1.6621,
+      "baselineAwayGoals": 1.4766,
+      "probabilities": {
+        "home": 0.3113,
+        "draw": 0.2367,
+        "away": 0.452,
+        "over25": 0.5911,
+        "btts": 0.6089
+      },
+      "mostLikely": "A",
+      "homeWeightedMatches": 7.9914,
+      "awayWeightedMatches": 9.2975,
+      "source": "open-matchday/fixture/WAL_2_cymru-north",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
       "league": "WAL_3_cymru-south",
       "season": "2026-27",
-      "date": "2026-11-27",
+      "date": "2026-12-18",
       "home": "Afan Lido",
-      "away": "Caerau Ely",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/WAL_3_cymru-south"
+      "away": "Carmarthen Town",
+      "expectedHomeGoals": 1.8712,
+      "expectedAwayGoals": 1.6456,
+      "baselineHomeGoals": 1.7921,
+      "baselineAwayGoals": 1.6245,
+      "probabilities": {
+        "home": 0.4357,
+        "draw": 0.2209,
+        "away": 0.3435,
+        "over25": 0.6823,
+        "btts": 0.6829
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 8.9475,
+      "awayWeightedMatches": 8.4487,
+      "source": "open-matchday/fixture/WAL_3_cymru-south",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
       "league": "WAL_3_cymru-south",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Caerphilly",
-      "away": "Baglan Dragons",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/WAL_3_cymru-south"
-    },
-    {
-      "league": "WAL_3_cymru-south",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Carmarthen Town",
-      "away": "Pure Swansea",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/WAL_3_cymru-south"
-    },
-    {
-      "league": "WAL_3_cymru-south",
-      "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Llanelli",
+      "date": "2026-12-18",
+      "home": "Baglan Dragons",
       "away": "Cardiff Draconians",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/WAL_3_cymru-south"
+      "expectedHomeGoals": 1.6406,
+      "expectedAwayGoals": 1.394,
+      "baselineHomeGoals": 1.7921,
+      "baselineAwayGoals": 1.6245,
+      "probabilities": {
+        "home": 0.4341,
+        "draw": 0.2395,
+        "away": 0.3264,
+        "over25": 0.5845,
+        "btts": 0.6061
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 10.776,
+      "awayWeightedMatches": 5.3327,
+      "source": "open-matchday/fixture/WAL_3_cymru-south",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
     {
       "league": "WAL_3_cymru-south",
       "season": "2026-27",
-      "date": "2026-11-27",
-      "home": "Newport City",
-      "away": "Pontardawe",
-      "kickoffUtc": null,
-      "source": "open-matchday/fixture/WAL_3_cymru-south"
+      "date": "2026-12-18",
+      "home": "Llanelli",
+      "away": "Llantwit Major",
+      "expectedHomeGoals": 1.781,
+      "expectedAwayGoals": 1.7696,
+      "baselineHomeGoals": 1.7921,
+      "baselineAwayGoals": 1.6245,
+      "probabilities": {
+        "home": 0.3918,
+        "draw": 0.221,
+        "away": 0.3872,
+        "over25": 0.6884,
+        "btts": 0.6898
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 9.1445,
+      "awayWeightedMatches": 11.3114,
+      "source": "open-matchday/fixture/WAL_3_cymru-south",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
     },
+    {
+      "league": "WAL_3_cymru-south",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Newport City",
+      "away": "Caerphilly",
+      "expectedHomeGoals": 1.8239,
+      "expectedAwayGoals": 1.6533,
+      "baselineHomeGoals": 1.7921,
+      "baselineAwayGoals": 1.6245,
+      "probabilities": {
+        "home": 0.4236,
+        "draw": 0.2228,
+        "away": 0.3535,
+        "over25": 0.6749,
+        "btts": 0.6781
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 6.6239,
+      "awayWeightedMatches": 9.2132,
+      "source": "open-matchday/fixture/WAL_3_cymru-south",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+    },
+    {
+      "league": "WAL_3_cymru-south",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Pontypridd",
+      "away": "Ynyshir Albions",
+      "expectedHomeGoals": 1.7721,
+      "expectedAwayGoals": 1.4688,
+      "baselineHomeGoals": 1.7921,
+      "baselineAwayGoals": 1.6245,
+      "probabilities": {
+        "home": 0.4493,
+        "draw": 0.2299,
+        "away": 0.3209,
+        "over25": 0.6286,
+        "btts": 0.639
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 9.6944,
+      "awayWeightedMatches": 8.974,
+      "source": "open-matchday/fixture/WAL_3_cymru-south",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+    },
+    {
+      "league": "WAL_3_cymru-south",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Pure Swansea",
+      "away": "Caerau Ely",
+      "expectedHomeGoals": 1.9365,
+      "expectedAwayGoals": 1.6603,
+      "baselineHomeGoals": 1.7921,
+      "baselineAwayGoals": 1.6245,
+      "probabilities": {
+        "home": 0.447,
+        "draw": 0.2175,
+        "away": 0.3355,
+        "over25": 0.6967,
+        "btts": 0.6931
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 10.1071,
+      "awayWeightedMatches": 7.773,
+      "source": "open-matchday/fixture/WAL_3_cymru-south",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+    },
+    {
+      "league": "WAL_3_cymru-south",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Trethomas Bluebirds",
+      "away": "Treowen",
+      "expectedHomeGoals": 1.9301,
+      "expectedAwayGoals": 1.789,
+      "baselineHomeGoals": 1.7921,
+      "baselineAwayGoals": 1.6245,
+      "probabilities": {
+        "home": 0.4206,
+        "draw": 0.2149,
+        "away": 0.3644,
+        "over25": 0.7178,
+        "btts": 0.712
+      },
+      "mostLikely": "H",
+      "homeWeightedMatches": 9.1942,
+      "awayWeightedMatches": 10.992,
+      "source": "open-matchday/fixture/WAL_3_cymru-south",
+      "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+    }
+  ],
+  "fixtures": [
     {
       "league": "ARG_2_primera-nacional",
       "season": "2026-27",
@@ -42127,10 +41119,397 @@
       "away": "Copenhagen",
       "kickoffUtc": null,
       "source": "open-matchday/fixture/UEFA_1_conference-league"
+    },
+    {
+      "league": "AUS_1_a-league",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Sydney FC",
+      "away": "Perth Glory FC",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/AUS_1_a-league"
+    },
+    {
+      "league": "BEL_1_pro-league",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Antwerp",
+      "away": "OH Leuven",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/BEL_1_pro-league"
+    },
+    {
+      "league": "ENG_2_championship",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "West Bromwich Albion",
+      "away": "Sheffield United",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/ENG_2_championship"
+    },
+    {
+      "league": "ENG_3_league-one",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Cambridge United",
+      "away": "Stevenage",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/ENG_3_league-one"
+    },
+    {
+      "league": "ENG_5_national-league",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "AFC Fylde",
+      "away": "Southend United",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/ENG_5_national-league"
+    },
+    {
+      "league": "ENG_7_northern-premier-league",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Avro",
+      "away": "Warrington Rylands",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/ENG_7_northern-premier-league"
+    },
+    {
+      "league": "GER_1_bundesliga",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "FC Bayern München",
+      "away": "SV Werder Bremen",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/GER_1_bundesliga"
+    },
+    {
+      "league": "GER_2_2-bundesliga",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "1. FC Nürnberg",
+      "away": "VfL Osnabrück",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/GER_2_2-bundesliga"
+    },
+    {
+      "league": "GER_2_2-bundesliga",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Energie Cottbus",
+      "away": "Holstein Kiel",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/GER_2_2-bundesliga"
+    },
+    {
+      "league": "GER_3_3-liga",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Viktoria Köln",
+      "away": "SV Waldhof Mannheim",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/GER_3_3-liga"
+    },
+    {
+      "league": "ITA_1_serie-a",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Frosinone",
+      "away": "Lazio",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/ITA_1_serie-a"
+    },
+    {
+      "league": "ITA_1_serie-a",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Lecce",
+      "away": "Internazionale",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/ITA_1_serie-a"
+    },
+    {
+      "league": "ITA_2_serie-b",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Hellas Verona",
+      "away": "Cremonese",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/ITA_2_serie-b"
+    },
+    {
+      "league": "NED_1_eredivisie",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Telstar",
+      "away": "Willem II",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/NED_1_eredivisie"
+    },
+    {
+      "league": "NED_2_eerste-divisie",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "De Graafschap",
+      "away": "Heracles Almelo",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/NED_2_eerste-divisie"
+    },
+    {
+      "league": "NED_2_eerste-divisie",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "FC Dordrecht",
+      "away": "FC Den Bosch",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/NED_2_eerste-divisie"
+    },
+    {
+      "league": "NED_2_eerste-divisie",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "FC Volendam",
+      "away": "FC Emmen",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/NED_2_eerste-divisie"
+    },
+    {
+      "league": "NED_2_eerste-divisie",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Helmond Sport",
+      "away": "Jong AZ",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/NED_2_eerste-divisie"
+    },
+    {
+      "league": "NED_2_eerste-divisie",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Jong PSV",
+      "away": "FC Eindhoven",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/NED_2_eerste-divisie"
+    },
+    {
+      "league": "NED_2_eerste-divisie",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "MVV Maastricht",
+      "away": "TOP Oss",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/NED_2_eerste-divisie"
+    },
+    {
+      "league": "NED_2_eerste-divisie",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "NAC Breda",
+      "away": "Roda JC Kerkrade",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/NED_2_eerste-divisie"
+    },
+    {
+      "league": "NED_2_eerste-divisie",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "RKC Waalwijk",
+      "away": "Jong Ajax",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/NED_2_eerste-divisie"
+    },
+    {
+      "league": "SCO_2_championship",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Queen's Park",
+      "away": "Raith Rovers",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/SCO_2_championship"
+    },
+    {
+      "league": "TUR_1_super-lig",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Amedspor",
+      "away": "Göztepe",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/TUR_1_super-lig"
+    },
+    {
+      "league": "TUR_1_super-lig",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Kasimpasa",
+      "away": "Fenerbahçe",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/TUR_1_super-lig"
+    },
+    {
+      "league": "WAL_1_cymru-premier",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Airbus",
+      "away": "Llandudno",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/WAL_1_cymru-premier"
+    },
+    {
+      "league": "WAL_1_cymru-premier",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Ammanford",
+      "away": "Barry",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/WAL_1_cymru-premier"
+    },
+    {
+      "league": "WAL_1_cymru-premier",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Briton Ferry",
+      "away": "Caernarfon",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/WAL_1_cymru-premier"
+    },
+    {
+      "league": "WAL_1_cymru-premier",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Cardiff Metropolitan",
+      "away": "Connahs Q.",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/WAL_1_cymru-premier"
+    },
+    {
+      "league": "WAL_1_cymru-premier",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Colwyn Bay",
+      "away": "TNS",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/WAL_1_cymru-premier"
+    },
+    {
+      "league": "WAL_1_cymru-premier",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Flint",
+      "away": "Trefelin",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/WAL_1_cymru-premier"
+    },
+    {
+      "league": "WAL_1_cymru-premier",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Penybont",
+      "away": "Holywell",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/WAL_1_cymru-premier"
+    },
+    {
+      "league": "WAL_2_cymru-north",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Bangor 1876",
+      "away": "Holyhead",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/WAL_2_cymru-north"
+    },
+    {
+      "league": "WAL_2_cymru-north",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Buckley",
+      "away": "Caersws FC",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/WAL_2_cymru-north"
+    },
+    {
+      "league": "WAL_2_cymru-north",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Newtown",
+      "away": "Mold Alexandra",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/WAL_2_cymru-north"
+    },
+    {
+      "league": "WAL_2_cymru-north",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Ruthin",
+      "away": "Brickfield",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/WAL_2_cymru-north"
+    },
+    {
+      "league": "WAL_3_cymru-south",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Afan Lido",
+      "away": "Carmarthen Town",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/WAL_3_cymru-south"
+    },
+    {
+      "league": "WAL_3_cymru-south",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Baglan Dragons",
+      "away": "Cardiff Draconians",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/WAL_3_cymru-south"
+    },
+    {
+      "league": "WAL_3_cymru-south",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Llanelli",
+      "away": "Llantwit Major",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/WAL_3_cymru-south"
+    },
+    {
+      "league": "WAL_3_cymru-south",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Newport City",
+      "away": "Caerphilly",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/WAL_3_cymru-south"
+    },
+    {
+      "league": "WAL_3_cymru-south",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Pontypridd",
+      "away": "Ynyshir Albions",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/WAL_3_cymru-south"
+    },
+    {
+      "league": "WAL_3_cymru-south",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Pure Swansea",
+      "away": "Caerau Ely",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/WAL_3_cymru-south"
+    },
+    {
+      "league": "WAL_3_cymru-south",
+      "season": "2026-27",
+      "date": "2026-12-18",
+      "home": "Trethomas Bluebirds",
+      "away": "Treowen",
+      "kickoffUtc": null,
+      "source": "open-matchday/fixture/WAL_3_cymru-south"
     }
   ],
-  "forecast_count": 1230,
-  "fixture_count": 1453,
+  "forecast_count": 1212,
+  "fixture_count": 1430,
   "source_receipts": [
     {
       "competition": "ENG_1_premier-league",

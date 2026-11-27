@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "9ebcec95149f25370d9d9ff620fcea53",
+  "captured_at_utc": "2026-11-27T12:20:23.730Z",
+  "catalog_generated_at_utc": "2026-11-26T07:40:37Z",
+  "original_code_sha": "c34c1d47b0c7a045f29c007f6492b4153d5856d7",
+  "source_results_sha256": "7c01176d22dbbb696e3a062a1648678cda3912a2adf62f1b5d9f5a3071284956",
+  "source_fixtures_sha256": "b5fd1bf6bc8cc04340a53ce09362f13e0db8627a224ab31608301e838a5c3fe0",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ENG_1_premier-league",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "Arsenal",
+    "away": "Man City",
+    "expectedHomeGoals": 1.5812,
+    "expectedAwayGoals": 1.1262,
+    "baselineHomeGoals": 1.5716,
+    "baselineAwayGoals": 1.1556,
+    "probabilities": {
+      "home": 0.4788,
+      "draw": 0.2501,
+      "away": 0.2711,
+      "over25": 0.5082,
+      "btts": 0.5367
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 7.7041,
+    "awayWeightedMatches": 7.7975,
+    "source": "open-matchday/fixture/ENG_1_premier-league",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}
