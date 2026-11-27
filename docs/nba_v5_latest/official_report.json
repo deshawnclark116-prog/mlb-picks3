@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_03_00PM.pdf",
-  "published_at_utc": "2026-11-27T20:00:00+00:00",
-  "captured_at_utc": "2026-11-27T20:07:51.936214+00:00",
-  "source_sha256": "509b182cfb7be4f346970ec0a48c951b3ee8e49d26be7227b892bdd63a334ad2",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_03_45PM.pdf",
+  "published_at_utc": "2026-11-27T20:45:00+00:00",
+  "captured_at_utc": "2026-11-27T20:56:31.883161+00:00",
+  "source_sha256": "00f2adefb856d76c4ecbe7b4a583576ee806f1bdf49cb58fcf0fc73d5462e74b",
   "reports": [
     {
       "matchup": "MIA@NYK",
@@ -737,6 +737,14 @@
     {
       "matchup": "GSW@POR",
       "team_abbr": "POR",
+      "player": "Yang, Hansen",
+      "normalized_player": "hansen yang",
+      "status": "QUESTIONABLE",
+      "reason": "Injury/Illness - Left Ankle Sprain"
+    },
+    {
+      "matchup": "GSW@POR",
+      "team_abbr": "POR",
       "player": "Youngblood, Chris",
       "normalized_player": "chris youngblood",
       "status": "OUT",
@@ -887,6 +895,46 @@
       "reason": "G League - Two-Way"
     },
     {
+      "matchup": "ORL@WAS",
+      "team_abbr": "WAS",
+      "player": "Beekman, Reece",
+      "normalized_player": "reece beekman",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "ORL@WAS",
+      "team_abbr": "WAS",
+      "player": "Champagnie, Justin",
+      "normalized_player": "justin champagnie",
+      "status": "OUT",
+      "reason": "Injury/Illness - Right Foot Surgery"
+    },
+    {
+      "matchup": "ORL@WAS",
+      "team_abbr": "WAS",
+      "player": "Okpara, Felix",
+      "normalized_player": "felix okpara",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "ORL@WAS",
+      "team_abbr": "WAS",
+      "player": "Vukcevic, Tristan",
+      "normalized_player": "tristan vukcevic",
+      "status": "OUT",
+      "reason": "Injury/Illness - Left Hip Impingement"
+    },
+    {
+      "matchup": "ORL@WAS",
+      "team_abbr": "WAS",
+      "player": "Watkins, Jamir",
+      "normalized_player": "jamir watkins",
+      "status": "OUT",
+      "reason": ""
+    },
+    {
       "matchup": "IND@CHI",
       "team_abbr": "CHI",
       "player": "Awaka, Tobe",
@@ -943,7 +991,7 @@
       "reason": ""
     }
   ],
-  "rows": 117,
+  "rows": 123,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
