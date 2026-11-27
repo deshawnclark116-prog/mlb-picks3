@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_01_45PM.pdf",
-  "published_at_utc": "2026-11-27T18:45:00+00:00",
-  "captured_at_utc": "2026-11-27T18:52:52.823785+00:00",
-  "source_sha256": "d65f14398b53e830eb1bf3be4ed6900e83b11e38bfdbba5fcaa8b25dc9c7ce3f",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_03_00PM.pdf",
+  "published_at_utc": "2026-11-27T20:00:00+00:00",
+  "captured_at_utc": "2026-11-27T20:07:51.936214+00:00",
+  "source_sha256": "509b182cfb7be4f346970ec0a48c951b3ee8e49d26be7227b892bdd63a334ad2",
   "reports": [
     {
       "matchup": "MIA@NYK",
@@ -545,6 +545,14 @@
     {
       "matchup": "DAL@PHX",
       "team_abbr": "DAL",
+      "player": "Irving, Kyrie",
+      "normalized_player": "kyrie irving",
+      "status": "QUESTIONABLE",
+      "reason": ""
+    },
+    {
+      "matchup": "DAL@PHX",
+      "team_abbr": "DAL",
       "player": "Lawal, Tobi",
       "normalized_player": "tobi lawal",
       "status": "OUT",
@@ -747,7 +755,7 @@
       "team_abbr": "LAL",
       "player": "Reaves, Austin",
       "normalized_player": "austin reaves",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
@@ -935,7 +943,7 @@
       "reason": ""
     }
   ],
-  "rows": 116,
+  "rows": 117,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
