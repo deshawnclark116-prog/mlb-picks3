@@ -1,0 +1,338 @@
+{
+  "schema": "NBA_TEAM_FROZEN_V5_ASOF_DAY_AUDIT_V2",
+  "sourceGames": 149,
+  "sourceRows": 28063,
+  "exclusions": {
+    "unsupported": 12027,
+    "ungradable": 2314,
+    "noGame": 648,
+    "noPlayer": 489,
+    "cutoff": 0,
+    "conflict": 10,
+    "invalid": 0
+  },
+  "all": {
+    "n": 12575,
+    "games": 142,
+    "actualHit": 0.4543141153081511,
+    "brier": {
+      "original": 0.2336605944802303,
+      "rotationDirect": 0.22787084368324065,
+      "priorResidual": 0.2290556341560719,
+      "teamResidual": 0.22705116622587374,
+      "teamConstrained": 0.2267783132508863,
+      "teamMix": 0.22755007909876393,
+      "sourceAvailabilityTeam": 0.23131313614986798
+    },
+    "MAE": {
+      "original": 2.4460485359613373,
+      "rotationDirect": 2.431565926058011,
+      "priorResidual": 2.4353071096595476,
+      "teamResidual": 2.409949903242908,
+      "teamConstrained": 2.401697816838581,
+      "teamMix": 2.4171481412833673,
+      "sourceAvailabilityTeam": 2.409949903242908
+    },
+    "meanP": {
+      "original": 0.4140849582250517,
+      "rotationDirect": 0.4537846824691401,
+      "priorResidual": 0.4516331974536423,
+      "teamResidual": 0.4473004044538775,
+      "teamConstrained": 0.4442822222290888,
+      "teamMix": 0.44946680095376124,
+      "sourceAvailabilityTeam": 0.4251058581885457
+    }
+  },
+  "byMarket": {
+    "points": {
+      "n": 3607,
+      "games": 142,
+      "actualHit": 0.3939561962850014,
+      "brier": {
+        "original": 0.22863470570724048,
+        "rotationDirect": 0.2236590148959954,
+        "priorResidual": 0.2248111905229043,
+        "teamResidual": 0.22315062540196717,
+        "teamConstrained": 0.2229819532104747,
+        "teamMix": 0.22328284284501107,
+        "sourceAvailabilityTeam": 0.2274085157623322
+      },
+      "MAE": {
+        "original": 4.7750996249573765,
+        "rotationDirect": 4.750508326731856,
+        "priorResidual": 4.768156508206115,
+        "teamResidual": 4.716771805547007,
+        "teamConstrained": 4.694421068036065,
+        "teamMix": 4.7309593391514415,
+        "sourceAvailabilityTeam": 4.716771805547007
+      },
+      "meanP": {
+        "original": 0.3660746827231777,
+        "rotationDirect": 0.4040515413274428,
+        "priorResidual": 0.4139246089208356,
+        "teamResidual": 0.40789024016449876,
+        "teamConstrained": 0.3980959376741104,
+        "teamMix": 0.4109074245426656,
+        "sourceAvailabilityTeam": 0.3942853934674206
+      }
+    },
+    "rebounds": {
+      "n": 3517,
+      "games": 142,
+      "actualHit": 0.44725618424793856,
+      "brier": {
+        "original": 0.23221370615294534,
+        "rotationDirect": 0.22848564667752974,
+        "priorResidual": 0.22959768545995252,
+        "teamResidual": 0.22841542330513026,
+        "teamConstrained": 0.2281368070562592,
+        "teamMix": 0.2286826178412071,
+        "sourceAvailabilityTeam": 0.23339957761103045
+      },
+      "MAE": {
+        "original": 1.9208564766839324,
+        "rotationDirect": 1.906626577324365,
+        "priorResidual": 1.9014417521648874,
+        "teamResidual": 1.889673321536575,
+        "teamConstrained": 1.8895345915295245,
+        "teamMix": 1.8924418437721469,
+        "sourceAvailabilityTeam": 1.889673321536575
+      },
+      "meanP": {
+        "original": 0.41773964261870766,
+        "rotationDirect": 0.4520345833465661,
+        "priorResidual": 0.43964809965603674,
+        "teamResidual": 0.43585154747714105,
+        "teamConstrained": 0.44080025252718763,
+        "teamMix": 0.4377498235665883,
+        "sourceAvailabilityTeam": 0.42078311414440195
+      }
+    },
+    "assists": {
+      "n": 3108,
+      "games": 142,
+      "actualHit": 0.481981981981982,
+      "brier": {
+        "original": 0.23622548661111212,
+        "rotationDirect": 0.22913395450720717,
+        "priorResidual": 0.23086477243048406,
+        "teamResidual": 0.22766999429240636,
+        "teamConstrained": 0.22706530525949137,
+        "teamMix": 0.2288802932765855,
+        "sourceAvailabilityTeam": 0.23186531021522852
+      },
+      "MAE": {
+        "original": 1.4575143451930332,
+        "rotationDirect": 1.4530251111117625,
+        "priorResidual": 1.4502526643280045,
+        "teamResidual": 1.426564742934138,
+        "teamConstrained": 1.4244580627945467,
+        "teamMix": 1.4354608502559836,
+        "sourceAvailabilityTeam": 1.426564742934138
+      },
+      "meanP": {
+        "original": 0.4335211548922134,
+        "rotationDirect": 0.48104948516874185,
+        "priorResidual": 0.47184908329442493,
+        "teamResidual": 0.4628542483833325,
+        "teamConstrained": 0.46297569501670227,
+        "teamMix": 0.46735166583887877,
+        "sourceAvailabilityTeam": 0.43565654499777967
+      }
+    },
+    "three_pointers_made": {
+      "n": 2343,
+      "games": 142,
+      "actualHit": 0.5211267605633803,
+      "brier": {
+        "original": 0.24016738163706078,
+        "rotationDirect": 0.23175648425677883,
+        "priorResidual": 0.23237638191202847,
+        "teamResidual": 0.23018724858750023,
+        "teamConstrained": 0.2302028445310879,
+        "teamMix": 0.2306548493699753,
+        "sourceAvailabilityTeam": 0.23345986859706463
+      },
+      "MAE": {
+        "original": 1.1503363418146904,
+        "rotationDirect": 1.1370609747836877,
+        "priorResidual": 1.1418874114243105,
+        "teamResidual": 1.1321753752148904,
+        "teamConstrained": 1.1247043803007577,
+        "teamMix": 1.133535232422239,
+        "sourceAvailabilityTeam": 1.1321753752148904
+      },
+      "meanP": {
+        "original": 0.4567276554001283,
+        "rotationDirect": 0.49680795687025153,
+        "priorResidual": 0.5008587606627243,
+        "teamResidual": 0.5045247944010446,
+        "teamConstrained": 0.49581474566377753,
+        "teamMix": 0.5026917775318845,
+        "sourceAvailabilityTeam": 0.4650465207789206
+      }
+    }
+  },
+  "featured": {
+    "n": 876,
+    "games": 142,
+    "actualHit": 0.6301369863013698,
+    "brier": {
+      "original": 0.23414235568013278,
+      "rotationDirect": 0.2306535665095197,
+      "priorResidual": 0.22962650831372958,
+      "teamResidual": 0.22971158743554923,
+      "teamConstrained": 0.2295400922714888,
+      "teamMix": 0.22921530523100325,
+      "sourceAvailabilityTeam": 0.23290033799184712
+    },
+    "MAE": {
+      "original": 1.3904937352245863,
+      "rotationDirect": 1.3940870281090791,
+      "priorResidual": 1.3919902159928992,
+      "teamResidual": 1.4026797233937858,
+      "teamConstrained": 1.399702155865408,
+      "teamMix": 1.395429052152201,
+      "sourceAvailabilityTeam": 1.4026797233937858
+    },
+    "meanP": {
+      "original": 0.6038529726369861,
+      "rotationDirect": 0.6121851506108312,
+      "priorResidual": 0.5902708662860258,
+      "teamResidual": 0.5971427062508845,
+      "teamConstrained": 0.5949394970064583,
+      "teamMix": 0.5937067862684547,
+      "sourceAvailabilityTeam": 0.5656704864007708
+    }
+  },
+  "pairedBrierGainCI": {
+    "rotationDirect": [
+      0.002954532958758793,
+      0.008726999948376599
+    ],
+    "priorResidual": [
+      0.0016800344656266637,
+      0.007730128233118125
+    ],
+    "teamResidual": [
+      0.0034171562379193957,
+      0.009574848053802978
+    ],
+    "teamConstrained": [
+      0.003916065277865495,
+      0.009866994708031816
+    ],
+    "teamMix": [
+      0.0029992438805477844,
+      0.008960519273746028
+    ],
+    "sourceAvailabilityTeam": [
+      0.0002033827610839316,
+      0.004531754942738652
+    ]
+  },
+  "participation": {
+    "n": 3607,
+    "original": 0.12240153960094954,
+    "new": 0.1182003440366428
+  },
+  "top4SameUniverse": {
+    "original": {
+      "n": 568,
+      "hit": 0.6461267605633803,
+      "p": 0.6424623130457743,
+      "brier": 0.2304804713181777
+    },
+    "rotationDirect": {
+      "n": 568,
+      "hit": 0.6848591549295775,
+      "p": 0.6918120630371793,
+      "brier": 0.21621477026214034
+    },
+    "priorResidual": {
+      "n": 568,
+      "hit": 0.6954225352112676,
+      "p": 0.6853642276590143,
+      "brier": 0.21503869980897666
+    },
+    "teamResidual": {
+      "n": 568,
+      "hit": 0.6936619718309859,
+      "p": 0.6868348431884204,
+      "brier": 0.2127293031969915
+    },
+    "teamConstrained": {
+      "n": 568,
+      "hit": 0.6866197183098591,
+      "p": 0.685747724826076,
+      "brier": 0.2130234558345235
+    },
+    "teamMix": {
+      "n": 568,
+      "hit": 0.704225352112676,
+      "p": 0.6832969239298774,
+      "brier": 0.20973884403053317
+    },
+    "sourceAvailabilityTeam": {
+      "n": 568,
+      "hit": 0.6408450704225352,
+      "p": 0.6460112131286249,
+      "brier": 0.23527454299268705
+    }
+  },
+  "top10SameUniverse": {
+    "original": {
+      "n": 1420,
+      "hit": 0.6309859154929578,
+      "p": 0.603377976579226,
+      "brier": 0.23349879047281857
+    },
+    "rotationDirect": {
+      "n": 1420,
+      "hit": 0.6338028169014085,
+      "p": 0.6563195101775791,
+      "brier": 0.22915068143780848
+    },
+    "priorResidual": {
+      "n": 1420,
+      "hit": 0.6330985915492958,
+      "p": 0.6509785949158613,
+      "brier": 0.22999928342854337
+    },
+    "teamResidual": {
+      "n": 1420,
+      "hit": 0.6570422535211268,
+      "p": 0.6529875878810474,
+      "brier": 0.22416891199390646
+    },
+    "teamConstrained": {
+      "n": 1420,
+      "hit": 0.6690140845070423,
+      "p": 0.6512107579020491,
+      "brier": 0.21998851449563186
+    },
+    "teamMix": {
+      "n": 1420,
+      "hit": 0.6394366197183099,
+      "p": 0.6491905319495452,
+      "brier": 0.22760494398567493
+    },
+    "sourceAvailabilityTeam": {
+      "n": 1420,
+      "hit": 0.6330985915492958,
+      "p": 0.6123119650835368,
+      "brier": 0.23433909090460545
+    }
+  },
+  "limitations": [
+    "first-seen V5 not full current specialists",
+    "archive lacks confirmed starter flags; top cards reconstructed from matched universe, not live eligible picks",
+    "same reused current season",
+    "source availability candidate uses V5 p_active and is not independent",
+    "same original targets",
+    "UTC date source guard, not exact historical completion receipts",
+    "missing candidate roster rows excluded; coverage must be reported"
+  ],
+  "promotionAllowed": false,
+  "cutoff_policy": "At each frozen forecast UTC date, only ingest games whose scheduled tip plus four hours fell on a strictly earlier UTC date; conservative proxy, not verified final timestamps."
+}
