@@ -171,6 +171,80 @@ def evaluate(rows,a,mins,op,pred,archive):
    z[name]=entry
   out["markets"][market]=z
  return out
+def whole(x):
+ return np.floor(np.maximum(0,x)+.4+1e-10).astype(int)
+def calibrated_distributions(rows,pred):
+ """Freeze validation residuals conditional on playing and mean scale.
+    Residuals are stored in units sqrt(mean+1) to respect count variance."""
+ out={}
+ played=np.array([r["played"]==1 for r in rows])
+ for market,k in STATS.items():
+  y=np.array([r["y"][k] for r in rows])
+  out[market]={}
+  for name,p in pred[market].items():
+   scale=np.sqrt(p+1)
+   err=(y-p)/scale
+   # Fixed bins, no data-driven rescue optimization on test seasons.
+   cuts=[0,2,5,10,20,1000] if market=="points" else [0,1,2,4,7,1000]
+   pool=np.sort(err[played])
+   out[market][name]=(cuts,pool,[np.sort(err[played&(p>=lo)&(p<hi)]) for lo,hi in zip(cuts,cuts[1:])])
+ return out
+def reach(p,target,a,cal):
+ cuts,pool,bins=cal
+ result=[]
+ for m,t,pa in zip(p,target,a):
+  if t<=0:result.append(1.);continue
+  j=min(len(bins)-1,max(0,int(np.searchsorted(cuts,m,side="right")-1)))
+  z=(t-.5-m)/math.sqrt(m+1)
+  def survival(arr):
+   return (len(arr)-np.searchsorted(arr,z,side="left")+.5)/(len(arr)+1)
+  local=bins[j];n=len(local)
+  prob=(n*survival(local)+100*survival(pool))/(n+100)
+  result.append(float(pa)*prob)
+ return np.asarray(result)
+def probability_tournament(rows,a,pred,cal,archive):
+ """Fixed pregame target comparison; own-target cards shown separately.
+    No winner gets credit merely for lowering the event threshold."""
+ out={}
+ fixed_cards=defaultdict(list);own_cards=defaultdict(list)
+ for market,k in STATS.items():
+  y=np.array([r["y"][k] for r in rows])
+  fixed=whole(pred[market]["last5"])
+  eligible=fixed>=FLOORS[market]
+  z={}
+  for name,p in pred[market].items():
+   pr=reach(p,fixed,a,cal[market][name]);own=whole(p);op=reach(p,own,a,cal[market][name])
+   target=y>=fixed;own_hit=y>=own
+   e={"fixed_last5_target":brier(target[eligible].astype(float),pr[eligible])}
+   for i,r in enumerate(rows):
+    key=(r["gid"],name)
+    if eligible[i]:fixed_cards[key].append((float(pr[i]),int(target[i]),market,r["pid"],int(fixed[i])))
+    if own[i]>=FLOORS[market]:own_cards[key].append((float(op[i]),int(own_hit[i]),market,r["pid"],int(own[i])))
+   # Same ORIGINAL V5 target on same played-player records; conditional only.
+   ids=[];oldp=[];t=[]
+   for i,r in enumerate(rows):
+    old=archive.get((r["gid"],r["pid"],market))
+    if not r["played"] or not old or old["actual"]!=r["y"][k]:continue
+    q=old.get("reach_probabilities") or {}
+    prob=q.get("probability_if_playing");target0=q.get("whole_projection")
+    if not isinstance(prob,(int,float)) or not isinstance(target0,int) or target0<FLOORS[market]:continue
+    ids.append(i);oldp.append(prob);t.append(target0)
+   if ids:
+    idx=np.asarray(ids);targets=np.asarray(t);actual=(y[idx]>=targets).astype(float)
+    newp=reach(p[idx],targets,np.ones(len(idx)),cal[market][name]);orig=np.asarray(oldp)
+    e["same_original_v5_target_if_played"]={"original":brier(actual,orig),"new":brier(actual,newp),"gain_ci95":ci([rows[i] for i in idx],actual,orig,newp,True)}
+   z[name]=e
+  out[market]=z
+ def summarize(cards):
+  by=defaultdict(list)
+  for (gid,name),r in cards.items():
+   r=sorted(r,key=lambda t:(-t[0],t[2],t[3]))
+   for n in (4,10):by[(name,n)].extend(r[:n])
+  return {name+"_"+str(n):{**brier(np.array([r[1] for r in q]),np.array([r[0] for r in q])),
+    "mean_target_by_market":{m:av([r[4] for r in q if r[2]==m]) for m in STATS},
+    "market_counts":{m:sum(r[2]==m for r in q) for m in STATS}} for (name,n),q in by.items()}
+ return {"markets":out,"fixed_common_target_cards":summarize(fixed_cards),"own_target_cards_not_equal_difficulty":summarize(own_cards)}
+
 def run(files,grades):
  games=load(files);rows,cov,tips,bad=build(games);archive=original_grades(grades,tips)
  tr=[r for r in rows if r["date"]<"2026-01-01"];va=[r for r in rows if "2026-01-01"<=r["date"]<"2026-02-15"]
@@ -178,9 +252,13 @@ def run(files,grades):
  assert min(map(len,(tr,va,spring,fall)))>100
  result={"schema":"NBA_FULL_ARCHITECTURE_TOURNAMENT_V1","production_changed":False,"promotion_allowed":False,"historical_already_examined":True,
     "complete_box_rejected":bad,"candidate_player_coverage_by_month":cov,"original_v5_rows":len(archive),"cohorts":{}}
+ cal=None
  for name,train,test in [("validation",tr,va),("spring",tr+va,spring),("fall",tr+va,fall)]:
   assert max(r["date"] for r in train)<min(r["date"] for r in test)
-  v=evaluate(test,*fit_predict(train,test),archive)
+  a,mins,op,pred=fit_predict(train,test)
+  v=evaluate(test,a,mins,op,pred,archive)
+  if name=="validation":cal=calibrated_distributions(test,pred)
+  else:v["probability_tournament"]=probability_tournament(test,a,pred,cal,archive)
   result["cohorts"][name]=v
   print("NBA_FULL_STRESS",name,json.dumps(v,sort_keys=True),flush=True)
  result["validation_selected_numeric_heads"]={m:min(v,key=lambda k:v[k]["conditional"]["mae"]) for m,v in result["cohorts"]["validation"]["markets"].items()}
