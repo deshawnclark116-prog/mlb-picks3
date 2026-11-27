@@ -3,15 +3,15 @@
   "asofDateUTC": "2026-11-27",
   "listedCompetitions": 75,
   "sourceVerifiedCompetitions": 75,
-  "upcomingFixtures": 1430,
+  "upcomingFixtures": 1427,
   "upcomingQuantitativeForecasts": 1212,
-  "originallyFrozen": 853,
-  "graded": 457,
+  "originallyFrozen": 855,
+  "graded": 459,
   "ungraded": 396,
-  "modelGoalMAE": 0.97732,
-  "baselineGoalMAE": 0.99841,
-  "model3wayBrier": 0.62078,
-  "baseline3wayBrier": 0.64132,
+  "modelGoalMAE": 0.97724,
+  "baselineGoalMAE": 0.99819,
+  "model3wayBrier": 0.62008,
+  "baseline3wayBrier": 0.64104,
   "byLeague": {
     "ENG_4_league-two": {
       "n": 14,
@@ -42,11 +42,11 @@
       "baseline3wayBrier": 0.50141
     },
     "ENG_3_league-one": {
-      "n": 15,
-      "modelGoalMAE": 0.9974,
-      "baselineGoalMAE": 0.9886,
-      "model3wayBrier": 0.72503,
-      "baseline3wayBrier": 0.7308
+      "n": 16,
+      "modelGoalMAE": 1.01077,
+      "baselineGoalMAE": 0.99553,
+      "model3wayBrier": 0.71644,
+      "baseline3wayBrier": 0.73035
     },
     "ENG_7_northern-premier-league": {
       "n": 11,
@@ -154,11 +154,11 @@
       "baseline3wayBrier": 0.62565
     },
     "BRA_1_serie-a": {
-      "n": 11,
-      "modelGoalMAE": 0.96388,
-      "baselineGoalMAE": 0.95552,
-      "model3wayBrier": 0.69351,
-      "baseline3wayBrier": 0.67943
+      "n": 12,
+      "modelGoalMAE": 0.94235,
+      "baselineGoalMAE": 0.94222,
+      "model3wayBrier": 0.66363,
+      "baseline3wayBrier": 0.65839
     },
     "GER_2_2-bundesliga": {
       "n": 7,
@@ -405,14 +405,14 @@
       "league": "UEFA_1_europa-league",
       "status": "NON_REGULATION_SCORE",
       "reason": "CUP_OR_UEFA_REGULATION_SCORE_UNVERIFIED",
-      "pastResults": 72,
+      "pastResults": 90,
       "upcomingFixtures": 18
     },
     {
       "league": "UEFA_1_conference-league",
       "status": "NON_REGULATION_SCORE",
       "reason": "CUP_OR_UEFA_REGULATION_SCORE_UNVERIFIED",
-      "pastResults": 54,
+      "pastResults": 72,
       "upcomingFixtures": 36
     },
     {
@@ -462,7 +462,7 @@
       "status": "NON_REGULATION_SCORE",
       "reason": "CUP_OR_UEFA_REGULATION_SCORE_UNVERIFIED",
       "pastResults": 129,
-      "upcomingFixtures": 8
+      "upcomingFixtures": 5
     },
     {
       "league": "SCO_CUP_scottish-cup",

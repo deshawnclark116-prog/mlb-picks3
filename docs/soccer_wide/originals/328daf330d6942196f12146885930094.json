@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "328daf330d6942196f12146885930094",
+  "captured_at_utc": "2026-11-27T23:28:12.485Z",
+  "catalog_generated_at_utc": "2026-11-27T14:48:16Z",
+  "original_code_sha": "82e902f96588f37bdff0189634b7b345ba544b41",
+  "source_results_sha256": "92c9433e8a901ba1474ab470addf12308b0a6c6b2406ff94bc2bc0321f6e0522",
+  "source_fixtures_sha256": "27897f8879502bc533cc0831caa60e653b55839ca56e1c3aa04f2b4dd85f8a1b",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ARG_1_liga-profesional",
+    "season": "2026-27",
+    "date": "2026-11-29",
+    "home": "Boca Juniors",
+    "away": "Gimnasia La Plata",
+    "expectedHomeGoals": 1.358,
+    "expectedAwayGoals": 0.9088,
+    "baselineHomeGoals": 1.2706,
+    "baselineAwayGoals": 1.0396,
+    "probabilities": {
+      "home": 0.4722,
+      "draw": 0.2769,
+      "away": 0.2509,
+      "over25": 0.3951,
+      "btts": 0.4435
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 18.5395,
+    "awayWeightedMatches": 17.4405,
+    "source": "open-matchday/fixture/ARG_1_liga-profesional",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}
