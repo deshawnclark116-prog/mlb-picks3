@@ -178,6 +178,18 @@ class PredictNoFinalLeakage(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'STALE_OR_OUT_OF_ORDER'):
             enrich_pretip_player_identities(early,bad,now)
 
+    def test_stale_optional_v5_does_not_block_fresh_v3(self):
+        now=dt.datetime(2026,11,20,23,0,tzinfo=dt.timezone.utc)
+        v3=roster(tip="2026-11-20T22:50:00+00:00")
+        old=roster(now="2026-11-19T12:00:00+00:00")
+        old["model_version"]="nba-v5-native-possession-simulation"
+        doc=generate_shadow(v3,[],now,history_sha="a"*64,v3_sha="b"*64,v5_roster=old,v5_roster_sha="c"*64)
+        self.assertEqual(doc["optional_v5_roster_disposition"],"V5_OPTIONAL_STALE_SKIPPED_FRESH_V3_ONLY")
+        self.assertEqual(doc["games_forecast"],0)
+        old["generated_at_utc"]="2026-11-21T23:00:00+00:00"
+        with self.assertRaisesRegex(ValueError,"STALE_OR_OUT_OF_ORDER"):
+            generate_shadow(v3,[],now,history_sha="a"*64,v3_sha="b"*64,v5_roster=old)
+
     def test_original_archive_is_immutable(self):
         latest={
             "schema":SCHEMA,"generated_at_utc":"2026-11-20T23:00:00Z",

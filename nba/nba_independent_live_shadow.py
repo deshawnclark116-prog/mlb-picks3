@@ -252,13 +252,32 @@ def enrich_pretip_player_identities(v3, v5, now):
 
 def generate_shadow(v3, historic_games, now, *, history_sha, v3_sha, v5_roster=None, v5_roster_sha=None,
                     confidence_calibration=None):
-    roster_inputs = enrich_pretip_player_identities(v3, v5_roster, now) if v5_roster else v3
+    # V3 is independently validated and sufficient for identity-only research.
+    # Optional V5 may be stale when its pretip collector has not run yet.
+    # Do not use stale V5 or suppress valid V3; identity/fixture conflicts
+    # and future timestamps still fail closed.
+    selected_live_games(v3, now)
+    roster_inputs = v3
+    disposition = "V3_ONLY_NO_V5_INPUT"
+    if v5_roster:
+        observed = utc(v5_roster["generated_at_utc"])
+        prior = utc(v3["generated_at_utc"])
+        if observed > now + dt.timedelta(minutes=2):
+            raise ValueError("NBA_INDEPENDENT_V5_ROSTER_STALE_OR_OUT_OF_ORDER")
+        if now - observed > dt.timedelta(hours=MAX_SOURCE_AGE_HOURS) or observed < prior - dt.timedelta(minutes=10):
+            if not str(v5_roster.get("model_version","")).startswith("nba-v5-"):
+                raise ValueError("NBA_INDEPENDENT_NOT_A_V5_PREGAME_ROSTER")
+            disposition = "V5_OPTIONAL_STALE_SKIPPED_FRESH_V3_ONLY"
+        else:
+            roster_inputs = enrich_pretip_player_identities(v3, v5_roster, now)
+            disposition = "V5_FRESH_IDENTITIES_ACCEPTED"
     eligible_games = selected_live_games(roster_inputs, now)
     root = {
         "schema": SCHEMA, "model_version": VERSION,
         "generated_at_utc": now.isoformat(), "source_v3_generated_at_utc": v3["generated_at_utc"],
         "source_v3_sha256": v3_sha, "source_game_history_sha256": history_sha,
         "additional_pretip_v5_roster_sha256": v5_roster_sha,
+        "optional_v5_roster_disposition": disposition,
         "roster_source_used_for_player_identity_only": "PUBLISHED_V5_WHEN_FRESH_ELSE_V3",
         "v5_stat_means_not_used_in_independent_model": True,
         "model_2025_validation_arm": "direct",
