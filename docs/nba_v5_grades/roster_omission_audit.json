@@ -946,6 +946,193 @@
       "report_is_postgame_diagnostic_only": true
     },
     {
+      "away": "Cleveland Cavaliers",
+      "forecast_at_utc": "2026-11-25T23:48:15.989203+00:00",
+      "forecast_player_id_count": 24,
+      "game_id": "401909319",
+      "home": "New York Knicks",
+      "missing_minutes_by_side": {
+        "away": 0.0,
+        "home": 15.0
+      },
+      "missing_players": [
+        {
+          "actual_minutes": 9.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
+          "player": "Tyler Nickel",
+          "player_id": "4838721",
+          "side": "home",
+          "team_id": "18"
+        },
+        {
+          "actual_minutes": 6.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
+          "player": "James Wiseman",
+          "player_id": "4432808",
+          "side": "home",
+          "team_id": "18"
+        }
+      ],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 15.0,
+      "played_players": 22,
+      "played_players_missing_from_v5": 2,
+      "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "Minnesota Timberwolves",
+      "forecast_at_utc": "2026-11-25T23:48:15.989203+00:00",
+      "forecast_player_id_count": 24,
+      "game_id": "401909320",
+      "home": "Oklahoma City Thunder",
+      "missing_minutes_by_side": {
+        "away": 0.0,
+        "home": 0.0
+      },
+      "missing_players": [],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 0.0,
+      "played_players": 18,
+      "played_players_missing_from_v5": 0,
+      "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "LA Clippers",
+      "forecast_at_utc": "2026-11-25T23:48:15.989203+00:00",
+      "forecast_player_id_count": 28,
+      "game_id": "401909321",
+      "home": "Memphis Grizzlies",
+      "missing_minutes_by_side": {
+        "away": 18.0,
+        "home": 4.0
+      },
+      "missing_players": [
+        {
+          "actual_minutes": 18.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
+          "player": "Yanic Konan Niederhauser",
+          "player_id": "5108024",
+          "side": "away",
+          "team_id": "12"
+        },
+        {
+          "actual_minutes": 4.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
+          "player": "Karim Lopez",
+          "player_id": "5231919",
+          "side": "home",
+          "team_id": "29"
+        }
+      ],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 22.0,
+      "played_players": 27,
+      "played_players_missing_from_v5": 2,
+      "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "Brooklyn Nets",
+      "forecast_at_utc": "2026-11-25T23:48:15.989203+00:00",
+      "forecast_player_id_count": 29,
+      "game_id": "401909322",
+      "home": "Milwaukee Bucks",
+      "missing_minutes_by_side": {
+        "away": 13.0,
+        "home": 0.0
+      },
+      "missing_players": [
+        {
+          "actual_minutes": 13.0,
+          "actually_started": false,
+          "cause": "ABSENT_FROM_FROZEN_V5_INPUT",
+          "frozen_availability_source": null,
+          "frozen_model_version": null,
+          "frozen_p_active": null,
+          "frozen_reported_status": null,
+          "player": "Grant Nelson",
+          "player_id": "4702670",
+          "side": "away",
+          "team_id": "17"
+        }
+      ],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 13.0,
+      "played_players": 22,
+      "played_players_missing_from_v5": 1,
+      "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "Phoenix Suns",
+      "forecast_at_utc": "2026-11-25T23:48:15.989203+00:00",
+      "forecast_player_id_count": 32,
+      "game_id": "401909323",
+      "home": "Houston Rockets",
+      "missing_minutes_by_side": {
+        "away": 0.0,
+        "home": 0.0
+      },
+      "missing_players": [],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 0.0,
+      "played_players": 20,
+      "played_players_missing_from_v5": 0,
+      "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "Sacramento Kings",
+      "forecast_at_utc": "2026-11-26T02:44:14.585031+00:00",
+      "forecast_player_id_count": 28,
+      "game_id": "401909324",
+      "home": "Golden State Warriors",
+      "missing_minutes_by_side": {
+        "away": 0.0,
+        "home": 0.0
+      },
+      "missing_players": [],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 0.0,
+      "played_players": 21,
+      "played_players_missing_from_v5": 0,
+      "report_is_postgame_diagnostic_only": true
+    },
+    {
+      "away": "San Antonio Spurs",
+      "forecast_at_utc": "2026-11-26T02:44:14.585031+00:00",
+      "forecast_player_id_count": 26,
+      "game_id": "401909325",
+      "home": "Portland Trail Blazers",
+      "missing_minutes_by_side": {
+        "away": 0.0,
+        "home": 0.0
+      },
+      "missing_players": [],
+      "omitted_played_starters": 0,
+      "played_minutes_missing_from_v5": 0.0,
+      "played_players": 20,
+      "played_players_missing_from_v5": 0,
+      "report_is_postgame_diagnostic_only": true
+    },
+    {
       "away": "Orlando Magic",
       "forecast_at_utc": "2026-11-06T01:34:44.132671+00:00",
       "forecast_player_id_count": 23,
@@ -4103,10 +4290,10 @@
       "report_is_postgame_diagnostic_only": true
     }
   ],
-  "games_graded": 142,
-  "games_with_missing_played_players": 63,
+  "games_graded": 149,
+  "games_with_missing_played_players": 66,
   "purpose": "Postgame validation only; cannot supply a future pretip roster",
   "schema": "NBA_V5_POSTGAME_ROSTER_OMISSION_AUDIT_V1",
-  "total_missing_played_minutes": 1760.0,
-  "total_missing_played_players": 125
+  "total_missing_played_minutes": 1810.0,
+  "total_missing_played_players": 130
 }
