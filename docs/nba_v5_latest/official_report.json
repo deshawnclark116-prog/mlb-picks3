@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
-  "published_at_utc": "2026-11-27T23:30:00+00:00",
-  "captured_at_utc": "2026-11-27T23:43:59.287466+00:00",
-  "source_sha256": "8c4f7612c5c360b720008fc7f826fd9a2217114330fe58d4b6b0d5ca9f35a233",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
+  "published_at_utc": "2026-11-27T23:45:00+00:00",
+  "captured_at_utc": "2026-11-27T23:47:53.793505+00:00",
+  "source_sha256": "214881bca55d1d8171c9de9f2a319f7215210941fb6b165e9083cbacc8c3223c",
   "reports": [
     {
       "matchup": "MIA@NYK",
@@ -307,7 +307,7 @@
       "team_abbr": "IND",
       "player": "Nance Jr., Larry",
       "normalized_player": "larry nance",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Ankle Bruise"
     },
     {

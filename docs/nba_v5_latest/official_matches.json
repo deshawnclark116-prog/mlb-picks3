@@ -1,84 +1,4 @@
 {
-  "401909326": [
-    {
-      "matchup": "MIA@NYK",
-      "team_abbr": "MIA",
-      "player": "Antetokounmpo, Giannis",
-      "normalized_player": "giannis antetokounmpo",
-      "status": "AVAILABLE",
-      "reason": "Injury/Illness - Right Groin Tendinitis",
-      "player_id": "3032977",
-      "team_id": "14",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "MIA@NYK",
-      "team_abbr": "MIA",
-      "player": "Wiggins, Andrew",
-      "normalized_player": "andrew wiggins",
-      "status": "AVAILABLE",
-      "reason": "",
-      "player_id": "3059319",
-      "team_id": "14",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "MIA@NYK",
-      "team_abbr": "NYK",
-      "player": "Towns, Karl-Anthony",
-      "normalized_player": "karl anthony towns",
-      "status": "AVAILABLE",
-      "reason": "",
-      "player_id": "3136195",
-      "team_id": "18",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "MIA@NYK",
-      "team_abbr": "NYK",
-      "player": "Clarkson, Jordan",
-      "normalized_player": "jordan clarkson",
-      "status": "OUT",
-      "reason": "Injury/Illness - Right Plantar Fasciitis",
-      "player_id": "2528426",
-      "team_id": "18",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "MIA@NYK",
-      "team_abbr": "NYK",
-      "player": "Anunoby, OG",
-      "normalized_player": "og anunoby",
-      "status": "OUT",
-      "reason": "Injury/Illness - Left Calf Strain",
-      "player_id": "3934719",
-      "team_id": "18",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
-      "source": "official_nba_injury_report"
-    },
-    {
-      "matchup": "MIA@NYK",
-      "team_abbr": "NYK",
-      "player": "McBride, Miles",
-      "normalized_player": "miles mcbride",
-      "status": "OUT",
-      "reason": "Injury/Illness - Left Athletic Pubalgia",
-      "player_id": "4431823",
-      "team_id": "18",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
-      "source": "official_nba_injury_report"
-    }
-  ],
   "401909327": [
     {
       "matchup": "MIL@DET",
@@ -89,8 +9,8 @@
       "reason": "G League - Two-Way",
       "player_id": "4397114",
       "team_id": "15",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -102,8 +22,8 @@
       "reason": "G League - Two-Way",
       "player_id": "4697268",
       "team_id": "15",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -115,8 +35,8 @@
       "reason": "",
       "player_id": "5214640",
       "team_id": "15",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -128,8 +48,8 @@
       "reason": "Injury/Illness - Right Arthroscopy",
       "player_id": "2990962",
       "team_id": "8",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -141,8 +61,8 @@
       "reason": "Injury/Illness - Left Quadriceps Strain",
       "player_id": "3157465",
       "team_id": "8",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -154,8 +74,8 @@
       "reason": "",
       "player_id": "4432166",
       "team_id": "8",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -167,8 +87,8 @@
       "reason": "Injury/Illness - Right Hamstring Strain",
       "player_id": "4433621",
       "team_id": "8",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     }
   ],
@@ -182,8 +102,8 @@
       "reason": "Injury/Illness - Right Hand Laceration",
       "player_id": "3133603",
       "team_id": "11",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -191,12 +111,12 @@
       "team_abbr": "IND",
       "player": "Nance Jr., Larry",
       "normalized_player": "larry nance",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Ankle Bruise",
       "player_id": "2580365",
       "team_id": "11",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -208,8 +128,8 @@
       "reason": "",
       "player_id": "2530530",
       "team_id": "11",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -221,8 +141,8 @@
       "reason": "Injury/Illness - Left Meniscus Surgery",
       "player_id": "4433076",
       "team_id": "11",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -234,8 +154,8 @@
       "reason": "Injury/Illness - Illness",
       "player_id": "3059318",
       "team_id": "20",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -247,8 +167,8 @@
       "reason": "",
       "player_id": "3912848",
       "team_id": "20",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -260,8 +180,8 @@
       "reason": "",
       "player_id": "3917376",
       "team_id": "20",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -273,8 +193,8 @@
       "reason": "Injury/Illness - Right Achilles Tendon",
       "player_id": "4871141",
       "team_id": "20",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     }
   ],
@@ -288,8 +208,8 @@
       "reason": "G League - On Assignment",
       "player_id": "5037873",
       "team_id": "17",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -301,8 +221,8 @@
       "reason": "",
       "player_id": "3150844",
       "team_id": "17",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -314,8 +234,8 @@
       "reason": "Injury/Illness - Right Hamstring Strain",
       "player_id": "5279130",
       "team_id": "17",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -327,8 +247,8 @@
       "reason": "G League - Two-Way",
       "player_id": "4397784",
       "team_id": "28",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -340,8 +260,8 @@
       "reason": "Injury/Illness - Left Knee Soreness",
       "player_id": "4702656",
       "team_id": "28",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -353,8 +273,8 @@
       "reason": "Injury/Illness - Right Hamstring Strain",
       "player_id": "4395625",
       "team_id": "28",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -366,8 +286,8 @@
       "reason": "",
       "player_id": "6450",
       "team_id": "28",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     }
   ],
@@ -381,8 +301,8 @@
       "reason": "G League - Two-Way",
       "player_id": "4431714",
       "team_id": "1",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -394,8 +314,8 @@
       "reason": "Injury/Illness - Left Calf Strain",
       "player_id": "2490149",
       "team_id": "1",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -407,8 +327,8 @@
       "reason": "Injury/Illness - Right Great Toe Sprain",
       "player_id": "3146557",
       "team_id": "1",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -420,8 +340,8 @@
       "reason": "Injury/Illness - Left Great Toe Surgery",
       "player_id": "4873201",
       "team_id": "1",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -433,8 +353,8 @@
       "reason": "G League - Two-Way",
       "player_id": "4433188",
       "team_id": "2",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -446,8 +366,8 @@
       "reason": "Injury/Illness - Illness",
       "player_id": "4351852",
       "team_id": "2",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     }
   ],
@@ -461,8 +381,8 @@
       "reason": "Injury/Illness - Face Mask",
       "player_id": "5279133",
       "team_id": "16",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -474,8 +394,8 @@
       "reason": "",
       "player_id": "3934673",
       "team_id": "16",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -487,8 +407,8 @@
       "reason": "Injury/Illness - Right Hamstring Strain",
       "player_id": "4432247",
       "team_id": "16",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -500,8 +420,8 @@
       "reason": "",
       "player_id": "4594268",
       "team_id": "16",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -513,8 +433,8 @@
       "reason": "",
       "player_id": "5105550",
       "team_id": "29",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     }
   ],
@@ -529,8 +449,8 @@
       "reason": "Injury/Illness - Right Finger Splint",
       "player_id": "4397014",
       "team_id": "13",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -542,8 +462,8 @@
       "reason": "",
       "player_id": "4066457",
       "team_id": "13",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -555,8 +475,8 @@
       "reason": "Injury/Illness - Right Shin Contusion",
       "player_id": "4066259",
       "team_id": "24",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -568,8 +488,8 @@
       "reason": "",
       "player_id": "5037871",
       "team_id": "24",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -581,8 +501,8 @@
       "reason": "Injury/Illness - Left Calf Strain",
       "player_id": "6440",
       "team_id": "24",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     }
   ],
@@ -596,8 +516,8 @@
       "reason": "Injury/Illness - Left Knee Strain",
       "player_id": "4397077",
       "team_id": "26",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -609,8 +529,8 @@
       "reason": "Injury/Illness - Right Hand Fracture",
       "player_id": "4066336",
       "team_id": "26",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -622,8 +542,8 @@
       "reason": "G League - On Assignment",
       "player_id": "4433607",
       "team_id": "7",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     }
   ],
@@ -637,8 +557,8 @@
       "reason": "G League - Two-Way",
       "player_id": "4398390",
       "team_id": "12",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -650,8 +570,8 @@
       "reason": "G League - Two-Way",
       "player_id": "4845363",
       "team_id": "12",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -663,8 +583,8 @@
       "reason": "",
       "player_id": "4396818",
       "team_id": "12",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -676,8 +596,8 @@
       "reason": "G League - Two-Way",
       "player_id": "4683742",
       "team_id": "3",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -689,8 +609,8 @@
       "reason": "Injury/Illness - Left Ankle Sprain",
       "player_id": "3907497",
       "team_id": "3",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -702,8 +622,8 @@
       "reason": "Injury/Illness - Left Plantar Fasciitis",
       "player_id": "4683634",
       "team_id": "3",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     }
   ],
@@ -717,8 +637,8 @@
       "reason": "Injury/Illness - Left Ankle Fracture",
       "player_id": "4578893",
       "team_id": "22",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -730,8 +650,8 @@
       "reason": "Not With Team",
       "player_id": "3102531",
       "team_id": "9",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     },
     {
@@ -743,8 +663,8 @@
       "reason": "Injury/Illness - Right Oblique Tear",
       "player_id": "3975",
       "team_id": "9",
-      "published_at_utc": "2026-11-27T23:30:00+00:00",
-      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_30PM.pdf",
+      "published_at_utc": "2026-11-27T23:45:00+00:00",
+      "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
       "source": "official_nba_injury_report"
     }
   ]
