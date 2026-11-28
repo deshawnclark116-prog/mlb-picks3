@@ -92,18 +92,19 @@ def forecast(arm,games,schedule,rosters,receipts,schedule_receipt):
         x=inputs(g,h,a,rr);ids=list(x)
         rows=[{"f":x[p][0]} for p in ids]
         pa,mn,mu=arm.predict(rows);owner={p:t for t in ts for p in rr[t]}
+        survival=arm.survivals(rows) if hasattr(arm,"survivals") else None
         forecast_rows=[]
         for i,pid in enumerate(ids):
             t=owner[pid]
             for j,m in enumerate(MARKETS):
                 v=float(mu[i,j]);target=own_target(v)
-                cond=[arm.p(j,v,k) for k in RANGES[j]]
+                cond=survival[j][i].tolist() if survival is not None else [arm.p(j,v,k) for k in RANGES[j]]
                 if any(cond[k]>cond[k-1]+1e-10 for k in range(1,len(cond))):raise ValueError("nonmonotone CDF")
-                chance=float(arm.p(j,v,target)*pa[i]) if target>0 else None
+                chance=float(cond[target-1]*pa[i]) if 0<target<=len(cond) else None
                 forecast_rows.append({"player_id":pid,"name":rosters[t][pid]["name"],"team_id":t,"market":m,
                     "projection":v,"conditional_minutes":float(mn[i]),"p_active":float(pa[i]),
                     "own_target":target,"own_target_probability":chance,"conditional_reach_1_to_K":cond,
-                    "candidate":bool(target>=MINIMUM_TARGETS[j] and pa[i]>=.75 and len(h.players.get(pid,[]))>=5)})
+                    "candidate":bool(chance is not None and target>=MINIMUM_TARGETS[j] and pa[i]>=.75 and len(h.players.get(pid,[]))>=5)})
         # A fresh scoreboard observation must still say PRE, and actual
         # freeze time must precede tipoff with margin.
         from zoneinfo import ZoneInfo

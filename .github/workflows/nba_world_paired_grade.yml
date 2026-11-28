@@ -1,0 +1,67 @@
+name: NBA WORLD immutable prospective paired grading
+on:
+  push:
+    branches: [research/nba-world-cleanroom]
+    paths:
+      - 'nba_world/paired_prospective.py'
+      - '.github/workflows/nba_world_paired_grade.yml'
+  workflow_dispatch:
+    inputs:
+      source_run:
+        description: 'Successful forecast workflow run ID'
+        default: '46171567847'
+        required: true
+      source_artifact:
+        description: 'Frozen forecast artifact name'
+        default: 'nba-world-prospective-frozen-46171567847'
+        required: true
+      forecast_filename:
+        description: 'JSON file in artifact'
+        default: 'nba_world_prospective.json'
+        required: true
+      expected_sha:
+        description: 'Printed SHA256 of immutable forecast'
+        default: '581047b1558229beb521af2d5a3f62122de5b7c7272e5059f35273679cccb9e6'
+        required: true
+permissions:
+  contents: read
+  actions: read
+jobs:
+  grade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: incumbent
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: |
+          pip install 'numpy>=1.26,<2.5' 'scikit-learn>=1.6,<1.9'
+          pip install 'torch>=2.6,<3' --index-url https://download.pytorch.org/whl/cpu
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ inputs.source_run || '46171567847' }}
+          name: ${{ inputs.source_artifact || 'nba-world-prospective-frozen-46171567847' }}
+          path: /tmp/frozen
+      - name: Grade exact preserved forecast
+        env:
+          FILENAME: ${{ inputs.forecast_filename || 'nba_world_prospective.json' }}
+          EXPECTED_SHA: ${{ inputs.expected_sha || '581047b1558229beb521af2d5a3f62122de5b7c7272e5059f35273679cccb9e6' }}
+        run: |
+          set -e
+          test "$(basename "$FILENAME")" = "$FILENAME"
+          echo "$EXPECTED_SHA  /tmp/frozen/$FILENAME" | sha256sum -c -
+          python -u -m nba_world.prospective_grade --forecast "/tmp/frozen/$FILENAME" --out /tmp/own_grade.json
+          python -u -m nba_world.paired_prospective --forecast "/tmp/frozen/$FILENAME" --expected-sha "$EXPECTED_SHA" \
+            --archive incumbent/docs/nba_v5_lineup_archive/first --out /tmp/paired_grade.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-world-prospective-grades-${{ github.run_id }}
+          path: |
+            /tmp/own_grade.json
+            /tmp/paired_grade.json

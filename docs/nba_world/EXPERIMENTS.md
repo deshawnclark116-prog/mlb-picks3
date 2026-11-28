@@ -57,3 +57,12 @@ Run 46171305843 failed at ESPN scoreboard multi-day query HTTP 400 after trainin
 
 ## Ranking control
 Separate old frontend ordering, old conditional probability ordering, old unconditional probability ordering, independent probabilities with common incumbent availability, and independent probabilities with independently predicted availability. Compare exact same event targets and candidate set; report market selection mix and game-cluster interval for improvements over old probability ordering. Prevent apparent gains due to sorting alone from being mistaken for model skill.
+
+## Distribution V1 result
+Run 46170755862: 130799 training and 15594 calibration rows, 142 November games, 15292 graded rows, 28 verified corrections. Direct MAE V5 -> new: points 4.5951 -> 4.5391, rebounds 1.8773 -> 1.8669, assists 1.3340 -> 1.3387, threes .91675 -> .91605. Top4 365/568 -> 394/568; Top10 872/1420 -> 946/1420. Brier lower across all four; rebounds interval includes zero; direct MAE intervals all include zero. Not prospective. Minutes 5.0403 -> 4.7499. No promotion.
+
+## Prospective source and rank controls
+Run 46171567847 successfully froze BOX_ONLY V1 forecasts: 13 games, 1836 rows, 707 eligible rows, no roster/schedule failures; one of 29 recent final source revalidations failed on '--' stat, retaining original valid record. SHA256 581047b1558229beb521af2d5a3f62122de5b7c7272e5059f35273679cccb9e6. Artifact retained 90 days, not permanent. Run 46171621824 confirmed old frontend rank equals unconditional probability ranking; independent box-only top4 397 vs 365 and top10 922 vs 872. New board heavily concentrated in threes; not proof of uniform market improvement.
+
+## Direct prospective and paired grading
+Train unchanged Distribution V1 on original chronology, serialize trusted fitted checkpoint, freeze independent forecasts. Grade same-event incumbent original targets against frozen independent survival distributions; report missing coverage, first pretip timing and separate within-30-minute cohort, with no claim of identical information. No production changes. No scheduled automation installed.
