@@ -1,35 +1,35 @@
 {
   "schema": "NBA_V5_IMMUTABLE_EXACT_CONFIRMED_CARD_AUDIT_V1",
   "kind": "last",
-  "games_with_archives_and_grades": 149,
-  "games_without_eligible_confirmed_starters": 99,
-  "files_missing_final_grade": 11,
+  "games_with_archives_and_grades": 160,
+  "games_without_eligible_confirmed_starters": 105,
+  "files_missing_final_grade": 0,
   "post_tip_forecasts_rejected": 0,
-  "confirmed_starters_missing_dnp_contract": 305,
+  "confirmed_starters_missing_dnp_contract": 340,
   "top4": {
-    "n": 200,
-    "hits": 141,
-    "hit_rate": 0.705,
-    "average_probability": 0.7168,
-    "gap": 0.0118,
-    "brier": 0.211004
+    "n": 220,
+    "hits": 156,
+    "hit_rate": 0.7091,
+    "average_probability": 0.7181,
+    "gap": 0.009,
+    "brier": 0.207271
   },
   "top10": {
-    "n": 500,
-    "hits": 335,
-    "hit_rate": 0.67,
-    "average_probability": 0.6589,
-    "gap": -0.0111,
-    "brier": 0.221557
+    "n": 550,
+    "hits": 366,
+    "hit_rate": 0.6655,
+    "average_probability": 0.6612,
+    "gap": -0.0042,
+    "brier": 0.221186
   },
   "top4_by_market": {
     "assists": {
-      "n": 22,
-      "hits": 13,
-      "hit_rate": 0.5909,
-      "average_probability": 0.7149,
-      "gap": 0.124,
-      "brier": 0.265397
+      "n": 24,
+      "hits": 14,
+      "hit_rate": 0.5833,
+      "average_probability": 0.7146,
+      "gap": 0.1313,
+      "brier": 0.267569
     },
     "blocks": {
       "n": 13,
@@ -40,28 +40,28 @@
       "brier": 0.308127
     },
     "rebounds": {
-      "n": 20,
-      "hits": 17,
-      "hit_rate": 0.85,
-      "average_probability": 0.6716,
-      "gap": -0.1784,
-      "brier": 0.154482
+      "n": 21,
+      "hits": 18,
+      "hit_rate": 0.8571,
+      "average_probability": 0.6729,
+      "gap": -0.1842,
+      "brier": 0.151428
     },
     "steals": {
-      "n": 70,
-      "hits": 51,
-      "hit_rate": 0.7286,
-      "average_probability": 0.7362,
-      "gap": 0.0076,
-      "brier": 0.197348
+      "n": 77,
+      "hits": 56,
+      "hit_rate": 0.7273,
+      "average_probability": 0.7364,
+      "gap": 0.0092,
+      "brier": 0.195117
     },
     "three_pointers_made": {
-      "n": 75,
-      "hits": 53,
-      "hit_rate": 0.7067,
-      "average_probability": 0.7163,
-      "gap": 0.0096,
-      "brier": 0.206032
+      "n": 85,
+      "hits": 61,
+      "hit_rate": 0.7176,
+      "average_probability": 0.7183,
+      "gap": 0.0006,
+      "brier": 0.199626
     }
   },
   "top4_miss_causes": [
@@ -79,7 +79,7 @@
     ],
     [
       "outside_stated_80_percent_range",
-      2
+      3
     ],
     [
       "overtime_extra_minutes",
@@ -92,12 +92,12 @@
   ],
   "top4_by_probability_contract": {
     "DNP_INCLUSIVE": {
-      "n": 200,
-      "hits": 141,
-      "hit_rate": 0.705,
-      "average_probability": 0.7168,
-      "gap": 0.0118,
-      "brier": 0.211004
+      "n": 220,
+      "hits": 156,
+      "hit_rate": 0.7091,
+      "average_probability": 0.7181,
+      "gap": 0.009,
+      "brier": 0.207271
     }
   },
   "repeat_selected": [
@@ -106,7 +106,21 @@
         "Jeremiah Fears",
         "three_pointers_made"
       ],
-      6
+      7
+    ],
+    [
+      [
+        "Jeremiah Fears",
+        "steals"
+      ],
+      5
+    ],
+    [
+      [
+        "Cameron Johnson",
+        "steals"
+      ],
+      5
     ],
     [
       [
@@ -117,7 +131,7 @@
     ],
     [
       [
-        "Jeremiah Fears",
+        "Nikola Jokic",
         "steals"
       ],
       4
@@ -125,13 +139,6 @@
     [
       [
         "Draymond Green",
-        "steals"
-      ],
-      4
-    ],
-    [
-      [
-        "Cameron Johnson",
         "steals"
       ],
       4
@@ -159,15 +166,15 @@
     ],
     [
       [
-        "Onyeka Okongwu",
-        "three_pointers_made"
+        "De'Anthony Melton",
+        "steals"
       ],
-      3
+      4
     ],
     [
       [
-        "Nikola Jokic",
-        "steals"
+        "Onyeka Okongwu",
+        "three_pointers_made"
       ],
       3
     ],
@@ -177,50 +184,43 @@
         "steals"
       ],
       3
-    ],
-    [
-      [
-        "Dylan Harper",
-        "three_pointers_made"
-      ],
-      3
     ]
   ],
   "shadow_candidate": {
     "status": "RESEARCH_ONLY_DO_NOT_PROMOTE",
-    "distinct_dates": 21,
-    "holdout_from": "2026-11-17",
-    "holdout_games": 18,
+    "distinct_dates": 22,
+    "holdout_from": "2026-11-18",
+    "holdout_games": 23,
     "baseline": {
-      "n": 72,
-      "hits": 52,
-      "hit_rate": 0.7222,
-      "average_probability": 0.7124,
-      "gap": -0.0098,
-      "brier": 0.194228
+      "n": 92,
+      "hits": 67,
+      "hit_rate": 0.7283,
+      "average_probability": 0.7165,
+      "gap": -0.0117,
+      "brier": 0.188948
     },
     "shadow": {
-      "n": 72,
-      "hits": 50,
-      "hit_rate": 0.6944,
-      "average_probability": 0.7321,
-      "gap": 0.0377,
-      "brier": 0.20309
+      "n": 92,
+      "hits": 65,
+      "hit_rate": 0.7065,
+      "average_probability": 0.7363,
+      "gap": 0.0298,
+      "brier": 0.195664
     },
-    "brier_reduction": -0.008862,
+    "brier_reduction": -0.006716,
     "brier_reduction_95pct_game_cluster_ci": [
-      -0.025308,
-      0.002883
+      -0.018855,
+      0.00274
     ],
-    "different_selection_count": 2,
+    "different_selection_count": 3,
     "by_market": {
       "assists": {
-        "n": 9,
-        "hits": 4,
-        "hit_rate": 0.4444,
-        "average_probability": 0.7419,
-        "gap": 0.2975,
-        "brier": 0.323507
+        "n": 12,
+        "hits": 6,
+        "hit_rate": 0.5,
+        "average_probability": 0.7388,
+        "gap": 0.2388,
+        "brier": 0.299831
       },
       "blocks": {
         "n": 3,
@@ -239,28 +239,28 @@
         "brier": 0.420195
       },
       "rebounds": {
-        "n": 10,
-        "hits": 9,
-        "hit_rate": 0.9,
-        "average_probability": 0.6962,
-        "gap": -0.2038,
-        "brier": 0.124932
+        "n": 11,
+        "hits": 10,
+        "hit_rate": 0.9091,
+        "average_probability": 0.6989,
+        "gap": -0.2102,
+        "brier": 0.12038
       },
       "steals": {
-        "n": 23,
-        "hits": 16,
-        "hit_rate": 0.6957,
-        "average_probability": 0.7435,
-        "gap": 0.0478,
-        "brier": 0.205734
+        "n": 29,
+        "hits": 20,
+        "hit_rate": 0.6897,
+        "average_probability": 0.7465,
+        "gap": 0.0568,
+        "brier": 0.202047
       },
       "three_pointers_made": {
-        "n": 26,
-        "hits": 20,
-        "hit_rate": 0.7692,
-        "average_probability": 0.7396,
-        "gap": -0.0296,
-        "brier": 0.165144
+        "n": 36,
+        "hits": 28,
+        "hit_rate": 0.7778,
+        "average_probability": 0.7445,
+        "gap": -0.0333,
+        "brier": 0.160656
       }
     },
     "promotion_allowed": false,

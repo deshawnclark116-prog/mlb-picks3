@@ -2,9 +2,9 @@
   "all_markets_and_players_included_not_frontend_selected": true,
   "by_frozen_pretip_roster_coverage": {
     "HIGH_AT_LEAST_90PCT": {
-      "DNP_players": 578,
-      "actual_play_fraction": 0.7942,
-      "games": 135,
+      "DNP_players": 649,
+      "actual_play_fraction": 0.7893,
+      "games": 146,
       "markets": {
         "assists": {
           "MAE": {
@@ -17,7 +17,7 @@
             "v4_only": 0.2056,
             "v5_only": 0.3247
           },
-          "n_all_played": 2230,
+          "n_all_played": 2431,
           "n_three_way_component_comparable": 268
         },
         "points": {
@@ -31,7 +31,7 @@
             "v4_only": 1.0776,
             "v5_only": 1.5821
           },
-          "n_all_played": 2230,
+          "n_all_played": 2431,
           "n_three_way_component_comparable": 268
         },
         "rebounds": {
@@ -45,7 +45,7 @@
             "v4_only": 0.1103,
             "v5_only": 0.3548
           },
-          "n_all_played": 2230,
+          "n_all_played": 2431,
           "n_three_way_component_comparable": 268
         },
         "three_pointers_made": {
@@ -59,16 +59,16 @@
             "v4_only": 0.0251,
             "v5_only": 0.109
           },
-          "n_all_played": 2230,
+          "n_all_played": 2431,
           "n_three_way_component_comparable": 268
         }
       },
-      "mean_active_probability_including_DNP": 0.7654,
-      "minute_MAE": 4.7518,
-      "minute_signed_bias": 0.4737,
-      "modeled_players_with_points_rows": 2808,
-      "played_players": 2230,
-      "player_minutes_off_by_6plus": 661,
+      "mean_active_probability_including_DNP": 0.7636,
+      "minute_MAE": 4.7028,
+      "minute_signed_bias": 0.4101,
+      "modeled_players_with_points_rows": 3080,
+      "played_players": 2431,
+      "player_minutes_off_by_6plus": 710,
       "predicted_40plus_actual_under_30": 0,
       "predicted_40plus_players": 0
     },
@@ -144,9 +144,9 @@
       "predicted_40plus_players": 14
     },
     "PARTIAL_75_TO_90PCT": {
-      "DNP_players": 166,
-      "actual_play_fraction": 0.8249,
-      "games": 67,
+      "DNP_players": 169,
+      "actual_play_fraction": 0.8267,
+      "games": 69,
       "markets": {
         "assists": {
           "MAE": {
@@ -159,7 +159,7 @@
             "v4_only": 0.1181,
             "v5_only": 0.5846
           },
-          "n_all_played": 782,
+          "n_all_played": 806,
           "n_three_way_component_comparable": 155
         },
         "points": {
@@ -173,7 +173,7 @@
             "v4_only": 0.7976,
             "v5_only": 2.8978
           },
-          "n_all_played": 782,
+          "n_all_played": 806,
           "n_three_way_component_comparable": 155
         },
         "rebounds": {
@@ -187,7 +187,7 @@
             "v4_only": 0.262,
             "v5_only": 1.0206
           },
-          "n_all_played": 782,
+          "n_all_played": 806,
           "n_three_way_component_comparable": 155
         },
         "three_pointers_made": {
@@ -201,16 +201,16 @@
             "v4_only": 0.1174,
             "v5_only": 0.3677
           },
-          "n_all_played": 782,
+          "n_all_played": 806,
           "n_three_way_component_comparable": 155
         }
       },
-      "mean_active_probability_including_DNP": 0.7791,
-      "minute_MAE": 5.6187,
-      "minute_signed_bias": 0.2943,
-      "modeled_players_with_points_rows": 948,
-      "played_players": 782,
-      "player_minutes_off_by_6plus": 289,
+      "mean_active_probability_including_DNP": 0.7758,
+      "minute_MAE": 5.5668,
+      "minute_signed_bias": 0.3593,
+      "modeled_players_with_points_rows": 975,
+      "played_players": 806,
+      "player_minutes_off_by_6plus": 293,
       "predicted_40plus_actual_under_30": 0,
       "predicted_40plus_players": 0
     }
@@ -219,7 +219,7 @@
     "ACTIVE": {
       "DNP_players": 0,
       "actual_play_fraction": 1.0,
-      "games": 49,
+      "games": 54,
       "markets": {
         "assists": {
           "MAE": {
@@ -232,7 +232,7 @@
             "v4_only": -0.4941,
             "v5_only": -0.78
           },
-          "n_all_played": 296,
+          "n_all_played": 334,
           "n_three_way_component_comparable": 24
         },
         "points": {
@@ -246,7 +246,7 @@
             "v4_only": -2.0924,
             "v5_only": -3.0373
           },
-          "n_all_played": 296,
+          "n_all_played": 334,
           "n_three_way_component_comparable": 24
         },
         "rebounds": {
@@ -260,7 +260,7 @@
             "v4_only": -0.2163,
             "v5_only": -0.3319
           },
-          "n_all_played": 296,
+          "n_all_played": 334,
           "n_three_way_component_comparable": 24
         },
         "three_pointers_made": {
@@ -274,23 +274,23 @@
             "v4_only": -0.2035,
             "v5_only": -0.264
           },
-          "n_all_played": 296,
+          "n_all_played": 334,
           "n_three_way_component_comparable": 24
         }
       },
       "mean_active_probability_including_DNP": 0.999,
-      "minute_MAE": 4.6799,
-      "minute_signed_bias": -1.6155,
-      "modeled_players_with_points_rows": 296,
-      "played_players": 296,
-      "player_minutes_off_by_6plus": 80,
+      "minute_MAE": 4.5157,
+      "minute_signed_bias": -1.6097,
+      "modeled_players_with_points_rows": 334,
+      "played_players": 334,
+      "player_minutes_off_by_6plus": 86,
       "predicted_40plus_actual_under_30": 0,
       "predicted_40plus_players": 0
     },
     "AVAILABLE": {
       "DNP_players": 13,
-      "actual_play_fraction": 0.9078,
-      "games": 91,
+      "actual_play_fraction": 0.915,
+      "games": 97,
       "markets": {
         "assists": {
           "MAE": {
@@ -303,7 +303,7 @@
             "v4_only": -0.3406,
             "v5_only": 0.0003
           },
-          "n_all_played": 128,
+          "n_all_played": 140,
           "n_three_way_component_comparable": 15
         },
         "points": {
@@ -317,7 +317,7 @@
             "v4_only": 3.2164,
             "v5_only": 4.4241
           },
-          "n_all_played": 128,
+          "n_all_played": 140,
           "n_three_way_component_comparable": 15
         },
         "rebounds": {
@@ -331,7 +331,7 @@
             "v4_only": -0.1052,
             "v5_only": 0.1852
           },
-          "n_all_played": 128,
+          "n_all_played": 140,
           "n_three_way_component_comparable": 15
         },
         "three_pointers_made": {
@@ -345,16 +345,16 @@
             "v4_only": 0.6022,
             "v5_only": 0.7057
           },
-          "n_all_played": 128,
+          "n_all_played": 140,
           "n_three_way_component_comparable": 15
         }
       },
       "mean_active_probability_including_DNP": 0.9958,
-      "minute_MAE": 4.9226,
-      "minute_signed_bias": 1.0587,
-      "modeled_players_with_points_rows": 141,
-      "played_players": 128,
-      "player_minutes_off_by_6plus": 35,
+      "minute_MAE": 4.8033,
+      "minute_signed_bias": 1.1207,
+      "modeled_players_with_points_rows": 153,
+      "played_players": 140,
+      "player_minutes_off_by_6plus": 37,
       "predicted_40plus_actual_under_30": 0,
       "predicted_40plus_players": 0
     },
@@ -502,8 +502,8 @@
     },
     "QUESTIONABLE": {
       "DNP_players": 10,
-      "actual_play_fraction": 0.5652,
-      "games": 16,
+      "actual_play_fraction": 0.5833,
+      "games": 17,
       "markets": {
         "assists": {
           "MAE": {
@@ -516,7 +516,7 @@
             "v4_only": -1.2337,
             "v5_only": -1.2354
           },
-          "n_all_played": 13,
+          "n_all_played": 14,
           "n_three_way_component_comparable": 3
         },
         "points": {
@@ -530,7 +530,7 @@
             "v4_only": -1.272,
             "v5_only": -1.188
           },
-          "n_all_played": 13,
+          "n_all_played": 14,
           "n_three_way_component_comparable": 3
         },
         "rebounds": {
@@ -544,7 +544,7 @@
             "v4_only": -1.7403,
             "v5_only": -1.9391
           },
-          "n_all_played": 13,
+          "n_all_played": 14,
           "n_three_way_component_comparable": 3
         },
         "three_pointers_made": {
@@ -558,23 +558,23 @@
             "v4_only": 0.8124,
             "v5_only": 0.8208
           },
-          "n_all_played": 13,
+          "n_all_played": 14,
           "n_three_way_component_comparable": 3
         }
       },
-      "mean_active_probability_including_DNP": 0.4666,
-      "minute_MAE": 4.1854,
-      "minute_signed_bias": 3.4792,
-      "modeled_players_with_points_rows": 23,
-      "played_players": 13,
+      "mean_active_probability_including_DNP": 0.4678,
+      "minute_MAE": 4.27,
+      "minute_signed_bias": 3.6143,
+      "modeled_players_with_points_rows": 24,
+      "played_players": 14,
       "player_minutes_off_by_6plus": 4,
       "predicted_40plus_actual_under_30": 0,
       "predicted_40plus_players": 0
     },
     "UNKNOWN_NOT_ACTIVE_CERTIFIED": {
-      "DNP_players": 738,
-      "actual_play_fraction": 0.786,
-      "games": 149,
+      "DNP_players": 812,
+      "actual_play_fraction": 0.7804,
+      "games": 160,
       "markets": {
         "assists": {
           "MAE": {
@@ -587,7 +587,7 @@
             "v4_only": 0.2771,
             "v5_only": 0.6154
           },
-          "n_all_played": 2711,
+          "n_all_played": 2885,
           "n_three_way_component_comparable": 436
         },
         "points": {
@@ -601,7 +601,7 @@
             "v4_only": 1.1151,
             "v5_only": 2.7931
           },
-          "n_all_played": 2711,
+          "n_all_played": 2885,
           "n_three_way_component_comparable": 436
         },
         "rebounds": {
@@ -615,7 +615,7 @@
             "v4_only": 0.2556,
             "v5_only": 0.8842
           },
-          "n_all_played": 2711,
+          "n_all_played": 2885,
           "n_three_way_component_comparable": 436
         },
         "three_pointers_made": {
@@ -629,27 +629,27 @@
             "v4_only": 0.0474,
             "v5_only": 0.261
           },
-          "n_all_played": 2711,
+          "n_all_played": 2885,
           "n_three_way_component_comparable": 436
         }
       },
-      "mean_active_probability_including_DNP": 0.7424,
-      "minute_MAE": 5.2568,
-      "minute_signed_bias": 0.7517,
-      "modeled_players_with_points_rows": 3449,
-      "played_players": 2711,
-      "player_minutes_off_by_6plus": 914,
+      "mean_active_probability_including_DNP": 0.7386,
+      "minute_MAE": 5.2026,
+      "minute_signed_bias": 0.7177,
+      "modeled_players_with_points_rows": 3697,
+      "played_players": 2885,
+      "player_minutes_off_by_6plus": 959,
       "predicted_40plus_actual_under_30": 9,
       "predicted_40plus_players": 14
     }
   },
-  "events": 15724,
-  "games": 149,
+  "events": 16920,
+  "games": 160,
   "no_filled_missing_values_or_hindsight_roster": true,
   "overall": {
-    "DNP_players": 764,
-    "actual_play_fraction": 0.8056,
-    "games": 149,
+    "DNP_players": 838,
+    "actual_play_fraction": 0.8019,
+    "games": 160,
     "markets": {
       "assists": {
         "MAE": {
@@ -662,7 +662,7 @@
           "v4_only": 0.2106,
           "v5_only": 0.511
         },
-        "n_all_played": 3167,
+        "n_all_played": 3392,
         "n_three_way_component_comparable": 484
       },
       "points": {
@@ -676,7 +676,7 @@
           "v4_only": 1.0272,
           "v5_only": 2.5288
         },
-        "n_all_played": 3167,
+        "n_all_played": 3392,
         "n_three_way_component_comparable": 484
       },
       "rebounds": {
@@ -690,7 +690,7 @@
           "v4_only": 0.2038,
           "v5_only": 0.7761
         },
-        "n_all_played": 3167,
+        "n_all_played": 3392,
         "n_three_way_component_comparable": 484
       },
       "three_pointers_made": {
@@ -704,16 +704,16 @@
           "v4_only": 0.0706,
           "v5_only": 0.2632
         },
-        "n_all_played": 3167,
+        "n_all_played": 3392,
         "n_three_way_component_comparable": 484
       }
     },
-    "mean_active_probability_including_DNP": 0.7698,
-    "minute_MAE": 5.1783,
-    "minute_signed_bias": 0.5553,
-    "modeled_players_with_points_rows": 3931,
-    "played_players": 3167,
-    "player_minutes_off_by_6plus": 1038,
+    "mean_active_probability_including_DNP": 0.7675,
+    "minute_MAE": 5.1087,
+    "minute_signed_bias": 0.5184,
+    "modeled_players_with_points_rows": 4230,
+    "played_players": 3392,
+    "player_minutes_off_by_6plus": 1091,
     "predicted_40plus_actual_under_30": 9,
     "predicted_40plus_players": 14
   },
@@ -1995,6 +1995,369 @@
           "played_points_player_minute_bias": 0.787,
           "played_points_players_count": 10,
           "postgame_missing_actual_player_minutes": 0.0,
+          "prior_coverage_source": "FROZEN_PRETIP_AUDIT",
+          "prior_coverage_warning": "NORMAL_RECENT_ROSTER_COVERAGE",
+          "prior_games_observed": 3,
+          "prior_missing_from_fixture_minutes": 0,
+          "prior_missing_from_model_minutes": 0,
+          "prior_rotation_coverage": 1.0,
+          "team_id": "22"
+        }
+      }
+    },
+    {
+      "away": "Miami Heat",
+      "game_id": "401909326",
+      "home": "New York Knicks",
+      "teams": {
+        "away": {
+          "played_points_player_minute_MAE": 2.903,
+          "played_points_player_minute_bias": -1.531,
+          "played_points_players_count": 10,
+          "postgame_missing_actual_player_minutes": null,
+          "prior_coverage_source": "FROZEN_PRETIP_AUDIT",
+          "prior_coverage_warning": "NORMAL_RECENT_ROSTER_COVERAGE",
+          "prior_games_observed": 3,
+          "prior_missing_from_fixture_minutes": 1.0,
+          "prior_missing_from_model_minutes": 0,
+          "prior_rotation_coverage": 0.9986,
+          "team_id": "14"
+        },
+        "home": {
+          "played_points_player_minute_MAE": 4.1567,
+          "played_points_player_minute_bias": -0.5011,
+          "played_points_players_count": 9,
+          "postgame_missing_actual_player_minutes": null,
+          "prior_coverage_source": "FROZEN_PRETIP_AUDIT",
+          "prior_coverage_warning": "NORMAL_RECENT_ROSTER_COVERAGE",
+          "prior_games_observed": 3,
+          "prior_missing_from_fixture_minutes": 54.0,
+          "prior_missing_from_model_minutes": 0,
+          "prior_rotation_coverage": 0.9249,
+          "team_id": "18"
+        }
+      }
+    },
+    {
+      "away": "Milwaukee Bucks",
+      "game_id": "401909327",
+      "home": "Detroit Pistons",
+      "teams": {
+        "away": {
+          "played_points_player_minute_MAE": 4.1809,
+          "played_points_player_minute_bias": 0.3009,
+          "played_points_players_count": 11,
+          "postgame_missing_actual_player_minutes": null,
+          "prior_coverage_source": "FROZEN_PRETIP_AUDIT",
+          "prior_coverage_warning": "NORMAL_RECENT_ROSTER_COVERAGE",
+          "prior_games_observed": 3,
+          "prior_missing_from_fixture_minutes": 29.0,
+          "prior_missing_from_model_minutes": 0,
+          "prior_rotation_coverage": 0.9599,
+          "team_id": "15"
+        },
+        "home": {
+          "played_points_player_minute_MAE": 5.131,
+          "played_points_player_minute_bias": -0.505,
+          "played_points_players_count": 10,
+          "postgame_missing_actual_player_minutes": null,
+          "prior_coverage_source": "FROZEN_PRETIP_AUDIT",
+          "prior_coverage_warning": "NORMAL_RECENT_ROSTER_COVERAGE",
+          "prior_games_observed": 3,
+          "prior_missing_from_fixture_minutes": 69.0,
+          "prior_missing_from_model_minutes": 0,
+          "prior_rotation_coverage": 0.9043,
+          "team_id": "8"
+        }
+      }
+    },
+    {
+      "away": "Philadelphia 76ers",
+      "game_id": "401909328",
+      "home": "Indiana Pacers",
+      "teams": {
+        "away": {
+          "played_points_player_minute_MAE": 3.7058,
+          "played_points_player_minute_bias": 1.4642,
+          "played_points_players_count": 12,
+          "postgame_missing_actual_player_minutes": null,
+          "prior_coverage_source": "FROZEN_PRETIP_AUDIT",
+          "prior_coverage_warning": "NORMAL_RECENT_ROSTER_COVERAGE",
+          "prior_games_observed": 3,
+          "prior_missing_from_fixture_minutes": 100.0,
+          "prior_missing_from_model_minutes": 0,
+          "prior_rotation_coverage": 0.8611,
+          "team_id": "20"
+        },
+        "home": {
+          "played_points_player_minute_MAE": 5.31,
+          "played_points_player_minute_bias": 1.1333,
+          "played_points_players_count": 12,
+          "postgame_missing_actual_player_minutes": null,
+          "prior_coverage_source": "FROZEN_PRETIP_AUDIT",
+          "prior_coverage_warning": "NORMAL_RECENT_ROSTER_COVERAGE",
+          "prior_games_observed": 3,
+          "prior_missing_from_fixture_minutes": 11.0,
+          "prior_missing_from_model_minutes": 0,
+          "prior_rotation_coverage": 0.9847,
+          "team_id": "11"
+        }
+      }
+    },
+    {
+      "away": "Brooklyn Nets",
+      "game_id": "401909329",
+      "home": "Toronto Raptors",
+      "teams": {
+        "away": {
+          "played_points_player_minute_MAE": 4.045,
+          "played_points_player_minute_bias": 3.4917,
+          "played_points_players_count": 12,
+          "postgame_missing_actual_player_minutes": null,
+          "prior_coverage_source": "FROZEN_PRETIP_AUDIT",
+          "prior_coverage_warning": "NORMAL_RECENT_ROSTER_COVERAGE",
+          "prior_games_observed": 3,
+          "prior_missing_from_fixture_minutes": 79.0,
+          "prior_missing_from_model_minutes": 0,
+          "prior_rotation_coverage": 0.8903,
+          "team_id": "17"
+        },
+        "home": {
+          "played_points_player_minute_MAE": 5.4167,
+          "played_points_player_minute_bias": -0.7878,
+          "played_points_players_count": 9,
+          "postgame_missing_actual_player_minutes": null,
+          "prior_coverage_source": "FROZEN_PRETIP_AUDIT",
+          "prior_coverage_warning": "NORMAL_RECENT_ROSTER_COVERAGE",
+          "prior_games_observed": 3,
+          "prior_missing_from_fixture_minutes": 0,
+          "prior_missing_from_model_minutes": 0,
+          "prior_rotation_coverage": 1.0,
+          "team_id": "28"
+        }
+      }
+    },
+    {
+      "away": "Atlanta Hawks",
+      "game_id": "401909330",
+      "home": "Boston Celtics",
+      "teams": {
+        "away": {
+          "played_points_player_minute_MAE": 1.8311,
+          "played_points_player_minute_bias": -0.12,
+          "played_points_players_count": 9,
+          "postgame_missing_actual_player_minutes": null,
+          "prior_coverage_source": "FROZEN_PRETIP_AUDIT",
+          "prior_coverage_warning": "NORMAL_RECENT_ROSTER_COVERAGE",
+          "prior_games_observed": 3,
+          "prior_missing_from_fixture_minutes": 0,
+          "prior_missing_from_model_minutes": 0,
+          "prior_rotation_coverage": 1.0,
+          "team_id": "1"
+        },
+        "home": {
+          "played_points_player_minute_MAE": 3.184,
+          "played_points_player_minute_bias": -1.432,
+          "played_points_players_count": 10,
+          "postgame_missing_actual_player_minutes": null,
+          "prior_coverage_source": "FROZEN_PRETIP_AUDIT",
+          "prior_coverage_warning": "NORMAL_RECENT_ROSTER_COVERAGE",
+          "prior_games_observed": 3,
+          "prior_missing_from_fixture_minutes": 0,
+          "prior_missing_from_model_minutes": 0,
+          "prior_rotation_coverage": 1.0,
+          "team_id": "2"
+        }
+      }
+    },
+    {
+      "away": "Memphis Grizzlies",
+      "game_id": "401909331",
+      "home": "Minnesota Timberwolves",
+      "teams": {
+        "away": {
+          "played_points_player_minute_MAE": 3.945,
+          "played_points_player_minute_bias": 0.501,
+          "played_points_players_count": 10,
+          "postgame_missing_actual_player_minutes": null,
+          "prior_coverage_source": "FROZEN_PRETIP_AUDIT",
+          "prior_coverage_warning": "NORMAL_RECENT_ROSTER_COVERAGE",
+          "prior_games_observed": 3,
+          "prior_missing_from_fixture_minutes": 4.0,
+          "prior_missing_from_model_minutes": 0,
+          "prior_rotation_coverage": 0.9945,
+          "team_id": "29"
+        },
+        "home": {
+          "played_points_player_minute_MAE": 5.7178,
+          "played_points_player_minute_bias": -1.8911,
+          "played_points_players_count": 9,
+          "postgame_missing_actual_player_minutes": null,
+          "prior_coverage_source": "FROZEN_PRETIP_AUDIT",
+          "prior_coverage_warning": "NORMAL_RECENT_ROSTER_COVERAGE",
+          "prior_games_observed": 3,
+          "prior_missing_from_fixture_minutes": 2.0,
+          "prior_missing_from_model_minutes": 0,
+          "prior_rotation_coverage": 0.9972,
+          "team_id": "16"
+        }
+      }
+    },
+    {
+      "away": "Dallas Mavericks",
+      "game_id": "401909332",
+      "home": "Phoenix Suns",
+      "teams": {
+        "away": {
+          "played_points_player_minute_MAE": 6.5289,
+          "played_points_player_minute_bias": -2.2489,
+          "played_points_players_count": 9,
+          "postgame_missing_actual_player_minutes": null,
+          "prior_coverage_source": "FROZEN_PRETIP_AUDIT",
+          "prior_coverage_warning": "NORMAL_RECENT_ROSTER_COVERAGE",
+          "prior_games_observed": 3,
+          "prior_missing_from_fixture_minutes": 35.0,
+          "prior_missing_from_model_minutes": 0,
+          "prior_rotation_coverage": 0.9514,
+          "team_id": "6"
+        },
+        "home": {
+          "played_points_player_minute_MAE": 4.349,
+          "played_points_player_minute_bias": -0.385,
+          "played_points_players_count": 10,
+          "postgame_missing_actual_player_minutes": null,
+          "prior_coverage_source": "FROZEN_PRETIP_AUDIT",
+          "prior_coverage_warning": "NORMAL_RECENT_ROSTER_COVERAGE",
+          "prior_games_observed": 3,
+          "prior_missing_from_fixture_minutes": 0,
+          "prior_missing_from_model_minutes": 0,
+          "prior_rotation_coverage": 1.0,
+          "team_id": "21"
+        }
+      }
+    },
+    {
+      "away": "Los Angeles Lakers",
+      "game_id": "401909333",
+      "home": "San Antonio Spurs",
+      "teams": {
+        "away": {
+          "played_points_player_minute_MAE": 4.652,
+          "played_points_player_minute_bias": 0.032,
+          "played_points_players_count": 10,
+          "postgame_missing_actual_player_minutes": null,
+          "prior_coverage_source": "FROZEN_PRETIP_AUDIT",
+          "prior_coverage_warning": "NORMAL_RECENT_ROSTER_COVERAGE",
+          "prior_games_observed": 3,
+          "prior_missing_from_fixture_minutes": 2.0,
+          "prior_missing_from_model_minutes": 0,
+          "prior_rotation_coverage": 0.9972,
+          "team_id": "13"
+        },
+        "home": {
+          "played_points_player_minute_MAE": 4.372,
+          "played_points_player_minute_bias": 0.678,
+          "played_points_players_count": 10,
+          "postgame_missing_actual_player_minutes": null,
+          "prior_coverage_source": "FROZEN_PRETIP_AUDIT",
+          "prior_coverage_warning": "NORMAL_RECENT_ROSTER_COVERAGE",
+          "prior_games_observed": 3,
+          "prior_missing_from_fixture_minutes": 0,
+          "prior_missing_from_model_minutes": 0,
+          "prior_rotation_coverage": 1.0,
+          "team_id": "24"
+        }
+      }
+    },
+    {
+      "away": "Denver Nuggets",
+      "game_id": "401909334",
+      "home": "Utah Jazz",
+      "teams": {
+        "away": {
+          "played_points_player_minute_MAE": 2.2664,
+          "played_points_player_minute_bias": 0.7791,
+          "played_points_players_count": 11,
+          "postgame_missing_actual_player_minutes": null,
+          "prior_coverage_source": "FROZEN_PRETIP_AUDIT",
+          "prior_coverage_warning": "NORMAL_RECENT_ROSTER_COVERAGE",
+          "prior_games_observed": 3,
+          "prior_missing_from_fixture_minutes": 0,
+          "prior_missing_from_model_minutes": 0,
+          "prior_rotation_coverage": 1.0,
+          "team_id": "7"
+        },
+        "home": {
+          "played_points_player_minute_MAE": 3.7756,
+          "played_points_player_minute_bias": -1.5289,
+          "played_points_players_count": 9,
+          "postgame_missing_actual_player_minutes": null,
+          "prior_coverage_source": "FROZEN_PRETIP_AUDIT",
+          "prior_coverage_warning": "NORMAL_RECENT_ROSTER_COVERAGE",
+          "prior_games_observed": 3,
+          "prior_missing_from_fixture_minutes": 1.0,
+          "prior_missing_from_model_minutes": 0,
+          "prior_rotation_coverage": 0.9986,
+          "team_id": "26"
+        }
+      }
+    },
+    {
+      "away": "New Orleans Pelicans",
+      "game_id": "401909335",
+      "home": "LA Clippers",
+      "teams": {
+        "away": {
+          "played_points_player_minute_MAE": 4.5889,
+          "played_points_player_minute_bias": -0.82,
+          "played_points_players_count": 9,
+          "postgame_missing_actual_player_minutes": null,
+          "prior_coverage_source": "FROZEN_PRETIP_AUDIT",
+          "prior_coverage_warning": "NORMAL_RECENT_ROSTER_COVERAGE",
+          "prior_games_observed": 3,
+          "prior_missing_from_fixture_minutes": 29.0,
+          "prior_missing_from_model_minutes": 0,
+          "prior_rotation_coverage": 0.9611,
+          "team_id": "3"
+        },
+        "home": {
+          "played_points_player_minute_MAE": 3.519,
+          "played_points_player_minute_bias": 0.079,
+          "played_points_players_count": 10,
+          "postgame_missing_actual_player_minutes": null,
+          "prior_coverage_source": "FROZEN_PRETIP_AUDIT",
+          "prior_coverage_warning": "NORMAL_RECENT_ROSTER_COVERAGE",
+          "prior_games_observed": 3,
+          "prior_missing_from_fixture_minutes": 42.0,
+          "prior_missing_from_model_minutes": 0,
+          "prior_rotation_coverage": 0.9417,
+          "team_id": "12"
+        }
+      }
+    },
+    {
+      "away": "Golden State Warriors",
+      "game_id": "401909336",
+      "home": "Portland Trail Blazers",
+      "teams": {
+        "away": {
+          "played_points_player_minute_MAE": 3.8615,
+          "played_points_player_minute_bias": 0.9677,
+          "played_points_players_count": 13,
+          "postgame_missing_actual_player_minutes": null,
+          "prior_coverage_source": "FROZEN_PRETIP_AUDIT",
+          "prior_coverage_warning": "NORMAL_RECENT_ROSTER_COVERAGE",
+          "prior_games_observed": 3,
+          "prior_missing_from_fixture_minutes": 0,
+          "prior_missing_from_model_minutes": 0,
+          "prior_rotation_coverage": 1.0,
+          "team_id": "9"
+        },
+        "home": {
+          "played_points_player_minute_MAE": 3.86,
+          "played_points_player_minute_bias": -0.0727,
+          "played_points_players_count": 11,
+          "postgame_missing_actual_player_minutes": null,
           "prior_coverage_source": "FROZEN_PRETIP_AUDIT",
           "prior_coverage_warning": "NORMAL_RECENT_ROSTER_COVERAGE",
           "prior_games_observed": 3,
