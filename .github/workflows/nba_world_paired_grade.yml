@@ -4,24 +4,25 @@ on:
     branches: [research/nba-world-cleanroom]
     paths:
       - 'nba_world/paired_prospective.py'
+      - 'nba_world/prospective_grade.py'
       - '.github/workflows/nba_world_paired_grade.yml'
   workflow_dispatch:
     inputs:
       source_run:
         description: 'Successful forecast workflow run ID'
-        default: '46171567847'
+        default: '46172117518'
         required: true
       source_artifact:
         description: 'Frozen forecast artifact name'
-        default: 'nba-world-prospective-frozen-46171567847'
+        default: 'nba-world-direct-prospective-46172117518'
         required: true
       forecast_filename:
         description: 'JSON file in artifact'
-        default: 'nba_world_prospective.json'
+        default: 'nba_world_direct_prospective.json'
         required: true
       expected_sha:
         description: 'Printed SHA256 of immutable forecast'
-        default: '581047b1558229beb521af2d5a3f62122de5b7c7272e5059f35273679cccb9e6'
+        default: 'd93af550a51e9fdbf3399c1358d9f016f2ae3195aae460529bdc0289c9bd5b4f'
         required: true
 permissions:
   contents: read
@@ -42,16 +43,17 @@ jobs:
       - run: |
           pip install 'numpy>=1.26,<2.5' 'scikit-learn>=1.6,<1.9'
           pip install 'torch>=2.6,<3' --index-url https://download.pytorch.org/whl/cpu
+      - run: python -m unittest discover -s tests -p test_nba_world_final_box.py -v
       - uses: actions/download-artifact@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ inputs.source_run || '46171567847' }}
-          name: ${{ inputs.source_artifact || 'nba-world-prospective-frozen-46171567847' }}
+          run-id: ${{ inputs.source_run || '46172117518' }}
+          name: ${{ inputs.source_artifact || 'nba-world-direct-prospective-46172117518' }}
           path: /tmp/frozen
       - name: Grade exact preserved forecast
         env:
-          FILENAME: ${{ inputs.forecast_filename || 'nba_world_prospective.json' }}
-          EXPECTED_SHA: ${{ inputs.expected_sha || '581047b1558229beb521af2d5a3f62122de5b7c7272e5059f35273679cccb9e6' }}
+          FILENAME: ${{ inputs.forecast_filename || 'nba_world_direct_prospective.json' }}
+          EXPECTED_SHA: ${{ inputs.expected_sha || 'd93af550a51e9fdbf3399c1358d9f016f2ae3195aae460529bdc0289c9bd5b4f' }}
         run: |
           set -e
           test "$(basename "$FILENAME")" = "$FILENAME"
