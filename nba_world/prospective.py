@@ -77,6 +77,9 @@ def train_locked(games):
     return Arm(tr,ca,False),len(tr),len(ca)
 def forecast(arm,games,schedule,rosters,receipts,schedule_receipt):
     out=[];skipped={};a=ActionHistory({})
+    from nba_world.injury import capture,annotate
+    try:injury=capture()
+    except Exception as e:injury={"error":str(e),"observations":[],"quarantined":[]}
     for g in schedule:
         gid=g["game_id"];tip=stamp(g["date"]);ts=teams(g)
         if any(t not in rosters for t in ts):skipped[gid]="ROSTER_SOURCE_MISSING";continue
@@ -124,6 +127,7 @@ def forecast(arm,games,schedule,rosters,receipts,schedule_receipt):
                     "home":g["home"],"away":g["away"],"history_cutoff_exclusive":cutoff.isoformat(),
                     "roster_receipts":{t:receipts[t] for t in ts},"schedule_recheck":receipt,
                     "starter_certification":"UNVERIFIED","rows":forecast_rows})
+    for g in out:annotate(g,injury)
     return out,skipped
 def main():
     p=argparse.ArgumentParser();p.add_argument("--games",action="append",required=True);p.add_argument("--out",required=True);args=p.parse_args()
@@ -149,6 +153,8 @@ def main():
     path=Path(args.out);path.write_text(json.dumps(result,indent=2,allow_nan=False))
     print("PROSPECTIVE_RECEIPT",json.dumps({"games":len(forecasts),"rows":sum(len(g["rows"]) for g in forecasts),
           "candidate_rows":sum(r["candidate"] for g in forecasts for r in g["rows"]),"skipped":skipped,"roster_errors":errors,
+          "injury_abstained_rows":sum(r["candidate"] and not r["injury_gated_candidate"] for g in forecasts for r in g["rows"]),
+          "injury_errors":{g["game_id"]:g["injury_source_error"] for g in forecasts if g["injury_source_error"]},
           "history_refresh":{k:v for k,v in history_audit.items() if k!="receipts"},"schedule_errors":sr["failures"],
           "sha256":hashlib.sha256(path.read_bytes()).hexdigest(),"game_ids":[g["game_id"] for g in forecasts]}),flush=True)
 if __name__=="__main__":main()

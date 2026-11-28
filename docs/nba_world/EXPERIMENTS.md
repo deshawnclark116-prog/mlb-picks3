@@ -66,3 +66,9 @@ Run 46171567847 successfully froze BOX_ONLY V1 forecasts: 13 games, 1836 rows, 7
 
 ## Direct prospective and paired grading
 Train unchanged Distribution V1 on original chronology, serialize trusted fitted checkpoint, freeze independent forecasts. Grade same-event incumbent original targets against frozen independent survival distributions; report missing coverage, first pretip timing and separate within-30-minute cohort, with no claim of identical information. No production changes. No scheduled automation installed.
+
+## Verified direct live freeze
+Run 46172117518, 13 games, 1836 rows, 723 candidates, zero roster errors/skips; artifact 15273839919; checkpoint SHA256 3caea3424745e501b379877e6b6aaa74d90da6d7028485ab0f7e111d06831c2d, forecast SHA256 d93af550a51e9fdbf3399c1358d9f016f2ae3195aae460529bdc0289c9bd5b4f. Paired grade run 46172117540 verified artifact retrieval but all 13 games pending. No results established.
+
+## Injury shadow
+Independent source parsing and timestamp validation. ESPN-reported status, not official active designation. Missing/stale report does not certify active. Fresh OUT/DOUBTFUL only creates a separate abstention ranking; no changes to projections or calibrated probabilities and no promotion. Compare frozen original and gated rankings prospectively. Use exact verified saved direct checkpoint; no retraining.

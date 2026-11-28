@@ -1,0 +1,50 @@
+name: NBA WORLD saved direct checkpoint live injury observation
+on:
+  push:
+    branches: [research/nba-world-cleanroom]
+    paths:
+      - 'nba_world/injury.py'
+      - '.github/workflows/nba_world_injury_shadow.yml'
+      - 'tests/test_nba_world_injury.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      OMP_NUM_THREADS: '2'
+      OPENBLAS_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: |
+          pip install 'numpy>=1.26,<2.5' 'scikit-learn>=1.6,<1.9' 'pyarrow>=18,<25'
+          pip install 'torch>=2.6,<3' --index-url https://download.pytorch.org/whl/cpu
+      - run: python -u -m nba_world.fetch_history --years 2023 2024 2025 --out /tmp/nba_world_history
+      - run: python -m unittest discover -s tests -p test_nba_world_injury.py -v
+      - uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: 46172117518
+          name: nba-world-direct-prospective-46172117518
+          path: /tmp/checkpoint
+      - run: |
+          echo '3caea3424745e501b379877e6b6aaa74d90da6d7028485ab0f7e111d06831c2d  /tmp/checkpoint/nba_world_direct.joblib' | sha256sum -c -
+          python -u -m nba_world.direct_prospective \
+            --games /tmp/nba_world_history/world_games_2023.jsonl.gz \
+            --games /tmp/nba_world_history/world_games_2024.jsonl.gz \
+            --games /tmp/nba_world_history/world_games_2025.jsonl.gz \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --checkpoint /tmp/checkpoint/nba_world_direct.joblib --reuse-checkpoint \
+            --out /tmp/nba_world_injury_shadow.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-world-injury-shadow-${{ github.run_id }}
+          path: /tmp/nba_world_injury_shadow.json
+          retention-days: 90

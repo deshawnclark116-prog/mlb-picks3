@@ -71,5 +71,7 @@ def main():
     dst=Path(a.out);dst.write_text(json.dumps(out,indent=2,allow_nan=False))
     print("DIRECT_PROSPECTIVE_RECEIPT",json.dumps({"games":len(forecasts),"rows":sum(len(g["rows"]) for g in forecasts),
       "candidates":sum(r["candidate"] for g in forecasts for r in g["rows"]),"skipped":skipped,"roster_errors":errors,
+      "injury_abstained_rows":sum(r["candidate"] and not r["injury_gated_candidate"] for g in forecasts for r in g["rows"]),
+      "injury_errors":{g["game_id"]:g["injury_source_error"] for g in forecasts if g["injury_source_error"]},
       "checkpoint_sha256":out["checkpoint_sha256"],"forecast_sha256":hashlib.sha256(dst.read_bytes()).hexdigest()}),flush=True)
 if __name__=="__main__":main()
