@@ -1,0 +1,36 @@
+name: NBA V6 frozen forecast research foundation
+on:
+  push:
+    branches: [research/nba-v6-foundation]
+    paths:
+      - 'nba/nba_v6_foundation.py'
+      - '.github/workflows/nba_v6_foundation.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  frozen-holdout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install 'numpy>=2.1,<2.5' 'scikit-learn>=1.6,<1.9'
+      - run: python -m py_compile nba/nba_v6_foundation.py
+      - name: Train older games, calibrate separately, grade real frozen forecasts
+        env:
+          OMP_NUM_THREADS: '2'
+          OPENBLAS_NUM_THREADS: '2'
+        run: |
+          python -u -m nba.nba_v6_foundation \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --archive docs/nba_v5_archive/first \
+            --grades docs/nba_v5_lineup_grades/first \
+            --out /tmp/nba_v6_foundation.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-v6-frozen-holdout
+          path: /tmp/nba_v6_foundation.json
