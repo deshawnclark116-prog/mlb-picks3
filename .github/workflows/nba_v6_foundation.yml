@@ -5,6 +5,7 @@ on:
     paths:
       - 'nba/nba_v6_foundation.py'
       - '.github/workflows/nba_v6_foundation.yml'
+      - 'tests/test_nba_v6_foundation.py'
   workflow_dispatch:
 permissions:
   contents: read
@@ -19,6 +20,7 @@ jobs:
           python-version: '3.12'
       - run: pip install 'numpy>=2.1,<2.5' 'scikit-learn>=1.6,<1.9'
       - run: python -m py_compile nba/nba_v6_foundation.py
+      - run: python -m unittest discover -s tests -p test_nba_v6_foundation.py -v
       - name: Train older games, calibrate separately, grade real frozen forecasts
         env:
           OMP_NUM_THREADS: '2'

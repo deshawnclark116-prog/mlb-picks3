@@ -201,6 +201,34 @@ def evaluate(model,res,games,archives):
                 means={arm:float(v[j]) for arm,v in mu.items()},
                 probs={arm:q[arm]*ap for arm in ARMS},own_probs={arm:q[arm]*av for arm in ARMS}))
     return records,dict(misses)
+def compare_independent(records, archives, root):
+    # Independent shadow uses different milestone targets. Compare numerical
+    # forecasts only, on identical actuals, with its own archived timestamp.
+    by={}
+    for actual,ar,_ in archives:
+        gid=str(actual["game_id"]); path=Path(root)/(gid+".json")
+        if not path.is_file(): continue
+        d=json.loads(path.read_text())
+        for g in d.get("games",[]):
+            if str(g.get("game_id"))!=gid: continue
+            t=stamp(g["forecast_at_utc"])
+            if t>=stamp(ar["tipoff_utc"]): continue
+            for p in g.get("players",[]):
+                for m,y in p.get("predictions",{}).items():
+                    if m in CORE and isinstance(y,(int,float)) and math.isfinite(y):
+                        by[(gid,str(p["player_id"]),m)]=float(y)
+    result={}
+    for m in CORE:
+        rows=[r for r in records if r["played"] and r["market"]==m and (r["game"],r["player"],m) in by]
+        if not rows: continue
+        baseline=lambda r: abs(by[(r["game"],r["player"],m)]-r["y"])
+        result[m]={"n":len(rows),"games":len({r["game"] for r in rows}),
+                   "independent_mae":mean([baseline(r) for r in rows]),
+                   "v5_mae":mean([abs(r["base_mean"]-r["y"]) for r in rows]),
+                   "challengers":{arm:{"mae":mean([abs(r["means"][arm]-r["y"]) for r in rows]),
+                      "reduction_ci":bootstrap([(r["game"],baseline(r)-abs(r["means"][arm]-r["y"])) for r in rows])} for arm in ARMS}}
+    return result
+
 def summarize(records):
     result={}
     for m in CORE:
@@ -228,6 +256,7 @@ def summarize(records):
     return result,top
 def main():
     a=argparse.ArgumentParser(); a.add_argument("--games",action="append",required=True); a.add_argument("--archive",required=True); a.add_argument("--grades",required=True); a.add_argument("--out",required=True)
+    a.add_argument("--independent-archive",default="docs/nba_independent_live/first")
     a.add_argument("--train-end",default="2026-02-01"); a.add_argument("--cal-end",default="2026-04-15"); a.add_argument("--test-from",default="2026-11-01")
     args=a.parse_args()
     if not args.train_end<args.cal_end<=args.test_from: raise ValueError("overlapping splits")
@@ -243,10 +272,12 @@ def main():
         "data_sha256":{p:hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in args.games},
         "archive_games":len(archive),"scored_events":len(records),"skipped_games":skipped,"excluded_rows":missing,
         "metrics":metrics,"top4_top10_same_eligible_set":top,
+        "independent_frozen_numerical_comparison":compare_independent(records,archive,args.independent_archive),
         "limitations":["historical last-four-game roster approximation in training; archive roster at evaluation",
           "no verified target-game starter or current tracking inputs in this first challenger",
           "historical November archive already researched, not a fresh prospective test",
           "independent availability uncalibrated; common incumbent availability is primary comparison",
-          "conditional stat residual model pooled within market; no joint simulation yet"]}
+          "conditional stat residual model pooled within market; no joint simulation yet",
+          "independent benchmark may be a different pretip timestamp; numerical comparison only"]}
     Path(args.out).write_text(json.dumps(report,indent=2)); print(json.dumps(report,indent=2),flush=True)
 if __name__=="__main__":main()
