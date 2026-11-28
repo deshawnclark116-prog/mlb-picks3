@@ -157,7 +157,7 @@ def bootstrap(rows,seed=61):
     idx=rng.integers(0,len(vals),(1000,len(vals)))
     return np.quantile(sums[idx].sum(axis=1)/sizes[idx].sum(axis=1),[.025,.975]).tolist()
 def evaluate(model,res,games,archives):
-    state=State(); i=0; records=[]; misses=collections.Counter()
+    state=State(); i=0; records=[]; misses=collections.Counter(); conflicts=[]
     for actual,ar,grade in archives:
         d=day(actual); gid=str(actual["game_id"])
         cutoff=stamp(ar["forecast_at_utc"]).astimezone(dt.timezone.utc).date().isoformat()
@@ -189,9 +189,13 @@ def evaluate(model,res,games,archives):
             cp=float(r["reach_probability"]); ap=float(r["p_active"])
             if not (0<=cp<=1 and 0<=ap<=1): raise ValueError("bad probability")
             p=lookup.get(pid); played=active(p)
-            if played!=bool(r["played"]): raise ValueError("box/grade availability mismatch")
+            if played!=bool(r["played"]):
+                misses["box_grade_availability_conflict"]+=1
+                conflicts.append({"game":gid,"player":pid,"market":m,"box_played":played,"grade_played":r["played"]}); continue
             j=list(CORE).index(m); y=safe(p,CORE[m]) if played else 0.
-            if played and y!=float(r["actual"]): raise ValueError("box/grade actual mismatch")
+            if played and y!=float(r["actual"]):
+                misses["box_grade_stat_conflict"]+=1
+                conflicts.append({"game":gid,"player":pid,"market":m,"box_actual":y,"grade_actual":r["actual"]}); continue
             av,mins,mu=pred[pid]; hit=int(played and y>=k)
             q={arm:prob(res[arm][j],float(v[j]),k) for arm,v in mu.items()}
             records.append(dict(game=gid,player=pid,market=m,played=played,y=y,hit=hit,target=k,
@@ -200,7 +204,7 @@ def evaluate(model,res,games,archives):
                 baseline_minutes=r.get("minutes_forecast"),rank=r.get("frontend_rank"),
                 means={arm:float(v[j]) for arm,v in mu.items()},
                 probs={arm:q[arm]*ap for arm in ARMS},own_probs={arm:q[arm]*av for arm in ARMS}))
-    return records,dict(misses)
+    return records,dict(misses),conflicts
 def compare_independent(records, archives, root):
     # Independent shadow uses different milestone targets. Compare numerical
     # forecasts only, on identical actuals, with its own archived timestamp.
@@ -264,13 +268,14 @@ def main():
     if len(train)<5000 or len(cal)<1000: raise ValueError("insufficient training/calibration")
     model=Model().fit(train); res=residuals(model,cal)
     archive,skipped=collect_archives(args.archive,args.grades,games,args.test_from)
-    records,missing=evaluate(model,res,games,archive)
+    records,missing,conflicts=evaluate(model,res,games,archive)
     if not records: raise ValueError("no matched frozen events")
     metrics,top=summarize(records)
-    report={"schema":"NBA_V6_RESEARCH_FOUNDATION_V1","production_changed":False,"promotion_allowed":False,
+    print("SOURCE_CONFLICT_COUNT",len(conflicts),flush=True)
+    report={"schema":"NBA_V6_RESEARCH_FOUNDATION_V1","production_changed":False,"promotion_allowed":False,"source_integrity_gate_passed":not conflicts,
         "training_rows":len(train),"calibration_rows":len(cal),"split":[args.train_end,args.cal_end,args.test_from],
         "data_sha256":{p:hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in args.games},
-        "archive_games":len(archive),"scored_events":len(records),"skipped_games":skipped,"excluded_rows":missing,
+        "archive_games":len(archive),"scored_events":len(records),"skipped_games":skipped,"excluded_rows":missing,"source_conflicts":conflicts,
         "metrics":metrics,"top4_top10_same_eligible_set":top,
         "independent_frozen_numerical_comparison":compare_independent(records,archive,args.independent_archive),
         "limitations":["historical last-four-game roster approximation in training; archive roster at evaluation",
