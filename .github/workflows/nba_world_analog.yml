@@ -1,0 +1,38 @@
+name: NBA WORLD independent historical situation retrieval
+on:
+  push:
+    branches: [research/nba-world-cleanroom]
+    paths:
+      - 'nba_world/analog.py'
+      - '.github/workflows/nba_world_analog.yml'
+      - 'tests/test_nba_world_analog.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      OMP_NUM_THREADS: '2'
+      OPENBLAS_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: |
+          pip install 'numpy>=1.26,<2.5' 'scikit-learn>=1.6,<1.9'
+          pip install 'torch>=2.6,<3' --index-url https://download.pytorch.org/whl/cpu
+      - run: python -m unittest discover -s tests -p test_nba_world_analog.py -v
+      - run: |
+          python -u -m nba_world.analog \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --archive docs/nba_v5_lineup_archive/first \
+            --grades docs/nba_v5_lineup_grades/first \
+            --out /tmp/nba_world_analog.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-world-analog-report
+          path: /tmp/nba_world_analog.json
