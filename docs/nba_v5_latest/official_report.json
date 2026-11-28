@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_06_45PM.pdf",
-  "published_at_utc": "2026-11-27T23:45:00+00:00",
-  "captured_at_utc": "2026-11-27T23:47:53.793505+00:00",
-  "source_sha256": "214881bca55d1d8171c9de9f2a319f7215210941fb6b165e9083cbacc8c3223c",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_08_15PM.pdf",
+  "published_at_utc": "2026-11-28T01:15:00+00:00",
+  "captured_at_utc": "2026-11-28T01:26:24.329833+00:00",
+  "source_sha256": "3cea8be0abb4252740b824813c42a2bcfc4ca2bdf16c9c7222d16f794fbb2af5",
   "reports": [
     {
       "matchup": "MIA@NYK",
@@ -236,7 +236,7 @@
       "player": "Prince, Taurean",
       "normalized_player": "taurean prince",
       "status": "OUT",
-      "reason": "Injury/Illness - Right Arthroscopy"
+      "reason": ""
     },
     {
       "matchup": "MIL@DET",
@@ -259,7 +259,7 @@
       "team_abbr": "PHI",
       "player": "Embiid, Joel",
       "normalized_player": "joel embiid",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Illness"
     },
     {
@@ -268,7 +268,7 @@
       "player": "Hukporti, Ariel",
       "normalized_player": "ariel hukporti",
       "status": "OUT",
-      "reason": "Injury/Illness - Right Achilles Tendon"
+      "reason": ""
     },
     {
       "matchup": "PHI@IND",
@@ -427,7 +427,7 @@
       "team_abbr": "MEM",
       "player": "Edey, Zach",
       "normalized_player": "zach edey",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Left Ankle Soreness"
     },
     {
@@ -475,7 +475,7 @@
       "team_abbr": "MEM",
       "player": "Stewart, Isaiah",
       "normalized_player": "isaiah stewart",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Right Hip Soreness"
     },
     {
@@ -547,7 +547,7 @@
       "team_abbr": "DAL",
       "player": "Irving, Kyrie",
       "normalized_player": "kyrie irving",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": ""
     },
     {
@@ -573,6 +573,30 @@
       "normalized_player": "caleb martin",
       "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Thumb Splint"
+    },
+    {
+      "matchup": "DAL@PHX",
+      "team_abbr": "PHX",
+      "player": "Reath, Duop",
+      "normalized_player": "duop reath",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "DAL@PHX",
+      "team_abbr": "PHX",
+      "player": "Spencer, Pat",
+      "normalized_player": "pat spencer",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
+    },
+    {
+      "matchup": "DAL@PHX",
+      "team_abbr": "PHX",
+      "player": "Timme, Drew",
+      "normalized_player": "drew timme",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
     },
     {
       "matchup": "DAL@PHX",
@@ -739,7 +763,7 @@
       "team_abbr": "POR",
       "player": "Yang, Hansen",
       "normalized_player": "hansen yang",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Left Ankle Sprain"
     },
     {
@@ -819,7 +843,7 @@
       "team_abbr": "NOP",
       "player": "Mathurin, Bennedict",
       "normalized_player": "bennedict mathurin",
-      "status": "DOUBTFUL",
+      "status": "OUT",
       "reason": "Injury/Illness - Left Plantar Fasciitis"
     },
     {
@@ -851,7 +875,7 @@
       "team_abbr": "NOP",
       "player": "Watford, Trendon",
       "normalized_player": "trendon watford",
-      "status": "PROBABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Right Ankle Sprain"
     },
     {
@@ -867,7 +891,7 @@
       "team_abbr": "LAC",
       "player": "Christie, Cam",
       "normalized_player": "cam christie",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "G League - Two-Way"
     },
     {
@@ -875,7 +899,7 @@
       "team_abbr": "LAC",
       "player": "Martinelli, Nick",
       "normalized_player": "nick martinelli",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "G League - Two-Way"
     },
     {
@@ -891,7 +915,7 @@
       "team_abbr": "LAC",
       "player": "Pickett, Jalen",
       "normalized_player": "jalen pickett",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "G League - Two-Way"
     },
     {
@@ -1183,7 +1207,7 @@
       "reason": "G League - Two-Way"
     }
   ],
-  "rows": 147,
+  "rows": 150,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
