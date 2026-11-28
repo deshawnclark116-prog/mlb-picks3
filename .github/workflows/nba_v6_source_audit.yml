@@ -1,0 +1,30 @@
+name: NBA V6 independent historical source reconciliation
+on:
+  push:
+    branches: [research/nba-v6-foundation]
+    paths:
+      - 'nba/nba_v6_source_audit.py'
+      - '.github/workflows/nba_v6_source_audit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install 'numpy>=2.1,<2.5' 'scikit-learn>=1.6,<1.9'
+      - run: |
+          python -u -m nba.nba_v6_source_audit \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --grades docs/nba_v5_lineup_grades/first \
+            --out /tmp/nba_v6_source_audit.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-v6-source-reconciliation
+          path: /tmp/nba_v6_source_audit.json
