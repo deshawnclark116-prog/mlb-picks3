@@ -1,0 +1,38 @@
+name: NBA WORLD independent prospective forecast freeze
+on:
+  push:
+    branches: [research/nba-world-cleanroom]
+    paths:
+      - 'nba_world/prospective.py'
+      - 'nba_world/prospective_grade.py'
+      - 'tests/test_nba_world_prospective.py'
+      - '.github/workflows/nba_world_prospective.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  freeze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      OMP_NUM_THREADS: '2'
+      OPENBLAS_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: |
+          pip install 'numpy>=1.26,<2.5' 'scikit-learn>=1.6,<1.9'
+          pip install 'torch>=2.6,<3' --index-url https://download.pytorch.org/whl/cpu
+      - run: python -m unittest discover -s tests -p test_nba_world_prospective.py -v
+      - run: |
+          python -u -m nba_world.prospective \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --out /tmp/nba_world_prospective.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-world-prospective-frozen-${{ github.run_id }}
+          path: /tmp/nba_world_prospective.json
+          retention-days: 90

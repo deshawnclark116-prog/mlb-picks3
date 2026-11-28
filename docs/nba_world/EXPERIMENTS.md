@@ -45,3 +45,9 @@ Run 46170510786: 4325 training games, 142 evaluation games, zero remaining outco
 
 ## ACTION ABLATION V1
 Independent PBP extraction uses verified event counts and fail-closed five-player substitution traces; no legacy PBP feature or rotation functions imported. Shot styles, assisted shot production, early/late stint minutes and prior opponent action volumes compared against identical box-only model, same training and calibration splits. Coverage and all trace rejection causes recorded. No tracking or exact defensive assignments claimed.
+
+## ACTION ABLATION result
+Run 46170964492: 142 games / 15,292 rows, 28 adjudicated corrections, zero remaining conflicts. Verified 1,016 historical regulation traces, 23,116 player action records and 22,087 stint records. Box-only Top4 397/568, Top10 922/1420; action Top4 398/568, Top10 913/1420. No material evidence that action features improve the overall system; rebounds probability worsened relative to box-only. Freeze this specific action representation, do not rescue-tune on November.
+
+## Prospective test protocol
+Freeze independent research forecasts from current ESPN schedule and current team roster identities only, no legacy model predictions or confirmed-starter claims. Use fixed box-only model architecture and original chronological train/cal splits. Capture actual observation times, pretip recheck, source hashes, own projection, full threshold survival and p_active. Grade the exact frozen artifact later. Own-target hit rates are descriptive, not comparable to different target definitions; no automatic production promotion. No scheduler is installed on main.
