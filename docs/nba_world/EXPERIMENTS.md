@@ -30,3 +30,12 @@ and coverage are established.
 
 ## Verified source reconciliation
 Run 46168467075 checked 15,292 original rows. All 28 conflicts were confirmed in favor of archived grading using freshly retrieved final ESPN outcomes. A read-only correction ledger carries the original audit and hashes. Apply exact matched corrections to evaluation outcomes only; preserve all raw inputs and frozen forecasts. Six minutes differences remain separate. Original WORLD V1 results above remain unchanged.
+
+## ANALOG V1 corrected outcome result
+Run 46170454331: 15,292 rows across 142 games, all 28 corrections, zero remaining conflicts. Minutes MAE 5.0403 -> 4.7870; points MAE 4.5951 -> 4.5215, rebounds 1.8773 -> 1.8828, assists 1.3340 -> 1.3237, threes .91675 -> .92061. Top4 365/568 -> 364/568; Top10 unchanged 872/1420. No promotion. Corrected neural rerun 46170454318 lost on all numerical markets but Top4 385/568 and Top10 907/1420; neural rerun variation indicates nondeterminism requiring seed replication before claims.
+
+## Expanded source acquired
+Run 46170510786 acquisition: 1227 (2023), 1229 (2024), 1228 (2025) verified regular-season games; total 3684. Thirteen candidate games rejected (4,3,6 respectively); authoritative per-season rejection counts in source manifest. Expanded neural training in progress at registration.
+
+## DISTRIBUTION V1
+New architecture: independent learned conditional count survival functions using expanded historical examples, explicit teammate resource/role features, monotone threshold classifier, separate direct numerical and minutes regressors, and separate later calibration. Equal original target evaluation and own target descriptive metrics. No automatic promotion.
