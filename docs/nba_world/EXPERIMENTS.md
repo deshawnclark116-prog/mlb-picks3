@@ -54,3 +54,6 @@ Freeze independent research forecasts from current ESPN schedule and current tea
 
 ## Prospective collector correction
 Run 46171305843 failed at ESPN scoreboard multi-day query HTTP 400 after training. No forecasts were frozen by that run. Use independent single-day ET schedule requests, final per-game pretip recheck, and an independently parsed last-five-day final-box refresh under the original UTC-day cutoff. Reconcile points, rebounds, team score and minutes before accepting final histories. Record all missing sources. No retroactive pretip certification.
+
+## Ranking control
+Separate old frontend ordering, old conditional probability ordering, old unconditional probability ordering, independent probabilities with common incumbent availability, and independent probabilities with independently predicted availability. Compare exact same event targets and candidate set; report market selection mix and game-cluster interval for improvements over old probability ordering. Prevent apparent gains due to sorting alone from being mistaken for model skill.
