@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-28_12_15PM.pdf",
-  "published_at_utc": "2026-11-28T17:15:00+00:00",
-  "captured_at_utc": "2026-11-28T17:29:50.997578+00:00",
-  "source_sha256": "fd0de743286d1df4a12875b6ecce125c55bc01dff7d7e3e66abaa716e8dd223b",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-28_12_30PM.pdf",
+  "published_at_utc": "2026-11-28T17:30:00+00:00",
+  "captured_at_utc": "2026-11-28T17:37:54.597430+00:00",
+  "source_sha256": "3c08a07d8458bc3e6b91f08e9998597160b25d8abb49ba24a781d5cd9226ae09",
   "reports": [
     {
       "matchup": "ORL@WAS",
@@ -275,7 +275,7 @@
       "team_abbr": "HOU",
       "player": "Adams, Steven",
       "normalized_player": "steven adams",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": ""
     },
     {
