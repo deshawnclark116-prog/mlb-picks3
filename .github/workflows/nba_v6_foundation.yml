@@ -27,7 +27,7 @@ jobs:
           python -u -m nba.nba_v6_foundation \
             --games nba/data/nba_v4_games_2025_26.jsonl.gz \
             --games nba/data/nba_v4_games_2026_27.jsonl \
-            --archive docs/nba_v5_archive/first \
+            --archive docs/nba_v5_lineup_archive/first \
             --grades docs/nba_v5_lineup_grades/first \
             --out /tmp/nba_v6_foundation.json
       - uses: actions/upload-artifact@v4
