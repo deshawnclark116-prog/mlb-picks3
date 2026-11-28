@@ -39,3 +39,9 @@ Run 46170510786 acquisition: 1227 (2023), 1229 (2024), 1228 (2025) verified regu
 
 ## DISTRIBUTION V1
 New architecture: independent learned conditional count survival functions using expanded historical examples, explicit teammate resource/role features, monotone threshold classifier, separate direct numerical and minutes regressors, and separate later calibration. Equal original target evaluation and own target descriptive metrics. No automatic promotion.
+
+## Expanded WORLD neural result
+Run 46170510786: 4325 training games, 142 evaluation games, zero remaining outcome conflicts. All played MAE V5 -> WORLD: points 4.59513 -> 4.61656, rebounds 1.87734 -> 1.96451, assists 1.33403 -> 1.40682, threes .91675 -> .91988. Top4 365/568 -> 388/568; Top10 872/1420 -> 905/1420. Three-point Brier .24689 -> .23382; availability Brier .13128 -> .11631. Still fails numerical promotion, November not prospective, seed replication needed.
+
+## ACTION ABLATION V1
+Independent PBP extraction uses verified event counts and fail-closed five-player substitution traces; no legacy PBP feature or rotation functions imported. Shot styles, assisted shot production, early/late stint minutes and prior opponent action volumes compared against identical box-only model, same training and calibration splits. Coverage and all trace rejection causes recorded. No tracking or exact defensive assignments claimed.

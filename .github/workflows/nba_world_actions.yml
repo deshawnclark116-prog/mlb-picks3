@@ -1,0 +1,41 @@
+name: NBA WORLD action-level paired ablation
+on:
+  push:
+    branches: [research/nba-world-cleanroom]
+    paths:
+      - 'nba_world/actions.py'
+      - 'nba_world/action_lab.py'
+      - 'tests/test_nba_world_actions.py'
+      - '.github/workflows/nba_world_actions.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ablation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      OMP_NUM_THREADS: '2'
+      OPENBLAS_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: |
+          pip install 'numpy>=1.26,<2.5' 'scikit-learn>=1.6,<1.9'
+          pip install 'torch>=2.6,<3' --index-url https://download.pytorch.org/whl/cpu
+      - run: python -m unittest discover -s tests -p test_nba_world_actions.py -v
+      - run: |
+          python -u -m nba_world.action_lab \
+            --games nba/data/nba_v4_games_2025_26.jsonl.gz \
+            --games nba/data/nba_v4_games_2026_27.jsonl \
+            --pbp nba/data/nba_v5_pbp_2025_26.jsonl.gz \
+            --pbp nba/data/nba_v5_pbp_2026_27.jsonl.gz \
+            --archive docs/nba_v5_lineup_archive/first \
+            --grades docs/nba_v5_lineup_grades/first \
+            --out /tmp/nba_world_actions.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-world-action-ablation
+          path: /tmp/nba_world_actions.json
