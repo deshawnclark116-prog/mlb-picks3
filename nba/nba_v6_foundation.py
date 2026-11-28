@@ -147,7 +147,7 @@ def collect_archives(root,grades,games,test_from):
         if stamp(a["forecast_at_utc"])!=stamp(g["forecast_at_utc"]) or stamp(a["forecast_at_utc"])>=stamp(a["tipoff_utc"]):
             raise ValueError("invalid frozen forecast timestamp")
         out.append((actual,a,g))
-    return sorted(out,key=lambda t:(day(t[0]),str(t[0]["game_id"]))),dict(skipped)
+    return sorted(out,key=lambda t:(stamp(t[1]["forecast_at_utc"]),str(t[0]["game_id"]))),dict(skipped)
 def bootstrap(rows,seed=61):
     by=collections.defaultdict(list)
     for gid,d in rows: by[gid].append(d)
@@ -160,7 +160,11 @@ def evaluate(model,res,games,archives):
     state=State(); i=0; records=[]; misses=collections.Counter()
     for actual,ar,grade in archives:
         d=day(actual); gid=str(actual["game_id"])
-        while i<len(games) and day(games[i])<d: state.ingest(games[i]); i+=1
+        cutoff=stamp(ar["forecast_at_utc"]).astimezone(dt.timezone.utc).date().isoformat()
+        # A prior-date game might still be running after midnight UTC. Use a
+        # conservative extra calendar-day buffer for historical box outcomes.
+        cutoff=(dt.date.fromisoformat(cutoff)-dt.timedelta(days=1)).isoformat()
+        while i<len(games) and day(games[i])<cutoff: state.ingest(games[i]); i+=1
         original={(str(r["player_id"]),r["market"]):r for r in ar["rows"]}
         if len(original)!=len(ar["rows"]): raise ValueError("duplicate original")
         lookup={str(p["id"]):p for p in actual["players"]}
