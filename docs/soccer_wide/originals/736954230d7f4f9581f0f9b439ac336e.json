@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "736954230d7f4f9581f0f9b439ac336e",
+  "captured_at_utc": "2026-11-28T11:45:31.937Z",
+  "catalog_generated_at_utc": "2026-11-28T07:07:07Z",
+  "original_code_sha": "e7c798375458ca18ae996487d53e527b8565a230",
+  "source_results_sha256": "461e68ceb423b38d2bf2412cfa8a3faca8804f40b2ec673af9e30cd81dafd33e",
+  "source_fixtures_sha256": "24d363d3994c28c45933bbe23190e1722b61a28671285e1c73002beb49421e9d",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ITA_2_serie-b",
+    "season": "2026-27",
+    "date": "2026-11-30",
+    "home": "Catanzaro",
+    "away": "US Avellino",
+    "expectedHomeGoals": 1.356,
+    "expectedAwayGoals": 1.3253,
+    "baselineHomeGoals": 1.4529,
+    "baselineAwayGoals": 1.2076,
+    "probabilities": {
+      "home": 0.3775,
+      "draw": 0.2592,
+      "away": 0.3633,
+      "over25": 0.5018,
+      "btts": 0.5451
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 8.321,
+    "awayWeightedMatches": 9.8858,
+    "source": "open-matchday/fixture/ITA_2_serie-b",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

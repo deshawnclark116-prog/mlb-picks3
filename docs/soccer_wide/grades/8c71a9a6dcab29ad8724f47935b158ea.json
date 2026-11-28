@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "8c71a9a6dcab29ad8724f47935b158ea",
+  "original_captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "league": "NED_2_eerste-divisie",
+  "date": "2026-11-27",
+  "match_result_source": "open-matchday/espn/NED_2_eerste-divisie",
+  "final_home_goals": 4,
+  "final_away_goals": 4,
+  "model_goal_mae": 2.2413499999999997,
+  "baseline_goal_mae": 2.2971500000000002,
+  "model_three_way_brier": 0.90959336,
+  "baseline_three_way_brier": 0.91651434
+}

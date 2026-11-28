@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "ce96ec17898df2b74318d5db5ce99cc0",
+  "original_captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "league": "TUR_1_super-lig",
+  "date": "2026-11-27",
+  "match_result_source": "open-matchday/fixturedl/TUR_1_super-lig",
+  "final_home_goals": 1,
+  "final_away_goals": 2,
+  "model_goal_mae": 0.64655,
+  "baseline_goal_mae": 0.6595,
+  "model_three_way_brier": 0.74910686,
+  "baseline_three_way_brier": 0.7374740100000001
+}

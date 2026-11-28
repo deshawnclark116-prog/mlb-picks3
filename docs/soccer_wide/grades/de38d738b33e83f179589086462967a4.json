@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "de38d738b33e83f179589086462967a4",
+  "original_captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "league": "ESP_1_la-liga",
+  "date": "2026-11-27",
+  "match_result_source": "open-matchday/fixturedl/ESP_1_la-liga",
+  "final_home_goals": 1,
+  "final_away_goals": 3,
+  "model_goal_mae": 1.294,
+  "baseline_goal_mae": 1.1505,
+  "model_three_way_brier": 0.8469977399999999,
+  "baseline_three_way_brier": 0.73744691
+}

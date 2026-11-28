@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "e6ef03b9c163fc3bc63a7117fc0c9bd8",
+  "captured_at_utc": "2026-11-28T11:45:31.937Z",
+  "catalog_generated_at_utc": "2026-11-28T07:07:07Z",
+  "original_code_sha": "e7c798375458ca18ae996487d53e527b8565a230",
+  "source_results_sha256": "c03c0b0b7e9c7c79bd3ca6e16b8df088a420738e0d18999049730fe3bf477656",
+  "source_fixtures_sha256": "cb09b7fd7cbb8ff9362e35c3722eb574156cb150ac2f722d4fc5947b4a37f9d9",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "POL_1_ekstraklasa",
+    "season": "2026-27",
+    "date": "2026-11-30",
+    "home": "Korona Kielce",
+    "away": "Cracovia",
+    "expectedHomeGoals": 1.6493,
+    "expectedAwayGoals": 1.2623,
+    "baselineHomeGoals": 1.6399,
+    "baselineAwayGoals": 1.262,
+    "probabilities": {
+      "home": 0.4647,
+      "draw": 0.2421,
+      "away": 0.2932,
+      "over25": 0.5567,
+      "btts": 0.5792
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 8.9297,
+    "awayWeightedMatches": 7.6058,
+    "source": "open-matchday/fixture/POL_1_ekstraklasa",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

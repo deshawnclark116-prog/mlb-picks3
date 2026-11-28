@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "2df43ed193e3e4fc37cdd8eca91c77ac",
+  "captured_at_utc": "2026-11-28T11:45:31.937Z",
+  "catalog_generated_at_utc": "2026-11-28T07:07:07Z",
+  "original_code_sha": "e7c798375458ca18ae996487d53e527b8565a230",
+  "source_results_sha256": "5390fec7985f618503faa47783bcc1e5271970e6d2b333141c77bd00744f9c50",
+  "source_fixtures_sha256": "648d05be60fc4e54600ea6e84aa3149a9a24a66448c253c0265093cab9a7d51f",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "RUS_1_premier-liga",
+    "season": "2026-27",
+    "date": "2026-11-30",
+    "home": "Fakel Voronezh",
+    "away": "Spartak Moscow",
+    "expectedHomeGoals": 1.1417,
+    "expectedAwayGoals": 1.3594,
+    "baselineHomeGoals": 1.3747,
+    "baselineAwayGoals": 1.2129,
+    "probabilities": {
+      "home": 0.3142,
+      "draw": 0.268,
+      "away": 0.4178,
+      "over25": 0.4565,
+      "btts": 0.5059
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 10.2056,
+    "awayWeightedMatches": 9.526,
+    "source": "open-matchday/fixture/RUS_1_premier-liga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "efe64a9cba299ea8e1acd34caccaa24e",
+  "original_captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "league": "ENG_5_national-league",
+  "date": "2026-11-27",
+  "match_result_source": "open-matchday/espn/ENG_5_national-league",
+  "final_home_goals": 4,
+  "final_away_goals": 1,
+  "model_goal_mae": 1.4033499999999999,
+  "baseline_goal_mae": 1.35685,
+  "model_three_way_brier": 0.50685728,
+  "baseline_three_way_brier": 0.4673466500000001
+}

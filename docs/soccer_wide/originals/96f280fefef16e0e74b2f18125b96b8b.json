@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "96f280fefef16e0e74b2f18125b96b8b",
+  "captured_at_utc": "2026-11-28T11:45:31.937Z",
+  "catalog_generated_at_utc": "2026-11-28T07:07:07Z",
+  "original_code_sha": "e7c798375458ca18ae996487d53e527b8565a230",
+  "source_results_sha256": "9e40c8598685df1d5890062b1d2e9d6c86bd980bb0b48e2f548e68ad67952d76",
+  "source_fixtures_sha256": "c516326fb05d9ee2c24feb2b995822f2aec15d289a8e9cd73966fa29a799f3cd",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "UKR_1_premier-league",
+    "season": "2026-27",
+    "date": "2026-11-30",
+    "home": "Shakhtar Donetsk",
+    "away": "Bukovyna",
+    "expectedHomeGoals": 1.4345,
+    "expectedAwayGoals": 0.9751,
+    "baselineHomeGoals": 1.3458,
+    "baselineAwayGoals": 1.0603,
+    "probabilities": {
+      "home": 0.4767,
+      "draw": 0.2669,
+      "away": 0.2563,
+      "over25": 0.4328,
+      "btts": 0.4745
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 14.0643,
+    "awayWeightedMatches": 9.421,
+    "source": "open-matchday/fixture/UKR_1_premier-league",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

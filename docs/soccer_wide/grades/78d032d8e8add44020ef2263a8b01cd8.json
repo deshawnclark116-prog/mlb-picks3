@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "78d032d8e8add44020ef2263a8b01cd8",
+  "original_captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "league": "UKR_1_premier-league",
+  "date": "2026-11-27",
+  "match_result_source": "open-matchday/soccerway/UKR_1_premier-league",
+  "final_home_goals": 1,
+  "final_away_goals": 0,
+  "model_goal_mae": 0.71675,
+  "baseline_goal_mae": 0.7131500000000001,
+  "model_three_way_brier": 0.6133431199999999,
+  "baseline_three_way_brier": 0.47499446
+}

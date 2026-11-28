@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "5f1fb7d0a8ab7794a09cf23d5f6cc0ea",
+  "captured_at_utc": "2026-11-28T11:45:31.937Z",
+  "catalog_generated_at_utc": "2026-11-28T07:07:07Z",
+  "original_code_sha": "e7c798375458ca18ae996487d53e527b8565a230",
+  "source_results_sha256": "50fc0537d9aca445729c2b9399306c23e75c85d75db4c25cd933e82ecd772777",
+  "source_fixtures_sha256": "54c7f34219c4a76c60046e7ebf006be7f85b8bfe044158456d06d25815b810ee",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "TUR_1_super-lig",
+    "season": "2026-27",
+    "date": "2026-11-30",
+    "home": "Göztepe",
+    "away": "Trabzonspor",
+    "expectedHomeGoals": 1.5228,
+    "expectedAwayGoals": 1.5147,
+    "baselineHomeGoals": 1.6502,
+    "baselineAwayGoals": 1.3376,
+    "probabilities": {
+      "home": 0.3811,
+      "draw": 0.2413,
+      "away": 0.3776,
+      "over25": 0.5852,
+      "btts": 0.61
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 7.5548,
+    "awayWeightedMatches": 9.0096,
+    "source": "open-matchday/fixture/TUR_1_super-lig",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

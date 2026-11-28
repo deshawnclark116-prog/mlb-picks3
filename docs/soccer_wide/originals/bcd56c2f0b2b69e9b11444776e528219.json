@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "bcd56c2f0b2b69e9b11444776e528219",
+  "captured_at_utc": "2026-11-28T11:45:31.937Z",
+  "catalog_generated_at_utc": "2026-11-28T07:07:07Z",
+  "original_code_sha": "e7c798375458ca18ae996487d53e527b8565a230",
+  "source_results_sha256": "421633b6f3d24687c796a6c0ec9babac63cfcdf6fb2ec2774984ec12faa625fb",
+  "source_fixtures_sha256": "cc87e607b20481362473c2e9b106c9a0aa3faf8cd91010320974f9ce48868b8d",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "POR_1_primeira-liga",
+    "season": "2026-27",
+    "date": "2026-11-30",
+    "home": "Casa Pia AC",
+    "away": "SC Braga",
+    "expectedHomeGoals": 1.0436,
+    "expectedAwayGoals": 1.4632,
+    "baselineHomeGoals": 1.2831,
+    "baselineAwayGoals": 1.3317,
+    "probabilities": {
+      "home": 0.2697,
+      "draw": 0.2624,
+      "away": 0.4679,
+      "over25": 0.4579,
+      "btts": 0.4978
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 7.24,
+    "awayWeightedMatches": 8.8469,
+    "source": "open-matchday/fixture/POR_1_primeira-liga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

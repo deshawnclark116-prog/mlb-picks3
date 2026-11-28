@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "4200063cd2077b470834dc1de824f707",
+  "original_captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "league": "CYP_1_first-division",
+  "date": "2026-11-27",
+  "match_result_source": "open-matchday/soccerway/CYP_1_first-division",
+  "final_home_goals": 1,
+  "final_away_goals": 1,
+  "model_goal_mae": 0.31704999999999994,
+  "baseline_goal_mae": 0.4284,
+  "model_three_way_brier": 0.83975912,
+  "baseline_three_way_brier": 0.85270536
+}

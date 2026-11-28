@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "f8166ce103202a21915bf0f21842bac6",
+  "captured_at_utc": "2026-11-28T11:45:31.937Z",
+  "catalog_generated_at_utc": "2026-11-28T07:07:07Z",
+  "original_code_sha": "e7c798375458ca18ae996487d53e527b8565a230",
+  "source_results_sha256": "867d6c286f8771f4ca49a826cfd6a26fb79dc101cb8087efa6e7dfa10b330894",
+  "source_fixtures_sha256": "3bcfc6c30593a4bdec7efcc7c87a15e7d4d59cc0b83204369e44eab8b194995c",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ROU_1_liga-1",
+    "season": "2026-27",
+    "date": "2026-11-30",
+    "home": "Univ. Craiova",
+    "away": "Dinamo Bucuresti",
+    "expectedHomeGoals": 1.5812,
+    "expectedAwayGoals": 1.1592,
+    "baselineHomeGoals": 1.4608,
+    "baselineAwayGoals": 1.2281,
+    "probabilities": {
+      "home": 0.4712,
+      "draw": 0.2495,
+      "away": 0.2794,
+      "over25": 0.5162,
+      "btts": 0.5451
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 8.6315,
+    "awayWeightedMatches": 8.9594,
+    "source": "open-matchday/fixture/ROU_1_liga-1",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "2a8bc7d46f3c5a34afc4a34b4b333d20",
+  "captured_at_utc": "2026-11-28T11:45:31.937Z",
+  "catalog_generated_at_utc": "2026-11-28T07:07:07Z",
+  "original_code_sha": "e7c798375458ca18ae996487d53e527b8565a230",
+  "source_results_sha256": "1a8a54e23ba40bc3c660b785b32aa79063e2933374de69ab54c4807e684bc00a",
+  "source_fixtures_sha256": "3414197c40d30cf13f6e923cc5ededc69928760b45466ff935fd8f5db22c0a95",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ITA_1_serie-a",
+    "season": "2026-27",
+    "date": "2026-11-30",
+    "home": "Cagliari",
+    "away": "Milan",
+    "expectedHomeGoals": 1.3554,
+    "expectedAwayGoals": 1.3726,
+    "baselineHomeGoals": 1.6484,
+    "baselineAwayGoals": 1.4401,
+    "probabilities": {
+      "home": 0.3677,
+      "draw": 0.2566,
+      "away": 0.3756,
+      "over25": 0.5132,
+      "btts": 0.5541
+    },
+    "mostLikely": "A",
+    "homeWeightedMatches": 7.7354,
+    "awayWeightedMatches": 9.092,
+    "source": "open-matchday/fixture/ITA_1_serie-a",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

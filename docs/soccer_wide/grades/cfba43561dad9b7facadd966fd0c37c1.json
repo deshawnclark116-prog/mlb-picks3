@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "cfba43561dad9b7facadd966fd0c37c1",
+  "original_captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "league": "WAL_1_cymru-premier",
+  "date": "2026-11-27",
+  "match_result_source": "open-matchday/soccerway/WAL_1_cymru-premier",
+  "final_home_goals": 1,
+  "final_away_goals": 2,
+  "model_goal_mae": 0.41825,
+  "baseline_goal_mae": 0.6594000000000001,
+  "model_three_way_brier": 0.51550278,
+  "baseline_three_way_brier": 0.72122643
+}

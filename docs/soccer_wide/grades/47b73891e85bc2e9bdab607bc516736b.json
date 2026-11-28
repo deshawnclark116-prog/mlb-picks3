@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "47b73891e85bc2e9bdab607bc516736b",
+  "original_captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "league": "POL_1_ekstraklasa",
+  "date": "2026-11-27",
+  "match_result_source": "open-matchday/soccerway/POL_1_ekstraklasa",
+  "final_home_goals": 3,
+  "final_away_goals": 2,
+  "model_goal_mae": 1.0842,
+  "baseline_goal_mae": 1.0602,
+  "model_three_way_brier": 0.37637394,
+  "baseline_three_way_brier": 0.43201779000000007
+}

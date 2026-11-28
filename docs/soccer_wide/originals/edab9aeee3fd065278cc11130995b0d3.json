@@ -1,0 +1,33 @@
+{
+  "schema": "soccer-wide-original-v1",
+  "id": "edab9aeee3fd065278cc11130995b0d3",
+  "captured_at_utc": "2026-11-28T11:45:31.937Z",
+  "catalog_generated_at_utc": "2026-11-28T07:07:07Z",
+  "original_code_sha": "e7c798375458ca18ae996487d53e527b8565a230",
+  "source_results_sha256": "56b573f7c03778a6dc41a89147c68ea7730327320018e3f56a7fc6c0bcc2926c",
+  "source_fixtures_sha256": "81d83c09600584065133024af544a4db1f081b28e1e1137dda9fdae55a2325ac",
+  "model_version": "soccer-wide-prior-result-poisson-v1",
+  "forecast": {
+    "league": "ESP_1_la-liga",
+    "season": "2026-27",
+    "date": "2026-11-30",
+    "home": "RCD Espanyol de Barcelona",
+    "away": "Getafe CF",
+    "expectedHomeGoals": 1.5645,
+    "expectedAwayGoals": 0.9978,
+    "baselineHomeGoals": 1.5556,
+    "baselineAwayGoals": 1.2747,
+    "probabilities": {
+      "home": 0.505,
+      "draw": 0.2535,
+      "away": 0.2415,
+      "over25": 0.4721,
+      "btts": 0.4993
+    },
+    "mostLikely": "H",
+    "homeWeightedMatches": 8.6935,
+    "awayWeightedMatches": 9.0343,
+    "source": "open-matchday/fixture/ESP_1_la-liga",
+    "status": "RESEARCH_UNCALIBRATED_NEVER_OFFICIAL_BET"
+  }
+}

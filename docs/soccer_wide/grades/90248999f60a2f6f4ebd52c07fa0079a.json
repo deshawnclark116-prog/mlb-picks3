@@ -1,0 +1,14 @@
+{
+  "schema": "soccer-wide-final-v1",
+  "id": "90248999f60a2f6f4ebd52c07fa0079a",
+  "original_captured_at_utc": "2026-11-25T12:56:27.369Z",
+  "league": "GER_3_3-liga",
+  "date": "2026-11-27",
+  "match_result_source": "open-matchday/openligadb/GER_3_3-liga",
+  "final_home_goals": 2,
+  "final_away_goals": 0,
+  "model_goal_mae": 0.6814,
+  "baseline_goal_mae": 0.83625,
+  "model_three_way_brier": 0.3416855,
+  "baseline_three_way_brier": 0.45029899000000007
+}
