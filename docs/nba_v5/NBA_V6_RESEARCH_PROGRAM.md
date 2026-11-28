@@ -15,3 +15,6 @@ nba/nba_v6_foundation.py trains direct and opportunity heads plus an availabilit
 
 ## Previously rejected
 The six-game confidence experiment degraded Top 4 (24/36 to 23/36) and the simple minutes correction worsened MAE (5.00 to 5.29 minutes) on nine games. Neither is deployed. Actual-minutes diagnostic demonstrated opportunity for better minutes modeling, not an attainable forecast. Existing hoopR source acquisition is not verified and completed-season aggregate is not current-game tracking.
+
+## Rotation feature ablation
+Separate paired box-only versus verified substitution/teammate exposure heads. Each PBP trace must pass the existing five-on-five validator, regulation minutes reconciliation and individual box-minute agreement. Past lineup composition similarity and early/late stint minutes are features, not assumed causal effects. Both arms train and score on identical cohorts with a conservative day buffer. Report minutes, availability, MAE, Brier and source rejection counts. No current-game substitutions or actual starters enter features.

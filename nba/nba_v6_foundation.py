@@ -10,7 +10,7 @@ from sklearn.ensemble import HistGradientBoostingRegressor, HistGradientBoosting
 CORE={"points":"pts","rebounds":"reb","assists":"ast","three_pointers_made":"tpm"}
 OPPS=("twoa","tpa","fta","reb","ast")
 STATS=("pts","reb","ast","tpm","min","fga","tpa","fta","fgm","ftm")
-ARMS=("direct","opportunity","simple")
+ARMS=("direct","opportunity","simple","rotation_direct","rotation_opportunity")
 def stamp(s): return dt.datetime.fromisoformat(str(s).replace("Z","+00:00"))
 def day(g): return str(g["date"])[:10]
 def read_games(paths):
@@ -28,12 +28,14 @@ def active(p): return p is not None and safe(p,"min")>0
 def opportunities(p):
     return [max(0,safe(p,"fga")-safe(p,"tpa")),safe(p,"tpa"),safe(p,"fta"),safe(p,"reb"),safe(p,"ast")]
 class State:
-    def __init__(self):
+    def __init__(self,rotation=None):
+        self.rotation=rotation
         self.ph=collections.defaultdict(list)
         self.th=collections.defaultdict(list)
     def roster(self,team):
         return sorted({str(p["id"]) for _,ps in self.th[team][-4:] for p in ps})
     def ingest(self,g):
+        if self.rotation is not None:self.rotation.ingest(g)
         for side in ("home","away"):
             team=str(g[side]["id"])
             ps=[p for p in g["players"] if str(p["team"])==team and active(p)]
@@ -84,14 +86,16 @@ class State:
         pct=[(twom+30*.53)/(twoa+30),(tm+40*.35)/(ta+40),(fm+20*.77)/(fa+20)]
         raw=[mean([safe(p,k) for p in hs[-10:]],0.) for k in CORE.values()]
         mins=mean([safe(p,"min") for p in recent5],12.)
-        return np.asarray(x+pct,dtype=float),pct,raw,mins
+        return np.asarray(x+pct+(self.rotation.features(pid,team,roster) if self.rotation is not None else []),dtype=float),pct,raw,mins
 
-def examples(games,train_end,cal_end):
-    state=State(); train=[]; cal=[]
+def examples(games,train_end,cal_end,rotation=None):
+    state=State(rotation); train=[]; cal=[]; pending=[]
     # Batch by calendar date, preventing same-day lookahead.
     for d,gg in __import__("itertools").groupby(games,key=day):
         group=list(gg)
         if d>=cal_end: break
+        cutoff=(dt.date.fromisoformat(d)-dt.timedelta(days=1)).isoformat()
+        while pending and day(pending[0])<cutoff: state.ingest(pending.pop(0))
         for g in group:
             for side in ("home","away"):
                 team=str(g[side]["id"]); opp=str(g["away" if side=="home" else "home"]["id"])
@@ -104,20 +108,22 @@ def examples(games,train_end,cal_end):
                     target=[safe(p,k) for k in CORE.values()] if played else [0.]*4
                     row=(feat,pct,raw,mins,played,safe(p,"min") if played else 0.,target,opportunities(p) if played else [0.]*5)
                     (train if d<train_end else cal).append(row)
-        for g in group: state.ingest(g)
+        pending.extend(group)
     return train,cal
 def reg(X,y):
     return HistGradientBoostingRegressor(max_iter=180,max_leaf_nodes=15,min_samples_leaf=35,l2_regularization=3,learning_rate=.06,random_state=61).fit(X,y)
 class Model:
+    def __init__(self,rotation=False):self.rotation=rotation
+    def features(self,r):return r[0] if self.rotation else r[0][:106]
     def fit(self,rows):
-        a=[r for r in rows if r[4]]; X=np.stack([r[0] for r in a]); allx=np.stack([r[0] for r in rows])
+        a=[r for r in rows if r[4]]; X=np.stack([self.features(r) for r in a]); allx=np.stack([self.features(r) for r in rows])
         self.av=HistGradientBoostingClassifier(max_iter=140,max_leaf_nodes=15,min_samples_leaf=40,l2_regularization=3,random_state=61).fit(allx,[r[4] for r in rows])
         self.minutes=reg(X,[min(r[5],48) for r in a])
         self.direct=[reg(X,[r[6][j] for r in a]) for j in range(4)]
         self.rates=[reg(X,[r[7][j]/max(r[5],1)*36 for r in a]) for j in range(5)]
         return self
     def predict(self,feats):
-        X=np.stack([f[0] for f in feats]); p=np.clip(self.av.predict_proba(X)[:,1],.01,.99)
+        X=np.stack([self.features(f) for f in feats]); p=np.clip(self.av.predict_proba(X)[:,1],.01,.99)
         mins=np.clip(self.minutes.predict(X),1,48)
         direct=np.maximum(0,np.stack([m.predict(X) for m in self.direct],axis=1))
         rates=np.maximum(0,np.stack([m.predict(X) for m in self.rates],axis=1))
@@ -126,6 +132,13 @@ class Model:
         opp=np.stack([op[:,0]*pct[:,0]*2+op[:,1]*pct[:,1]*3+op[:,2]*pct[:,2],op[:,3],op[:,4],op[:,1]*pct[:,1]],axis=1)
         simple=np.stack([f[2] for f in feats])
         return p,mins,{"direct":direct,"opportunity":opp,"simple":simple}
+class PairedModels:
+    def __init__(self,rows):
+        self.base=Model().fit(rows); self.rot=Model(True).fit(rows)
+    def predict(self,feats):
+        p,m,base=self.base.predict(feats); rp,rm,rot=self.rot.predict(feats)
+        return p,m,{**base,"rotation_direct":rot["direct"],"rotation_opportunity":rot["opportunity"]}
+
 def residuals(model,rows):
     a=[r for r in rows if r[4]]
     _,_,pred=model.predict([r[:4] for r in a]); y=np.asarray([r[6] for r in a])
@@ -156,8 +169,8 @@ def bootstrap(rows,seed=61):
     sums=np.array([sum(v) for v in vals]); sizes=np.array([len(v) for v in vals])
     idx=rng.integers(0,len(vals),(1000,len(vals)))
     return np.quantile(sums[idx].sum(axis=1)/sizes[idx].sum(axis=1),[.025,.975]).tolist()
-def evaluate(model,res,games,archives):
-    state=State(); i=0; records=[]; misses=collections.Counter(); conflicts=[]
+def evaluate(model,res,games,archives,rotation=None):
+    state=State(rotation); i=0; records=[]; misses=collections.Counter(); conflicts=[]
     for actual,ar,grade in archives:
         d=day(actual); gid=str(actual["game_id"])
         cutoff=stamp(ar["forecast_at_utc"]).astimezone(dt.timezone.utc).date().isoformat()
@@ -175,7 +188,8 @@ def evaluate(model,res,games,archives):
             if not roster: continue
             f=[state.features(pid,team,opp,side=="home",d,roster) for pid in roster]
             pa,mins,means=model.predict(f)
-            for j,pid in enumerate(roster): pred[pid]=(pa[j],mins[j],{k:v[j] for k,v in means.items()})
+            rp,rm,_=model.rot.predict(f)
+            for j,pid in enumerate(roster): pred[pid]=(pa[j],mins[j],{k:v[j] for k,v in means.items()},rp[j],rm[j])
         seen=set()
         for r in grade["rows"]:
             m=r["market"]; pid=str(r["player_id"]); key=(pid,m)
@@ -196,14 +210,14 @@ def evaluate(model,res,games,archives):
             if played and y!=float(r["actual"]):
                 misses["box_grade_stat_conflict"]+=1
                 conflicts.append({"game":gid,"player":pid,"market":m,"box_actual":y,"grade_actual":r["actual"]}); continue
-            av,mins,mu=pred[pid]; hit=int(played and y>=k)
+            av,mins,mu,rotav,rotmins=pred[pid]; hit=int(played and y>=k)
             q={arm:prob(res[arm][j],float(v[j]),k) for arm,v in mu.items()}
             records.append(dict(game=gid,player=pid,market=m,played=played,y=y,hit=hit,target=k,
                 base_mean=float(r["projection"]),base_p=cp*ap,base_cond=cp,base_active=ap,
-                candidate_active=float(av),minutes=mins,actual_minutes=safe(p,"min") if played else 0,
+                candidate_active=float(av),rotation_active=float(rotav),minutes=mins,rotation_minutes=rotmins,actual_minutes=safe(p,"min") if played else 0,
                 baseline_minutes=r.get("minutes_forecast"),rank=r.get("frontend_rank"),
                 means={arm:float(v[j]) for arm,v in mu.items()},
-                probs={arm:q[arm]*ap for arm in ARMS},own_probs={arm:q[arm]*av for arm in ARMS}))
+                probs={arm:q[arm]*ap for arm in ARMS},own_probs={arm:q[arm]*(rotav if arm.startswith("rotation_") else av) for arm in ARMS}))
     return records,dict(misses),conflicts
 def compare_independent(records, archives, root):
     # Independent shadow uses different milestone targets. Compare numerical
@@ -258,17 +272,26 @@ def summarize(records):
             picked=[r for rows in by.values() for r in sorted(rows,key=lambda r:(r["rank"] if arm=="baseline" else -r["probs"][arm],r["player"],r["market"]))[:k]]
             top[str(k)][arm]={"n":len(picked),"hits":sum(r["hit"] for r in picked),"hit_rate":mean([r["hit"] for r in picked])}
     return result,top
+def rotation_metrics(records):
+    rs=[r for r in records if r["market"]=="points"]; pl=[r for r in rs if r["played"] and r["baseline_minutes"] is not None]
+    return {"n":len(rs),"n_minutes":len(pl),"minutes_mae":{k:mean([abs(r[k]-r["actual_minutes"]) for r in pl]) for k in ("baseline_minutes","minutes","rotation_minutes")},
+       "availability_brier":{k:mean([(r[k]-int(r["played"]))**2 for r in rs]) for k in ("base_active","candidate_active","rotation_active")}}
+
 def main():
     a=argparse.ArgumentParser(); a.add_argument("--games",action="append",required=True); a.add_argument("--archive",required=True); a.add_argument("--grades",required=True); a.add_argument("--out",required=True)
+    a.add_argument("--pbp",action="append",required=True)
     a.add_argument("--independent-archive",default="docs/nba_independent_live/first")
     a.add_argument("--train-end",default="2026-02-01"); a.add_argument("--cal-end",default="2026-04-15"); a.add_argument("--test-from",default="2026-11-01")
     args=a.parse_args()
     if not args.train_end<args.cal_end<=args.test_from: raise ValueError("overlapping splits")
-    games=read_games(args.games); train,cal=examples(games,args.train_end,args.cal_end)
+    from nba.nba_v6_rotation import RotationHistory, load_pbp
+    games=read_games(args.games); pbp=load_pbp(args.pbp)
+    trainrot=RotationHistory(pbp); evalrot=RotationHistory(pbp)
+    train,cal=examples(games,args.train_end,args.cal_end,trainrot)
     if len(train)<5000 or len(cal)<1000: raise ValueError("insufficient training/calibration")
-    model=Model().fit(train); res=residuals(model,cal)
+    model=PairedModels(train); res=residuals(model,cal)
     archive,skipped=collect_archives(args.archive,args.grades,games,args.test_from)
-    records,missing,conflicts=evaluate(model,res,games,archive)
+    records,missing,conflicts=evaluate(model,res,games,archive,evalrot)
     if not records: raise ValueError("no matched frozen events")
     metrics,top=summarize(records)
     print("SOURCE_CONFLICT_COUNT",len(conflicts),flush=True)
@@ -276,6 +299,8 @@ def main():
         "training_rows":len(train),"calibration_rows":len(cal),"split":[args.train_end,args.cal_end,args.test_from],
         "data_sha256":{p:hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in args.games},
         "archive_games":len(archive),"scored_events":len(records),"skipped_games":skipped,"excluded_rows":missing,"source_conflicts":conflicts,
+        "rotation_training_source_audit":dict(trainrot.audit),"rotation_evaluation_source_audit":dict(evalrot.audit),
+        "rotation_minutes_and_availability":rotation_metrics(records),
         "metrics":metrics,"top4_top10_same_eligible_set":top,
         "independent_frozen_numerical_comparison":compare_independent(records,archive,args.independent_archive),
         "limitations":["historical last-four-game roster approximation in training; archive roster at evaluation",
