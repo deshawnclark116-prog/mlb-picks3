@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_08_15PM.pdf",
-  "published_at_utc": "2026-11-28T01:15:00+00:00",
-  "captured_at_utc": "2026-11-28T01:26:24.329833+00:00",
-  "source_sha256": "3cea8be0abb4252740b824813c42a2bcfc4ca2bdf16c9c7222d16f794fbb2af5",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_08_30PM.pdf",
+  "published_at_utc": "2026-11-28T01:30:00+00:00",
+  "captured_at_utc": "2026-11-28T01:34:51.523262+00:00",
+  "source_sha256": "2e41a7f5dfe85d5c5665d058772a696bd9355fafce8da45886a1b7aa9321c596",
   "reports": [
     {
       "matchup": "MIA@NYK",
@@ -643,7 +643,7 @@
       "team_abbr": "UTA",
       "player": "Bamba, Mo",
       "normalized_player": "mo bamba",
-      "status": "QUESTIONABLE",
+      "status": "OUT",
       "reason": "Injury/Illness - Illness"
     },
     {
@@ -659,7 +659,7 @@
       "team_abbr": "UTA",
       "player": "Hayes, Jaxson",
       "normalized_player": "jaxson hayes",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": "Injury/Illness - Left Knee Strain"
     },
     {
@@ -691,7 +691,7 @@
       "team_abbr": "UTA",
       "player": "Nurkic, Jusuf",
       "normalized_player": "jusuf nurkic",
-      "status": "QUESTIONABLE",
+      "status": "AVAILABLE",
       "reason": ""
     },
     {
