@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-28_08_15AM.pdf",
-  "published_at_utc": "2026-11-28T13:15:00+00:00",
-  "captured_at_utc": "2026-11-28T13:22:32.065734+00:00",
-  "source_sha256": "270cd394e0aa01d2843b5d7cff025cd56f02893a2adfd500590d5916a5b0ae6b",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-28_12_15PM.pdf",
+  "published_at_utc": "2026-11-28T17:15:00+00:00",
+  "captured_at_utc": "2026-11-28T17:29:50.997578+00:00",
+  "source_sha256": "fd0de743286d1df4a12875b6ecce125c55bc01dff7d7e3e66abaa716e8dd223b",
   "reports": [
     {
       "matchup": "ORL@WAS",
