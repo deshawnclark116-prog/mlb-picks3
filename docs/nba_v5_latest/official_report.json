@@ -1,10 +1,10 @@
 {
   "schema": "NBA_OFFICIAL_INJURY_REPORT_SNAPSHOT_V1",
   "source_url": "https://official.nba.com/nba-injury-report-2026-27-season/",
-  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_08_30PM.pdf",
-  "published_at_utc": "2026-11-28T01:30:00+00:00",
-  "captured_at_utc": "2026-11-28T01:34:51.523262+00:00",
-  "source_sha256": "2e41a7f5dfe85d5c5665d058772a696bd9355fafce8da45886a1b7aa9321c596",
+  "report_url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-27_08_45PM.pdf",
+  "published_at_utc": "2026-11-28T01:45:00+00:00",
+  "captured_at_utc": "2026-11-28T01:50:28.419404+00:00",
+  "source_sha256": "bf9253e8e985416fccb38dc0e04c5b0cc414aa4fb3099f7c7e711a5c1840ff04",
   "reports": [
     {
       "matchup": "MIA@NYK",
@@ -803,16 +803,16 @@
       "team_abbr": "SAS",
       "player": "Fox, De'Aaron",
       "normalized_player": "de aaron fox",
-      "status": "QUESTIONABLE",
-      "reason": "Injury/Illness - Right Shin Contusion"
+      "status": "AVAILABLE",
+      "reason": "-"
     },
     {
       "matchup": "LAL@SAS",
       "team_abbr": "SAS",
       "player": "Harper, Dylan",
       "normalized_player": "dylan harper",
-      "status": "QUESTIONABLE",
-      "reason": ""
+      "status": "AVAILABLE",
+      "reason": "-"
     },
     {
       "matchup": "LAL@SAS",
@@ -821,6 +821,14 @@
       "normalized_player": "tobias harris",
       "status": "OUT",
       "reason": "Injury/Illness - Left Calf Strain"
+    },
+    {
+      "matchup": "LAL@SAS",
+      "team_abbr": "SAS",
+      "player": "Jones Garcia, David",
+      "normalized_player": "david jones garcia",
+      "status": "OUT",
+      "reason": "G League - Two-Way"
     },
     {
       "matchup": "LAL@SAS",
@@ -1207,7 +1215,7 @@
       "reason": "G League - Two-Way"
     }
   ],
-  "rows": 150,
+  "rows": 151,
   "unparsed_name_rows": 0,
   "absence_from_report_does_not_mean_healthy": true,
   "game_active_roster_certified": false,
