@@ -27,3 +27,6 @@ Expand historical seasons and collect timestamped pregame roster/availability
 information. Existing data are not sufficient to validate true coach intent or
 defender matchup assignment. Do not claim tracking until actual source access
 and coverage are established.
+
+## Verified source reconciliation
+Run 46168467075 checked 15,292 original rows. All 28 conflicts were confirmed in favor of archived grading using freshly retrieved final ESPN outcomes. A read-only correction ledger carries the original audit and hashes. Apply exact matched corrections to evaluation outcomes only; preserve all raw inputs and frozen forecasts. Six minutes differences remain separate. Original WORLD V1 results above remain unchanged.

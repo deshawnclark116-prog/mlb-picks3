@@ -10,6 +10,7 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 from nba_world.data import read,archives,teams,date,stamp,played,val,MARKETS,KEYS,History
 from nba_world.evaluate import boot,mean
+from nba_world.reconcile import load,reconcile
 
 ARMS=("recent10","decay","role","role_opponent")
 GRID=((5,10,15,20,25,30,35,40),(2,4,6,8,10,12),(1,2,4,6,8,10),(1,2,3,4,5,6))
@@ -100,7 +101,7 @@ class Retrieval(History):
         return out,f
 
 def collect(games,from_date,end_date,archive=None):
-    h=Retrieval();i=0;rows=[];skips=collections.Counter();conflicts=[]
+    h=Retrieval();i=0;rows=[];skips=collections.Counter();conflicts=[];ledger=load();corrected=0
     if archive is None:
         iterable=[(g,None,None) for g in games if from_date<=date(g).isoformat()<end_date]
     else:iterable=archive
@@ -134,13 +135,15 @@ def collect(games,from_date,end_date,archive=None):
             x=by.get(pid)
             if x is None:skips["outside_roster"]+=1;continue
             j=MARKETS.index(m);actual=float(x["actual"][j])
-            if x["played"]!=bool(r["played"]) or (x["played"] and actual!=float(r["actual"])):
+            ok,actual,changed=reconcile(ledger,gid,pid,m,actual,r.get("actual"),x["played"],bool(r["played"]))
+            corrected+=int(changed)
+            if not ok:
                 conflicts.append({"game":gid,"player":pid,"market":m,"box":actual,"grade":r.get("actual")});continue
             if x["dist"] is None:skips["no_player_history"]+=1
             rows.append({**x,"market":m,"j":j,"y":actual,"base":float(r["projection"]),
                          "base_active":float(r["p_active"]),"base_minutes":r.get("minutes_forecast"),
                          "rank":r.get("frontend_rank"),"target":r.get("whole_projection"),"cp":r.get("reach_probability")})
-    return rows,dict(skips),conflicts
+    return rows,dict(skips),conflicts,corrected
 
 def fit(train,cal):
     xa=np.stack([r["f"] for r in train]);ya=np.asarray([r["played"] for r in train])
@@ -226,16 +229,16 @@ def main():
     p.add_argument("--archive",required=True);p.add_argument("--grades",required=True);p.add_argument("--out",required=True)
     args=p.parse_args()
     games=read(args.games)
-    tr,_,_=collect(games,"2025-12-01","2026-03-01");ca,_,_=collect(games,"2026-03-01","2026-04-15")
+    tr,_,_,_=collect(games,"2025-12-01","2026-03-01");ca,_,_,_=collect(games,"2026-03-01","2026-04-15")
     if len(tr)<5000 or len(ca)<1000:raise ValueError("insufficient chronological examples")
     print("ANALOG_TRAIN",len(tr),"CALIBRATION",len(ca),flush=True)
     fitted=fit(tr,ca);ar,skipped=archives(games,args.archive,args.grades,"2026-11-01")
-    rows,missing,conflicts=collect(games,"","",archive=ar)
+    rows,missing,conflicts,corrected=collect(games,"","",archive=ar)
     graded,metrics=score(rows,fitted)
     result={"schema":"NBA_WORLD_ANALOG_V1","production_changed":False,"promotion_allowed":False,
        "train_rows":len(tr),"calibration_rows":len(ca),"archive_games":len(ar),"evaluated":len(graded),
        "selected_by_prior_training_only":fitted[2],"historical_selection_scores":fitted[4],
-       "metrics":metrics,"excluded":missing,"skipped":skipped,"source_conflicts":conflicts,
+       "metrics":metrics,"excluded":missing,"skipped":skipped,"source_conflicts":conflicts,"verified_outcome_corrections_applied":corrected,
        "source_hashes":{x:hashlib.sha256(Path(x).read_bytes()).hexdigest() for x in args.games},
        "limitations":["historical roster candidates approximate and archive candidate identities/status used at test",
         "no target-game availability or box outcome in retrieved features",

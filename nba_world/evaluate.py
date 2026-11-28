@@ -5,6 +5,7 @@ import numpy as np
 import torch
 from nba_world.data import read,make_training,archives,History,teams,date,stamp,MARKETS,KEYS,val
 from nba_world.model import train,simulate
+from nba_world.reconcile import load,reconcile
 def mean(x):return float(np.mean(x)) if len(x) else None
 def boot(rows,seed=71):
     d=collections.defaultdict(list)
@@ -14,7 +15,7 @@ def boot(rows,seed=71):
     rng=np.random.default_rng(seed);i=rng.integers(0,len(sums),(1000,len(sums)))
     return np.quantile(sums[i].sum(axis=1)/sizes[i].sum(axis=1),[.025,.975]).tolist()
 def grade(model,games,ar,sims,independent_root):
-    h=History();i=0;records=[];conflicts=[];excluded=collections.Counter();coverage=[]
+    h=History();i=0;records=[];conflicts=[];excluded=collections.Counter();coverage=[];ledger=load();corrected=0
     for g,a,gr in ar:
         cutoff=stamp(a["forecast_at_utc"]).date()-dt.timedelta(days=1)
         while i<len(games) and date(games[i])<cutoff:h.add(games[i]);i+=1
@@ -44,7 +45,9 @@ def grade(model,games,ar,sims,independent_root):
             if (pid,m) not in original:raise ValueError("grade missing forecast")
             k=MARKETS.index(m);t,j=ids[pid];p=lookup.get(pid);played=p is not None
             actual=val(p,KEYS[k]) if played else 0
-            if bool(r["played"])!=played or (played and float(r["actual"])!=actual):
+            ok,actual,changed=reconcile(ledger,gid,pid,m,actual,r.get("actual"),played,bool(r["played"]))
+            corrected+=int(changed)
+            if not ok:
                 conflicts.append({"game":gid,"player":pid,"market":m,"box":actual if played else None,"grade":r.get("actual")});continue
             world=sim[t]["stats"][:,j,k];active=sim[t]["active"][:,j]
             pa=float(active.mean());sample=world[active]
@@ -61,7 +64,7 @@ def grade(model,games,ar,sims,independent_root):
                    p_common=float(np.mean(sample>=target))*row["base_active"] if len(sample) else 0.,
                    base_p=float(cp)*row["base_active"])
             records.append(row)
-    return records,conflicts,dict(excluded),coverage
+    return records,conflicts,dict(excluded),coverage,corrected
 def report(rows):
     out={}
     for m in MARKETS:
@@ -101,7 +104,7 @@ def main():
     print("WORLD_TRAIN_GAMES",len(tr),"VALID_GAMES",len(va),flush=True)
     model,trace=train(tr,va,args.epochs)
     ar,skipped=archives(games,args.archive,args.grades,args.test_from)
-    rows,conflicts,excluded,coverage=grade(model,games,ar,args.sims,args.independent)
+    rows,conflicts,excluded,coverage,corrected=grade(model,games,ar,args.sims,args.independent)
     if not rows:raise ValueError("no scored rows")
     metrics,top,role=report(rows)
     result={"schema":"NBA_WORLD_CLEANROOM_V1","production_changed":False,"promotion_allowed":False,
@@ -110,7 +113,7 @@ def main():
        "validation_trace":trace,"split":[args.train_end,args.valid_end,args.test_from],
        "metrics":metrics,"top_same_original_target":top,"minutes_and_availability":role,
        "actual_player_roster_coverage":sum(x for x,y in coverage)/max(1,sum(y for x,y in coverage)),
-       "skipped":skipped,"excluded":excluded,"source_conflicts":conflicts,
+       "skipped":skipped,"excluded":excluded,"source_conflicts":conflicts,"verified_outcome_corrections_applied":corrected,
        "limitations":["historical rosters approximated from earlier appearances; test roster identities supplied by pretip archives",
           "November outcomes were previously researched; not fresh prospective holdout",
           "current injury/starter certification and player tracking not yet present",

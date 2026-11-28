@@ -1,0 +1,463 @@
+{
+  "schema": "NBA_WORLD_VERIFIED_GRADE_CORRECTIONS_V1",
+  "source_run": 46168467075,
+  "source_job": 141051237217,
+  "raw_source_audit": {
+    "schema": "NBA_V6_SOURCE_RECONCILIATION_V1",
+    "production_changed": false,
+    "original_archives_unchanged": true,
+    "n_checked": 15292,
+    "n_conflicts": 28,
+    "decisions": {
+      "GRADE_CONFIRMED": 28
+    },
+    "conflicts": [
+      {
+        "game": "401909314",
+        "player": "2596112",
+        "market": "rebounds",
+        "box_played": true,
+        "grade_played": true,
+        "box": 1,
+        "grade": 2,
+        "fresh_actual": 2,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401909314",
+        "player": "5107199",
+        "market": "rebounds",
+        "box_played": true,
+        "grade_played": true,
+        "box": 5,
+        "grade": 4,
+        "fresh_actual": 4,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401909947",
+        "player": "4683766",
+        "market": "assists",
+        "box_played": true,
+        "grade_played": true,
+        "box": 2,
+        "grade": 3,
+        "fresh_actual": 3,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401909947",
+        "player": "4684793",
+        "market": "assists",
+        "box_played": true,
+        "grade_played": true,
+        "box": 1,
+        "grade": 0,
+        "fresh_actual": 0,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401909949",
+        "player": "3133628",
+        "market": "rebounds",
+        "box_played": true,
+        "grade_played": true,
+        "box": 5,
+        "grade": 6,
+        "fresh_actual": 6,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401909949",
+        "player": "4591725",
+        "market": "rebounds",
+        "box_played": true,
+        "grade_played": true,
+        "box": 5,
+        "grade": 4,
+        "fresh_actual": 4,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401909949",
+        "player": "4397424",
+        "market": "rebounds",
+        "box_played": true,
+        "grade_played": true,
+        "box": 9,
+        "grade": 8,
+        "fresh_actual": 8,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401909953",
+        "player": "4395651",
+        "market": "rebounds",
+        "box_played": true,
+        "grade_played": true,
+        "box": 3,
+        "grade": 2,
+        "fresh_actual": 2,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401909953",
+        "player": "4395651",
+        "market": "assists",
+        "box_played": true,
+        "grade_played": true,
+        "box": 8,
+        "grade": 9,
+        "fresh_actual": 9,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401909955",
+        "player": "3134908",
+        "market": "rebounds",
+        "box_played": true,
+        "grade_played": true,
+        "box": 8,
+        "grade": 7,
+        "fresh_actual": 7,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401909955",
+        "player": "4432241",
+        "market": "rebounds",
+        "box_played": true,
+        "grade_played": true,
+        "box": 2,
+        "grade": 3,
+        "fresh_actual": 3,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401909957",
+        "player": "4871144",
+        "market": "rebounds",
+        "box_played": true,
+        "grade_played": true,
+        "box": 12,
+        "grade": 11,
+        "fresh_actual": 11,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401909958",
+        "player": "4845367",
+        "market": "rebounds",
+        "box_played": true,
+        "grade_played": true,
+        "box": 8,
+        "grade": 7,
+        "fresh_actual": 7,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401909961",
+        "player": "4065804",
+        "market": "rebounds",
+        "box_played": true,
+        "grade_played": true,
+        "box": 5,
+        "grade": 4,
+        "fresh_actual": 4,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401909961",
+        "player": "5175647",
+        "market": "rebounds",
+        "box_played": true,
+        "grade_played": true,
+        "box": 2,
+        "grade": 3,
+        "fresh_actual": 3,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401909981",
+        "player": "4278078",
+        "market": "rebounds",
+        "box_played": true,
+        "grade_played": true,
+        "box": 4,
+        "grade": 3,
+        "fresh_actual": 3,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401909984",
+        "player": "4397002",
+        "market": "rebounds",
+        "box_played": true,
+        "grade_played": true,
+        "box": 5,
+        "grade": 4,
+        "fresh_actual": 4,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401909984",
+        "player": "4066650",
+        "market": "rebounds",
+        "box_played": true,
+        "grade_played": true,
+        "box": 5,
+        "grade": 6,
+        "fresh_actual": 6,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401909985",
+        "player": "1966",
+        "market": "rebounds",
+        "box_played": true,
+        "grade_played": true,
+        "box": 6,
+        "grade": 7,
+        "fresh_actual": 7,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401909985",
+        "player": "4396909",
+        "market": "rebounds",
+        "box_played": true,
+        "grade_played": true,
+        "box": 5,
+        "grade": 4,
+        "fresh_actual": 4,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401909988",
+        "player": "4395630",
+        "market": "rebounds",
+        "box_played": true,
+        "grade_played": true,
+        "box": 5,
+        "grade": 6,
+        "fresh_actual": 6,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401909988",
+        "player": "5104157",
+        "market": "rebounds",
+        "box_played": true,
+        "grade_played": true,
+        "box": 11,
+        "grade": 10,
+        "fresh_actual": 10,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401910000",
+        "player": "5170947",
+        "market": "assists",
+        "box_played": true,
+        "grade_played": true,
+        "box": 0,
+        "grade": 1,
+        "fresh_actual": 1,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401910005",
+        "player": "3907498",
+        "market": "rebounds",
+        "box_played": true,
+        "grade_played": true,
+        "box": 6,
+        "grade": 5,
+        "fresh_actual": 5,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401910005",
+        "player": "3945274",
+        "market": "rebounds",
+        "box_played": true,
+        "grade_played": true,
+        "box": 6,
+        "grade": 7,
+        "fresh_actual": 7,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401910007",
+        "player": "4684806",
+        "market": "points",
+        "box_played": true,
+        "grade_played": true,
+        "box": 20,
+        "grade": 18,
+        "fresh_actual": 18,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401910007",
+        "player": "4903027",
+        "market": "points",
+        "box_played": true,
+        "grade_played": true,
+        "box": 18,
+        "grade": 20,
+        "fresh_actual": 20,
+        "decision": "GRADE_CONFIRMED"
+      },
+      {
+        "game": "401910021",
+        "player": "3136196",
+        "market": "rebounds",
+        "box_played": true,
+        "grade_played": true,
+        "box": 6,
+        "grade": 5,
+        "fresh_actual": 5,
+        "decision": "GRADE_CONFIRMED"
+      }
+    ],
+    "n_minutes_differences": 6,
+    "minutes_examples": [
+      {
+        "game": "401909960",
+        "player": "4897943",
+        "box_minutes": 6,
+        "grade_minutes": 8
+      },
+      {
+        "game": "401909960",
+        "player": "5211983",
+        "box_minutes": 5,
+        "grade_minutes": 6
+      },
+      {
+        "game": "401909960",
+        "player": "5289900",
+        "box_minutes": 17,
+        "grade_minutes": 18
+      },
+      {
+        "game": "401909960",
+        "player": "4277922",
+        "box_minutes": 7,
+        "grade_minutes": 8
+      },
+      {
+        "game": "401909960",
+        "player": "4997526",
+        "box_minutes": 23,
+        "grade_minutes": 24
+      },
+      {
+        "game": "401909960",
+        "player": "5214640",
+        "box_minutes": 22,
+        "grade_minutes": 23
+      }
+    ],
+    "fresh_sources": {
+      "401909314": {
+        "status": "VERIFIED_FINAL",
+        "sha256": "da52500b5b3f9ad59d58b86c2d90b0ce7e855bae7e5f82d484a4e9ee4fd4dd0e",
+        "captured": "2026-11-28T17:04:21.776553+00:00",
+        "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=401909314"
+      },
+      "401909947": {
+        "status": "VERIFIED_FINAL",
+        "sha256": "6a0ccb0c9123a5f0088f0a141e59ed34d96ac25ffea052312ef3953312d6848d",
+        "captured": "2026-11-28T17:04:21.906002+00:00",
+        "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=401909947"
+      },
+      "401909949": {
+        "status": "VERIFIED_FINAL",
+        "sha256": "34364d79bc523f6c13d6286a0e27c079bd56e67366cc10e0906e6193fa4a20ae",
+        "captured": "2026-11-28T17:04:21.873670+00:00",
+        "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=401909949"
+      },
+      "401909953": {
+        "status": "VERIFIED_FINAL",
+        "sha256": "202d08efa3d9610c0332e4b6a69c5aad2734e9401f19c467d168a01889939c9e",
+        "captured": "2026-11-28T17:04:21.948027+00:00",
+        "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=401909953"
+      },
+      "401909955": {
+        "status": "VERIFIED_FINAL",
+        "sha256": "e5e29af769c4f7f49c7ec68375b0b041cd03060148f992d055f374ebf4def62e",
+        "captured": "2026-11-28T17:04:21.790524+00:00",
+        "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=401909955"
+      },
+      "401909957": {
+        "status": "VERIFIED_FINAL",
+        "sha256": "6c5e5719eb6de2763b3319199a32c228ad2c020c373e328078a3e5080bf3702e",
+        "captured": "2026-11-28T17:04:22.247149+00:00",
+        "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=401909957"
+      },
+      "401909958": {
+        "status": "VERIFIED_FINAL",
+        "sha256": "bd853bd87a4b2b5a4c20395a6cac93bc01af6f7befcd699d364cd9642948b339",
+        "captured": "2026-11-28T17:04:22.098587+00:00",
+        "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=401909958"
+      },
+      "401909961": {
+        "status": "VERIFIED_FINAL",
+        "sha256": "768b8423c0d213dee431130ae90e8a54cab4345d69dd5e45583e1e925b29965f",
+        "captured": "2026-11-28T17:04:22.259587+00:00",
+        "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=401909961"
+      },
+      "401909981": {
+        "status": "VERIFIED_FINAL",
+        "sha256": "90472932996ba24d31a5ce029cc90488f645b9f35a45dcc84dba020d34a0ba85",
+        "captured": "2026-11-28T17:04:22.165461+00:00",
+        "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=401909981"
+      },
+      "401909984": {
+        "status": "VERIFIED_FINAL",
+        "sha256": "b8627ba03874d911f0c0a7a6d958a2b5df3283e79a69ee73b3a39d463de73de1",
+        "captured": "2026-11-28T17:04:22.233746+00:00",
+        "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=401909984"
+      },
+      "401909985": {
+        "status": "VERIFIED_FINAL",
+        "sha256": "903f19cf3e7bf43be1f1c09856471e2da26138549fa8795f6250d664f10db5c2",
+        "captured": "2026-11-28T17:04:22.353768+00:00",
+        "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=401909985"
+      },
+      "401909988": {
+        "status": "VERIFIED_FINAL",
+        "sha256": "9abb7b5d1cf74f82ab8b1f390262614e5dec3ba3e17fbf4a4511b9c74db8a69e",
+        "captured": "2026-11-28T17:04:22.404764+00:00",
+        "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=401909988"
+      },
+      "401910000": {
+        "status": "VERIFIED_FINAL",
+        "sha256": "44c12d3ffa32bd0211dde9134a3dbd1661e2b673b778f172d9ac398104f69c1f",
+        "captured": "2026-11-28T17:04:22.454759+00:00",
+        "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=401910000"
+      },
+      "401910005": {
+        "status": "VERIFIED_FINAL",
+        "sha256": "c61fc0db816a17606c43445de37a0e1346d7ef88ee1b54e67603c62c305d98e5",
+        "captured": "2026-11-28T17:04:22.469819+00:00",
+        "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=401910005"
+      },
+      "401910007": {
+        "status": "VERIFIED_FINAL",
+        "sha256": "925e000dc4ec36acfb8c67eee44897b4e5f41f6fe84de20cac454d533f8d87a0",
+        "captured": "2026-11-28T17:04:22.483770+00:00",
+        "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=401910007"
+      },
+      "401910021": {
+        "status": "VERIFIED_FINAL",
+        "sha256": "1cd41467db65d1242461e42195766bc267459e8853740e6bc65d58146ddd763b",
+        "captured": "2026-11-28T17:04:22.582446+00:00",
+        "url": "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=401910021"
+      }
+    }
+  },
+  "policy": "Apply only at outcome evaluation; matching raw value, grade value and fresh final required. Never change original frozen forecasts or as-of historical input."
+}

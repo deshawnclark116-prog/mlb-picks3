@@ -3,7 +3,11 @@ on:
   push:
     branches: [research/nba-world-cleanroom]
     paths:
-      - 'nba_world/**'
+      - 'nba_world/data.py'
+      - 'nba_world/model.py'
+      - 'nba_world/evaluate.py'
+      - 'nba_world/reconcile.py'
+      - 'docs/nba_world/verified_grade_corrections.json'
       - 'tests/test_nba_world.py'
       - '.github/workflows/nba_world.yml'
   workflow_dispatch:
