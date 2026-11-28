@@ -14,3 +14,10 @@ class ProspectiveTests(unittest.TestCase):
     def test_duplicate_rejected(self):
         with self.assertRaises(ValueError):
             parse_roster({"athletes":[{"id":"1","fullName":"P"}]*10},"1")
+
+    def test_precise_minutes(self):
+        from nba_world.refresh import parse_minutes,pair
+        self.assertAlmostEqual(parse_minutes("0:30"),.5)
+        self.assertEqual(pair("3-7"),(3,7))
+        with self.assertRaises(ValueError):pair("8-7")
+        with self.assertRaises(ValueError):parse_minutes("1:60")

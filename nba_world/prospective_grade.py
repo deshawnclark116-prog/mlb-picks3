@@ -38,7 +38,10 @@ def main():
     for g in d["games"]:
         gid=g["game_id"];tip=stamp(g["tipoff_utc"])
         if stamp(g["forecast_at_utc"])>=tip:raise ValueError("late prediction")
-        b,r=get("summary?event="+gid);box=final(b)
+        b,r=get("summary?event="+gid)
+        header=(b.get("header",{}).get("competitions") or [{}])[0]
+        if str(header.get("id"))!=str(gid):raise ValueError("final game identity mismatch")
+        box=final(b)
         if box is None:pending.append(gid);continue
         receipts[gid]=r
         for p in g["rows"]:

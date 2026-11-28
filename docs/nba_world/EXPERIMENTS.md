@@ -51,3 +51,6 @@ Run 46170964492: 142 games / 15,292 rows, 28 adjudicated corrections, zero remai
 
 ## Prospective test protocol
 Freeze independent research forecasts from current ESPN schedule and current team roster identities only, no legacy model predictions or confirmed-starter claims. Use fixed box-only model architecture and original chronological train/cal splits. Capture actual observation times, pretip recheck, source hashes, own projection, full threshold survival and p_active. Grade the exact frozen artifact later. Own-target hit rates are descriptive, not comparable to different target definitions; no automatic production promotion. No scheduler is installed on main.
+
+## Prospective collector correction
+Run 46171305843 failed at ESPN scoreboard multi-day query HTTP 400 after training. No forecasts were frozen by that run. Use independent single-day ET schedule requests, final per-game pretip recheck, and an independently parsed last-five-day final-box refresh under the original UTC-day cutoff. Reconcile points, rebounds, team score and minutes before accepting final histories. Record all missing sources. No retroactive pretip certification.

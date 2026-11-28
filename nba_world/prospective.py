@@ -55,9 +55,19 @@ def parse_roster(body,tid):
 def roster(t):
     b,r=get("teams/"+t+"/roster");return t,parse_roster(b,t),r
 def source_schedule():
-    n=now();start=n.date()-dt.timedelta(days=1);end=n.date()+dt.timedelta(days=2)
-    body,receipt=get("scoreboard?dates="+start.strftime("%Y%m%d")+"-"+end.strftime("%Y%m%d")+"&limit=100")
-    return parse_schedule(body,stamp(receipt["observed_at"])),receipt
+    n=now();games={};receipts=[];errors={}
+    # The source accepts single-day date queries. Query ET today and tomorrow;
+    # a failed day remains explicit rather than treated as an empty slate.
+    from zoneinfo import ZoneInfo
+    start=n.astimezone(ZoneInfo("America/New_York")).date()
+    for d in (start,start+dt.timedelta(days=1)):
+        try:
+            body,receipt=get("scoreboard?dates="+d.strftime("%Y%m%d")+"&limit=100")
+            receipts.append(receipt)
+            for g in parse_schedule(body,stamp(receipt["observed_at"])):games[g["game_id"]]=g
+        except Exception as e:errors[d.isoformat()]=str(e)
+    if not receipts:raise RuntimeError("no schedule source succeeded "+str(errors))
+    return sorted(games.values(),key=lambda g:g["date"]),{"observations":receipts,"failures":errors}
 def train_locked(games):
     # Predeclared box-only challenger from action ablation. No November
     # labels train model parameters, even as historical features advance.
@@ -96,7 +106,14 @@ def forecast(arm,games,schedule,rosters,receipts,schedule_receipt):
                     "candidate":bool(target>=MINIMUM_TARGETS[j] and pa[i]>=.75 and len(h.players.get(pid,[]))>=5)})
         # A fresh scoreboard observation must still say PRE, and actual
         # freeze time must precede tipoff with margin.
-        latest,receipt=source_schedule();match=next((z for z in latest if z["game_id"]==gid),None);frozen=now()
+        from zoneinfo import ZoneInfo
+        day=tip.astimezone(ZoneInfo("America/New_York")).date()
+        try:
+            body,receipt=get("scoreboard?dates="+day.strftime("%Y%m%d")+"&limit=100")
+            latest=parse_schedule(body,stamp(receipt["observed_at"]))
+        except Exception as e:
+            skipped[gid]="FINAL_PRETIP_SOURCE_FAILED: "+str(e);continue
+        match=next((z for z in latest if z["game_id"]==gid),None);frozen=now()
         if match is None or stamp(match["date"])!=tip or frozen>=tip-dt.timedelta(minutes=5):
             skipped[gid]="FINAL_PRETIP_RECHECK_FAILED";continue
         if any(stamp(receipts[t]["observed_at"])>=tip for t in ts):raise ValueError("late roster source")
@@ -110,6 +127,8 @@ def forecast(arm,games,schedule,rosters,receipts,schedule_receipt):
 def main():
     p=argparse.ArgumentParser();p.add_argument("--games",action="append",required=True);p.add_argument("--out",required=True);args=p.parse_args()
     games=read(args.games);arm,tr,ca=train_locked(games)
+    from nba_world.refresh import refresh
+    games,history_audit=refresh(games,now().date()-dt.timedelta(days=1))
     schedule,sr=source_schedule();ts=sorted({t for g in schedule for t in teams(g)})
     rosters={};receipts={};errors={}
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
@@ -121,13 +140,14 @@ def main():
     forecasts,skipped=forecast(arm,games,schedule,rosters,receipts,sr)
     result={"schema":"NBA_WORLD_PROSPECTIVE_FIRST_V1","production_changed":False,"research_only":True,
        "created_at":now().isoformat(),"git_commit":os.getenv("GITHUB_SHA"),"run_id":os.getenv("GITHUB_RUN_ID"),
-       "train_rows":tr,"calibration_rows":ca,"schedule_receipt":sr,"roster_errors":errors,
+       "train_rows":tr,"calibration_rows":ca,"schedule_receipt":sr,"roster_errors":errors,"recent_history_refresh":history_audit,
        "source_hashes":{p:hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in args.games},
        "games":forecasts,"skipped":skipped,
-       "limitations":["roster membership only; no verified current starters or injuries","history cutoff is conservative; no latest live final scores fetched",
+       "limitations":["roster membership only; no verified current starters or injuries","history cutoff is conservative; recent completed-game refresh errors explicitly recorded",
           "own targets are not sportsbook lines or comparable to different incumbent targets","not an official pick or wager"]}
     path=Path(args.out);path.write_text(json.dumps(result,indent=2,allow_nan=False))
     print("PROSPECTIVE_RECEIPT",json.dumps({"games":len(forecasts),"rows":sum(len(g["rows"]) for g in forecasts),
           "candidate_rows":sum(r["candidate"] for g in forecasts for r in g["rows"]),"skipped":skipped,"roster_errors":errors,
+          "history_refresh":{k:v for k,v in history_audit.items() if k!="receipts"},"schedule_errors":sr["failures"],
           "sha256":hashlib.sha256(path.read_bytes()).hexdigest(),"game_ids":[g["game_id"] for g in forecasts]}),flush=True)
 if __name__=="__main__":main()
