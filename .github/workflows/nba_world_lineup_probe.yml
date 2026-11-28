@@ -1,0 +1,33 @@
+name: NBA WORLD independent lineup evidence probe
+on:
+  push:
+    branches: [research/nba-world-cleanroom]
+    paths:
+      - 'nba_world/lineups.py'
+      - 'nba_world/lineup_probe.py'
+      - 'tests/test_nba_world_lineups.py'
+      - '.github/workflows/nba_world_lineup_probe.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      OMP_NUM_THREADS: '2'
+      OPENBLAS_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: |
+          pip install 'numpy>=1.26,<2.5' 'scikit-learn>=1.6,<1.9'
+          pip install 'torch>=2.6,<3' --index-url https://download.pytorch.org/whl/cpu
+      - run: python -m unittest discover -s tests -p test_nba_world_lineups.py -v
+      - run: python -u -m nba_world.lineup_probe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nba-world-lineup-source
+          path: /tmp/nba_world_lineup_source.json

@@ -32,7 +32,7 @@ def parse_schedule(body,observed):
         if status.get("state")!="pre" or status.get("completed"):continue
         tip=stamp(comp.get("date") or ev["date"])
         if tip<=observed or tip>observed+dt.timedelta(hours=30):continue
-        sides={c.get("homeAway"):{"id":str(c["team"]["id"]),"name":c["team"].get("displayName")} for c in comp.get("competitors",[])}
+        sides={c.get("homeAway"):{"id":str(c["team"]["id"]),"name":c["team"].get("displayName"),"abbr":c["team"].get("abbreviation")} for c in comp.get("competitors",[])}
         if set(sides)!={"home","away"}:continue
         if sides["home"]["id"]==sides["away"]["id"]:continue
         if not all(t["id"].isdigit() and 1<=int(t["id"])<=30 for t in sides.values()):continue

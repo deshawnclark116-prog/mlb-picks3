@@ -72,3 +72,9 @@ Run 46172117518, 13 games, 1836 rows, 723 candidates, zero roster errors/skips; 
 
 ## Injury shadow
 Independent source parsing and timestamp validation. ESPN-reported status, not official active designation. Missing/stale report does not certify active. Fresh OUT/DOUBTFUL only creates a separate abstention ranking; no changes to projections or calibrated probabilities and no promotion. Compare frozen original and gated rankings prospectively. Use exact verified saved direct checkpoint; no retraining.
+
+## Verified injury shadow
+Run 46173338702: identical direct checkpoint hash, 13 games, 1836 forecasts, 723 initial candidates, 10 abstained rows, zero source errors. Frozen SHA aa3e8df741b167e830cb7e68823087f51d586ab12e5c74ac8cc7a70513fa5233. Not yet outcome graded.
+
+## Lineup conditioning V1
+Independent source parser validates exact pretip five positional starters by roster identity and actual observation time. Separate source probe; no production usage rights inferred from public access. Conditional learner uses past starter configurations as training state; report strict archived confirmed evidence and explicitly nondeployable actual-starting-five oracle diagnostic separately. No manual probability inflation. If strict archive has no confirmed teams, no claim of pretip lineup benefit is permitted.
